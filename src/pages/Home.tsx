@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Heart, Check } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -95,6 +94,8 @@ const Home: React.FC = () => {
 
   // State for tracking the currently selected item
   const [selectedItemId, setSelectedItemId] = useState<string>('1');
+  // State for tracking the selected match item
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   
   // Find the selected item
   const selectedItem = myItems.find(item => item.id === selectedItemId);
@@ -107,6 +108,13 @@ const Home: React.FC = () => {
   // Handle item selection
   const handleSelectItem = (id: string) => {
     setSelectedItemId(id);
+    // Clear selected match when changing items
+    setSelectedMatchId(null);
+  };
+
+  // Handle match selection
+  const handleSelectMatch = (id: string) => {
+    setSelectedMatchId(selectedMatchId === id ? null : id);
   };
 
   return (
@@ -143,13 +151,6 @@ const Home: React.FC = () => {
                       <h3 className="font-medium text-center">{item.name}</h3>
                     </CardContent>
                   </Card>
-                  
-                  {/* Item Details - shown only for selected item */}
-                  {selectedItemId === item.id && (
-                    <Card className="mt-3 overflow-hidden">
-                      {selectedItem && <ItemDetails name={selectedItem.name} />}
-                    </Card>
-                  )}
                 </div>
               ))}
             </div>
@@ -162,26 +163,40 @@ const Home: React.FC = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {filteredMatches.map((match) => (
-                <Card key={match.id} className="overflow-hidden">
-                  <div className="relative">
-                    <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-                      <Avatar className="h-full w-full rounded-none">
-                        <AvatarImage src={match.image} alt={match.name} className="object-cover" />
-                        <AvatarFallback className="rounded-none text-gray-400 text-xs">
-                          400 × 320
-                        </AvatarFallback>
-                      </Avatar>
+                <div key={match.id} className="flex flex-col">
+                  <Card 
+                    className={`overflow-hidden cursor-pointer ${selectedMatchId === match.id ? 'ring-2 ring-blue-500' : ''}`}
+                    onClick={() => handleSelectMatch(match.id)}
+                  >
+                    <div className="relative">
+                      <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+                        <Avatar className="h-full w-full rounded-none">
+                          <AvatarImage src={match.image} alt={match.name} className="object-cover" />
+                          <AvatarFallback className="rounded-none text-gray-400 text-xs">
+                            400 × 320
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md">
+                        <Heart className="h-5 w-5 text-red-500" fill={match.liked ? "red" : "none"} />
+                      </div>
                     </div>
-                    <div className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md">
-                      <Heart className="h-5 w-5 text-red-500" fill={match.liked ? "red" : "none"} />
-                    </div>
-                  </div>
-                  <CardContent className="p-3">
-                    <h3 className="font-medium text-center">{match.name}</h3>
-                  </CardContent>
-                </Card>
+                    <CardContent className="p-3">
+                      <h3 className="font-medium text-center">{match.name}</h3>
+                    </CardContent>
+                  </Card>
+                </div>
               ))}
             </div>
+
+            {/* Item Details for selected match */}
+            {selectedMatchId && (
+              <div className="mt-4">
+                <Card className="overflow-hidden">
+                  <ItemDetails name={filteredMatches.find(match => match.id === selectedMatchId)?.name || ""} />
+                </Card>
+              </div>
+            )}
           </section>
         </div>
       </div>
