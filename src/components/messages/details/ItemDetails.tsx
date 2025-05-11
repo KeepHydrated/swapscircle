@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Shield, Calendar } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface ItemDetailsProps {
@@ -71,20 +71,9 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
           </div>
           
           <div className="flex items-center text-sm text-gray-600">
-            <Shield className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-            <span>Verified member</span>
-          </div>
-          
-          <div className="flex items-center text-sm text-gray-600">
             <Calendar className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
             <span>Since 2023</span>
           </div>
-        </div>
-        
-        <div className="mt-3 flex flex-wrap gap-1">
-          <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-600">Responsive</Badge>
-          <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-600">Top Trader</Badge>
-          <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-600">ID Verified</Badge>
         </div>
       </div>
     </div>
