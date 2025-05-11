@@ -10,8 +10,9 @@ interface MessageDisplayProps {
 const MessageDisplay = ({ activeChat }: MessageDisplayProps) => {
   return (
     <ScrollArea className="flex-1 p-4">
-      <div className="flex justify-center my-8">
-        <p className="text-blue-500">{activeChat.lastMessage}</p>
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-gray-500">{activeChat.lastMessage}</p>
+        <p className="text-sm text-gray-400 mt-2">No message history available</p>
       </div>
     </ScrollArea>
   );
