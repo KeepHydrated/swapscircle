@@ -5,10 +5,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, Category } from 'lucide-react';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 
 const PostItem: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
+  const [category, setCategory] = useState<string>("");
+  const [subcategory, setSubcategory] = useState<string>("");
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -17,12 +26,27 @@ const PostItem: React.FC = () => {
     }
   };
 
+  // Define categories and their subcategories for rental items
+  const categories = {
+    "Electronics": ["Cameras", "Computers", "Audio Equipment", "TVs", "Gaming Consoles", "Other Electronics"],
+    "Home & Garden": ["Power Tools", "Furniture", "Party Supplies", "Kitchen Appliances", "Gardening Equipment", "Other Home Items"],
+    "Sports & Outdoors": ["Camping Gear", "Bikes", "Winter Sports", "Water Sports", "Fitness Equipment", "Other Sports Gear"],
+    "Vehicles": ["Cars", "Motorcycles", "Bicycles", "RVs", "Boats", "Other Vehicles"],
+    "Clothing": ["Formal Wear", "Costumes", "Accessories", "Designer Items", "Special Occasion", "Other Clothing"],
+    "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Other Business Items"],
+    "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Other Entertainment Items"]
+  };
+
+  // Subcategories based on selected category
+  const getSubcategories = () => {
+    if (!category) return [];
+    return categories[category as keyof typeof categories] || [];
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-1 p-4 md:p-6">
-        <h1 className="text-2xl font-bold mb-6">Post New Item</h1>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
           {/* What You're Offering Column */}
           <div className="bg-white p-6 rounded-lg shadow">
@@ -70,7 +94,7 @@ const PostItem: React.FC = () => {
               {/* Title */}
               <div className="space-y-2">
                 <Label htmlFor="title">Title</Label>
-                <Input id="title" placeholder="What are you offering?" />
+                <Input id="title" placeholder="What are you offering for rent?" />
               </div>
               
               {/* Description */}
@@ -78,10 +102,48 @@ const PostItem: React.FC = () => {
                 <Label htmlFor="description">Description</Label>
                 <Textarea 
                   id="description" 
-                  placeholder="Describe your item in detail..." 
-                  rows={6}
+                  placeholder="Describe your rental item in detail..." 
+                  rows={4}
                 />
               </div>
+              
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select 
+                  value={category} 
+                  onValueChange={(value) => {
+                    setCategory(value);
+                    setSubcategory(""); // Reset subcategory when category changes
+                  }}
+                >
+                  <SelectTrigger id="category" className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(categories).map((cat) => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Subcategory - only show if category is selected */}
+              {category && (
+                <div className="space-y-2">
+                  <Label htmlFor="subcategory">Subcategory</Label>
+                  <Select value={subcategory} onValueChange={setSubcategory}>
+                    <SelectTrigger id="subcategory" className="w-full">
+                      <SelectValue placeholder="Select a subcategory" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getSubcategories().map((subcat) => (
+                        <SelectItem key={subcat} value={subcat}>{subcat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           </div>
           
