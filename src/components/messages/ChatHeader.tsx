@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Conversation } from '@/data/conversations';
@@ -21,19 +21,15 @@ const ChatHeader = ({ activeChat }: ChatHeaderProps) => {
         <div>
           <div className="flex items-center">
             <h2 className="font-medium">{activeChat.name}</h2>
-            {activeChat.rating && (
-              <div className="ml-2 flex text-yellow-400">
-                {"★".repeat(activeChat.rating)}
-                <span className="ml-1 text-gray-500 text-sm">({42})</span>
-              </div>
-            )}
+            <div className="ml-2 flex text-yellow-400">
+              {"★".repeat(activeChat.rating)}
+              <span className="ml-1 text-gray-500 text-sm">({42})</span>
+            </div>
           </div>
-          {activeChat.distance && (
-            <p className="text-sm text-gray-500 flex items-center">
-              <span className="mr-2">📍 {activeChat.distance}</span>
-              {activeChat.isNew && <span>• New match</span>}
-            </p>
-          )}
+          <p className="text-sm text-gray-500 flex items-center">
+            <MapPin className="h-3 w-3 mr-1" /> {activeChat.distance}
+            {activeChat.isNew && <span className="ml-2">• New match</span>}
+          </p>
         </div>
       </div>
       <Button variant="ghost" size="icon">
