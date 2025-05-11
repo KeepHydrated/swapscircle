@@ -36,9 +36,9 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
             dragFree: true,
           }}
         >
-          <CarouselContent className="px-2">
+          <CarouselContent className="px-1">
             {exchangePairs.map((pair) => (
-              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-2 pr-4">
+              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-1 pr-5">
                 <div 
                   className={`flex items-center cursor-pointer rounded-lg ${
                     selectedPairId === pair.id 
@@ -47,32 +47,39 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                   }`}
                   onClick={() => onPairSelect(pair.partnerId, pair.id)}
                 >
-                  <div className="flex items-center p-3 w-full">
-                    {/* First item */}
-                    <div className="flex flex-col items-center flex-1">
-                      <Avatar className="h-10 w-10 bg-gray-100">
-                        <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
-                        <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm text-blue-600 font-medium mt-2 text-center truncate w-full">
-                        {pair.item1.name}
-                      </span>
-                    </div>
-                    
-                    {/* Exchange icon */}
-                    <div className="flex items-center justify-center mx-3">
-                      <ArrowLeftRight className="h-5 w-5 text-blue-400" />
-                    </div>
-                    
-                    {/* Second item */}
-                    <div className="flex flex-col items-center flex-1">
-                      <Avatar className="h-10 w-10 bg-gray-100">
-                        <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
-                        <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm text-gray-600 font-medium mt-2 text-center truncate w-full">
-                        {pair.item2.name}
-                      </span>
+                  <div className="flex items-center p-3 w-full justify-between">
+                    {/* Container with fixed equal height */}
+                    <div className="flex h-full">
+                      {/* First item */}
+                      <div className="flex flex-col items-center flex-1">
+                        <div className="h-12 flex items-center justify-center">
+                          <Avatar className="h-10 w-10 bg-gray-100">
+                            <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
+                            <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <span className="text-sm text-blue-600 font-medium mt-2 text-center truncate w-full max-w-[90px]">
+                          {pair.item1.name}
+                        </span>
+                      </div>
+                      
+                      {/* Exchange icon */}
+                      <div className="flex items-center justify-center mx-3">
+                        <ArrowLeftRight className="h-5 w-5 text-blue-400" />
+                      </div>
+                      
+                      {/* Second item */}
+                      <div className="flex flex-col items-center flex-1">
+                        <div className="h-12 flex items-center justify-center">
+                          <Avatar className="h-10 w-10 bg-gray-100">
+                            <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
+                            <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <span className="text-sm text-gray-600 font-medium mt-2 text-center truncate w-full max-w-[90px]">
+                          {pair.item2.name}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
