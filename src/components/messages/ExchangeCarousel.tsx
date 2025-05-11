@@ -2,7 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeftRight } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import useEmblaCarousel from "embla-carousel-react";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem 
+} from '@/components/ui/carousel';
 
 interface ExchangePair {
   id: number;
@@ -23,39 +27,20 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
   onPairSelect
 }) => {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-  
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
-    loop: true,
-    dragFree: true,
-  });
-
-  // Update active slide index when carousel scrolls
-  useEffect(() => {
-    if (!emblaApi) return;
-    
-    const onScroll = () => {
-      const currentIndex = emblaApi.selectedScrollSnap();
-      setActiveSlideIndex(currentIndex);
-    };
-    
-    emblaApi.on('scroll', onScroll);
-    // Initial call to set the correct starting position
-    onScroll();
-    
-    return () => {
-      emblaApi.off('scroll', onScroll);
-    };
-  }, [emblaApi]);
 
   return (
     <div className="h-full flex items-center w-full">
       <div className="w-full max-w-5xl mx-auto">
-        {/* Using direct embla carousel reference for more control */}
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex cursor-grab active:cursor-grabbing">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+            dragFree: true,
+          }}
+        >
+          <CarouselContent>
             {exchangePairs.map((pair) => (
-              <div key={pair.id} className="min-w-0 shrink-0 grow-0 basis-1/3 md:basis-1/4 lg:basis-1/4 px-1">
+              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/4 px-1">
                 <div 
                   className={`flex items-center justify-between cursor-pointer p-1.5 rounded-md h-10 ${selectedPairId === pair.id ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
                   onClick={() => onPairSelect(pair.partnerId, pair.id)}
@@ -83,10 +68,10 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                     </Avatar>
                   </div>
                 </div>
-              </div>
+              </CarouselItem>
             ))}
-          </div>
-        </div>
+          </CarouselContent>
+        </Carousel>
       </div>
     </div>
   );

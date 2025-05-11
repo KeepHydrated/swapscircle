@@ -1,55 +1,57 @@
 
 import React, { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import useEmblaCarousel from 'embla-carousel-react';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem,
+  type CarouselApi
+} from '@/components/ui/carousel';
 
 interface ItemCarouselProps {
   imageUrls: string[];
 }
 
 const ItemCarousel = ({ imageUrls }: ItemCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "center",
-    loop: true,
-  });
+  const [api, setApi] = React.useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!api) return;
     
     const onSelect = () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
+      setSelectedIndex(api.selectedScrollSnap());
     };
     
-    emblaApi.on('select', onSelect);
+    api.on('select', onSelect);
     onSelect();
     
     return () => {
-      emblaApi.off('select', onSelect);
+      api.off('select', onSelect);
     };
-  }, [emblaApi]);
+  }, [api]);
   
-  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
-  const scrollNext = () => emblaApi && emblaApi.scrollNext();
+  const scrollPrev = () => api && api.scrollPrev();
+  const scrollNext = () => api && api.scrollNext();
   
   return (
     <>
       {/* Main image container with navigation buttons */}
       <div className="relative h-56 bg-gray-100 overflow-hidden">
-        <div className="overflow-hidden w-full h-full" ref={emblaRef}>
-          <div className="flex h-full">
+        <Carousel setApi={setApi} opts={{ align: "center", loop: true }}>
+          <CarouselContent className="h-full">
             {imageUrls.map((url, index) => (
-              <div key={index} className="flex-[0_0_100%] h-full min-w-0">
+              <CarouselItem key={index} className="h-full">
                 <div 
                   className="w-full h-full bg-center bg-cover bg-no-repeat flex items-center justify-center text-gray-400"
                   style={{ backgroundImage: `url(${url})` }}
                 >
                   {!url && <span>Image {index + 1}</span>}
                 </div>
-              </div>
+              </CarouselItem>
             ))}
-          </div>
-        </div>
+          </CarouselContent>
+        </Carousel>
         
         {/* Navigation buttons */}
         <button 
@@ -79,7 +81,7 @@ const ItemCarousel = ({ imageUrls }: ItemCarouselProps) => {
         {imageUrls.map((url, index) => (
           <div 
             key={index}
-            onClick={() => emblaApi?.scrollTo(index)} 
+            onClick={() => api?.scrollTo(index)} 
             className={`flex-shrink-0 w-16 h-16 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
           >
             <div 
