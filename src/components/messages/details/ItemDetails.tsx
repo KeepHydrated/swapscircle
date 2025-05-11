@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -9,15 +9,32 @@ interface ItemDetailsProps {
 }
 
 const ItemDetails = ({ name }: ItemDetailsProps) => {
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+
+  const toggleDescription = () => {
+    setIsDescriptionOpen(!isDescriptionOpen);
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold text-gray-900 mb-3">
         {name || "Selected Item"}
       </h2>
       
-      <p className="text-gray-700 mb-6">
-        Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
-      </p>
+      <div className="flex items-center justify-between mb-2 cursor-pointer" onClick={toggleDescription}>
+        <p className="text-gray-700 font-medium">Item Description</p>
+        {isDescriptionOpen ? (
+          <ChevronUp className="h-5 w-5 text-gray-500" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-gray-500" />
+        )}
+      </div>
+      
+      {isDescriptionOpen && (
+        <p className="text-gray-700 mb-6 bg-gray-50 p-3 rounded-md">
+          Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
+        </p>
+      )}
       
       <hr className="mb-4" />
       
