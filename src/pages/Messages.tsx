@@ -11,8 +11,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
@@ -84,45 +82,47 @@ const Messages = () => {
             opts={{
               align: "start",
               loop: true,
+              dragFree: true,
             }}
             className="w-full max-w-4xl mx-auto"
             onSelect={handleSlideChange}
           >
-            <CarouselContent>
-              {exchangePairs.map((pair) => (
-                <CarouselItem key={pair.id} className="basis-1/2 md:basis-1/2 lg:basis-1/3 pl-1">
-                  <div 
-                    className="flex flex-row items-center justify-center cursor-pointer transition-transform hover:scale-105 px-2"
-                    onClick={() => handlePairSelect(pair.partnerId)}
-                  >
-                    {/* First item */}
-                    <div className="flex flex-col items-center">
-                      <Avatar className="h-16 w-16 bg-gray-100">
-                        <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
-                        <AvatarFallback>{pair.item1.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm mt-1 text-gray-700">{pair.item1.name}</span>
+            <ScrollArea className="w-full" orientation="horizontal">
+              <CarouselContent className="cursor-grab active:cursor-grabbing">
+                {exchangePairs.map((pair) => (
+                  <CarouselItem key={pair.id} className="basis-1/2 md:basis-1/2 lg:basis-1/3 pl-1">
+                    <div 
+                      className="flex flex-row items-center justify-center cursor-pointer transition-transform hover:scale-105 px-2"
+                      onClick={() => handlePairSelect(pair.partnerId)}
+                    >
+                      {/* First item */}
+                      <div className="flex flex-col items-center">
+                        <Avatar className="h-16 w-16 bg-gray-100">
+                          <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
+                          <AvatarFallback>{pair.item1.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm mt-1 text-gray-700">{pair.item1.name}</span>
+                      </div>
+                      
+                      {/* Exchange icon */}
+                      <div className="flex items-center justify-center h-8 w-8 mx-3 rounded-full bg-blue-100">
+                        <ArrowLeftRight className="h-4 w-4 text-blue-600" />
+                      </div>
+                      
+                      {/* Second item */}
+                      <div className="flex flex-col items-center">
+                        <Avatar className="h-16 w-16 bg-gray-100">
+                          <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
+                          <AvatarFallback>{pair.item2.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm mt-1 text-gray-700">{pair.item2.name}</span>
+                      </div>
                     </div>
-                    
-                    {/* Exchange icon */}
-                    <div className="flex items-center justify-center h-8 w-8 mx-3 rounded-full bg-blue-100">
-                      <ArrowLeftRight className="h-4 w-4 text-blue-600" />
-                    </div>
-                    
-                    {/* Second item */}
-                    <div className="flex flex-col items-center">
-                      <Avatar className="h-16 w-16 bg-gray-100">
-                        <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
-                        <AvatarFallback>{pair.item2.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm mt-1 text-gray-700">{pair.item2.name}</span>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </ScrollArea>
             <div className="flex justify-center items-center mt-4 px-4">
-              <CarouselPrevious className="relative left-0 translate-y-0 hidden sm:flex" />
               <div className="w-full max-w-md mx-auto px-4">
                 {/* Custom slider that matches the image */}
                 <div className="relative h-1 bg-gray-200 rounded-full">
@@ -135,7 +135,6 @@ const Messages = () => {
                   />
                 </div>
               </div>
-              <CarouselNext className="relative right-0 translate-y-0 hidden sm:flex" />
             </div>
           </Carousel>
         </div>
