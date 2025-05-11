@@ -12,6 +12,7 @@ interface ItemCardProps {
   isMatch?: boolean;
   liked?: boolean;
   onSelect: (id: string) => void;
+  onLike?: (id: string) => void;
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ 
@@ -21,8 +22,16 @@ const ItemCard: React.FC<ItemCardProps> = ({
   isSelected, 
   isMatch,
   liked,
-  onSelect 
+  onSelect,
+  onLike
 }) => {
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering card selection
+    if (onLike) {
+      onLike(id);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <Card 
@@ -46,8 +55,14 @@ const ItemCard: React.FC<ItemCardProps> = ({
           )}
           
           {isMatch && (
-            <div className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md">
-              <Heart className="h-5 w-5 text-red-500" fill={liked ? "red" : "none"} />
+            <div 
+              className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100"
+              onClick={handleHeartClick}
+            >
+              <Heart 
+                className={`h-5 w-5 ${liked ? "text-red-500" : "text-gray-400"}`} 
+                fill={liked ? "red" : "none"} 
+              />
             </div>
           )}
         </div>

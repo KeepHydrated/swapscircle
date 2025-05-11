@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
@@ -8,12 +9,45 @@ import { mockConversations } from '@/data/conversations';
 import { exchangePairs } from '@/data/exchangePairs';
 import { toast } from "sonner";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useLocation } from 'react-router-dom';
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
   const [selectedPairId, setSelectedPairId] = useState<number | null>(1);
   const [conversations, setConversations] = useState(mockConversations);
+  const location = useLocation();
   
+  // Check if we've navigated here from liking an item
+  useEffect(() => {
+    const likedItemMatch = location.state?.likedItem;
+    if (likedItemMatch) {
+      // Check if we already have a conversation for this match
+      const existingConvo = conversations.find(
+        convo => convo.name === `${likedItemMatch.name} Owner`
+      );
+      
+      if (!existingConvo) {
+        // Create a new conversation for this match
+        const newConvo = {
+          id: `match-${Date.now()}`,
+          name: `${likedItemMatch.name} Owner`,
+          lastMessage: "Be the first to reach out and start the conversation.",
+          time: "New match",
+          rating: 5,
+          distance: "2.5 mi away",
+          isNew: true
+        };
+        
+        // Add the new conversation
+        setConversations(prev => [newConvo, ...prev]);
+        // Set it as active
+        setActiveConversation(newConvo.id);
+        // Show a toast
+        toast(`New match created with ${newConvo.name}!`);
+      }
+    }
+  }, [location.state]);
+
   const activeChat = conversations.find(conv => conv.id === activeConversation);
 
   // Get the currently selected pair

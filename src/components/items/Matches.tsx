@@ -1,7 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import ItemCard from './ItemCard';
 import ItemDetails from '@/components/messages/details/ItemDetails';
 import { Card } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { toast } from "sonner";
 
 interface MatchItem {
   id: string;
@@ -26,6 +29,9 @@ const Matches: React.FC<MatchesProps> = ({
 }) => {
   // State to keep track of viewport size
   const [itemsPerRow, setItemsPerRow] = useState(3);
+  // State to track liked items
+  const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
   
   // Update itemsPerRow based on window size
   useEffect(() => {
@@ -59,6 +65,34 @@ const Matches: React.FC<MatchesProps> = ({
   const selectedRowIndex = selectedIndex !== -1 
     ? getRowIndex(selectedIndex) 
     : -1;
+    
+  // Handle liking an item
+  const handleLike = (id: string) => {
+    // Toggle the liked state
+    const newLikedItems = { 
+      ...likedItems, 
+      [id]: !likedItems[id] 
+    };
+    setLikedItems(newLikedItems);
+    
+    // If newly liked, show toast and navigate to messages
+    if (newLikedItems[id]) {
+      const match = matches.find(m => m.id === id);
+      if (match) {
+        toast(`You matched with ${match.name}! Check your messages.`);
+        // Navigate to messages with the liked item info
+        setTimeout(() => {
+          navigate('/messages', { state: { likedItem: match } });
+        }, 1000);
+      }
+    }
+  };
+
+  // Handle selecting an item with additional like functionality
+  const handleItemSelect = (id: string) => {
+    // Call the original onSelectMatch function
+    onSelectMatch(id);
+  };
 
   // Render function to create the grid with details injected after the selected row
   const renderGrid = () => {
@@ -82,9 +116,10 @@ const Matches: React.FC<MatchesProps> = ({
           name={match.name}
           image={match.image}
           isMatch={true}
-          liked={match.liked}
+          liked={likedItems[match.id] || match.liked}
           isSelected={selectedMatchId === match.id}
-          onSelect={onSelectMatch}
+          onSelect={handleItemSelect}
+          onLike={handleLike}
         />
       );
       
