@@ -4,6 +4,7 @@ import { Heart, Check } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import ItemDetails from '@/components/messages/details/ItemDetails';
 
 // Types for our items
 interface Item {
@@ -12,6 +13,10 @@ interface Item {
   image: string;
   isSelected?: boolean;
   category?: string;
+  condition?: string;
+  description?: string;
+  tags?: string[];
+  priceRange?: string;
 }
 
 interface MatchItem extends Item {
@@ -19,12 +24,48 @@ interface MatchItem extends Item {
 }
 
 const Home: React.FC = () => {
-  // Sample data for my items
+  // Sample data for my items with added details
   const myItems: Item[] = [
-    { id: '1', name: 'Vintage Camera', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32', category: 'photography' },
-    { id: '2', name: 'Mountain Bike', image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e', category: 'sports' },
-    { id: '3', name: 'Acoustic Guitar', image: 'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f', category: 'music' },
-    { id: '4', name: 'Laptop', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853', category: 'electronics' },
+    { 
+      id: '1', 
+      name: 'Vintage Camera', 
+      image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32', 
+      category: 'photography',
+      condition: 'Brand New',
+      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality vintage camera at a great value.',
+      tags: ['Electronics', 'Photography', 'Collectibles'],
+      priceRange: '$100 - $250'
+    },
+    { 
+      id: '2', 
+      name: 'Mountain Bike', 
+      image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e', 
+      category: 'sports',
+      condition: 'Brand New',
+      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality mountain bike at a great value.',
+      tags: ['Sports', 'Outdoors', 'Cycling'],
+      priceRange: '$200 - $500'
+    },
+    { 
+      id: '3', 
+      name: 'Acoustic Guitar', 
+      image: 'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f', 
+      category: 'music',
+      condition: 'Brand New',
+      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality acoustic guitar at a great value.',
+      tags: ['Music', 'Instruments', 'Entertainment'],
+      priceRange: '$150 - $350'
+    },
+    { 
+      id: '4', 
+      name: 'Laptop', 
+      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853', 
+      category: 'electronics',
+      condition: 'Brand New',
+      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality laptop at a great value.',
+      tags: ['Electronics', 'Computers', 'Office'],
+      priceRange: '$300 - $800'
+    },
   ];
 
   // Sample data for all possible matches
@@ -78,30 +119,38 @@ const Home: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">My Items</h2>
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
               {myItems.map((item) => (
-                <Card 
-                  key={item.id} 
-                  className={`overflow-hidden cursor-pointer ${selectedItemId === item.id ? 'ring-2 ring-green-500' : ''}`}
-                  onClick={() => handleSelectItem(item.id)}
-                >
-                  <div className="relative">
-                    <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-                      <Avatar className="h-full w-full rounded-none">
-                        <AvatarImage src={item.image} alt={item.name} className="object-cover" />
-                        <AvatarFallback className="rounded-none text-gray-400 text-xs">
-                          400 × 320
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-                    {selectedItemId === item.id && (
-                      <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
-                        <Check className="h-5 w-5" />
+                <div key={item.id} className="flex flex-col">
+                  <Card 
+                    className={`overflow-hidden cursor-pointer ${selectedItemId === item.id ? 'ring-2 ring-green-500' : ''}`}
+                    onClick={() => handleSelectItem(item.id)}
+                  >
+                    <div className="relative">
+                      <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+                        <Avatar className="h-full w-full rounded-none">
+                          <AvatarImage src={item.image} alt={item.name} className="object-cover" />
+                          <AvatarFallback className="rounded-none text-gray-400 text-xs">
+                            400 × 320
+                          </AvatarFallback>
+                        </Avatar>
                       </div>
-                    )}
-                  </div>
-                  <CardContent className="p-3">
-                    <h3 className="font-medium text-center">{item.name}</h3>
-                  </CardContent>
-                </Card>
+                      {selectedItemId === item.id && (
+                        <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
+                          <Check className="h-5 w-5" />
+                        </div>
+                      )}
+                    </div>
+                    <CardContent className="p-3">
+                      <h3 className="font-medium text-center">{item.name}</h3>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Item Details - shown only for selected item */}
+                  {selectedItemId === item.id && (
+                    <Card className="mt-3 overflow-hidden">
+                      {selectedItem && <ItemDetails name={selectedItem.name} />}
+                    </Card>
+                  )}
+                </div>
               ))}
             </div>
           </section>
