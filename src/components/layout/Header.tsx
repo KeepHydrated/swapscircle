@@ -24,9 +24,11 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="icon" className="hidden md:flex">
-            <Plus className="w-5 h-5" />
-            <span className="sr-only">Add New</span>
+          <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+            <Link to="/post-item">
+              <Plus className="w-5 h-5" />
+              <span className="sr-only">Post Item</span>
+            </Link>
           </Button>
           
           <Button variant="ghost" size="icon" className="hidden md:flex">
