@@ -54,12 +54,13 @@ const Messages = () => {
         
         {/* Three columns with individual scroll areas */}
         <div className="flex flex-1 overflow-hidden">
-          {/* Conversations sidebar with its own scrollbar */}
-          <div className="w-64 border-r border-gray-200 overflow-hidden flex flex-col">
+          {/* Conversations sidebar with its own scrollbar - now wider */}
+          <div className="w-80 border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
               conversations={conversations}
               activeConversation={activeConversation}
               setActiveConversation={setActiveConversation}
+              exchangePairs={exchangePairs}
             />
           </div>
           

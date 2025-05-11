@@ -20,12 +20,19 @@ interface ConversationListProps {
   conversations: Conversation[];
   activeConversation: string | null;
   setActiveConversation: (id: string) => void;
+  exchangePairs?: Array<{
+    id: number;
+    partnerId: string;
+    item1: { name: string; image: string };
+    item2: { name: string; image: string };
+  }>;
 }
 
 const ConversationList = ({ 
   conversations, 
   activeConversation, 
-  setActiveConversation 
+  setActiveConversation,
+  exchangePairs = []
 }: ConversationListProps) => {
   return (
     <>
@@ -40,28 +47,43 @@ const ConversationList = ({
       </div>
       
       <ScrollArea className="flex-1 h-[calc(100vh-130px)]">
-        {conversations.map((conversation) => (
-          <div 
-            key={conversation.id}
-            className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
-            onClick={() => setActiveConversation(conversation.id)}
-          >
-            <div className="flex items-start gap-4">
-              <Avatar className="h-12 w-12">
-                <AvatarFallback className="bg-purple-100 text-purple-800">
-                  {conversation.name.substring(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-medium truncate">{conversation.name}</h3>
-                  <span className="text-xs text-gray-500">{conversation.time}</span>
+        {conversations.map((conversation) => {
+          // Find the exchange pair for this conversation if it exists
+          const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
+          
+          return (
+            <div 
+              key={conversation.id}
+              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
+              onClick={() => setActiveConversation(conversation.id)}
+            >
+              <div className="flex items-start gap-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarFallback className="bg-purple-100 text-purple-800">
+                    {conversation.name.substring(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center mb-1">
+                    <h3 className="font-medium truncate">{conversation.name}</h3>
+                    <span className="text-xs text-gray-500">{conversation.time}</span>
+                  </div>
+                  
+                  {/* Display exchange pair info if available */}
+                  {exchangePair && conversation.isNew && (
+                    <div className="flex items-center text-xs text-blue-600 mb-1">
+                      <span className="truncate">{exchangePair.item1.name}</span>
+                      <span className="mx-1">↔</span>
+                      <span className="truncate">{exchangePair.item2.name}</span>
+                    </div>
+                  )}
+                  
+                  <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
                 </div>
-                <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </ScrollArea>
     </>
   );
