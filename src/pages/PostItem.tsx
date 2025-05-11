@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Save, Check } from 'lucide-react';
+import { ImagePlus, Save, Check, PlusCircle } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select, 
@@ -32,6 +31,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 // Define types for saved preferences
 type SavedPreference = {
@@ -62,6 +71,7 @@ const PostItem: React.FC = () => {
   const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
   const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   // Load saved preferences from localStorage on component mount
   useEffect(() => {
@@ -237,12 +247,25 @@ const PostItem: React.FC = () => {
     });
   };
 
+  const resetForm = () => {
+    setImages([]);
+    setCategory("");
+    setSubcategory("");
+    setCondition("");
+    setPriceRange("");
+    // We're not resetting the "What You're Looking For" section
+    // as it's valuable to keep these preferences for the next item
+  };
+
+  const addNewItem = () => {
+    resetForm();
+    setShowSuccessDialog(false);
+  };
+
   const handleSubmit = () => {
-    toast({
-      title: "Item Posted",
-      description: "Your item has been successfully posted for trade.",
-    });
-    // Here you would normally handle the form submission
+    // Here you would normally handle the form submission logic
+    // After successful submission, show the success dialog
+    setShowSuccessDialog(true);
   };
 
   return (
@@ -582,6 +605,29 @@ const PostItem: React.FC = () => {
           </Button>
         </div>
       )}
+
+      {/* Success Dialog */}
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent className="bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold text-green-600">
+              Item Successfully Posted!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600">
+              Your item has been successfully posted for trade on TradeMate.
+              Would you like to add another item?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel className="border-gray-300">
+              Done
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={addNewItem} className="bg-green-600 hover:bg-green-700 text-white">
+              <PlusCircle className="mr-2 h-4 w-4" /> Add New Item
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
