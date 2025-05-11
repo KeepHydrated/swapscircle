@@ -1,11 +1,13 @@
-
 import React, { useState } from 'react';
-import { Star, MapPin, Calendar } from 'lucide-react';
+import { Star, MapPin, Calendar, Edit } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
+import ItemEditDialog from '@/components/items/ItemEditDialog';
+import { Item } from '@/types/item';
 
 const Profile: React.FC = () => {
   // Profile data
@@ -18,39 +20,54 @@ const Profile: React.FC = () => {
     memberSince: "2022"
   };
 
-  // Items for trade
-  const availableItems = [
+  // Items for trade (adding proper typing here)
+  const [availableItems, setAvailableItems] = useState<Item[]>([
     {
-      id: 1,
+      id: "1",
       name: "Super Nintendo Entertainment System (SNES)",
       description: "Original SNES console in excellent condition. Includes two controllers, power adapter, and AV cable. Some minor cosmetic wear but works perfectly.",
-      image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952"
+      image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
+      condition: "Excellent",
+      category: "Gaming",
+      priceRange: "$100-$150"
     },
     {
-      id: 2,
+      id: "2",
       name: "Vintage Led Zeppelin Vinyl Collection",
       description: "Complete set of first pressing Led Zeppelin vinyl records. All sleeves in near-mint condition. A must-have for any serious collector.",
-      image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc"
+      image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc",
+      condition: "Near Mint",
+      category: "Music",
+      priceRange: "$200-$300"
     },
     {
-      id: 3,
+      id: "3",
       name: "Limited Edition Gundam Figurine",
       description: "Rare 1995 limited edition Gundam Wing Zero Custom figurine, still in original packaging. Only minor wear on the box corners.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f"
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
+      condition: "Good",
+      category: "Collectibles",
+      priceRange: "$75-$125"
     },
     {
-      id: 4,
+      id: "4",
       name: "Polaroid SX-70 Camera",
       description: "Vintage Polaroid SX-70 instant camera from the 1970s. Recently serviced and in full working condition. Includes original leather case.",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+      condition: "Good",
+      category: "Photography",
+      priceRange: "$120-$180"
     },
     {
-      id: 5,
+      id: "5",
       name: "Antique Brass Compass",
       description: "19th century maritime brass compass with original wooden case. Beautiful patina and fully functional. A true collector's piece.",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+      condition: "Antique",
+      category: "Collectibles",
+      priceRange: "$250-$350"
     }
-  ];
+  ]);
 
   // Completed trades
   const completedTrades = [
@@ -87,6 +104,29 @@ const Profile: React.FC = () => {
       image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc"
     }
   ];
+
+  // State for editing items
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  // Function to handle clicking on an item to edit
+  const handleItemClick = (item: Item) => {
+    setEditingItem(item);
+    setIsEditDialogOpen(true);
+  };
+
+  // Function to save edited item
+  const handleSaveItem = (updatedItem: Item) => {
+    setAvailableItems(items => 
+      items.map(item => 
+        item.id === updatedItem.id ? updatedItem : item
+      )
+    );
+    toast({
+      title: "Item updated",
+      description: `${updatedItem.name} has been updated successfully.`
+    });
+  };
 
   // Render stars based on rating
   const renderStars = (rating: number) => {
@@ -162,13 +202,22 @@ const Profile: React.FC = () => {
           <TabsContent value="available" className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {availableItems.map(item => (
-                <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+                <Card 
+                  key={item.id} 
+                  className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+                  onClick={() => handleItemClick(item)}
+                >
                   <div className="aspect-[4/3] relative overflow-hidden">
                     <img 
                       src={item.image} 
                       alt={item.name} 
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/80 hover:bg-white">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                   <div className="p-4">
                     <h3 className="font-medium text-gray-800">{item.name}</h3>
@@ -224,6 +273,14 @@ const Profile: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Item Edit Dialog */}
+      <ItemEditDialog
+        item={editingItem}
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        onSave={handleSaveItem}
+      />
     </MainLayout>
   );
 };
