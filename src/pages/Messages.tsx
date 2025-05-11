@@ -8,6 +8,7 @@ import ExchangeCarousel from '@/components/messages/ExchangeCarousel';
 import { mockConversations } from '@/data/conversations';
 import { exchangePairs } from '@/data/exchangePairs';
 import { toast } from "sonner";
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
@@ -27,8 +28,8 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel taking full width */}
-        <div className="w-full">
+        {/* Item exchange carousel taking full width - frozen at top */}
+        <div className="w-full border-b border-gray-200 sticky top-0 bg-white z-10">
           <ExchangeCarousel 
             exchangePairs={exchangePairs}
             selectedPairId={selectedPairId}
@@ -36,19 +37,31 @@ const Messages = () => {
           />
         </div>
         
-        <div className="flex flex-1">
-          {/* Conversations sidebar */}
-          <ConversationList 
-            conversations={mockConversations}
-            activeConversation={activeConversation}
-            setActiveConversation={setActiveConversation}
-          />
+        <div className="flex flex-1 overflow-hidden">
+          {/* Conversations sidebar with scroll */}
+          <div className="w-64 border-r border-gray-200">
+            <ScrollArea className="h-[calc(100vh-64px-60px)]">
+              <ConversationList 
+                conversations={mockConversations}
+                activeConversation={activeConversation}
+                setActiveConversation={setActiveConversation}
+              />
+            </ScrollArea>
+          </div>
           
-          {/* Chat area */}
-          <ChatArea activeChat={activeChat} />
+          {/* Chat area with scroll */}
+          <div className="flex-1">
+            <ScrollArea className="h-[calc(100vh-64px-60px)]">
+              <ChatArea activeChat={activeChat} />
+            </ScrollArea>
+          </div>
           
-          {/* Details panel */}
-          <DetailsPanel selectedPair={selectedPair} />
+          {/* Details panel with scroll */}
+          <div className="w-80">
+            <ScrollArea className="h-[calc(100vh-64px-60px)]">
+              <DetailsPanel selectedPair={selectedPair} />
+            </ScrollArea>
+          </div>
         </div>
       </div>
     </MainLayout>

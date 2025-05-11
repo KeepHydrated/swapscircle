@@ -12,7 +12,7 @@ interface ChatAreaProps {
 const ChatArea = ({ activeChat }: ChatAreaProps) => {
   if (!activeChat) {
     return (
-      <div className="hidden md:flex flex-col flex-1">
+      <div className="flex flex-col flex-1">
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray-500">Select a conversation to start messaging</p>
         </div>
@@ -21,9 +21,11 @@ const ChatArea = ({ activeChat }: ChatAreaProps) => {
   }
 
   return (
-    <div className="hidden md:flex flex-col flex-1">
+    <div className="flex flex-col flex-1">
       <ChatHeader activeChat={activeChat} />
-      <MessageDisplay activeChat={activeChat} />
+      <div className="flex-1">
+        <MessageDisplay activeChat={activeChat} />
+      </div>
       <MessageInput />
     </div>
   );
