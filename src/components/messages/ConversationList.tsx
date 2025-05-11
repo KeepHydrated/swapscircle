@@ -2,7 +2,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 type Conversation = {
@@ -65,34 +65,7 @@ const ConversationList = ({
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium truncate">{conversation.name}</h3>
-                      
-                      {/* Item indicators next to person's name */}
-                      {exchangePair && (
-                        <div className="flex items-center space-x-0.5 ml-1">
-                          <div className="relative">
-                            <Avatar className="h-6 w-6 bg-gray-100">
-                              <AvatarImage src={exchangePair.item1.image} alt={exchangePair.item1.name} />
-                              <AvatarFallback className="text-xs">{exchangePair.item1.name[0]}</AvatarFallback>
-                            </Avatar>
-                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 flex items-center justify-center bg-blue-100 rounded-full">
-                              <span className="font-bold text-[8px] text-blue-700">C</span>
-                            </div>
-                          </div>
-                          <span className="text-gray-400 text-xs mx-0.5">↔</span>
-                          <div className="relative">
-                            <Avatar className="h-6 w-6 bg-gray-100">
-                              <AvatarImage src={exchangePair.item2.image} alt={exchangePair.item2.name} />
-                              <AvatarFallback className="text-xs">{exchangePair.item2.name[0]}</AvatarFallback>
-                            </Avatar>
-                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 flex items-center justify-center bg-gray-200 rounded-full">
-                              <span className="font-bold text-[8px] text-gray-600">B</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <h3 className="font-medium truncate">{conversation.name}</h3>
                     <span className="text-xs text-gray-500">{conversation.time}</span>
                   </div>
                   
