@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ItemCard from './ItemCard';
 import ItemDetails from '@/components/messages/details/ItemDetails';
 import { Card } from '@/components/ui/card';
@@ -35,6 +35,10 @@ const Matches: React.FC<MatchesProps> = ({
   const [removedItems, setRemovedItems] = useState<string[]>([]);
   const navigate = useNavigate();
   
+  // Refs for click outside detection
+  const matchesContainerRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  
   // Update itemsPerRow based on window size
   useEffect(() => {
     const handleResize = () => {
@@ -52,6 +56,26 @@ const Matches: React.FC<MatchesProps> = ({
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  // Handle click outside to close details
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectedMatchId) {
+        // Check if the click is outside both the matches container and the details
+        const isOutsideMatches = matchesContainerRef.current && !matchesContainerRef.current.contains(event.target as Node);
+        const isOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
+        
+        if (isOutsideMatches && isOutsideDetails) {
+          onSelectMatch(''); // Clear selection when clicking outside
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [selectedMatchId, onSelectMatch]);
 
   // Calculate the row index for an item
   const getRowIndex = (index: number) => {
@@ -145,7 +169,7 @@ const Matches: React.FC<MatchesProps> = ({
           ((i + 1) % itemsPerRow === 0 || i === displayedMatches.length - 1)) {
         // Add details component spanning the full width
         result.push(
-          <div key={`details-${selectedMatchId}`} className="col-span-2 md:col-span-3">
+          <div key={`details-${selectedMatchId}`} className="col-span-2 md:col-span-3" ref={detailsRef}>
             <Card className="overflow-hidden mt-2 mb-4">
               <ItemDetails name={displayedMatches[selectedIndex]?.name || ''} />
             </Card>
@@ -162,7 +186,7 @@ const Matches: React.FC<MatchesProps> = ({
       <h2 className="text-2xl font-bold mb-4">
         Matches for {selectedItemName || 'Selected Item'}
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4" ref={matchesContainerRef}>
         {renderGrid()}
       </div>
     </div>

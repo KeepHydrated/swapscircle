@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
@@ -165,14 +164,14 @@ const Home: React.FC = () => {
 
   // Handle item selection
   const handleSelectItem = (id: string) => {
-    setSelectedItemId(id);
+    setSelectedItemId(id || '1'); // Default to first item if empty
     // Clear selected match when changing items
     setSelectedMatchId(null);
   };
 
   // Handle match selection
   const handleSelectMatch = (id: string) => {
-    setSelectedMatchId(selectedMatchId === id ? null : id);
+    setSelectedMatchId(id || null); // Set to null if empty string
   };
 
   // Handle liking a friend's item
