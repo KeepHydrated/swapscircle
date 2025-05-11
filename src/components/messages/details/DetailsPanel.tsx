@@ -37,7 +37,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   };
   
   return (
-    <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-white">
+    <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
       {/* Item connection display at the top of the right panel */}
       {selectedPair && (
         <ItemConnection 

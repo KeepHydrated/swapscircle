@@ -111,7 +111,7 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - fixed position with white background */}
+        {/* Item exchange carousel - fixed position */}
         <div className="w-full border-b border-gray-200 bg-white z-10 h-24 flex items-center px-2 sticky top-0">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
@@ -141,7 +141,7 @@ const Messages = () => {
           </div>
           
           {/* Details panel with its own scrollbar */}
-          <div className="w-80 border-l border-gray-200 overflow-hidden bg-white">
+          <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
             <ScrollArea className="h-full">
               <DetailsPanel selectedPair={selectedPair} />
             </ScrollArea>

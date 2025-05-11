@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign, Star } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ItemDetailsProps {
@@ -52,31 +53,43 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
         </div>
       </div>
       
-      {/* Profile information section - restored */}
+      {/* Owner Profile Information - Redesigned layout */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex items-center">
-          <Avatar className="h-10 w-10 mr-3">
-            <AvatarImage src="https://images.unsplash.com/photo-1501286353178-1ec881214838" alt="User Profile" />
-            <AvatarFallback>JD</AvatarFallback>
+        <div className="flex items-start">
+          {/* Avatar on the left */}
+          <Avatar className="h-12 w-12 mr-4 flex-shrink-0">
+            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
+            <AvatarFallback>EW</AvatarFallback>
           </Avatar>
-          <div>
-            <h4 className="font-medium text-gray-900">John Doe</h4>
-            <div className="flex items-center text-sm text-gray-500">
-              <div className="flex items-center mr-2">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
-                <span>4.8</span>
+          
+          {/* Profile info on the right */}
+          <div className="flex flex-col">
+            {/* First row: Name and rating */}
+            <div className="flex items-center mb-1">
+              <h3 className="text-lg font-semibold mr-2">Emma Wilson</h3>
+              <div className="flex items-center">
+                <span className="text-amber-400">★★★★★</span> 
+                <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
               </div>
-              <span>· 24 Trades</span>
             </div>
-          </div>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
-            Member since May 2023
-          </div>
-          <div className="text-sm font-medium text-blue-600">
-            View Profile
+            
+            {/* Second row: Member since, distance, response time */}
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center">
+                <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span>Since 2023</span>
+              </div>
+              
+              <div className="flex items-center">
+                <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span>2.3 mi away</span>
+              </div>
+              
+              <div className="flex items-center">
+                <Clock className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span>Response: ~1 hour</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
