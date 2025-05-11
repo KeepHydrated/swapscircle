@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Heart, Check } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -121,11 +122,11 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-1 p-4 md:p-6">
-        <div className="space-y-8">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* My Items Section */}
-          <section>
+          <div className="lg:w-1/2">
             <h2 className="text-2xl font-bold mb-4">My Items</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {myItems.map((item) => (
                 <div key={item.id} className="flex flex-col">
                   <Card 
@@ -154,14 +155,14 @@ const Home: React.FC = () => {
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          {/* Matches Section - now stretches across all columns */}
-          <section>
+          {/* Matches Section */}
+          <div className="lg:w-1/2">
             <h2 className="text-2xl font-bold mb-4">
               Matches for {selectedItem ? selectedItem.name : 'Selected Item'}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {filteredMatches.map((match) => (
                 <div key={match.id} className="flex flex-col">
                   <Card 
@@ -197,7 +198,7 @@ const Home: React.FC = () => {
                 </Card>
               </div>
             )}
-          </section>
+          </div>
         </div>
       </div>
     </div>
