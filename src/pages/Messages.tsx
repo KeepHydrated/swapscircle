@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -123,7 +122,7 @@ const Messages = () => {
         {/* Three columns with individual scroll areas */}
         <div className="flex flex-1 overflow-hidden">
           {/* Wider conversations sidebar */}
-          <div className="w-96 border-r border-gray-200 overflow-hidden flex flex-col">
+          <div className="w-[320px] border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
               conversations={displayedConversations}
               activeConversation={activeConversation}

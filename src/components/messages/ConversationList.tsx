@@ -72,9 +72,9 @@ const ConversationList = ({
                   {/* Simplified exchange item display */}
                   {exchangePair && (
                     <div className="flex items-center mb-1 text-xs">
-                      <span className="truncate text-gray-900 max-w-[120px]">{exchangePair.item1.name}</span>
+                      <span className="truncate text-gray-900 max-w-[140px]">{exchangePair.item1.name}</span>
                       <ArrowRight className="h-3 w-3 mx-1 text-blue-600 flex-shrink-0" />
-                      <span className="truncate text-gray-900 max-w-[120px]">{exchangePair.item2.name}</span>
+                      <span className="truncate text-gray-900 max-w-[140px]">{exchangePair.item2.name}</span>
                       
                       {conversation.isNew && (
                         <Badge variant="outline" className="text-xs ml-2 font-normal flex-shrink-0">
