@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ImagePlus } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
 import { 
   Select, 
   SelectContent, 
@@ -18,6 +19,8 @@ const PostItem: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
+  const [condition, setCondition] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<number[]>([50]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -35,6 +38,15 @@ const PostItem: React.FC = () => {
     "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Other Business Items"],
     "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Other Entertainment Items"]
   };
+
+  // Conditions for rental items
+  const conditions = [
+    "Brand New", 
+    "Like New", 
+    "Very Good", 
+    "Good", 
+    "Acceptable"
+  ];
 
   // Subcategories based on selected category
   const getSubcategories = () => {
@@ -104,6 +116,41 @@ const PostItem: React.FC = () => {
                   placeholder="Describe your rental item in detail..." 
                   rows={4}
                 />
+              </div>
+              
+              {/* Price Range */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="price-range">Price per day</Label>
+                  <span className="font-medium">${priceRange[0]}</span>
+                </div>
+                <Slider
+                  id="price-range"
+                  defaultValue={[50]}
+                  max={500}
+                  step={5}
+                  className="w-full"
+                  onValueChange={(value) => setPriceRange(value)}
+                />
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>$0</span>
+                  <span>$500</span>
+                </div>
+              </div>
+
+              {/* Condition */}
+              <div className="space-y-2">
+                <Label htmlFor="condition">Condition</Label>
+                <Select value={condition} onValueChange={setCondition}>
+                  <SelectTrigger id="condition" className="w-full">
+                    <SelectValue placeholder="Select condition" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {conditions.map((cond) => (
+                      <SelectItem key={cond} value={cond}>{cond}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
               {/* Category */}
