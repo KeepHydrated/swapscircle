@@ -28,9 +28,9 @@ const ConversationList = ({
   setActiveConversation 
 }: ConversationListProps) => {
   return (
-    <div className="w-full md:w-96 border-r border-gray-200">
-      <div className="p-4 border-b border-gray-200">
-        <div className="relative">
+    <>
+      <div className="p-4 border-b border-gray-200 flex items-center">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input 
             placeholder="Search messages..." 
@@ -39,7 +39,7 @@ const ConversationList = ({
         </div>
       </div>
       
-      <ScrollArea className="h-[calc(100vh-130px)]">
+      <ScrollArea className="flex-1 h-[calc(100vh-130px)]">
         {conversations.map((conversation) => (
           <div 
             key={conversation.id}
@@ -63,7 +63,7 @@ const ConversationList = ({
           </div>
         ))}
       </ScrollArea>
-    </div>
+    </>
   );
 };
 

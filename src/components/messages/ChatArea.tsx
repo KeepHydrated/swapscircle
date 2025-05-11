@@ -21,7 +21,7 @@ const ChatArea = ({ activeChat }: ChatAreaProps) => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)]">
+    <div className="flex flex-col h-full">
       <ChatHeader activeChat={activeChat} />
       <div className="flex-1 overflow-y-auto">
         <MessageDisplay activeChat={activeChat} />

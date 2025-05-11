@@ -49,7 +49,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
   }, [emblaApi]);
 
   return (
-    <div className="h-full flex flex-col justify-center">
+    <div className="h-full flex items-center w-full">
       <div className="w-full max-w-5xl mx-auto">
         {/* Using direct embla carousel reference for more control */}
         <div className="overflow-hidden" ref={emblaRef}>
@@ -85,22 +85,6 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-        
-        {/* Custom slider indicator */}
-        <div className="flex justify-center items-center px-4 mt-0.5">
-          <div className="w-full max-w-md mx-auto">
-            {/* Custom slider that matches the image */}
-            <div className="relative h-1 bg-gray-200 rounded-full">
-              <div 
-                className="absolute h-1 bg-gray-500 rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${(activeSlideIndex + 1) * (100 / (exchangePairs.length / 3))}%`,
-                  maxWidth: '100%' 
-                }}
-              />
-            </div>
           </div>
         </div>
       </div>

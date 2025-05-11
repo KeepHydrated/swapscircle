@@ -28,7 +28,7 @@ const Messages = () => {
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
         {/* Item exchange carousel - frozen at top with consistent height */}
-        <div className="w-full border-b border-gray-200 bg-white z-10 h-16">
+        <div className="w-full border-b border-gray-200 bg-white z-10 h-16 flex items-center">
           <ExchangeCarousel 
             exchangePairs={exchangePairs}
             selectedPairId={selectedPairId}
@@ -39,7 +39,7 @@ const Messages = () => {
         {/* Three columns with individual scroll areas */}
         <div className="flex flex-1 overflow-hidden">
           {/* Conversations sidebar with its own scrollbar */}
-          <div className="w-64 border-r border-gray-200 overflow-y-auto">
+          <div className="w-64 border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
               conversations={mockConversations}
               activeConversation={activeConversation}
@@ -48,12 +48,12 @@ const Messages = () => {
           </div>
           
           {/* Chat area with its own scrollbar */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-hidden">
             <ChatArea activeChat={activeChat} />
           </div>
           
           {/* Details panel with its own scrollbar */}
-          <div className="w-80 border-l border-gray-200 overflow-y-auto bg-gray-50">
+          <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
             <DetailsPanel selectedPair={selectedPair} />
           </div>
         </div>
