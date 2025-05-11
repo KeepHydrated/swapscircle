@@ -1,10 +1,8 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { mockConversations } from '@/data/conversations';
-import { ArrowLeftRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowLeftRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import useEmblaCarousel from 'embla-carousel-react';
 
 // Define the interface for the props
 interface DetailsPanelProps {
@@ -16,15 +14,47 @@ interface DetailsPanelProps {
 }
 
 const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
-  // Check if the active conversation is the first one with the Blender
-  const isBlenderMatch = mockConversations[0].id === "1";
-
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    loop: true,
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  
+  // Sample image placeholders for the carousel
+  useEffect(() => {
+    // Use selected pair images and add some placeholder images
+    const urls = [
+      // Add real item images if available
+      selectedPair?.item1.image || "/placeholder.svg",
+      selectedPair?.item2.image || "/placeholder.svg",
+      "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
+      "https://images.unsplash.com/photo-1487887235947-a955ef187fcc",
+    ];
+    setImageUrls(urls);
+  }, [selectedPair]);
+  
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+    
+    emblaApi.on('select', onSelect);
+    onSelect();
+    
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
+  
+  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
+  const scrollNext = () => emblaApi && emblaApi.scrollNext();
+  
   return (
-    <div className="hidden lg:block w-80 border-l border-gray-200 bg-gray-50">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="font-semibold text-lg">Details</h2>
-      </div>
-      
+    <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
       {/* Item connection display at the top of the right panel */}
       {selectedPair && (
         <div className="p-4 border-b border-gray-200">
@@ -55,48 +85,64 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
         </div>
       )}
       
-      <div className="p-4">
-        {isBlenderMatch && (
-          <Card className="mb-4 p-4">
-            <div className="text-center mb-4">
-              <h3 className="text-xl font-bold">Blender</h3>
+      {/* Image Carousel */}
+      <div className="flex-1 flex flex-col">
+        {/* Main image container with navigation buttons */}
+        <div className="relative h-72 bg-gray-100 overflow-hidden">
+          <div className="overflow-hidden w-full h-full" ref={emblaRef}>
+            <div className="flex h-full">
+              {imageUrls.map((url, index) => (
+                <div key={index} className="flex-[0_0_100%] h-full min-w-0">
+                  <div 
+                    className="w-full h-full bg-center bg-cover bg-no-repeat flex items-center justify-center text-gray-400"
+                    style={{ backgroundImage: `url(${url})` }}
+                  >
+                    {!url && <span>Image {index + 1}</span>}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="bg-gray-100 rounded-md h-48 mb-4 flex items-center justify-center">
-              <span className="text-gray-400 text-lg">Product Image</span>
-            </div>
-            <p className="text-gray-700">
-              This is the item you'll be trading away. It's currently listed for exchange with your trading partner.
-            </p>
-          </Card>
-        )}
+          </div>
+          
+          {/* Navigation buttons */}
+          <button 
+            onClick={scrollPrev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-600" />
+          </button>
+          
+          <button 
+            onClick={scrollNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+            aria-label="Next image"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-600" />
+          </button>
+          
+          {/* Image counter */}
+          <div className="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 text-white text-sm rounded-full px-2 py-0.5">
+            {selectedIndex + 1}/{imageUrls.length}
+          </div>
+        </div>
         
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-2">About</h3>
-            <p className="text-sm">
-              Additional information about the conversation or user could appear here.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Shared Files</h3>
-            <div className="bg-white p-3 rounded-md border border-gray-200">
-              <p className="text-sm text-gray-500">No files shared yet</p>
+        {/* Thumbnail strip */}
+        <div className="p-2 flex overflow-x-auto bg-white border-t border-gray-100">
+          {imageUrls.map((url, index) => (
+            <div 
+              key={index}
+              onClick={() => emblaApi?.scrollTo(index)} 
+              className={`flex-shrink-0 w-20 h-20 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
+            >
+              <div 
+                className="w-full h-full bg-center bg-cover flex items-center justify-center text-gray-400"
+                style={{ backgroundImage: `url(${url})` }}
+              >
+                {!url && <span>Image {index + 1}</span>}
+              </div>
             </div>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Actions</h3>
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start text-sm">
-                View Profile
-              </Button>
-              <Button variant="outline" className="w-full justify-start text-sm">
-                Block User
-              </Button>
-              <Button variant="outline" className="w-full justify-start text-sm text-red-500 hover:text-red-600">
-                Report Issue
-              </Button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
