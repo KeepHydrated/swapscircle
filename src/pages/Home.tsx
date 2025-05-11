@@ -1,27 +1,9 @@
 
 import React, { useState } from 'react';
-import { Heart, Check } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import ItemDetails from '@/components/messages/details/ItemDetails';
-
-// Types for our items
-interface Item {
-  id: string;
-  name: string;
-  image: string;
-  isSelected?: boolean;
-  category?: string;
-  condition?: string;
-  description?: string;
-  tags?: string[];
-  priceRange?: string;
-}
-
-interface MatchItem extends Item {
-  liked?: boolean;
-}
+import MyItems from '@/components/items/MyItems';
+import Matches from '@/components/items/Matches';
+import { Item, MatchItem } from '@/types/item';
 
 const Home: React.FC = () => {
   // Sample data for my items with added details
@@ -123,82 +105,20 @@ const Home: React.FC = () => {
       <Header />
       <div className="flex-1 p-4 md:p-6">
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* My Items Section */}
-          <div className="lg:w-1/2">
-            <h2 className="text-2xl font-bold mb-4">My Items</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {myItems.map((item) => (
-                <div key={item.id} className="flex flex-col">
-                  <Card 
-                    className={`overflow-hidden cursor-pointer ${selectedItemId === item.id ? 'ring-2 ring-green-500' : ''}`}
-                    onClick={() => handleSelectItem(item.id)}
-                  >
-                    <div className="relative">
-                      <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-                        <Avatar className="h-full w-full rounded-none">
-                          <AvatarImage src={item.image} alt={item.name} className="object-cover" />
-                          <AvatarFallback className="rounded-none text-gray-400 text-xs">
-                            400 × 320
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                      {selectedItemId === item.id && (
-                        <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
-                          <Check className="h-5 w-5" />
-                        </div>
-                      )}
-                    </div>
-                    <CardContent className="p-3">
-                      <h3 className="font-medium text-center">{item.name}</h3>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* My Items Component */}
+          <MyItems 
+            items={myItems} 
+            selectedItemId={selectedItemId}
+            onSelectItem={handleSelectItem}
+          />
 
-          {/* Matches Section */}
-          <div className="lg:w-1/2">
-            <h2 className="text-2xl font-bold mb-4">
-              Matches for {selectedItem ? selectedItem.name : 'Selected Item'}
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {filteredMatches.map((match) => (
-                <div key={match.id} className="flex flex-col">
-                  <Card 
-                    className={`overflow-hidden cursor-pointer ${selectedMatchId === match.id ? 'ring-2 ring-blue-500' : ''}`}
-                    onClick={() => handleSelectMatch(match.id)}
-                  >
-                    <div className="relative">
-                      <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-                        <Avatar className="h-full w-full rounded-none">
-                          <AvatarImage src={match.image} alt={match.name} className="object-cover" />
-                          <AvatarFallback className="rounded-none text-gray-400 text-xs">
-                            400 × 320
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                      <div className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md">
-                        <Heart className="h-5 w-5 text-red-500" fill={match.liked ? "red" : "none"} />
-                      </div>
-                    </div>
-                    <CardContent className="p-3">
-                      <h3 className="font-medium text-center">{match.name}</h3>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-
-            {/* Item Details for selected match */}
-            {selectedMatchId && (
-              <div className="mt-4">
-                <Card className="overflow-hidden">
-                  <ItemDetails name={filteredMatches.find(match => match.id === selectedMatchId)?.name || ""} />
-                </Card>
-              </div>
-            )}
-          </div>
+          {/* Matches Component */}
+          <Matches 
+            matches={filteredMatches}
+            selectedItemName={selectedItem?.name || ''}
+            selectedMatchId={selectedMatchId}
+            onSelectMatch={handleSelectMatch}
+          />
         </div>
       </div>
     </div>
