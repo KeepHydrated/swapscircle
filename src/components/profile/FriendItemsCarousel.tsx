@@ -44,9 +44,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   // Close the dropdown when clicking outside of the carousel or details panel
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (selectedItemId && carouselRef.current && detailsRef.current) {
-        if (!carouselRef.current.contains(event.target as Node) && 
-            !detailsRef.current.contains(event.target as Node)) {
+      if (selectedItemId) {
+        // Check if the click is outside both the carousel and the details panel
+        const isOutsideCarousel = carouselRef.current && !carouselRef.current.contains(event.target as Node);
+        const isOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
+        
+        if (isOutsideCarousel && isOutsideDetails) {
           setSelectedItemId(null);
         }
       }
