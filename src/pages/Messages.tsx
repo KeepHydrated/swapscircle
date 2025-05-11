@@ -18,6 +18,7 @@ import { toast } from "sonner";
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [selectedPairId, setSelectedPairId] = useState<number | null>(1);
   
   const activeChat = mockConversations.find(conv => conv.id === activeConversation);
 
@@ -43,13 +44,13 @@ const Messages = () => {
     },
     { 
       id: 4, 
-      item1: { name: "Smart Watch", image: "/placeholder.svg" },
+      item1: { name: "Smart Watch", image: "https://images.unsplash.com/photo-1551816230-ef5deaed4a26" },
       item2: { name: "Fitness Tracker", image: "/placeholder.svg" },
       partnerId: "4"
     },
     { 
       id: 5, 
-      item1: { name: "Gaming Console", image: "/placeholder.svg" },
+      item1: { name: "Gaming Console", image: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42" },
       item2: { name: "VR Headset", image: "/placeholder.svg" },
       partnerId: "5"
     },
@@ -58,11 +59,48 @@ const Messages = () => {
       item1: { name: "Turntable", image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334" },
       item2: { name: "Speakers", image: "/placeholder.svg" },
       partnerId: "3"
+    },
+    { 
+      id: 7, 
+      item1: { name: "Headphones", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
+      item2: { name: "Earbuds", image: "/placeholder.svg" },
+      partnerId: "1"
+    },
+    { 
+      id: 8, 
+      item1: { name: "DSLR Camera", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32" },
+      item2: { name: "Camera Lens", image: "/placeholder.svg" },
+      partnerId: "2"
+    },
+    { 
+      id: 9, 
+      item1: { name: "Vintage Radio", image: "https://images.unsplash.com/photo-1583452924150-ea5a6fc8a6a0" },
+      item2: { name: "Bluetooth Speaker", image: "/placeholder.svg" },
+      partnerId: "5"
+    },
+    { 
+      id: 10, 
+      item1: { name: "Record Player", image: "https://images.unsplash.com/photo-1593078166039-c9878df5c520" },
+      item2: { name: "Vinyl Records", image: "/placeholder.svg" },
+      partnerId: "4"
+    },
+    { 
+      id: 11, 
+      item1: { name: "Gaming Mouse", image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7" },
+      item2: { name: "Gaming Keyboard", image: "/placeholder.svg" },
+      partnerId: "2"
+    },
+    { 
+      id: 12, 
+      item1: { name: "Projector", image: "https://images.unsplash.com/photo-1626337920103-ae3bccd889fb" },
+      item2: { name: "Projection Screen", image: "/placeholder.svg" },
+      partnerId: "3"
     }
   ];
 
-  const handlePairSelect = (partnerId: string) => {
+  const handlePairSelect = (partnerId: string, pairId: number) => {
     setActiveConversation(partnerId);
+    setSelectedPairId(pairId);
     toast(`Starting conversation about this item exchange`);
   };
 
@@ -90,10 +128,10 @@ const Messages = () => {
             <ScrollArea className="w-full overflow-x-auto">
               <CarouselContent className="cursor-grab active:cursor-grabbing">
                 {exchangePairs.map((pair) => (
-                  <CarouselItem key={pair.id} className="basis-1/2 md:basis-1/2 lg:basis-1/3 pl-1">
+                  <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-1">
                     <div 
-                      className="flex flex-row items-center justify-center cursor-pointer transition-transform hover:scale-105 px-2"
-                      onClick={() => handlePairSelect(pair.partnerId)}
+                      className={`flex flex-row items-center justify-center cursor-pointer px-2 py-2 rounded-md ${selectedPairId === pair.id ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                      onClick={() => handlePairSelect(pair.partnerId, pair.id)}
                     >
                       {/* First item */}
                       <div className="flex flex-col items-center">
@@ -129,7 +167,7 @@ const Messages = () => {
                   <div 
                     className="absolute h-1 bg-gray-500 rounded-full"
                     style={{ 
-                      width: `${(activeSlideIndex + 1) * (100 / exchangePairs.length)}%`,
+                      width: `${(activeSlideIndex + 1) * (100 / (exchangePairs.length / 2))}%`,
                       maxWidth: '100%' 
                     }}
                   />
