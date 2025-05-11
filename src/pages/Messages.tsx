@@ -8,7 +8,6 @@ import ExchangeCarousel from '@/components/messages/ExchangeCarousel';
 import { mockConversations } from '@/data/conversations';
 import { exchangePairs } from '@/data/exchangePairs';
 import { toast } from "sonner";
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
@@ -28,8 +27,8 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel taking full width - frozen at top */}
-        <div className="w-full border-b border-gray-200 sticky top-0 bg-white z-10">
+        {/* Item exchange carousel - frozen at top with consistent height */}
+        <div className="w-full border-b border-gray-200 bg-white z-10 h-16">
           <ExchangeCarousel 
             exchangePairs={exchangePairs}
             selectedPairId={selectedPairId}
@@ -37,30 +36,25 @@ const Messages = () => {
           />
         </div>
         
+        {/* Three columns with individual scroll areas */}
         <div className="flex flex-1 overflow-hidden">
-          {/* Conversations sidebar with scroll */}
-          <div className="w-64 border-r border-gray-200">
-            <ScrollArea className="h-[calc(100vh-64px-60px)]">
-              <ConversationList 
-                conversations={mockConversations}
-                activeConversation={activeConversation}
-                setActiveConversation={setActiveConversation}
-              />
-            </ScrollArea>
+          {/* Conversations sidebar with its own scrollbar */}
+          <div className="w-64 border-r border-gray-200 overflow-y-auto">
+            <ConversationList 
+              conversations={mockConversations}
+              activeConversation={activeConversation}
+              setActiveConversation={setActiveConversation}
+            />
           </div>
           
-          {/* Chat area with scroll */}
-          <div className="flex-1">
-            <ScrollArea className="h-[calc(100vh-64px-60px)]">
-              <ChatArea activeChat={activeChat} />
-            </ScrollArea>
+          {/* Chat area with its own scrollbar */}
+          <div className="flex-1 overflow-y-auto">
+            <ChatArea activeChat={activeChat} />
           </div>
           
-          {/* Details panel with scroll */}
-          <div className="w-80">
-            <ScrollArea className="h-[calc(100vh-64px-60px)]">
-              <DetailsPanel selectedPair={selectedPair} />
-            </ScrollArea>
+          {/* Details panel with its own scrollbar */}
+          <div className="w-80 border-l border-gray-200 overflow-y-auto bg-gray-50">
+            <DetailsPanel selectedPair={selectedPair} />
           </div>
         </div>
       </div>
