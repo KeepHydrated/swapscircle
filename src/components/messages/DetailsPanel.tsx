@@ -57,10 +57,10 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
       {/* Item connection display at the top of the right panel */}
       {selectedPair && (
         <div className="p-4 border-b border-gray-200">
-          <div className={`flex flex-row items-center justify-center bg-gray-200 px-2 py-3 rounded-md mb-4`}>
+          <div className={`flex flex-row items-center justify-center bg-gray-200 px-1 py-4 rounded-md mb-4`}>
             {/* First item */}
             <div className="flex flex-col items-center">
-              <Avatar className="h-12 w-12 bg-gray-100">
+              <Avatar className="h-14 w-14 bg-gray-100">
                 <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
                 <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
               </Avatar>
@@ -68,13 +68,13 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             </div>
             
             {/* Exchange icon */}
-            <div className="flex items-center justify-center h-8 w-8 mx-3 rounded-full bg-blue-100">
-              <ArrowLeftRight className="h-4 w-4 text-blue-600" />
+            <div className="flex items-center justify-center h-10 w-10 mx-4 rounded-full bg-blue-100">
+              <ArrowLeftRight className="h-5 w-5 text-blue-600" />
             </div>
             
             {/* Second item */}
             <div className="flex flex-col items-center">
-              <Avatar className="h-12 w-12 bg-gray-100">
+              <Avatar className="h-14 w-14 bg-gray-100">
                 <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
                 <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
               </Avatar>
@@ -144,7 +144,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
           ))}
         </div>
         
-        {/* Product details section - added based on reference image */}
+        {/* Product details section */}
         <div className="p-4">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
             {selectedPair?.item1.name || "Stand Mixer"}

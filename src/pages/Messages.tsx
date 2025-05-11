@@ -27,12 +27,14 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel at the top */}
-        <ExchangeCarousel 
-          exchangePairs={exchangePairs}
-          selectedPairId={selectedPairId}
-          onPairSelect={handlePairSelect}
-        />
+        {/* Item exchange carousel at the top with less padding */}
+        <div className="px-1 sm:px-2">
+          <ExchangeCarousel 
+            exchangePairs={exchangePairs}
+            selectedPairId={selectedPairId}
+            onPairSelect={handlePairSelect}
+          />
+        </div>
         
         <div className="flex flex-1">
           {/* Conversations sidebar */}
