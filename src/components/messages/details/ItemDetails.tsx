@@ -59,31 +59,37 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
             <AvatarFallback>EW</AvatarFallback>
           </Avatar>
           
-          <div className="flex flex-col space-y-1">
-            <div className="flex items-center">
-              <h3 className="text-lg font-semibold mr-3">Emma Wilson</h3>
-              <div className="flex items-center text-amber-400">
-                {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+          <div className="flex flex-col space-y-1 flex-grow">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <h3 className="text-lg font-semibold mr-3">Emma Wilson</h3>
+                <div className="flex items-center text-amber-400">
+                  {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+                </div>
               </div>
-            </div>
-            
-            <div className="flex items-center text-sm text-gray-600">
-              <Calendar className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-              <span>Since 2023</span>
+              
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                  <span>Since 2023</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                  <span>2.3 mi away</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <Clock className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                  <span>Response: ~1 hour</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div className="flex items-center text-sm text-gray-600">
-            <MapPin className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-            <span>2.3 mi away</span>
-          </div>
-          
-          <div className="flex items-center text-sm text-gray-600">
-            <Clock className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-            <span>Response: ~1 hour</span>
-          </div>
+          {/* Removed the map pin and clock items since they're now in the row above */}
         </div>
       </div>
     </div>
