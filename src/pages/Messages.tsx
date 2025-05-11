@@ -111,6 +111,9 @@ const Messages = () => {
     toast(`Starting conversation about this item exchange`);
   };
 
+  // Get the currently selected pair
+  const selectedPair = exchangePairs.find(pair => pair.id === selectedPairId);
+
   // Update active slide index when carousel scrolls
   useEffect(() => {
     if (!emblaApi) return;
@@ -202,7 +205,7 @@ const Messages = () => {
           <ChatArea activeChat={activeChat} />
           
           {/* Details panel */}
-          <DetailsPanel />
+          <DetailsPanel selectedPair={selectedPair} />
         </div>
       </div>
     </MainLayout>
