@@ -54,13 +54,6 @@ const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-white">
-              <div className="flex items-center justify-start gap-2 p-2">
-                <div className="flex flex-col space-y-1 leading-none">
-                  <p className="font-medium">User</p>
-                  <p className="text-xs text-muted-foreground">user@example.com</p>
-                </div>
-              </div>
-              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/profile" className="flex w-full cursor-pointer items-center">
                   <User className="mr-2 h-4 w-4" />
