@@ -54,45 +54,44 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
         </div>
       </div>
       
-      {/* Owner Profile Information */}
+      {/* Owner Profile Information - Redesigned layout */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex items-center mb-2">
-          <Avatar className="h-10 w-10 mr-3">
+        <div className="flex items-start">
+          {/* Avatar on the left */}
+          <Avatar className="h-12 w-12 mr-4 flex-shrink-0">
             <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
             <AvatarFallback>EW</AvatarFallback>
           </Avatar>
           
-          <div className="flex flex-col space-y-1 flex-grow">
-            <div className="flex items-center justify-between">
+          {/* Profile info on the right */}
+          <div className="flex flex-col">
+            {/* First row: Name and rating */}
+            <div className="flex items-center mb-1">
+              <h3 className="text-lg font-semibold mr-2">Emma Wilson</h3>
               <div className="flex items-center">
-                <h3 className="text-lg font-semibold mr-3">Emma Wilson</h3>
-                <div className="flex items-center text-amber-400">
-                  {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
-                </div>
+                <span className="text-amber-400">★★★★★</span> 
+                <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+              </div>
+            </div>
+            
+            {/* Second row: Member since, distance, response time */}
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center">
+                <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span>Since 2023</span>
               </div>
               
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center">
-                  <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-                  <span>Since 2023</span>
-                </div>
-                
-                <div className="flex items-center">
-                  <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-                  <span>2.3 mi away</span>
-                </div>
-                
-                <div className="flex items-center">
-                  <Clock className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-                  <span>Response: ~1 hour</span>
-                </div>
+              <div className="flex items-center">
+                <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span>2.3 mi away</span>
+              </div>
+              
+              <div className="flex items-center">
+                <Clock className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span>Response: ~1 hour</span>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {/* Removed the map pin and clock items since they're now in the row above */}
         </div>
       </div>
     </div>
