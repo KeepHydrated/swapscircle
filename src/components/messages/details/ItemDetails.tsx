@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ItemDetailsProps {
   name: string;
@@ -50,47 +49,6 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
             <DollarSign className="w-5 h-5 text-green-600" />
           </div>
           <span className="text-gray-800 font-medium">$100 - $250</span>
-        </div>
-      </div>
-      
-      {/* Owner Profile Information - Redesigned layout */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex items-start">
-          {/* Avatar on the left */}
-          <Avatar className="h-12 w-12 mr-4 flex-shrink-0">
-            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-            <AvatarFallback>EW</AvatarFallback>
-          </Avatar>
-          
-          {/* Profile info on the right */}
-          <div className="flex flex-col">
-            {/* First row: Name and rating */}
-            <div className="flex items-center mb-1">
-              <h3 className="text-lg font-semibold mr-2">Emma Wilson</h3>
-              <div className="flex items-center">
-                <span className="text-amber-400">★★★★★</span> 
-                <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
-              </div>
-            </div>
-            
-            {/* Second row: Member since, distance, response time */}
-            <div className="flex items-center gap-3 text-sm text-gray-600">
-              <div className="flex items-center">
-                <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-                <span>Since 2023</span>
-              </div>
-              
-              <div className="flex items-center">
-                <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-                <span>2.3 mi away</span>
-              </div>
-              
-              <div className="flex items-center">
-                <Clock className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-                <span>Response: ~1 hour</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
