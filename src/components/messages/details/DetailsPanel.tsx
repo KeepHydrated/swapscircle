@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
-import ItemConnection from './ItemConnection';
-import ItemCarousel from './ItemCarousel';
+import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Utensils, DollarSign } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import useEmblaCarousel from 'embla-carousel-react';
 import ItemDetails from './ItemDetails';
 
 // Define the interfaces for the props
@@ -14,6 +14,11 @@ interface DetailsPanelProps {
 }
 
 const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    loop: true,
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item1');
   
@@ -31,29 +36,144 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
     ];
     setImageUrls(urls);
   }, [selectedPair, selectedItem]);
+  
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+    
+    emblaApi.on('select', onSelect);
+    onSelect();
+    
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
+  
+  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
+  const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   const handleSelectItem = (item: 'item1' | 'item2') => {
     setSelectedItem(item);
+    // Reset carousel to first slide when switching items
+    if (emblaApi) {
+      emblaApi.scrollTo(0);
+    }
   };
   
   return (
     <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
       {/* Item connection display at the top of the right panel */}
       {selectedPair && (
-        <ItemConnection 
-          selectedPair={selectedPair} 
-          selectedItem={selectedItem}
-          onSelectItem={handleSelectItem}
-        />
+        <div className="p-4 border-b border-gray-200">
+          {/* Item connection display */}
+          <div className="flex flex-row items-center justify-between bg-gray-200 px-3 py-3 rounded-md mb-4 h-20">
+            {/* First item - clickable */}
+            <div 
+              className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item1' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
+              onClick={() => handleSelectItem('item1')}
+            >
+              <div className={`p-0.5 rounded-full ${selectedItem === 'item1' ? 'bg-blue-100' : ''}`}>
+                <Avatar className="h-12 w-12 bg-gray-100">
+                  <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
+                  <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <span className={`text-xs mt-1 truncate w-full text-center ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+                {selectedPair.item1.name}
+              </span>
+            </div>
+            
+            {/* Exchange icon */}
+            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100">
+              <ArrowLeftRight className="h-3 w-3 text-blue-600" />
+            </div>
+            
+            {/* Second item - clickable */}
+            <div 
+              className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item2' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
+              onClick={() => handleSelectItem('item2')}
+            >
+              <div className={`p-0.5 rounded-full ${selectedItem === 'item2' ? 'bg-blue-100' : ''}`}>
+                <Avatar className="h-12 w-12 bg-gray-100">
+                  <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
+                  <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <span className={`text-xs mt-1 truncate w-full text-center ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+                {selectedPair.item2.name}
+              </span>
+            </div>
+          </div>
+        </div>
       )}
       
       {/* Image Carousel - made smaller */}
       <div className="flex-1 flex flex-col">
-        <ItemCarousel imageUrls={imageUrls} />
+        {/* Image carousel */}
+        <div className="relative h-56 bg-gray-100 overflow-hidden">
+          <div className="overflow-hidden w-full h-full" ref={emblaRef}>
+            <div className="flex h-full">
+              {imageUrls.map((url, index) => (
+                <div key={index} className="flex-[0_0_100%] h-full min-w-0">
+                  <div 
+                    className="w-full h-full bg-center bg-cover bg-no-repeat flex items-center justify-center text-gray-400"
+                    style={{ backgroundImage: `url(${url})` }}
+                  >
+                    {!url && <span>Image {index + 1}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Navigation buttons */}
+          <button 
+            onClick={scrollPrev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          
+          <button 
+            onClick={scrollNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+            aria-label="Next image"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
+          
+          {/* Image counter */}
+          <div className="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 text-white text-sm rounded-full px-2 py-0.5">
+            {selectedIndex + 1}/{imageUrls.length}
+          </div>
+        </div>
         
-        {/* Product details section */}
+        {/* Thumbnail strip */}
+        <div className="p-2 flex overflow-x-auto bg-white border-t border-gray-100">
+          {imageUrls.map((url, index) => (
+            <div 
+              key={index}
+              onClick={() => emblaApi?.scrollTo(index)} 
+              className={`flex-shrink-0 w-16 h-16 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
+            >
+              <div 
+                className="w-full h-full bg-center bg-cover flex items-center justify-center text-gray-400"
+                style={{ backgroundImage: `url(${url})` }}
+              >
+                {!url && <span>Image {index + 1}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Replace with ItemDetails component */}
         <ItemDetails 
-          name={selectedPair ? selectedPair[selectedItem].name : undefined}
+          name={selectedPair ? selectedPair[selectedItem].name : "Selected Item"} 
+          showProfileInfo={false} 
         />
       </div>
     </div>
