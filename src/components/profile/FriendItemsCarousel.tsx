@@ -24,6 +24,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   title = "Your Friend's Items"
 }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<'left' | 'right'>('left');
   const carouselRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
@@ -37,7 +38,15 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     });
   };
 
-  const handleItemClick = (itemId: string) => {
+  const handleItemClick = (itemId: string, itemElement: HTMLElement) => {
+    // Calculate if the item is in the left or right half of the screen
+    if (itemElement) {
+      const rect = itemElement.getBoundingClientRect();
+      const windowWidth = window.innerWidth;
+      const isOnRightSide = (rect.left + rect.width/2) > windowWidth/2;
+      setDropdownPosition(isOnRightSide ? 'right' : 'left');
+    }
+    
     setSelectedItemId(prevId => prevId === itemId ? null : itemId);
   };
 
@@ -76,12 +85,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         >
           <CarouselContent>
             {items.map((item) => (
-              <CarouselItem key={item.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3">
+              <CarouselItem key={item.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
                 <Card 
                   className={`overflow-hidden cursor-pointer transition-all ${
                     selectedItemId === item.id ? 'ring-2 ring-primary shadow-md' : ''
                   }`}
-                  onClick={() => handleItemClick(item.id)}
+                  onClick={(e) => handleItemClick(item.id, e.currentTarget)}
                 >
                   <div className="relative">
                     <img 
@@ -112,8 +121,11 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 
       {/* Item details panel that appears when an item is selected */}
       {selectedItem && (
-        <div className="flex justify-center w-full">
-          <div ref={detailsRef} className="mt-4 bg-white rounded-lg border p-6 animate-fade-in w-full md:w-1/2">
+        <div className={`flex ${dropdownPosition === 'left' ? 'justify-start' : 'justify-end'} w-full`}>
+          <div 
+            ref={detailsRef} 
+            className="mt-4 bg-white rounded-lg border p-6 animate-fade-in w-full md:w-1/2"
+          >
             <h2 className="text-2xl font-bold mb-2">{selectedItem.name}</h2>
             
             <div className="bg-gray-50 p-4 rounded-md mb-4">
