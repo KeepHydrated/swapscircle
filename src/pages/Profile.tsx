@@ -7,6 +7,8 @@ import { Item } from '@/types/item';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
+import ReviewsTab from '@/components/profile/ReviewsTab';
+import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users } from 'lucide-react';
 
 const Profile: React.FC = () => {
@@ -241,47 +243,12 @@ const Profile: React.FC = () => {
           
           {/* Reviews Tab Content */}
           <TabsContent value="reviews" className="p-6">
-            <div className="space-y-6">
-              {reviews.map(review => (
-                <div key={review.id} className="bg-white rounded-lg border p-4 shadow-sm">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium">{review.user}</div>
-                    <div className="text-sm text-muted-foreground">{review.date}</div>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-gray-600">{review.comment}</p>
-                </div>
-              ))}
-            </div>
+            <ReviewsTab reviews={reviews} />
           </TabsContent>
           
           {/* Friends Tab Content */}
           <TabsContent value="friends" className="p-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {friends.map(friend => (
-                <div key={friend.id} className="bg-white rounded-lg border p-4 shadow-sm flex items-center">
-                  <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                    <img 
-                      src={friend.avatar} 
-                      alt={friend.name}
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
-                  <div>
-                    <div className="font-medium">{friend.name}</div>
-                    <div className="text-sm text-muted-foreground">{friend.mutualItems} mutual items</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <FriendsTab friends={friends} />
           </TabsContent>
         </Tabs>
       </div>
