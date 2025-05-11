@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { UserPlus, UserCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
 
-export type FriendRequestStatus = 'none' | 'pending' | 'accepted' | 'rejected';
+export type FriendRequestStatus = 'none' | 'pending' | 'pending-received' | 'accepted' | 'rejected';
 
 interface FriendRequestButtonProps {
   userId: string;
