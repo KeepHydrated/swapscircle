@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -110,8 +111,8 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - frozen at top with consistent height */}
-        <div className="w-full border-b border-gray-200 bg-white z-10 h-16 flex items-center">
+        {/* Item exchange carousel - increased height to accommodate the new design */}
+        <div className="w-full border-b border-gray-200 bg-white z-10 h-24 flex items-center">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
             selectedPairId={selectedPairId}
