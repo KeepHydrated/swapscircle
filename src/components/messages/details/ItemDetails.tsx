@@ -19,35 +19,35 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
       
       <hr className="mb-4" />
       
-      <ul className="space-y-4">
-        <li className="flex items-center">
+      <div className="flex flex-wrap gap-4 items-center">
+        <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
             <Check className="w-5 h-5 text-green-600" />
           </div>
           <span className="text-gray-800 font-medium">Brand New</span>
-        </li>
+        </div>
         
-        <li className="flex items-center">
+        <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
             <Home className="w-5 h-5 text-blue-600" />
           </div>
           <span className="text-gray-800 font-medium">Home & Garden</span>
-        </li>
+        </div>
         
-        <li className="flex items-center">
+        <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
             <Utensils className="w-5 h-5 text-purple-600" />
           </div>
           <span className="text-gray-800 font-medium">Kitchen Appliances</span>
-        </li>
+        </div>
         
-        <li className="flex items-center">
+        <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
             <DollarSign className="w-5 h-5 text-green-600" />
           </div>
           <span className="text-gray-800 font-medium">$100 - $250</span>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   );
 };
