@@ -122,16 +122,14 @@ const PostItem: React.FC = () => {
     "Poor"
   ];
   
-  // Price ranges as shown in the image
+  // Price ranges updated to cap at $1,000
   const priceRanges = [
     "$0 - $50",
     "$50 - $100",
     "$100 - $250",
     "$250 - $500",
-    "$500 - $1,000",
-    "$1,000 - $2,500",
-    "$2,500 - $5,000",
-    "$5,000+"
+    "$500 - $750",
+    "$750 - $1,000"
   ];
 
   // Subcategories based on selected category
