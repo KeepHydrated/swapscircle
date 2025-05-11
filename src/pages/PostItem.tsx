@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import { Input } from '@/components/ui/input';
@@ -147,24 +146,7 @@ const PostItem: React.FC = () => {
                 />
               </div>
               
-              {/* Price Range - Replaced Slider with Dropdown */}
-              <div className="space-y-2">
-                <Label htmlFor="price-range">Price Range</Label>
-                <Select value={priceRange} onValueChange={setPriceRange}>
-                  <SelectTrigger id="price-range" className="w-full">
-                    <SelectValue placeholder="Select price range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {priceRanges.map((range) => (
-                      <SelectItem key={range} value={range}>
-                        {range}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Condition */}
+              {/* Condition - Moved up as requested */}
               <div className="space-y-2">
                 <Label htmlFor="condition">Condition</Label>
                 <Select value={condition} onValueChange={setCondition}>
@@ -216,6 +198,23 @@ const PostItem: React.FC = () => {
                   </Select>
                 </div>
               )}
+              
+              {/* Price Range - Moved to the bottom as requested */}
+              <div className="space-y-2">
+                <Label htmlFor="price-range">Price Range</Label>
+                <Select value={priceRange} onValueChange={setPriceRange}>
+                  <SelectTrigger id="price-range" className="w-full">
+                    <SelectValue placeholder="Select price range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priceRanges.map((range) => (
+                      <SelectItem key={range} value={range}>
+                        {range}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           
