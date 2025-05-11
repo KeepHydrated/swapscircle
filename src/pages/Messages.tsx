@@ -87,7 +87,7 @@ const Messages = () => {
             className="w-full max-w-4xl mx-auto"
             onSelect={handleSlideChange}
           >
-            <ScrollArea className="w-full" orientation="horizontal">
+            <ScrollArea className="w-full overflow-x-auto">
               <CarouselContent className="cursor-grab active:cursor-grabbing">
                 {exchangePairs.map((pair) => (
                   <CarouselItem key={pair.id} className="basis-1/2 md:basis-1/2 lg:basis-1/3 pl-1">
