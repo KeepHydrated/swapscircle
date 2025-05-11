@@ -42,12 +42,12 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                 <div 
                   className={`flex items-center cursor-pointer rounded-lg ${
                     selectedPairId === pair.id 
-                      ? 'bg-blue-50 border border-blue-200' 
+                      ? 'bg-blue-50 border border-blue-100' 
                       : 'hover:bg-gray-50 border border-transparent'
                   }`}
                   onClick={() => onPairSelect(pair.partnerId, pair.id)}
                 >
-                  <div className="flex items-center p-3 w-full justify-center">
+                  <div className="flex items-center p-2 w-full justify-center">
                     <div className="flex items-center justify-between w-full">
                       {/* Left item */}
                       <div className="flex flex-col items-center w-1/3 min-h-[80px]">
