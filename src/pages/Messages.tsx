@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -54,7 +53,15 @@ const Messages = () => {
   const displayedConversations = conversations.filter(conv => !conv.isNew);
 
   const activeChat = conversations.find(conv => conv.id === activeConversation) || 
-    { id: activeConversation || '', name: 'New Match', isNew: true };
+    { 
+      id: activeConversation || '', 
+      name: 'New Match', 
+      isNew: true,
+      lastMessage: "No messages yet. Start the conversation!", 
+      time: "Just matched",
+      rating: 5,
+      distance: "Unknown distance"
+    };
 
   // Get the currently selected pair
   const selectedPair = dynamicExchangePairs.find(pair => pair.id === selectedPairId);
