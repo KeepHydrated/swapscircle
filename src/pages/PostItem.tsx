@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ImagePlus } from 'lucide-react';
-import { Slider } from '@/components/ui/slider';
 import { 
   Select, 
   SelectContent, 
@@ -14,13 +13,31 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const PostItem: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<number[]>([50]);
+  const [priceRange, setPriceRange] = useState<string>("");
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -46,6 +63,18 @@ const PostItem: React.FC = () => {
     "Very Good", 
     "Good", 
     "Acceptable"
+  ];
+  
+  // Price ranges as shown in the image
+  const priceRanges = [
+    "$0 - $50",
+    "$50 - $100",
+    "$100 - $250",
+    "$250 - $500",
+    "$500 - $1,000",
+    "$1,000 - $2,500",
+    "$2,500 - $5,000",
+    "$5,000+"
   ];
 
   // Subcategories based on selected category
@@ -118,24 +147,21 @@ const PostItem: React.FC = () => {
                 />
               </div>
               
-              {/* Price Range */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="price-range">Price per day</Label>
-                  <span className="font-medium">${priceRange[0]}</span>
-                </div>
-                <Slider
-                  id="price-range"
-                  defaultValue={[50]}
-                  max={500}
-                  step={5}
-                  className="w-full"
-                  onValueChange={(value) => setPriceRange(value)}
-                />
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>$0</span>
-                  <span>$500</span>
-                </div>
+              {/* Price Range - Replaced Slider with Dropdown */}
+              <div className="space-y-2">
+                <Label htmlFor="price-range">Price Range</Label>
+                <Select value={priceRange} onValueChange={setPriceRange}>
+                  <SelectTrigger id="price-range" className="w-full">
+                    <SelectValue placeholder="Select price range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priceRanges.map((range) => (
+                      <SelectItem key={range} value={range}>
+                        {range}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Condition */}
