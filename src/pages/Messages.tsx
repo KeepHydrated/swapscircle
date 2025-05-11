@@ -8,6 +8,7 @@ import ExchangeCarousel from '@/components/messages/ExchangeCarousel';
 import { mockConversations } from '@/data/conversations';
 import { exchangePairs } from '@/data/exchangePairs';
 import { toast } from "sonner";
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
@@ -56,12 +57,14 @@ const Messages = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Conversations sidebar with its own scrollbar - now wider */}
           <div className="w-80 border-r border-gray-200 overflow-hidden flex flex-col">
-            <ConversationList 
-              conversations={conversations}
-              activeConversation={activeConversation}
-              setActiveConversation={setActiveConversation}
-              exchangePairs={exchangePairs}
-            />
+            <ScrollArea className="h-full">
+              <ConversationList 
+                conversations={conversations}
+                activeConversation={activeConversation}
+                setActiveConversation={setActiveConversation}
+                exchangePairs={exchangePairs}
+              />
+            </ScrollArea>
           </div>
           
           {/* Chat area with its own scrollbar */}
@@ -74,7 +77,9 @@ const Messages = () => {
           
           {/* Details panel with its own scrollbar */}
           <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
-            <DetailsPanel selectedPair={selectedPair} />
+            <ScrollArea className="h-full">
+              <DetailsPanel selectedPair={selectedPair} />
+            </ScrollArea>
           </div>
         </div>
       </div>

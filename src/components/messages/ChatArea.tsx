@@ -4,6 +4,7 @@ import { Conversation } from '@/data/conversations';
 import ChatHeader from './ChatHeader';
 import MessageDisplay from './MessageDisplay';
 import MessageInput from './MessageInput';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatAreaProps {
   activeChat: Conversation | undefined;
@@ -24,13 +25,13 @@ const ChatArea = ({ activeChat, onSendFirstMessage }: ChatAreaProps) => {
   return (
     <div className="flex flex-col h-full">
       <ChatHeader activeChat={activeChat} />
-      <div className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1">
         <MessageDisplay 
           activeChat={activeChat} 
           onSendFirstMessage={onSendFirstMessage}
         />
-      </div>
-      <div className="p-4 border-t">
+      </ScrollArea>
+      <div className="border-t">
         <MessageInput />
       </div>
     </div>
