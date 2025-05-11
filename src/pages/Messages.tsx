@@ -27,8 +27,8 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel at the top with less padding */}
-        <div className="px-1 sm:px-2">
+        {/* Item exchange carousel at the top with minimal padding */}
+        <div className="px-0">
           <ExchangeCarousel 
             exchangePairs={exchangePairs}
             selectedPairId={selectedPairId}
