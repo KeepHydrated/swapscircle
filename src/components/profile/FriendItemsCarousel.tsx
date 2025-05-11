@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { 
   Carousel, 
@@ -23,8 +23,10 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   onLikeItem,
   title = "Your Friend's Items"
 }) => {
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+
   const handleLikeClick = (e: React.MouseEvent, item: MatchItem) => {
-    e.preventDefault();
+    e.stopPropagation(); // Prevent triggering selection when clicking heart
     onLikeItem(item.id);
     
     toast({
@@ -32,6 +34,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
       description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
     });
   };
+
+  const handleItemClick = (itemId: string) => {
+    setSelectedItemId(prevId => prevId === itemId ? null : itemId);
+  };
+
+  const selectedItem = items.find(item => item.id === selectedItemId);
 
   return (
     <div className="relative">
@@ -46,7 +54,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         <CarouselContent>
           {items.map((item) => (
             <CarouselItem key={item.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-              <Card className="overflow-hidden">
+              <Card 
+                className={`overflow-hidden cursor-pointer transition-all ${
+                  selectedItemId === item.id ? 'ring-2 ring-primary shadow-md' : ''
+                }`}
+                onClick={() => handleItemClick(item.id)}
+              >
                 <div className="relative">
                   <img 
                     src={item.image} 
@@ -72,6 +85,85 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80" />
         <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80" />
       </Carousel>
+
+      {/* Item details panel that appears when an item is selected */}
+      {selectedItem && (
+        <div className="mt-4 bg-white rounded-lg border p-6 animate-fade-in">
+          <h2 className="text-2xl font-bold mb-2">{selectedItem.name}</h2>
+          
+          <div className="bg-gray-50 p-4 rounded-md mb-4">
+            <p className="text-gray-700">
+              Like new condition. This item has been gently used and well maintained. Perfect for
+              anyone looking for a high-quality {selectedItem.name.toLowerCase()} at a great value.
+            </p>
+          </div>
+          
+          <hr className="my-4" />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                <span className="text-green-600">✓</span>
+              </div>
+              <span className="text-gray-800 font-medium">Brand New</span>
+            </div>
+            
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                <span className="text-blue-600">⌂</span>
+              </div>
+              <span className="text-gray-800 font-medium">Home & Garden</span>
+            </div>
+            
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                <span className="text-purple-600">𝍢</span>
+              </div>
+              <span className="text-gray-800 font-medium">Kitchen Appliances</span>
+            </div>
+            
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                <span className="text-green-600">$</span>
+              </div>
+              <span className="text-gray-800 font-medium">$100 - $250</span>
+            </div>
+          </div>
+          
+          <hr className="my-4" />
+          
+          <div className="flex items-center mt-2">
+            <div className="flex-shrink-0 mr-4">
+              <img 
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
+                alt="Owner" 
+                className="w-12 h-12 rounded-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="flex items-center">
+                <h3 className="text-lg font-semibold mr-2">Emma Wilson</h3>
+                <div className="flex text-amber-400">★★★★★</div>
+                <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <span className="mr-1">📅</span>
+                  <span>Since 2023</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="mr-1">📍</span>
+                  <span>2.3 mi away</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="mr-1">🕒</span>
+                  <span>Response: ~1 hour</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
