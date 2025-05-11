@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Plus, User, Settings, LogOut } from 'lucide-react';
+import { Bell, Plus, User, Settings, LogOut, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MobileMenu } from './MobileMenu';
@@ -28,6 +28,13 @@ const Header = () => {
             <Link to="/post-item">
               <Plus className="w-5 h-5" />
               <span className="sr-only">Post Item</span>
+            </Link>
+          </Button>
+          
+          <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+            <Link to="/messages">
+              <MessageCircle className="w-5 h-5" />
+              <span className="sr-only">Messages</span>
             </Link>
           </Button>
           
