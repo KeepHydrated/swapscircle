@@ -50,7 +50,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
   }, [emblaApi]);
 
   return (
-    <div className="w-full py-6 border-b border-gray-200">
+    <div className="w-full py-4 border-b border-gray-200">
       <div className="w-full max-w-5xl mx-auto">
         {/* Using direct embla carousel reference for more control */}
         <div className="overflow-hidden" ref={emblaRef}>
@@ -58,12 +58,12 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
             {exchangePairs.map((pair) => (
               <div key={pair.id} className="min-w-0 shrink-0 grow-0 basis-1/3 md:basis-1/4 lg:basis-1/4 pl-4 pr-4">
                 <div 
-                  className={`flex flex-row items-center justify-between cursor-pointer p-3 rounded-md ${selectedPairId === pair.id ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                  className={`flex flex-row items-center justify-between cursor-pointer p-3 rounded-md h-20 ${selectedPairId === pair.id ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
                   onClick={() => onPairSelect(pair.partnerId, pair.id)}
                 >
                   {/* First item */}
-                  <div className="flex flex-col items-center w-1/3">
-                    <Avatar className="h-14 w-14 bg-gray-100">
+                  <div className="flex flex-col items-center w-[40%]">
+                    <Avatar className="h-12 w-12 bg-gray-100">
                       <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
                       <AvatarFallback>{pair.item1.name[0]}</AvatarFallback>
                     </Avatar>
@@ -71,13 +71,13 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                   </div>
                   
                   {/* Exchange icon */}
-                  <div className="flex items-center justify-center h-8 w-8 mx-1 rounded-full bg-blue-100">
-                    <ArrowLeftRight className="h-4 w-4 text-blue-600" />
+                  <div className="flex items-center justify-center h-6 w-6 mx-0.5 rounded-full bg-blue-100">
+                    <ArrowLeftRight className="h-3 w-3 text-blue-600" />
                   </div>
                   
                   {/* Second item */}
-                  <div className="flex flex-col items-center w-1/3">
-                    <Avatar className="h-14 w-14 bg-gray-100">
+                  <div className="flex flex-col items-center w-[40%]">
+                    <Avatar className="h-12 w-12 bg-gray-100">
                       <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
                       <AvatarFallback>{pair.item2.name[0]}</AvatarFallback>
                     </Avatar>
@@ -90,7 +90,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
         </div>
         
         {/* Custom slider indicator */}
-        <div className="flex justify-center items-center mt-4 px-4">
+        <div className="flex justify-center items-center mt-2 px-4">
           <div className="w-full max-w-md mx-auto px-4">
             {/* Custom slider that matches the image */}
             <div className="relative h-1 bg-gray-200 rounded-full">
