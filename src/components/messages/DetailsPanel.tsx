@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Utensils, DollarSign } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import useEmblaCarousel from 'embla-carousel-react';
 
-// Define the interface for the props
+// Define the interfaces for the props
 interface DetailsPanelProps {
   selectedPair?: {
     id: number;
@@ -19,20 +20,22 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item1');
   
   // Sample image placeholders for the carousel
   useEffect(() => {
-    // Use selected pair images and add some placeholder images
+    if (!selectedPair) return;
+    
+    // Use selected item images and add some placeholder images
+    const selectedItemImage = selectedPair[selectedItem].image || "/placeholder.svg";
     const urls = [
-      // Add real item images if available
-      selectedPair?.item1.image || "/placeholder.svg",
-      selectedPair?.item2.image || "/placeholder.svg",
+      selectedItemImage,
       "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
       "https://images.unsplash.com/photo-1487887235947-a955ef187fcc",
     ];
     setImageUrls(urls);
-  }, [selectedPair]);
+  }, [selectedPair, selectedItem]);
   
   useEffect(() => {
     if (!emblaApi) return;
@@ -51,6 +54,14 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   
   const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
+
+  const handleSelectItem = (item: 'item1' | 'item2') => {
+    setSelectedItem(item);
+    // Reset carousel to first slide when switching items
+    if (emblaApi) {
+      emblaApi.scrollTo(0);
+    }
+  };
   
   return (
     <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
@@ -58,13 +69,20 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
       {selectedPair && (
         <div className="p-4 border-b border-gray-200">
           <div className={`flex flex-row items-center justify-center bg-gray-200 px-1 py-4 rounded-md mb-4`}>
-            {/* First item */}
-            <div className="flex flex-col items-center">
-              <Avatar className="h-14 w-14 bg-gray-100">
-                <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
-                <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs mt-1 text-gray-700">{selectedPair.item1.name}</span>
+            {/* First item - clickable */}
+            <div 
+              className={`flex flex-col items-center cursor-pointer transition-all ${selectedItem === 'item1' ? 'scale-110' : 'opacity-80 hover:opacity-100'}`}
+              onClick={() => handleSelectItem('item1')}
+            >
+              <div className={`p-1 rounded-full ${selectedItem === 'item1' ? 'bg-blue-100' : ''}`}>
+                <Avatar className="h-14 w-14 bg-gray-100">
+                  <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
+                  <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <span className={`text-xs mt-1 ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+                {selectedPair.item1.name}
+              </span>
             </div>
             
             {/* Exchange icon */}
@@ -72,13 +90,20 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
               <ArrowLeftRight className="h-5 w-5 text-blue-600" />
             </div>
             
-            {/* Second item */}
-            <div className="flex flex-col items-center">
-              <Avatar className="h-14 w-14 bg-gray-100">
-                <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
-                <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs mt-1 text-gray-700">{selectedPair.item2.name}</span>
+            {/* Second item - clickable */}
+            <div 
+              className={`flex flex-col items-center cursor-pointer transition-all ${selectedItem === 'item2' ? 'scale-110' : 'opacity-80 hover:opacity-100'}`}
+              onClick={() => handleSelectItem('item2')}
+            >
+              <div className={`p-1 rounded-full ${selectedItem === 'item2' ? 'bg-blue-100' : ''}`}>
+                <Avatar className="h-14 w-14 bg-gray-100">
+                  <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
+                  <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <span className={`text-xs mt-1 ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+                {selectedPair.item2.name}
+              </span>
             </div>
           </div>
         </div>
@@ -147,11 +172,11 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
         {/* Product details section */}
         <div className="p-4">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            {selectedPair?.item1.name || "Stand Mixer"}
+            {selectedPair ? selectedPair[selectedItem].name : "Selected Item"}
           </h2>
           
           <p className="text-gray-700 mb-6">
-            Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality stand mixer at a great value.
+            Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {selectedPair ? selectedPair[selectedItem].name.toLowerCase() : "item"} at a great value.
           </p>
           
           <hr className="mb-4" />
