@@ -25,13 +25,25 @@ const Matches: React.FC<MatchesProps> = ({
   selectedMatchId, 
   onSelectMatch 
 }) => {
+  // Helper function to determine if we should insert details after this card
+  const shouldInsertDetailsAfter = (index: number) => {
+    if (!selectedMatchId) return false;
+    
+    // Get the selected item's index
+    const selectedIndex = matches.findIndex(match => match.id === selectedMatchId);
+    
+    // Calculate if this is the last item in its row
+    const itemsPerRow = window.innerWidth >= 768 ? 3 : 2; // 3 columns on md screens, 2 on small
+    return index === selectedIndex && (index % itemsPerRow === itemsPerRow - 1 || index === matches.length - 1);
+  };
+
   return (
     <div className="lg:w-1/2">
       <h2 className="text-2xl font-bold mb-4">
         Matches for {selectedItemName || 'Selected Item'}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {matches.map((match) => (
+        {matches.map((match, index) => (
           <React.Fragment key={match.id}>
             <ItemCard
               id={match.id}
@@ -43,8 +55,8 @@ const Matches: React.FC<MatchesProps> = ({
               onSelect={onSelectMatch}
             />
             {selectedMatchId === match.id && (
-              <div className="col-span-2 md:col-span-3 mt-2 mb-4">
-                <Card className="overflow-hidden">
+              <div className="col-span-2 md:col-span-3">
+                <Card className="overflow-hidden mt-2 mb-4">
                   <ItemDetails name={match.name} />
                 </Card>
               </div>
