@@ -52,12 +52,12 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                       {/* Left item */}
                       <div className="flex flex-col items-center w-1/3 min-h-[80px]">
                         <div className="h-10 flex items-center justify-center">
-                          <Avatar className="h-10 w-10 bg-gray-100">
+                          <Avatar className="h-10 w-10 bg-white">
                             <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
                             <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
                           </Avatar>
                         </div>
-                        <span className="text-sm text-blue-600 font-medium mt-2 text-center truncate w-full max-w-[80px]">
+                        <span className="text-sm text-foreground font-medium mt-2 text-center truncate w-full max-w-[80px]">
                           {pair.item1.name}
                         </span>
                       </div>
@@ -70,12 +70,12 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                       {/* Right item */}
                       <div className="flex flex-col items-center w-1/3 min-h-[80px]">
                         <div className="h-10 flex items-center justify-center">
-                          <Avatar className="h-10 w-10 bg-gray-100">
+                          <Avatar className="h-10 w-10 bg-white">
                             <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
                             <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
                           </Avatar>
                         </div>
-                        <span className="text-sm text-gray-600 font-medium mt-2 text-center truncate w-full max-w-[80px]">
+                        <span className="text-sm text-foreground font-medium mt-2 text-center truncate w-full max-w-[80px]">
                           {pair.item2.name}
                         </span>
                       </div>
