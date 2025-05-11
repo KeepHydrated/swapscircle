@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
+import Messages2 from "./pages/Messages2";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/post-item" element={<PostItem />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/messages2" element={<Messages2 />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </BrowserRouter>
