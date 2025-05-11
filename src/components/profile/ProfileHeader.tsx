@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Star, MapPin, Calendar } from 'lucide-react';
+import { Star, MapPin, Calendar, Users } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 interface ProfileHeaderProps {
   profile: {
@@ -12,9 +13,17 @@ interface ProfileHeaderProps {
     location: string;
     memberSince: string;
   };
+  onReviewsClick?: () => void;
+  onFriendsClick?: () => void;
+  friendCount?: number;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ 
+  profile, 
+  onReviewsClick, 
+  onFriendsClick,
+  friendCount = 0 
+}) => {
   // Render stars based on rating
   const renderStars = (rating: number) => {
     const stars = [];
@@ -44,7 +53,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
         <h1 className="text-2xl font-bold text-gray-800 text-center md:text-left">{profile.name}</h1>
         <div className="my-2 flex justify-center md:justify-start">
           {renderStars(profile.rating)}
-          <span className="ml-2 text-gray-600">{profile.rating}.0 ({profile.reviewCount} reviews)</span>
+          <Button 
+            variant="link" 
+            className="ml-2 p-0 h-auto text-gray-600 hover:text-primary"
+            onClick={onReviewsClick}
+          >
+            {profile.rating}.0 ({profile.reviewCount} reviews)
+          </Button>
         </div>
         <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
           <div className="flex items-center">
@@ -55,6 +70,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
             <Calendar className="h-4 w-4 mr-1" />
             <span>Member since {profile.memberSince}</span>
           </div>
+          {friendCount > 0 && (
+            <Button
+              variant="link"
+              className="p-0 h-auto text-gray-500 hover:text-primary"
+              onClick={onFriendsClick}
+            >
+              <Users className="h-4 w-4 mr-1" />
+              <span>{friendCount} friends</span>
+            </Button>
+          )}
         </div>
         <p className="mt-4 text-gray-700 leading-relaxed text-center md:text-left">{profile.description}</p>
       </div>

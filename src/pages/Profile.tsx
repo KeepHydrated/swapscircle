@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -11,6 +10,9 @@ import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import { Star, Users } from 'lucide-react';
 
 const Profile: React.FC = () => {
+  // State for active tab
+  const [activeTab, setActiveTab] = useState('available');
+  
   // Profile data
   const profile = {
     name: "Alex Morgan",
@@ -176,6 +178,11 @@ const Profile: React.FC = () => {
     }
   ];
 
+  // Function to navigate to specific tab
+  const navigateToTab = (tabValue: string) => {
+    setActiveTab(tabValue);
+  };
+
   return (
     <MainLayout>
       <div className="mb-6">
@@ -184,10 +191,19 @@ const Profile: React.FC = () => {
       
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
-        <ProfileHeader profile={profile} />
+        <ProfileHeader 
+          profile={profile} 
+          friendCount={friends.length}
+          onReviewsClick={() => navigateToTab('reviews')}
+          onFriendsClick={() => navigateToTab('friends')}
+        />
 
         {/* Tabs */}
-        <Tabs defaultValue="available" className="w-full">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
           <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start">
             <TabsTrigger 
               value="available" 
