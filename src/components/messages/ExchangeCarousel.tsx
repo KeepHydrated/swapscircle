@@ -49,28 +49,32 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                 >
                   <div className="flex items-center p-3 w-full justify-center">
                     <div className="flex items-center justify-between w-full">
-                      {/* Left item - always blue text */}
-                      <div className="flex flex-col items-center w-1/3">
-                        <Avatar className="h-10 w-10 bg-gray-100">
-                          <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
-                          <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
-                        </Avatar>
+                      {/* Left item */}
+                      <div className="flex flex-col items-center w-1/3 min-h-[80px]">
+                        <div className="h-10 flex items-center justify-center">
+                          <Avatar className="h-10 w-10 bg-gray-100">
+                            <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
+                            <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
+                          </Avatar>
+                        </div>
                         <span className="text-sm text-blue-600 font-medium mt-2 text-center truncate w-full max-w-[80px]">
                           {pair.item1.name}
                         </span>
                       </div>
                       
                       {/* Center exchange icon */}
-                      <div className="flex items-center justify-center w-1/3">
+                      <div className="flex items-center justify-center w-1/3 min-h-[80px]">
                         <ArrowLeftRight className="h-5 w-5 text-blue-400" />
                       </div>
                       
-                      {/* Right item - always gray text */}
-                      <div className="flex flex-col items-center w-1/3">
-                        <Avatar className="h-10 w-10 bg-gray-100">
-                          <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
-                          <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
-                        </Avatar>
+                      {/* Right item */}
+                      <div className="flex flex-col items-center w-1/3 min-h-[80px]">
+                        <div className="h-10 flex items-center justify-center">
+                          <Avatar className="h-10 w-10 bg-gray-100">
+                            <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
+                            <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
+                          </Avatar>
+                        </div>
                         <span className="text-sm text-gray-600 font-medium mt-2 text-center truncate w-full max-w-[80px]">
                           {pair.item2.name}
                         </span>
