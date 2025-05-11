@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Item } from '@/types/item';
 import { toast } from '@/hooks/use-toast';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Image, Pencil } from 'lucide-react';
 
 interface ItemEditDialogProps {
   item: Item | null;
@@ -34,7 +34,7 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
 }) => {
   const [name, setName] = useState(item?.name || '');
   const [description, setDescription] = useState(item?.description || '');
-  const [images, setImages] = useState<string[]>([item?.image || '']);
+  const [image, setImage] = useState(item?.image || '');
   const [category, setCategory] = useState(item?.category || '');
   const [condition, setCondition] = useState(item?.condition || '');
   const [priceRange, setPriceRange] = useState(item?.priceRange || '');
@@ -44,7 +44,7 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
     if (item) {
       setName(item.name);
       setDescription(item.description || '');
-      setImages([item.image]);
+      setImage(item.image);
       setCategory(item.category || '');
       setCondition(item.condition || '');
       setPriceRange(item.priceRange || '');
@@ -54,10 +54,10 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim() || images.length === 0 || !images[0].trim()) {
+    if (!name.trim() || !image.trim()) {
       toast({
         title: "Missing information",
-        description: "Please provide a name and at least one image for your item",
+        description: "Please provide a name and an image for your item",
         variant: "destructive",
       });
       return;
@@ -69,7 +69,7 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
       ...item,
       name,
       description,
-      image: images[0], // Currently only supporting one image
+      image,
       category,
       condition,
       priceRange,
@@ -93,43 +93,38 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-xl">Edit Item</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Images Section */}
-          <div className="space-y-2">
-            <Label className="text-base font-medium">Add Images</Label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <div className="flex justify-center mb-2">
-                <img 
-                  src="/lovable-uploads/6de02767-04e3-4b51-93af-053033a1c111.png" 
-                  alt="Upload icon" 
-                  className="w-16 h-16 opacity-50" 
-                />
-              </div>
-              <p className="text-gray-500 mb-2">Upload up to 5 images</p>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handleImageSelect}
-                className="w-full sm:w-auto"
-              >
-                Select Images
-              </Button>
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Image Preview */}
+          <div className="relative rounded-md overflow-hidden aspect-square bg-gray-100">
+            <img 
+              src={image} 
+              alt={name} 
+              className="w-full h-full object-cover"
+            />
+            <Button 
+              type="button" 
+              variant="secondary" 
+              size="icon"
+              className="absolute top-2 right-2 h-8 w-8 bg-white/80 hover:bg-white"
+              onClick={handleImageSelect}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
           </div>
           
-          {/* Title */}
+          {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-base font-medium">Title</Label>
+            <Label htmlFor="name" className="text-sm font-medium">Name</Label>
             <Input 
               id="name" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
-              placeholder="What are you offering for rent?"
+              placeholder="Item name"
               className="w-full"
               required
             />
@@ -137,70 +132,72 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
           
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-base font-medium">Description</Label>
+            <Label htmlFor="description" className="text-sm font-medium">Description</Label>
             <Textarea 
               id="description" 
               value={description} 
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your rental item in detail..." 
-              className="min-h-[120px]"
+              placeholder="Describe your item..." 
+              className="min-h-[80px]"
             />
           </div>
-          
-          {/* Condition */}
-          <div className="space-y-2">
-            <Label htmlFor="condition" className="text-base font-medium">Condition</Label>
-            <div className="relative">
-              <select
-                id="condition"
-                value={condition}
-                onChange={(e) => setCondition(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-base appearance-none pr-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
-              >
-                <option value="">Select condition</option>
-                {conditionOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Category */}
+            <div className="space-y-2">
+              <Label htmlFor="category" className="text-sm font-medium">Category</Label>
+              <div className="relative">
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm appearance-none pr-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Select a category</option>
+                  {categoryOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
             </div>
-          </div>
-          
-          {/* Category */}
-          <div className="space-y-2">
-            <Label htmlFor="category" className="text-base font-medium">Category</Label>
-            <div className="relative">
-              <select
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-base appearance-none pr-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
-              >
-                <option value="">Select a category</option>
-                {categoryOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            
+            {/* Condition */}
+            <div className="space-y-2">
+              <Label htmlFor="condition" className="text-sm font-medium">Condition</Label>
+              <div className="relative">
+                <select
+                  id="condition"
+                  value={condition}
+                  onChange={(e) => setCondition(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm appearance-none pr-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Select condition</option>
+                  {conditionOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
             </div>
           </div>
           
           {/* Price Range */}
           <div className="space-y-2">
-            <Label htmlFor="priceRange" className="text-base font-medium">Price Range</Label>
+            <Label htmlFor="priceRange" className="text-sm font-medium">Price Range</Label>
             <div className="relative">
               <select
                 id="priceRange"
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-base appearance-none pr-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm appearance-none pr-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Select price range</option>
                 {priceRangeOptions.map(option => (
                   <option key={option} value={option}>{option}</option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <ChevronDown className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             </div>
           </div>
           
