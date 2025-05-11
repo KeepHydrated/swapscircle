@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, Star } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ItemDetailsProps {
   name: string;
@@ -48,6 +49,35 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
             <DollarSign className="w-5 h-5 text-green-600" />
           </div>
           <span className="text-gray-800 font-medium">$100 - $250</span>
+        </div>
+      </div>
+      
+      {/* Profile information section - restored */}
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="flex items-center">
+          <Avatar className="h-10 w-10 mr-3">
+            <AvatarImage src="https://images.unsplash.com/photo-1501286353178-1ec881214838" alt="User Profile" />
+            <AvatarFallback>JD</AvatarFallback>
+          </Avatar>
+          <div>
+            <h4 className="font-medium text-gray-900">John Doe</h4>
+            <div className="flex items-center text-sm text-gray-500">
+              <div className="flex items-center mr-2">
+                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
+                <span>4.8</span>
+              </div>
+              <span>· 24 Trades</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            Member since May 2023
+          </div>
+          <div className="text-sm font-medium text-blue-600">
+            View Profile
+          </div>
         </div>
       </div>
     </div>
