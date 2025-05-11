@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Save } from 'lucide-react';
+import { ImagePlus, Save, Check } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select, 
@@ -235,6 +234,14 @@ const PostItem: React.FC = () => {
       title: "Deleted",
       description: "Preference has been removed",
     });
+  };
+
+  const handleSubmit = () => {
+    toast({
+      title: "Item Posted",
+      description: "Your item has been successfully posted for trade.",
+    });
+    // Here you would normally handle the form submission
   };
 
   return (
@@ -556,6 +563,23 @@ const PostItem: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* Submit and Save Preferences Buttons */}
+        <div className="flex justify-end mt-8 max-w-6xl mx-auto">
+          <Button
+            variant="outline"
+            className="mr-4 flex items-center bg-green-600 hover:bg-green-700 text-white"
+            onClick={() => setSaveDialogOpen(true)}
+          >
+            <Save className="mr-2 h-4 w-4" /> Save Preferences
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            className="bg-trademate-dark hover:bg-trademate-blue text-white"
+          >
+            <Check className="mr-2 h-4 w-4" /> Submit Item
+          </Button>
         </div>
       </div>
     </div>
