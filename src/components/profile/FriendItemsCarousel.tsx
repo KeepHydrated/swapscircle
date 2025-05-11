@@ -64,7 +64,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   const selectedItem = items.find(item => item.id === selectedItemId);
 
   return (
-    <div className="relative">
+    <div className="relative w-full md:w-1/2 mx-auto">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       <div ref={carouselRef}>
         <Carousel
@@ -76,7 +76,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         >
           <CarouselContent>
             {items.map((item) => (
-              <CarouselItem key={item.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+              <CarouselItem key={item.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3">
                 <Card 
                   className={`overflow-hidden cursor-pointer transition-all ${
                     selectedItemId === item.id ? 'ring-2 ring-primary shadow-md' : ''
