@@ -31,6 +31,8 @@ const Matches: React.FC<MatchesProps> = ({
   const [itemsPerRow, setItemsPerRow] = useState(3);
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+  // State to track removed items
+  const [removedItems, setRemovedItems] = useState<string[]>([]);
   const navigate = useNavigate();
   
   // Update itemsPerRow based on window size
@@ -55,10 +57,15 @@ const Matches: React.FC<MatchesProps> = ({
   const getRowIndex = (index: number) => {
     return Math.floor(index / itemsPerRow);
   };
+  
+  // Filter out removed/matched items
+  const displayedMatches = matches.filter(match => 
+    !removedItems.includes(match.id) && !match.liked
+  );
 
-  // Find the index of the selected match
+  // Find the index of the selected match in displayed matches
   const selectedIndex = selectedMatchId 
-    ? matches.findIndex(match => match.id === selectedMatchId) 
+    ? displayedMatches.findIndex(match => match.id === selectedMatchId) 
     : -1;
   
   // Calculate which row has the selected item
@@ -79,6 +86,9 @@ const Matches: React.FC<MatchesProps> = ({
     if (newLikedItems[id]) {
       const match = matches.find(m => m.id === id);
       if (match) {
+        // Add item to removed list
+        setRemovedItems(prev => [...prev, id]);
+        
         toast(`You matched with ${match.name}! Check your messages.`);
         // Navigate to messages with the liked item info
         setTimeout(() => {
@@ -106,8 +116,8 @@ const Matches: React.FC<MatchesProps> = ({
     let result = [];
     let currentRow = -1;
     
-    for (let i = 0; i < matches.length; i++) {
-      const match = matches[i];
+    for (let i = 0; i < displayedMatches.length; i++) {
+      const match = displayedMatches[i];
       const rowIndex = getRowIndex(i);
       
       // Check if we're starting a new row
@@ -132,12 +142,12 @@ const Matches: React.FC<MatchesProps> = ({
       
       // If this is the last item in a row AND it's the selected row, add details
       if (selectedRowIndex === rowIndex && 
-          ((i + 1) % itemsPerRow === 0 || i === matches.length - 1)) {
+          ((i + 1) % itemsPerRow === 0 || i === displayedMatches.length - 1)) {
         // Add details component spanning the full width
         result.push(
           <div key={`details-${selectedMatchId}`} className="col-span-2 md:col-span-3">
             <Card className="overflow-hidden mt-2 mb-4">
-              <ItemDetails name={matches[selectedIndex]?.name || ''} />
+              <ItemDetails name={displayedMatches[selectedIndex]?.name || ''} />
             </Card>
           </div>
         );

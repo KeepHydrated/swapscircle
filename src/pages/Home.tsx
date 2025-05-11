@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
 import Matches from '@/components/items/Matches';
@@ -79,14 +79,35 @@ const Home: React.FC = () => {
   const [selectedItemId, setSelectedItemId] = useState<string>('1');
   // State for tracking the selected match item
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  // State to track matched/liked items
+  const [likedItemIds, setLikedItemIds] = useState<string[]>([]);
+  
+  // Load liked items from localStorage on component mount
+  useEffect(() => {
+    const savedLikedItems = localStorage.getItem('likedItems');
+    if (savedLikedItems) {
+      setLikedItemIds(JSON.parse(savedLikedItems));
+    }
+  }, []);
+  
+  // Update local storage when liked items change
+  useEffect(() => {
+    localStorage.setItem('likedItems', JSON.stringify(likedItemIds));
+  }, [likedItemIds]);
   
   // Find the selected item
   const selectedItem = myItems.find(item => item.id === selectedItemId);
   
+  // Mark items as liked from the saved list
+  const updatedMatches = allMatches.map(match => ({
+    ...match,
+    liked: likedItemIds.includes(match.id)
+  }));
+  
   // Filter matches based on the selected item's category
   const filteredMatches = selectedItem 
-    ? allMatches.filter(match => match.category === selectedItem.category)
-    : allMatches.filter(match => match.category === 'photography'); // Default to photography
+    ? updatedMatches.filter(match => match.category === selectedItem.category)
+    : updatedMatches.filter(match => match.category === 'photography'); // Default to photography
 
   // Handle item selection
   const handleSelectItem = (id: string) => {
