@@ -22,15 +22,18 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
         <div>
           <div className="flex items-center">
             <h2 className="font-medium">{activeChat.name}</h2>
-            <div className="ml-2 flex text-yellow-400">
-              {"★".repeat(activeChat.rating)}
-              <span className="ml-1 text-gray-500 text-sm">({42})</span>
-            </div>
           </div>
-          <p className="text-sm text-gray-500 flex items-center">
-            <MapPin className="h-3 w-3 mr-1" /> {activeChat.distance}
-            {activeChat.isNew && <span className="ml-2">• New match</span>}
-          </p>
+          <div className="flex items-center">
+            <p className="text-sm text-gray-500">
+              {activeChat.isNew ? "New match" : activeChat.distance}
+            </p>
+            {!activeChat.isNew && activeChat.rating > 0 && (
+              <div className="ml-2 flex text-yellow-400">
+                {"★".repeat(activeChat.rating)}
+                <span className="ml-1 text-gray-500 text-sm">({42})</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <Button variant="ghost" size="icon">
