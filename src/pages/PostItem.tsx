@@ -283,7 +283,6 @@ const PostItem: React.FC = () => {
         applyPreference(pref);
       }
     }
-    // If not "clear" or "load", keep current preferences (default behavior)
     
     setShowSuccessDialog(false);
     setShowPreferenceOptions(false); // Reset for next time
@@ -651,7 +650,7 @@ const PostItem: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           
-          {/* Modified preference options */}
+          {/* Modified preference options - Removed "Keep current preferences" */}
           {showPreferenceOptions && (
             <div className="my-4 border-t border-b border-gray-200 py-4">
               <Label className="font-medium mb-2 block">For your next item:</Label>
@@ -663,10 +662,6 @@ const PostItem: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="clear" id="clear" />
                   <Label htmlFor="clear">Create new item with no preferences</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="keep" id="keep" />
-                  <Label htmlFor="keep">Keep current preferences</Label>
                 </div>
                 {savedPreferences.length > 0 && (
                   <div className="flex items-center space-x-2">
