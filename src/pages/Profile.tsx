@@ -8,6 +8,7 @@ import { Item } from '@/types/item';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
+import { Star, Users } from 'lucide-react';
 
 const Profile: React.FC = () => {
   // Profile data
@@ -128,11 +129,57 @@ const Profile: React.FC = () => {
     });
   };
 
+  // Mock reviews data
+  const reviews = [
+    {
+      id: 1,
+      user: "Jessica L.",
+      rating: 5,
+      comment: "Excellent trader! The item was exactly as described, and shipping was fast.",
+      date: "April 15, 2025"
+    },
+    {
+      id: 2,
+      user: "Marcus T.",
+      rating: 5,
+      comment: "Great communication and smooth transaction. Would definitely trade again!",
+      date: "March 28, 2025"
+    },
+    {
+      id: 3,
+      user: "Sophia R.",
+      rating: 4,
+      comment: "Very satisfied with my trade. Item was in good condition as described.",
+      date: "February 12, 2025"
+    }
+  ];
+
+  // Mock friends data
+  const friends = [
+    {
+      id: "friend1",
+      name: "Jessica L.",
+      mutualItems: 4,
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+    },
+    {
+      id: "friend2",
+      name: "Marcus T.",
+      mutualItems: 2,
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
+    },
+    {
+      id: "friend3",
+      name: "Sophia R.",
+      mutualItems: 7,
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb"
+    }
+  ];
+
   return (
     <MainLayout>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your profile and trading items</p>
+        <h1 className="text-3xl font-bold">My Trading Hub</h1>
       </div>
       
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
@@ -154,6 +201,20 @@ const Profile: React.FC = () => {
             >
               Completed Trades
             </TabsTrigger>
+            <TabsTrigger 
+              value="reviews" 
+              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+            >
+              <Star className="mr-2 h-4 w-4" />
+              Reviews
+            </TabsTrigger>
+            <TabsTrigger 
+              value="friends" 
+              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Friends
+            </TabsTrigger>
           </TabsList>
 
           {/* Available Items Tab Content */}
@@ -164,6 +225,51 @@ const Profile: React.FC = () => {
           {/* Completed Trades Tab Content */}
           <TabsContent value="completed" className="p-6">
             <CompletedTradesTab trades={completedTrades} />
+          </TabsContent>
+          
+          {/* Reviews Tab Content */}
+          <TabsContent value="reviews" className="p-6">
+            <div className="space-y-6">
+              {reviews.map(review => (
+                <div key={review.id} className="bg-white rounded-lg border p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-medium">{review.user}</div>
+                    <div className="text-sm text-muted-foreground">{review.date}</div>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-gray-600">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+          
+          {/* Friends Tab Content */}
+          <TabsContent value="friends" className="p-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {friends.map(friend => (
+                <div key={friend.id} className="bg-white rounded-lg border p-4 shadow-sm flex items-center">
+                  <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                    <img 
+                      src={friend.avatar} 
+                      alt={friend.name}
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                  <div>
+                    <div className="font-medium">{friend.name}</div>
+                    <div className="text-sm text-muted-foreground">{friend.mutualItems} mutual items</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
