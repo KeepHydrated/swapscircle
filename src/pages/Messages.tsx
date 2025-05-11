@@ -28,42 +28,33 @@ const Messages = () => {
       );
       
       if (!existingConvo) {
-        // Create a new conversation for this match
-        const newConvo = {
-          id: `match-${Date.now()}`,
-          name: `${likedItemMatch.name} Owner`,
-          lastMessage: "Be the first to reach out and start the conversation.",
-          time: "New match",
-          rating: 5,
-          distance: "2.5 mi away",
-          isNew: true
-        };
-        
         // Create a new exchange pair for the carousel
+        const newConversationId = `match-${Date.now()}`;
         const newExchangePair = {
           id: dynamicExchangePairs.length + 1,
-          partnerId: newConvo.id,
+          partnerId: newConversationId,
           item1: { name: "Your Item", image: "/placeholder.svg" },
           item2: { name: likedItemMatch.name, image: likedItemMatch.image || "/placeholder.svg" }
         };
         
-        // Add the new exchange pair
+        // Add the new exchange pair to the top carousel
         setDynamicExchangePairs(prev => [...prev, newExchangePair]);
         
-        // Add the new conversation
-        setConversations(prev => [newConvo, ...prev]);
-        
         // Set it as active
-        setActiveConversation(newConvo.id);
+        setActiveConversation(newConversationId);
         setSelectedPairId(newExchangePair.id);
         
         // Show a toast
-        toast(`New match created with ${newConvo.name}!`);
+        toast(`New match created with ${likedItemMatch.name}!`);
       }
     }
   }, [location.state]);
 
-  const activeChat = conversations.find(conv => conv.id === activeConversation);
+  // Only show conversations that are not new matches (a message has been sent)
+  const displayedConversations = conversations.filter(conv => !conv.isNew);
+
+  const activeChat = conversations.find(conv => conv.id === activeConversation) || 
+    { id: activeConversation || '', name: 'New Match', isNew: true };
 
   // Get the currently selected pair
   const selectedPair = dynamicExchangePairs.find(pair => pair.id === selectedPairId);
@@ -75,21 +66,38 @@ const Messages = () => {
   };
 
   const handleSendFirstMessage = (conversationId: string) => {
-    setConversations(prevConversations => 
-      prevConversations.map(conv => 
-        conv.id === conversationId 
-          ? { 
-              ...conv, 
-              isNew: false, 
-              lastMessage: "Hi there! I'm interested in exchanging items with you.",
-              time: "Just now" 
-            } 
-          : conv
-      )
-    );
+    // Find the exchange pair related to this conversation
+    const relatedPair = dynamicExchangePairs.find(pair => pair.partnerId === conversationId);
     
-    // Conversation no longer needs highlighting in the exchange carousel
-    // since a message has been sent
+    if (relatedPair) {
+      // Create a new conversation entry for the match that just had its first message
+      const newConvo = {
+        id: conversationId,
+        name: `${relatedPair.item2.name} Owner`,
+        lastMessage: "Hi there! I'm interested in exchanging items with you.",
+        time: "Just now",
+        rating: 5,
+        distance: "2.5 mi away",
+        isNew: false
+      };
+      
+      // Add the conversation to the list
+      setConversations(prev => [newConvo, ...prev]);
+    } else {
+      // Update existing conversation
+      setConversations(prevConversations => 
+        prevConversations.map(conv => 
+          conv.id === conversationId 
+            ? { 
+                ...conv, 
+                isNew: false, 
+                lastMessage: "Hi there! I'm interested in exchanging items with you.",
+                time: "Just now" 
+              } 
+            : conv
+        )
+      );
+    }
   };
 
   return (
@@ -109,7 +117,7 @@ const Messages = () => {
           {/* Conversations sidebar with its own scrollbar - now wider */}
           <div className="w-80 border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
-              conversations={conversations}
+              conversations={displayedConversations}
               activeConversation={activeConversation}
               setActiveConversation={setActiveConversation}
               exchangePairs={dynamicExchangePairs}
