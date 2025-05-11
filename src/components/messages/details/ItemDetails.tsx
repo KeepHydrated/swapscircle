@@ -52,10 +52,11 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
       
       {/* Owner Profile Information */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold mb-2">Emma Wilson</h3>
-        
-        <div className="flex items-center mb-2 text-amber-400">
-          {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-semibold">Emma Wilson</h3>
+          <div className="flex items-center text-amber-400">
+            {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
