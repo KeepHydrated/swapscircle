@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Input } from '@/components/ui/input';
@@ -382,51 +383,8 @@ const PostItem: React.FC = () => {
           
           {/* What You're Looking For Column */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4">
               <h2 className="text-xl font-semibold text-trademate-blue">What You're Looking For</h2>
-              <div className="flex space-x-2">
-                {savedPreferences.length > 0 && (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowSavedPreferences(!showSavedPreferences)}
-                  >
-                    {showSavedPreferences ? 'Hide Saved' : 'Load Saved'}
-                  </Button>
-                )}
-                <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="flex items-center">
-                      <Save className="mr-1 h-4 w-4" />
-                      Save Preferences
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Save Your Preferences</DialogTitle>
-                      <DialogDescription>
-                        Give your preferences a name so you can easily use them again later.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="preference-name" className="col-span-4">
-                          Name
-                        </Label>
-                        <Input
-                          id="preference-name"
-                          placeholder="e.g., Photography Equipment"
-                          className="col-span-4"
-                          value={preferenceName}
-                          onChange={(e) => setPreferenceName(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button type="submit" onClick={savePreferences}>Save</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
             </div>
             
             {/* Display saved preferences if active */}
@@ -582,6 +540,48 @@ const PostItem: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Dialog for saving preferences */}
+      <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Save Your Preferences</DialogTitle>
+            <DialogDescription>
+              Give your preferences a name so you can easily use them again later.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="preference-name" className="col-span-4">
+                Name
+              </Label>
+              <Input
+                id="preference-name"
+                placeholder="e.g., Photography Equipment"
+                className="col-span-4"
+                value={preferenceName}
+                onChange={(e) => setPreferenceName(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" onClick={savePreferences}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Button to show saved preferences */}
+      {savedPreferences.length > 0 && (
+        <div className="fixed bottom-4 left-4">
+          <Button 
+            onClick={() => setShowSavedPreferences(!showSavedPreferences)}
+            variant="outline"
+            className="bg-white shadow"
+          >
+            {showSavedPreferences ? 'Hide Saved' : 'Load Saved'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
