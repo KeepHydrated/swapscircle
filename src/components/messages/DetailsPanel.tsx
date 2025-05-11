@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { ArrowLeftRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Kitchen, DollarSign } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -85,10 +85,10 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
         </div>
       )}
       
-      {/* Image Carousel */}
+      {/* Image Carousel - made smaller */}
       <div className="flex-1 flex flex-col">
-        {/* Main image container with navigation buttons */}
-        <div className="relative h-72 bg-gray-100 overflow-hidden">
+        {/* Main image container with navigation buttons - reduced height */}
+        <div className="relative h-56 bg-gray-100 overflow-hidden">
           <div className="overflow-hidden w-full h-full" ref={emblaRef}>
             <div className="flex h-full">
               {imageUrls.map((url, index) => (
@@ -107,18 +107,18 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
           {/* Navigation buttons */}
           <button 
             onClick={scrollPrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
             aria-label="Previous image"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-600" />
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
           
           <button 
             onClick={scrollNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
             aria-label="Next image"
           >
-            <ChevronRight className="w-6 h-6 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-gray-600" />
           </button>
           
           {/* Image counter */}
@@ -133,7 +133,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             <div 
               key={index}
               onClick={() => emblaApi?.scrollTo(index)} 
-              className={`flex-shrink-0 w-20 h-20 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
+              className={`flex-shrink-0 w-16 h-16 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
             >
               <div 
                 className="w-full h-full bg-center bg-cover flex items-center justify-center text-gray-400"
@@ -144,9 +144,53 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             </div>
           ))}
         </div>
+        
+        {/* Product details section - added based on reference image */}
+        <div className="p-4">
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            {selectedPair?.item1.name || "Stand Mixer"}
+          </h2>
+          
+          <p className="text-gray-700 mb-6">
+            Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality stand mixer at a great value.
+          </p>
+          
+          <hr className="mb-4" />
+          
+          <ul className="space-y-4">
+            <li className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                <Check className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-gray-800 font-medium">Brand New</span>
+            </li>
+            
+            <li className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                <Home className="w-5 h-5 text-blue-600" />
+              </div>
+              <span className="text-gray-800 font-medium">Home & Garden</span>
+            </li>
+            
+            <li className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                <Kitchen className="w-5 h-5 text-purple-600" />
+              </div>
+              <span className="text-gray-800 font-medium">Kitchen Appliances</span>
+            </li>
+            
+            <li className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                <DollarSign className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-gray-800 font-medium">$100 - $250</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
 };
 
 export default DetailsPanel;
+
