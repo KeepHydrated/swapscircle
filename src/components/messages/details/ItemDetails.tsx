@@ -16,7 +16,6 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
       </h2>
       
       <div className="mb-4">
-        <p className="text-gray-700 font-medium">Item Description</p>
         <p className="text-gray-700 mt-2 bg-gray-50 p-3 rounded-md">
           Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
         </p>
