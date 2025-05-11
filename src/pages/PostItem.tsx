@@ -76,7 +76,7 @@ const PostItem: React.FC = () => {
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
   const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("new");
+  const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("clear");
   const [showPreferenceOptions, setShowPreferenceOptions] = useState(false);
   const [selectedSavedPreferenceId, setSelectedSavedPreferenceId] = useState<string>("");
 
@@ -275,9 +275,7 @@ const PostItem: React.FC = () => {
   const addNewItem = () => {
     resetForm();
     
-    if (selectedPreferenceOption === "new") {
-      clearPreferences();
-    } else if (selectedPreferenceOption === "clear") {
+    if (selectedPreferenceOption === "clear") {
       clearPreferences();
     } else if (selectedPreferenceOption === "load" && selectedSavedPreferenceId) {
       const pref = savedPreferences.find(p => p.id === selectedSavedPreferenceId);
@@ -285,6 +283,7 @@ const PostItem: React.FC = () => {
         applyPreference(pref);
       }
     }
+    // If not "clear" or "load", keep current preferences (default behavior)
     
     setShowSuccessDialog(false);
     setShowPreferenceOptions(false); // Reset for next time
@@ -298,7 +297,7 @@ const PostItem: React.FC = () => {
     // Show preference options when success dialog is shown
     setShowPreferenceOptions(true);
     // Default to creating new preferences
-    setSelectedPreferenceOption("new");
+    setSelectedPreferenceOption("clear");
   };
 
   return (
@@ -662,12 +661,12 @@ const PostItem: React.FC = () => {
                 className="space-y-2"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="new" id="new" />
-                  <Label htmlFor="new">Create new item with current preferences</Label>
-                </div>
-                <div className="flex items-center space-x-2">
                   <RadioGroupItem value="clear" id="clear" />
                   <Label htmlFor="clear">Create new item with no preferences</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="keep" id="keep" />
+                  <Label htmlFor="keep">Keep current preferences</Label>
                 </div>
                 {savedPreferences.length > 0 && (
                   <div className="flex items-center space-x-2">
