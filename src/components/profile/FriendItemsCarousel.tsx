@@ -15,11 +15,13 @@ import { MatchItem } from '@/types/item';
 interface FriendItemsCarouselProps {
   items: MatchItem[];
   onLikeItem: (itemId: string) => void;
+  title?: string;
 }
 
 const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({ 
   items, 
-  onLikeItem 
+  onLikeItem,
+  title = "Your Friend's Items"
 }) => {
   const handleLikeClick = (e: React.MouseEvent, item: MatchItem) => {
     e.preventDefault();
@@ -33,6 +35,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 
   return (
     <div className="relative">
+      {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       <Carousel
         opts={{
           align: "start",
