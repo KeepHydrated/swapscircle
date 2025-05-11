@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Check, Home, DollarSign } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -69,23 +69,16 @@ const ConversationList = ({
                     <span className="text-xs text-gray-500">{conversation.time}</span>
                   </div>
                   
-                  {/* Display item tags in a more compact format */}
+                  {/* Simplified exchange item display */}
                   {exchangePair && (
-                    <div className="flex items-center gap-1 mb-1">
-                      <div className="flex items-center bg-green-50 text-green-700 rounded-full px-2 py-0.5 text-xs">
-                        <Check className="h-3 w-3 mr-1" />
-                        <span className="truncate max-w-[60px]">{exchangePair.item1.name}</span>
-                      </div>
-                      
-                      <div className="flex items-center bg-blue-50 text-blue-700 rounded-full px-2 py-0.5 text-xs">
-                        <Home className="h-3 w-3 mr-1" />
-                        <span className="truncate max-w-[60px]">{exchangePair.item2.name}</span>
-                      </div>
+                    <div className="flex items-center mb-1 text-xs">
+                      <span className="truncate text-gray-900">{exchangePair.item1.name}</span>
+                      <ArrowRight className="h-3 w-3 mx-1 text-blue-600" />
+                      <span className="truncate text-gray-900">{exchangePair.item2.name}</span>
                       
                       {conversation.isNew && (
-                        <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600 ml-1">
-                          <DollarSign className="h-3 w-3 mr-1" />
-                          <span>{conversation.rating && conversation.rating > 0 ? `$100 - $250` : "New"}</span>
+                        <Badge variant="outline" className="text-xs ml-2 font-normal">
+                          {conversation.rating && conversation.rating > 0 ? `$100-$250` : "New"}
                         </Badge>
                       )}
                     </div>
