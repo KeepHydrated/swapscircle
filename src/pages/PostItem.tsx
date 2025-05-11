@@ -41,6 +41,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+  RadioGroup,
+  RadioGroupItem
+} from "@/components/ui/radio-group"
 
 // Define types for saved preferences
 type SavedPreference = {
@@ -72,6 +76,8 @@ const PostItem: React.FC = () => {
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
   const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("keep");
+  const [showPreferenceOptions, setShowPreferenceOptions] = useState(false);
 
   // Load saved preferences from localStorage on component mount
   useEffect(() => {
@@ -253,19 +259,38 @@ const PostItem: React.FC = () => {
     setSubcategory("");
     setCondition("");
     setPriceRange("");
-    // We're not resetting the "What You're Looking For" section
+    // We're not resetting the "What You're Looking For" section by default
     // as it's valuable to keep these preferences for the next item
+  };
+
+  const clearPreferences = () => {
+    setLookingForText("");
+    setSelectedCategories([]);
+    setSelectedSubcategories({});
+    setSelectedPriceRanges([]);
+    setSelectedConditions([]);
   };
 
   const addNewItem = () => {
     resetForm();
+    
+    if (selectedPreferenceOption === "new") {
+      clearPreferences();
+    }
+    // If "keep" is selected, we keep the current preferences
+    
     setShowSuccessDialog(false);
+    setShowPreferenceOptions(false); // Reset for next time
   };
 
   const handleSubmit = () => {
     // Here you would normally handle the form submission logic
     // After successful submission, show the success dialog
     setShowSuccessDialog(true);
+    // Show preference options when success dialog is shown
+    setShowPreferenceOptions(true);
+    // Default to keeping preferences
+    setSelectedPreferenceOption("keep");
   };
 
   return (
@@ -606,7 +631,7 @@ const PostItem: React.FC = () => {
         </div>
       )}
 
-      {/* Success Dialog */}
+      {/* Success Dialog with preference options */}
       <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
@@ -618,6 +643,57 @@ const PostItem: React.FC = () => {
               Would you like to add another item?
             </AlertDialogDescription>
           </AlertDialogHeader>
+          
+          {/* Added preference options here */}
+          {showPreferenceOptions && (
+            <div className="my-4 border-t border-b border-gray-200 py-4">
+              <Label className="font-medium mb-2 block">For your next item:</Label>
+              <RadioGroup 
+                value={selectedPreferenceOption} 
+                onValueChange={setSelectedPreferenceOption}
+                className="space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="keep" id="keep" />
+                  <Label htmlFor="keep">Keep my current preferences</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="new" id="new" />
+                  <Label htmlFor="new">Create new preferences</Label>
+                </div>
+                {savedPreferences.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="load" id="load" />
+                    <Label htmlFor="load">Load saved preferences</Label>
+                  </div>
+                )}
+              </RadioGroup>
+              
+              {/* Show saved preferences dropdown if "load" is selected */}
+              {selectedPreferenceOption === "load" && savedPreferences.length > 0 && (
+                <div className="mt-3">
+                  <Select 
+                    onValueChange={(prefId) => {
+                      const pref = savedPreferences.find(p => p.id === prefId);
+                      if (pref) applyPreference(pref);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select saved preferences" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {savedPreferences.map((pref) => (
+                        <SelectItem key={pref.id} value={pref.id}>
+                          {pref.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          )}
+          
           <AlertDialogFooter className="mt-4">
             <AlertDialogCancel className="border-gray-300">
               Done
