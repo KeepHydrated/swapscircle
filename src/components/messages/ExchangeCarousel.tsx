@@ -43,7 +43,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                   className={`flex items-center cursor-pointer rounded-lg ${
                     selectedPairId === pair.id 
                       ? 'bg-blue-50 border border-blue-200' 
-                      : 'hover:bg-gray-50'
+                      : 'hover:bg-gray-50 border border-transparent'
                   }`}
                   onClick={() => onPairSelect(pair.partnerId, pair.id)}
                 >
@@ -52,7 +52,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                       {/* Left item */}
                       <div className="flex flex-col items-center w-1/3 min-h-[80px]">
                         <div className="h-10 flex items-center justify-center">
-                          <Avatar className="h-10 w-10 bg-white">
+                          <Avatar className="h-10 w-10 bg-white border-0">
                             <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
                             <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
                           </Avatar>
@@ -70,7 +70,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                       {/* Right item */}
                       <div className="flex flex-col items-center w-1/3 min-h-[80px]">
                         <div className="h-10 flex items-center justify-center">
-                          <Avatar className="h-10 w-10 bg-white">
+                          <Avatar className="h-10 w-10 bg-white border-0">
                             <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
                             <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
                           </Avatar>
