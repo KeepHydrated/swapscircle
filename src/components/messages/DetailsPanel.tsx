@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Kitchen, DollarSign } from 'lucide-react';
+import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Utensils, DollarSign } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -174,7 +173,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             
             <li className="flex items-center">
               <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                <Kitchen className="w-5 h-5 text-purple-600" />
+                <Utensils className="w-5 h-5 text-purple-600" />
               </div>
               <span className="text-gray-800 font-medium">Kitchen Appliances</span>
             </li>
@@ -193,4 +192,3 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
 };
 
 export default DetailsPanel;
-
