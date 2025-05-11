@@ -28,7 +28,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
 }) => {
   return (
     <div className="h-full flex items-center w-full">
-      <div className="w-full max-w-5xl mx-auto">
+      <div className="w-full">
         <Carousel
           opts={{
             align: "start",
@@ -36,9 +36,9 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
             dragFree: true,
           }}
         >
-          <CarouselContent className="px-4">
+          <CarouselContent className="px-2">
             {exchangePairs.map((pair) => (
-              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4 pr-8">
+              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-2 pr-4">
                 <div 
                   className={`flex items-center cursor-pointer rounded-lg ${
                     selectedPairId === pair.id 
@@ -54,7 +54,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                         <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
                         <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
                       </Avatar>
-                      <span className="text-sm text-blue-600 font-medium mt-2 text-center">
+                      <span className="text-sm text-blue-600 font-medium mt-2 text-center truncate w-full">
                         {pair.item1.name}
                       </span>
                     </div>
@@ -70,7 +70,7 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
                         <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
                         <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
                       </Avatar>
-                      <span className="text-sm text-gray-600 font-medium mt-2 text-center">
+                      <span className="text-sm text-gray-600 font-medium mt-2 text-center truncate w-full">
                         {pair.item2.name}
                       </span>
                     </div>

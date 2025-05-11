@@ -58,7 +58,7 @@ const ConversationList = ({
               onClick={() => setActiveConversation(conversation.id)}
             >
               <div className="flex items-start gap-4">
-                <Avatar className="h-12 w-12">
+                <Avatar className="h-12 w-12 flex-shrink-0">
                   <AvatarFallback className="bg-purple-100 text-purple-800">
                     {conversation.name.substring(0, 2)}
                   </AvatarFallback>
@@ -66,21 +66,15 @@ const ConversationList = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
                     <h3 className="font-medium truncate">{conversation.name}</h3>
-                    <span className="text-xs text-gray-500">{conversation.time}</span>
+                    <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                   </div>
                   
-                  {/* Simplified exchange item display */}
+                  {/* Exchange item display */}
                   {exchangePair && (
                     <div className="flex items-center mb-1 text-xs">
-                      <span className="truncate text-gray-900 max-w-[140px]">{exchangePair.item1.name}</span>
+                      <span className="truncate text-gray-900 max-w-[100px] inline-block">{exchangePair.item1.name}</span>
                       <ArrowRight className="h-3 w-3 mx-1 text-blue-600 flex-shrink-0" />
-                      <span className="truncate text-gray-900 max-w-[140px]">{exchangePair.item2.name}</span>
-                      
-                      {conversation.isNew && (
-                        <Badge variant="outline" className="text-xs ml-2 font-normal flex-shrink-0">
-                          {conversation.rating && conversation.rating > 0 ? `$100-$250` : "New"}
-                        </Badge>
-                      )}
+                      <span className="truncate text-gray-900 max-w-[100px] inline-block">{exchangePair.item2.name}</span>
                     </div>
                   )}
                   

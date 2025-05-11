@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -110,8 +111,8 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - increased height to accommodate the new design */}
-        <div className="w-full border-b border-gray-200 bg-white z-10 h-24 flex items-center">
+        {/* Item exchange carousel */}
+        <div className="w-full border-b border-gray-200 bg-white z-10 h-24 flex items-center px-2">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
             selectedPairId={selectedPairId}
@@ -122,7 +123,7 @@ const Messages = () => {
         {/* Three columns with individual scroll areas */}
         <div className="flex flex-1 overflow-hidden">
           {/* Wider conversations sidebar */}
-          <div className="w-[320px] border-r border-gray-200 overflow-hidden flex flex-col">
+          <div className="w-[350px] border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
               conversations={displayedConversations}
               activeConversation={activeConversation}
