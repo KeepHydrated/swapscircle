@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
-import DetailsPanel from '@/components/messages/DetailsPanel';
+import DetailsPanel from '@/components/messages/details/DetailsPanel';
 import ExchangeCarousel from '@/components/messages/ExchangeCarousel';
 import { mockConversations } from '@/data/conversations';
 import { exchangePairs } from '@/data/exchangePairs';
