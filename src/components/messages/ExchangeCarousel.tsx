@@ -36,9 +36,9 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
             dragFree: true,
           }}
         >
-          <CarouselContent>
+          <CarouselContent className="px-2">
             {exchangePairs.map((pair) => (
-              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 px-1">
+              <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4 pr-6">
                 <div 
                   className={`flex items-center cursor-pointer rounded-lg ${
                     selectedPairId === pair.id 
