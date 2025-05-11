@@ -16,7 +16,7 @@ interface ItemConnectionProps {
 const ItemConnection = ({ selectedPair, selectedItem, onSelectItem }: ItemConnectionProps) => {
   return (
     <div className="p-4 border-b border-gray-200">
-      <div className="flex flex-row items-center justify-between bg-gray-200 px-3 py-3 rounded-md mb-4 h-20">
+      <div className="flex flex-row items-center justify-between bg-white border border-gray-200 px-3 py-3 rounded-md mb-4 h-20">
         {/* First item - clickable */}
         <div 
           className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item1' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
