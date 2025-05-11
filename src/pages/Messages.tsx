@@ -15,6 +15,7 @@ const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
   const [selectedPairId, setSelectedPairId] = useState<number | null>(1);
   const [conversations, setConversations] = useState(mockConversations);
+  const [dynamicExchangePairs, setDynamicExchangePairs] = useState(exchangePairs);
   const location = useLocation();
   
   // Check if we've navigated here from liking an item
@@ -38,10 +39,24 @@ const Messages = () => {
           isNew: true
         };
         
+        // Create a new exchange pair for the carousel
+        const newExchangePair = {
+          id: dynamicExchangePairs.length + 1,
+          partnerId: newConvo.id,
+          item1: { name: "Your Item", image: "/placeholder.svg" },
+          item2: { name: likedItemMatch.name, image: likedItemMatch.image || "/placeholder.svg" }
+        };
+        
+        // Add the new exchange pair
+        setDynamicExchangePairs(prev => [...prev, newExchangePair]);
+        
         // Add the new conversation
         setConversations(prev => [newConvo, ...prev]);
+        
         // Set it as active
         setActiveConversation(newConvo.id);
+        setSelectedPairId(newExchangePair.id);
+        
         // Show a toast
         toast(`New match created with ${newConvo.name}!`);
       }
@@ -51,7 +66,7 @@ const Messages = () => {
   const activeChat = conversations.find(conv => conv.id === activeConversation);
 
   // Get the currently selected pair
-  const selectedPair = exchangePairs.find(pair => pair.id === selectedPairId);
+  const selectedPair = dynamicExchangePairs.find(pair => pair.id === selectedPairId);
 
   const handlePairSelect = (partnerId: string, pairId: number) => {
     setActiveConversation(partnerId);
@@ -72,6 +87,9 @@ const Messages = () => {
           : conv
       )
     );
+    
+    // Conversation no longer needs highlighting in the exchange carousel
+    // since a message has been sent
   };
 
   return (
@@ -80,7 +98,7 @@ const Messages = () => {
         {/* Item exchange carousel - frozen at top with consistent height */}
         <div className="w-full border-b border-gray-200 bg-white z-10 h-16 flex items-center">
           <ExchangeCarousel 
-            exchangePairs={exchangePairs}
+            exchangePairs={dynamicExchangePairs}
             selectedPairId={selectedPairId}
             onPairSelect={handlePairSelect}
           />
@@ -94,7 +112,7 @@ const Messages = () => {
               conversations={conversations}
               activeConversation={activeConversation}
               setActiveConversation={setActiveConversation}
-              exchangePairs={exchangePairs}
+              exchangePairs={dynamicExchangePairs}
             />
           </div>
           

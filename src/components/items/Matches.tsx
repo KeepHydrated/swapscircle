@@ -82,7 +82,14 @@ const Matches: React.FC<MatchesProps> = ({
         toast(`You matched with ${match.name}! Check your messages.`);
         // Navigate to messages with the liked item info
         setTimeout(() => {
-          navigate('/messages', { state: { likedItem: match } });
+          navigate('/messages', { 
+            state: { 
+              likedItem: {
+                ...match,
+                liked: true  // Ensure the item is marked as liked
+              } 
+            }
+          });
         }, 1000);
       }
     }
