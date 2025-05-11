@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, Check, Home, DollarSign } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 type Conversation = {
   id: string;
@@ -69,12 +69,25 @@ const ConversationList = ({
                     <span className="text-xs text-gray-500">{conversation.time}</span>
                   </div>
                   
-                  {/* Display exchange pair info if available */}
-                  {exchangePair && conversation.isNew && (
-                    <div className="flex items-center text-xs text-blue-600 mb-1">
-                      <span className="truncate">{exchangePair.item1.name}</span>
-                      <span className="mx-1">↔</span>
-                      <span className="truncate">{exchangePair.item2.name}</span>
+                  {/* Display item tags in a more compact format */}
+                  {exchangePair && (
+                    <div className="flex items-center gap-1 mb-1">
+                      <div className="flex items-center bg-green-50 text-green-700 rounded-full px-2 py-0.5 text-xs">
+                        <Check className="h-3 w-3 mr-1" />
+                        <span className="truncate max-w-[60px]">{exchangePair.item1.name}</span>
+                      </div>
+                      
+                      <div className="flex items-center bg-blue-50 text-blue-700 rounded-full px-2 py-0.5 text-xs">
+                        <Home className="h-3 w-3 mr-1" />
+                        <span className="truncate max-w-[60px]">{exchangePair.item2.name}</span>
+                      </div>
+                      
+                      {conversation.isNew && (
+                        <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600 ml-1">
+                          <DollarSign className="h-3 w-3 mr-1" />
+                          <span>{conversation.rating && conversation.rating > 0 ? `$100 - $250` : "New"}</span>
+                        </Badge>
+                      )}
                     </div>
                   )}
                   
