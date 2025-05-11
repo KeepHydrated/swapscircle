@@ -76,8 +76,9 @@ const PostItem: React.FC = () => {
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
   const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("keep");
+  const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("new");
   const [showPreferenceOptions, setShowPreferenceOptions] = useState(false);
+  const [selectedSavedPreferenceId, setSelectedSavedPreferenceId] = useState<string>("");
 
   // Load saved preferences from localStorage on component mount
   useEffect(() => {
@@ -276,11 +277,18 @@ const PostItem: React.FC = () => {
     
     if (selectedPreferenceOption === "new") {
       clearPreferences();
+    } else if (selectedPreferenceOption === "clear") {
+      clearPreferences();
+    } else if (selectedPreferenceOption === "load" && selectedSavedPreferenceId) {
+      const pref = savedPreferences.find(p => p.id === selectedSavedPreferenceId);
+      if (pref) {
+        applyPreference(pref);
+      }
     }
-    // If "keep" is selected, we keep the current preferences
     
     setShowSuccessDialog(false);
     setShowPreferenceOptions(false); // Reset for next time
+    setSelectedSavedPreferenceId(""); // Reset selected preference
   };
 
   const handleSubmit = () => {
@@ -289,8 +297,8 @@ const PostItem: React.FC = () => {
     setShowSuccessDialog(true);
     // Show preference options when success dialog is shown
     setShowPreferenceOptions(true);
-    // Default to keeping preferences
-    setSelectedPreferenceOption("keep");
+    // Default to creating new preferences
+    setSelectedPreferenceOption("new");
   };
 
   return (
@@ -644,7 +652,7 @@ const PostItem: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           
-          {/* Added preference options here */}
+          {/* Modified preference options */}
           {showPreferenceOptions && (
             <div className="my-4 border-t border-b border-gray-200 py-4">
               <Label className="font-medium mb-2 block">For your next item:</Label>
@@ -654,17 +662,17 @@ const PostItem: React.FC = () => {
                 className="space-y-2"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="keep" id="keep" />
-                  <Label htmlFor="keep">Keep my current preferences</Label>
+                  <RadioGroupItem value="new" id="new" />
+                  <Label htmlFor="new">Create new item with current preferences</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="new" id="new" />
-                  <Label htmlFor="new">Create new preferences</Label>
+                  <RadioGroupItem value="clear" id="clear" />
+                  <Label htmlFor="clear">Create new item with no preferences</Label>
                 </div>
                 {savedPreferences.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="load" id="load" />
-                    <Label htmlFor="load">Load saved preferences</Label>
+                    <Label htmlFor="load">Use saved preferences</Label>
                   </div>
                 )}
               </RadioGroup>
@@ -673,10 +681,8 @@ const PostItem: React.FC = () => {
               {selectedPreferenceOption === "load" && savedPreferences.length > 0 && (
                 <div className="mt-3">
                   <Select 
-                    onValueChange={(prefId) => {
-                      const pref = savedPreferences.find(p => p.id === prefId);
-                      if (pref) applyPreference(pref);
-                    }}
+                    value={selectedSavedPreferenceId}
+                    onValueChange={setSelectedSavedPreferenceId}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select saved preferences" />
