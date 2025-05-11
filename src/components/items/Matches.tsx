@@ -32,27 +32,26 @@ const Matches: React.FC<MatchesProps> = ({
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {matches.map((match) => (
-          <ItemCard
-            key={match.id}
-            id={match.id}
-            name={match.name}
-            image={match.image}
-            isMatch={true}
-            liked={match.liked}
-            isSelected={selectedMatchId === match.id}
-            onSelect={onSelectMatch}
-          />
+          <React.Fragment key={match.id}>
+            <ItemCard
+              id={match.id}
+              name={match.name}
+              image={match.image}
+              isMatch={true}
+              liked={match.liked}
+              isSelected={selectedMatchId === match.id}
+              onSelect={onSelectMatch}
+            />
+            {selectedMatchId === match.id && (
+              <div className="col-span-2 md:col-span-3 mt-2 mb-4">
+                <Card className="overflow-hidden">
+                  <ItemDetails name={match.name} />
+                </Card>
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
-
-      {/* Item Details for selected match */}
-      {selectedMatchId && (
-        <div className="mt-4">
-          <Card className="overflow-hidden">
-            <ItemDetails name={matches.find(match => match.id === selectedMatchId)?.name || ""} />
-          </Card>
-        </div>
-      )}
     </div>
   );
 };
