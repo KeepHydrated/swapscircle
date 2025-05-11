@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/post-item" element={<PostItem />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user/:userId" element={<UserProfile />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </BrowserRouter>

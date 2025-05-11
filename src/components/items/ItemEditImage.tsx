@@ -7,15 +7,17 @@ interface ItemEditImageProps {
   image: string;
   name: string;
   onImageSelect: () => void;
+  className?: string;
 }
 
 const ItemEditImage: React.FC<ItemEditImageProps> = ({ 
   image, 
   name,
-  onImageSelect 
+  onImageSelect,
+  className = ""
 }) => {
   return (
-    <div className="relative rounded-md overflow-hidden aspect-square bg-gray-100">
+    <div className={`relative rounded-md overflow-hidden aspect-square bg-gray-100 ${className}`}>
       <img 
         src={image} 
         alt={name} 

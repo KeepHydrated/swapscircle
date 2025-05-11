@@ -10,6 +10,7 @@ interface SelectFieldProps {
   onChange: (value: string) => void;
   options: string[];
   placeholder?: string;
+  disabled?: boolean;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({
@@ -18,7 +19,8 @@ const SelectField: React.FC<SelectFieldProps> = ({
   value,
   onChange,
   options,
-  placeholder = "Select an option"
+  placeholder = "Select an option",
+  disabled = false
 }) => {
   return (
     <div className="space-y-2">
@@ -29,6 +31,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm appearance-none pr-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          disabled={disabled}
         >
           <option value="">{placeholder}</option>
           {options.map(option => (

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star, MapPin, Calendar, ArrowLeft } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
@@ -10,6 +9,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import ItemCard from '@/components/items/ItemCard';
 import { MatchItem } from '@/types/item';
+import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
+import ProfileHeader from '@/components/profile/ProfileHeader';
 
 // Mock user data - in a real app this would come from an API call using the userId
 const mockUsers = {
@@ -21,7 +22,8 @@ const mockUsers = {
     reviewCount: 87,
     location: "Seattle, WA",
     memberSince: "2023",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    friendStatus: "none" as FriendRequestStatus
   },
   "user2": {
     id: "user2",
@@ -31,7 +33,8 @@ const mockUsers = {
     reviewCount: 134,
     location: "Austin, TX",
     memberSince: "2021",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    friendStatus: "pending" as FriendRequestStatus
   }
 };
 
@@ -127,7 +130,7 @@ const UserProfile: React.FC = () => {
   const safeUserId = userId || "user1";
   
   // Get user data
-  const profile = mockUsers[safeUserId as keyof typeof mockUsers];
+  const [profile, setProfile] = useState(mockUsers[safeUserId as keyof typeof mockUsers]);
   
   // Get user's items for trade
   const [availableItems, setAvailableItems] = useState<MatchItem[]>(
@@ -162,22 +165,15 @@ const UserProfile: React.FC = () => {
     // In a real app, this could navigate to an item detail page
     console.log(`Selected item: ${itemId}`);
   };
-
-  // Render stars based on rating
-  const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          size={20}
-          fill={i < rating ? "#FFD700" : "none"}
-          color={i < rating ? "#FFD700" : "#D3D3D3"}
-          className="inline-block"
-        />
-      );
+  
+  // Handle friend request status change
+  const handleFriendStatusChange = (status: FriendRequestStatus) => {
+    if (profile) {
+      setProfile({
+        ...profile,
+        friendStatus: status
+      });
     }
-    return stars;
   };
 
   if (!profile) {
@@ -193,44 +189,28 @@ const UserProfile: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="mb-6 flex items-center">
-        <Button variant="ghost" onClick={handleGoBack} className="mr-2">
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center">
+          <Button variant="ghost" onClick={handleGoBack} className="mr-2">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{profile.name}'s Profile</h1>
+            <p className="text-muted-foreground mt-1">View their items and trade history</p>
+          </div>
+        </div>
         <div>
-          <h1 className="text-3xl font-bold">{profile.name}'s Profile</h1>
-          <p className="text-muted-foreground mt-1">View their items and trade history</p>
+          <FriendRequestButton 
+            userId={profile.id} 
+            initialStatus={profile.friendStatus}
+            onStatusChange={handleFriendStatusChange}
+          />
         </div>
       </div>
       
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row p-6 bg-white border-b">
-          <div className="flex-shrink-0 mr-6 flex justify-center md:justify-start mb-4 md:mb-0">
-            <Avatar className="w-32 h-32 border-4 border-primary">
-              <AvatarImage src={profile.avatar} />
-              <AvatarFallback>{profile.name.substring(0, 2)}</AvatarFallback>
-            </Avatar>
-          </div>
-          <div className="flex-grow">
-            <h1 className="text-2xl font-bold text-gray-800 text-center md:text-left">{profile.name}</h1>
-            <div className="my-2 flex justify-center md:justify-start">
-              {renderStars(profile.rating)}
-              <span className="ml-2 text-gray-600">{profile.rating}.0 ({profile.reviewCount} reviews)</span>
-            </div>
-            <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-1" />
-                <span>{profile.location}</span>
-              </div>
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-1" />
-                <span>Member since {profile.memberSince}</span>
-              </div>
-            </div>
-            <p className="mt-4 text-gray-700 leading-relaxed text-center md:text-left">{profile.description}</p>
-          </div>
-        </div>
+        <ProfileHeader profile={profile} />
 
         {/* Tabs */}
         <Tabs defaultValue="available" className="w-full">
