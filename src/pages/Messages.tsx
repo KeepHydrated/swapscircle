@@ -6,7 +6,7 @@ import ChatArea from '@/components/messages/ChatArea';
 import DetailsPanel from '@/components/messages/DetailsPanel';
 import { mockConversations } from '@/data/conversations';
 import { Card } from '@/components/ui/card';
-import { Exchange } from 'lucide-react';
+import { ArrowLeftRight } from 'lucide-react';
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
@@ -38,7 +38,7 @@ const Messages = () => {
               <span className="text-sm font-medium">{item.name}</span>
               {item.id !== matchedItems[matchedItems.length - 1].id && (
                 <div className="absolute -right-6 top-1/2 transform -translate-y-1/2">
-                  <Exchange className="text-blue-500 bg-blue-100 rounded-full p-1 w-8 h-8" />
+                  <ArrowLeftRight className="text-blue-500 bg-blue-100 rounded-full p-1 w-8 h-8" />
                 </div>
               )}
             </Card>
