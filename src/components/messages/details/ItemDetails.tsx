@@ -59,19 +59,17 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
             <AvatarFallback>EW</AvatarFallback>
           </Avatar>
           
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <h3 className="text-lg font-semibold">Emma Wilson</h3>
-            </div>
-            
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col space-y-1">
+            <div className="flex items-center">
+              <h3 className="text-lg font-semibold mr-3">Emma Wilson</h3>
               <div className="flex items-center text-amber-400">
                 {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
               </div>
-              <div className="flex items-center text-sm text-gray-600">
-                <Calendar className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-                <span>Since 2023</span>
-              </div>
+            </div>
+            
+            <div className="flex items-center text-sm text-gray-600">
+              <Calendar className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+              <span>Since 2023</span>
             </div>
           </div>
         </div>
