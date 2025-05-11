@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, Save } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select, 
@@ -15,19 +15,37 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check } from "lucide-react";
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from "@/components/ui/toast"
+import { useToast } from "@/hooks/use-toast"
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from "@/components/ui/command";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+// Define types for saved preferences
+type SavedPreference = {
+  id: string;
+  name: string;
+  lookingFor: string;
+  selectedCategories: string[];
+  selectedSubcategories: Record<string, string[]>;
+  selectedPriceRanges: string[];
+  selectedConditions: string[];
+}
 
 const PostItem: React.FC = () => {
+  const { toast } = useToast();
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
@@ -38,6 +56,20 @@ const PostItem: React.FC = () => {
   const [lookingForText, setLookingForText] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [preferenceName, setPreferenceName] = useState<string>("");
+  const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
+  const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
+  const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
+
+  // Load saved preferences from localStorage on component mount
+  useEffect(() => {
+    const savedPrefs = localStorage.getItem('tradeMatePreferences');
+    if (savedPrefs) {
+      setSavedPreferences(JSON.parse(savedPrefs));
+    }
+  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -122,6 +154,86 @@ const PostItem: React.FC = () => {
         ...prev,
         [category]: updatedSubs
       };
+    });
+  };
+
+  // Toggle price range selection
+  const togglePriceRange = (range: string) => {
+    setSelectedPriceRanges(prev => 
+      prev.includes(range) 
+        ? prev.filter(r => r !== range) 
+        : [...prev, range]
+    );
+  };
+
+  // Toggle condition selection
+  const toggleCondition = (condition: string) => {
+    setSelectedConditions(prev => 
+      prev.includes(condition) 
+        ? prev.filter(c => c !== condition) 
+        : [...prev, condition]
+    );
+  };
+
+  // Save current preferences
+  const savePreferences = () => {
+    if (!preferenceName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a name for your preferences",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newPreference: SavedPreference = {
+      id: Date.now().toString(),
+      name: preferenceName,
+      lookingFor: lookingForText,
+      selectedCategories,
+      selectedSubcategories,
+      selectedPriceRanges,
+      selectedConditions
+    };
+
+    const updatedPreferences = [...savedPreferences, newPreference];
+    setSavedPreferences(updatedPreferences);
+    localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
+    
+    toast({
+      title: "Success",
+      description: "Your preferences have been saved",
+    });
+    
+    setSaveDialogOpen(false);
+    setPreferenceName("");
+  };
+
+  // Apply a saved preference
+  const applyPreference = (preference: SavedPreference) => {
+    setLookingForText(preference.lookingFor);
+    setSelectedCategories(preference.selectedCategories);
+    setSelectedSubcategories(preference.selectedSubcategories);
+    setSelectedPriceRanges(preference.selectedPriceRanges);
+    setSelectedConditions(preference.selectedConditions);
+    
+    toast({
+      title: "Preferences Applied",
+      description: `"${preference.name}" has been applied to your search`,
+    });
+    
+    setShowSavedPreferences(false);
+  };
+
+  // Delete a saved preference
+  const deletePreference = (id: string) => {
+    const updatedPreferences = savedPreferences.filter(pref => pref.id !== id);
+    setSavedPreferences(updatedPreferences);
+    localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
+    
+    toast({
+      title: "Deleted",
+      description: "Preference has been removed",
     });
   };
 
@@ -263,7 +375,81 @@ const PostItem: React.FC = () => {
           
           {/* What You're Looking For Column */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4 text-trademate-blue">What You're Looking For</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-trademate-blue">What You're Looking For</h2>
+              <div className="flex space-x-2">
+                {savedPreferences.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowSavedPreferences(!showSavedPreferences)}
+                  >
+                    {showSavedPreferences ? 'Hide Saved' : 'Load Saved'}
+                  </Button>
+                )}
+                <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="flex items-center">
+                      <Save className="mr-1 h-4 w-4" />
+                      Save Preferences
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Save Your Preferences</DialogTitle>
+                      <DialogDescription>
+                        Give your preferences a name so you can easily use them again later.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="preference-name" className="col-span-4">
+                          Name
+                        </Label>
+                        <Input
+                          id="preference-name"
+                          placeholder="e.g., Photography Equipment"
+                          className="col-span-4"
+                          value={preferenceName}
+                          onChange={(e) => setPreferenceName(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" onClick={savePreferences}>Save</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+            
+            {/* Display saved preferences if active */}
+            {showSavedPreferences && savedPreferences.length > 0 && (
+              <div className="mb-6 bg-gray-50 p-4 rounded-lg border">
+                <h3 className="font-medium mb-3">Saved Preferences</h3>
+                <div className="space-y-2">
+                  {savedPreferences.map((pref) => (
+                    <div key={pref.id} className="flex items-center justify-between bg-white p-2 rounded border">
+                      <span className="font-medium">{pref.name}</span>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          onClick={() => applyPreference(pref)}
+                        >
+                          Apply
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => deletePreference(pref.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             <div className="space-y-6">
               <div className="space-y-2">
@@ -331,7 +517,11 @@ const PostItem: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {priceRanges.map((range) => (
                     <div key={range} className="flex items-center space-x-2">
-                      <Checkbox id={`price-range-${range}`} />
+                      <Checkbox 
+                        id={`price-range-${range}`}
+                        checked={selectedPriceRanges.includes(range)}
+                        onCheckedChange={() => togglePriceRange(range)}
+                      />
                       <Label 
                         htmlFor={`price-range-${range}`}
                         className="text-base font-normal cursor-pointer"
@@ -349,7 +539,11 @@ const PostItem: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {conditions.map((condition) => (
                     <div key={condition} className="flex items-center space-x-2">
-                      <Checkbox id={`condition-${condition}`} />
+                      <Checkbox 
+                        id={`condition-${condition}`}
+                        checked={selectedConditions.includes(condition)}
+                        onCheckedChange={() => toggleCondition(condition)}
+                      />
                       <Label 
                         htmlFor={`condition-${condition}`}
                         className="text-base font-normal cursor-pointer"
