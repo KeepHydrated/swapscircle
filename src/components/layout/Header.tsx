@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Plus, User, Settings, LogOut, MessageCircle, MapPin, Clock, Shield, Calendar } from 'lucide-react';
+import { Bell, Plus, User, Settings, LogOut, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MobileMenu } from './MobileMenu';
@@ -78,38 +78,6 @@ const Header = () => {
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log Out</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              
-              {/* Profile information section */}
-              <div className="p-3">
-                <h3 className="text-sm font-semibold mb-2">Emma Wilson</h3>
-                
-                <div className="flex items-center mb-1.5 text-amber-400">
-                  {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
-                </div>
-                
-                <div className="space-y-1.5">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <MapPin className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-                    <span>2.3 mi away</span>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Clock className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-                    <span>Response: ~1 hour</span>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Shield className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-                    <span>Verified member</span>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
-                    <span>Since 2023</span>
-                  </div>
-                </div>
-              </div>
             </DropdownMenuContent>
           </DropdownMenu>
 
