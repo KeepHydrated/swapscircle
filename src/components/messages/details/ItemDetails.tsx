@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Shield, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface ItemDetailsProps {
   name: string;
@@ -46,6 +47,43 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
             <DollarSign className="w-5 h-5 text-green-600" />
           </div>
           <span className="text-gray-800 font-medium">$100 - $250</span>
+        </div>
+      </div>
+      
+      {/* Owner Profile Information */}
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <h3 className="text-lg font-semibold mb-2">Emma Wilson</h3>
+        
+        <div className="flex items-center mb-2 text-amber-400">
+          {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="flex items-center text-sm text-gray-600">
+            <MapPin className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+            <span>2.3 mi away</span>
+          </div>
+          
+          <div className="flex items-center text-sm text-gray-600">
+            <Clock className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+            <span>Response: ~1 hour</span>
+          </div>
+          
+          <div className="flex items-center text-sm text-gray-600">
+            <Shield className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+            <span>Verified member</span>
+          </div>
+          
+          <div className="flex items-center text-sm text-gray-600">
+            <Calendar className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+            <span>Since 2023</span>
+          </div>
+        </div>
+        
+        <div className="mt-3 flex flex-wrap gap-1">
+          <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-600">Responsive</Badge>
+          <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-600">Top Trader</Badge>
+          <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-600">ID Verified</Badge>
         </div>
       </div>
     </div>
