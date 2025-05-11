@@ -2,6 +2,7 @@
 import React from 'react';
 import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ItemDetailsProps {
   name: string;
@@ -52,9 +53,17 @@ const ItemDetails = ({ name }: ItemDetailsProps) => {
       
       {/* Owner Profile Information */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center mb-2">
+          <Avatar className="h-10 w-10 mr-3">
+            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
+            <AvatarFallback>EW</AvatarFallback>
+          </Avatar>
+          
           <div className="flex items-center justify-between w-full">
-            <h3 className="text-lg font-semibold">Emma Wilson</h3>
+            <div className="flex flex-col">
+              <h3 className="text-lg font-semibold">Emma Wilson</h3>
+            </div>
+            
             <div className="flex items-center gap-3">
               <div className="flex items-center text-amber-400">
                 {'★★★★★'} <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
