@@ -13,19 +13,24 @@ const Messages = () => {
 
   return (
     <MainLayout>
-      <div className="flex h-[calc(100vh-64px)]">
-        {/* Conversations sidebar */}
-        <ConversationList 
-          conversations={mockConversations}
-          activeConversation={activeConversation}
-          setActiveConversation={setActiveConversation}
-        />
+      <div className="flex flex-col h-[calc(100vh-64px)]">
+        {/* Blank row at the top */}
+        <div className="w-full h-12 border-b border-gray-200"></div>
         
-        {/* Chat area */}
-        <ChatArea activeChat={activeChat} />
-        
-        {/* Details panel */}
-        <DetailsPanel />
+        <div className="flex flex-1">
+          {/* Conversations sidebar */}
+          <ConversationList 
+            conversations={mockConversations}
+            activeConversation={activeConversation}
+            setActiveConversation={setActiveConversation}
+          />
+          
+          {/* Chat area */}
+          <ChatArea activeChat={activeChat} />
+          
+          {/* Details panel */}
+          <DetailsPanel />
+        </div>
       </div>
     </MainLayout>
   );
