@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import ItemEditDialog from '@/components/items/ItemEditDialog';
-import { Item } from '@/types/item';
+import { Item, MatchItem } from '@/types/item';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
+import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import { Star, Users } from 'lucide-react';
 
 const Profile: React.FC = () => {
@@ -22,6 +24,52 @@ const Profile: React.FC = () => {
     location: "Portland, OR",
     memberSince: "2022"
   };
+
+  // Friend's items that you can like
+  const [friendItems, setFriendItems] = useState<MatchItem[]>([
+    {
+      id: "f1",
+      name: "Vintage Camera Collection",
+      image: "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848",
+      liked: false
+    },
+    {
+      id: "f2",
+      name: "Handcrafted Leather Journal",
+      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
+      liked: true
+    },
+    {
+      id: "f3",
+      name: "Mid-Century Modern Lamp",
+      image: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15",
+      liked: false
+    },
+    {
+      id: "f4",
+      name: "Vintage Wristwatch",
+      image: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade",
+      liked: false
+    },
+    {
+      id: "f5",
+      name: "Antique Typewriter",
+      image: "https://images.unsplash.com/photo-1558522195-e1201b090344",
+      liked: false
+    },
+    {
+      id: "f6",
+      name: "Rare Comic Book Collection",
+      image: "https://images.unsplash.com/photo-1608889825205-eebdb9fc5806",
+      liked: true
+    },
+    {
+      id: "f7",
+      name: "Vintage Record Player",
+      image: "https://images.unsplash.com/photo-1461360228754-6e81c478b882",
+      liked: false
+    }
+  ]);
 
   // Items for trade
   const [availableItems, setAvailableItems] = useState<Item[]>([
@@ -183,6 +231,15 @@ const Profile: React.FC = () => {
     setActiveTab(tabValue);
   };
 
+  // Function to handle liking an item from friends
+  const handleLikeFriendItem = (itemId: string) => {
+    setFriendItems(items => 
+      items.map(item => 
+        item.id === itemId ? { ...item, liked: !item.liked } : item
+      )
+    );
+  };
+
   return (
     <MainLayout>
       <div className="mb-6">
@@ -197,6 +254,15 @@ const Profile: React.FC = () => {
           onReviewsClick={() => navigateToTab('reviews')}
           onFriendsClick={() => navigateToTab('friends')}
         />
+
+        {/* Friends Items Carousel */}
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold mb-4">Your Friend's Items</h2>
+          <FriendItemsCarousel 
+            items={friendItems} 
+            onLikeItem={handleLikeFriendItem} 
+          />
+        </div>
 
         {/* Tabs */}
         <Tabs 
