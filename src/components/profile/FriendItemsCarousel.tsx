@@ -64,7 +64,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   const selectedItem = items.find(item => item.id === selectedItemId);
 
   return (
-    <div className="relative w-full md:w-1/2 mx-auto">
+    <div className="relative w-full">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       <div ref={carouselRef}>
         <Carousel
@@ -112,76 +112,78 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 
       {/* Item details panel that appears when an item is selected */}
       {selectedItem && (
-        <div ref={detailsRef} className="mt-4 bg-white rounded-lg border p-6 animate-fade-in">
-          <h2 className="text-2xl font-bold mb-2">{selectedItem.name}</h2>
-          
-          <div className="bg-gray-50 p-4 rounded-md mb-4">
-            <p className="text-gray-700">
-              Like new condition. This item has been gently used and well maintained. Perfect for
-              anyone looking for a high-quality {selectedItem.name.toLowerCase()} at a great value.
-            </p>
-          </div>
-          
-          <hr className="my-4" />
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                <span className="text-green-600">✓</span>
-              </div>
-              <span className="text-gray-800 font-medium">Brand New</span>
+        <div className="flex justify-center w-full">
+          <div ref={detailsRef} className="mt-4 bg-white rounded-lg border p-6 animate-fade-in w-full md:w-1/2">
+            <h2 className="text-2xl font-bold mb-2">{selectedItem.name}</h2>
+            
+            <div className="bg-gray-50 p-4 rounded-md mb-4">
+              <p className="text-gray-700">
+                Like new condition. This item has been gently used and well maintained. Perfect for
+                anyone looking for a high-quality {selectedItem.name.toLowerCase()} at a great value.
+              </p>
             </div>
             
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                <span className="text-blue-600">⌂</span>
-              </div>
-              <span className="text-gray-800 font-medium">Home & Garden</span>
-            </div>
+            <hr className="my-4" />
             
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                <span className="text-purple-600">𝍢</span>
-              </div>
-              <span className="text-gray-800 font-medium">Kitchen Appliances</span>
-            </div>
-            
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                <span className="text-green-600">$</span>
-              </div>
-              <span className="text-gray-800 font-medium">$100 - $250</span>
-            </div>
-          </div>
-          
-          <hr className="my-4" />
-          
-          <div className="flex items-center mt-2">
-            <div className="flex-shrink-0 mr-4">
-              <img 
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
-                alt="Owner" 
-                className="w-12 h-12 rounded-full object-cover"
-              />
-            </div>
-            <div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center">
-                <h3 className="text-lg font-semibold mr-2">Emma Wilson</h3>
-                <div className="flex text-amber-400">★★★★★</div>
-                <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                  <span className="text-green-600">✓</span>
+                </div>
+                <span className="text-gray-800 font-medium">Brand New</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <div className="flex items-center">
-                  <span className="mr-1">📅</span>
-                  <span>Since 2023</span>
+              
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                  <span className="text-blue-600">⌂</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="mr-1">📍</span>
-                  <span>2.3 mi away</span>
+                <span className="text-gray-800 font-medium">Home & Garden</span>
+              </div>
+              
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                  <span className="text-purple-600">𝍢</span>
                 </div>
+                <span className="text-gray-800 font-medium">Kitchen Appliances</span>
+              </div>
+              
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                  <span className="text-green-600">$</span>
+                </div>
+                <span className="text-gray-800 font-medium">$100 - $250</span>
+              </div>
+            </div>
+            
+            <hr className="my-4" />
+            
+            <div className="flex items-center mt-2">
+              <div className="flex-shrink-0 mr-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
+                  alt="Owner" 
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              </div>
+              <div>
                 <div className="flex items-center">
-                  <span className="mr-1">🕒</span>
-                  <span>Response: ~1 hour</span>
+                  <h3 className="text-lg font-semibold mr-2">Emma Wilson</h3>
+                  <div className="flex text-amber-400">★★★★★</div>
+                  <span className="text-gray-500 text-xs ml-1">(42 reviews)</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="flex items-center">
+                    <span className="mr-1">📅</span>
+                    <span>Since 2023</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="mr-1">📍</span>
+                    <span>2.3 mi away</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="mr-1">🕒</span>
+                    <span>Response: ~1 hour</span>
+                  </div>
                 </div>
               </div>
             </div>
