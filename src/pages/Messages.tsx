@@ -14,40 +14,52 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Slider } from "@/components/ui/slider";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
-  const [sliderValue, setSliderValue] = useState([33]);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   
   const activeChat = mockConversations.find(conv => conv.id === activeConversation);
 
-  // Organize items into pairs for exchange
+  // Items for exchange with real product names to match the image
   const exchangePairs = [
     { 
       id: 1, 
-      item1: { name: "Blender", image: "/placeholder.svg" },
-      item2: { name: "Stand Mixer", image: "/placeholder.svg" },
+      item1: { name: "Acoustic Guitar", image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" },
+      item2: { name: "Keyboard", image: "/placeholder.svg" },
       partnerId: "1"
     },
     { 
       id: 2, 
-      item1: { name: "Coffee Machine", image: "/placeholder.svg" },
-      item2: { name: "Toaster", image: "/placeholder.svg" },
+      item1: { name: "Laptop", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f" },
+      item2: { name: "Tablet", image: "/placeholder.svg" },
       partnerId: "2"
     },
     { 
       id: 3, 
-      item1: { name: "Food Processor", image: "/placeholder.svg" },
-      item2: { name: "Juicer", image: "/placeholder.svg" },
+      item1: { name: "Drone", image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc" },
+      item2: { name: "Camera", image: "/placeholder.svg" },
       partnerId: "3"
     },
     { 
       id: 4, 
-      item1: { name: "Waffle Maker", image: "/placeholder.svg" },
-      item2: { name: "Air Fryer", image: "/placeholder.svg" },
+      item1: { name: "Smart Watch", image: "/placeholder.svg" },
+      item2: { name: "Fitness Tracker", image: "/placeholder.svg" },
       partnerId: "4"
+    },
+    { 
+      id: 5, 
+      item1: { name: "Gaming Console", image: "/placeholder.svg" },
+      item2: { name: "VR Headset", image: "/placeholder.svg" },
+      partnerId: "5"
+    },
+    { 
+      id: 6, 
+      item1: { name: "Turntable", image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334" },
+      item2: { name: "Speakers", image: "/placeholder.svg" },
+      partnerId: "3"
     }
   ];
 
@@ -56,9 +68,11 @@ const Messages = () => {
     toast(`Starting conversation about this item exchange`);
   };
 
-  const handleSliderChange = (value: number[]) => {
-    setSliderValue(value);
-    // You can use this value to control the carousel position if needed
+  // Function to handle carousel slide change
+  const handleSlideChange = (api: any) => {
+    if (!api) return;
+    const currentIndex = api.selectedScrollSnap();
+    setActiveSlideIndex(currentIndex);
   };
 
   return (
@@ -72,6 +86,7 @@ const Messages = () => {
               loop: true,
             }}
             className="w-full max-w-4xl mx-auto"
+            onSelect={handleSlideChange}
           >
             <CarouselContent>
               {exchangePairs.map((pair) => (
@@ -106,18 +121,21 @@ const Messages = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-between items-center mt-4 px-4">
-              <CarouselPrevious className="relative left-0 translate-y-0" />
-              <div className="w-full px-4 max-w-xs mx-auto">
-                <Slider
-                  value={sliderValue}
-                  onValueChange={handleSliderChange}
-                  max={100}
-                  step={1}
-                  className="cursor-pointer"
-                />
+            <div className="flex justify-center items-center mt-4 px-4">
+              <CarouselPrevious className="relative left-0 translate-y-0 hidden sm:flex" />
+              <div className="w-full max-w-md mx-auto px-4">
+                {/* Custom slider that matches the image */}
+                <div className="relative h-1 bg-gray-200 rounded-full">
+                  <div 
+                    className="absolute h-1 bg-gray-500 rounded-full"
+                    style={{ 
+                      width: `${(activeSlideIndex + 1) * (100 / exchangePairs.length)}%`,
+                      maxWidth: '100%' 
+                    }}
+                  />
+                </div>
               </div>
-              <CarouselNext className="relative right-0 translate-y-0" />
+              <CarouselNext className="relative right-0 translate-y-0 hidden sm:flex" />
             </div>
           </Carousel>
         </div>
