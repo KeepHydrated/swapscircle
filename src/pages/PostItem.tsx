@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, ChevronDown, ChevronUp } from 'lucide-react';
+import { ImagePlus } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select, 
@@ -26,17 +26,6 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 const PostItem: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -49,7 +38,6 @@ const PostItem: React.FC = () => {
   const [lookingForText, setLookingForText] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -66,7 +54,7 @@ const PostItem: React.FC = () => {
     "Clothing": ["Formal Wear", "Costumes", "Accessories", "Designer Items", "Special Occasion", "Other Clothing"],
     "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Other Business Items"],
     "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Other Entertainment Items"],
-    "Collectibles": ["Trading Cards", "Toys", "Vintage Items", "Memorabilia", "Other Collectibles"],
+    "Collectibles": ["Trading Cards", "Toys", "Vintage Items", "Memorabilia", "Comics", "Stamps", "Coins", "Vinyl Records", "Antiques", "Other Collectibles"],
     "Books & Media": ["Books", "Movies", "Music", "Magazines", "Other Media"],
     "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Other Tools"],
     "Vehicles": ["Cars", "Motorcycles", "Bicycles", "Scooters", "Other Vehicles"],
@@ -135,14 +123,6 @@ const PostItem: React.FC = () => {
         [category]: updatedSubs
       };
     });
-  };
-
-  // Toggle category expansion
-  const toggleCategoryExpansion = (category: string) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
   };
 
   return (
@@ -297,72 +277,67 @@ const PostItem: React.FC = () => {
                 />
               </div>
               
-              {/* Categories Section */}
+              {/* Categories Section - Updated to match the image */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Categories (Select all that apply)</h3>
+                <h3 className="text-xl font-medium">Categories (Select all that apply)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {Object.keys(categories).map((categoryName) => (
-                    <div key={categoryName} className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`category-${categoryName}`} 
-                          checked={selectedCategories.includes(categoryName)}
-                          onCheckedChange={() => toggleCategory(categoryName)}
-                        />
-                        <Label 
-                          htmlFor={`category-${categoryName}`}
-                          className="cursor-pointer flex items-center justify-between w-full"
-                        >
-                          <span>{categoryName}</span>
-                          {selectedCategories.includes(categoryName) && (
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="p-0 h-6 w-6"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                toggleCategoryExpansion(categoryName);
-                              }}
-                            >
-                              {expandedCategories[categoryName] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                            </Button>
-                          )}
-                        </Label>
-                      </div>
-                      
-                      {/* Subcategories - only show if category is selected */}
-                      {selectedCategories.includes(categoryName) && expandedCategories[categoryName] && (
-                        <div className="pl-6 space-y-1">
-                          {categories[categoryName as keyof typeof categories].map((subcat) => (
-                            <div key={subcat} className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={`subcategory-${categoryName}-${subcat}`} 
-                                checked={(selectedSubcategories[categoryName] || []).includes(subcat)}
-                                onCheckedChange={() => toggleSubcategory(categoryName, subcat)}
-                              />
-                              <Label 
-                                htmlFor={`subcategory-${categoryName}-${subcat}`}
-                                className="text-sm"
-                              >
-                                {subcat}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                    <div key={categoryName} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`category-${categoryName}`} 
+                        checked={selectedCategories.includes(categoryName)}
+                        onCheckedChange={() => toggleCategory(categoryName)}
+                      />
+                      <Label 
+                        htmlFor={`category-${categoryName}`}
+                        className="text-base font-normal cursor-pointer"
+                      >
+                        {categoryName}
+                      </Label>
                     </div>
                   ))}
                 </div>
               </div>
               
+              {/* Subcategories Section - Only shown when categories are selected */}
+              {selectedCategories.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-medium">Subcategories (Select all that apply)</h3>
+                  {selectedCategories.map((categoryName) => (
+                    <div key={`subcats-${categoryName}`} className="space-y-2">
+                      {categories[categoryName as keyof typeof categories].map((subcat) => (
+                        <div key={`${categoryName}-${subcat}`} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={`subcategory-${categoryName}-${subcat}`} 
+                            checked={(selectedSubcategories[categoryName] || []).includes(subcat)}
+                            onCheckedChange={() => toggleSubcategory(categoryName, subcat)}
+                          />
+                          <Label 
+                            htmlFor={`subcategory-${categoryName}-${subcat}`}
+                            className="text-base font-normal cursor-pointer flex items-center"
+                          >
+                            {subcat} <span className="text-gray-500 ml-2">({categoryName})</span>
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               {/* Price Range Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Price Range (Select all that apply)</h3>
+                <h3 className="text-xl font-medium">Price Range (Select all that apply)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {priceRanges.map((range) => (
                     <div key={range} className="flex items-center space-x-2">
                       <Checkbox id={`price-range-${range}`} />
-                      <Label htmlFor={`price-range-${range}`}>{range}</Label>
+                      <Label 
+                        htmlFor={`price-range-${range}`}
+                        className="text-base font-normal cursor-pointer"
+                      >
+                        {range}
+                      </Label>
                     </div>
                   ))}
                 </div>
@@ -370,12 +345,17 @@ const PostItem: React.FC = () => {
               
               {/* Condition Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Condition (Select all that apply)</h3>
+                <h3 className="text-xl font-medium">Condition (Select all that apply)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {conditions.map((condition) => (
                     <div key={condition} className="flex items-center space-x-2">
                       <Checkbox id={`condition-${condition}`} />
-                      <Label htmlFor={`condition-${condition}`}>{condition}</Label>
+                      <Label 
+                        htmlFor={`condition-${condition}`}
+                        className="text-base font-normal cursor-pointer"
+                      >
+                        {condition}
+                      </Label>
                     </div>
                   ))}
                 </div>
