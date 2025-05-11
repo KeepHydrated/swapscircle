@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
@@ -14,12 +14,19 @@ import {
 } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import useEmblaCarousel from "embla-carousel-react";
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [selectedPairId, setSelectedPairId] = useState<number | null>(1);
   
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    loop: true,
+    dragFree: true,
+  });
+
   const activeChat = mockConversations.find(conv => conv.id === activeConversation);
 
   // Items for exchange with real product names to match the image
@@ -104,31 +111,35 @@ const Messages = () => {
     toast(`Starting conversation about this item exchange`);
   };
 
-  // Function to handle carousel slide change
-  const handleSlideChange = (api: any) => {
-    if (!api) return;
-    const currentIndex = api.selectedScrollSnap();
-    setActiveSlideIndex(currentIndex);
-  };
+  // Update active slide index when carousel scrolls
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    const onScroll = () => {
+      const currentIndex = emblaApi.selectedScrollSnap();
+      setActiveSlideIndex(currentIndex);
+    };
+    
+    emblaApi.on('scroll', onScroll);
+    // Initial call to set the correct starting position
+    onScroll();
+    
+    return () => {
+      emblaApi.off('scroll', onScroll);
+    };
+  }, [emblaApi]);
 
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
         {/* Item exchange row at the top with carousel */}
         <div className="w-full py-4 border-b border-gray-200">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-              dragFree: true,
-            }}
-            className="w-full max-w-4xl mx-auto"
-            onSelect={handleSlideChange}
-          >
-            <ScrollArea className="w-full overflow-x-auto">
-              <CarouselContent className="cursor-grab active:cursor-grabbing">
+          <div className="w-full max-w-4xl mx-auto">
+            {/* Using direct embla carousel reference for more control */}
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex cursor-grab active:cursor-grabbing">
                 {exchangePairs.map((pair) => (
-                  <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-1">
+                  <div key={pair.id} className="min-w-0 shrink-0 grow-0 basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4">
                     <div 
                       className={`flex flex-row items-center justify-center cursor-pointer px-2 py-2 rounded-md ${selectedPairId === pair.id ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
                       onClick={() => handlePairSelect(pair.partnerId, pair.id)}
@@ -156,25 +167,27 @@ const Messages = () => {
                         <span className="text-sm mt-1 text-gray-700">{pair.item2.name}</span>
                       </div>
                     </div>
-                  </CarouselItem>
+                  </div>
                 ))}
-              </CarouselContent>
-            </ScrollArea>
+              </div>
+            </div>
+            
+            {/* Custom slider indicator */}
             <div className="flex justify-center items-center mt-4 px-4">
               <div className="w-full max-w-md mx-auto px-4">
                 {/* Custom slider that matches the image */}
                 <div className="relative h-1 bg-gray-200 rounded-full">
                   <div 
-                    className="absolute h-1 bg-gray-500 rounded-full"
+                    className="absolute h-1 bg-gray-500 rounded-full transition-all duration-300"
                     style={{ 
-                      width: `${(activeSlideIndex + 1) * (100 / (exchangePairs.length / 2))}%`,
+                      width: `${(activeSlideIndex + 1) * (100 / (exchangePairs.length / 3))}%`,
                       maxWidth: '100%' 
                     }}
                   />
                 </div>
               </div>
             </div>
-          </Carousel>
+          </div>
         </div>
         
         <div className="flex flex-1">
