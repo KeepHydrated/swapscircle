@@ -16,3 +16,12 @@ export interface Item {
 export interface MatchItem extends Item {
   liked?: boolean;
 }
+
+export interface CompletedTrade {
+  id: number;
+  name: string;
+  tradedFor: string;
+  tradedWith: string;
+  tradeDate: string;
+  image: string;
+}
