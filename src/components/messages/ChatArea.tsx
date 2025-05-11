@@ -7,9 +7,10 @@ import MessageInput from './MessageInput';
 
 interface ChatAreaProps {
   activeChat: Conversation | undefined;
+  onSendFirstMessage?: (conversationId: string) => void;
 }
 
-const ChatArea = ({ activeChat }: ChatAreaProps) => {
+const ChatArea = ({ activeChat, onSendFirstMessage }: ChatAreaProps) => {
   if (!activeChat) {
     return (
       <div className="flex flex-col h-full">
@@ -24,7 +25,10 @@ const ChatArea = ({ activeChat }: ChatAreaProps) => {
     <div className="flex flex-col h-full">
       <ChatHeader activeChat={activeChat} />
       <div className="flex-1 overflow-y-auto">
-        <MessageDisplay activeChat={activeChat} />
+        <MessageDisplay 
+          activeChat={activeChat} 
+          onSendFirstMessage={onSendFirstMessage}
+        />
       </div>
       <div className="p-4 border-t">
         <MessageInput />

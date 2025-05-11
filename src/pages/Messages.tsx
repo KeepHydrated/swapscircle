@@ -12,8 +12,9 @@ import { toast } from "sonner";
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
   const [selectedPairId, setSelectedPairId] = useState<number | null>(1);
+  const [conversations, setConversations] = useState(mockConversations);
   
-  const activeChat = mockConversations.find(conv => conv.id === activeConversation);
+  const activeChat = conversations.find(conv => conv.id === activeConversation);
 
   // Get the currently selected pair
   const selectedPair = exchangePairs.find(pair => pair.id === selectedPairId);
@@ -22,6 +23,21 @@ const Messages = () => {
     setActiveConversation(partnerId);
     setSelectedPairId(pairId);
     toast(`Starting conversation about this item exchange`);
+  };
+
+  const handleSendFirstMessage = (conversationId: string) => {
+    setConversations(prevConversations => 
+      prevConversations.map(conv => 
+        conv.id === conversationId 
+          ? { 
+              ...conv, 
+              isNew: false, 
+              lastMessage: "Hi there! I'm interested in exchanging items with you.",
+              time: "Just now" 
+            } 
+          : conv
+      )
+    );
   };
 
   return (
@@ -41,7 +57,7 @@ const Messages = () => {
           {/* Conversations sidebar with its own scrollbar */}
           <div className="w-64 border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
-              conversations={mockConversations}
+              conversations={conversations}
               activeConversation={activeConversation}
               setActiveConversation={setActiveConversation}
             />
@@ -49,7 +65,10 @@ const Messages = () => {
           
           {/* Chat area with its own scrollbar */}
           <div className="flex-1 overflow-hidden">
-            <ChatArea activeChat={activeChat} />
+            <ChatArea 
+              activeChat={activeChat} 
+              onSendFirstMessage={handleSendFirstMessage}
+            />
           </div>
           
           {/* Details panel with its own scrollbar */}
