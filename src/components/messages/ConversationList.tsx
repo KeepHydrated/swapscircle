@@ -36,7 +36,7 @@ const ConversationList = ({
 }: ConversationListProps) => {
   return (
     <>
-      <div className="p-4 border-b border-gray-200 flex items-center">
+      <div className="p-4 border-b border-gray-200 flex items-center sticky top-0 bg-white z-10">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input 
@@ -46,7 +46,7 @@ const ConversationList = ({
         </div>
       </div>
       
-      <ScrollArea className="flex-1 h-[calc(100vh-130px)]">
+      <div className="h-[calc(100vh-130px)]">
         {conversations.map((conversation) => {
           // Find the exchange pair for this conversation if it exists
           const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
@@ -84,7 +84,7 @@ const ConversationList = ({
             </div>
           );
         })}
-      </ScrollArea>
+      </div>
     </>
   );
 };

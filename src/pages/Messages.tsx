@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -57,14 +56,12 @@ const Messages = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Conversations sidebar with its own scrollbar - now wider */}
           <div className="w-80 border-r border-gray-200 overflow-hidden flex flex-col">
-            <ScrollArea className="h-full">
-              <ConversationList 
-                conversations={conversations}
-                activeConversation={activeConversation}
-                setActiveConversation={setActiveConversation}
-                exchangePairs={exchangePairs}
-              />
-            </ScrollArea>
+            <ConversationList 
+              conversations={conversations}
+              activeConversation={activeConversation}
+              setActiveConversation={setActiveConversation}
+              exchangePairs={exchangePairs}
+            />
           </div>
           
           {/* Chat area with its own scrollbar */}
