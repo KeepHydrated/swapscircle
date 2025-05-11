@@ -14,25 +14,51 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<string | null>("1");
+  const [sliderValue, setSliderValue] = useState([33]);
   
   const activeChat = mockConversations.find(conv => conv.id === activeConversation);
 
-  // Mock items for the exchange with more items
-  const exchangeItems = [
-    { id: 1, name: "Blender", image: "/placeholder.svg", partnerId: "1" },
-    { id: 2, name: "Stand Mixer", image: "/placeholder.svg", partnerId: "2" },
-    { id: 3, name: "Coffee Machine", image: "/placeholder.svg", partnerId: "3" },
-    { id: 4, name: "Toaster", image: "/placeholder.svg", partnerId: "4" },
-    { id: 5, name: "Food Processor", image: "/placeholder.svg", partnerId: "5" },
+  // Organize items into pairs for exchange
+  const exchangePairs = [
+    { 
+      id: 1, 
+      item1: { name: "Blender", image: "/placeholder.svg" },
+      item2: { name: "Stand Mixer", image: "/placeholder.svg" },
+      partnerId: "1"
+    },
+    { 
+      id: 2, 
+      item1: { name: "Coffee Machine", image: "/placeholder.svg" },
+      item2: { name: "Toaster", image: "/placeholder.svg" },
+      partnerId: "2"
+    },
+    { 
+      id: 3, 
+      item1: { name: "Food Processor", image: "/placeholder.svg" },
+      item2: { name: "Juicer", image: "/placeholder.svg" },
+      partnerId: "3"
+    },
+    { 
+      id: 4, 
+      item1: { name: "Waffle Maker", image: "/placeholder.svg" },
+      item2: { name: "Air Fryer", image: "/placeholder.svg" },
+      partnerId: "4"
+    }
   ];
 
-  const handleItemSelect = (partnerId: string) => {
+  const handlePairSelect = (partnerId: string) => {
     setActiveConversation(partnerId);
     toast(`Starting conversation about this item exchange`);
+  };
+
+  const handleSliderChange = (value: number[]) => {
+    setSliderValue(value);
+    // You can use this value to control the carousel position if needed
   };
 
   return (
@@ -45,34 +71,52 @@ const Messages = () => {
               align: "start",
               loop: true,
             }}
-            className="w-full max-w-md mx-auto"
+            className="w-full max-w-4xl mx-auto"
           >
             <CarouselContent>
-              {exchangeItems.map((item, index) => (
-                <CarouselItem key={item.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4 pl-1">
+              {exchangePairs.map((pair) => (
+                <CarouselItem key={pair.id} className="basis-1/2 md:basis-1/2 lg:basis-1/3 pl-1">
                   <div 
-                    className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105"
-                    onClick={() => handleItemSelect(item.partnerId)}
+                    className="flex flex-row items-center justify-center cursor-pointer transition-transform hover:scale-105 px-2"
+                    onClick={() => handlePairSelect(pair.partnerId)}
                   >
-                    <div className="relative">
+                    {/* First item */}
+                    <div className="flex flex-col items-center">
                       <Avatar className="h-16 w-16 bg-gray-100">
-                        <AvatarImage src={item.image} alt={item.name} />
-                        <AvatarFallback>{item.name[0]}</AvatarFallback>
+                        <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
+                        <AvatarFallback>{pair.item1.name[0]}</AvatarFallback>
                       </Avatar>
-                      
-                      {index % 2 === 0 && (
-                        <div className="absolute -bottom-2 -right-2 flex items-center justify-center h-8 w-8 rounded-full bg-blue-100">
-                          <ArrowLeftRight className="h-4 w-4 text-blue-600" />
-                        </div>
-                      )}
+                      <span className="text-sm mt-1 text-gray-700">{pair.item1.name}</span>
                     </div>
-                    <span className="text-sm mt-2 text-gray-700 text-center">{item.name}</span>
+                    
+                    {/* Exchange icon */}
+                    <div className="flex items-center justify-center h-8 w-8 mx-3 rounded-full bg-blue-100">
+                      <ArrowLeftRight className="h-4 w-4 text-blue-600" />
+                    </div>
+                    
+                    {/* Second item */}
+                    <div className="flex flex-col items-center">
+                      <Avatar className="h-16 w-16 bg-gray-100">
+                        <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
+                        <AvatarFallback>{pair.item2.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm mt-1 text-gray-700">{pair.item2.name}</span>
+                    </div>
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-center mt-2">
-              <CarouselPrevious className="relative left-0 translate-y-0 mr-2" />
+            <div className="flex justify-between items-center mt-4 px-4">
+              <CarouselPrevious className="relative left-0 translate-y-0" />
+              <div className="w-full px-4 max-w-xs mx-auto">
+                <Slider
+                  value={sliderValue}
+                  onValueChange={handleSliderChange}
+                  max={100}
+                  step={1}
+                  className="cursor-pointer"
+                />
+              </div>
               <CarouselNext className="relative right-0 translate-y-0" />
             </div>
           </Carousel>
