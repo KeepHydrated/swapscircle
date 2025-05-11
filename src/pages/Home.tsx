@@ -113,11 +113,11 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-1 p-4 md:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-8">
           {/* My Items Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4">My Items</h2>
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {myItems.map((item) => (
                 <div key={item.id} className="flex flex-col">
                   <Card 
@@ -155,12 +155,12 @@ const Home: React.FC = () => {
             </div>
           </section>
 
-          {/* Matches Section */}
+          {/* Matches Section - now stretches across all columns */}
           <section>
             <h2 className="text-2xl font-bold mb-4">
               Matches for {selectedItem ? selectedItem.name : 'Selected Item'}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {filteredMatches.map((match) => (
                 <Card key={match.id} className="overflow-hidden">
                   <div className="relative">
