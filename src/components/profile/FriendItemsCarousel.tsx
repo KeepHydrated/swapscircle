@@ -44,6 +44,23 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     setSelectedItem(null);
   };
 
+  const handlePopupLikeClick = (item: MatchItem) => {
+    onLikeItem(item.id);
+    
+    // Update the selected item's liked status in the local state
+    if (selectedItem && selectedItem.id === item.id) {
+      setSelectedItem({
+        ...selectedItem,
+        liked: !selectedItem.liked
+      });
+    }
+    
+    toast({
+      title: item.liked ? "Removed from favorites" : "Added to favorites",
+      description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
+    });
+  };
+
   return (
     <div className="relative w-full">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
@@ -78,6 +95,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
           item={selectedItem}
           isOpen={!!selectedItem}
           onClose={handleClosePopup}
+          onLikeClick={handlePopupLikeClick}
         />
       )}
     </div>

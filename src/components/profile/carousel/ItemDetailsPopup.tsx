@@ -1,17 +1,19 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X, Heart } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import {
   Dialog,
   DialogContent,
   DialogOverlay,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 interface ItemDetailsPopupProps {
   item: MatchItem;
   isOpen: boolean;
   onClose: () => void;
+  onLikeClick?: (item: MatchItem) => void;
   className?: string;
 }
 
@@ -19,12 +21,22 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   item, 
   isOpen,
   onClose,
+  onLikeClick,
   className = ''
 }) => {
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onLikeClick) {
+      onLikeClick(item);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
+        <DialogTitle className="sr-only">{item.name}</DialogTitle>
+        
         <button 
           onClick={onClose}
           className="absolute right-4 top-4 rounded-full bg-black/50 p-1 text-white hover:bg-black/70 z-10"
@@ -32,18 +44,26 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           <X className="h-5 w-5" />
         </button>
         
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row h-[80vh] max-h-[600px]">
           {/* Left side - Image */}
-          <div className="md:w-2/3 bg-gray-100">
+          <div className="md:w-2/3 bg-gray-100 relative">
             <img 
               src={item.image} 
               alt={item.name} 
-              className="w-full aspect-square md:aspect-auto md:h-full object-cover"
+              className="w-full h-full object-contain"
             />
+            <button 
+              className="absolute bottom-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
+              onClick={handleLikeClick}
+            >
+              <Heart 
+                className={`h-5 w-5 ${item.liked ? "text-red-500 fill-red-500" : "text-gray-400"}`}
+              />
+            </button>
           </div>
           
           {/* Right side - Item details */}
-          <div className="md:w-1/3 p-4 overflow-y-auto max-h-[80vh] md:max-h-[600px]">
+          <div className="md:w-1/3 p-4 overflow-y-auto">
             <h2 className="text-xl font-bold mb-2">{item.name}</h2>
             
             <div className="bg-gray-50 p-3 rounded-md mb-3">
