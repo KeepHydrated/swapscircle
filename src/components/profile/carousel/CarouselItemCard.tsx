@@ -40,7 +40,7 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
         </button>
       </div>
       <div className="p-2">
-        <h3 className="font-medium text-center truncate text-sm">{item.name}</h3>
+        <h3 className="font-medium text-center truncate text-sm whitespace-nowrap overflow-hidden text-ellipsis" title={item.name}>{item.name}</h3>
       </div>
     </Card>
   );
