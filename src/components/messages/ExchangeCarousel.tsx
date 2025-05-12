@@ -36,46 +36,46 @@ const ExchangeCarousel: React.FC<ExchangeCarouselProps> = ({
             dragFree: true,
           }}
         >
-          <CarouselContent className="px-1">
+          <CarouselContent className="p-1">
             {exchangePairs.map((pair) => (
               <CarouselItem key={pair.id} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-1">
                 <div 
-                  className={`flex items-center cursor-pointer rounded-lg ${
+                  className={`flex items-center cursor-pointer rounded-lg h-[80px] ${
                     selectedPairId === pair.id 
                       ? 'bg-blue-50 border border-blue-100' 
                       : 'hover:bg-gray-50 border border-transparent'
                   }`}
                   onClick={() => onPairSelect(pair.partnerId, pair.id)}
                 >
-                  <div className="flex items-center p-2 w-full justify-center">
+                  <div className="flex items-center p-1 w-full justify-center">
                     <div className="flex items-center justify-between w-full">
                       {/* Left item */}
-                      <div className="flex flex-col items-center w-1/3 min-h-[80px]">
-                        <div className="h-10 flex items-center justify-center">
-                          <Avatar className="h-10 w-10 bg-white border-0">
+                      <div className="flex flex-col items-center w-1/3 min-h-[60px]">
+                        <div className="h-8 flex items-center justify-center">
+                          <Avatar className="h-8 w-8 bg-white border-0">
                             <AvatarImage src={pair.item1.image} alt={pair.item1.name} />
                             <AvatarFallback className="text-lg font-medium">{pair.item1.name[0]}</AvatarFallback>
                           </Avatar>
                         </div>
-                        <span className="text-sm text-foreground font-medium mt-2 text-center truncate w-full max-w-[80px]">
+                        <span className="text-xs text-foreground font-medium mt-1 text-center truncate w-full max-w-[80px]">
                           {pair.item1.name}
                         </span>
                       </div>
                       
                       {/* Center exchange icon */}
-                      <div className="flex items-center justify-center w-1/3 min-h-[80px]">
-                        <ArrowLeftRight className="h-5 w-5 text-gray-400" />
+                      <div className="flex items-center justify-center w-1/3">
+                        <ArrowLeftRight className="h-4 w-4 text-gray-400" />
                       </div>
                       
                       {/* Right item */}
-                      <div className="flex flex-col items-center w-1/3 min-h-[80px]">
-                        <div className="h-10 flex items-center justify-center">
-                          <Avatar className="h-10 w-10 bg-white border-0">
+                      <div className="flex flex-col items-center w-1/3 min-h-[60px]">
+                        <div className="h-8 flex items-center justify-center">
+                          <Avatar className="h-8 w-8 bg-white border-0">
                             <AvatarImage src={pair.item2.image} alt={pair.item2.name} />
                             <AvatarFallback className="text-lg font-medium">{pair.item2.name[0]}</AvatarFallback>
                           </Avatar>
                         </div>
-                        <span className="text-sm text-foreground font-medium mt-2 text-center truncate w-full max-w-[80px]">
+                        <span className="text-xs text-foreground font-medium mt-1 text-center truncate w-full max-w-[80px]">
                           {pair.item2.name}
                         </span>
                       </div>

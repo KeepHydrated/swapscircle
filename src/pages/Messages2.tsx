@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -11,9 +12,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLocation } from 'react-router-dom';
 
 const Messages2 = () => {
-  const [activeConversation, setActiveConversation] = useState<string | null>("1");
+  const [activeConversation, setActiveConversation] = useState<string | null>("2");
   const [selectedPairId, setSelectedPairId] = useState<number | null>(1);
-  const [conversations, setConversations] = useState(mockConversations);
+  
+  // Filter out Emma Wilson (id: "1") from the conversations
+  const [conversations, setConversations] = useState(
+    mockConversations.filter(conv => conv.id !== "1")
+  );
+  
   const [dynamicExchangePairs, setDynamicExchangePairs] = useState(exchangePairs);
   const location = useLocation();
   
@@ -155,8 +161,8 @@ const Messages2 = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - fixed position with z-index to ensure it stays on top */}
-        <div className="w-full border-b border-gray-200 bg-white z-20 h-24 flex items-center px-2 sticky top-0">
+        {/* Item exchange carousel - improved styling to prevent cutoff */}
+        <div className="w-full border-b border-gray-200 bg-white z-20 h-24 flex items-center px-2 py-1 sticky top-0">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
             selectedPairId={selectedPairId}
