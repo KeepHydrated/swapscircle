@@ -1,4 +1,3 @@
-
 // Common types for items and matches
 
 export interface Item {
@@ -24,4 +23,14 @@ export interface CompletedTrade {
   tradedWith: string;
   tradeDate: string;
   image: string;
+  myReview?: {
+    rating: number;
+    comment: string;
+    date: string;
+  };
+  theirReview?: {
+    rating: number;
+    comment: string;
+    date: string;
+  };
 }

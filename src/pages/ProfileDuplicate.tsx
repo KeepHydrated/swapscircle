@@ -12,12 +12,21 @@ import { Star, Users } from 'lucide-react';
 import { Item } from '@/types/item';
 
 // Import mock data
-import { mockProfileData } from '@/data/mockProfileData';
 import { myAvailableItems } from '@/data/mockMyItems';
 import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
 import { myFriends } from '@/data/mockMyFriends';
 import { mockUserItems } from '@/data/mockUsers';
+
+// Create a different profile for this page
+const duplicateProfileData = {
+  name: "Jordan Taylor",
+  description: "Tech gadget enthusiast with a passion for photography. I collect vintage cameras and modern tech accessories. Looking to trade with fellow collectors who appreciate quality items!",
+  rating: 4.8,
+  reviewCount: 92,
+  location: "Seattle, WA",
+  memberSince: "2023"
+};
 
 const ProfileDuplicate: React.FC = () => {
   // Combine items from myAvailableItems and mockUserItems to get 10 items total
@@ -44,7 +53,7 @@ const ProfileDuplicate: React.FC = () => {
         {/* Profile Header with Friend Request Button */}
         <div className="relative">
           <ProfileHeader 
-            profile={mockProfileData} 
+            profile={duplicateProfileData} 
             friendCount={myFriends.length}
             onReviewsClick={() => navigateToTab('reviews')}
             onFriendsClick={() => navigateToTab('friends')}
