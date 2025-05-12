@@ -1,4 +1,3 @@
-
 // Common types for items and matches
 
 export interface Item {
@@ -17,21 +16,4 @@ export interface MatchItem extends Item {
   liked?: boolean;
 }
 
-export interface CompletedTrade {
-  id: number;
-  name: string;
-  tradedFor: string;
-  tradedWith: string;
-  tradeDate: string;
-  image: string;
-  myReview?: {
-    rating: number;
-    comment: string;
-    date: string;
-  };
-  theirReview?: {
-    rating: number;
-    comment: string;
-    date: string;
-  };
-}
+// CompletedTrade is now imported from @/types/trade

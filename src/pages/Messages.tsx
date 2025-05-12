@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -107,6 +108,51 @@ const Messages = () => {
     }
   };
 
+  const handleTradeCompleted = (conversationId: string) => {
+    // In a real app, this would save the completed trade to the user's profile
+    // and potentially remove it from active conversations
+    
+    // Mark the conversation as completed
+    setConversations(prevConversations => 
+      prevConversations.map(conv => 
+        conv.id === conversationId 
+          ? { 
+              ...conv, 
+              lastMessage: "Trade completed! You can now leave a review.",
+              time: "Just now",
+              isCompleted: true
+            } 
+          : conv
+      )
+    );
+    
+    // Create a completed trade record
+    // This would typically be done on the server
+    const completedTrade = {
+      id: Date.now(),
+      name: "Your Item",
+      tradedFor: activeChat.name.replace(" Owner", ""),
+      tradedWith: activeChat.name,
+      tradeDate: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+      image: "/placeholder.svg",
+      theirReview: {
+        rating: 5,
+        comment: "Great trade! The item was exactly as described.",
+        date: "Just now"
+      }
+      // No myReview yet, as the user hasn't left one
+    };
+    
+    // In a real app, we would save this completed trade to the database
+    console.log("Trade completed:", completedTrade);
+    
+    toast.success("Trade completed and added to your profile!");
+  };
+
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
@@ -136,6 +182,7 @@ const Messages = () => {
             <ChatArea 
               activeChat={activeChat} 
               onSendFirstMessage={handleSendFirstMessage}
+              onTradeCompleted={handleTradeCompleted}
             />
           </div>
           
