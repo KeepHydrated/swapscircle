@@ -51,5 +51,61 @@ export const mockConversations: Conversation[] = [
     time: "Mon, 3:20 PM",
     rating: 4,
     distance: "4.5 mi away"
+  },
+  {
+    id: "6",
+    name: "Alex Chen",
+    lastMessage: "I've had this item for about 6 months but it's barely used.",
+    time: "Sun, 1:15 PM",
+    rating: 5,
+    distance: "1.3 mi away"
+  },
+  {
+    id: "7",
+    name: "Taylor Wright",
+    lastMessage: "Perfect! The coffee shop on Main St. at 3pm tomorrow works for me.",
+    time: "Sat, 4:22 PM",
+    rating: 4,
+    distance: "2.8 mi away"
+  },
+  {
+    id: "8",
+    name: "Jordan Parker",
+    lastMessage: "Do you have any photos showing the condition of the item?",
+    time: "Fri, 11:05 AM",
+    rating: 4,
+    distance: "3.5 mi away"
+  },
+  {
+    id: "9",
+    name: "Casey Morgan",
+    lastMessage: "I can offer you my guitar amplifier plus $20. Would that work?",
+    time: "Thu, 7:30 PM",
+    rating: 3,
+    distance: "5.1 mi away"
+  },
+  {
+    id: "10",
+    name: "Riley Johnson",
+    lastMessage: "Thanks for the smooth exchange! Would love to trade again sometime.",
+    time: "Wed, 2:45 PM",
+    rating: 5,
+    distance: "2.0 mi away"
+  },
+  {
+    id: "11",
+    name: "Jamie Edwards",
+    lastMessage: "I'm going to pass for now, but thanks for the offer!",
+    time: "May 10",
+    rating: 4,
+    distance: "4.2 mi away"
+  },
+  {
+    id: "12",
+    name: "Quinn Wilson",
+    lastMessage: "Sorry for the late reply. Is this still available?",
+    time: "May 5",
+    rating: 3,
+    distance: "6.7 mi away"
   }
 ];
