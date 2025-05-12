@@ -22,10 +22,7 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
   // Ensure the entire content is visible on initial render
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.style.height = '100%';
-      containerRef.current.style.overflowY = 'auto';
-      containerRef.current.style.display = 'flex';
-      containerRef.current.style.flexDirection = 'column';
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
     
     if (scrollRef.current) {
@@ -34,8 +31,8 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-full flex-1 overflow-y-auto">
-      <div className="flex flex-col gap-4 px-4 py-3">
+    <div ref={containerRef} className="h-full overflow-y-auto">
+      <div className="flex flex-col gap-4 p-4">
         <p className="text-xs text-center text-gray-500 my-2">Today</p>
         
         {messages.map((message) => (

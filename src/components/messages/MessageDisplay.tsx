@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/data/conversations';
 import { toast } from 'sonner';
 import { getMessagesByChatId } from '@/utils/messageData';
@@ -24,7 +23,7 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
   };
 
   return (
-    <div className="h-[calc(100vh-180px)] flex flex-col overflow-hidden">
+    <div className="flex-1 overflow-hidden">
       {activeChat.isNew ? (
         <NewMatchPrompt 
           name={activeChat.name} 

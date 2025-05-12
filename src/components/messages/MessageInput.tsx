@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Paperclip, Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 
 const MessageInput = () => {
   const [messageInput, setMessageInput] = useState("");
@@ -24,7 +23,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 bg-white border-t border-gray-200 w-full">
+    <div className="p-3 bg-white border-t border-gray-200 w-full">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" className="shrink-0">
           <Paperclip className="h-5 w-5" />
