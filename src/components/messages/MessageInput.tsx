@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Paperclip, Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 const MessageInput = () => {
   const [messageInput, setMessageInput] = useState("");
@@ -15,10 +16,17 @@ const MessageInput = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
-    <div className="p-4 bg-white border-t border-gray-200 w-full">
+    <div className="p-4 bg-white border-t border-gray-200 w-full sticky bottom-0 left-0 right-0">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="shrink-0">
           <Paperclip className="h-5 w-5" />
         </Button>
         <Input 
@@ -26,16 +34,13 @@ const MessageInput = () => {
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
           className="flex-1"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSendMessage();
-            }
-          }}
+          onKeyDown={handleKeyDown}
         />
         <Button 
           onClick={handleSendMessage}
           disabled={!messageInput.trim()}
           size="icon"
+          className="shrink-0"
         >
           <Send className="h-5 w-5" />
         </Button>
