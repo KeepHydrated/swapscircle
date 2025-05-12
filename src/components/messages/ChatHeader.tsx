@@ -13,7 +13,7 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => {
   return (
-    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+    <div className="p-4 border-b border-gray-200 flex justify-between items-center h-16 bg-white">
       <div className="flex items-center gap-3">
         <Link to={`/profile-duplicate`}>
           <Avatar className="h-10 w-10 cursor-pointer">
