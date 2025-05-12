@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import ItemDetails from '@/components/messages/details/ItemDetails';
 import { Item } from '@/types/item';
+import ProfileItemCard from './ProfileItemCard';
 
 interface ProfileItemsForTradeProps {
   items: Item[];
@@ -20,9 +20,6 @@ const ProfileItemsForTrade: React.FC<ProfileItemsForTradeProps> = ({
     if (!selectedItem) return -1;
     return items.findIndex(item => item.id === selectedItem.id);
   };
-  
-  // Find the column and row for the selected item
-  const selectedItemIndex = getSelectedItemIndex();
   
   // Calculate columns based on screen size (this should match the grid-cols in the container)
   const getColumnCount = () => {
@@ -46,9 +43,6 @@ const ProfileItemsForTrade: React.FC<ProfileItemsForTradeProps> = ({
     return { row, col };
   };
   
-  // Get position of selected item
-  const selectedPosition = selectedItemIndex >= 0 ? getRowAndColumn(selectedItemIndex) : null;
-  
   // Determine items that should be rendered with details dropdown
   const renderItems = () => {
     return items.map((item, index) => {
@@ -59,31 +53,15 @@ const ProfileItemsForTrade: React.FC<ProfileItemsForTradeProps> = ({
       const showDropdown = isSelected;
 
       // Calculate if this is an odd or even item (0-indexed, so item 1 is actually index 0)
-      // For even indices (0, 2, 4...), dropdown aligns with item
-      // For odd indices (1, 3, 5...), dropdown appears to the left
       const isEvenItem = index % 2 === 0;
       
       return (
         <React.Fragment key={item.id}>
-          <div className="flex flex-col">
-            <Card 
-              className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
-                isSelected ? 'ring-2 ring-primary shadow-md' : ''
-              }`}
-              onClick={() => onItemClick(item)}
-            >
-              <div className="aspect-[4/3] relative overflow-hidden">
-                <img 
-                  src={item.image} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-medium text-gray-800">{item.name}</h3>
-              </div>
-            </Card>
-          </div>
+          <ProfileItemCard 
+            item={item} 
+            isSelected={isSelected} 
+            onItemClick={onItemClick} 
+          />
           
           {/* Insert dropdown after the item */}
           {showDropdown && (
