@@ -1,13 +1,6 @@
 
 import { mockUserItems } from '@/data/mockUsers';
-
-export interface Friend {
-  id: string;
-  name: string;
-  friendCount: number;
-  avatar: string;
-  items: any[];
-}
+import { Friend } from '@/types/profile';
 
 export const myFriends: Friend[] = [
   {

@@ -22,3 +22,11 @@ export interface CompletedTrade {
   tradeDate: string;
   image: string;
 }
+
+export interface Friend {
+  id: string;
+  name: string;
+  friendCount: number;
+  avatar: string;
+  items: MatchItem[];
+}

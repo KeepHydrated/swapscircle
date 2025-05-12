@@ -1,15 +1,8 @@
 
 import { mockUserItems } from '@/data/mockUsers';
+import { Friend } from '@/types/profile';
 
 // Mock friends data for users
-
-export interface Friend {
-  id: string;
-  name: string;
-  friendCount: number;
-  avatar: string;
-  items: any[];
-}
 
 const mockUserFriends: Record<string, Friend[]> = {
   "user1": [
@@ -49,5 +42,3 @@ const mockUserFriends: Record<string, Friend[]> = {
 export const getUserFriends = (userId: string): Friend[] => {
   return mockUserFriends[userId as keyof typeof mockUserFriends] || [];
 };
-
-export type { Friend };

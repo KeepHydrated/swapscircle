@@ -2,16 +2,8 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
-import { MatchItem } from '@/types/item';
 import { Users } from 'lucide-react';
-
-interface Friend {
-  id: string;
-  name: string;
-  friendCount: number;
-  avatar: string;
-  items: MatchItem[];
-}
+import { Friend } from '@/types/profile';
 
 interface FriendsTabProps {
   friends: Friend[];
