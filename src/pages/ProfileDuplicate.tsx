@@ -120,36 +120,56 @@ const ProfileItemsForTrade: React.FC<{
   onItemClick: (item: Item) => void;
   selectedItem: Item | null;
 }> = ({ items, onItemClick, selectedItem }) => {
+  // Function to determine if an item should show the dropdown
+  const shouldShowDropdown = (index: number) => {
+    if (!selectedItem) return false;
+    return items.findIndex(item => item.id === selectedItem.id) === index;
+  };
+  
+  // Calculate column position for each item (0 for even, 1 for odd)
+  const getColumnPosition = (index: number) => {
+    return index % 2 === 0 ? 0 : 1;
+  };
+  
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {items.map(item => (
-        <div key={item.id} className="flex flex-col">
-          <Card 
-            className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
-              selectedItem?.id === item.id ? 'ring-2 ring-primary shadow-md' : ''
-            }`}
-            onClick={() => onItemClick(item)}
-          >
-            <div className="aspect-[4/3] relative overflow-hidden">
-              <img 
-                src={item.image} 
-                alt={item.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="font-medium text-gray-800">{item.name}</h3>
-            </div>
-          </Card>
-          
-          {/* Item Details dropdown - only show for the selected item */}
-          {selectedItem?.id === item.id && (
-            <div className="w-full mt-2 bg-white rounded-lg border shadow-sm overflow-hidden">
-              <ItemDetails name={selectedItem.name} showProfileInfo={false} />
-            </div>
-          )}
+      {items.map((item, index) => {
+        // Determine if this item should display its dropdown
+        const showDropdown = shouldShowDropdown(index);
+        // Get column position (0 or 1)
+        const colPosition = getColumnPosition(index);
+        
+        return (
+          <div key={item.id} className="flex flex-col">
+            <Card 
+              className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
+                selectedItem?.id === item.id ? 'ring-2 ring-primary shadow-md' : ''
+              }`}
+              onClick={() => onItemClick(item)}
+            >
+              <div className="aspect-[4/3] relative overflow-hidden">
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-medium text-gray-800">{item.name}</h3>
+              </div>
+            </Card>
+          </div>
+        );
+      })}
+      
+      {/* Separate details dropdown that spans two columns */}
+      {selectedItem && (
+        <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 -mt-4 z-10">
+          <div className="bg-white rounded-lg border shadow-sm overflow-hidden mt-2">
+            <ItemDetails name={selectedItem.name} showProfileInfo={false} />
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 };
