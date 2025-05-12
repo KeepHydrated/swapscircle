@@ -161,8 +161,8 @@ const Messages2 = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - improved styling to prevent cutoff */}
-        <div className="w-full border-b border-gray-200 bg-white z-20 h-24 flex items-center px-2 py-1 sticky top-0">
+        {/* Item exchange carousel - reduced height */}
+        <div className="w-full border-b border-gray-200 bg-white z-20 h-20 flex items-center px-2 py-0 sticky top-0">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
             selectedPairId={selectedPairId}
@@ -191,7 +191,7 @@ const Messages2 = () => {
             />
           </div>
           
-          {/* Right sidebar - Details panel with consistent header height */}
+          {/* Right sidebar - Details panel with reduced height and better scrolling */}
           <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
             <ScrollArea className="h-full">
               <DetailsPanel selectedPair={selectedPair} />
