@@ -25,7 +25,7 @@ const ChatArea = ({ activeChat, onSendFirstMessage }: ChatAreaProps) => {
   return (
     <div className="flex flex-col h-full">
       <ChatHeader activeChat={activeChat} showProfileInfo={true} />
-      <div className="flex-1 overflow-y-auto relative">
+      <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-[calc(100vh-176px)]">
           <MessageDisplay 
             activeChat={activeChat} 
