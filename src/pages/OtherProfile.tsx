@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { Item } from '@/types/item';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
@@ -14,134 +13,9 @@ import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/F
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-
-// Mock users data - in a real app this would come from an API call
-const mockUsers = {
-  "user1": {
-    id: "user1",
-    name: "Jessica Parker",
-    description: "Vintage clothing enthusiast and collector of rare books. Always looking for unique fashion pieces from the 70s and 80s, as well as first edition novels.",
-    rating: 4,
-    reviewCount: 87,
-    location: "Seattle, WA",
-    memberSince: "2023",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-    friendStatus: "none" as FriendRequestStatus
-  },
-  "user2": {
-    id: "user2",
-    name: "Marcus Thompson",
-    description: "Tech gadget collector focusing on retro gaming and audio equipment. Looking to expand my collection of vintage consoles and high-quality headphones.",
-    rating: 5,
-    reviewCount: 134,
-    location: "Austin, TX",
-    memberSince: "2021",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-    friendStatus: "pending" as FriendRequestStatus
-  }
-};
-
-// Mock items for trade
-const mockUserItems = {
-  "user1": [
-    {
-      id: "item1",
-      name: "Vintage Leather Jacket",
-      description: "Genuine leather jacket from the 1970s in excellent condition.",
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5",
-      condition: "Excellent",
-      category: "Fashion",
-      priceRange: "$200-$300"
-    },
-    {
-      id: "item2",
-      name: "First Edition Hemingway",
-      description: "First edition copy of 'The Old Man and the Sea' in good condition.",
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
-      condition: "Good",
-      category: "Books",
-      priceRange: "$150-$250"
-    },
-    {
-      id: "item3",
-      name: "80s Sequin Dress",
-      description: "Vintage 1980s sequin evening dress, size 8, barely worn.",
-      image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae",
-      condition: "Near Mint",
-      category: "Fashion",
-      priceRange: "$100-$150"
-    }
-  ],
-  "user2": [
-    {
-      id: "item4",
-      name: "SEGA Genesis Console",
-      description: "Original SEGA Genesis with two controllers and 5 games.",
-      image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
-      condition: "Good",
-      category: "Gaming",
-      priceRange: "$80-$120"
-    },
-    {
-      id: "item5",
-      name: "Vintage Headphones",
-      description: "1970s studio headphones, recently refurbished with new ear pads.",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-      condition: "Good",
-      category: "Audio",
-      priceRange: "$150-$200"
-    },
-    {
-      id: "item6",
-      name: "Retro Game Collection",
-      description: "Collection of 20 retro games from NES, SNES and Genesis eras.",
-      image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8",
-      condition: "Mixed",
-      category: "Gaming",
-      priceRange: "$200-$300"
-    }
-  ]
-};
-
-// Mock completed trades
-const mockUserTrades = {
-  "user1": [
-    {
-      id: 101,
-      name: "Designer Handbag",
-      tradedFor: "Vintage Camera",
-      tradedWith: "Michael R.",
-      tradeDate: "April 10, 2025",
-      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3"
-    },
-    {
-      id: 102,
-      name: "Antique Brooch",
-      tradedFor: "First Edition Book",
-      tradedWith: "Sophia T.",
-      tradeDate: "March 22, 2025",
-      image: "https://images.unsplash.com/photo-1586878341523-7c1ef1a0e9c0"
-    }
-  ],
-  "user2": [
-    {
-      id: 103,
-      name: "Nintendo 64 Console",
-      tradedFor: "Bluetooth Speaker",
-      tradedWith: "Alex P.",
-      tradeDate: "May 5, 2025",
-      image: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e"
-    },
-    {
-      id: 104,
-      name: "Record Player",
-      tradedFor: "Gaming Headset",
-      tradedWith: "Emma L.",
-      tradeDate: "April 17, 2025",
-      image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc"
-    }
-  ]
-};
+import { mockUsers, mockUserItems, mockUserTrades } from '@/data/mockUsers';
+import { ProfileUser } from '@/types/profile';
+import { Item } from '@/types/item';
 
 // Mock reviews data
 const mockUserReviews = {
@@ -222,7 +96,7 @@ const OtherProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState('available');
   
   // Get user data
-  const [profile, setProfile] = useState(mockUsers[safeUserId as keyof typeof mockUsers]);
+  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId as keyof typeof mockUsers]);
   
   // Get user's items for trade
   const [availableItems, setAvailableItems] = useState<Item[]>(

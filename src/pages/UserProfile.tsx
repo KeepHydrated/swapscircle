@@ -1,126 +1,17 @@
+
 import React, { useState } from 'react';
-import { Star, MapPin, Calendar, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import ItemCard from '@/components/items/ItemCard';
-import { MatchItem } from '@/types/item';
 import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
 import ProfileHeader from '@/components/profile/ProfileHeader';
-
-// Mock user data - in a real app this would come from an API call using the userId
-const mockUsers = {
-  "user1": {
-    id: "user1",
-    name: "Jessica Parker",
-    description: "Vintage clothing enthusiast and collector of rare books. Always looking for unique fashion pieces from the 70s and 80s, as well as first edition novels.",
-    rating: 4,
-    reviewCount: 87,
-    location: "Seattle, WA",
-    memberSince: "2023",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-    friendStatus: "none" as FriendRequestStatus
-  },
-  "user2": {
-    id: "user2",
-    name: "Marcus Thompson",
-    description: "Tech gadget collector focusing on retro gaming and audio equipment. Looking to expand my collection of vintage consoles and high-quality headphones.",
-    rating: 5,
-    reviewCount: 134,
-    location: "Austin, TX",
-    memberSince: "2021",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-    friendStatus: "pending" as FriendRequestStatus
-  }
-};
-
-// Mock items for trade
-const mockUserItems = {
-  "user1": [
-    {
-      id: "item1",
-      name: "Vintage Leather Jacket",
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5",
-      liked: false
-    },
-    {
-      id: "item2",
-      name: "First Edition Hemingway",
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
-      liked: false
-    },
-    {
-      id: "item3",
-      name: "80s Sequin Dress",
-      image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae",
-      liked: true
-    }
-  ],
-  "user2": [
-    {
-      id: "item4",
-      name: "SEGA Genesis Console",
-      image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
-      liked: false
-    },
-    {
-      id: "item5",
-      name: "Vintage Headphones",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-      liked: true
-    },
-    {
-      id: "item6",
-      name: "Retro Game Collection",
-      image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8",
-      liked: false
-    }
-  ]
-};
-
-// Mock completed trades
-const mockUserTrades = {
-  "user1": [
-    {
-      id: 101,
-      name: "Designer Handbag",
-      tradedFor: "Vintage Camera",
-      tradedWith: "Michael R.",
-      tradeDate: "April 10, 2025",
-      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3"
-    },
-    {
-      id: 102,
-      name: "Antique Brooch",
-      tradedFor: "First Edition Book",
-      tradedWith: "Sophia T.",
-      tradeDate: "March 22, 2025",
-      image: "https://images.unsplash.com/photo-1586878341523-7c1ef1a0e9c0"
-    }
-  ],
-  "user2": [
-    {
-      id: 103,
-      name: "Nintendo 64 Console",
-      tradedFor: "Bluetooth Speaker",
-      tradedWith: "Alex P.",
-      tradeDate: "May 5, 2025",
-      image: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e"
-    },
-    {
-      id: 104,
-      name: "Record Player",
-      tradedFor: "Gaming Headset",
-      tradedWith: "Emma L.",
-      tradeDate: "April 17, 2025",
-      image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc"
-    }
-  ]
-};
+import UserAvailableItems from '@/components/profile/UserAvailableItems';
+import UserCompletedTrades from '@/components/profile/UserCompletedTrades';
+import { mockUsers, mockUserItems, mockUserTrades } from '@/data/mockUsers';
+import { ProfileUser } from '@/types/profile';
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -130,10 +21,10 @@ const UserProfile: React.FC = () => {
   const safeUserId = userId || "user1";
   
   // Get user data
-  const [profile, setProfile] = useState(mockUsers[safeUserId as keyof typeof mockUsers]);
+  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId as keyof typeof mockUsers]);
   
   // Get user's items for trade
-  const [availableItems, setAvailableItems] = useState<MatchItem[]>(
+  const [availableItems, setAvailableItems] = useState(
     mockUserItems[safeUserId as keyof typeof mockUserItems] || []
   );
   
@@ -231,65 +122,16 @@ const UserProfile: React.FC = () => {
 
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {availableItems.map(item => (
-                <ItemCard
-                  key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  image={item.image}
-                  isMatch={true}
-                  liked={item.liked}
-                  onSelect={handleSelectItem}
-                  onLike={handleLikeItem}
-                />
-              ))}
-            </div>
+            <UserAvailableItems 
+              items={availableItems}
+              onLikeItem={handleLikeItem}
+              onSelectItem={handleSelectItem}
+            />
           </TabsContent>
 
           {/* Completed Trades Tab Content */}
           <TabsContent value="completed" className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {completedTrades.map(item => (
-                <Card key={item.id} className="overflow-hidden">
-                  <div className="p-3 border-b">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold text-gray-800">{item.tradedWith}</h3>
-                        <p className="text-xs text-gray-500">{item.tradeDate}</p>
-                      </div>
-                      <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                        Completed
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row p-4">
-                    <div className="w-full sm:w-1/2 pb-4 sm:pb-0 sm:pr-2 border-b sm:border-b-0 sm:border-r">
-                      <div className="text-center mb-1 text-sm text-gray-600 font-medium">They traded:</div>
-                      <div className="h-40 overflow-hidden mb-2">
-                        <img 
-                          src={item.image} 
-                          alt={item.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <p className="text-center text-sm">{item.name}</p>
-                    </div>
-                    <div className="w-full sm:w-1/2 pt-4 sm:pt-0 sm:pl-2">
-                      <div className="text-center mb-1 text-sm text-gray-600 font-medium">For:</div>
-                      <div className="h-40 overflow-hidden mb-2">
-                        <img 
-                          src="https://images.unsplash.com/photo-1460925895917-afdab827c52f" 
-                          alt={item.tradedFor} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <p className="text-center text-sm">{item.tradedFor}</p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <UserCompletedTrades trades={completedTrades} />
           </TabsContent>
         </Tabs>
       </div>
