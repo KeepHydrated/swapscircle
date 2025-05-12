@@ -18,6 +18,18 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
     }
   }, [messages]);
 
+  // Add an effect to ensure scrolling on initial render
+  useEffect(() => {
+    // Short timeout to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: "auto" });
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="flex flex-col gap-4 px-4 pb-4">
       <p className="text-xs text-center text-gray-500 my-2">Today</p>
@@ -37,7 +49,7 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
       </div>
       
       {/* Div that helps auto-scroll to bottom - made more visible with padding */}
-      <div ref={scrollRef} className="h-4" />
+      <div ref={scrollRef} className="h-8" />
     </div>
   );
 };
