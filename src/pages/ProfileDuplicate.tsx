@@ -32,12 +32,7 @@ const ProfileDuplicate: React.FC = () => {
 
   // Function to handle item click
   const handleItemClick = (item: Item) => {
-    setSelectedItem(item);
-  };
-
-  // Function to clear selected item
-  const handleCloseItemDetails = () => {
-    setSelectedItem(null);
+    setSelectedItem(prevItem => prevItem?.id === item.id ? null : item);
   };
 
   return (
@@ -95,27 +90,7 @@ const ProfileDuplicate: React.FC = () => {
           <TabsContent value="available" className="p-6">
             <div className="space-y-6">
               {/* Show items grid */}
-              <ProfileItemsForTrade items={myAvailableItems} onItemClick={handleItemClick} />
-              
-              {/* Item Details Section - Show when an item is selected but in a compact format */}
-              {selectedItem && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4" onClick={handleCloseItemDetails}>
-                  <Card 
-                    className="max-w-md w-full max-h-[80vh] overflow-y-auto bg-white rounded-lg shadow-xl" 
-                    onClick={e => e.stopPropagation()}
-                  >
-                    <button 
-                      className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
-                      onClick={handleCloseItemDetails}
-                    >
-                      ×
-                    </button>
-                    <div className="p-1">
-                      <ItemDetails name={selectedItem.name} showProfileInfo={false} />
-                    </div>
-                  </Card>
-                </div>
-              )}
+              <ProfileItemsForTrade items={myAvailableItems} onItemClick={handleItemClick} selectedItem={selectedItem} />
             </div>
           </TabsContent>
 
@@ -143,26 +118,37 @@ const ProfileDuplicate: React.FC = () => {
 const ProfileItemsForTrade: React.FC<{
   items: Item[];
   onItemClick: (item: Item) => void;
-}> = ({ items, onItemClick }) => {
+  selectedItem: Item | null;
+}> = ({ items, onItemClick, selectedItem }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {items.map(item => (
-        <Card 
-          key={item.id} 
-          className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => onItemClick(item)}
-        >
-          <div className="aspect-[4/3] relative overflow-hidden">
-            <img 
-              src={item.image} 
-              alt={item.name} 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="p-4">
-            <h3 className="font-medium text-gray-800">{item.name}</h3>
-          </div>
-        </Card>
+        <div key={item.id} className="flex flex-col">
+          <Card 
+            className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
+              selectedItem?.id === item.id ? 'ring-2 ring-primary shadow-md' : ''
+            }`}
+            onClick={() => onItemClick(item)}
+          >
+            <div className="aspect-[4/3] relative overflow-hidden">
+              <img 
+                src={item.image} 
+                alt={item.name} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="p-4">
+              <h3 className="font-medium text-gray-800">{item.name}</h3>
+            </div>
+          </Card>
+          
+          {/* Item Details dropdown - only show for the selected item */}
+          {selectedItem?.id === item.id && (
+            <div className="w-full mt-2 bg-white rounded-lg border shadow-sm overflow-hidden">
+              <ItemDetails name={selectedItem.name} showProfileInfo={false} />
+            </div>
+          )}
+        </div>
       ))}
     </div>
   );
