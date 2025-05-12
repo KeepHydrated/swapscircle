@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/data/conversations';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,8 @@ interface ChatMessage {
 }
 
 const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   // Sample messages for specific chats
   const messagesByChat: Record<string, ChatMessage[]> = {
     // Default messages for any chat
@@ -163,8 +164,15 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
     }
   };
 
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messages, activeChat.id]);
+
   return (
-    <ScrollArea className="flex-1 p-4 bg-white">
+    <ScrollArea className="h-[calc(100vh-180px)] py-4">
       {activeChat.isNew ? (
         <div className="flex flex-col items-center my-8 gap-4">
           <p className="text-gray-600">You've matched with {activeChat.name}!</p>
@@ -178,7 +186,7 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
           </Button>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 py-4">
+        <div className="flex flex-col gap-4 px-4">
           <p className="text-xs text-center text-gray-500 my-2">Today</p>
           
           {messages.map((message) => (
@@ -211,6 +219,9 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
               Delivered
             </div>
           </div>
+          
+          {/* Div that helps auto-scroll to bottom */}
+          <div ref={scrollRef} />
         </div>
       )}
     </ScrollArea>

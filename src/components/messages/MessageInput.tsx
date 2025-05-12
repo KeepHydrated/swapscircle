@@ -24,7 +24,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 bg-white border-t border-gray-200 w-full sticky bottom-0 left-0 right-0">
+    <div className="p-4 bg-white border-t border-gray-200 w-full">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" className="shrink-0">
           <Paperclip className="h-5 w-5" />
