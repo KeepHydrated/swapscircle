@@ -65,23 +65,21 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   
   return (
     <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
-      {/* Item connection display at the top of the right panel */}
+      {/* Item connection display with fixed height to match other headers */}
       {selectedPair && (
-        <div className="p-4 border-b border-gray-200">
-          {/* Item connection display */}
-          <div className="flex flex-row items-center justify-between bg-gray-200 px-3 py-3 rounded-md mb-4 h-20">
+        <div className="p-4 border-b border-gray-200 bg-white h-16 flex items-center">
+          {/* Item connection display - simplified to ensure alignment */}
+          <div className="flex flex-row items-center justify-between bg-gray-100 px-3 py-2 rounded-md w-full">
             {/* First item - clickable */}
             <div 
-              className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item1' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
+              className={`flex items-center cursor-pointer transition-all ${selectedItem === 'item1' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
               onClick={() => handleSelectItem('item1')}
             >
-              <div className={`p-0.5 rounded-full ${selectedItem === 'item1' ? 'bg-blue-100' : ''}`}>
-                <Avatar className="h-12 w-12 bg-gray-100">
-                  <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
-                  <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
-                </Avatar>
-              </div>
-              <span className={`text-xs mt-1 truncate w-full text-center ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+              <Avatar className="h-8 w-8 bg-gray-50">
+                <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
+                <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
+              </Avatar>
+              <span className={`text-xs ml-2 truncate max-w-[80px] ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
                 {selectedPair.item1.name}
               </span>
             </div>
@@ -93,16 +91,14 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             
             {/* Second item - clickable */}
             <div 
-              className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item2' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
+              className={`flex items-center cursor-pointer transition-all ${selectedItem === 'item2' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
               onClick={() => handleSelectItem('item2')}
             >
-              <div className={`p-0.5 rounded-full ${selectedItem === 'item2' ? 'bg-blue-100' : ''}`}>
-                <Avatar className="h-12 w-12 bg-gray-100">
-                  <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
-                  <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
-                </Avatar>
-              </div>
-              <span className={`text-xs mt-1 truncate w-full text-center ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+              <Avatar className="h-8 w-8 bg-gray-50">
+                <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
+                <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
+              </Avatar>
+              <span className={`text-xs ml-2 truncate max-w-[80px] ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
                 {selectedPair.item2.name}
               </span>
             </div>

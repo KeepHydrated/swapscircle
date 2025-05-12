@@ -110,7 +110,7 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - fixed position */}
+        {/* Item exchange carousel - fixed height for consistent alignment */}
         <div className="w-full border-b border-gray-200 bg-white z-10 h-24 flex items-center px-2 sticky top-0">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
@@ -119,9 +119,9 @@ const Messages = () => {
           />
         </div>
         
-        {/* Three columns with individual scroll areas */}
+        {/* Three columns with consistent header heights */}
         <div className="flex flex-1 overflow-hidden">
-          {/* Wider conversations sidebar */}
+          {/* Left sidebar - Conversations */}
           <div className="w-[350px] border-r border-gray-200 overflow-hidden flex flex-col">
             <ConversationList 
               conversations={displayedConversations}
@@ -131,7 +131,7 @@ const Messages = () => {
             />
           </div>
           
-          {/* Chat area with its own scrollbar */}
+          {/* Middle - Chat area */}
           <div className="flex-1 overflow-hidden">
             <ChatArea 
               activeChat={activeChat} 
@@ -139,7 +139,7 @@ const Messages = () => {
             />
           </div>
           
-          {/* Details panel with its own scrollbar */}
+          {/* Right sidebar - Details panel with consistent header height */}
           <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
             <ScrollArea className="h-full">
               <DetailsPanel selectedPair={selectedPair} />
