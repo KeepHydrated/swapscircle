@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Carousel, 
   CarouselContent, 
@@ -23,10 +23,8 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   onLikeItem,
   title = "Your Friend's Items"
 }) => {
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [dropdownPosition, setDropdownPosition] = useState<'left' | 'right'>('left');
+  const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const detailsRef = useRef<HTMLDivElement>(null);
 
   const handleLikeClick = (e: React.MouseEvent, item: MatchItem) => {
     e.stopPropagation(); // Prevent triggering selection when clicking heart
@@ -38,39 +36,13 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     });
   };
 
-  const handleItemClick = (itemId: string, itemElement: HTMLElement) => {
-    // Calculate if the item is in the left or right half of the screen
-    if (itemElement) {
-      const rect = itemElement.getBoundingClientRect();
-      const windowWidth = window.innerWidth;
-      const isOnRightSide = (rect.left + rect.width/2) > windowWidth/2;
-      setDropdownPosition(isOnRightSide ? 'right' : 'left');
-    }
-    
-    setSelectedItemId(prevId => prevId === itemId ? null : itemId);
+  const handleItemClick = (item: MatchItem) => {
+    setSelectedItem(item);
   };
 
-  // Close the dropdown when clicking outside of the carousel or details panel
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectedItemId) {
-        // Check if the click is outside both the carousel and the details panel
-        const isOutsideCarousel = carouselRef.current && !carouselRef.current.contains(event.target as Node);
-        const isOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
-        
-        if (isOutsideCarousel && isOutsideDetails) {
-          setSelectedItemId(null);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [selectedItemId]);
-
-  const selectedItem = items.find(item => item.id === selectedItemId);
+  const handleClosePopup = () => {
+    setSelectedItem(null);
+  };
 
   return (
     <div className="relative w-full">
@@ -88,8 +60,8 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
               <CarouselItem key={item.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
                 <CarouselItemCard
                   item={item}
-                  isSelected={selectedItemId === item.id}
-                  onItemClick={handleItemClick}
+                  isSelected={selectedItem?.id === item.id}
+                  onItemClick={() => handleItemClick(item)}
                   onLikeClick={handleLikeClick}
                 />
               </CarouselItem>
@@ -100,15 +72,13 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         </Carousel>
       </div>
 
-      {/* Item details panel that appears when an item is selected - width of 3 items */}
+      {/* Item details lightbox popup */}
       {selectedItem && (
-        <div ref={detailsRef}>
-          <ItemDetailsPopup
-            item={selectedItem}
-            dropdownPosition={dropdownPosition}
-            className="w-[calc(50%-2rem)]" // Width of approximately 3 items
-          />
-        </div>
+        <ItemDetailsPopup
+          item={selectedItem}
+          isOpen={!!selectedItem}
+          onClose={handleClosePopup}
+        />
       )}
     </div>
   );

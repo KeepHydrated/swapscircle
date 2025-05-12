@@ -7,7 +7,7 @@ import { MatchItem } from '@/types/item';
 interface CarouselItemCardProps {
   item: MatchItem;
   isSelected: boolean;
-  onItemClick: (itemId: string, element: HTMLElement) => void;
+  onItemClick: () => void;
   onLikeClick: (e: React.MouseEvent, item: MatchItem) => void;
 }
 
@@ -22,7 +22,7 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
       className={`overflow-hidden cursor-pointer transition-all ${
         isSelected ? 'ring-2 ring-primary shadow-md' : ''
       }`}
-      onClick={(e) => onItemClick(item.id, e.currentTarget)}
+      onClick={onItemClick}
     >
       <div className="relative">
         <img 
