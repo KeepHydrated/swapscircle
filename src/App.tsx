@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
+import Messages2 from "./pages/Messages2";
 import Profile from "./pages/Profile";
 import ProfileDuplicate from "./pages/ProfileDuplicate";
 import UserProfile from "./pages/UserProfile";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/post-item" element={<PostItem />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/messages2" element={<Messages2 />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
           <Route path="/user/:userId" element={<UserProfile />} />
