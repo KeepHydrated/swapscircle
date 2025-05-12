@@ -44,12 +44,19 @@ const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatArea
 
   return (
     <div className="flex flex-col h-full bg-white">
+      {/* Fixed header */}
       <ChatHeader activeChat={activeChat} showProfileInfo={true} />
-      <div className="flex-1 overflow-hidden flex flex-col">
+      
+      {/* Scrollable message area that takes available space */}
+      <div className="flex-1 overflow-hidden">
         <MessageDisplay 
           activeChat={activeChat} 
           onSendFirstMessage={onSendFirstMessage}
         />
+      </div>
+      
+      {/* Fixed input area at the bottom */}
+      <div className="flex-shrink-0">
         <MessageInput 
           onMarkCompleted={handleTradeCompleted} 
           conversationId={activeChat.id} 

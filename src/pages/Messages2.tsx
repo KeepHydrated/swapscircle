@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ConversationList from '@/components/messages/ConversationList';
@@ -177,8 +176,8 @@ const Messages2 = () => {
             />
           </div>
           
-          {/* Middle - Chat area */}
-          <div className="flex-1 overflow-hidden">
+          {/* Middle - Chat area - Ensure it has proper height and doesn't scroll as a whole */}
+          <div className="flex-1 overflow-hidden flex flex-col">
             <ChatArea 
               activeChat={activeChat} 
               onSendFirstMessage={handleSendFirstMessage}
@@ -199,4 +198,3 @@ const Messages2 = () => {
 };
 
 export default Messages2;
-
