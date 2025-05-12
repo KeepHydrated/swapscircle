@@ -4,7 +4,6 @@ import { Conversation } from '@/data/conversations';
 import ChatHeader from './ChatHeader';
 import MessageDisplay from './MessageDisplay';
 import MessageInput from './MessageInput';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatAreaProps {
   activeChat: Conversation | undefined;
