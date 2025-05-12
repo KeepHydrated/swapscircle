@@ -9,6 +9,7 @@ import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
+import OtherProfile from "./pages/OtherProfile";
 import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user/:userId" element={<UserProfile />} />
+          <Route path="/other-profile/:userId?" element={<OtherProfile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="*" element={<Home />} />
         </Routes>
