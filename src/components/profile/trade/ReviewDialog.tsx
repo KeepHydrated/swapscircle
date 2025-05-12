@@ -19,13 +19,15 @@ interface ReviewDialogProps {
   traderId: string;
   review?: TradeReview;
   onSubmitReview?: (comment: string, rating: number) => void;
+  children?: React.ReactNode;
 }
 
 const ReviewDialog: React.FC<ReviewDialogProps> = ({ 
   type, 
   traderId, 
   review, 
-  onSubmitReview 
+  onSubmitReview,
+  children 
 }) => {
   const [reviewText, setReviewText] = React.useState('');
   const [selectedRating, setSelectedRating] = React.useState(5);
@@ -42,23 +44,24 @@ const ReviewDialog: React.FC<ReviewDialogProps> = ({
     }
   };
 
-  let buttonContent;
+  // Default button content if no children are provided
+  let defaultTrigger;
   if (type === 'view-my') {
-    buttonContent = (
+    defaultTrigger = (
       <Button variant="outline" size="sm" className="flex-1">
         <Check className="h-4 w-4 mr-2" />
         You Left a Review
       </Button>
     );
   } else if (type === 'view-their') {
-    buttonContent = (
+    defaultTrigger = (
       <Button variant="outline" size="sm" className="flex-1">
         <MessageSquare className="h-4 w-4 mr-2" />
         View Their Review
       </Button>
     );
   } else {
-    buttonContent = (
+    defaultTrigger = (
       <Button variant="default" size="sm" className="flex-1">
         <Star className="h-4 w-4 mr-2" />
         Leave a Review
@@ -69,7 +72,7 @@ const ReviewDialog: React.FC<ReviewDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        {buttonContent}
+        {children || defaultTrigger}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

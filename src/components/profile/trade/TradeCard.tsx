@@ -33,20 +33,46 @@ const TradeCard: React.FC<TradeCardProps> = ({ trade, onSubmitReview }) => {
             <p className="text-xs text-gray-500">{trade.tradeDate}</p>
           </div>
           
-          {/* Review summary display */}
+          {/* Review summary display - now clickable */}
           <div className="flex items-center space-x-4">
             {trade.myReview && (
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-600">Your Review</span>
-                <ReviewStars rating={trade.myReview.rating} />
-              </div>
+              <ReviewDialog 
+                type="view-my" 
+                traderId={trade.tradedWith} 
+                review={trade.myReview}
+              >
+                <div className="flex flex-col items-end cursor-pointer hover:opacity-80 transition-opacity">
+                  <span className="text-xs text-gray-600">Your Review</span>
+                  <ReviewStars rating={trade.myReview.rating} />
+                </div>
+              </ReviewDialog>
             )}
             
             {trade.theirReview && (
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-600">Their Review</span>
-                <ReviewStars rating={trade.theirReview.rating} />
-              </div>
+              <ReviewDialog 
+                type="view-their" 
+                traderId={trade.tradedWith} 
+                review={trade.theirReview}
+              >
+                <div className="flex flex-col items-end cursor-pointer hover:opacity-80 transition-opacity">
+                  <span className="text-xs text-gray-600">Their Review</span>
+                  <ReviewStars rating={trade.theirReview.rating} />
+                </div>
+              </ReviewDialog>
+            )}
+
+            {/* Add review button if no review exists */}
+            {!trade.myReview && (
+              <ReviewDialog 
+                type="leave" 
+                traderId={trade.tradedWith} 
+                onSubmitReview={handleSubmitReview}
+              >
+                <div className="flex flex-col items-end cursor-pointer hover:opacity-80 transition-opacity">
+                  <span className="text-xs text-gray-600">Leave Review</span>
+                  <div className="text-sm text-blue-500">+ Add Review</div>
+                </div>
+              </ReviewDialog>
             )}
           </div>
         </div>
@@ -74,32 +100,6 @@ const TradeCard: React.FC<TradeCardProps> = ({ trade, onSubmitReview }) => {
             />
           </div>
           <p className="text-center text-sm">{trade.tradedFor}</p>
-        </div>
-      </div>
-      
-      <div className="px-4 pb-4">
-        <div className="flex flex-col sm:flex-row gap-3 mt-2">
-          {trade.theirReview && (
-            <ReviewDialog 
-              type="view-their" 
-              traderId={trade.tradedWith} 
-              review={trade.theirReview} 
-            />
-          )}
-          
-          {trade.myReview ? (
-            <ReviewDialog 
-              type="view-my" 
-              traderId={trade.tradedWith} 
-              review={trade.myReview} 
-            />
-          ) : (
-            <ReviewDialog 
-              type="leave" 
-              traderId={trade.tradedWith} 
-              onSubmitReview={handleSubmitReview} 
-            />
-          )}
         </div>
       </div>
     </Card>
