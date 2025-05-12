@@ -17,7 +17,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({ items, onItemClick 
         <Card 
           key={item.id} 
           className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-          onClick={() => onItemClick(item)}
+          onClick={() => onItemClick && onItemClick(item)}
         >
           <div className="aspect-[4/3] relative overflow-hidden">
             <img 

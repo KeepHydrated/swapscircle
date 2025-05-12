@@ -2,88 +2,21 @@
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { toast } from '@/hooks/use-toast';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
-import { Star, Users } from 'lucide-react';
+import { Star, Users, ArrowLeft } from 'lucide-react';
 import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { mockUsers, mockUserItems, mockUserTrades } from '@/data/mockUsers';
 import { ProfileUser } from '@/types/profile';
-import { Item } from '@/types/item';
 
-// Mock reviews data
-const mockUserReviews = {
-  "user1": [
-    {
-      id: 1,
-      user: "Michael R.",
-      rating: 5,
-      comment: "Great trader! Item was exactly as described, and Jessica was a pleasure to work with.",
-      date: "April 15, 2025"
-    },
-    {
-      id: 2,
-      user: "Sophia T.",
-      rating: 4,
-      comment: "Good communication and fair trade. The book was in slightly worse condition than I expected, but still a good deal.",
-      date: "March 28, 2025"
-    }
-  ],
-  "user2": [
-    {
-      id: 3,
-      user: "Alex P.",
-      rating: 5,
-      comment: "Marcus is a trustworthy trader. The console was in perfect condition and he shipped it quickly.",
-      date: "May 7, 2025"
-    },
-    {
-      id: 4,
-      user: "Emma L.",
-      rating: 5,
-      comment: "Amazing experience trading with Marcus. The record player works perfectly!",
-      date: "April 20, 2025"
-    }
-  ]
-};
-
-// Mock friends data
-const mockUserFriends = {
-  "user1": [
-    {
-      id: "friend1",
-      name: "Michael R.",
-      mutualItems: 4,
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
-    },
-    {
-      id: "friend2",
-      name: "Sophia T.",
-      mutualItems: 2,
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb"
-    }
-  ],
-  "user2": [
-    {
-      id: "friend3",
-      name: "Alex P.",
-      mutualItems: 5,
-      avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61"
-    },
-    {
-      id: "friend4",
-      name: "Emma L.",
-      mutualItems: 3,
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956"
-    }
-  ]
-};
+// Separate data into dedicated files
+import { getUserReviews } from '@/data/mockReviews';
+import { getUserFriends } from '@/data/mockFriends';
 
 const OtherProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -99,18 +32,16 @@ const OtherProfile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId as keyof typeof mockUsers]);
   
   // Get user's items for trade
-  const [availableItems, setAvailableItems] = useState<Item[]>(
+  const [availableItems, setAvailableItems] = useState(
     mockUserItems[safeUserId as keyof typeof mockUserItems] || []
   );
   
   // Get user's completed trades
   const completedTrades = mockUserTrades[safeUserId as keyof typeof mockUserTrades] || [];
 
-  // Get user's reviews
-  const reviews = mockUserReviews[safeUserId as keyof typeof mockUserReviews] || [];
-
-  // Get user's friends
-  const friends = mockUserFriends[safeUserId as keyof typeof mockUserFriends] || [];
+  // Get user's reviews and friends
+  const reviews = getUserReviews(safeUserId);
+  const friends = getUserFriends(safeUserId);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -136,6 +67,8 @@ const OtherProfile: React.FC = () => {
       </MainLayout>
     );
   }
+
+  const handleItemClick = () => {}; // Empty function for ItemsForTradeTab
 
   return (
     <MainLayout>
@@ -211,7 +144,7 @@ const OtherProfile: React.FC = () => {
 
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
-            <ItemsForTradeTab items={availableItems} onItemClick={() => {}} />
+            <ItemsForTradeTab items={availableItems} onItemClick={handleItemClick} />
           </TabsContent>
 
           {/* Completed Trades Tab Content */}
