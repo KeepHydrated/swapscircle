@@ -110,8 +110,8 @@ const Messages = () => {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel - fixed height for consistent alignment */}
-        <div className="w-full border-b border-gray-200 bg-white z-10 h-24 flex items-center px-2 sticky top-0">
+        {/* Item exchange carousel - fixed position with z-index to ensure it stays on top */}
+        <div className="w-full border-b border-gray-200 bg-white z-20 h-24 flex items-center px-2 sticky top-0">
           <ExchangeCarousel 
             exchangePairs={dynamicExchangePairs}
             selectedPairId={selectedPairId}
