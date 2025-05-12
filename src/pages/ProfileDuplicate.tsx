@@ -17,9 +17,13 @@ import { myAvailableItems } from '@/data/mockMyItems';
 import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
 import { myFriends } from '@/data/mockMyFriends';
+import { mockUserItems } from '@/data/mockUsers';
 import { Item } from '@/types/item';
 
 const ProfileDuplicate: React.FC = () => {
+  // Combine items from myAvailableItems and mockUserItems to get 10 items total
+  const combinedItems = [...myAvailableItems, ...Object.values(mockUserItems).flat()].slice(0, 10);
+
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
   // State for selected item
@@ -90,7 +94,7 @@ const ProfileDuplicate: React.FC = () => {
           <TabsContent value="available" className="p-6">
             <div className="space-y-6">
               {/* Show items grid */}
-              <ProfileItemsForTrade items={myAvailableItems} onItemClick={handleItemClick} selectedItem={selectedItem} />
+              <ProfileItemsForTrade items={combinedItems} onItemClick={handleItemClick} selectedItem={selectedItem} />
             </div>
           </TabsContent>
 
