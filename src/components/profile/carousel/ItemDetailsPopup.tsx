@@ -6,15 +6,17 @@ import { MatchItem } from '@/types/item';
 interface ItemDetailsPopupProps {
   item: MatchItem;
   dropdownPosition: 'left' | 'right';
+  className?: string; // Added className as an optional prop
 }
 
 const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({ 
   item, 
-  dropdownPosition
+  dropdownPosition,
+  className = '' // Default to empty string if not provided
 }) => {
   return (
     <div className={`flex ${dropdownPosition === 'left' ? 'justify-start' : 'justify-end'} w-full`}>
-      <div className="mt-4 bg-white rounded-lg border p-4 animate-fade-in w-full md:w-1/2">
+      <div className={`mt-4 bg-white rounded-lg border p-4 animate-fade-in ${className}`}>
         <h2 className="text-xl font-bold mb-2">{item.name}</h2>
         
         <div className="bg-gray-50 p-3 rounded-md mb-3">
