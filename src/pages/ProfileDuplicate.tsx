@@ -166,9 +166,11 @@ const ProfileItemsForTrade: React.FC<{
       
       // Determine if this item should have dropdown below it
       const showDropdown = isSelected;
-      
-      // Determine if this is the last item in a row
-      const isLastInRow = (col === columnCount - 1) || (index === items.length - 1);
+
+      // Calculate if this is an odd or even item (0-indexed, so item 1 is actually index 0)
+      // For even indices (0, 2, 4...), dropdown aligns with item
+      // For odd indices (1, 3, 5...), dropdown appears to the left
+      const isEvenItem = index % 2 === 0;
       
       return (
         <React.Fragment key={item.id}>
@@ -192,16 +194,13 @@ const ProfileItemsForTrade: React.FC<{
             </Card>
           </div>
           
-          {/* Insert dropdown after the item and its adjacent item (or at end of row) */}
+          {/* Insert dropdown after the item */}
           {showDropdown && (
             <div 
-              className={`col-span-2 mt-2 mb-4 z-10 ${
-                // If this is the last column, align to the left (negative margin)
-                col === columnCount - 1 ? 'col-start-end-1' : ''
-              }`}
+              className="col-span-2 mt-2 mb-4 z-10"
               style={{
-                gridColumn: col === columnCount - 1 
-                  ? `${columnCount - 1} / span 2` 
+                gridColumn: !isEvenItem 
+                  ? `${col - 1 >= 0 ? col - 1 + 1 : col + 1} / span 2` 
                   : `${col + 1} / span 2`
               }}
             >
