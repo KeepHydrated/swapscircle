@@ -24,22 +24,20 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-180px)] flex flex-col">
-      <div className="flex-1">
-        {activeChat.isNew ? (
-          <NewMatchPrompt 
-            name={activeChat.name} 
-            onSendFirstMessage={handleSendFirstMessage} 
-            conversationId={activeChat.id} 
-          />
-        ) : (
-          <MessageList 
-            messages={messages} 
-            chatName={activeChat.name} 
-          />
-        )}
-      </div>
-    </ScrollArea>
+    <div className="h-[calc(100vh-180px)] flex flex-col overflow-hidden">
+      {activeChat.isNew ? (
+        <NewMatchPrompt 
+          name={activeChat.name} 
+          onSendFirstMessage={handleSendFirstMessage} 
+          conversationId={activeChat.id} 
+        />
+      ) : (
+        <MessageList 
+          messages={messages} 
+          chatName={activeChat.name} 
+        />
+      )}
+    </div>
   );
 };
 
