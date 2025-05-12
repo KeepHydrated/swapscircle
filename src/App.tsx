@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import ProfileDuplicate from "./pages/ProfileDuplicate";
 import UserProfile from "./pages/UserProfile";
 import OtherProfile from "./pages/OtherProfile";
 import Notifications from "./pages/Notifications";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/post-item" element={<PostItem />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
           <Route path="/user/:userId" element={<UserProfile />} />
           <Route path="/other-profile/:userId" element={<OtherProfile />} />
           <Route path="/notifications" element={<Notifications />} />
