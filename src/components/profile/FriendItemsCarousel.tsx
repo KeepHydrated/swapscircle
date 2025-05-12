@@ -137,33 +137,33 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
             
             <hr className="my-4" />
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-wrap gap-3">
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                  <span className="text-green-600">✓</span>
+                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                  <span className="text-green-600 text-xs">✓</span>
                 </div>
-                <span className="text-gray-800 font-medium">Brand New</span>
+                <span className="text-gray-800 text-sm">Brand New</span>
               </div>
               
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                  <span className="text-blue-600">⌂</span>
+                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                  <span className="text-blue-600 text-xs">⌂</span>
                 </div>
-                <span className="text-gray-800 font-medium">Home & Garden</span>
+                <span className="text-gray-800 text-sm">Home & Garden</span>
               </div>
               
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                  <span className="text-purple-600">𝍢</span>
+                <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mr-2">
+                  <span className="text-purple-600 text-xs">𝍢</span>
                 </div>
-                <span className="text-gray-800 font-medium">Kitchen Appliances</span>
+                <span className="text-gray-800 text-sm">Kitchen Appliances</span>
               </div>
               
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                  <span className="text-green-600">$</span>
+                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                  <span className="text-green-600 text-xs">$</span>
                 </div>
-                <span className="text-gray-800 font-medium">$100 - $250</span>
+                <span className="text-gray-800 text-sm">$100 - $250</span>
               </div>
             </div>
             

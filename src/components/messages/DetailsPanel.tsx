@@ -180,33 +180,33 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
           
           <hr className="mb-4" />
           
-          <ul className="space-y-4">
+          <ul className="flex flex-wrap gap-3">
             <li className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                <Check className="w-5 h-5 text-green-600" />
+              <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                <Check className="w-3 h-3 text-green-600" />
               </div>
-              <span className="text-gray-800 font-medium">Brand New</span>
+              <span className="text-gray-800 text-sm">Brand New</span>
             </li>
             
             <li className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                <Home className="w-5 h-5 text-blue-600" />
+              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                <Home className="w-3 h-3 text-blue-600" />
               </div>
-              <span className="text-gray-800 font-medium">Home & Garden</span>
+              <span className="text-gray-800 text-sm">Home & Garden</span>
             </li>
             
             <li className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                <Utensils className="w-5 h-5 text-purple-600" />
+              <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mr-2">
+                <Utensils className="w-3 h-3 text-purple-600" />
               </div>
-              <span className="text-gray-800 font-medium">Kitchen Appliances</span>
+              <span className="text-gray-800 text-sm">Kitchen Appliances</span>
             </li>
             
             <li className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                <DollarSign className="w-5 h-5 text-green-600" />
+              <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                <DollarSign className="w-3 h-3 text-green-600" />
               </div>
-              <span className="text-gray-800 font-medium">$100 - $250</span>
+              <span className="text-gray-800 text-sm">$100 - $250</span>
             </li>
           </ul>
         </div>
