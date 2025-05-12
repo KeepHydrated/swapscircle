@@ -35,6 +35,11 @@ const ProfileDuplicate: React.FC = () => {
     setSelectedItem(item);
   };
 
+  // Function to clear selected item
+  const handleCloseItemDetails = () => {
+    setSelectedItem(null);
+  };
+
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
@@ -89,13 +94,27 @@ const ProfileDuplicate: React.FC = () => {
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
             <div className="space-y-6">
+              {/* Show items grid */}
               <ProfileItemsForTrade items={myAvailableItems} onItemClick={handleItemClick} />
               
-              {/* Item Details Section - Show when an item is selected */}
+              {/* Item Details Section - Show when an item is selected but in a compact format */}
               {selectedItem && (
-                <Card className="mt-6 border rounded-lg overflow-hidden">
-                  <ItemDetails name={selectedItem.name} showProfileInfo={false} />
-                </Card>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4" onClick={handleCloseItemDetails}>
+                  <Card 
+                    className="max-w-md w-full max-h-[80vh] overflow-y-auto bg-white rounded-lg shadow-xl" 
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <button 
+                      className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+                      onClick={handleCloseItemDetails}
+                    >
+                      ×
+                    </button>
+                    <div className="p-1">
+                      <ItemDetails name={selectedItem.name} showProfileInfo={false} />
+                    </div>
+                  </Card>
+                </div>
               )}
             </div>
           </TabsContent>
