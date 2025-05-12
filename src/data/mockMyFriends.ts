@@ -1,23 +1,34 @@
 
-import { Friend } from '@/data/mockFriends';
+import { mockUserItems } from '@/data/mockUsers';
+
+export interface Friend {
+  id: string;
+  name: string;
+  friendCount: number;
+  avatar: string;
+  items: any[];
+}
 
 export const myFriends: Friend[] = [
   {
     id: "friend1",
     name: "Jessica L.",
-    mutualItems: 4,
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+    friendCount: 24,
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    items: mockUserItems["friend1"] || []
   },
   {
     id: "friend2",
     name: "Marcus T.",
-    mutualItems: 2,
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
+    friendCount: 18,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    items: mockUserItems["friend2"] || []
   },
   {
     id: "friend3",
     name: "Sophia R.",
-    mutualItems: 7,
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb"
+    friendCount: 32,
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
+    items: mockUserItems["friend3"] || []
   }
 ];
