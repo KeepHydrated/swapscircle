@@ -15,7 +15,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
       {friends.map(friend => (
         <Card key={friend.id} className="overflow-hidden">
           <div className="p-4">
-            <Link to={`/other-profile/${friend.id}`} className="flex items-center">
+            <Link to={`/profile-duplicate`} className="flex items-center">
               <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
                 <img 
                   src={friend.avatar} 

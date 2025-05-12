@@ -15,7 +15,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
   return (
     <div className="p-4 border-b border-gray-200 flex justify-between items-center">
       <div className="flex items-center gap-3">
-        <Link to={`/other-profile/${activeChat.id}`}>
+        <Link to={`/profile-duplicate`}>
           <Avatar className="h-10 w-10 cursor-pointer">
             <AvatarFallback className="bg-purple-100 text-purple-800">
               {activeChat.name.substring(0, 2)}
@@ -24,7 +24,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
         </Link>
         <div>
           <div className="flex items-center">
-            <Link to={`/other-profile/${activeChat.id}`} className="hover:underline">
+            <Link to={`/profile-duplicate`} className="hover:underline">
               <h2 className="font-medium">{activeChat.name}</h2>
             </Link>
           </div>
