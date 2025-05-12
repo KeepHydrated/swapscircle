@@ -2,31 +2,15 @@
 import React from 'react';
 import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
-
-type Conversation = {
-  id: string;
-  name: string;
-  lastMessage: string;
-  time: string;
-  avatar?: string;
-  rating?: number;
-  isNew?: boolean;
-  distance?: string;
-};
+import { Conversation, ExchangePair } from '@/hooks/useConversations';
 
 interface ConversationListProps {
   conversations: Conversation[];
   activeConversation: string | null;
   setActiveConversation: (id: string) => void;
-  exchangePairs?: Array<{
-    id: number;
-    partnerId: string;
-    item1: { name: string; image: string };
-    item2: { name: string; image: string };
-  }>;
+  exchangePairs?: ExchangePair[];
 }
 
 const ConversationList = ({ 

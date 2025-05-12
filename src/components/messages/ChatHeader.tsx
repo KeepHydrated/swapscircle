@@ -2,8 +2,8 @@
 import React from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Conversation } from '@/data/conversations';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Conversation } from '@/hooks/useConversations';
 import { Link } from 'react-router-dom';
 
 interface ChatHeaderProps {
@@ -32,7 +32,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
             <p className="text-sm text-gray-500">
               {activeChat.isNew ? "New match" : activeChat.distance}
             </p>
-            {!activeChat.isNew && activeChat.rating > 0 && (
+            {!activeChat.isNew && activeChat.rating && activeChat.rating > 0 && (
               <div className="ml-2 flex text-yellow-400">
                 {"★".repeat(activeChat.rating)}
                 <span className="ml-1 text-gray-500 text-sm">({42})</span>

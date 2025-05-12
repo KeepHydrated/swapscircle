@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Conversation } from '@/data/conversations';
+import { Conversation } from '@/hooks/useConversations';
 import { toast } from 'sonner';
 import { getMessagesByChatId } from '@/utils/messageData';
 import NewMatchPrompt from './NewMatchPrompt';

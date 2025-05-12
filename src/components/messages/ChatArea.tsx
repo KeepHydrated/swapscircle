@@ -1,11 +1,9 @@
 
 import React from 'react';
-import { Conversation } from '@/data/conversations';
+import { Conversation } from '@/hooks/useConversations';
 import ChatHeader from './ChatHeader';
 import MessageDisplay from './MessageDisplay';
 import MessageInput from './MessageInput';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 interface ChatAreaProps {
   activeChat: Conversation | undefined;
@@ -14,8 +12,6 @@ interface ChatAreaProps {
 }
 
 const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatAreaProps) => {
-  const navigate = useNavigate();
-
   if (!activeChat) {
     return (
       <div className="flex flex-col h-full bg-white">
@@ -29,16 +25,6 @@ const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatArea
   const handleTradeCompleted = () => {
     if (activeChat && onTradeCompleted) {
       onTradeCompleted(activeChat.id);
-      
-      // Simulate a delay before redirecting to profile
-      setTimeout(() => {
-        toast.success("Trade completed! Redirecting to your profile to leave a review...");
-        
-        // In a real app, we would redirect after a short delay
-        setTimeout(() => {
-          navigate('/profile-duplicate');
-        }, 2000);
-      }, 1000);
     }
   };
 
