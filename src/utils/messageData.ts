@@ -1,5 +1,4 @@
-
-import { MessagesByChat } from "@/types/message";
+import { ChatMessage, MessagesByChat } from "@/types/message";
 
 // Sample messages for specific chats
 export const messagesByChat: MessagesByChat = {

@@ -24,7 +24,7 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-180px)] py-4">
+    <ScrollArea className="h-[calc(100vh-180px)] pb-4">
       {activeChat.isNew ? (
         <NewMatchPrompt 
           name={activeChat.name} 
