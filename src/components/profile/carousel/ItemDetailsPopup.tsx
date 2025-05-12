@@ -157,30 +157,34 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
               
               <hr className="my-4" />
               
-              <div className="flex items-center mt-2">
-                <div className="flex-shrink-0 mr-3">
-                  <img 
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
-                    alt="Owner" 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <h3 className="text-sm font-semibold">Emma Wilson</h3>
-                  <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
-                  
-                  <div className="text-xs text-gray-600 mt-1">
-                    <div className="flex items-center mb-0.5">
-                      <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
-                      <span>Since 2023</span>
-                    </div>
-                    <div className="flex items-center mb-0.5">
-                      <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-                      <span>2.3 mi away</span>
-                    </div>
+              <div className="mt-2">
+                <div className="flex-shrink-0 mr-3 flex items-start">
+                  <div className="flex-shrink-0 mr-3">
+                    <img 
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
+                      alt="Owner" 
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col">
                     <div className="flex items-center">
-                      <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
-                      <span>~1 hour</span>
+                      <h3 className="text-sm font-semibold">Emma Wilson</h3>
+                      <div className="flex text-amber-400 text-xs ml-2">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3 text-xs text-gray-600 mt-1">
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <span>Since 2023</span>
+                      </div>
+                      <div className="flex items-center">
+                        <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <span>2.3 mi away</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <span>~1 hour</span>
+                      </div>
                     </div>
                   </div>
                 </div>

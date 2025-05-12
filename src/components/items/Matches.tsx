@@ -5,14 +5,8 @@ import ItemDetails from '@/components/messages/details/ItemDetails';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
-
-interface MatchItem {
-  id: string;
-  name: string;
-  image: string;
-  liked?: boolean;
-  category?: string;
-}
+import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
+import { MatchItem } from '@/types/item';
 
 interface MatchesProps {
   matches: MatchItem[];
@@ -33,6 +27,8 @@ const Matches: React.FC<MatchesProps> = ({
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   // State to track removed items
   const [removedItems, setRemovedItems] = useState<string[]>([]);
+  // State to track which match is being viewed in the popup
+  const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const navigate = useNavigate();
   
   // Refs for click outside detection
@@ -129,10 +125,32 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
 
-  // Handle selecting an item with additional like functionality
+  // Handle selecting an item with popup display
   const handleItemSelect = (id: string) => {
-    // Call the original onSelectMatch function
+    // Find the selected match
+    const match = displayedMatches.find(m => m.id === id);
+    if (match) {
+      setSelectedMatch(match);
+    }
+    
+    // Still call the original onSelectMatch function for existing functionality
     onSelectMatch(id);
+  };
+  
+  // Handle popup like click
+  const handlePopupLikeClick = (item: MatchItem) => {
+    // Use the existing handleLike function
+    handleLike(item.id);
+    
+    // Close the popup
+    setSelectedMatch(null);
+  };
+  
+  // Close the popup
+  const handleClosePopup = () => {
+    setSelectedMatch(null);
+    // Also clear the selected match in the parent component
+    onSelectMatch('');
   };
 
   // Render function to create the grid with details injected after the selected row
@@ -189,6 +207,16 @@ const Matches: React.FC<MatchesProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4" ref={matchesContainerRef}>
         {renderGrid()}
       </div>
+      
+      {/* Popup for displaying match details */}
+      {selectedMatch && (
+        <ItemDetailsPopup
+          item={selectedMatch}
+          isOpen={!!selectedMatch}
+          onClose={handleClosePopup}
+          onLikeClick={handlePopupLikeClick}
+        />
+      )}
     </div>
   );
 };
