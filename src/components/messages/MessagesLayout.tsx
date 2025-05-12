@@ -55,7 +55,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
           />
         </div>
         
-        {/* Middle - Chat area - Ensure it has proper height and doesn't scroll as a whole */}
+        {/* Middle - Chat area with reduced height */}
         <div className="flex-1 overflow-hidden flex flex-col">
           <ChatArea 
             activeChat={activeChat} 
@@ -64,7 +64,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
           />
         </div>
         
-        {/* Right sidebar - Details panel with reduced height and better scrolling */}
+        {/* Right sidebar - Details panel */}
         <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
           <ScrollArea className="h-full">
             <DetailsPanel selectedPair={selectedPair} />

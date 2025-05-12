@@ -85,7 +85,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         >
           <CarouselContent>
             {items.map((item) => (
-              <CarouselItem key={item.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
+              <CarouselItem key={item.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
                 <CarouselItemCard
                   item={item}
                   isSelected={selectedItemId === item.id}
@@ -100,12 +100,13 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         </Carousel>
       </div>
 
-      {/* Item details panel that appears when an item is selected */}
+      {/* Item details panel that appears when an item is selected - width of 3 items */}
       {selectedItem && (
         <div ref={detailsRef}>
           <ItemDetailsPopup
             item={selectedItem}
             dropdownPosition={dropdownPosition}
+            className="w-[calc(50%-2rem)]" // Width of approximately 3 items
           />
         </div>
       )}

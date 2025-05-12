@@ -33,7 +33,7 @@ const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatArea
       {/* Fixed header */}
       <ChatHeader activeChat={activeChat} showProfileInfo={true} />
       
-      {/* Scrollable message area that takes available space */}
+      {/* Scrollable message area with reduced height */}
       <div className="flex-1 overflow-hidden">
         <MessageDisplay 
           activeChat={activeChat} 
