@@ -120,30 +120,58 @@ const ProfileItemsForTrade: React.FC<{
   onItemClick: (item: Item) => void;
   selectedItem: Item | null;
 }> = ({ items, onItemClick, selectedItem }) => {
-  // Function to determine if an item should show the dropdown
-  const shouldShowDropdown = (index: number) => {
-    if (!selectedItem) return false;
-    return items.findIndex(item => item.id === selectedItem.id) === index;
+  // Function to get the index of the selected item
+  const getSelectedItemIndex = () => {
+    if (!selectedItem) return -1;
+    return items.findIndex(item => item.id === selectedItem.id);
   };
   
-  // Calculate column position for each item (0 for even, 1 for odd)
-  const getColumnPosition = (index: number) => {
-    return index % 2 === 0 ? 0 : 1;
+  // Find the column and row for the selected item
+  const selectedItemIndex = getSelectedItemIndex();
+  
+  // Calculate columns based on screen size (this should match the grid-cols in the container)
+  const getColumnCount = () => {
+    // Check if window is available (for SSR compatibility)
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width >= 1280) return 4; // xl:grid-cols-4
+      if (width >= 1024) return 3; // lg:grid-cols-3
+      if (width >= 640) return 2;  // sm:grid-cols-2
+      return 1; // default for mobile
+    }
+    return 2; // Default fallback
   };
   
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {items.map((item, index) => {
-        // Determine if this item should display its dropdown
-        const showDropdown = shouldShowDropdown(index);
-        // Get column position (0 or 1)
-        const colPosition = getColumnPosition(index);
-        
-        return (
-          <div key={item.id} className="flex flex-col">
+  const columnCount = getColumnCount();
+  
+  // Calculate the row and column of the selected item
+  const getRowAndColumn = (index: number) => {
+    const row = Math.floor(index / columnCount);
+    const col = index % columnCount;
+    return { row, col };
+  };
+  
+  // Get position of selected item
+  const selectedPosition = selectedItemIndex >= 0 ? getRowAndColumn(selectedItemIndex) : null;
+  
+  // Determine items that should be rendered with details dropdown
+  const renderItems = () => {
+    return items.map((item, index) => {
+      const { row, col } = getRowAndColumn(index);
+      const isSelected = selectedItem?.id === item.id;
+      
+      // Determine if this item should have dropdown below it
+      const showDropdown = isSelected;
+      
+      // Determine if this is the last item in a row
+      const isLastInRow = (col === columnCount - 1) || (index === items.length - 1);
+      
+      return (
+        <React.Fragment key={item.id}>
+          <div className="flex flex-col">
             <Card 
               className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
-                selectedItem?.id === item.id ? 'ring-2 ring-primary shadow-md' : ''
+                isSelected ? 'ring-2 ring-primary shadow-md' : ''
               }`}
               onClick={() => onItemClick(item)}
             >
@@ -159,17 +187,38 @@ const ProfileItemsForTrade: React.FC<{
               </div>
             </Card>
           </div>
-        );
-      })}
-      
-      {/* Separate details dropdown that spans two columns */}
-      {selectedItem && (
-        <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 -mt-4 z-10">
-          <div className="bg-white rounded-lg border shadow-sm overflow-hidden mt-2">
-            <ItemDetails name={selectedItem.name} showProfileInfo={false} />
-          </div>
-        </div>
-      )}
+          
+          {/* Insert dropdown after the item and its adjacent item (or at end of row) */}
+          {showDropdown && (
+            <div 
+              className={`col-span-2 mt-2 mb-4 z-10 ${
+                // If this is the last column, align to the left (negative margin)
+                col === columnCount - 1 ? 'col-start-end-1' : ''
+              }`}
+              style={{
+                gridColumn: col === columnCount - 1 
+                  ? `${columnCount - 1} / span 2` 
+                  : `${col + 1} / span 2`
+              }}
+            >
+              <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
+                <ItemDetails name={selectedItem.name} showProfileInfo={false} />
+              </div>
+            </div>
+          )}
+        </React.Fragment>
+      );
+    });
+  };
+  
+  return (
+    <div 
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      style={{ 
+        gridAutoFlow: 'dense' // Ensures items flow naturally around the dropdown
+      }}
+    >
+      {renderItems()}
     </div>
   );
 };
