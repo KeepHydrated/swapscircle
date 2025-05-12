@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -13,6 +13,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { mockUsers, mockUserItems, mockUserTrades } from '@/data/mockUsers';
 import { ProfileUser } from '@/types/profile';
+import { toast } from 'sonner';
 
 // Separate data into dedicated files
 import { getUserReviews } from '@/data/mockReviews';
@@ -29,19 +30,26 @@ const OtherProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState('available');
   
   // Get user data
-  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId as keyof typeof mockUsers]);
+  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId]);
   
   // Get user's items for trade
   const [availableItems, setAvailableItems] = useState(
-    mockUserItems[safeUserId as keyof typeof mockUserItems] || []
+    mockUserItems[safeUserId] || []
   );
   
   // Get user's completed trades
-  const completedTrades = mockUserTrades[safeUserId as keyof typeof mockUserTrades] || [];
+  const completedTrades = mockUserTrades[safeUserId] || [];
 
   // Get user's reviews and friends
   const reviews = getUserReviews(safeUserId);
   const friends = getUserFriends(safeUserId);
+
+  // Effect to show toast when user is not found
+  useEffect(() => {
+    if (!profile && userId) {
+      toast.error(`User with ID "${userId}" not found`);
+    }
+  }, [profile, userId]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -61,7 +69,7 @@ const OtherProfile: React.FC = () => {
     return (
       <MainLayout>
         <div className="p-6">
-          <h1>User not found</h1>
+          <h1 className="text-2xl font-bold mb-4">User not found</h1>
           <Button onClick={handleGoBack}>Go Back</Button>
         </div>
       </MainLayout>

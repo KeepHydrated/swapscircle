@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -21,15 +21,22 @@ const UserProfile: React.FC = () => {
   const safeUserId = userId || "user1";
   
   // Get user data
-  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId as keyof typeof mockUsers]);
+  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId]);
   
   // Get user's items for trade
   const [availableItems, setAvailableItems] = useState(
-    mockUserItems[safeUserId as keyof typeof mockUserItems] || []
+    mockUserItems[safeUserId] || []
   );
   
   // Get user's completed trades
-  const completedTrades = mockUserTrades[safeUserId as keyof typeof mockUserTrades] || [];
+  const completedTrades = mockUserTrades[safeUserId] || [];
+
+  // Effect to show toast when user is not found
+  useEffect(() => {
+    if (!profile && userId) {
+      toast.error(`User with ID "${userId}" not found`);
+    }
+  }, [profile, userId]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -71,7 +78,7 @@ const UserProfile: React.FC = () => {
     return (
       <MainLayout>
         <div className="p-6">
-          <h1>User not found</h1>
+          <h1 className="text-2xl font-bold mb-4">User not found</h1>
           <Button onClick={handleGoBack}>Go Back</Button>
         </div>
       </MainLayout>

@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import OtherProfile from "./pages/OtherProfile";
 import Notifications from "./pages/Notifications";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -26,9 +27,9 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user/:userId" element={<UserProfile />} />
-          <Route path="/other-profile/:userId?" element={<OtherProfile />} />
+          <Route path="/other-profile/:userId" element={<OtherProfile />} />
           <Route path="/notifications" element={<Notifications />} />
-          <Route path="*" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
