@@ -112,9 +112,27 @@ const CompletedTradesTab: React.FC<CompletedTradesTabProps> = ({ trades }) => {
                 <h3 className="font-bold text-gray-800">{item.tradedWith}</h3>
                 <p className="text-xs text-gray-500">{item.tradeDate}</p>
               </div>
-              <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                Completed
-              </span>
+              
+              {/* Review summary display */}
+              <div className="flex items-center space-x-4">
+                {item.myReview && (
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs text-gray-600">Your Review</span>
+                    <div className="flex">
+                      {renderRatingStars(item.myReview.rating)}
+                    </div>
+                  </div>
+                )}
+                
+                {item.theirReview && (
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs text-gray-600">Their Review</span>
+                    <div className="flex">
+                      {renderRatingStars(item.theirReview.rating)}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row p-4">
