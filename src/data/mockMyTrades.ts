@@ -1,5 +1,5 @@
 
-import { CompletedTrade } from '@/types/item';
+import { CompletedTrade } from '@/types/trade';
 
 export const myCompletedTrades: CompletedTrade[] = [
   {
