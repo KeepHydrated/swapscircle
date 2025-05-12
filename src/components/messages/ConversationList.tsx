@@ -4,6 +4,7 @@ import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 
 type Conversation = {
   id: string;
@@ -58,14 +59,18 @@ const ConversationList = ({
               onClick={() => setActiveConversation(conversation.id)}
             >
               <div className="flex items-start gap-4">
-                <Avatar className="h-12 w-12 flex-shrink-0">
-                  <AvatarFallback className="bg-purple-100 text-purple-800">
-                    {conversation.name.substring(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
+                <Link to="/profile-duplicate" className="flex-shrink-0">
+                  <Avatar className="h-12 w-12">
+                    <AvatarFallback className="bg-purple-100 text-purple-800">
+                      {conversation.name.substring(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
-                    <h3 className="font-medium truncate">{conversation.name}</h3>
+                    <Link to="/profile-duplicate" className="hover:underline">
+                      <h3 className="font-medium truncate">{conversation.name}</h3>
+                    </Link>
                     <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                   </div>
                   
