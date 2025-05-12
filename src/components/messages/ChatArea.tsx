@@ -14,7 +14,7 @@ interface ChatAreaProps {
 const ChatArea = ({ activeChat, onSendFirstMessage }: ChatAreaProps) => {
   if (!activeChat) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full bg-white">
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray-500">Select a conversation to start messaging</p>
         </div>
@@ -23,9 +23,9 @@ const ChatArea = ({ activeChat, onSendFirstMessage }: ChatAreaProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white">
       <ChatHeader activeChat={activeChat} showProfileInfo={true} />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden bg-white">
         <ScrollArea className="h-[calc(100vh-176px)]">
           <MessageDisplay 
             activeChat={activeChat} 

@@ -20,7 +20,7 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
   };
 
   return (
-    <ScrollArea className="flex-1 p-4">
+    <ScrollArea className="flex-1 p-4 bg-white">
       <div className="flex flex-col items-center my-8 gap-4">
         {activeChat.isNew && (
           <div className="flex flex-col items-center gap-4">
