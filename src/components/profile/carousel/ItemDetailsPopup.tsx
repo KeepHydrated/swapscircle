@@ -35,22 +35,31 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9'
   ];
 
+  // Handle like click with popup closing
+  const handleLikeClick = (item: MatchItem) => {
+    if (onLikeClick) {
+      onLikeClick(item);
+      // Close popup after liking the item
+      onClose();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className={`max-w-4xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
+      <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
         {/* Action buttons component */}
         <ActionButtons 
           item={item} 
-          onLikeClick={onLikeClick} 
+          onLikeClick={handleLikeClick} 
           onClose={onClose}
         />
         
         <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px]">
-          {/* Left side - Image Carousel */}
-          <ItemImageCarousel images={images} itemName={item.name} />
+          {/* Left side - Image Carousel with reduced width */}
+          <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
           
           {/* Right side - Item details */}
           <ItemDetailsContent name={item.name} />

@@ -34,7 +34,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
     : -1;
 
   return (
-    <ScrollArea className="flex-grow">
+    <ScrollArea className="h-[calc(100vh-240px)]">
       <MatchesGrid
         displayedMatches={displayedMatches}
         selectedMatchId={selectedMatchId}

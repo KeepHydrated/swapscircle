@@ -67,7 +67,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
           )}
         </div>
         <CardContent className="p-3">
-          <h3 className="font-medium text-center">{name}</h3>
+          <h3 className="font-medium text-center truncate" title={name}>{name}</h3>
         </CardContent>
       </Card>
     </div>

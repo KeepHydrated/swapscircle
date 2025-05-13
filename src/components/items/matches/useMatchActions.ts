@@ -69,10 +69,10 @@ export const useMatchActions = (
     const match = displayedMatches.find(m => m.id === id);
     if (match) {
       setSelectedMatch(match);
+      
+      // Call the original onSelectMatch function to select the match
+      onSelectMatch(id);
     }
-    
-    // Still call the original onSelectMatch function for existing functionality
-    onSelectMatch(id);
   };
   
   // Handle popup like click
@@ -80,7 +80,8 @@ export const useMatchActions = (
     // Use the existing handleLike function
     handleLike(item.id);
     
-    // Close the popup
+    // Close the popup - this now happens in the ItemDetailsPopup component
+    // Note: We don't clear the selected match in the parent component here
     setSelectedMatch(null);
   };
   
