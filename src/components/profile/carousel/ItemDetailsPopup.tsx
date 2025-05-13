@@ -59,6 +59,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
       <DialogContent className={`max-w-5xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
+        {/* Action buttons - Like button now on the left of the X button */}
         <div className="absolute right-4 top-4 flex items-center space-x-2 z-10">
           <button 
             onClick={handleLikeClick}
@@ -78,7 +79,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           </button>
         </div>
         
-        <div className="flex flex-col md:flex-row h-[50vh] max-h-[500px]">
+        <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px]">
           {/* Left side - Image Carousel */}
           <div className="md:w-2/3 bg-gray-100 relative">
             <img 
@@ -117,7 +118,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           {/* Right side - Item details */}
           <div className="md:w-1/3 flex flex-col">
             <ScrollArea className="flex-grow">
-              <div className="p-6 pt-10"> {/* Added more padding for spacing on top */}
+              <div className="p-6 pt-12"> {/* More padding on top */}
                 <h2 className="text-xl font-bold mb-3">{item.name}</h2>
                 
                 <div className="bg-gray-50 p-3 rounded-md mb-4">
@@ -129,8 +130,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 
                 <hr className="my-4" />
                 
-                {/* First row - Brand New and Home & Garden */}
-                <div className="flex items-center justify-between mb-2">
+                {/* Aligned vertically - First row */}
+                <div className="flex gap-4 mb-3">
                   <div className="flex items-center">
                     <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
                       <Check className="w-2.5 h-2.5 text-green-600" />
@@ -146,8 +147,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                   </div>
                 </div>
                 
-                {/* Second row - Kitchen and Price */}
-                <div className="flex items-center justify-between mb-3">
+                {/* Aligned vertically - Second row */}
+                <div className="flex gap-4 mb-3">
                   <div className="flex items-center">
                     <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center mr-1.5">
                       <Utensils className="w-2.5 h-2.5 text-purple-600" />
@@ -165,7 +166,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 
                 <hr className="my-4" />
                 
-                {/* User profile section - restructured */}
+                {/* User profile section with vertical layout for user details */}
                 <div className="mt-4">
                   <div className="flex flex-col">
                     {/* Profile image and name/rating row */}
@@ -185,8 +186,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                       </div>
                     </div>
                     
-                    {/* User details under the profile pic */}
-                    <div className="flex flex-row space-x-4 text-xs text-gray-600 ml-1">
+                    {/* User details stacked vertically below the profile pic */}
+                    <div className="flex flex-col space-y-1.5 text-xs text-gray-600 ml-1">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
                         <span>Since 2023</span>

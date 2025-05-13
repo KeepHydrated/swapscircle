@@ -9,7 +9,7 @@ import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
 import Messages2 from "./pages/Messages2";
 import Profile from "./pages/Profile";
-import OtherPersonProfile from "./pages/ProfileDuplicate"; // Renamed but file is still ProfileDuplicate.tsx
+import OtherPersonProfile from "./pages/ProfileDuplicate"; // Updated this import
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
