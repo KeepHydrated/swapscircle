@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ItemFeatureBadge from './ItemFeatureBadge';
 import UserInfoSection from './UserInfoSection';

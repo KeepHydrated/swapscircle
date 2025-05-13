@@ -58,41 +58,38 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
       {showProfileInfo && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex flex-col">
-            {/* Avatar centered */}
-            <div className="flex justify-center mb-3">
-              <Avatar className="h-14 w-14">
+            {/* Avatar and name/rating in the same row */}
+            <div className="flex items-center mb-3">
+              <Avatar className="h-12 w-12 mr-3">
                 <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
                 <AvatarFallback>EW</AvatarFallback>
               </Avatar>
-            </div>
-            
-            {/* Profile info centered below */}
-            <div className="flex flex-col items-center">
-              {/* First row: Name and rating */}
-              <div className="flex items-center mb-2">
+              
+              {/* First row: Name and rating to the right of avatar */}
+              <div className="flex items-center">
                 <h3 className="text-sm font-semibold mr-2">Emma Wilson</h3>
                 <div className="flex items-center">
                   <span className="text-amber-400 text-xs">★★★★★</span> 
                   <span className="text-gray-500 text-xs ml-0.5">(42)</span>
                 </div>
               </div>
+            </div>
+            
+            {/* Second row: Member since, distance, response time in horizontal layout, left-aligned */}
+            <div className="flex items-center space-x-4 text-xs text-gray-600 pl-0">
+              <div className="flex items-center">
+                <Calendar className="h-3 w-3 mr-0.5 flex-shrink-0" />
+                <span>Since 2023</span>
+              </div>
               
-              {/* Second row: Member since, distance, response time in horizontal layout */}
-              <div className="flex items-center justify-center space-x-4 text-xs text-gray-600">
-                <div className="flex items-center">
-                  <Calendar className="h-3 w-3 mr-0.5 flex-shrink-0" />
-                  <span>Since 2023</span>
-                </div>
-                
-                <div className="flex items-center">
-                  <MapPin className="h-3 w-3 mr-0.5 flex-shrink-0" />
-                  <span>2.3 mi away</span>
-                </div>
-                
-                <div className="flex items-center">
-                  <Clock className="h-3 w-3 mr-0.5 flex-shrink-0" />
-                  <span>~1 hour</span>
-                </div>
+              <div className="flex items-center">
+                <MapPin className="h-3 w-3 mr-0.5 flex-shrink-0" />
+                <span>2.3 mi away</span>
+              </div>
+              
+              <div className="flex items-center">
+                <Clock className="h-3 w-3 mr-0.5 flex-shrink-0" />
+                <span>~1 hour</span>
               </div>
             </div>
           </div>
