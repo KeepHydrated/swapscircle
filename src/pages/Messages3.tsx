@@ -1,11 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { useState } from 'react';
-import ItemCard from '@/components/items/ItemCard';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem,
+  type CarouselApi
+} from '@/components/ui/carousel';
 
 // Sample match items
 const matchItems = [
@@ -15,17 +19,17 @@ const matchItems = [
   { id: '4', name: 'Acoustic Guitar', image: '/placeholder.svg', description: 'Handcrafted acoustic guitar with case' },
   { id: '5', name: 'Vintage Watch', image: '/placeholder.svg', description: 'Collectible timepiece from 1960s' },
   { id: '6', name: 'Antique Book', image: '/placeholder.svg', description: 'Rare first edition in mint condition' },
+  { id: '7', name: 'Synthesizer', image: '/placeholder.svg', description: 'Electronic music synthesizer in perfect condition' },
+  { id: '8', name: 'Camera Lens', image: '/placeholder.svg', description: 'Professional camera lens, barely used' },
 ];
 
 const Messages3 = () => {
   const [selectedMatch, setSelectedMatch] = useState<typeof matchItems[0] | null>(null);
-
+  const [api, setApi] = React.useState<CarouselApi>();
+  
   // Handle item selection
-  const handleSelectItem = (id: string) => {
-    const match = matchItems.find(item => item.id === id);
-    if (match) {
-      setSelectedMatch(match);
-    }
+  const handleSelectItem = (match: typeof matchItems[0]) => {
+    setSelectedMatch(match);
   };
 
   // Handle like action
@@ -57,20 +61,60 @@ const Messages3 = () => {
   return (
     <MainLayout>
       <div className="container mx-auto py-8">
-        <h1 className="text-2xl font-bold mb-6">Browse Matches</h1>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {matchItems.map(item => (
-            <ItemCard
-              key={item.id}
-              id={item.id}
-              name={item.name}
-              image={item.image}
-              isMatch={true}
-              onSelect={handleSelectItem}
-              onLike={handleLike}
-            />
-          ))}
+        <div className="mb-12">
+          <h1 className="text-2xl font-bold mb-6">Item Matches</h1>
+          
+          {/* Item matches carousel */}
+          <div className="relative">
+            <Carousel
+              setApi={setApi}
+              className="w-full"
+              opts={{
+                align: 'start',
+              }}
+            >
+              <CarouselContent>
+                {matchItems.map((item) => (
+                  <CarouselItem key={item.id} className="basis-1/4 md:basis-1/5 lg:basis-1/6">
+                    <div 
+                      className="cursor-pointer" 
+                      onClick={() => handleSelectItem(item)}
+                    >
+                      <div className="relative aspect-square overflow-hidden rounded-lg mb-2 bg-gray-100">
+                        <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <h3 className="text-sm font-medium text-center truncate">{item.name}</h3>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              
+              {/* Navigation arrows outside carousel items */}
+              <Button
+                variant="outline" 
+                size="icon" 
+                className="absolute -left-12 top-1/2 -translate-y-1/2 z-10 rounded-full"
+                onClick={() => api?.scrollPrev()}
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span className="sr-only">Previous items</span>
+              </Button>
+              
+              <Button
+                variant="outline" 
+                size="icon" 
+                className="absolute -right-12 top-1/2 -translate-y-1/2 z-10 rounded-full"
+                onClick={() => api?.scrollNext()}
+              >
+                <ArrowRight className="h-5 w-5" />
+                <span className="sr-only">Next items</span>
+              </Button>
+            </Carousel>
+          </div>
         </div>
 
         {/* Match item popup with navigation */}
