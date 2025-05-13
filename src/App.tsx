@@ -9,9 +9,7 @@ import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
 import Messages2 from "./pages/Messages2";
 import Profile from "./pages/Profile";
-import ProfileDuplicate from "./pages/ProfileDuplicate";
-import UserProfile from "./pages/UserProfile";
-import OtherProfile from "./pages/OtherProfile";
+import OtherPersonProfile from "./pages/ProfileDuplicate"; // Renamed but file is still ProfileDuplicate.tsx
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
@@ -29,9 +27,7 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/messages2" element={<Messages2 />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
-          <Route path="/user/:userId" element={<UserProfile />} />
-          <Route path="/other-profile/:userId" element={<OtherProfile />} />
+          <Route path="/profile-duplicate" element={<OtherPersonProfile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

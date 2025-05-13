@@ -8,6 +8,8 @@ import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users } from 'lucide-react';
+import { MatchItem } from '@/types/item';
+import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
 
 // Import mock data
 import { mockProfileData } from '@/data/mockProfileData';
@@ -19,10 +21,28 @@ import { myFriends } from '@/data/mockMyFriends';
 const Profile: React.FC = () => {
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
+  // State for popup
+  const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
     setActiveTab(tabValue);
+  };
+
+  // Convert items to MatchItem type to use with popup
+  const itemsAsMatchItems = myAvailableItems.map(item => ({...item, liked: false}));
+  
+  // Handle item click for popup
+  const handleItemClick = (itemId: string) => {
+    const item = itemsAsMatchItems.find(i => i.id === itemId);
+    if (item) {
+      setPopupItem(item);
+    }
+  };
+  
+  // Handle popup close
+  const handlePopupClose = () => {
+    setPopupItem(null);
   };
 
   return (
@@ -73,7 +93,7 @@ const Profile: React.FC = () => {
 
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
-            <ProfileItemsManager initialItems={myAvailableItems} />
+            <ProfileItemsManager initialItems={myAvailableItems} onItemClick={handleItemClick} />
           </TabsContent>
 
           {/* Completed Trades Tab Content */}
@@ -92,6 +112,16 @@ const Profile: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Item Details Popup */}
+      {popupItem && (
+        <ItemDetailsPopup 
+          item={popupItem}
+          isOpen={!!popupItem}
+          onClose={handlePopupClose}
+          canEdit={true} // Allow editing for own items
+        />
+      )}
     </MainLayout>
   );
 };

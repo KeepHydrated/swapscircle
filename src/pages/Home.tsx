@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
@@ -105,12 +106,19 @@ const Home: React.FC = () => {
 
   // Sample data for all possible matches
   const allMatches: MatchItem[] = [
-    // Photography matches
+    // Photography matches - added more vintage camera matches
     { id: '1', name: 'DSLR Camera', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32', liked: false, category: 'photography' },
     { id: '2', name: 'Polaroid Camera', image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f', liked: false, category: 'photography' },
     { id: '3', name: 'Photography Light', image: 'https://images.unsplash.com/photo-1587614202459-6e6aa7c5aee2', liked: false, category: 'photography' },
     { id: '4', name: 'Camera Tripod', image: 'https://images.unsplash.com/photo-1557513952-68e6c52558f3', liked: false, category: 'photography' },
     { id: '5', name: 'Camera Lens', image: 'https://images.unsplash.com/photo-1617005082094-97ea0afcd450', liked: false, category: 'photography' },
+    { id: '20', name: 'Vintage Film Reel', image: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a', liked: false, category: 'photography' },
+    { id: '21', name: 'Photo Printer', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3', liked: false, category: 'photography' },
+    { id: '22', name: 'Lens Filters', image: 'https://images.unsplash.com/photo-1623841675698-8aac12636480', liked: false, category: 'photography' },
+    { id: '23', name: 'Camera Bag', image: 'https://images.unsplash.com/photo-1622560480654-d96214fdc887', liked: false, category: 'photography' },
+    { id: '24', name: 'Lighting Kit', image: 'https://images.unsplash.com/photo-1595859703065-2259982784bb', liked: false, category: 'photography' },
+    { id: '25', name: 'Studio Backdrop', image: 'https://images.unsplash.com/photo-1541534401786-2077eed87a74', liked: false, category: 'photography' },
+    { id: '26', name: 'Vintage Photo Album', image: 'https://images.unsplash.com/photo-1590346346857-42964385b56a', liked: false, category: 'photography' },
     
     // Sports matches
     { id: '6', name: 'Skateboard', image: 'https://images.unsplash.com/photo-1572506026207-3a3c2e88eb6d', liked: false, category: 'sports' },
@@ -164,7 +172,7 @@ const Home: React.FC = () => {
 
   // Handle item selection
   const handleSelectItem = (id: string) => {
-    setSelectedItemId(id || '1'); // Default to first item if empty
+    setSelectedItemId(id); // Removed default to prevent going back to first item
     // Clear selected match when changing items
     setSelectedMatchId(null);
   };

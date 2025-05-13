@@ -16,6 +16,7 @@ interface ItemDetailsPopupProps {
   onClose: () => void;
   onLikeClick?: (item: MatchItem) => void;
   className?: string;
+  canEdit?: boolean;
 }
 
 const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({ 
@@ -23,7 +24,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   isOpen,
   onClose,
   onLikeClick,
-  className = ''
+  className = '',
+  canEdit = false
 }) => {
   // For multiple images (dummy data as example)
   const images = [
@@ -57,15 +59,26 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
       <DialogContent className={`max-w-5xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
-        <button 
-          onClick={onClose}
-          className="absolute right-4 top-4 rounded-full bg-black/50 p-1 text-white hover:bg-black/70 z-10"
-          aria-label="Close dialog"
-        >
-          <X className="h-5 w-5" />
-        </button>
+        <div className="absolute right-4 top-4 flex items-center space-x-2 z-10">
+          <button 
+            onClick={handleLikeClick}
+            className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+            aria-label="Like item"
+          >
+            <Heart 
+              className={`h-5 w-5 ${item.liked ? "text-red-500 fill-red-500" : "text-gray-600"}`}
+            />
+          </button>
+          <button 
+            onClick={onClose}
+            className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+            aria-label="Close dialog"
+          >
+            <X className="h-5 w-5 text-gray-600" />
+          </button>
+        </div>
         
-        <div className="flex flex-col md:flex-row h-[60vh] max-h-[500px]">
+        <div className="flex flex-col md:flex-row h-[50vh] max-h-[500px]">
           {/* Left side - Image Carousel */}
           <div className="md:w-2/3 bg-gray-100 relative">
             <img 
@@ -99,22 +112,12 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 </div>
               </>
             )}
-            
-            {/* Like button */}
-            <button 
-              className="absolute bottom-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
-              onClick={handleLikeClick}
-            >
-              <Heart 
-                className={`h-5 w-5 ${item.liked ? "text-red-500 fill-red-500" : "text-gray-400"}`}
-              />
-            </button>
           </div>
           
           {/* Right side - Item details */}
           <div className="md:w-1/3 flex flex-col">
             <ScrollArea className="flex-grow">
-              <div className="p-6"> {/* Added more padding for spacing */}
+              <div className="p-6 pt-10"> {/* Added more padding for spacing on top */}
                 <h2 className="text-xl font-bold mb-3">{item.name}</h2>
                 
                 <div className="bg-gray-50 p-3 rounded-md mb-4">
@@ -127,7 +130,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 <hr className="my-4" />
                 
                 {/* First row - Brand New and Home & Garden */}
-                <div className="flex gap-3 mb-2">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
                     <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
                       <Check className="w-2.5 h-2.5 text-green-600" />
@@ -144,7 +147,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 </div>
                 
                 {/* Second row - Kitchen and Price */}
-                <div className="flex gap-3 mb-3">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
                     <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center mr-1.5">
                       <Utensils className="w-2.5 h-2.5 text-purple-600" />
@@ -163,7 +166,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 <hr className="my-4" />
                 
                 {/* User profile section - restructured */}
-                <div className="mt-3">
+                <div className="mt-4">
                   <div className="flex flex-col">
                     {/* Profile image and name/rating row */}
                     <div className="mb-3 flex">
@@ -183,7 +186,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                     </div>
                     
                     {/* User details under the profile pic */}
-                    <div className="flex flex-col space-y-1 text-xs text-gray-600 ml-1">
+                    <div className="flex flex-row space-x-4 text-xs text-gray-600 ml-1">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
                         <span>Since 2023</span>

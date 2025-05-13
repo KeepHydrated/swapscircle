@@ -7,9 +7,9 @@ import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
-import ProfileItemsForTrade from '@/components/profile/ProfileItemsForTrade';
 import { Star, Users } from 'lucide-react';
-import { Item } from '@/types/item';
+import { Item, MatchItem } from '@/types/item';
+import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
 
 // Import mock data
 import { myAvailableItems } from '@/data/mockMyItems';
@@ -19,7 +19,7 @@ import { myFriends } from '@/data/mockMyFriends';
 import { mockUserItems } from '@/data/mockUsers';
 
 // Create a different profile for this page
-const duplicateProfileData = {
+const otherPersonProfileData = {
   name: "Jordan Taylor",
   description: "Tech gadget enthusiast with a passion for photography. I collect vintage cameras and modern tech accessories. Looking to trade with fellow collectors who appreciate quality items!",
   rating: 4.8,
@@ -28,14 +28,17 @@ const duplicateProfileData = {
   memberSince: "2023"
 };
 
-const ProfileDuplicate: React.FC = () => {
+const OtherPersonProfile: React.FC = () => {
   // Combine items from myAvailableItems and mockUserItems to get 10 items total
   const combinedItems = [...myAvailableItems, ...Object.values(mockUserItems).flat()].slice(0, 10);
+  const itemsAsMatchItems: MatchItem[] = combinedItems.map(item => ({...item, liked: false}));
 
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
   // State for selected item
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  // State for popup
+  const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
@@ -45,6 +48,28 @@ const ProfileDuplicate: React.FC = () => {
   // Function to handle item click
   const handleItemClick = (item: Item) => {
     setSelectedItem(prevItem => prevItem?.id === item.id ? null : item);
+    
+    // Find the item in our match items list
+    const matchItem = itemsAsMatchItems.find(match => match.id === item.id);
+    if (matchItem) {
+      setPopupItem(matchItem);
+    }
+  };
+
+  // Handle popup close
+  const handlePopupClose = () => {
+    setPopupItem(null);
+  };
+  
+  // Handle like item in popup
+  const handlePopupLikeClick = (item: MatchItem) => {
+    // Update the liked status in our items list
+    const updatedItems = itemsAsMatchItems.map(i => 
+      i.id === item.id ? {...i, liked: !i.liked} : i
+    );
+    
+    // Close the popup
+    setPopupItem(null);
   };
 
   return (
@@ -53,7 +78,7 @@ const ProfileDuplicate: React.FC = () => {
         {/* Profile Header with Friend Request Button */}
         <div className="relative">
           <ProfileHeader 
-            profile={duplicateProfileData} 
+            profile={otherPersonProfileData} 
             friendCount={myFriends.length}
             onReviewsClick={() => navigateToTab('reviews')}
             onFriendsClick={() => navigateToTab('friends')}
@@ -101,11 +126,22 @@ const ProfileDuplicate: React.FC = () => {
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
             <div className="space-y-6">
-              <ProfileItemsForTrade 
-                items={combinedItems} 
-                onItemClick={handleItemClick} 
-                selectedItem={selectedItem} 
-              />
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {combinedItems.map((item) => (
+                  <div 
+                    key={item.id} 
+                    onClick={() => handleItemClick(item)}
+                    className="cursor-pointer"
+                  >
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-full aspect-square object-cover rounded-md"
+                    />
+                    <h3 className="mt-2 font-medium text-sm">{item.name}</h3>
+                  </div>
+                ))}
+              </div>
             </div>
           </TabsContent>
 
@@ -125,8 +161,18 @@ const ProfileDuplicate: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Item Details Popup */}
+      {popupItem && (
+        <ItemDetailsPopup 
+          item={popupItem}
+          isOpen={!!popupItem}
+          onClose={handlePopupClose}
+          onLikeClick={handlePopupLikeClick}
+        />
+      )}
     </MainLayout>
   );
 };
 
-export default ProfileDuplicate;
+export default OtherPersonProfile;
