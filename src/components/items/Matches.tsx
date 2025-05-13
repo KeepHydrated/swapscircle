@@ -64,7 +64,9 @@ const Matches: React.FC<MatchesProps> = ({
         const isOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
         
         if (isOutsideMatches && isOutsideDetails) {
-          onSelectMatch(''); // Clear selection when clicking outside
+          // Don't clear the selection completely anymore
+          // Just close the popup by setting selectedMatch to null
+          setSelectedMatch(null);
         }
       }
     };
@@ -73,7 +75,7 @@ const Matches: React.FC<MatchesProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [selectedMatchId, onSelectMatch]);
+  }, [selectedMatchId, onSelectMatch, setSelectedMatch]);
 
   // Effect to update selectedMatch when matches or selectedMatchId change
   useEffect(() => {

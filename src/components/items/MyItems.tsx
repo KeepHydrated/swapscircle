@@ -24,22 +24,8 @@ interface MyItemsProps {
 const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }) => {
   const myItemsRef = useRef<HTMLDivElement>(null);
   
-  // Handle click outside to close selected item
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectedItemId && myItemsRef.current) {
-        // Check if the click is outside the MyItems container
-        if (!myItemsRef.current.contains(event.target as Node)) {
-          onSelectItem(''); // Clear selection when clicking outside
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [selectedItemId, onSelectItem]);
+  // Removed click outside handler that was clearing the selection
+  // This ensures the selected item stays selected
 
   return (
     <div className="lg:w-1/2 sticky top-0 pb-6">

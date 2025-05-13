@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
@@ -139,11 +140,13 @@ const Home: React.FC = () => {
     ? updatedMatches.filter(match => match.category === selectedItem.category)
     : updatedMatches.filter(match => match.category === 'photography'); // Default to photography
 
-  // Handle item selection
+  // Handle item selection - Note: we've removed the empty string default
   const handleSelectItem = (id: string) => {
-    setSelectedItemId(id); // Removed default to prevent going back to first item
-    // Clear selected match when changing items
-    setSelectedMatchId(null);
+    if (id) {
+      setSelectedItemId(id);
+      // Clear selected match when changing items
+      setSelectedMatchId(null);
+    }
   };
 
   // Handle match selection

@@ -84,8 +84,10 @@ export const useMatchActions = (
   // Close the popup
   const handleClosePopup = () => {
     setSelectedMatch(null);
-    // Also clear the selected match in the parent component
-    onSelectMatch('');
+    
+    // FIXED: Don't clear the selected match ID when closing the popup
+    // This preserves the highlighted/outlined item after closing the popup
+    // onSelectMatch('');
   };
 
   return {
