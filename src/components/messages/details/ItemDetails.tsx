@@ -24,7 +24,7 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
       
       <hr className="mb-3" />
       
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 gap-2 mb-2">
         <div className="flex items-center">
           <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
             <Check className="w-2.5 h-2.5 text-green-600" />
@@ -65,30 +65,27 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
                 <AvatarFallback>EW</AvatarFallback>
               </Avatar>
               
-              {/* First row: Name and rating to the right of avatar */}
-              <div className="flex items-center">
-                <h3 className="text-sm font-semibold mr-2">Emma Wilson</h3>
-                <div className="flex items-center">
-                  <span className="text-amber-400 text-xs">★★★★★</span> 
-                  <span className="text-gray-500 text-xs ml-0.5">(42)</span>
-                </div>
+              {/* Name and rating to the right of avatar */}
+              <div>
+                <h3 className="text-sm font-semibold">Emma Wilson</h3>
+                <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
               </div>
             </div>
             
-            {/* Second row: Member since, distance, response time in horizontal layout, left-aligned */}
-            <div className="flex items-center space-x-4 text-xs text-gray-600 pl-0">
+            {/* User details in a horizontal row under the profile, left-aligned */}
+            <div className="flex flex-wrap gap-4 text-xs text-gray-600 pl-0">
               <div className="flex items-center">
-                <Calendar className="h-3 w-3 mr-0.5 flex-shrink-0" />
+                <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
                 <span>Since 2023</span>
               </div>
               
               <div className="flex items-center">
-                <MapPin className="h-3 w-3 mr-0.5 flex-shrink-0" />
+                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
                 <span>2.3 mi away</span>
               </div>
               
               <div className="flex items-center">
-                <Clock className="h-3 w-3 mr-0.5 flex-shrink-0" />
+                <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
                 <span>~1 hour</span>
               </div>
             </div>

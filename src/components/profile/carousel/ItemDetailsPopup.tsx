@@ -18,6 +18,7 @@ interface ItemDetailsPopupProps {
   onLikeClick?: (item: MatchItem) => void;
   className?: string;
   canEdit?: boolean;
+  showProfileInfo?: boolean;
 }
 
 const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({ 
@@ -26,7 +27,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   onClose,
   onLikeClick,
   className = '',
-  canEdit = false
+  canEdit = false,
+  showProfileInfo = true
 }) => {
   // For multiple images (dummy data as example)
   const images = [
@@ -62,7 +64,10 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
           
           {/* Right side - Item details with showProfileInfo prop */}
-          <ItemDetailsContent name={item.name} showProfileInfo={true} />
+          <ItemDetailsContent 
+            name={item.name} 
+            showProfileInfo={showProfileInfo} 
+          />
         </div>
       </DialogContent>
     </Dialog>

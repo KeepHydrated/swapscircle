@@ -205,13 +205,14 @@ const OtherPersonProfile: React.FC = () => {
         </Tabs>
       </div>
 
-      {/* Item Details Popup - Set showProfileInfo to true */}
+      {/* Item Details Popup - Set showProfileInfo to false for profile duplicate */}
       {popupItem && (
         <ItemDetailsPopup 
           item={popupItem}
           isOpen={!!popupItem}
           onClose={handlePopupClose}
           onLikeClick={handlePopupLikeClick}
+          showProfileInfo={false}
         />
       )}
     </MainLayout>

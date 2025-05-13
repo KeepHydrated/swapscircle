@@ -15,14 +15,14 @@ const UserInfoSection: React.FC = () => {
           />
           
           {/* Name and rating to the right of image */}
-          <div className="flex items-center">
-            <h3 className="text-sm font-semibold mr-2">Emma Wilson</h3>
+          <div>
+            <h3 className="text-sm font-semibold">Emma Wilson</h3>
             <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
           </div>
         </div>
         
         {/* User details in a horizontal row under the profile, left-aligned */}
-        <div className="flex items-center space-x-4 text-xs text-gray-600 pl-0">
+        <div className="flex flex-wrap gap-4 text-xs text-gray-600 pl-0">
           <div className="flex items-center">
             <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
             <span>Since 2023</span>

@@ -26,8 +26,8 @@ const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfi
           
           <hr className="my-4" />
           
-          {/* Feature badges in horizontal row */}
-          <div className="flex flex-wrap gap-4 mb-4">
+          {/* Feature badges in two rows of two */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
             <ItemFeatureBadge 
               icon={Check}
               text="Brand New"
