@@ -7,9 +7,10 @@ import UserInfoSection from './UserInfoSection';
 
 interface ItemDetailsContentProps {
   name: string;
+  showProfileInfo?: boolean;
 }
 
-const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name }) => {
+const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfileInfo = true }) => {
   return (
     <div className="md:w-[45%] flex flex-col">
       <ScrollArea className="flex-grow">
@@ -61,8 +62,8 @@ const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name }) => {
           
           <hr className="my-4" />
           
-          {/* User profile section */}
-          <UserInfoSection />
+          {/* User profile section - only show if showProfileInfo is true */}
+          {showProfileInfo && <UserInfoSection />}
         </div>
       </ScrollArea>
     </div>
