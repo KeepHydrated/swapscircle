@@ -23,8 +23,8 @@ const UserInfoSection: React.FC = () => {
             <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
           </div>
           
-          {/* User details stacked vertically */}
-          <div className="flex flex-col space-y-1 text-xs text-gray-600">
+          {/* User details in a horizontal row */}
+          <div className="flex items-center space-x-4 text-xs text-gray-600">
             <div className="flex items-center">
               <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
               <span>Since 2023</span>

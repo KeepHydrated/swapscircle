@@ -1,6 +1,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import ItemCard from './ItemCard';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Item {
   id: string;
@@ -43,18 +44,20 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
   return (
     <div className="lg:w-1/2 sticky top-0 pb-6">
       <h2 className="text-2xl font-bold mb-4">My Items</h2>
-      <div className="grid grid-cols-2 gap-4" ref={myItemsRef}>
-        {items.map((item) => (
-          <ItemCard 
-            key={item.id}
-            id={item.id}
-            name={item.name}
-            image={item.image}
-            isSelected={selectedItemId === item.id}
-            onSelect={onSelectItem}
-          />
-        ))}
-      </div>
+      <ScrollArea className="h-[calc(100vh-240px)]">
+        <div className="grid grid-cols-2 gap-4 pr-4" ref={myItemsRef}>
+          {items.map((item) => (
+            <ItemCard 
+              key={item.id}
+              id={item.id}
+              name={item.name}
+              image={item.image}
+              isSelected={selectedItemId === item.id}
+              onSelect={onSelectItem}
+            />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 };

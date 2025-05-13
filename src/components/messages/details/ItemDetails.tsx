@@ -12,7 +12,7 @@ interface ItemDetailsProps {
 const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
   return (
     <div className="p-3">
-      <h2 className="text-xl font-bold text-gray-900 mb-2">
+      <h2 className="text-xl font-bold text-gray-900 mb-2 truncate">
         {name || "Selected Item"}
       </h2>
       
@@ -75,8 +75,8 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
                 </div>
               </div>
               
-              {/* Second row: Member since, distance, response time */}
-              <div className="flex items-center flex-wrap gap-2 text-xs text-gray-600">
+              {/* Second row: Member since, distance, response time in horizontal layout */}
+              <div className="flex items-center space-x-4 text-xs text-gray-600">
                 <div className="flex items-center">
                   <Calendar className="h-3 w-3 mr-0.5 flex-shrink-0" />
                   <span>Since 2023</span>

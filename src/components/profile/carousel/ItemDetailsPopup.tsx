@@ -39,8 +39,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   const handleLikeClick = (item: MatchItem) => {
     if (onLikeClick) {
       onLikeClick(item);
-      // Close popup after liking the item
-      onClose();
+      // Close popup after liking the item - already handled in parent component
     }
   };
 
@@ -61,8 +60,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           {/* Left side - Image Carousel with reduced width */}
           <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
           
-          {/* Right side - Item details */}
-          <ItemDetailsContent name={item.name} />
+          {/* Right side - Item details with showProfileInfo set to true */}
+          <ItemDetailsContent name={item.name} showProfileInfo={true} />
         </div>
       </DialogContent>
     </Dialog>

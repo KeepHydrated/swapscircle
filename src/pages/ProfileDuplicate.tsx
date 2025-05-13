@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
@@ -28,9 +29,49 @@ const otherPersonProfileData = {
   memberSince: "2023"
 };
 
+// Additional dummy items to show more items
+const additionalItems: Item[] = [
+  { 
+    id: 'add1', 
+    name: 'Vintage Record Collection', 
+    image: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04',
+    category: 'music'
+  },
+  { 
+    id: 'add2', 
+    name: 'Smart Home Hub', 
+    image: 'https://images.unsplash.com/photo-1558002038-1055907df827',
+    category: 'electronics'
+  },
+  { 
+    id: 'add3', 
+    name: 'Gaming Console', 
+    image: 'https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42',
+    category: 'gaming'
+  },
+  { 
+    id: 'add4', 
+    name: 'Polaroid Camera', 
+    image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f',
+    category: 'photography'
+  },
+  { 
+    id: 'add5', 
+    name: 'Designer Watch', 
+    image: 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3',
+    category: 'fashion'
+  },
+  { 
+    id: 'add6', 
+    name: 'Film Camera', 
+    image: 'https://images.unsplash.com/photo-1452780212940-6f5c0d14d848',
+    category: 'photography'
+  },
+];
+
 const OtherPersonProfile: React.FC = () => {
-  // Combine items from myAvailableItems and mockUserItems to get 10 items total
-  const combinedItems = [...myAvailableItems, ...Object.values(mockUserItems).flat()].slice(0, 10);
+  // Combine items from myAvailableItems, mockUserItems, and additionalItems to get more items
+  const combinedItems = [...myAvailableItems, ...Object.values(mockUserItems).flat(), ...additionalItems].slice(0, 16);
   const itemsAsMatchItems: MatchItem[] = combinedItems.map(item => ({...item, liked: false}));
 
   // State for active tab
@@ -68,7 +109,7 @@ const OtherPersonProfile: React.FC = () => {
       i.id === item.id ? {...i, liked: !i.liked} : i
     );
     
-    // Close the popup
+    // Close the popup after liking
     setPopupItem(null);
   };
 
@@ -126,22 +167,24 @@ const OtherPersonProfile: React.FC = () => {
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
             <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {combinedItems.map((item) => (
-                  <div 
-                    key={item.id} 
-                    onClick={() => handleItemClick(item)}
-                    className="cursor-pointer"
-                  >
-                    <img 
-                      src={item.image} 
-                      alt={item.name} 
-                      className="w-full aspect-square object-cover rounded-md"
-                    />
-                    <h3 className="mt-2 font-medium text-sm">{item.name}</h3>
-                  </div>
-                ))}
-              </div>
+              <ScrollArea className="h-[calc(100vh-320px)]">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
+                  {combinedItems.map((item) => (
+                    <div 
+                      key={item.id} 
+                      onClick={() => handleItemClick(item)}
+                      className="cursor-pointer"
+                    >
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full aspect-square object-cover rounded-md"
+                      />
+                      <h3 className="mt-2 font-medium text-sm truncate">{item.name}</h3>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
           </TabsContent>
 
@@ -162,7 +205,7 @@ const OtherPersonProfile: React.FC = () => {
         </Tabs>
       </div>
 
-      {/* Item Details Popup */}
+      {/* Item Details Popup - Set showProfileInfo to true */}
       {popupItem && (
         <ItemDetailsPopup 
           item={popupItem}
