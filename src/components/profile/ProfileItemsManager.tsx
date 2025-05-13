@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Item } from '@/types/item';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
@@ -7,17 +6,24 @@ import { toast } from '@/hooks/use-toast';
 
 interface ProfileItemsManagerProps {
   initialItems: Item[];
+  onItemClick?: (itemId: string) => void;  // Added this prop to match usage in Profile.tsx
 }
 
-const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems }) => {
+const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems, onItemClick }) => {
   const [items, setItems] = useState<Item[]>(initialItems);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Function to handle clicking on an item to edit
   const handleItemClick = (item: Item) => {
-    setEditingItem(item);
-    setIsEditDialogOpen(true);
+    // If onItemClick prop is provided, call it with the item id
+    if (onItemClick) {
+      onItemClick(item.id);
+    } else {
+      // Otherwise, use the original behavior
+      setEditingItem(item);
+      setIsEditDialogOpen(true);
+    }
   };
 
   // Function to save edited item
