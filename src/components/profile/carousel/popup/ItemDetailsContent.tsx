@@ -26,8 +26,8 @@ const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfi
           
           <hr className="my-4" />
           
-          {/* Aligned vertically - First row */}
-          <div className="flex gap-4 mb-3">
+          {/* Feature badges in horizontal row */}
+          <div className="flex flex-wrap gap-4 mb-4">
             <ItemFeatureBadge 
               icon={Check}
               text="Brand New"
@@ -41,10 +41,7 @@ const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfi
               bgColor="bg-blue-100"
               iconColor="text-blue-600"
             />
-          </div>
           
-          {/* Aligned vertically - Second row */}
-          <div className="flex gap-4 mb-3">
             <ItemFeatureBadge 
               icon={Utensils}
               text="Kitchen"

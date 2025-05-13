@@ -57,17 +57,19 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
       {/* Owner Profile Information - Only show if showProfileInfo is true */}
       {showProfileInfo && (
         <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-start">
-            {/* Avatar on the left */}
-            <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
-              <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-              <AvatarFallback>EW</AvatarFallback>
-            </Avatar>
+          <div className="flex flex-col">
+            {/* Avatar centered */}
+            <div className="flex justify-center mb-3">
+              <Avatar className="h-14 w-14">
+                <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
+                <AvatarFallback>EW</AvatarFallback>
+              </Avatar>
+            </div>
             
-            {/* Profile info on the right */}
-            <div className="flex flex-col">
+            {/* Profile info centered below */}
+            <div className="flex flex-col items-center">
               {/* First row: Name and rating */}
-              <div className="flex items-center mb-0.5">
+              <div className="flex items-center mb-2">
                 <h3 className="text-sm font-semibold mr-2">Emma Wilson</h3>
                 <div className="flex items-center">
                   <span className="text-amber-400 text-xs">★★★★★</span> 
@@ -76,7 +78,7 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
               </div>
               
               {/* Second row: Member since, distance, response time in horizontal layout */}
-              <div className="flex items-center space-x-4 text-xs text-gray-600">
+              <div className="flex items-center justify-center space-x-4 text-xs text-gray-600">
                 <div className="flex items-center">
                   <Calendar className="h-3 w-3 mr-0.5 flex-shrink-0" />
                   <span>Since 2023</span>
