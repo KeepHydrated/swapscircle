@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
@@ -60,7 +59,7 @@ const Home: React.FC = () => {
     }
   ]);
 
-  // Sample data for my items with added details
+  // Sample data for my items with added details - keeping only the first one
   const myItems: Item[] = [
     { 
       id: '1', 
@@ -71,37 +70,7 @@ const Home: React.FC = () => {
       description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality vintage camera at a great value.',
       tags: ['Electronics', 'Photography', 'Collectibles'],
       priceRange: '$100 - $250'
-    },
-    { 
-      id: '2', 
-      name: 'Mountain Bike', 
-      image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e', 
-      category: 'sports',
-      condition: 'Brand New',
-      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality mountain bike at a great value.',
-      tags: ['Sports', 'Outdoors', 'Cycling'],
-      priceRange: '$200 - $500'
-    },
-    { 
-      id: '3', 
-      name: 'Acoustic Guitar', 
-      image: 'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f', 
-      category: 'music',
-      condition: 'Brand New',
-      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality acoustic guitar at a great value.',
-      tags: ['Music', 'Instruments', 'Entertainment'],
-      priceRange: '$150 - $350'
-    },
-    { 
-      id: '4', 
-      name: 'Laptop', 
-      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853', 
-      category: 'electronics',
-      condition: 'Brand New',
-      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality laptop at a great value.',
-      tags: ['Electronics', 'Computers', 'Office'],
-      priceRange: '$300 - $800'
-    },
+    }
   ];
 
   // Sample data for all possible matches
