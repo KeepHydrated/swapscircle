@@ -75,18 +75,20 @@ const Messages3 = () => {
 
         {/* Match item popup with navigation */}
         {selectedMatch && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
             <div className="relative bg-white rounded-lg max-w-3xl w-full mx-4 overflow-hidden">
-              {/* Previous button - more prominent */}
-              <Button
-                variant="default"
-                size="icon"
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white shadow-lg hover:bg-gray-100 border border-gray-200"
-                onClick={navigateToPrev}
-              >
-                <ArrowLeft className="h-5 w-5 text-gray-700" />
-                <span className="sr-only">Previous match</span>
-              </Button>
+              {/* Previous button - show only if not first item */}
+              {matchItems.findIndex(item => item.id === selectedMatch.id) > 0 && (
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
+                  onClick={navigateToPrev}
+                >
+                  <ArrowLeft className="h-6 w-6 text-gray-800" />
+                  <span className="sr-only">Previous match</span>
+                </Button>
+              )}
               
               <ItemDetailsPopup
                 item={selectedMatch}
@@ -95,16 +97,18 @@ const Messages3 = () => {
                 onLikeClick={() => handleLike(selectedMatch.id)}
               />
               
-              {/* Next button - more prominent */}
-              <Button
-                variant="default"
-                size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white shadow-lg hover:bg-gray-100 border border-gray-200"
-                onClick={navigateToNext}
-              >
-                <ArrowRight className="h-5 w-5 text-gray-700" />
-                <span className="sr-only">Next match</span>
-              </Button>
+              {/* Next button - show only if not last item */}
+              {matchItems.findIndex(item => item.id === selectedMatch.id) < matchItems.length - 1 && (
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
+                  onClick={navigateToNext}
+                >
+                  <ArrowRight className="h-6 w-6 text-gray-800" />
+                  <span className="sr-only">Next match</span>
+                </Button>
+              )}
 
               {/* Visual indicator showing current position */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full px-3 py-1 text-sm font-medium shadow-md z-20">
