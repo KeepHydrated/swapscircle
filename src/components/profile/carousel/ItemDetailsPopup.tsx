@@ -59,7 +59,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           onClose={onClose}
         />
         
-        <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px]">
+        <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px] overflow-hidden">
           {/* Left side - Image Carousel with reduced width */}
           <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
           

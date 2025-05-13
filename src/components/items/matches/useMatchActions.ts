@@ -62,11 +62,7 @@ export const useMatchActions = (
   // Handle selecting an item with popup display
   const handleItemSelect = (id: string) => {
     // Find the selected match
-    const displayedMatches = matches.filter(match => 
-      !removedItems.includes(match.id) && !match.liked
-    );
-    
-    const match = displayedMatches.find(m => m.id === id);
+    const match = matches.find(m => m.id === id);
     if (match) {
       setSelectedMatch(match);
       

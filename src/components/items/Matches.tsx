@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
@@ -32,7 +33,8 @@ const Matches: React.FC<MatchesProps> = ({
     handleLike,
     handleItemSelect,
     handlePopupLikeClick,
-    handleClosePopup
+    handleClosePopup,
+    setSelectedMatch
   } = useMatchActions(matches, onSelectMatch);
   
   // Update itemsPerRow based on window size
@@ -72,6 +74,16 @@ const Matches: React.FC<MatchesProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [selectedMatchId, onSelectMatch]);
+
+  // Effect to update selectedMatch when matches or selectedMatchId change
+  useEffect(() => {
+    if (selectedMatchId && matches.length > 0) {
+      const match = matches.find(m => m.id === selectedMatchId);
+      if (match) {
+        setSelectedMatch(match);
+      }
+    }
+  }, [matches, selectedMatchId, setSelectedMatch]);
   
   // Filter out removed/matched items
   const displayedMatches = matches.filter(match => 
