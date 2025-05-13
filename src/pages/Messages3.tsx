@@ -5,13 +5,6 @@ import { useState } from 'react';
 import ItemCard from '@/components/items/ItemCard';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem, 
-  CarouselPrevious, 
-  CarouselNext 
-} from "@/components/ui/carousel";
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
 
 // Sample match items
@@ -45,6 +38,22 @@ const Messages3 = () => {
     setSelectedMatch(null);
   };
 
+  // Navigate to previous item
+  const navigateToPrev = () => {
+    if (!selectedMatch) return;
+    const currentIndex = matchItems.findIndex(item => item.id === selectedMatch.id);
+    const prevIndex = (currentIndex - 1 + matchItems.length) % matchItems.length;
+    setSelectedMatch(matchItems[prevIndex]);
+  };
+
+  // Navigate to next item
+  const navigateToNext = () => {
+    if (!selectedMatch) return;
+    const currentIndex = matchItems.findIndex(item => item.id === selectedMatch.id);
+    const nextIndex = (currentIndex + 1) % matchItems.length;
+    setSelectedMatch(matchItems[nextIndex]);
+  };
+
   return (
     <MainLayout>
       <div className="container mx-auto py-8">
@@ -68,21 +77,16 @@ const Messages3 = () => {
         {selectedMatch && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="relative bg-white rounded-lg max-w-3xl w-full mx-4 overflow-hidden">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 ml-2 z-20">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-full bg-white shadow-md hover:bg-gray-100"
-                  onClick={() => {
-                    const currentIndex = matchItems.findIndex(item => item.id === selectedMatch.id);
-                    const prevIndex = (currentIndex - 1 + matchItems.length) % matchItems.length;
-                    setSelectedMatch(matchItems[prevIndex]);
-                  }}
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="sr-only">Previous match</span>
-                </Button>
-              </div>
+              {/* Previous button - more prominent */}
+              <Button
+                variant="default"
+                size="icon"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white shadow-lg hover:bg-gray-100 border border-gray-200"
+                onClick={navigateToPrev}
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-700" />
+                <span className="sr-only">Previous match</span>
+              </Button>
               
               <ItemDetailsPopup
                 item={selectedMatch}
@@ -91,20 +95,20 @@ const Messages3 = () => {
                 onLikeClick={() => handleLike(selectedMatch.id)}
               />
               
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 z-20">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-full bg-white shadow-md hover:bg-gray-100"
-                  onClick={() => {
-                    const currentIndex = matchItems.findIndex(item => item.id === selectedMatch.id);
-                    const nextIndex = (currentIndex + 1) % matchItems.length;
-                    setSelectedMatch(matchItems[nextIndex]);
-                  }}
-                >
-                  <ArrowRight className="h-4 w-4" />
-                  <span className="sr-only">Next match</span>
-                </Button>
+              {/* Next button - more prominent */}
+              <Button
+                variant="default"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white shadow-lg hover:bg-gray-100 border border-gray-200"
+                onClick={navigateToNext}
+              >
+                <ArrowRight className="h-5 w-5 text-gray-700" />
+                <span className="sr-only">Next match</span>
+              </Button>
+
+              {/* Visual indicator showing current position */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full px-3 py-1 text-sm font-medium shadow-md z-20">
+                {matchItems.findIndex(item => item.id === selectedMatch.id) + 1} / {matchItems.length}
               </div>
             </div>
           </div>
