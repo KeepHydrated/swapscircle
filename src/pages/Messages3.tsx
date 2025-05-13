@@ -62,10 +62,10 @@ const Messages3 = () => {
     <MainLayout>
       <div className="container mx-auto py-8">
         <div className="mb-12">
-          <h1 className="text-2xl font-bold mb-6">Item Matches</h1>
+          <h2 className="text-xl font-medium mb-6 text-gray-600">Your Match Opportunities</h2>
           
           {/* Item matches carousel */}
-          <div className="relative">
+          <div className="relative px-12"> {/* Added padding for arrow space */}
             <Carousel
               setApi={setApi}
               className="w-full"
@@ -88,30 +88,31 @@ const Messages3 = () => {
                         />
                       </div>
                       <h3 className="text-sm font-medium text-center truncate">{item.name}</h3>
+                      <p className="text-xs text-center text-gray-500">Matched Item</p>
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
               
-              {/* Navigation arrows outside carousel items */}
+              {/* Navigation arrows inside the container */}
               <Button
-                variant="outline" 
+                variant="default" 
                 size="icon" 
-                className="absolute -left-12 top-1/2 -translate-y-1/2 z-10 rounded-full"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white shadow-lg h-10 w-10 border border-gray-200"
                 onClick={() => api?.scrollPrev()}
               >
-                <ArrowLeft className="h-5 w-5" />
-                <span className="sr-only">Previous items</span>
+                <ArrowLeft className="h-5 w-5 text-gray-800" />
+                <span className="sr-only">Previous matches</span>
               </Button>
               
               <Button
-                variant="outline" 
+                variant="default" 
                 size="icon" 
-                className="absolute -right-12 top-1/2 -translate-y-1/2 z-10 rounded-full"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white shadow-lg h-10 w-10 border border-gray-200"
                 onClick={() => api?.scrollNext()}
               >
-                <ArrowRight className="h-5 w-5" />
-                <span className="sr-only">Next items</span>
+                <ArrowRight className="h-5 w-5 text-gray-800" />
+                <span className="sr-only">Next matches</span>
               </Button>
             </Carousel>
           </div>
