@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import ItemCard from './ItemCard';
 import ItemDetails from '@/components/messages/details/ItemDetails';
@@ -6,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
 import { MatchItem } from '@/types/item';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface MatchesProps {
   matches: MatchItem[];
@@ -199,13 +201,15 @@ const Matches: React.FC<MatchesProps> = ({
   };
 
   return (
-    <div className="lg:w-1/2">
+    <div className="lg:w-1/2 flex flex-col h-full">
       <h2 className="text-2xl font-bold mb-4">
         Matches for {selectedItemName || 'Selected Item'}
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4" ref={matchesContainerRef}>
-        {renderGrid()}
-      </div>
+      <ScrollArea className="flex-grow">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pr-2" ref={matchesContainerRef}>
+          {renderGrid()}
+        </div>
+      </ScrollArea>
       
       {/* Popup for displaying match details */}
       {selectedMatch && (

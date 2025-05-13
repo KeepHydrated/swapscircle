@@ -41,7 +41,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
   }, [selectedItemId, onSelectItem]);
 
   return (
-    <div className="lg:w-1/2">
+    <div className="lg:w-1/2 sticky top-0 pb-6">
       <h2 className="text-2xl font-bold mb-4">My Items</h2>
       <div className="grid grid-cols-2 gap-4" ref={myItemsRef}>
         {items.map((item) => (

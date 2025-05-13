@@ -56,7 +56,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className={`max-w-5xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
+      <DialogContent className={`max-w-4xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
         {/* Action buttons - Like button now on the left of the X button */}
@@ -80,8 +80,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
         </div>
         
         <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px]">
-          {/* Left side - Image Carousel */}
-          <div className="md:w-2/3 bg-gray-100 relative">
+          {/* Left side - Image Carousel (now more narrow) */}
+          <div className="md:w-[55%] bg-gray-100 relative">
             <img 
               src={images[currentImageIndex]} 
               alt={`${item.name} - image ${currentImageIndex + 1}`} 
@@ -115,8 +115,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             )}
           </div>
           
-          {/* Right side - Item details */}
-          <div className="md:w-1/3 flex flex-col">
+          {/* Right side - Item details (now wider relative to image) */}
+          <div className="md:w-[45%] flex flex-col">
             <ScrollArea className="flex-grow">
               <div className="p-6 pt-12"> {/* More padding on top */}
                 <h2 className="text-xl font-bold mb-3">{item.name}</h2>
