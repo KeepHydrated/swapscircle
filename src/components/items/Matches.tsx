@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import ItemCard from './ItemCard';
 import ItemDetails from '@/components/messages/details/ItemDetails';

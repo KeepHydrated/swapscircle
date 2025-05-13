@@ -54,7 +54,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className={`max-w-4xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
+      <DialogContent className={`max-w-5xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
         <button 
@@ -65,9 +65,9 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           <X className="h-5 w-5" />
         </button>
         
-        <div className="flex flex-col md:flex-row h-[70vh] max-h-[500px]">
+        <div className="flex flex-col md:flex-row h-[60vh] max-h-[500px]">
           {/* Left side - Image Carousel */}
-          <div className="md:w-3/5 bg-gray-100 relative">
+          <div className="md:w-2/3 bg-gray-100 relative">
             <img 
               src={images[currentImageIndex]} 
               alt={`${item.name} - image ${currentImageIndex + 1}`} 
@@ -112,67 +112,78 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           </div>
           
           {/* Right side - Item details */}
-          <div className="md:w-2/5 flex flex-col">
-            <ScrollArea className="flex-grow p-4">
-              <h2 className="text-xl font-bold mb-2">{item.name}</h2>
-              
-              <div className="bg-gray-50 p-3 rounded-md mb-3">
-                <p className="text-gray-700 text-sm">
-                  Like new condition. This item has been gently used and well maintained. Perfect for
-                  anyone looking for a high-quality {item.name.toLowerCase()} at a great value.
-                </p>
-              </div>
-              
-              <hr className="my-3" />
-              
-              <div className="flex flex-wrap gap-2 mb-4">
-                <div className="flex items-center">
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
-                    <Check className="w-2.5 h-2.5 text-green-600" />
-                  </div>
-                  <span className="text-gray-800 text-xs">Brand New</span>
+          <div className="md:w-1/3 flex flex-col">
+            <ScrollArea className="flex-grow">
+              <div className="p-6"> {/* Added more padding for spacing */}
+                <h2 className="text-xl font-bold mb-3">{item.name}</h2>
+                
+                <div className="bg-gray-50 p-3 rounded-md mb-4">
+                  <p className="text-gray-700 text-sm">
+                    Like new condition. This item has been gently used and well maintained. Perfect for
+                    anyone looking for a high-quality {item.name.toLowerCase()} at a great value.
+                  </p>
                 </div>
                 
-                <div className="flex items-center">
-                  <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-1.5">
-                    <Home className="w-2.5 h-2.5 text-blue-600" />
+                <hr className="my-4" />
+                
+                {/* First row - Brand New and Home & Garden */}
+                <div className="flex gap-3 mb-2">
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
+                      <Check className="w-2.5 h-2.5 text-green-600" />
+                    </div>
+                    <span className="text-gray-800 text-xs">Brand New</span>
                   </div>
-                  <span className="text-gray-800 text-xs">Home & Garden</span>
+                  
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-1.5">
+                      <Home className="w-2.5 h-2.5 text-blue-600" />
+                    </div>
+                    <span className="text-gray-800 text-xs">Home & Garden</span>
+                  </div>
                 </div>
                 
-                <div className="flex items-center">
-                  <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center mr-1.5">
-                    <Utensils className="w-2.5 h-2.5 text-purple-600" />
+                {/* Second row - Kitchen and Price */}
+                <div className="flex gap-3 mb-3">
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center mr-1.5">
+                      <Utensils className="w-2.5 h-2.5 text-purple-600" />
+                    </div>
+                    <span className="text-gray-800 text-xs">Kitchen</span>
                   </div>
-                  <span className="text-gray-800 text-xs">Kitchen</span>
+                  
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
+                      <DollarSign className="w-2.5 h-2.5 text-green-600" />
+                    </div>
+                    <span className="text-gray-800 text-xs">$100-$250</span>
+                  </div>
                 </div>
                 
-                <div className="flex items-center">
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
-                    <DollarSign className="w-2.5 h-2.5 text-green-600" />
-                  </div>
-                  <span className="text-gray-800 text-xs">$100-$250</span>
-                </div>
-              </div>
-              
-              <hr className="my-4" />
-              
-              <div className="mt-2">
-                <div className="flex-shrink-0 mr-3 flex items-start">
-                  <div className="flex-shrink-0 mr-3">
-                    <img 
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
-                      alt="Owner" 
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </div>
+                <hr className="my-4" />
+                
+                {/* User profile section - restructured */}
+                <div className="mt-3">
                   <div className="flex flex-col">
-                    <div className="flex items-center">
-                      <h3 className="text-sm font-semibold">Emma Wilson</h3>
-                      <div className="flex text-amber-400 text-xs ml-2">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                    {/* Profile image and name/rating row */}
+                    <div className="mb-3 flex">
+                      <div className="flex-shrink-0 mr-3">
+                        <img 
+                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"
+                          alt="Owner" 
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <div className="flex items-center">
+                          <h3 className="text-sm font-semibold mr-2">Emma Wilson</h3>
+                          <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="flex items-center space-x-3 text-xs text-gray-600 mt-1">
+                    {/* User details under the profile pic */}
+                    <div className="flex flex-col space-y-1 text-xs text-gray-600 ml-1">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
                         <span>Since 2023</span>
