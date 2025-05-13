@@ -26,7 +26,7 @@ const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfi
           
           <hr className="my-4" />
           
-          {/* Feature badges in two rows of two */}
+          {/* Feature badges in two rows of two, with price badge moved to the right */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <ItemFeatureBadge 
               icon={Check}
@@ -36,24 +36,24 @@ const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfi
             />
             
             <ItemFeatureBadge 
+              icon={DollarSign}
+              text="$100-$250"
+              bgColor="bg-green-100"
+              iconColor="text-green-600"
+            />
+          
+            <ItemFeatureBadge 
               icon={Home}
               text="Home & Garden"
               bgColor="bg-blue-100"
               iconColor="text-blue-600"
             />
-          
+            
             <ItemFeatureBadge 
               icon={Utensils}
               text="Kitchen"
               bgColor="bg-purple-100"
               iconColor="text-purple-600"
-            />
-            
-            <ItemFeatureBadge 
-              icon={DollarSign}
-              text="$100-$250"
-              bgColor="bg-green-100"
-              iconColor="text-green-600"
             />
           </div>
           

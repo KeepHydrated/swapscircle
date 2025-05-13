@@ -24,12 +24,20 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
       
       <hr className="mb-3" />
       
+      {/* Feature badges with price badge moved to the right */}
       <div className="grid grid-cols-2 gap-2 mb-2">
         <div className="flex items-center">
           <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
             <Check className="w-2.5 h-2.5 text-green-600" />
           </div>
           <span className="text-gray-800 text-xs">Brand New</span>
+        </div>
+        
+        <div className="flex items-center">
+          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
+            <DollarSign className="w-2.5 h-2.5 text-green-600" />
+          </div>
+          <span className="text-gray-800 text-xs">$100 - $250</span>
         </div>
         
         <div className="flex items-center">
@@ -44,13 +52,6 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
             <Utensils className="w-2.5 h-2.5 text-purple-600" />
           </div>
           <span className="text-gray-800 text-xs">Kitchen Appliances</span>
-        </div>
-        
-        <div className="flex items-center">
-          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
-            <DollarSign className="w-2.5 h-2.5 text-green-600" />
-          </div>
-          <span className="text-gray-800 text-xs">$100 - $250</span>
         </div>
       </div>
       
@@ -72,7 +73,7 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
               </div>
             </div>
             
-            {/* User details in a horizontal row under the profile, left-aligned */}
+            {/* User details under the profile, left-aligned */}
             <div className="flex flex-wrap gap-4 text-xs text-gray-600 pl-0">
               <div className="flex items-center">
                 <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />

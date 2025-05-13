@@ -21,7 +21,7 @@ const UserInfoSection: React.FC = () => {
           </div>
         </div>
         
-        {/* User details in a horizontal row under the profile, left-aligned */}
+        {/* User details under the profile, left-aligned */}
         <div className="flex flex-wrap gap-4 text-xs text-gray-600 pl-0">
           <div className="flex items-center">
             <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
