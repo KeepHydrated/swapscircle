@@ -35,7 +35,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   return (
     <div className="flex flex-col">
       <Card 
-        className={`overflow-hidden cursor-pointer ${isSelected ? 'ring-2 ring-green-500' : ''}`}
+        className={`overflow-hidden cursor-pointer ${isSelected && !isMatch ? 'ring-2 ring-green-500' : ''}`}
         onClick={() => onSelect(id)}
       >
         <div className="relative">
