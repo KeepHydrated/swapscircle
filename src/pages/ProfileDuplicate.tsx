@@ -8,8 +8,8 @@ import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users } from 'lucide-react';
-import { myProfileData } from '@/data/mockProfileData';
-import { myItems } from '@/data/mockMyItems';
+import { ProfileData } from '@/data/mockProfileData';
+import { myAvailableItems } from '@/data/mockMyItems';
 import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
 import { myFriends } from '@/data/mockMyFriends';
@@ -17,13 +17,19 @@ import { myFriends } from '@/data/mockMyFriends';
 const ProfileDuplicate: React.FC = () => {
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
+  
+  // Function to handle item click
+  const handleItemClick = (item: any) => {
+    console.log('Item clicked:', item);
+    // Add additional functionality as needed
+  };
 
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
-          profile={myProfileData}
+          profile={ProfileData}
           friendCount={myFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
@@ -67,7 +73,7 @@ const ProfileDuplicate: React.FC = () => {
 
             {/* Available Items Tab Content */}
             <TabsContent value="available" className="p-6">
-              <ItemsForTradeTab items={myItems} />
+              <ItemsForTradeTab items={myAvailableItems} onItemClick={handleItemClick} />
             </TabsContent>
 
             {/* Completed Trades Tab Content */}
