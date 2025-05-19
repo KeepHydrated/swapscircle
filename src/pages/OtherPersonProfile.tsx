@@ -1,15 +1,14 @@
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { Star } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
-import ReviewsTab from '@/components/profile/ReviewsTab';
-import { myReviews } from '@/data/mockMyReviews';
+import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
 
 const OtherPersonProfile: React.FC = () => {
   // Convert items to MatchItems
@@ -28,11 +27,6 @@ const OtherPersonProfile: React.FC = () => {
   // Handle popup close
   const handlePopupClose = () => {
     setPopupItem(null);
-  };
-  
-  // Handle item click
-  const handleItemClick = (item: MatchItem) => {
-    setPopupItem(item);
   };
   
   // Handle like item in popup
@@ -88,37 +82,12 @@ const OtherPersonProfile: React.FC = () => {
           </Tabs>
         </div>
 
-        {/* Available Items Tab Content */}
-        <TabsContent value="available" className="p-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {itemsAsMatchItems.map((item) => (
-              <div 
-                key={item.id} 
-                onClick={() => handleItemClick(item)}
-                className="cursor-pointer group"
-              >
-                <div className="relative aspect-square overflow-hidden rounded-md">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                  />
-                </div>
-                <h3 className="mt-2 font-medium text-sm truncate">{item.name}</h3>
-              </div>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Completed Trades Tab Content */}
-        <TabsContent value="completed" className="p-6">
-          <p className="text-muted-foreground">This user's completed trades will appear here.</p>
-        </TabsContent>
-        
-        {/* Reviews Tab Content */}
-        <TabsContent value="reviews" className="p-6">
-          <ReviewsTab reviews={myReviews} />
-        </TabsContent>
+        {/* Tab Content */}
+        <OtherProfileTabContent 
+          activeTab={activeTab}
+          items={itemsAsMatchItems}
+          setPopupItem={setPopupItem}
+        />
       </div>
 
       {/* Item Details Popup - no edit controls for other person's items */}

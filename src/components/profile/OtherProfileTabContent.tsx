@@ -4,13 +4,11 @@ import { TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
-import FriendsTab from '@/components/profile/FriendsTab';
 import { MatchItem } from '@/types/item';
 
 // Import mock data
 import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
-import { myFriends } from '@/data/mockMyFriends';
 
 interface OtherProfileTabContentProps {
   activeTab: string;
@@ -28,11 +26,12 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
     setPopupItem(item);
   };
 
+  // Only render the content for the active tab
   return (
     <>
       {/* Available Items Tab Content */}
-      <TabsContent value="available" className="p-6">
-        <div className="space-y-6">
+      {activeTab === 'available' && (
+        <div className="p-6 space-y-6">
           <ScrollArea className="h-[calc(100vh-320px)]">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
               {items.map((item) => (
@@ -52,22 +51,21 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
             </div>
           </ScrollArea>
         </div>
-      </TabsContent>
+      )}
 
       {/* Completed Trades Tab Content */}
-      <TabsContent value="completed" className="p-6">
-        <CompletedTradesTab trades={myCompletedTrades} />
-      </TabsContent>
+      {activeTab === 'completed' && (
+        <div className="p-6">
+          <CompletedTradesTab trades={myCompletedTrades} />
+        </div>
+      )}
       
       {/* Reviews Tab Content */}
-      <TabsContent value="reviews" className="p-6">
-        <ReviewsTab reviews={myReviews} />
-      </TabsContent>
-      
-      {/* Friends Tab Content */}
-      <TabsContent value="friends" className="p-6">
-        <FriendsTab friends={myFriends} />
-      </TabsContent>
+      {activeTab === 'reviews' && (
+        <div className="p-6">
+          <ReviewsTab reviews={myReviews} />
+        </div>
+      )}
     </>
   );
 };
