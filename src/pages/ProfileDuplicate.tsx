@@ -8,7 +8,7 @@ import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users } from 'lucide-react';
-import { ProfileData } from '@/data/mockProfileData';
+import { mockProfileData } from '@/data/mockProfileData';
 import { myAvailableItems } from '@/data/mockMyItems';
 import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
@@ -29,7 +29,7 @@ const ProfileDuplicate: React.FC = () => {
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
-          profile={ProfileData}
+          profile={mockProfileData}
           friendCount={myFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
