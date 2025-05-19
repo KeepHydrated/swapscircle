@@ -9,8 +9,8 @@ import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
 import Messages2 from "./pages/Messages2";
 import Messages3 from "./pages/Messages3";
-import Profile from "./pages/Profile";
-import OtherPersonProfile from "./pages/ProfileDuplicate"; // Updated this import
+import ProfileDuplicate from "./pages/ProfileDuplicate";
+import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
@@ -28,8 +28,9 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/messages2" element={<Messages2 />} />
           <Route path="/messages3" element={<Messages3 />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile-duplicate" element={<OtherPersonProfile />} />
+          <Route path="/profile" element={<ProfileDuplicate />} />
+          <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
+          <Route path="/other-person-profile" element={<OtherPersonProfile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

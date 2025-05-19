@@ -39,8 +39,10 @@ const Header = () => {
           </Button>
           
           <Button variant="ghost" size="icon" className="hidden md:flex">
-            <Bell className="w-5 h-5" />
-            <span className="sr-only">Notifications</span>
+            <Link to="/notifications">
+              <Bell className="w-5 h-5" />
+              <span className="sr-only">Notifications</span>
+            </Link>
           </Button>
           
           <DropdownMenu>
@@ -57,7 +59,13 @@ const Header = () => {
               <DropdownMenuItem asChild>
                 <Link to="/profile-duplicate" className="flex w-full cursor-pointer items-center">
                   <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <span>My Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/other-person-profile" className="flex w-full cursor-pointer items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Other Person's Profile</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

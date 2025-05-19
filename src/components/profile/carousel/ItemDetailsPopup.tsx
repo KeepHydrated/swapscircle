@@ -16,6 +16,9 @@ interface ItemDetailsPopupProps {
   isOpen: boolean;
   onClose: () => void;
   onLikeClick?: (item: MatchItem) => void;
+  onEditClick?: () => void;
+  onDuplicateClick?: () => void;
+  onDeleteClick?: () => void;
   className?: string;
   canEdit?: boolean;
   showProfileInfo?: boolean;
@@ -26,6 +29,9 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   isOpen,
   onClose,
   onLikeClick,
+  onEditClick,
+  onDuplicateClick,
+  onDeleteClick,
   className = '',
   canEdit = false,
   showProfileInfo = true
@@ -41,8 +47,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   const handleLikeClick = (item: MatchItem) => {
     if (onLikeClick) {
       onLikeClick(item);
-      // Close popup after liking
-      onClose();
     }
   };
 
@@ -57,6 +61,10 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           item={item} 
           onLikeClick={handleLikeClick} 
           onClose={onClose}
+          onEditClick={onEditClick}
+          onDuplicateClick={onDuplicateClick}
+          onDeleteClick={onDeleteClick}
+          canEdit={canEdit}
         />
         
         <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px] overflow-hidden">
