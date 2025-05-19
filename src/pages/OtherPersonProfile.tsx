@@ -79,15 +79,15 @@ const OtherPersonProfile: React.FC = () => {
                 Reviews
               </TabsTrigger>
             </TabsList>
+            
+            {/* We're moving the tab content inside the Tabs component */}
+            <OtherProfileTabContent 
+              activeTab={activeTab}
+              items={itemsAsMatchItems}
+              setPopupItem={setPopupItem}
+            />
           </Tabs>
         </div>
-
-        {/* Tab Content */}
-        <OtherProfileTabContent 
-          activeTab={activeTab}
-          items={itemsAsMatchItems}
-          setPopupItem={setPopupItem}
-        />
       </div>
 
       {/* Item Details Popup - no edit controls for other person's items */}
