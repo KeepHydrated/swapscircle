@@ -11,13 +11,15 @@ import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonP
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
 
 const OtherPersonProfile: React.FC = () => {
-  // Convert items to MatchItems
+  // Convert items to MatchItems and add liked property
   const itemsAsMatchItems: MatchItem[] = getOtherPersonItems().map(item => ({...item, liked: false}));
 
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
   // State for popup
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
+  // State to track liked items
+  const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
@@ -31,10 +33,23 @@ const OtherPersonProfile: React.FC = () => {
   
   // Handle like item in popup
   const handlePopupLikeClick = (item: MatchItem) => {
-    // Logic to handle liking an item would go here
-    // Close the popup after liking
+    handleLikeItem(item.id);
     setPopupItem(null);
   };
+
+  // Handle liking an item
+  const handleLikeItem = (id: string) => {
+    setLikedItems(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  // Update items with liked status
+  const itemsWithLikedStatus = itemsAsMatchItems.map(item => ({
+    ...item,
+    liked: likedItems[item.id] || false
+  }));
 
   return (
     <MainLayout>
@@ -83,8 +98,9 @@ const OtherPersonProfile: React.FC = () => {
             {/* We're moving the tab content inside the Tabs component */}
             <OtherProfileTabContent 
               activeTab={activeTab}
-              items={itemsAsMatchItems}
+              items={itemsWithLikedStatus}
               setPopupItem={setPopupItem}
+              onLikeItem={handleLikeItem}
             />
           </Tabs>
         </div>

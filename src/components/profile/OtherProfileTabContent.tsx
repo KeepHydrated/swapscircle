@@ -3,6 +3,7 @@ import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
+import ItemCard from '@/components/items/ItemCard';
 import { MatchItem } from '@/types/item';
 
 // Import mock data
@@ -13,16 +14,21 @@ interface OtherProfileTabContentProps {
   activeTab: string;
   items: MatchItem[];
   setPopupItem: (item: MatchItem | null) => void;
+  onLikeItem: (id: string) => void;
 }
 
 const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({ 
   activeTab, 
   items,
-  setPopupItem
+  setPopupItem,
+  onLikeItem
 }) => {
   // Handle item click to show popup
-  const handleItemClick = (item: MatchItem) => {
-    setPopupItem(item);
+  const handleItemClick = (id: string) => {
+    const item = items.find(item => item.id === id);
+    if (item) {
+      setPopupItem(item);
+    }
   };
 
   // Only render the content for the active tab
@@ -34,18 +40,16 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
           <ScrollArea className="h-[calc(100vh-320px)]">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
               {items.map((item) => (
-                <div 
-                  key={item.id} 
-                  onClick={() => handleItemClick(item)}
-                  className="cursor-pointer"
-                >
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-full aspect-square object-cover rounded-md"
-                  />
-                  <h3 className="mt-2 font-medium text-sm truncate">{item.name}</h3>
-                </div>
+                <ItemCard
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  image={item.image}
+                  isMatch={true}
+                  liked={item.liked}
+                  onSelect={handleItemClick}
+                  onLike={onLikeItem}
+                />
               ))}
             </div>
           </ScrollArea>
