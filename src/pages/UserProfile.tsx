@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Star, Users, Pencil } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client'; // Fixed import path
+import { supabase } from '@/integrations/supabase/client'; 
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
@@ -46,27 +45,40 @@ const UserProfile: React.FC = () => {
           }
           
           // Fetch user items
-          const { data: items, error: itemsError } = await supabase
-            .from('items')
-            .select('*')
-            .eq('user_id', user.id);
-          
-          if (itemsError) {
-            console.error('Error fetching items:', itemsError);
-          } else {
-            // Convert to MatchItem format
-            const formattedItems = items.map(item => ({
-              id: item.id,
-              name: item.name,
-              image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-              category: item.category,
-              condition: item.condition,
-              description: item.description,
-              tags: item.tags,
-              liked: false
-            }));
+          try {
+            const { data: items, error: itemsError } = await supabase
+              .from('items')
+              .select('*')
+              .eq('user_id', user.id);
             
-            setUserItems(formattedItems);
+            if (itemsError) {
+              // Check if table doesn't exist
+              if (itemsError.message?.includes('does not exist')) {
+                console.warn('The items table does not exist yet. Please run the SQL migrations.');
+                toast.error("Database tables not set up yet. Please run the SQL migrations.");
+                setUserItems([]);
+              } else {
+                console.error('Error fetching items:', itemsError);
+                toast.error('Error loading items');
+              }
+            } else if (items) {
+              // Convert to MatchItem format
+              const formattedItems = items.map(item => ({
+                id: item.id,
+                name: item.name,
+                image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+                category: item.category,
+                condition: item.condition,
+                description: item.description,
+                tags: item.tags,
+                liked: false
+              }));
+              
+              setUserItems(formattedItems);
+            }
+          } catch (error) {
+            console.error('Error in items fetch:', error);
+            setUserItems([]);
           }
           
           // For now, we'll use empty arrays for trades, reviews, and friends

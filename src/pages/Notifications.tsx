@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +6,8 @@ import { Bell, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client'; // Fixed import path
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface Notification {
   id: string;
@@ -145,6 +145,7 @@ const Notifications: React.FC = () => {
       }
     } catch (error) {
       console.error('Error updating notification:', error);
+      toast.error('Failed to update notification');
     }
   };
 

@@ -24,7 +24,12 @@ export const fetchUserProfile = async (userId: string) => {
       .maybeSingle();
       
     if (result.error) {
-      console.error('Error fetching profile:', result.error);
+      // Check if the error is because the table doesn't exist
+      if (result.error.message?.includes('does not exist')) {
+        console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
+      } else {
+        console.error('Error fetching profile:', result.error);
+      }
       return null;
     }
 
@@ -49,16 +54,28 @@ export const signUp = async (email: string, password: string, name: string) => {
     }
 
     if (data.user) {
-      // Create a profile record - using explicit error handling
-      const profileInsert = await supabase.from('profiles').insert({
-        id: data.user.id,
-        name,
-        email,
-        created_at: new Date().toISOString(),
-      });
+      try {
+        // Create a profile record - using explicit error handling
+        const profileInsert = await supabase.from('profiles').insert({
+          id: data.user.id,
+          name,
+          email,
+          created_at: new Date().toISOString(),
+        });
 
-      if (profileInsert.error) {
-        throw profileInsert.error;
+        if (profileInsert.error) {
+          // Check if this is because the table doesn't exist
+          if (profileInsert.error.message?.includes('does not exist')) {
+            console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
+            // Continue with sign-up even if profile creation fails
+          } else {
+            console.error('Error creating profile:', profileInsert.error);
+            // Don't throw here, let the signup succeed even if profile creation fails
+          }
+        }
+      } catch (profileError) {
+        console.error('Error creating profile:', profileError);
+        // Continue with sign-up even if profile creation fails
       }
 
       toast.success('Account created successfully! Please check your email for verification.');
@@ -125,6 +142,12 @@ export const updateProfile = async (userId: string, data: { name?: string; avata
       .eq('id', userId);
 
     if (result.error) {
+      // Check if this is because the table doesn't exist
+      if (result.error.message?.includes('does not exist')) {
+        console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
+        toast.error('Cannot update profile: database tables not set up.');
+        return false;
+      }
       throw result.error;
     }
 
