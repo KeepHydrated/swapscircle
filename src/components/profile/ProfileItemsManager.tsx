@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Item } from '@/types/item';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
@@ -83,10 +82,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
         item.id === updatedItem.id ? updatedItem : item
       )
     );
-    toast({
-      title: "Item updated",
-      description: `${updatedItem.name} has been updated successfully.`
-    });
+    toast.success(`${updatedItem.name} has been updated successfully.`);
   };
 
   // Custom version of ItemsForTradeTab that catches action clicks
