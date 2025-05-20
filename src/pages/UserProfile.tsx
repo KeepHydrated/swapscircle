@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Star, Users, Pencil } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { supabase, getSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client'; // Fixed import path
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';

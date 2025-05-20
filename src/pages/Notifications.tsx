@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,7 +7,7 @@ import { Bell, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { supabase, getSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client'; // Fixed import path
 
 interface Notification {
   id: string;

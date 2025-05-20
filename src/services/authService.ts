@@ -15,18 +15,20 @@ export const fetchUserProfile = async (userId: string) => {
   }
 
   try {
-    const { data, error } = await supabase
+    // Using explicit error handling since we don't have proper types yet
+    // This will be resolved once the database tables are created
+    const result = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle();
-
-    if (error) {
-      console.error('Error fetching profile:', error);
+      
+    if (result.error) {
+      console.error('Error fetching profile:', result.error);
       return null;
     }
 
-    return data;
+    return result.data;
   } catch (error) {
     console.error('Profile fetch error:', error);
     return null;
@@ -47,16 +49,16 @@ export const signUp = async (email: string, password: string, name: string) => {
     }
 
     if (data.user) {
-      // Create a profile record
-      const { error: profileError } = await supabase.from('profiles').insert({
+      // Create a profile record - using explicit error handling
+      const profileInsert = await supabase.from('profiles').insert({
         id: data.user.id,
         name,
         email,
         created_at: new Date().toISOString(),
       });
 
-      if (profileError) {
-        throw profileError;
+      if (profileInsert.error) {
+        throw profileInsert.error;
       }
 
       toast.success('Account created successfully! Please check your email for verification.');
@@ -116,13 +118,14 @@ export const updateProfile = async (userId: string, data: { name?: string; avata
   }
 
   try {
-    const { error } = await supabase
+    // Using explicit error handling since we don't have proper types yet
+    const result = await supabase
       .from('profiles')
       .update(data)
       .eq('id', userId);
 
-    if (error) {
-      throw error;
+    if (result.error) {
+      throw result.error;
     }
 
     toast.success('Profile updated successfully');
