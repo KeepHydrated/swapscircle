@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,26 +11,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/context/AuthContext';
 
 const Header = () => {
-  // State to track if user is logged in
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    toast.success('Successfully logged out');
+  const handleLogout = async () => {
+    await signOut();
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    toast.success('Successfully logged in');
+    navigate('/auth');
   };
 
   const handleNotificationsClick = () => {
     navigate('/notifications');
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
   };
 
   return (
@@ -43,7 +49,7 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          {isLoggedIn ? (
+          {user ? (
             <>
               <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
                 <Link to="/post-item">
@@ -73,15 +79,18 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
+                      {user.avatar_url ? (
+                        <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
+                      ) : null}
                       <AvatarFallback className="bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
-                        <User className="h-4 w-4" />
+                        {user.name ? getInitials(user.name) : <User className="h-4 w-4" />}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-900">
                   <DropdownMenuItem asChild>
-                    <Link to="/profile-duplicate" className="flex w-full cursor-pointer items-center">
+                    <Link to="/profile" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </Link>
