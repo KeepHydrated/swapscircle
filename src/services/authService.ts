@@ -17,29 +17,18 @@ export const fetchUserProfile = async (userId: string) => {
   try {
     // Using try-catch since the table might not exist yet
     try {
-      // Check if the table exists first
-      const { error: checkError } = await supabase
-        .from('profiles')
-        .select('count')
-        .limit(1);
-      
-      if (checkError && checkError.message?.includes('does not exist')) {
-        console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
-        return null;
-      }
-      
-      const result = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
         
-      if (result.error) {
-        console.error('Error fetching profile:', result.error);
+      if (error) {
+        console.error('Error fetching profile:', error);
         return null;
       }
 
-      return result.data;
+      return data;
     } catch (error) {
       console.error('Profile fetch error:', error);
       return null;
@@ -65,30 +54,19 @@ export const signUp = async (email: string, password: string, name: string) => {
 
     if (data.user) {
       try {
-        // Try to create a profile record if the table exists
-        try {
-          const { error: tableCheckError } = await supabase
-            .from('profiles')
-            .select('count')
-            .limit(1);
-            
-          // Only try to insert if the table exists
-          if (!tableCheckError) {
-            const profileInsert = await supabase.from('profiles').insert({
-              id: data.user.id,
-              name,
-              email,
-              created_at: new Date().toISOString(),
-            });
-  
-            if (profileInsert.error && !profileInsert.error.message?.includes('does not exist')) {
-              console.error('Error creating profile:', profileInsert.error);
-            }
-          } else {
-            console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
-          }
-        } catch (profileError) {
-          console.error('Error creating profile:', profileError);
+        // Try to create a profile record
+        const profileInsert = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            name,
+            email,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+
+        if (profileInsert.error) {
+          console.error('Error creating profile:', profileInsert.error);
         }
       } catch (profileError) {
         console.error('Error creating profile:', profileError);
@@ -151,40 +129,20 @@ export const updateProfile = async (userId: string, data: { name?: string; avata
   }
 
   try {
-    // Check if the profiles table exists first
-    try {
-      const { error: tableCheckError } = await supabase
-        .from('profiles')
-        .select('count')
-        .limit(1);
-        
-      if (tableCheckError && tableCheckError.message?.includes('does not exist')) {
-        console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
-        toast.error('Cannot update profile: database tables not set up.');
-        return false;
-      }
-      
-      // Using explicit error handling since we don't have proper types yet
-      const result = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('id', userId);
-  
-      if (result.error) {
-        throw result.error;
-      }
-  
-      toast.success('Profile updated successfully');
-      return true;
-    } catch (error: any) {
-      if (error.message?.includes('does not exist')) {
-        console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
-        toast.error('Cannot update profile: database tables not set up.');
-        return false;
-      }
-      toast.error(error.message || 'Error updating profile');
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        ...data,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (error) {
       throw error;
     }
+
+    toast.success('Profile updated successfully');
+    return true;
   } catch (error: any) {
     toast.error(error.message || 'Error updating profile');
     return false;

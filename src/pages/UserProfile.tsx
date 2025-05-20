@@ -47,43 +47,31 @@ const UserProfile: React.FC = () => {
           
           // Fetch user items
           try {
-            // First check if items table exists
-            const { error: tableCheckError } = await supabase
+            const { data: items, error: itemsError } = await supabase
               .from('items')
-              .select('count')
-              .limit(1);
-              
-            if (tableCheckError && tableCheckError.message?.includes('does not exist')) {
-              console.warn('The items table does not exist yet. Please run the SQL migrations.');
-              toast.error("Database tables not set up yet. Please run the SQL migrations.");
+              .select('*')
+              .eq('user_id', user.id);
+            
+            if (itemsError) {
+              console.error('Error fetching items:', itemsError);
+              toast.error('Error loading items');
               setUserItems([]);
-            } else {
-              const { data: items, error: itemsError } = await supabase
-                .from('items')
-                .select('*')
-                .eq('user_id', user.id);
+            } else if (items && Array.isArray(items)) {
+              // Convert to MatchItem format
+              const formattedItems = items.map(item => ({
+                id: item.id,
+                name: item.name,
+                image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+                category: item.category,
+                condition: item.condition,
+                description: item.description,
+                tags: item.tags,
+                liked: false
+              }));
               
-              if (itemsError) {
-                console.error('Error fetching items:', itemsError);
-                toast.error('Error loading items');
-                setUserItems([]);
-              } else if (items && Array.isArray(items)) {
-                // Convert to MatchItem format
-                const formattedItems = items.map(item => ({
-                  id: item.id,
-                  name: item.name,
-                  image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-                  category: item.category,
-                  condition: item.condition,
-                  description: item.description,
-                  tags: item.tags,
-                  liked: false
-                }));
-                
-                setUserItems(formattedItems);
-              } else {
-                setUserItems([]);
-              }
+              setUserItems(formattedItems);
+            } else {
+              setUserItems([]);
             }
           } catch (error) {
             console.error('Error in items fetch:', error);

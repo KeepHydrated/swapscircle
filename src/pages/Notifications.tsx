@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -66,59 +67,29 @@ const Notifications: React.FC = () => {
         }
 
         try {
-          // Check if notifications table exists
-          const { error: tableCheckError } = await supabase
-            .from('notifications')
-            .select('count')
-            .limit(1);
-            
-          if (tableCheckError && tableCheckError.message?.includes('does not exist')) {
-            console.warn('The notifications table does not exist yet. Using placeholder data.');
-            // Fall back to placeholder notifications
-            setNotifications([
-              {
-                id: '1',
-                type: 'message',
-                title: 'New message',
-                content: 'You have received a new message from Marcus Thompson.',
-                isRead: false,
-                timestamp: new Date().toISOString(),
-                relatedId: 'user2'
-              },
-              {
-                id: '2',
-                type: 'trade',
-                title: 'Trade request',
-                content: 'Jessica Parker wants to trade her Vintage Leather Jacket for your item.',
-                isRead: true,
-                timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-                relatedId: 'user1'
-              },
-              {
-                id: '3',
-                type: 'system',
-                title: 'Welcome to TradeMate',
-                content: 'Thank you for joining TradeMate. Start adding items to trade!',
-                isRead: true,
-                timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-              },
-            ]);
-            setLoading(false);
-            return;
-          }
-          
           const { data, error } = await supabase
             .from('notifications')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-  
+
           if (error) {
             console.error('Error fetching notifications:', error);
             throw error;
           }
-  
-          setNotifications(data as Notification[]);
+
+          // Map the database fields to our interface
+          const formattedNotifications = (data || []).map((notification: any) => ({
+            id: notification.id,
+            type: notification.type as 'system' | 'message' | 'trade' | 'friend',
+            title: notification.title,
+            content: notification.content,
+            isRead: notification.is_read,
+            timestamp: notification.created_at,
+            relatedId: notification.related_id
+          }));
+
+          setNotifications(formattedNotifications);
         } catch (error) {
           console.error('Error in notification fetch:', error);
           // Fall back to placeholder notifications
@@ -175,10 +146,12 @@ const Notifications: React.FC = () => {
         setNotifications(updatedNotifications);
         
         // In a real app, update the read status in the database
-        // await supabase
-        //   .from('notifications')
-        //   .update({ is_read: true })
-        //   .eq('id', notification.id);
+        if (supabaseConfigured) {
+          await supabase
+            .from('notifications')
+            .update({ is_read: true })
+            .eq('id', notification.id);
+        }
       }
       
       // Navigate based on notification type
