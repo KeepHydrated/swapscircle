@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import LocationFilter from './LocationFilter';
+import LocationRangeSelector from './LocationRangeSelector';
 
 interface HomeWithLocationFilterProps {
   children: React.ReactNode;
@@ -16,8 +16,8 @@ const HomeWithLocationFilter: React.FC<HomeWithLocationFilterProps> = ({ childre
   };
   
   return (
-    <div>
-      <LocationFilter onLocationChange={handleLocationChange} />
+    <div className="px-4 md:px-6">
+      <LocationRangeSelector onLocationChange={handleLocationChange} initialValue={locationFilter} />
       {children}
     </div>
   );

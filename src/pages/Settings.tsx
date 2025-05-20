@@ -12,7 +12,6 @@ const Settings: React.FC = () => {
     <MainLayout>
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground mt-1">Manage your account preferences</p>
       </div>
       
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">

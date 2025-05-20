@@ -60,8 +60,8 @@ const Messages3 = () => {
 
   return (
     <MainLayout>
-      <div className="container mx-auto py-8">
-        <div className="mb-12">
+      <div className="container mx-auto py-6">
+        <div className="mb-10">
           <h2 className="text-xl font-medium mb-6 text-gray-600">Your Match Opportunities</h2>
           
           {/* Item matches carousel */}
@@ -121,39 +121,36 @@ const Messages3 = () => {
         {/* Match item popup with navigation */}
         {selectedMatch && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
-            <div className="relative bg-white rounded-lg max-w-3xl w-full mx-4 overflow-hidden">
-              {/* Previous button - show only if not first item */}
-              {matchItems.findIndex(item => item.id === selectedMatch.id) > 0 && (
-                <Button
-                  variant="default"
-                  size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
-                  onClick={navigateToPrev}
-                >
-                  <ArrowLeft className="h-6 w-6 text-gray-800" />
-                  <span className="sr-only">Previous match</span>
-                </Button>
-              )}
+            <div className="relative max-w-3xl w-full mx-4">
+              {/* External navigation buttons */}
+              <Button
+                variant="default"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
+                onClick={navigateToPrev}
+              >
+                <ArrowLeft className="h-6 w-6 text-gray-800" />
+                <span className="sr-only">Previous match</span>
+              </Button>
               
-              <ItemDetailsPopup
-                item={selectedMatch}
-                isOpen={true}
-                onClose={handleClosePopup}
-                onLikeClick={() => handleLike(selectedMatch.id)}
-              />
+              <div className="bg-white rounded-lg overflow-hidden">
+                <ItemDetailsPopup
+                  item={selectedMatch}
+                  isOpen={true}
+                  onClose={handleClosePopup}
+                  onLikeClick={() => handleLike(selectedMatch.id)}
+                />
+              </div>
               
-              {/* Next button - show only if not last item */}
-              {matchItems.findIndex(item => item.id === selectedMatch.id) < matchItems.length - 1 && (
-                <Button
-                  variant="default"
-                  size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
-                  onClick={navigateToNext}
-                >
-                  <ArrowRight className="h-6 w-6 text-gray-800" />
-                  <span className="sr-only">Next match</span>
-                </Button>
-              )}
+              <Button
+                variant="default"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
+                onClick={navigateToNext}
+              >
+                <ArrowRight className="h-6 w-6 text-gray-800" />
+                <span className="sr-only">Next match</span>
+              </Button>
 
               {/* Visual indicator showing current position */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full px-3 py-1 text-sm font-medium shadow-md z-20">
