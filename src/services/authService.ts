@@ -15,25 +15,35 @@ export const fetchUserProfile = async (userId: string) => {
   }
 
   try {
-    // Using explicit error handling since we don't have proper types yet
-    // This will be resolved once the database tables are created
-    const result = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
+    // Using try-catch since the table might not exist yet
+    try {
+      // Check if the table exists first
+      const { error: checkError } = await supabase
+        .from('profiles')
+        .select('count')
+        .limit(1);
       
-    if (result.error) {
-      // Check if the error is because the table doesn't exist
-      if (result.error.message?.includes('does not exist')) {
+      if (checkError && checkError.message?.includes('does not exist')) {
         console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
-      } else {
-        console.error('Error fetching profile:', result.error);
+        return null;
       }
+      
+      const result = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+        
+      if (result.error) {
+        console.error('Error fetching profile:', result.error);
+        return null;
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Profile fetch error:', error);
       return null;
     }
-
-    return result.data;
   } catch (error) {
     console.error('Profile fetch error:', error);
     return null;
@@ -55,27 +65,33 @@ export const signUp = async (email: string, password: string, name: string) => {
 
     if (data.user) {
       try {
-        // Create a profile record - using explicit error handling
-        const profileInsert = await supabase.from('profiles').insert({
-          id: data.user.id,
-          name,
-          email,
-          created_at: new Date().toISOString(),
-        });
-
-        if (profileInsert.error) {
-          // Check if this is because the table doesn't exist
-          if (profileInsert.error.message?.includes('does not exist')) {
-            console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
-            // Continue with sign-up even if profile creation fails
+        // Try to create a profile record if the table exists
+        try {
+          const { error: tableCheckError } = await supabase
+            .from('profiles')
+            .select('count')
+            .limit(1);
+            
+          // Only try to insert if the table exists
+          if (!tableCheckError) {
+            const profileInsert = await supabase.from('profiles').insert({
+              id: data.user.id,
+              name,
+              email,
+              created_at: new Date().toISOString(),
+            });
+  
+            if (profileInsert.error && !profileInsert.error.message?.includes('does not exist')) {
+              console.error('Error creating profile:', profileInsert.error);
+            }
           } else {
-            console.error('Error creating profile:', profileInsert.error);
-            // Don't throw here, let the signup succeed even if profile creation fails
+            console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
           }
+        } catch (profileError) {
+          console.error('Error creating profile:', profileError);
         }
       } catch (profileError) {
         console.error('Error creating profile:', profileError);
-        // Continue with sign-up even if profile creation fails
       }
 
       toast.success('Account created successfully! Please check your email for verification.');
@@ -131,31 +147,47 @@ export const updateProfile = async (userId: string, data: { name?: string; avata
     if (!isSupabaseConfigured()) {
       toast.error('Supabase is not configured. Please add environment variables.');
     }
-    return;
+    return false;
   }
 
   try {
-    // Using explicit error handling since we don't have proper types yet
-    const result = await supabase
-      .from('profiles')
-      .update(data)
-      .eq('id', userId);
-
-    if (result.error) {
-      // Check if this is because the table doesn't exist
-      if (result.error.message?.includes('does not exist')) {
+    // Check if the profiles table exists first
+    try {
+      const { error: tableCheckError } = await supabase
+        .from('profiles')
+        .select('count')
+        .limit(1);
+        
+      if (tableCheckError && tableCheckError.message?.includes('does not exist')) {
         console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
         toast.error('Cannot update profile: database tables not set up.');
         return false;
       }
-      throw result.error;
+      
+      // Using explicit error handling since we don't have proper types yet
+      const result = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('id', userId);
+  
+      if (result.error) {
+        throw result.error;
+      }
+  
+      toast.success('Profile updated successfully');
+      return true;
+    } catch (error: any) {
+      if (error.message?.includes('does not exist')) {
+        console.warn('The profiles table does not exist yet. Please run the SQL migrations.');
+        toast.error('Cannot update profile: database tables not set up.');
+        return false;
+      }
+      toast.error(error.message || 'Error updating profile');
+      throw error;
     }
-
-    toast.success('Profile updated successfully');
-    return true;
   } catch (error: any) {
     toast.error(error.message || 'Error updating profile');
-    throw error;
+    return false;
   }
 };
 
