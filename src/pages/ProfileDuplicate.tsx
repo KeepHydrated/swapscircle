@@ -3,12 +3,11 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
-import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
+import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import { Star, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 // Import mock data
 import { myAvailableItems } from '@/data/mockMyItems';
@@ -16,23 +15,36 @@ import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
 import { myFriends } from '@/data/mockMyFriends';
 import { mockProfileData } from '@/data/mockProfileData';
+import { MatchItem } from '@/types/item';
+import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
 
 const ProfileDuplicate: React.FC = () => {
-  const navigate = useNavigate();
-  
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
   
-  // Handle item click (empty function for now)
-  const handleItemClick = () => {};
+  // State for liked items in friends' collections
+  const [friendsLikedItems, setFriendsLikedItems] = useState<Record<string, boolean>>({});
+
+  // Handle liking a friend's item
+  const handleLikeItem = (itemId: string) => {
+    setFriendsLikedItems(prev => ({
+      ...prev,
+      [itemId]: !prev[itemId]
+    }));
+  };
+
+  // Prepare friends' items for the carousel
+  const allFriendsItems = myFriends.flatMap(friend => 
+    friend.items.map(item => ({
+      ...item,
+      liked: friendsLikedItems[item.id] || false,
+      friendId: friend.id,
+      friendName: friend.name
+    }))
+  );
 
   return (
     <MainLayout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">My Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your profile, items, and trades</p>
-      </div>
-      
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
@@ -41,6 +53,17 @@ const ProfileDuplicate: React.FC = () => {
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
         />
+
+        {/* Friends' Items Carousel */}
+        {allFriendsItems.length > 0 && (
+          <div className="p-6 border-b">
+            <FriendItemsCarousel 
+              items={allFriendsItems as MatchItem[]}
+              onLikeItem={handleLikeItem}
+              title="Your Friends' Items"
+            />
+          </div>
+        )}
 
         {/* Tabs */}
         <Tabs 
@@ -79,7 +102,7 @@ const ProfileDuplicate: React.FC = () => {
 
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
-            <ItemsForTradeTab items={myAvailableItems} onItemClick={handleItemClick} />
+            <ProfileItemsManager initialItems={myAvailableItems} />
           </TabsContent>
 
           {/* Completed Trades Tab Content */}
