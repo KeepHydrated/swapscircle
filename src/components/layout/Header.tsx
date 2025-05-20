@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn } from 'lucide-react';
+import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MobileMenu } from './MobileMenu';
@@ -13,9 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { toast } from 'sonner';
 
 const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -23,6 +25,12 @@ const Header = () => {
   };
 
   const handleLogin = () => {
+    if (!supabaseConfigured) {
+      toast.error("Supabase is not configured. Please add environment variables to enable authentication.", {
+        duration: 5000,
+      });
+      return;
+    }
     navigate('/auth');
   };
 
@@ -49,7 +57,22 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          {user ? (
+          {!supabaseConfigured && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" className="text-amber-500">
+                    <AlertTriangle className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Supabase is not configured. Some features may not work.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+
+          {user || !supabaseConfigured ? (
             <>
               <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
                 <Link to="/post-item">
@@ -79,11 +102,11 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      {user.avatar_url ? (
+                      {user?.avatar_url ? (
                         <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                       ) : null}
                       <AvatarFallback className="bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
-                        {user.name ? getInitials(user.name) : <User className="h-4 w-4" />}
+                        {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -102,13 +125,15 @@ const Header = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log Out</span>
-                  </DropdownMenuItem>
+                  {supabaseConfigured && (
+                    <DropdownMenuItem 
+                      className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log Out</span>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </>

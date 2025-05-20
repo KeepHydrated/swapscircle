@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 type User = {
@@ -17,6 +17,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (data: { name?: string; avatar_url?: string }) => Promise<void>;
+  supabaseConfigured: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => {},
   signOut: async () => {},
   updateProfile: async () => {},
+  supabaseConfigured: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -33,11 +35,17 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabaseConfigured = isSupabaseConfigured();
 
   useEffect(() => {
     // Check active session and set user
     const getSession = async () => {
       setLoading(true);
+      
+      if (!supabaseConfigured) {
+        setLoading(false);
+        return;
+      }
       
       try {
         const { data, error } = await supabase.auth.getSession();
@@ -75,36 +83,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSession();
 
     // Set up auth subscription
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-        if (session) {
-          // Fetch user profile from profiles table
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+    if (supabaseConfigured) {
+      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          if (session) {
+            // Fetch user profile from profiles table
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
 
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            name: profileData?.name,
-            avatar_url: profileData?.avatar_url,
-          });
+            setUser({
+              id: session.user.id,
+              email: session.user.email || '',
+              name: profileData?.name,
+              avatar_url: profileData?.avatar_url,
+            });
+          }
         }
-      }
-      
-      if (event === 'SIGNED_OUT') {
-        setUser(null);
-      }
-    });
+        
+        if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      });
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    }
+  }, [supabaseConfigured]);
 
   const signUp = async (email: string, password: string, name: string) => {
+    if (!supabaseConfigured) {
+      toast.error('Supabase is not configured. Please add environment variables.');
+      return;
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
 
@@ -134,6 +149,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signIn = async (email: string, password: string) => {
+    if (!supabaseConfigured) {
+      toast.error('Supabase is not configured. Please add environment variables.');
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -149,6 +169,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    if (!supabaseConfigured) {
+      toast.error('Supabase is not configured. Please add environment variables.');
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signOut();
 
@@ -164,7 +189,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateProfile = async (data: { name?: string; avatar_url?: string }) => {
-    if (!user) return;
+    if (!user || !supabaseConfigured) {
+      if (!supabaseConfigured) {
+        toast.error('Supabase is not configured. Please add environment variables.');
+      }
+      return;
+    }
 
     try {
       const { error } = await supabase
@@ -191,7 +221,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signUp,
       signIn,
       signOut,
-      updateProfile
+      updateProfile,
+      supabaseConfigured
     }}>
       {children}
     </AuthContext.Provider>

@@ -2,22 +2,30 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 interface RequireAuthProps {
   children: React.ReactNode;
 }
 
 const RequireAuth = ({ children }: RequireAuthProps) => {
-  const { user, loading } = useAuth();
+  const { user, loading, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    if (!supabaseConfigured) {
+      toast.error("Supabase is not configured. Some features may not work.", {
+        duration: 5000,
+      });
+      return;
+    }
+    
     if (!loading && !user) {
       // Redirect to login page if not authenticated
       navigate('/auth', { state: { from: location.pathname } });
     }
-  }, [user, loading, navigate, location]);
+  }, [user, loading, navigate, location, supabaseConfigured]);
 
   // Show nothing while checking authentication
   if (loading) {
@@ -28,8 +36,8 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
     );
   }
 
-  // If authenticated, show the protected content
-  return user ? <>{children}</> : null;
+  // If not configured or authenticated, show the protected content (demo mode)
+  return (!supabaseConfigured || user) ? <>{children}</> : null;
 };
 
 export default RequireAuth;
