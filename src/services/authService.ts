@@ -1,5 +1,5 @@
 
-import { supabase, isSupabaseConfigured, getSupabaseClient } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export type User = {
@@ -10,19 +10,18 @@ export type User = {
 };
 
 export const fetchUserProfile = async (userId: string) => {
-  const client = getSupabaseClient();
-  if (!client) {
+  if (!isSupabaseConfigured()) {
     return null;
   }
 
   try {
-    const { data, error } = await client
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
       console.error('Error fetching profile:', error);
       return null;
     }
