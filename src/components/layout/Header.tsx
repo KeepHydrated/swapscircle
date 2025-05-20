@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MobileMenu } from './MobileMenu';
 import {
@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 const Header = () => {
   // State to track if user is logged in
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -28,12 +29,16 @@ const Header = () => {
     toast.success('Successfully logged in');
   };
 
+  const handleNotificationsClick = () => {
+    navigate('/notifications');
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-trademate-blue">TradeMate</h1>
+            <h1 className="text-2xl font-bold text-trademate-blue dark:text-blue-400">TradeMate</h1>
           </Link>
         </div>
 
@@ -54,24 +59,27 @@ const Header = () => {
                 </Link>
               </Button>
               
-              <Button variant="ghost" size="icon" className="hidden md:flex">
-                <Link to="/notifications">
-                  <Bell className="w-5 h-5" />
-                  <span className="sr-only">Notifications</span>
-                </Link>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden md:flex"
+                onClick={handleNotificationsClick}
+              >
+                <Bell className="w-5 h-5" />
+                <span className="sr-only">Notifications</span>
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-purple-100 text-purple-800">
+                      <AvatarFallback className="bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
                         <User className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white">
+                <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-900">
                   <DropdownMenuItem asChild>
                     <Link to="/profile-duplicate" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />

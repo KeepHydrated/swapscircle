@@ -4,12 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useTheme } from '@/context/ThemeContext';
 
 const PrivacySettings: React.FC = () => {
-  const [privacyLevel, setPrivacyLevel] = React.useState('friends');
-  const [darkMode, setDarkMode] = React.useState(false);
+  const { theme, setTheme } = useTheme();
 
   return (
     <Card>
@@ -20,22 +19,6 @@ const PrivacySettings: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="privacy">Profile Visibility</Label>
-          <Select 
-            value={privacyLevel} 
-            onValueChange={setPrivacyLevel}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select visibility" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="public">Public</SelectItem>
-              <SelectItem value="friends">Friends Only</SelectItem>
-              <SelectItem value="private">Private</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-medium">Dark Mode</h3>
@@ -44,8 +27,8 @@ const PrivacySettings: React.FC = () => {
             </p>
           </div>
           <Switch 
-            checked={darkMode} 
-            onCheckedChange={setDarkMode} 
+            checked={theme === 'dark'} 
+            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')} 
           />
         </div>
         <div className="flex items-center justify-between">

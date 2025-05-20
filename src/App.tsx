@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/context/ThemeContext";
 import Home from "./pages/Home";
 import PostItem from "./pages/PostItem";
 import Messages from "./pages/Messages";
@@ -19,24 +20,26 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/post-item" element={<PostItem />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/messages2" element={<Messages2 />} />
-          <Route path="/messages3" element={<Messages3 />} />
-          <Route path="/other-person-profile" element={<OtherPersonProfile />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/post-item" element={<PostItem />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/messages2" element={<Messages2 />} />
+            <Route path="/messages3" element={<Messages3 />} />
+            <Route path="/other-person-profile" element={<OtherPersonProfile />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
