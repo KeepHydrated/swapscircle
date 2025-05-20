@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Conversation } from '@/hooks/useConversations';
@@ -27,17 +27,23 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
             <Link to={`/profile-duplicate`} className="hover:underline">
               <h2 className="font-medium">{activeChat.name}</h2>
             </Link>
+            {activeChat.rating && activeChat.rating > 0 && (
+              <div className="ml-2 flex text-yellow-400">
+                {Array(5).fill(0).map((_, i) => (
+                  <Star 
+                    key={i}
+                    className="h-4 w-4"
+                    fill={i < (activeChat.rating || 0) ? "currentColor" : "none"}
+                  />
+                ))}
+                <span className="ml-1 text-gray-500 text-sm">({42})</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center">
             <p className="text-sm text-gray-500">
               {activeChat.isNew ? "New match" : activeChat.distance}
             </p>
-            {!activeChat.isNew && activeChat.rating && activeChat.rating > 0 && (
-              <div className="ml-2 flex text-yellow-400">
-                {"★".repeat(activeChat.rating)}
-                <span className="ml-1 text-gray-500 text-sm">({42})</span>
-              </div>
-            )}
           </div>
         </div>
       </div>

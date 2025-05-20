@@ -13,6 +13,7 @@ import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 import ProfileDuplicate from "./pages/ProfileDuplicate";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/other-person-profile" element={<OtherPersonProfile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile-duplicate" element={<ProfileDuplicate />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

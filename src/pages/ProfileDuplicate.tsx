@@ -6,7 +6,6 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
-import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import { Star, Users } from 'lucide-react';
 
 // Import mock data
@@ -15,33 +14,11 @@ import { myCompletedTrades } from '@/data/mockMyTrades';
 import { myReviews } from '@/data/mockMyReviews';
 import { myFriends } from '@/data/mockMyFriends';
 import { mockProfileData } from '@/data/mockProfileData';
-import { MatchItem } from '@/types/item';
 import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
 
 const ProfileDuplicate: React.FC = () => {
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
-  
-  // State for liked items in friends' collections
-  const [friendsLikedItems, setFriendsLikedItems] = useState<Record<string, boolean>>({});
-
-  // Handle liking a friend's item
-  const handleLikeItem = (itemId: string) => {
-    setFriendsLikedItems(prev => ({
-      ...prev,
-      [itemId]: !prev[itemId]
-    }));
-  };
-
-  // Prepare friends' items for the carousel
-  const allFriendsItems = myFriends.flatMap(friend => 
-    friend.items.map(item => ({
-      ...item,
-      liked: friendsLikedItems[item.id] || false,
-      friendId: friend.id,
-      friendName: friend.name
-    }))
-  );
 
   return (
     <MainLayout>
@@ -53,17 +30,6 @@ const ProfileDuplicate: React.FC = () => {
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
         />
-
-        {/* Friends' Items Carousel */}
-        {allFriendsItems.length > 0 && (
-          <div className="p-6 border-b">
-            <FriendItemsCarousel 
-              items={allFriendsItems as MatchItem[]}
-              onLikeItem={handleLikeItem}
-              title="Your Friends' Items"
-            />
-          </div>
-        )}
 
         {/* Tabs */}
         <Tabs 
