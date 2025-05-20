@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Star, Users, Pencil } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase, getSupabaseClient } from '@/lib/supabase';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
@@ -14,9 +13,10 @@ import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
 import { Button } from '@/components/ui/button';
 import { MatchItem } from '@/types/item';
 import { CompletedTrade } from '@/types/profile';
+import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
-  const { user } = useAuth();
+  const { user, supabaseConfigured } = useAuth();
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
   
@@ -33,6 +33,17 @@ const UserProfile: React.FC = () => {
       const fetchUserData = async () => {
         setLoading(true);
         try {
+          if (!supabaseConfigured) {
+            // If not configured, use mock data or empty arrays
+            setUserItems([]);
+            setUserTrades([]);
+            setUserReviews([]);
+            setUserFriends([]);
+            toast.error("Supabase not configured. Using demo mode with empty data.");
+            setLoading(false);
+            return;
+          }
+          
           // Fetch user items
           const { data: items, error: itemsError } = await supabase
             .from('items')
@@ -72,7 +83,7 @@ const UserProfile: React.FC = () => {
       
       fetchUserData();
     }
-  }, [user]);
+  }, [user, supabaseConfigured]);
   
   if (!user) {
     return null; // Should be handled by RequireAuth

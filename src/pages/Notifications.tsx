@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Bell, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase, getSupabaseClient } from '@/lib/supabase';
 
 interface Notification {
   id: string;
@@ -20,7 +19,7 @@ interface Notification {
 }
 
 const Notifications: React.FC = () => {
-  const { user } = useAuth();
+  const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +30,40 @@ const Notifications: React.FC = () => {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
+        if (!supabaseConfigured) {
+          // Use placeholder notifications for demo mode
+          setNotifications([
+            {
+              id: '1',
+              type: 'message',
+              title: 'New message',
+              content: 'You have received a new message from Marcus Thompson.',
+              isRead: false,
+              timestamp: new Date().toISOString(),
+              relatedId: 'user2'
+            },
+            {
+              id: '2',
+              type: 'trade',
+              title: 'Trade request',
+              content: 'Jessica Parker wants to trade her Vintage Leather Jacket for your item.',
+              isRead: true,
+              timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+              relatedId: 'user1'
+            },
+            {
+              id: '3',
+              type: 'system',
+              title: 'Welcome to TradeMate',
+              content: 'Thank you for joining TradeMate. Start adding items to trade!',
+              isRead: true,
+              timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+            },
+          ]);
+          setLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('notifications')
           .select('*')
@@ -39,7 +72,7 @@ const Notifications: React.FC = () => {
 
         if (error) {
           console.error('Error fetching notifications:', error);
-          // For now, use placeholder notifications
+          // Fall back to placeholder notifications
           setNotifications([
             {
               id: '1',
@@ -79,7 +112,7 @@ const Notifications: React.FC = () => {
     };
 
     fetchNotifications();
-  }, [user]);
+  }, [user, supabaseConfigured]);
 
   const handleBack = () => {
     navigate(-1);
