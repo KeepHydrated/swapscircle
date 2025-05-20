@@ -34,8 +34,8 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
 }) => {
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
-      {/* Item exchange carousel - reduced height */}
-      <div className="w-full border-b border-gray-200 bg-white z-20 h-20 flex items-center px-2 py-0 sticky top-0">
+      {/* Item exchange carousel with reduced height */}
+      <div className="w-full border-b border-gray-200 bg-white z-20 flex items-center px-2 sticky top-0">
         <ExchangeCarousel 
           exchangePairs={exchangePairs}
           selectedPairId={selectedPairId}
@@ -55,7 +55,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
           />
         </div>
         
-        {/* Middle - Chat area with reduced height */}
+        {/* Middle - Chat area */}
         <div className="flex-1 overflow-hidden flex flex-col">
           <ChatArea 
             activeChat={activeChat} 

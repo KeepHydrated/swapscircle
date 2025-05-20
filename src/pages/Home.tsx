@@ -5,6 +5,7 @@ import MyItems from '@/components/items/MyItems';
 import Matches from '@/components/items/Matches';
 import { Item, MatchItem } from '@/types/item';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
+import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
 
 const Home: React.FC = () => {
   // Sample data for friends' items
@@ -166,32 +167,34 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <div className="flex-1 p-4 md:p-6">
-        {/* Friend's Items Section */}
-        <div className="mb-8">
-          <FriendItemsCarousel 
-            items={friendItems} 
-            onLikeItem={handleLikeFriendItem} 
-          />
-        </div>
+      <HomeWithLocationFilter>
+        <div className="flex-1 p-4 md:p-6">
+          {/* Friend's Items Section */}
+          <div className="mb-8">
+            <FriendItemsCarousel 
+              items={friendItems} 
+              onLikeItem={handleLikeFriendItem} 
+            />
+          </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* My Items Component */}
-          <MyItems 
-            items={myItems} 
-            selectedItemId={selectedItemId}
-            onSelectItem={handleSelectItem}
-          />
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* My Items Component */}
+            <MyItems 
+              items={myItems} 
+              selectedItemId={selectedItemId}
+              onSelectItem={handleSelectItem}
+            />
 
-          {/* Matches Component */}
-          <Matches 
-            matches={filteredMatches}
-            selectedItemName={selectedItem?.name || ''}
-            selectedMatchId={selectedMatchId}
-            onSelectMatch={handleSelectMatch}
-          />
+            {/* Matches Component */}
+            <Matches 
+              matches={filteredMatches}
+              selectedItemName={selectedItem?.name || ''}
+              selectedMatchId={selectedMatchId}
+              onSelectMatch={handleSelectMatch}
+            />
+          </div>
         </div>
-      </div>
+      </HomeWithLocationFilter>
     </div>
   );
 };

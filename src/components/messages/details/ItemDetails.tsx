@@ -3,6 +3,7 @@ import React from 'react';
 import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Link } from 'react-router-dom';
 
 interface ItemDetailsProps {
   name: string;
@@ -58,37 +59,39 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
       {/* Owner Profile Information - Only show if showProfileInfo is true */}
       {showProfileInfo && (
         <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex flex-col">
-            {/* Avatar and name/rating in the same row */}
-            <div className="flex items-center mb-3">
-              <Avatar className="h-12 w-12 mr-3">
-                <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                <AvatarFallback>EW</AvatarFallback>
-              </Avatar>
-              
-              {/* Name and rating to the right of avatar */}
-              <div>
-                <h3 className="text-sm font-semibold">Emma Wilson</h3>
-                <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+          <Link to="/other-person-profile" className="block">
+            <div className="flex flex-col">
+              {/* Avatar and name/rating in the same row */}
+              <div className="flex items-center mb-3">
+                <Avatar className="h-12 w-12 mr-3">
+                  <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
+                  <AvatarFallback>EW</AvatarFallback>
+                </Avatar>
+                
+                {/* Name and rating to the right of avatar */}
+                <div>
+                  <h3 className="text-sm font-semibold">Emma Wilson</h3>
+                  <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                </div>
               </div>
             </div>
+          </Link>
             
-            {/* User details under the profile, left-aligned */}
-            <div className="flex flex-wrap gap-4 text-xs text-gray-600 pl-0">
-              <div className="flex items-center">
-                <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
-                <span>Since 2023</span>
-              </div>
-              
-              <div className="flex items-center">
-                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-                <span>2.3 mi away</span>
-              </div>
-              
-              <div className="flex items-center">
-                <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
-                <span>~1 hour</span>
-              </div>
+          {/* User details under the profile, left-aligned */}
+          <div className="flex flex-wrap gap-4 text-xs text-gray-600 pl-0">
+            <div className="flex items-center">
+              <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
+              <span>Since 2023</span>
+            </div>
+            
+            <div className="flex items-center">
+              <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+              <span>2.3 mi away</span>
+            </div>
+            
+            <div className="flex items-center">
+              <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
+              <span>~1 hour</span>
             </div>
           </div>
         </div>
