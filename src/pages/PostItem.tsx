@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Save, Check, PlusCircle } from 'lucide-react';
+import { ImagePlus, Save, Check, PlusCircle, Loader2 } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select, 
@@ -13,15 +13,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import {
-  Toast,
-  ToastClose,
-  ToastDescription,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-} from "@/components/ui/toast"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,11 +32,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import {
   RadioGroup,
   RadioGroupItem
-} from "@/components/ui/radio-group"
+} from "@/components/ui/radio-group";
+import { useAuth } from '@/context/AuthContext';
+import { postItem, uploadItemImage } from '@/services/authService';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 // Define types for saved preferences
 type SavedPreference = {
@@ -59,11 +55,17 @@ type SavedPreference = {
 
 const PostItem: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
   const [priceRange, setPriceRange] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // For "What You're Looking For" section
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -253,6 +255,8 @@ const PostItem: React.FC = () => {
   };
 
   const resetForm = () => {
+    setTitle('');
+    setDescription('');
     setImages([]);
     setCategory("");
     setSubcategory("");
@@ -287,14 +291,59 @@ const PostItem: React.FC = () => {
     setSelectedSavedPreferenceId(""); // Reset selected preference
   };
 
-  const handleSubmit = () => {
-    // Here you would normally handle the form submission logic
-    // After successful submission, show the success dialog
-    setShowSuccessDialog(true);
-    // Show preference options when success dialog is shown
-    setShowPreferenceOptions(true);
-    // Default to creating new preferences
-    setSelectedPreferenceOption("clear");
+  const handleSubmit = async () => {
+    // Validation
+    if (!title.trim()) {
+      toast.error('Please enter a title for your item');
+      return;
+    }
+
+    if (!category) {
+      toast.error('Please select a category for your item');
+      return;
+    }
+
+    if (!condition) {
+      toast.error('Please select the condition of your item');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      let imageUrl = null;
+      
+      // Upload the first image if available
+      if (images.length > 0) {
+        imageUrl = await uploadItemImage(images[0]);
+      }
+      
+      // Create item tags from subcategory if selected
+      const tags = subcategory ? [subcategory] : [];
+      
+      // Post the item to Supabase
+      const newItem = await postItem({
+        name: title,
+        description,
+        image_url: imageUrl || undefined,
+        category,
+        condition,
+        tags,
+      });
+      
+      if (newItem) {
+        // Show success dialog
+        setShowSuccessDialog(true);
+        setShowPreferenceOptions(true);
+        setSelectedPreferenceOption("clear");
+        toast.success('Your item has been posted successfully!');
+      }
+    } catch (error) {
+      console.error('Error posting item:', error);
+      toast.error('There was an error posting your item. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -348,7 +397,12 @@ const PostItem: React.FC = () => {
               {/* Title */}
               <div className="space-y-2">
                 <Label htmlFor="title">Title</Label>
-                <Input id="title" placeholder="What are you offering for rent?" />
+                <Input 
+                  id="title" 
+                  placeholder="What are you offering for trade?" 
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
               
               {/* Description */}
@@ -356,8 +410,10 @@ const PostItem: React.FC = () => {
                 <Label htmlFor="description">Description</Label>
                 <Textarea 
                   id="description" 
-                  placeholder="Describe your rental item in detail..." 
+                  placeholder="Describe your trade item in detail..." 
                   rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
               
@@ -586,9 +642,19 @@ const PostItem: React.FC = () => {
           </Button>
           <Button
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="bg-trademate-dark hover:bg-trademate-blue text-white"
           >
-            <Check className="mr-2 h-4 w-4" /> Submit Item
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <>
+                <Check className="mr-2 h-4 w-4" /> Submit Item
+              </>
+            )}
           </Button>
         </div>
       </div>

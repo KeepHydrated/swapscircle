@@ -9,6 +9,17 @@ export type User = {
   avatar_url?: string;
 };
 
+export type Item = {
+  id?: string;
+  name: string;
+  description?: string;
+  image_url?: string;
+  category?: string;
+  condition?: string;
+  tags?: string[];
+  user_id?: string;
+};
+
 export const fetchUserProfile = async (userId: string) => {
   if (!isSupabaseConfigured()) {
     return null;
@@ -165,6 +176,113 @@ export const getCurrentSession = async () => {
     return data?.session || null;
   } catch (error) {
     console.error('Session fetch error:', error);
+    return null;
+  }
+};
+
+// New function to post an item
+export const postItem = async (item: Item) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return null;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to post an item.');
+      return null;
+    }
+
+    const itemToInsert = {
+      ...item,
+      user_id: session.user.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('items')
+      .insert(itemToInsert)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error posting item:', error);
+      toast.error(error.message || 'Error posting item');
+      return null;
+    }
+
+    toast.success('Item posted successfully!');
+    return data;
+  } catch (error: any) {
+    console.error('Error posting item:', error);
+    toast.error(error.message || 'Error posting item');
+    return null;
+  }
+};
+
+// New function to handle image upload
+export const uploadItemImage = async (file: File): Promise<string | null> => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return null;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to upload an image.');
+      return null;
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${session.user.id}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+    const filePath = `${session.user.id}/${fileName}`;
+
+    // Check if the bucket exists
+    let { data: bucket } = await supabase.storage.getBucket('item-images');
+    
+    // Create the bucket if it doesn't exist
+    if (!bucket) {
+      try {
+        // Create the bucket
+        const { error: createBucketError } = await supabase.storage.createBucket('item-images', {
+          public: true,
+          fileSizeLimit: 5242880, // 5MB
+          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
+        });
+
+        if (createBucketError) {
+          console.error('Error creating bucket:', createBucketError);
+          toast.error('Error creating storage bucket');
+          return null;
+        }
+      } catch (error) {
+        console.error('Error checking/creating bucket:', error);
+      }
+    }
+
+    // Upload the file
+    const { error: uploadError } = await supabase.storage
+      .from('item-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      toast.error('Error uploading image');
+      return null;
+    }
+
+    // Get the public URL
+    const { data } = supabase.storage
+      .from('item-images')
+      .getPublicUrl(filePath);
+
+    return data?.publicUrl || null;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    toast.error('Error uploading image');
     return null;
   }
 };
