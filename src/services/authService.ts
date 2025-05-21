@@ -17,7 +17,6 @@ export type Item = {
   condition?: string;
   tags?: string[];
   user_id?: string;
-  priceRange?: string;
 };
 
 export const fetchUserProfile = async (userId: string) => {

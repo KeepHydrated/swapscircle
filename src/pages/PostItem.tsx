@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
@@ -168,8 +169,8 @@ const PostItem: React.FC = () => {
       // Create item tags from subcategory if selected
       const tags = subcategory ? [subcategory] : [];
       
-      // Post the item to Supabase with proper type
-      const itemToPost: any = {
+      // Post the item to Supabase
+      const newItem = await postItem({
         name: title,
         description,
         image_url: imageUrl || undefined,
@@ -177,9 +178,7 @@ const PostItem: React.FC = () => {
         condition,
         tags,
         priceRange, // Add priceRange to item
-      };
-      
-      const newItem = await postItem(itemToPost);
+      });
       
       if (newItem) {
         // Show success dialog

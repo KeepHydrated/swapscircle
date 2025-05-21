@@ -67,14 +67,12 @@ const ProfileSettings: React.FC = () => {
           
           if (data) {
             // Update form values with fetched profile data
-            // Use type assertion to access the fields we know exist in the database
-            const profileData = data as any;
             form.reset({
-              name: profileData.name || user.name || "",
+              name: data.name || user.name || "",
               username: user.email?.split('@')[0] || "",
               email: user.email || "",
-              bio: profileData.bio || "",
-              location: profileData.location || "",
+              bio: data.bio || "",
+              location: data.location || "",
             });
           }
         } catch (error) {
