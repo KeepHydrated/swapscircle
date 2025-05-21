@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -67,14 +66,16 @@ const UserProfile: React.FC = () => {
             if (profileError) {
               console.error('Error fetching profile:', profileError);
             } else if (profileData) {
+              // Use type assertion to access the fields we know exist in the database
+              const typedProfileData = profileData as any;
               setUserProfile({
-                name: profileData.name || user.name || 'User',
-                description: profileData.bio || 'Your profile description goes here. Edit your profile to update this information.',
+                name: typedProfileData.name || user.name || 'User',
+                description: typedProfileData.bio || 'Your profile description goes here. Edit your profile to update this information.',
                 rating: 0, // Default value
                 reviewCount: 0, // Default value
-                location: profileData.location || 'Update your location',
-                memberSince: new Date(profileData.created_at).getFullYear().toString(),
-                avatar_url: profileData.avatar_url || ''
+                location: typedProfileData.location || 'Update your location',
+                memberSince: new Date(typedProfileData.created_at).getFullYear().toString(),
+                avatar_url: typedProfileData.avatar_url || ''
               });
             }
           } catch (error) {
@@ -94,17 +95,21 @@ const UserProfile: React.FC = () => {
               setUserItems([]);
             } else if (items && Array.isArray(items)) {
               // Convert to MatchItem format
-              const formattedItems = items.map(item => ({
-                id: item.id,
-                name: item.name,
-                image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-                category: item.category,
-                condition: item.condition,
-                description: item.description,
-                tags: item.tags,
-                liked: false,
-                priceRange: item.priceRange
-              }));
+              const formattedItems = items.map(item => {
+                // Use type assertion to access priceRange
+                const typedItem = item as any;
+                return {
+                  id: item.id,
+                  name: item.name,
+                  image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+                  category: item.category,
+                  condition: item.condition,
+                  description: item.description,
+                  tags: item.tags,
+                  liked: false,
+                  priceRange: typedItem.priceRange
+                };
+              });
               
               setUserItems(formattedItems);
             } else {
