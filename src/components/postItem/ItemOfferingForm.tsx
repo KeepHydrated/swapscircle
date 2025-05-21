@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -86,7 +86,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newImages = Array.from(e.target.files);
-      // Fixed the TypeScript error by creating a new array instead of using updater function
+      // Fixed TypeScript error by directly setting the new array instead of using an updater function
       setImages([...images, ...newImages]);
     }
   };

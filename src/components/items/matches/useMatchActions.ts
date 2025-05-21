@@ -40,8 +40,6 @@ export const useMatchActions = (
     if (newLikedItems[id]) {
       const match = matches.find(m => m.id === id);
       if (match) {
-        // FIX: Don't add item to removedItems here so it stays visible
-        // Just navigate to messages with the liked item info
         toast(`You matched with ${match.name}! Check your messages.`);
         
         setTimeout(() => {
@@ -75,18 +73,13 @@ export const useMatchActions = (
     // Use the existing handleLike function
     handleLike(item.id);
     
-    // Close the popup - this now happens in the ItemDetailsPopup component
-    // Note: We don't clear the selected match in the parent component here
+    // Close the popup
     setSelectedMatch(null);
   };
   
   // Close the popup
   const handleClosePopup = () => {
     setSelectedMatch(null);
-    
-    // FIXED: Don't clear the selected match ID when closing the popup
-    // This preserves the highlighted/outlined item after closing the popup
-    // onSelectMatch('');
   };
 
   return {

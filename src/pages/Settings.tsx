@@ -10,7 +10,6 @@ import AddressSettings from '@/components/settings/AddressSettings';
 const Settings: React.FC = () => {
   return (
     <MainLayout>
-      {/* Removed the "Settings" text from the h1 title */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Account</h1>
       </div>
