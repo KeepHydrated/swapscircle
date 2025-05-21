@@ -1,61 +1,25 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Save, Check, PlusCircle, Loader2 } from 'lucide-react';
-import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  RadioGroup,
-  RadioGroupItem
-} from "@/components/ui/radio-group";
+import { Save, Check, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-// Define types for saved preferences
-type SavedPreference = {
-  id: string;
-  name: string;
-  lookingFor: string;
-  selectedCategories: string[];
-  selectedSubcategories: Record<string, string[]>;
-  selectedPriceRanges: string[];
-  selectedConditions: string[];
-}
+// Import our new components
+import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
+import PreferencesForm, { SavedPreference } from '@/components/postItem/PreferencesForm';
+import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
+import SavedPreferencesList from '@/components/postItem/SavedPreferencesList';
+import SuccessDialog from '@/components/postItem/SuccessDialog';
 
 const PostItem: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
+  // Item offering form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
@@ -65,12 +29,14 @@ const PostItem: React.FC = () => {
   const [priceRange, setPriceRange] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // For "What You're Looking For" section
+  // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  
+  // Dialog state
   const [preferenceName, setPreferenceName] = useState<string>("");
   const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
@@ -88,106 +54,23 @@ const PostItem: React.FC = () => {
     }
   }, []);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newImages = Array.from(e.target.files);
-      setImages(prev => [...prev, ...newImages]);
-    }
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setImages([]);
+    setCategory("");
+    setSubcategory("");
+    setCondition("");
+    setPriceRange("");
+    // We're not resetting the "What You're Looking For" section by default
   };
 
-  // Define categories and their subcategories for rental items
-  const categories = {
-    "Electronics": ["Cameras", "Computers", "Audio Equipment", "TVs", "Gaming Consoles", "Other Electronics"],
-    "Home & Garden": ["Power Tools", "Furniture", "Party Supplies", "Kitchen Appliances", "Gardening Equipment", "Other Home Items"],
-    "Sports & Outdoors": ["Camping Gear", "Bikes", "Winter Sports", "Water Sports", "Fitness Equipment", "Other Sports Gear"],
-    "Clothing": ["Formal Wear", "Costumes", "Accessories", "Designer Items", "Special Occasion", "Other Clothing"],
-    "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Other Business Items"],
-    "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Other Entertainment Items"],
-    "Collectibles": ["Trading Cards", "Toys", "Vintage Items", "Memorabilia", "Comics", "Stamps", "Coins", "Vinyl Records", "Antiques", "Other Collectibles"],
-    "Books & Media": ["Books", "Movies", "Music", "Magazines", "Other Media"],
-    "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Other Tools"],
-    "Vehicles": ["Cars", "Motorcycles", "Bicycles", "Scooters", "Other Vehicles"],
-    "Furniture": ["Living Room", "Bedroom", "Dining Room", "Office", "Outdoor", "Other Furniture"],
-    "Other": ["Miscellaneous"]
-  };
-
-  // Conditions for rental items
-  const conditions = [
-    "Brand New", 
-    "Like New", 
-    "Very Good", 
-    "Good", 
-    "Acceptable",
-    "Fair",
-    "Poor"
-  ];
-  
-  // Price ranges updated to cap at $1,000
-  const priceRanges = [
-    "$0 - $50",
-    "$50 - $100",
-    "$100 - $250",
-    "$250 - $500",
-    "$500 - $750",
-    "$750 - $1,000"
-  ];
-
-  // Subcategories based on selected category
-  const getSubcategories = () => {
-    if (!category) return [];
-    return categories[category as keyof typeof categories] || [];
-  };
-
-  // Toggle category selection in "What You're Looking For"
-  const toggleCategory = (categoryName: string) => {
-    setSelectedCategories(prev => {
-      if (prev.includes(categoryName)) {
-        // Remove the category and its subcategories
-        const newSelected = prev.filter(cat => cat !== categoryName);
-        setSelectedSubcategories(prev => {
-          const updated = {...prev};
-          delete updated[categoryName];
-          return updated;
-        });
-        return newSelected;
-      } else {
-        // Add the category
-        return [...prev, categoryName];
-      }
-    });
-  };
-
-  // Toggle subcategory selection
-  const toggleSubcategory = (category: string, subcategory: string) => {
-    setSelectedSubcategories(prev => {
-      const currentSubs = prev[category] || [];
-      const updatedSubs = currentSubs.includes(subcategory)
-        ? currentSubs.filter(sub => sub !== subcategory)
-        : [...currentSubs, subcategory];
-      
-      return {
-        ...prev,
-        [category]: updatedSubs
-      };
-    });
-  };
-
-  // Toggle price range selection
-  const togglePriceRange = (range: string) => {
-    setSelectedPriceRanges(prev => 
-      prev.includes(range) 
-        ? prev.filter(r => r !== range) 
-        : [...prev, range]
-    );
-  };
-
-  // Toggle condition selection
-  const toggleCondition = (condition: string) => {
-    setSelectedConditions(prev => 
-      prev.includes(condition) 
-        ? prev.filter(c => c !== condition) 
-        : [...prev, condition]
-    );
+  const clearPreferences = () => {
+    setLookingForText("");
+    setSelectedCategories([]);
+    setSelectedSubcategories({});
+    setSelectedPriceRanges([]);
+    setSelectedConditions([]);
   };
 
   // Save current preferences
@@ -237,26 +120,6 @@ const PostItem: React.FC = () => {
     localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
     
     toast.success("Preference has been removed");
-  };
-
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setImages([]);
-    setCategory("");
-    setSubcategory("");
-    setCondition("");
-    setPriceRange("");
-    // We're not resetting the "What You're Looking For" section by default
-    // as it's valuable to keep these preferences for the next item
-  };
-
-  const clearPreferences = () => {
-    setLookingForText("");
-    setSelectedCategories([]);
-    setSelectedSubcategories({});
-    setSelectedPriceRanges([]);
-    setSelectedConditions([]);
   };
 
   const addNewItem = () => {
@@ -337,282 +200,46 @@ const PostItem: React.FC = () => {
       <div className="flex-1 p-4 md:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
           {/* What You're Offering Column */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4 text-trademate-blue">What You're Offering</h2>
-            
-            <div className="space-y-6">
-              {/* Image Upload */}
-              <div>
-                <Label htmlFor="images">Add Images</Label>
-                <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
-                  <ImagePlus className="h-10 w-10 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-500">Upload up to 5 images</p>
-                  <input
-                    id="images"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                  <Button 
-                    variant="outline" 
-                    className="mt-2"
-                    onClick={() => document.getElementById('images')?.click()}
-                  >
-                    Select Images
-                  </Button>
-                  
-                  {images.length > 0 && (
-                    <div className="mt-4 grid grid-cols-3 gap-2 w-full">
-                      {images.map((image, index) => (
-                        <div key={index} className="relative h-20 bg-gray-100 rounded-md overflow-hidden">
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Preview ${index}`}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* Title */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input 
-                  id="title" 
-                  placeholder="What are you offering for trade?" 
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-              
-              {/* Description */}
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea 
-                  id="description" 
-                  placeholder="Describe your trade item in detail..." 
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              
-              {/* Condition - Moved up as requested */}
-              <div className="space-y-2">
-                <Label htmlFor="condition">Condition</Label>
-                <Select value={condition} onValueChange={setCondition}>
-                  <SelectTrigger id="condition" className="w-full">
-                    <SelectValue placeholder="Select condition" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {conditions.map((cond) => (
-                      <SelectItem key={cond} value={cond}>{cond}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {/* Category */}
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select 
-                  value={category} 
-                  onValueChange={(value) => {
-                    setCategory(value);
-                    setSubcategory(""); // Reset subcategory when category changes
-                  }}
-                >
-                  <SelectTrigger id="category" className="w-full">
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.keys(categories).map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {/* Subcategory - only show if category is selected */}
-              {category && (
-                <div className="space-y-2">
-                  <Label htmlFor="subcategory">Subcategory</Label>
-                  <Select value={subcategory} onValueChange={setSubcategory}>
-                    <SelectTrigger id="subcategory" className="w-full">
-                      <SelectValue placeholder="Select a subcategory" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getSubcategories().map((subcat) => (
-                        <SelectItem key={subcat} value={subcat}>{subcat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              
-              {/* Price Range - Moved to the bottom as requested */}
-              <div className="space-y-2">
-                <Label htmlFor="price-range">Price Range</Label>
-                <Select value={priceRange} onValueChange={setPriceRange}>
-                  <SelectTrigger id="price-range" className="w-full">
-                    <SelectValue placeholder="Select price range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {priceRanges.map((range) => (
-                      <SelectItem key={range} value={range}>
-                        {range}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+          <ItemOfferingForm
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            images={images}
+            setImages={setImages}
+            category={category}
+            setCategory={setCategory}
+            subcategory={subcategory}
+            setSubcategory={setSubcategory}
+            condition={condition}
+            setCondition={setCondition}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+          />
           
           {/* What You're Looking For Column */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold text-trademate-blue">What You're Looking For</h2>
-            </div>
+          <div>
+            {/* Saved preferences list */}
+            <SavedPreferencesList
+              show={showSavedPreferences && savedPreferences.length > 0}
+              preferences={savedPreferences}
+              onApply={applyPreference}
+              onDelete={deletePreference}
+            />
             
-            {/* Display saved preferences if active */}
-            {showSavedPreferences && savedPreferences.length > 0 && (
-              <div className="mb-6 bg-gray-50 p-4 rounded-lg border">
-                <h3 className="font-medium mb-3">Saved Preferences</h3>
-                <div className="space-y-2">
-                  {savedPreferences.map((pref) => (
-                    <div key={pref.id} className="flex items-center justify-between bg-white p-2 rounded border">
-                      <span className="font-medium">{pref.name}</span>
-                      <div className="flex space-x-2">
-                        <Button 
-                          size="sm" 
-                          onClick={() => applyPreference(pref)}
-                        >
-                          Apply
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => deletePreference(pref.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="lookingFor">I'm looking for...</Label>
-                <Textarea 
-                  id="lookingFor" 
-                  placeholder="Describe what you would like to trade for..." 
-                  rows={4}
-                  value={lookingForText}
-                  onChange={(e) => setLookingForText(e.target.value)}
-                />
-              </div>
-              
-              {/* Categories Section - Updated to match the image */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-medium">Categories (Select all that apply)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {Object.keys(categories).map((categoryName) => (
-                    <div key={categoryName} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`category-${categoryName}`} 
-                        checked={selectedCategories.includes(categoryName)}
-                        onCheckedChange={() => toggleCategory(categoryName)}
-                      />
-                      <Label 
-                        htmlFor={`category-${categoryName}`}
-                        className="text-base font-normal cursor-pointer"
-                      >
-                        {categoryName}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Subcategories Section - Only shown when categories are selected */}
-              {selectedCategories.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-medium">Subcategories (Select all that apply)</h3>
-                  {selectedCategories.map((categoryName) => (
-                    <div key={`subcats-${categoryName}`} className="space-y-2">
-                      {categories[categoryName as keyof typeof categories].map((subcat) => (
-                        <div key={`${categoryName}-${subcat}`} className="flex items-center space-x-2">
-                          <Checkbox 
-                            id={`subcategory-${categoryName}-${subcat}`} 
-                            checked={(selectedSubcategories[categoryName] || []).includes(subcat)}
-                            onCheckedChange={() => toggleSubcategory(categoryName, subcat)}
-                          />
-                          <Label 
-                            htmlFor={`subcategory-${categoryName}-${subcat}`}
-                            className="text-base font-normal cursor-pointer flex items-center"
-                          >
-                            {subcat} <span className="text-gray-500 ml-2">({categoryName})</span>
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Price Range Section */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-medium">Price Range (Select all that apply)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {priceRanges.map((range) => (
-                    <div key={range} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`price-range-${range}`}
-                        checked={selectedPriceRanges.includes(range)}
-                        onCheckedChange={() => togglePriceRange(range)}
-                      />
-                      <Label 
-                        htmlFor={`price-range-${range}`}
-                        className="text-base font-normal cursor-pointer"
-                      >
-                        {range}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Condition Section */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-medium">Condition (Select all that apply)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {conditions.map((condition) => (
-                    <div key={condition} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`condition-${condition}`}
-                        checked={selectedConditions.includes(condition)}
-                        onCheckedChange={() => toggleCondition(condition)}
-                      />
-                      <Label 
-                        htmlFor={`condition-${condition}`}
-                        className="text-base font-normal cursor-pointer"
-                      >
-                        {condition}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Preferences form */}
+            <PreferencesForm 
+              lookingForText={lookingForText}
+              setLookingForText={setLookingForText}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+              selectedSubcategories={selectedSubcategories}
+              setSelectedSubcategories={setSelectedSubcategories}
+              selectedPriceRanges={selectedPriceRanges}
+              setSelectedPriceRanges={setSelectedPriceRanges}
+              selectedConditions={selectedConditions}
+              setSelectedConditions={setSelectedConditions}
+            />
           </div>
         </div>
         
@@ -644,34 +271,26 @@ const PostItem: React.FC = () => {
         </div>
       </div>
 
-      {/* Dialog for saving preferences */}
-      <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Save Your Preferences</DialogTitle>
-            <DialogDescription>
-              Give your preferences a name so you can easily use them again later.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="preference-name" className="col-span-4">
-                Name
-              </Label>
-              <Input
-                id="preference-name"
-                placeholder="e.g., Photography Equipment"
-                className="col-span-4"
-                value={preferenceName}
-                onChange={(e) => setPreferenceName(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" onClick={savePreferences}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Dialogs */}
+      <SavePreferenceDialog 
+        open={saveDialogOpen}
+        onOpenChange={setSaveDialogOpen}
+        preferenceName={preferenceName}
+        setPreferenceName={setPreferenceName}
+        onSave={savePreferences}
+      />
+
+      <SuccessDialog 
+        open={showSuccessDialog}
+        onOpenChange={setShowSuccessDialog}
+        selectedPreferenceOption={selectedPreferenceOption}
+        setSelectedPreferenceOption={setSelectedPreferenceOption}
+        showPreferenceOptions={showPreferenceOptions}
+        savedPreferences={savedPreferences}
+        selectedSavedPreferenceId={selectedSavedPreferenceId}
+        setSelectedSavedPreferenceId={setSelectedSavedPreferenceId}
+        onAddNewItem={addNewItem}
+      />
 
       {/* Button to show saved preferences */}
       {savedPreferences.length > 0 && (
@@ -685,74 +304,6 @@ const PostItem: React.FC = () => {
           </Button>
         </div>
       )}
-
-      {/* Success Dialog with preference options */}
-      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <AlertDialogContent className="bg-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-semibold text-green-600">
-              Item Successfully Posted!
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
-              Your item has been successfully posted for trade on TradeMate.
-              Would you like to add another item?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          
-          {/* Modified preference options - Removed "Keep current preferences" */}
-          {showPreferenceOptions && (
-            <div className="my-4 border-t border-b border-gray-200 py-4">
-              <Label className="font-medium mb-2 block">For your next item:</Label>
-              <RadioGroup 
-                value={selectedPreferenceOption} 
-                onValueChange={setSelectedPreferenceOption}
-                className="space-y-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="clear" id="clear" />
-                  <Label htmlFor="clear">Create new item with no preferences</Label>
-                </div>
-                {savedPreferences.length > 0 && (
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="load" id="load" />
-                    <Label htmlFor="load">Use saved preferences</Label>
-                  </div>
-                )}
-              </RadioGroup>
-              
-              {/* Show saved preferences dropdown if "load" is selected */}
-              {selectedPreferenceOption === "load" && savedPreferences.length > 0 && (
-                <div className="mt-3">
-                  <Select 
-                    value={selectedSavedPreferenceId}
-                    onValueChange={setSelectedSavedPreferenceId}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select saved preferences" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {savedPreferences.map((pref) => (
-                        <SelectItem key={pref.id} value={pref.id}>
-                          {pref.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </div>
-          )}
-          
-          <AlertDialogFooter className="mt-4">
-            <AlertDialogCancel className="border-gray-300">
-              Done
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={addNewItem} className="bg-green-600 hover:bg-green-700 text-white">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add New Item
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
