@@ -79,11 +79,11 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 }) => {
   // Toggle category selection in "What You're Looking For"
   const toggleCategory = (categoryName: string) => {
-    setSelectedCategories(prev => {
+    setSelectedCategories((prev: string[]) => {
       if (prev.includes(categoryName)) {
         // Remove the category and its subcategories
         const newSelected = prev.filter(cat => cat !== categoryName);
-        setSelectedSubcategories(prev => {
+        setSelectedSubcategories((prev: Record<string, string[]>) => {
           const updated = {...prev};
           delete updated[categoryName];
           return updated;
@@ -98,7 +98,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 
   // Toggle subcategory selection
   const toggleSubcategory = (category: string, subcategory: string) => {
-    setSelectedSubcategories(prev => {
+    setSelectedSubcategories((prev: Record<string, string[]>) => {
       const currentSubs = prev[category] || [];
       const updatedSubs = currentSubs.includes(subcategory)
         ? currentSubs.filter(sub => sub !== subcategory)
@@ -113,7 +113,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 
   // Toggle price range selection
   const togglePriceRange = (range: string) => {
-    setSelectedPriceRanges(prev => 
+    setSelectedPriceRanges((prev: string[]) => 
       prev.includes(range) 
         ? prev.filter(r => r !== range) 
         : [...prev, range]
@@ -122,7 +122,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 
   // Toggle condition selection
   const toggleCondition = (condition: string) => {
-    setSelectedConditions(prev => 
+    setSelectedConditions((prev: string[]) => 
       prev.includes(condition) 
         ? prev.filter(c => c !== condition) 
         : [...prev, condition]
