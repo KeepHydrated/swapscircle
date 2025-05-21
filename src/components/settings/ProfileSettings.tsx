@@ -115,6 +115,8 @@ const ProfileSettings: React.FC = () => {
         });
         
         toast.success('Profile updated successfully');
+        
+        // Don't navigate to the profile page, stay on the settings page
       }
     } catch (error) {
       console.error('Error updating profile:', error);
