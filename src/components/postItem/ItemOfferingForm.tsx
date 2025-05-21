@@ -86,8 +86,8 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newImages = Array.from(e.target.files);
-      // Fixed TypeScript error by explicitly typing the previous state
-      setImages((prev: File[]) => [...prev, ...newImages]);
+      // Fixed the TypeScript error by creating a new array instead of using updater function
+      setImages([...images, ...newImages]);
     }
   };
 

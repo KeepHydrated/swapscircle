@@ -79,54 +79,54 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 }) => {
   // Toggle category selection in "What You're Looking For"
   const toggleCategory = (categoryName: string) => {
-    setSelectedCategories((prev: string[]) => {
-      if (prev.includes(categoryName)) {
-        // Remove the category and its subcategories
-        const newSelected = prev.filter(cat => cat !== categoryName);
-        setSelectedSubcategories((prev: Record<string, string[]>) => {
-          const updated = {...prev};
-          delete updated[categoryName];
-          return updated;
-        });
-        return newSelected;
-      } else {
-        // Add the category
-        return [...prev, categoryName];
-      }
-    });
+    // Fixed TypeScript error by creating new arrays directly instead of using updater functions
+    if (selectedCategories.includes(categoryName)) {
+      // Remove the category and its subcategories
+      const newSelected = selectedCategories.filter(cat => cat !== categoryName);
+      setSelectedCategories(newSelected);
+      
+      // Create new subcategories object without the removed category
+      const updatedSubcategories = {...selectedSubcategories};
+      delete updatedSubcategories[categoryName];
+      setSelectedSubcategories(updatedSubcategories);
+    } else {
+      // Add the category
+      setSelectedCategories([...selectedCategories, categoryName]);
+    }
   };
 
   // Toggle subcategory selection
   const toggleSubcategory = (category: string, subcategory: string) => {
-    setSelectedSubcategories((prev: Record<string, string[]>) => {
-      const currentSubs = prev[category] || [];
-      const updatedSubs = currentSubs.includes(subcategory)
-        ? currentSubs.filter(sub => sub !== subcategory)
-        : [...currentSubs, subcategory];
-      
-      return {
-        ...prev,
-        [category]: updatedSubs
-      };
-    });
+    const currentSubs = selectedSubcategories[category] || [];
+    const updatedSubs = currentSubs.includes(subcategory)
+      ? currentSubs.filter(sub => sub !== subcategory)
+      : [...currentSubs, subcategory];
+    
+    // Create new subcategories object with updated values
+    const newSelectedSubcategories = {
+      ...selectedSubcategories,
+      [category]: updatedSubs
+    };
+    
+    setSelectedSubcategories(newSelectedSubcategories);
   };
 
   // Toggle price range selection
   const togglePriceRange = (range: string) => {
-    setSelectedPriceRanges((prev: string[]) => 
-      prev.includes(range) 
-        ? prev.filter(r => r !== range) 
-        : [...prev, range]
-    );
+    if (selectedPriceRanges.includes(range)) {
+      setSelectedPriceRanges(selectedPriceRanges.filter(r => r !== range));
+    } else {
+      setSelectedPriceRanges([...selectedPriceRanges, range]);
+    }
   };
 
   // Toggle condition selection
   const toggleCondition = (condition: string) => {
-    setSelectedConditions((prev: string[]) => 
-      prev.includes(condition) 
-        ? prev.filter(c => c !== condition) 
-        : [...prev, condition]
-    );
+    if (selectedConditions.includes(condition)) {
+      setSelectedConditions(selectedConditions.filter(c => c !== condition));
+    } else {
+      setSelectedConditions([...selectedConditions, condition]);
+    }
   };
 
   return (
