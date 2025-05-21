@@ -13,7 +13,6 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +53,6 @@ type SavedPreference = {
 }
 
 const PostItem: React.FC = () => {
-  const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -195,11 +193,7 @@ const PostItem: React.FC = () => {
   // Save current preferences
   const savePreferences = () => {
     if (!preferenceName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a name for your preferences",
-        variant: "destructive",
-      });
+      toast.error("Please enter a name for your preferences");
       return;
     }
 
@@ -217,10 +211,7 @@ const PostItem: React.FC = () => {
     setSavedPreferences(updatedPreferences);
     localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
     
-    toast({
-      title: "Success",
-      description: "Your preferences have been saved",
-    });
+    toast.success("Your preferences have been saved");
     
     setSaveDialogOpen(false);
     setPreferenceName("");
@@ -234,10 +225,7 @@ const PostItem: React.FC = () => {
     setSelectedPriceRanges(preference.selectedPriceRanges);
     setSelectedConditions(preference.selectedConditions);
     
-    toast({
-      title: "Preferences Applied",
-      description: `"${preference.name}" has been applied to your search`,
-    });
+    toast.success(`"${preference.name}" has been applied to your search`);
     
     setShowSavedPreferences(false);
   };
@@ -248,10 +236,7 @@ const PostItem: React.FC = () => {
     setSavedPreferences(updatedPreferences);
     localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
     
-    toast({
-      title: "Deleted",
-      description: "Preference has been removed",
-    });
+    toast.success("Preference has been removed");
   };
 
   const resetForm = () => {
