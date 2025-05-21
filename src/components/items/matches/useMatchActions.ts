@@ -40,11 +40,10 @@ export const useMatchActions = (
     if (newLikedItems[id]) {
       const match = matches.find(m => m.id === id);
       if (match) {
-        // Add item to removed list
-        setRemovedItems(prev => [...prev, id]);
-        
+        // FIX: Don't add item to removedItems here so it stays visible
+        // Just navigate to messages with the liked item info
         toast(`You matched with ${match.name}! Check your messages.`);
-        // Navigate to messages with the liked item info
+        
         setTimeout(() => {
           navigate('/messages', { 
             state: { 

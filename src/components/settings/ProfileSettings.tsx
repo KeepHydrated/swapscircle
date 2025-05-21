@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
-import { mockProfileData } from '@/data/mockProfileData';
+import { useAuth } from '@/context/AuthContext';
 
 // Create form schema
 const profileFormSchema = z.object({
@@ -33,21 +33,41 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const ProfileSettings: React.FC = () => {
-  // Initialize form with profile data
+  // Get user data from auth context
+  const { user, updateProfile } = useAuth();
+
+  // Initialize form with user data
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: mockProfileData.name,
-      username: "jessica.parker",
-      email: "jessica.parker@example.com",
-      bio: mockProfileData.description,
-      location: mockProfileData.location,
+      name: user?.name || "",
+      username: user?.email?.split('@')[0] || "",
+      email: user?.email || "",
+      bio: "",
+      location: "",
     },
   });
 
   // Handle form submission
-  const onSubmit = (data: ProfileFormValues) => {
-    toast.success('Profile updated successfully');
+  const onSubmit = async (data: ProfileFormValues) => {
+    try {
+      if (user) {
+        await updateProfile({
+          name: data.name,
+          // We could add avatar_url here if implementing file uploads
+        });
+        toast.success('Profile updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // In a real implementation, this would upload the image to storage
+    // and then update the user's avatar_url
+    toast.success('Profile picture updated');
   };
 
   return (
@@ -61,8 +81,8 @@ const ProfileSettings: React.FC = () => {
       <CardContent>
         <div className="flex items-center gap-5 pb-6 mb-6 border-b">
           <Avatar className="h-24 w-24">
-            <AvatarImage src="https://github.com/shadcn.png" alt="Profile" />
-            <AvatarFallback>{mockProfileData.name.substring(0, 2)}</AvatarFallback>
+            <AvatarImage src={user?.avatar_url || "https://github.com/shadcn.png"} alt="Profile" />
+            <AvatarFallback>{user?.name?.substring(0, 2) || "US"}</AvatarFallback>
           </Avatar>
           <div>
             <Button size="sm" className="relative" variant="outline">
@@ -72,7 +92,7 @@ const ProfileSettings: React.FC = () => {
                 type="file" 
                 className="absolute inset-0 opacity-0 cursor-pointer" 
                 accept="image/*"
-                onChange={() => toast.success('Profile picture updated')}
+                onChange={handleAvatarChange}
               />
             </Button>
             <p className="text-sm text-muted-foreground mt-2">

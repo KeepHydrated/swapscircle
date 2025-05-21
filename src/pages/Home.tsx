@@ -155,7 +155,7 @@ const Home: React.FC = () => {
     setSelectedMatchId(id || null); // Set to null if empty string
   };
 
-  // Handle liking a friend's item
+  // Handle liking a friend's item - FIXED to not remove items when liked
   const handleLikeFriendItem = (itemId: string) => {
     setFriendItems(items => 
       items.map(item => 
