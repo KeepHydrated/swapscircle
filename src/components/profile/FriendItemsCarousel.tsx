@@ -7,11 +7,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 import CarouselItemCard from './carousel/CarouselItemCard';
 import ItemDetailsPopup from './carousel/ItemDetailsPopup';
-import { useNavigate } from 'react-router-dom';
 
 interface FriendItemsCarouselProps {
   items: MatchItem[];
@@ -26,30 +25,15 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 }) => {
   const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   const handleLikeClick = (e: React.MouseEvent, item: MatchItem) => {
     e.stopPropagation(); // Prevent triggering selection when clicking heart
-    
-    // Toggle liked state
     onLikeItem(item.id);
     
-    // Show toast and navigate to messages if item is now liked
-    if (!item.liked) {
-      toast(`You matched with ${item.name}! Check your messages.`);
-      
-      // Navigate to messages with item info after a short delay
-      setTimeout(() => {
-        navigate('/messages', { 
-          state: { 
-            likedItem: {
-              ...item,
-              liked: true  // Ensure the item is marked as liked
-            } 
-          }
-        });
-      }, 1000);
-    }
+    toast({
+      title: item.liked ? "Removed from favorites" : "Added to favorites",
+      description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
+    });
   };
 
   const handleItemClick = (item: MatchItem) => {
@@ -61,28 +45,20 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   };
 
   const handlePopupLikeClick = (item: MatchItem) => {
-    // Close the popup
-    setSelectedItem(null);
-    
-    // Toggle liked state for the item
     onLikeItem(item.id);
     
-    // Show toast and navigate to messages if item is now liked
-    if (!item.liked) {
-      toast(`You matched with ${item.name}! Check your messages.`);
-      
-      // Navigate to messages with item info after a short delay
-      setTimeout(() => {
-        navigate('/messages', { 
-          state: { 
-            likedItem: {
-              ...item,
-              liked: true
-            } 
-          }
-        });
-      }, 1000);
+    // Update the selected item's liked status in the local state
+    if (selectedItem && selectedItem.id === item.id) {
+      setSelectedItem({
+        ...selectedItem,
+        liked: !selectedItem.liked
+      });
     }
+    
+    toast({
+      title: item.liked ? "Removed from favorites" : "Added to favorites",
+      description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
+    });
   };
 
   return (

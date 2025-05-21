@@ -27,17 +27,6 @@ const UserProfile: React.FC = () => {
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // Add state for user profile
-  const [userProfile, setUserProfile] = useState({
-    name: '',
-    description: '',
-    rating: 0,
-    reviewCount: 0,
-    location: '',
-    memberSince: '',
-    avatar_url: ''
-  });
 
   // Fetch user items and data
   useEffect(() => {
@@ -54,31 +43,6 @@ const UserProfile: React.FC = () => {
             toast.error("Supabase not configured. Using demo mode with empty data.");
             setLoading(false);
             return;
-          }
-          
-          // Fetch user profile
-          try {
-            const { data: profileData, error: profileError } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', user.id)
-              .single();
-              
-            if (profileError) {
-              console.error('Error fetching profile:', profileError);
-            } else if (profileData) {
-              setUserProfile({
-                name: profileData.name || user.name || 'User',
-                description: profileData.bio || 'Your profile description goes here. Edit your profile to update this information.',
-                rating: 0, // Default value
-                reviewCount: 0, // Default value
-                location: profileData.location || 'Update your location',
-                memberSince: new Date(profileData.created_at).getFullYear().toString(),
-                avatar_url: profileData.avatar_url || ''
-              });
-            }
-          } catch (error) {
-            console.error('Error in profile fetch:', error);
           }
           
           // Fetch user items
@@ -102,8 +66,7 @@ const UserProfile: React.FC = () => {
                 condition: item.condition,
                 description: item.description,
                 tags: item.tags,
-                liked: false,
-                priceRange: item.priceRange
+                liked: false
               }));
               
               setUserItems(formattedItems);
@@ -116,6 +79,7 @@ const UserProfile: React.FC = () => {
           }
           
           // For now, we'll use empty arrays for trades, reviews, and friends
+          // These would be fetched from your Supabase tables once you set them up
           setUserTrades([]);
           setUserReviews([]);
           setUserFriends([]);
@@ -135,6 +99,15 @@ const UserProfile: React.FC = () => {
     return null; // Should be handled by RequireAuth
   }
 
+  const profileData = {
+    name: user?.name || 'User',
+    description: 'Your profile description goes here. Edit your profile to update this information.',
+    rating: 0,
+    reviewCount: userReviews.length,
+    location: 'Update your location',
+    memberSince: new Date().getFullYear().toString(),
+  };
+
   return (
     <MainLayout>
       <div className="mb-6 flex items-center justify-between">
@@ -150,7 +123,7 @@ const UserProfile: React.FC = () => {
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
-          profile={userProfile}
+          profile={profileData}
           friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}

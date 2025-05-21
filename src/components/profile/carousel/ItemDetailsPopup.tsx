@@ -36,11 +36,11 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   canEdit = false,
   showProfileInfo = true
 }) => {
-  // For multiple images (use item image and some defaults)
+  // For multiple images (dummy data as example)
   const images = [
     item.image,
-    'https://images.unsplash.com/photo-1597600159211-d6c104f408d1', // Additional sample image
-    'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9'  // Additional sample image
+    'https://images.unsplash.com/photo-1721322800607-8c38375eef04',
+    'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9'
   ];
 
   // Handle like click with popup closing
@@ -73,12 +73,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           
           {/* Right side - Item details with showProfileInfo prop */}
           <ItemDetailsContent 
-            name={item.name}
-            description={item.description || "No description available."}
-            category={item.category || "Uncategorized"}
-            condition={item.condition || "Not specified"}
-            tags={item.tags || []}
-            priceRange={item.priceRange || "Not specified"}
+            name={item.name} 
             showProfileInfo={showProfileInfo} 
           />
         </div>
