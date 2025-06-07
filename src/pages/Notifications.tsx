@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bell, MessageCircle, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Bell, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -130,10 +128,6 @@ const Notifications: React.FC = () => {
     fetchNotifications();
   }, [user, supabaseConfigured]);
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   const handleNotificationClick = async (notification: Notification) => {
     if (!user) return;
     
@@ -168,10 +162,7 @@ const Notifications: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="mb-6 flex items-center">
-        <Button variant="ghost" onClick={handleBack} className="mr-2">
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+      <div className="mb-6">
         <h1 className="text-3xl font-bold">Notifications</h1>
       </div>
 
