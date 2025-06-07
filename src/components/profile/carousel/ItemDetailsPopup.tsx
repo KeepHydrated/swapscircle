@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import {
   Dialog,
@@ -57,6 +58,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     }
   };
 
+  const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
+
   return (
     <>
       {/* Custom overlay that doesn't interfere with navigation buttons */}
@@ -67,10 +70,36 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
         />
       )}
       
+      {/* Navigation arrows positioned outside the modal content */}
+      {showNavigation && (
+        <>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onNavigatePrev();
+            }}
+            className="fixed left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
+            aria-label="Previous match"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onNavigateNext();
+            }}
+            className="fixed right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
+            aria-label="Next match"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-700" />
+          </button>
+        </>
+      )}
+      
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <DialogContent 
           className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden z-50 relative ${className}`}
-          onClick={(e) => e.stopPropagation()}
         >
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
