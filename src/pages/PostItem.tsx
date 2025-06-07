@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { postItem, uploadItemImage } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-// Import our components
+// Import our new components
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
 import PreferencesForm, { SavedPreference } from '@/components/postItem/PreferencesForm';
 import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
@@ -168,18 +169,15 @@ const PostItem: React.FC = () => {
       // Create item tags from subcategory if selected
       const tags = subcategory ? [subcategory] : [];
       
-      // Post the item to Supabase with proper type
-      const itemToPost: any = {
+      // Post the item to Supabase
+      const newItem = await postItem({
         name: title,
         description,
         image_url: imageUrl || undefined,
         category,
         condition,
         tags,
-        priceRange, // Add priceRange to item
-      };
-      
-      const newItem = await postItem(itemToPost);
+      });
       
       if (newItem) {
         // Show success dialog
@@ -187,13 +185,6 @@ const PostItem: React.FC = () => {
         setShowPreferenceOptions(true);
         setSelectedPreferenceOption("clear");
         toast.success('Your item has been posted successfully!');
-        
-        // Redirect to profile page after 2 seconds
-        setTimeout(() => {
-          if (!showSuccessDialog) { // Only redirect if success dialog is closed
-            navigate('/profile');
-          }
-        }, 2000);
       }
     } catch (error) {
       console.error('Error posting item:', error);
@@ -202,14 +193,6 @@ const PostItem: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
-  // If not logged in, redirect to auth page
-  useEffect(() => {
-    if (!user) {
-      toast.error('You must be logged in to post an item');
-      navigate('/auth');
-    }
-  }, [user, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen">

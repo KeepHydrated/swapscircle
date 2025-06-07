@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { X, Heart, Edit, Copy, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Heart, X, Edit, Copy, Trash2 } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 
 interface ActionButtonsProps {
@@ -14,14 +13,14 @@ interface ActionButtonsProps {
   canEdit?: boolean;
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({
-  item,
-  onLikeClick,
-  onClose,
-  onEditClick,
-  onDuplicateClick,
+const ActionButtons: React.FC<ActionButtonsProps> = ({ 
+  item, 
+  onLikeClick, 
+  onClose, 
+  onEditClick, 
+  onDuplicateClick, 
   onDeleteClick,
-  canEdit = false
+  canEdit = false 
 }) => {
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -30,78 +29,73 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
     }
   };
 
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEditClick) {
+      onEditClick();
+    }
+  };
+
+  const handleDuplicateClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDuplicateClick) {
+      onDuplicateClick();
+    }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDeleteClick) {
+      onDeleteClick();
+    }
+  };
+
   return (
-    <div className="absolute top-0 right-0 left-0 z-50 flex justify-between p-3">
-      <div className="flex gap-2">
-        {onLikeClick && (
-          <Button
-            onClick={handleLikeClick}
-            className={`rounded-full p-2 h-auto w-auto ${
-              item.liked
-                ? 'bg-red-500 hover:bg-red-600 text-white'
-                : 'bg-white hover:bg-gray-100 text-gray-700'
-            }`}
-            title={item.liked ? 'Unlike' : 'Like'}
+    <div className="absolute right-4 top-4 flex items-center space-x-2 z-10">
+      {canEdit ? (
+        // Edit buttons for own items
+        <>
+          <button 
+            onClick={handleEditClick}
+            className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+            aria-label="Edit item"
           >
-            <Heart
-              className={`h-5 w-5 ${item.liked ? 'fill-white' : ''}`}
-            />
-          </Button>
-        )}
-
-        {/* Edit buttons - only show if canEdit is true */}
-        {canEdit && (
-          <>
-            {onEditClick && (
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditClick();
-                }}
-                className="rounded-full p-2 h-auto w-auto bg-white hover:bg-gray-100 text-gray-700"
-                title="Edit"
-              >
-                <Edit className="h-5 w-5" />
-              </Button>
-            )}
-            
-            {onDuplicateClick && (
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDuplicateClick();
-                }}
-                className="rounded-full p-2 h-auto w-auto bg-white hover:bg-gray-100 text-gray-700"
-                title="Duplicate"
-              >
-                <Copy className="h-5 w-5" />
-              </Button>
-            )}
-            
-            {onDeleteClick && (
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteClick();
-                }}
-                className="rounded-full p-2 h-auto w-auto bg-white hover:bg-gray-100 text-red-600"
-                title="Delete"
-              >
-                <Trash2 className="h-5 w-5" />
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Close button - always visible */}
-      <Button
+            <Edit className="h-5 w-5 text-gray-600" />
+          </button>
+          <button 
+            onClick={handleDuplicateClick}
+            className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+            aria-label="Duplicate item"
+          >
+            <Copy className="h-5 w-5 text-gray-600" />
+          </button>
+          <button 
+            onClick={handleDeleteClick}
+            className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+            aria-label="Delete item"
+          >
+            <Trash2 className="h-5 w-5 text-gray-600" />
+          </button>
+        </>
+      ) : (
+        // Like button for other people's items
+        <button 
+          onClick={handleLikeClick}
+          className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+          aria-label="Like item"
+        >
+          <Heart 
+            className={`h-5 w-5 ${item.liked ? "text-red-500 fill-red-500" : "text-gray-600"}`}
+          />
+        </button>
+      )}
+      <button 
         onClick={onClose}
-        className="rounded-full p-2 h-auto w-auto bg-white hover:bg-gray-100 text-gray-700"
-        title="Close"
+        className="rounded-full bg-white p-1.5 shadow-md hover:bg-gray-100 transition-colors"
+        aria-label="Close dialog"
       >
-        <X className="h-5 w-5" />
-      </Button>
+        <X className="h-5 w-5 text-gray-600" />
+      </button>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -26,17 +27,6 @@ const UserProfile: React.FC = () => {
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // Add state for user profile
-  const [userProfile, setUserProfile] = useState({
-    name: '',
-    description: '',
-    rating: 0,
-    reviewCount: 0,
-    location: '',
-    memberSince: '',
-    avatar_url: ''
-  });
 
   // Fetch user items and data
   useEffect(() => {
@@ -55,33 +45,6 @@ const UserProfile: React.FC = () => {
             return;
           }
           
-          // Fetch user profile
-          try {
-            const { data: profileData, error: profileError } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', user.id)
-              .single();
-              
-            if (profileError) {
-              console.error('Error fetching profile:', profileError);
-            } else if (profileData) {
-              // Use type assertion to access the fields we know exist in the database
-              const typedProfileData = profileData as any;
-              setUserProfile({
-                name: typedProfileData.name || user.name || 'User',
-                description: typedProfileData.bio || 'Your profile description goes here. Edit your profile to update this information.',
-                rating: 0, // Default value
-                reviewCount: 0, // Default value
-                location: typedProfileData.location || 'Update your location',
-                memberSince: new Date(typedProfileData.created_at).getFullYear().toString(),
-                avatar_url: typedProfileData.avatar_url || ''
-              });
-            }
-          } catch (error) {
-            console.error('Error in profile fetch:', error);
-          }
-          
           // Fetch user items
           try {
             const { data: items, error: itemsError } = await supabase
@@ -95,21 +58,16 @@ const UserProfile: React.FC = () => {
               setUserItems([]);
             } else if (items && Array.isArray(items)) {
               // Convert to MatchItem format
-              const formattedItems = items.map(item => {
-                // Use type assertion to access priceRange
-                const typedItem = item as any;
-                return {
-                  id: item.id,
-                  name: item.name,
-                  image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-                  category: item.category,
-                  condition: item.condition,
-                  description: item.description,
-                  tags: item.tags,
-                  liked: false,
-                  priceRange: typedItem.priceRange
-                };
-              });
+              const formattedItems = items.map(item => ({
+                id: item.id,
+                name: item.name,
+                image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+                category: item.category,
+                condition: item.condition,
+                description: item.description,
+                tags: item.tags,
+                liked: false
+              }));
               
               setUserItems(formattedItems);
             } else {
@@ -121,6 +79,7 @@ const UserProfile: React.FC = () => {
           }
           
           // For now, we'll use empty arrays for trades, reviews, and friends
+          // These would be fetched from your Supabase tables once you set them up
           setUserTrades([]);
           setUserReviews([]);
           setUserFriends([]);
@@ -140,6 +99,15 @@ const UserProfile: React.FC = () => {
     return null; // Should be handled by RequireAuth
   }
 
+  const profileData = {
+    name: user?.name || 'User',
+    description: 'Your profile description goes here. Edit your profile to update this information.',
+    rating: 0,
+    reviewCount: userReviews.length,
+    location: 'Update your location',
+    memberSince: new Date().getFullYear().toString(),
+  };
+
   return (
     <MainLayout>
       <div className="mb-6 flex items-center justify-between">
@@ -155,7 +123,7 @@ const UserProfile: React.FC = () => {
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
-          profile={userProfile}
+          profile={profileData}
           friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}

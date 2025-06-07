@@ -155,28 +155,13 @@ const Home: React.FC = () => {
     setSelectedMatchId(id || null); // Set to null if empty string
   };
 
-  // Handle liking a friend's item - this needs to update state and handle navigation to messages
+  // Handle liking a friend's item - FIXED to not remove items when liked
   const handleLikeFriendItem = (itemId: string) => {
-    // Toggle the liked state for this item
-    const updatedItems = friendItems.map(item => {
-      if (item.id === itemId) {
-        return { ...item, liked: !item.liked };
-      }
-      return item;
-    });
-    
-    // Update the state with the new items array
-    setFriendItems(updatedItems);
-    
-    // Find the item that was just liked or unliked
-    const likedItem = updatedItems.find(item => item.id === itemId);
-    
-    // Add or remove from likedItemIds array (for persistence)
-    if (likedItem && likedItem.liked) {
-      setLikedItemIds(prev => [...prev, itemId]);
-    } else {
-      setLikedItemIds(prev => prev.filter(id => id !== itemId));
-    }
+    setFriendItems(items => 
+      items.map(item => 
+        item.id === itemId ? { ...item, liked: !item.liked } : item
+      )
+    );
   };
 
   return (

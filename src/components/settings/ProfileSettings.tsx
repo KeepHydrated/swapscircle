@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,7 +12,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Pencil } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 
 // Create form schema
 const profileFormSchema = z.object({
@@ -49,74 +48,15 @@ const ProfileSettings: React.FC = () => {
     },
   });
 
-  // Fetch user profile data when component mounts
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (user?.id) {
-        try {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-            
-          if (error) {
-            console.error('Error fetching profile:', error);
-            return;
-          }
-          
-          if (data) {
-            // Update form values with fetched profile data
-            // Use type assertion to access the fields we know exist in the database
-            const profileData = data as any;
-            form.reset({
-              name: profileData.name || user.name || "",
-              username: user.email?.split('@')[0] || "",
-              email: user.email || "",
-              bio: profileData.bio || "",
-              location: profileData.location || "",
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching profile data:', error);
-        }
-      }
-    };
-    
-    fetchUserProfile();
-  }, [user, form]);
-
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
     try {
       if (user) {
-        // Update the profile in Supabase
-        const { error } = await supabase
-          .from('profiles')
-          .upsert({
-            id: user.id,
-            name: data.name,
-            email: user.email,
-            bio: data.bio,
-            location: data.location,
-            updated_at: new Date().toISOString()
-          });
-        
-        if (error) {
-          console.error('Error updating profile in database:', error);
-          toast.error('Failed to update profile in database');
-          return;
-        }
-        
-        // Update auth user profile (for name and avatar)
         await updateProfile({
           name: data.name,
           // We could add avatar_url here if implementing file uploads
         });
-        
         toast.success('Profile updated successfully');
-        
-        // Don't navigate to the profile page, stay on the settings page
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -125,71 +65,9 @@ const ProfileSettings: React.FC = () => {
   };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files.length || !user) {
-      return;
-    }
-    
-    const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${user.id}-avatar.${fileExt}`;
-    
-    try {
-      // Check if the bucket exists and create it if it doesn't
-      let { data: bucket } = await supabase.storage.getBucket('avatars');
-      
-      if (!bucket) {
-        const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
-          public: true
-        });
-        
-        if (createBucketError) {
-          toast.error('Error creating storage bucket');
-          return;
-        }
-      }
-      
-      // Upload file to storage
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, file, { upsert: true });
-      
-      if (uploadError) {
-        toast.error('Error uploading image');
-        return;
-      }
-      
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(fileName);
-      
-      if (urlData) {
-        // Update user profile with new avatar URL
-        await updateProfile({
-          avatar_url: urlData.publicUrl
-        });
-        
-        // Update the profile in database
-        const { error } = await supabase
-          .from('profiles')
-          .upsert({
-            id: user.id,
-            avatar_url: urlData.publicUrl,
-            updated_at: new Date().toISOString()
-          });
-          
-        if (error) {
-          console.error('Error updating avatar in database:', error);
-          toast.error('Failed to update avatar in database');
-          return;
-        }
-        
-        toast.success('Profile picture updated');
-      }
-    } catch (error) {
-      console.error('Error updating avatar:', error);
-      toast.error('Failed to update profile picture');
-    }
+    // In a real implementation, this would upload the image to storage
+    // and then update the user's avatar_url
+    toast.success('Profile picture updated');
   };
 
   return (

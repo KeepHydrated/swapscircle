@@ -1,14 +1,13 @@
 
 import React from 'react';
-import { MatchItem } from '@/types/item';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { MatchItem } from '@/types/item';
 import {
   Dialog,
   DialogContent,
   DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from '@/components/ui/button';
 import ItemImageCarousel from './popup/ItemImageCarousel';
 import ItemDetailsContent from './popup/ItemDetailsContent';
 import ActionButtons from './popup/ActionButtons';
@@ -26,7 +25,6 @@ interface ItemDetailsPopupProps {
   showProfileInfo?: boolean;
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
-  showNavigation?: boolean;
   currentIndex?: number;
   totalItems?: number;
 }
@@ -44,15 +42,14 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   showProfileInfo = true,
   onNavigatePrev,
   onNavigateNext,
-  showNavigation = false,
-  currentIndex = 0,
-  totalItems = 0
+  currentIndex,
+  totalItems
 }) => {
-  // For multiple images (use item image and some defaults)
+  // For multiple images (dummy data as example)
   const images = [
     item.image,
-    'https://images.unsplash.com/photo-1597600159211-d6c104f408d1', // Additional sample image
-    'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9'  // Additional sample image
+    'https://images.unsplash.com/photo-1721322800607-8c38375eef04',
+    'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9'
   ];
 
   // Handle like click with popup closing
@@ -62,42 +59,33 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     }
   };
 
+  const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden relative ${className}`}>
+      <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
-        {/* Navigation arrows - positioned outside the modal content */}
-        {showNavigation && onNavigatePrev && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onNavigatePrev}
-            className="absolute left-[-60px] top-1/2 -translate-y-1/2 z-50 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50"
-            aria-label="Previous item"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        )}
-        
-        {showNavigation && onNavigateNext && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onNavigateNext}
-            className="absolute right-[-60px] top-1/2 -translate-y-1/2 z-50 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50"
-            aria-label="Next item"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        )}
-        
-        {/* Item counter */}
-        {showNavigation && totalItems > 1 && (
-          <div className="absolute bottom-[-50px] left-1/2 -translate-x-1/2 bg-white rounded-full px-4 py-2 text-sm font-medium shadow-md z-50">
-            {currentIndex + 1} / {totalItems}
-          </div>
+        {/* Navigation arrows */}
+        {showNavigation && (
+          <>
+            <button
+              onClick={onNavigatePrev}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              aria-label="Previous match"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            
+            <button
+              onClick={onNavigateNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              aria-label="Next match"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-700" />
+            </button>
+          </>
         )}
         
         {/* Action buttons component */}
@@ -117,15 +105,17 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           
           {/* Right side - Item details with showProfileInfo prop */}
           <ItemDetailsContent 
-            name={item.name}
-            description={item.description || "No description available."}
-            category={item.category || "Uncategorized"}
-            condition={item.condition || "Not specified"}
-            tags={item.tags || []}
-            priceRange={item.priceRange || "Not specified"}
+            name={item.name} 
             showProfileInfo={showProfileInfo} 
           />
         </div>
+        
+        {/* Current position indicator */}
+        {showNavigation && currentIndex !== undefined && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-2 py-1 rounded z-20">
+            {currentIndex + 1} / {totalItems}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

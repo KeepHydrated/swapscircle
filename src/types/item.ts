@@ -17,4 +17,4 @@ export interface MatchItem extends Item {
   liked?: boolean;
 }
 
-// CompletedTrade is now imported from @/types/profile
+// CompletedTrade is now imported from @/types/trade
