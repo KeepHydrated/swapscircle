@@ -64,8 +64,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogOverlay className="bg-black/80 flex items-center justify-center" />
-      <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden relative ${className} fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]`}>
+      <DialogOverlay className="bg-black/80" />
+      <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden relative ${className}`}>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         
         {/* Navigation arrows - positioned outside the modal content */}
