@@ -92,6 +92,38 @@ const Matches: React.FC<MatchesProps> = ({
     !removedItems.includes(match.id) && !match.liked
   );
 
+  // Navigation handlers for the popup
+  const handleNavigatePrev = () => {
+    if (!selectedMatch) return;
+    
+    const currentIndex = displayedMatches.findIndex(match => match.id === selectedMatch.id);
+    const prevIndex = currentIndex > 0 ? currentIndex - 1 : displayedMatches.length - 1;
+    const prevMatch = displayedMatches[prevIndex];
+    
+    if (prevMatch) {
+      setSelectedMatch(prevMatch);
+      onSelectMatch(prevMatch.id);
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (!selectedMatch) return;
+    
+    const currentIndex = displayedMatches.findIndex(match => match.id === selectedMatch.id);
+    const nextIndex = currentIndex < displayedMatches.length - 1 ? currentIndex + 1 : 0;
+    const nextMatch = displayedMatches[nextIndex];
+    
+    if (nextMatch) {
+      setSelectedMatch(nextMatch);
+      onSelectMatch(nextMatch.id);
+    }
+  };
+
+  // Get current item index for display
+  const currentItemIndex = selectedMatch 
+    ? displayedMatches.findIndex(match => match.id === selectedMatch.id)
+    : -1;
+
   return (
     <div className="lg:w-1/2 flex flex-col h-full">
       <h2 className="text-2xl font-bold mb-4">
@@ -108,13 +140,18 @@ const Matches: React.FC<MatchesProps> = ({
         />
       </div>
       
-      {/* Popup for displaying match details */}
+      {/* Popup for displaying match details with navigation */}
       {selectedMatch && (
         <ItemDetailsPopup
           item={selectedMatch}
           isOpen={!!selectedMatch}
           onClose={handleClosePopup}
           onLikeClick={handlePopupLikeClick}
+          showNavigation={displayedMatches.length > 1}
+          onNavigatePrev={handleNavigatePrev}
+          onNavigateNext={handleNavigateNext}
+          currentIndex={currentItemIndex}
+          totalItems={displayedMatches.length}
         />
       )}
     </div>
