@@ -5,7 +5,6 @@ import { MatchItem } from '@/types/item';
 import {
   Dialog,
   DialogContent,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import ItemImageCarousel from './popup/ItemImageCarousel';
@@ -62,56 +61,64 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogOverlay className="bg-black/80" />
-      
-      {/* Navigation arrows positioned outside the modal card */}
-      {showNavigation && (
-        <>
-          <button
-            onClick={onNavigatePrev}
-            className="fixed left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[100] border border-gray-200"
-            aria-label="Previous match"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
-          </button>
-          
-          <button
-            onClick={onNavigateNext}
-            className="fixed right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[100] border border-gray-200"
-            aria-label="Next match"
-          >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
-          </button>
-        </>
+    <>
+      {/* Custom overlay that doesn't interfere with navigation buttons */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-40"
+          onClick={onClose}
+        />
       )}
       
-      <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
-        <DialogTitle className="sr-only">{item.name}</DialogTitle>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        {/* Navigation arrows positioned outside the modal card */}
+        {showNavigation && (
+          <>
+            <button
+              onClick={onNavigatePrev}
+              className="fixed left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[100] border border-gray-200"
+              aria-label="Previous match"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            
+            <button
+              onClick={onNavigateNext}
+              className="fixed right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[100] border border-gray-200"
+              aria-label="Next match"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-700" />
+            </button>
+          </>
+        )}
         
-        {/* Action buttons component */}
-        <ActionButtons 
-          item={item} 
-          onLikeClick={handleLikeClick} 
-          onClose={onClose}
-          onEditClick={onEditClick}
-          onDuplicateClick={onDuplicateClick}
-          onDeleteClick={onDeleteClick}
-          canEdit={canEdit}
-        />
-        
-        <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px] overflow-hidden">
-          {/* Left side - Image Carousel with reduced width */}
-          <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
+        <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden z-50 ${className}`}>
+          <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
-          {/* Right side - Item details with showProfileInfo prop */}
-          <ItemDetailsContent 
-            name={item.name} 
-            showProfileInfo={showProfileInfo} 
+          {/* Action buttons component */}
+          <ActionButtons 
+            item={item} 
+            onLikeClick={handleLikeClick} 
+            onClose={onClose}
+            onEditClick={onEditClick}
+            onDuplicateClick={onDuplicateClick}
+            onDeleteClick={onDeleteClick}
+            canEdit={canEdit}
           />
-        </div>
-      </DialogContent>
-    </Dialog>
+          
+          <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px] overflow-hidden">
+            {/* Left side - Image Carousel with reduced width */}
+            <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
+            
+            {/* Right side - Item details with showProfileInfo prop */}
+            <ItemDetailsContent 
+              name={item.name} 
+              showProfileInfo={showProfileInfo} 
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
