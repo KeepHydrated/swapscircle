@@ -108,10 +108,6 @@ const UserProfile: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">My Profile</h1>
-      </div>
-      
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
