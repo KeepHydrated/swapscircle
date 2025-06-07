@@ -30,7 +30,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({ onLocationChange }) => 
               <SelectValue placeholder="Select location range" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="nationwide">All of US</SelectItem>
+              <SelectItem value="nationwide">US Shipping</SelectItem>
               <SelectItem value="5">5 miles</SelectItem>
               <SelectItem value="10">10 miles</SelectItem>
               <SelectItem value="25">25 miles</SelectItem>
