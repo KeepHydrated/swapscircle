@@ -41,7 +41,7 @@ const LocationSettings: React.FC = () => {
                 className="h-4 w-4 text-primary"
               />
               <Label htmlFor="nationwide" className="text-sm font-normal cursor-pointer">
-                US Shipping
+                All of US
               </Label>
             </div>
             
@@ -55,7 +55,7 @@ const LocationSettings: React.FC = () => {
                 className="h-4 w-4 text-primary"
               />
               <Label htmlFor="specific-range" className="text-sm font-normal cursor-pointer">
-                Local range
+                Specific range
               </Label>
             </div>
           </div>
