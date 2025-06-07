@@ -62,16 +62,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 
   return (
     <>
-      {/* Custom overlay that doesn't interfere with navigation buttons */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/80 z-40"
-          onClick={onClose}
-        />
-      )}
-      
       {/* Navigation arrows positioned outside the modal content */}
-      {showNavigation && (
+      {showNavigation && isOpen && (
         <>
           <button
             onClick={(e) => {
