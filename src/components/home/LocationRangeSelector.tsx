@@ -64,7 +64,7 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
             onClick={() => setIsOpen(!isOpen)}
             className="bg-white border border-gray-300 rounded-md px-3 py-1.5 w-48 text-left flex items-center justify-between text-sm"
           >
-            <span>{selectionType === 'all' ? 'All of US' : `Within ${rangeValue} miles`}</span>
+            <span>{selectionType === 'all' ? 'US Shipping' : `Within ${rangeValue} miles`}</span>
             <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
             </svg>
@@ -83,7 +83,7 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                   )}
-                  <span className={`${selectionType === 'all' ? 'font-medium' : ''} text-sm`}>All of US</span>
+                  <span className={`${selectionType === 'all' ? 'font-medium' : ''} text-sm`}>US Shipping</span>
                 </li>
                 <li 
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
@@ -94,14 +94,14 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                   )}
-                  <span className={`${selectionType === 'range' ? 'font-medium' : ''} text-sm`}>Specific range</span>
+                  <span className={`${selectionType === 'range' ? 'font-medium' : ''} text-sm`}>Local range</span>
                 </li>
               </ul>
             </div>
           )}
         </div>
         
-        {/* Range slider (appears when "Specific range" is selected) */}
+        {/* Range slider (appears when "Local range" is selected) */}
         {selectionType === 'range' && (
           <div className="ml-2 flex items-center flex-1">
             <div className="w-full max-w-[200px]">
