@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import {
   Dialog,
@@ -58,8 +57,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     }
   };
 
-  const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
-
   return (
     <>
       {/* Custom overlay that doesn't interfere with navigation buttons */}
@@ -76,33 +73,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
-          
-          {/* Navigation arrows positioned inside the modal content */}
-          {showNavigation && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onNavigatePrev();
-                }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
-                aria-label="Previous match"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700" />
-              </button>
-              
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onNavigateNext();
-                }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
-                aria-label="Next match"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-700" />
-              </button>
-            </>
-          )}
           
           {/* Action buttons component */}
           <ActionButtons 
