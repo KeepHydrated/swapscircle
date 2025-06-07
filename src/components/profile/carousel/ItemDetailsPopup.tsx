@@ -5,6 +5,7 @@ import { MatchItem } from '@/types/item';
 import {
   Dialog,
   DialogContent,
+  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import ItemImageCarousel from './popup/ItemImageCarousel';
@@ -61,38 +62,31 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
 
   return (
-    <>
-      {/* Navigation arrows positioned outside the modal content */}
-      {showNavigation && isOpen && (
-        <>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onNavigatePrev();
-            }}
-            className="fixed left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
-            aria-label="Previous match"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
-          </button>
-          
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onNavigateNext();
-            }}
-            className="fixed right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
-            aria-label="Next match"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
-          </button>
-        </>
-      )}
-      
-      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent 
-          className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden z-50 relative ${className}`}
-        >
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogOverlay className="bg-black/80" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Navigation arrows outside the modal */}
+        {showNavigation && (
+          <>
+            <button
+              onClick={onNavigatePrev}
+              className="absolute left-4 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              aria-label="Previous match"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-700" />
+            </button>
+            
+            <button
+              onClick={onNavigateNext}
+              className="absolute right-4 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              aria-label="Next match"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-700" />
+            </button>
+          </>
+        )}
+        
+        <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden relative ${className}`}>
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
           {/* Action buttons component */}
@@ -117,8 +111,15 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             />
           </div>
         </DialogContent>
-      </Dialog>
-    </>
+        
+        {/* Current position indicator */}
+        {showNavigation && currentIndex !== undefined && (
+          <div className="absolute bottom-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full z-20">
+            {currentIndex + 1} / {totalItems}
+          </div>
+        )}
+      </div>
+    </Dialog>
   );
 };
 
