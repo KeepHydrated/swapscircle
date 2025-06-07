@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
@@ -109,13 +108,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             showProfileInfo={showProfileInfo} 
           />
         </div>
-        
-        {/* Current position indicator */}
-        {showNavigation && currentIndex !== undefined && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-2 py-1 rounded z-20">
-            {currentIndex + 1} / {totalItems}
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );
