@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface ItemImageCarouselProps {
   images: string[];
@@ -10,59 +11,77 @@ interface ItemImageCarouselProps {
 
 const ItemImageCarousel: React.FC<ItemImageCarouselProps> = ({ 
   images, 
-  itemName, 
-  className = '' 
+  itemName,
+  className = ''
 }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
 
-  const goToPrevious = () => {
-    setCurrentImageIndex((prevIndex) => 
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
-  };
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+  
+  // Update current index when slide changes
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCurrentIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi, setCurrentIndex]);
 
-  const goToNext = () => {
-    setCurrentImageIndex((prevIndex) => 
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+  React.useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
   return (
-    <div className={`relative bg-black flex items-center justify-center ${className}`}>
-      {/* Main image */}
-      <img 
-        src={images[currentImageIndex]} 
-        alt={itemName} 
-        className="w-full h-full object-cover"
-      />
+    <div className={`relative flex flex-col ${className}`}>
+      <div className="overflow-hidden h-full" ref={emblaRef}>
+        <div className="flex h-full">
+          {images.map((image, index) => (
+            <div key={index} className="flex-[0_0_100%] h-full min-w-0 flex items-center justify-center" style={{ height: "100%" }}>
+              <div 
+                style={{ 
+                  backgroundImage: `url(${image})`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  width: "100%",
+                  height: "100%"
+                }} 
+                aria-label={`${itemName} image ${index + 1}`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
       
       {/* Navigation arrows */}
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors z-10"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-800" />
-          </button>
-          
-          <button
-            onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors z-10"
-            aria-label="Next image"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-800" />
-          </button>
-        </>
-      )}
+      <button 
+        className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white shadow-md flex items-center justify-center"
+        onClick={scrollPrev}
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="h-4 w-4 text-gray-600" />
+      </button>
+      <button 
+        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white shadow-md flex items-center justify-center"
+        onClick={scrollNext}
+        aria-label="Next image"
+      >
+        <ChevronRight className="h-4 w-4 text-gray-600" />
+      </button>
       
       {/* Image counter */}
-      {images.length > 1 && (
-        <div className="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-2 py-1 rounded">
-          {currentImageIndex + 1} / {images.length}
-        </div>
-      )}
+      <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">
+        {currentIndex + 1} / {images.length}
+      </div>
     </div>
   );
 };

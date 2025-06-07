@@ -1,86 +1,83 @@
 
 import React from 'react';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 
 interface ItemDetailsContentProps {
   name: string;
+  description?: string;
+  category?: string;
+  condition?: string;
+  tags?: string[];
+  priceRange?: string;
   showProfileInfo?: boolean;
 }
 
-const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ name, showProfileInfo = true }) => {
+const ItemDetailsContent: React.FC<ItemDetailsContentProps> = ({ 
+  name, 
+  description = "No description available.", 
+  category = "Uncategorized", 
+  condition = "Not specified",
+  tags = [],
+  priceRange = "Not specified",
+  showProfileInfo = true
+}) => {
   return (
-    <div className="flex-1 overflow-y-auto p-5 bg-white">
-      <h2 className="text-xl font-bold mb-3 text-gray-900">
-        {name || "Item Name"}
-      </h2>
-      
-      <p className="text-gray-700 text-sm mb-4 bg-gray-50 p-3 rounded-md">
-        Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
-      </p>
-      
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="flex items-center">
-          <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
-            <Check className="w-3 h-3 text-green-600" />
-          </div>
-          <span className="text-gray-800 text-xs">Brand New</span>
-        </div>
+    <div className="flex-1 p-6 overflow-y-auto">
+      {/* Item Header */}
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold mb-2">{name}</h2>
         
-        <div className="flex items-center">
-          <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-1.5">
-            <DollarSign className="w-3 h-3 text-green-600" />
-          </div>
-          <span className="text-gray-800 text-xs">$100 - $250</span>
-        </div>
-        
-        <div className="flex items-center">
-          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-1.5">
-            <Home className="w-3 h-3 text-blue-600" />
-          </div>
-          <span className="text-gray-800 text-xs">Home & Garden</span>
-        </div>
-        
-        <div className="flex items-center">
-          <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mr-1.5">
-            <Utensils className="w-3 h-3 text-purple-600" />
-          </div>
-          <span className="text-gray-800 text-xs">Kitchen Appliances</span>
+        {/* Category & Condition */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          <Badge variant="outline" className="bg-blue-50 hover:bg-blue-50 border-blue-200">
+            {category}
+          </Badge>
+          <Badge variant="outline" className="bg-green-50 hover:bg-green-50 border-green-200">
+            {condition}
+          </Badge>
+          {priceRange && (
+            <Badge variant="outline" className="bg-purple-50 hover:bg-purple-50 border-purple-200">
+              {priceRange}
+            </Badge>
+          )}
         </div>
       </div>
       
+      {/* Owner Information - Only show if showProfileInfo is true */}
       {showProfileInfo && (
-        <div className="border-t border-gray-200 pt-4 mt-4">
-          <Link to="/other-person-profile" className="block mb-3">
-            <div className="flex items-center">
-              <Avatar className="h-10 w-10 mr-3">
-                <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                <AvatarFallback>EW</AvatarFallback>
-              </Avatar>
-              
-              <div>
-                <h3 className="font-medium text-sm">Emma Wilson</h3>
-                <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
-              </div>
+        <div className="flex items-center mb-4 p-3 bg-gray-50 rounded-lg">
+          <Avatar className="h-10 w-10 mr-3">
+            <AvatarImage src="https://github.com/shadcn.png" alt="Owner" />
+            <AvatarFallback>OW</AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="text-sm font-medium">Owner Name</div>
+            <div className="flex items-center text-xs text-gray-500">
+              <Star className="h-3 w-3 mr-1 fill-yellow-400 stroke-yellow-400" />
+              <span>4.9 (120 reviews)</span>
             </div>
-          </Link>
-          
-          <div className="flex justify-between text-xs text-gray-600">
-            <div className="flex items-center">
-              <Calendar className="h-3 w-3 mr-1" />
-              <span>Since 2023</span>
-            </div>
-            
-            <div className="flex items-center">
-              <MapPin className="h-3 w-3 mr-1" />
-              <span>2.3 mi away</span>
-            </div>
-            
-            <div className="flex items-center">
-              <Clock className="h-3 w-3 mr-1" />
-              <span>~1 hr response</span>
-            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Description */}
+      <div className="mb-4">
+        <h3 className="font-semibold text-gray-700 mb-2">Description</h3>
+        <p className="text-gray-600 whitespace-pre-line">{description}</p>
+      </div>
+      
+      {/* Tags */}
+      {tags && tags.length > 0 && (
+        <div>
+          <h3 className="font-semibold text-gray-700 mb-2">Tags</h3>
+          <div className="flex flex-wrap gap-1 mt-1">
+            {tags.map((tag, index) => (
+              <Badge key={index} variant="secondary" className="text-xs font-normal">
+                {tag}
+              </Badge>
+            ))}
           </div>
         </div>
       )}
