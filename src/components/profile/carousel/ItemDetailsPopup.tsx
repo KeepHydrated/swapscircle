@@ -72,7 +72,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           <>
             <button
               onClick={onNavigatePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
               aria-label="Previous match"
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
@@ -80,7 +80,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             
             <button
               onClick={onNavigateNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
               aria-label="Next match"
             >
               <ChevronRight className="w-5 h-5 text-gray-700" />
