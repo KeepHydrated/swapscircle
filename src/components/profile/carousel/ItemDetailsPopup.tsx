@@ -63,14 +63,14 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogOverlay className="bg-black/80" />
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <DialogOverlay className="bg-black/80 fixed inset-0 z-50" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Navigation arrows outside the modal */}
         {showNavigation && (
           <>
             <button
               onClick={onNavigatePrev}
-              className="absolute left-4 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
               aria-label="Previous match"
             >
               <ChevronLeft className="w-6 h-6 text-gray-700" />
@@ -78,7 +78,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             
             <button
               onClick={onNavigateNext}
-              className="absolute right-4 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-20 border border-gray-200"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-[60] border border-gray-200"
               aria-label="Next match"
             >
               <ChevronRight className="w-6 h-6 text-gray-700" />
@@ -86,7 +86,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           </>
         )}
         
-        <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden relative ${className}`}>
+        <DialogContent className={`max-w-3xl w-full p-0 border-none bg-white rounded-lg overflow-hidden relative ${className}`}>
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
           {/* Action buttons component */}
@@ -114,7 +114,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
         
         {/* Current position indicator */}
         {showNavigation && currentIndex !== undefined && (
-          <div className="absolute bottom-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full z-20">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-3 py-1 rounded-full z-[60]">
             {currentIndex + 1} / {totalItems}
           </div>
         )}
