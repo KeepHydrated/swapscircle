@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -110,16 +109,6 @@ const UserProfile: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">My Profile</h1>
-        <Button variant="outline" asChild>
-          <a href="/settings">
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Profile
-          </a>
-        </Button>
-      </div>
-      
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Profile Header */}
         <ProfileHeader 
