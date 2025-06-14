@@ -88,9 +88,10 @@ const Auth: React.FC = () => {
     setIsSubmitting(true);
     try {
       await signUp(data.email, data.password, data.name);
-      // Fixed: Don't switch to login tab, auto login will take care of navigation
-      // After signup the user will automatically be logged in
-      navigate('/');
+      // Instead of navigating to Home, set the tab to 'login' and clear form
+      setActiveTab("login");
+      registerForm.reset(); // Optionally reset registration form
+      // Optionally show a success message (optional: toast)
     } catch (error) {
       console.error("Register error:", error);
     } finally {
