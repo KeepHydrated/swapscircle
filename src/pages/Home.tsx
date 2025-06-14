@@ -5,6 +5,7 @@ import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
 import { useDbItems } from '@/hooks/useDbItems';
 import ItemCard from '@/components/items/ItemCard';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
 
 const Home: React.FC = () => {
   // Friend/fake items remain only for the top carousel demo
@@ -72,6 +73,20 @@ const Home: React.FC = () => {
     );
   };
 
+  // Modal state for Explore Items
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalItem, setModalItem] = useState(null);
+
+  const handleOpenModal = (item: any) => {
+    setModalItem(item);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalItem(null);
+    setModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -92,19 +107,28 @@ const Home: React.FC = () => {
             ) : dbItemsError ? (
               <div className="text-red-600 text-center">{dbItemsError}</div>
             ) : (
-              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {dbItems.map(item => (
-                  <ItemCard
-                    key={item.id}
-                    id={item.id}
-                    name={item.name}
-                    image={item.image}
-                    isSelected={false}
-                    isMatch={false}
-                    onSelect={() => {}}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                  {dbItems.map(item => (
+                    <div key={item.id} className="flex">
+                      <ItemCard
+                        id={item.id}
+                        name={item.name}
+                        image={item.image}
+                        isSelected={false}
+                        isMatch={false}
+                        onSelect={() => handleOpenModal(item)}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <ExploreItemModal
+                  open={modalOpen}
+                  item={modalItem}
+                  onClose={handleCloseModal}
+                  images={modalItem?.images}
+                />
+              </>
             )}
           </div>
         </div>
