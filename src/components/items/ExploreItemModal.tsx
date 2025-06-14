@@ -88,14 +88,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     fetchItemDetails();
   }, [item?.id, open]);
 
-  // Image carousel
-  const allImages = images.length > 0 
-    ? images 
-    : [
-        (fullItem || item)?.image,
-        "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-        "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-      ];
+  // Only show the one image from the uploaded item, no fallbacks.
+  const displayItem = fullItem || item;
+  const mainImage = displayItem?.image || displayItem?.image_url || "";
+  const allImages = mainImage ? [mainImage] : [];
+
   const [slide, setSlide] = React.useState(0);
 
   React.useEffect(() => {
@@ -109,8 +106,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
   // --- Hook declarations END, now return null if item missing
   if (!item) return null;
-
-  const displayItem = fullItem || item;
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
@@ -130,45 +125,57 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
           {/* Carousel */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
-            <img
-              src={allImages[slide]}
-              alt={displayItem.name}
-              className="object-cover w-full h-full"
-              style={{ minHeight: 320 }}
-            />
-            {/* Carousel Nav */}
-            <button
-              onClick={() =>
-                setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
-              }
-              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition z-10"
-              aria-label="Previous"
-            >
-              <ArrowLeft />
-            </button>
-            <button
-              onClick={() =>
-                setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
-              }
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition z-10"
-              aria-label="Next"
-            >
-              <ArrowRight />
-            </button>
-            <div className="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
-              {allImages.map((_, i) => (
+            {allImages.length > 0 ? (
+              <img
+                src={allImages[slide]}
+                alt={displayItem.name}
+                className="object-cover w-full h-full"
+                style={{ minHeight: 320 }}
+              />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+                No image uploaded.
+              </div>
+            )}
+            {/* Carousel Nav (hidden if 0 or 1 images) */}
+            {allImages.length > 1 && (
+              <>
                 <button
-                  key={i}
-                  className={`w-2.5 h-2.5 rounded-full ${
-                    slide === i
-                      ? "bg-white border-primary border-2"
-                      : "bg-white/60"
-                  }`}
-                  style={{ borderWidth: slide === i ? 2 : 0 }}
-                  onClick={() => setSlide(i)}
-                />
-              ))}
-            </div>
+                  onClick={() =>
+                    setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
+                  }
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition z-10"
+                  aria-label="Previous"
+                >
+                  <ArrowLeft />
+                </button>
+                <button
+                  onClick={() =>
+                    setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition z-10"
+                  aria-label="Next"
+                >
+                  <ArrowRight />
+                </button>
+              </>
+            )}
+            {allImages.length > 1 && (
+              <div className="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
+                {allImages.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`w-2.5 h-2.5 rounded-full ${
+                      slide === i
+                        ? "bg-white border-primary border-2"
+                        : "bg-white/60"
+                    }`}
+                    style={{ borderWidth: slide === i ? 2 : 0 }}
+                    onClick={() => setSlide(i)}
+                  />
+                ))}
+              </div>
+            )}
             {/* Like button positioned on the right side of the image */}
             <button
               className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
@@ -256,4 +263,3 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 };
 
 export default ExploreItemModal;
-
