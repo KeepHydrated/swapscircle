@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,8 +10,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Pencil } from 'lucide-react';
+import { Pencil, Upload } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { uploadItemImage } from '@/services/authService';
 
 // Create form schema
 const profileFormSchema = z.object({
@@ -35,6 +36,8 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 const ProfileSettings: React.FC = () => {
   // Get user data from auth context
   const { user, updateProfile } = useAuth();
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
 
   // Initialize form with user data
   const form = useForm<ProfileFormValues>({
@@ -54,7 +57,7 @@ const ProfileSettings: React.FC = () => {
       if (user) {
         await updateProfile({
           name: data.name,
-          // We could add avatar_url here if implementing file uploads
+          avatar_url: avatarUrl,
         });
         toast.success('Profile updated successfully');
       }
@@ -65,9 +68,36 @@ const ProfileSettings: React.FC = () => {
   };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // In a real implementation, this would upload the image to storage
-    // and then update the user's avatar_url
-    toast.success('Profile picture updated');
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const imageUrl = await uploadItemImage(file);
+      if (imageUrl) {
+        setAvatarUrl(imageUrl);
+        toast.success('Profile picture uploaded successfully');
+      } else {
+        toast.error('Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast.error('Failed to upload profile picture');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -75,28 +105,38 @@ const ProfileSettings: React.FC = () => {
       <CardHeader>
         <CardTitle>Profile Information</CardTitle>
         <CardDescription>
-          Update your profile information.
+          Update your profile information and avatar.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-5 pb-6 mb-6 border-b">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={user?.avatar_url || "https://github.com/shadcn.png"} alt="Profile" />
+            <AvatarImage src={avatarUrl || user?.avatar_url || "https://github.com/shadcn.png"} alt="Profile" />
             <AvatarFallback>{user?.name?.substring(0, 2) || "US"}</AvatarFallback>
           </Avatar>
           <div>
-            <Button size="sm" className="relative" variant="outline">
-              <Pencil className="mr-2 h-4 w-4" />
-              Change Avatar
+            <Button size="sm" className="relative" variant="outline" disabled={uploading}>
+              {uploading ? (
+                <>
+                  <Upload className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Change Avatar
+                </>
+              )}
               <input 
                 type="file" 
                 className="absolute inset-0 opacity-0 cursor-pointer" 
                 accept="image/*"
                 onChange={handleAvatarChange}
+                disabled={uploading}
               />
             </Button>
             <p className="text-sm text-muted-foreground mt-2">
-              Recommended: Square JPG or PNG, at least 400x400 pixels.
+              Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB.
             </p>
           </div>
         </div>
@@ -139,8 +179,11 @@ const ProfileSettings: React.FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Your email address" {...field} />
+                    <Input type="email" placeholder="Your email address" {...field} disabled />
                   </FormControl>
+                  <FormDescription>
+                    Email cannot be changed from this form.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -184,7 +227,9 @@ const ProfileSettings: React.FC = () => {
               )}
             />
             
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" disabled={uploading}>
+              {uploading ? 'Uploading...' : 'Save Changes'}
+            </Button>
           </form>
         </Form>
       </CardContent>

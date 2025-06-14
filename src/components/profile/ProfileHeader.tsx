@@ -12,6 +12,7 @@ interface ProfileHeaderProps {
     reviewCount: number;
     location: string;
     memberSince: string;
+    avatar_url?: string;
   };
   onReviewsClick?: () => void;
   onFriendsClick?: () => void;
@@ -45,8 +46,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <div className="flex flex-col md:flex-row p-6 bg-white border-b">
       <div className="flex-shrink-0 mr-6 flex justify-center md:justify-start mb-4 md:mb-0">
         <Avatar className="w-32 h-32 border-4 border-primary">
-          <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-          <AvatarFallback>AM</AvatarFallback>
+          <AvatarImage src={profile.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"} />
+          <AvatarFallback>{profile.name?.substring(0, 2) || "AM"}</AvatarFallback>
         </Avatar>
       </div>
       <div className="flex-grow">

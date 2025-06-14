@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -105,6 +106,7 @@ const UserProfile: React.FC = () => {
     reviewCount: userReviews.length,
     location: 'Update your location',
     memberSince: new Date().getFullYear().toString(),
+    avatar_url: user?.avatar_url,
   };
 
   return (
