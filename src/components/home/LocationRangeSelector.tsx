@@ -51,50 +51,50 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
   }, []);
 
   return (
-    <div className="mb-6 bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-4 shadow-lg backdrop-blur-sm">
+    <div className="mb-6 bg-card border border-border rounded-xl p-4 shadow-lg backdrop-blur-sm">
       <div className="flex items-center flex-wrap gap-3">
         <div className="flex items-center">
-          <MapPin className="h-5 w-5 text-blue-400 mr-2" />
-          <span className="font-medium text-white text-sm mr-2">Location:</span>
+          <MapPin className="h-5 w-5 text-primary mr-2" />
+          <span className="font-medium text-foreground text-sm mr-2">Location:</span>
         </div>
         
         <div className="relative" ref={dropdownRef}>
           {/* Dropdown button */}
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="bg-gray-700 border border-gray-600 rounded-md px-3 py-1.5 w-48 text-left flex items-center justify-between text-sm text-white hover:bg-gray-600 transition-colors"
+            className="bg-muted border border-border rounded-md px-3 py-1.5 w-48 text-left flex items-center justify-between text-sm text-foreground hover:bg-muted/80 transition-colors"
           >
             <span>{selectionType === 'all' ? 'All of US' : `Within ${rangeValue} miles`}</span>
-            <svg className="w-4 h-4 ml-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-4 h-4 ml-2 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
             </svg>
           </button>
           
           {/* Dropdown menu */}
           {isOpen && (
-            <div className="absolute z-10 mt-1 w-48 bg-gray-800 border border-gray-600 rounded-md shadow-xl">
+            <div className="absolute z-10 mt-1 w-48 bg-popover border border-border rounded-md shadow-xl">
               <ul>
                 <li 
-                  className="px-4 py-2 hover:bg-gray-700 cursor-pointer flex items-center text-white"
+                  className="px-4 py-2 hover:bg-muted cursor-pointer flex items-center text-foreground"
                   onClick={() => handleSelectionChange('all')}
                 >
                   {selectionType === 'all' && (
-                    <svg className="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                   )}
-                  <span className={`${selectionType === 'all' ? 'font-medium text-blue-400' : ''} text-sm`}>All of US</span>
+                  <span className={`${selectionType === 'all' ? 'font-medium text-primary' : ''} text-sm`}>All of US</span>
                 </li>
                 <li 
-                  className="px-4 py-2 hover:bg-gray-700 cursor-pointer flex items-center text-white"
+                  className="px-4 py-2 hover:bg-muted cursor-pointer flex items-center text-foreground"
                   onClick={() => handleSelectionChange('range')}
                 >
                   {selectionType === 'range' && (
-                    <svg className="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                   )}
-                  <span className={`${selectionType === 'range' ? 'font-medium text-blue-400' : ''} text-sm`}>Specific range</span>
+                  <span className={`${selectionType === 'range' ? 'font-medium text-primary' : ''} text-sm`}>Specific range</span>
                 </li>
               </ul>
             </div>
@@ -113,7 +113,7 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
                 onValueChange={handleRangeChange}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-gray-400 mt-1 px-1">
+              <div className="flex justify-between text-xs text-muted-foreground mt-1 px-1">
                 <span>1</span>
                 <span>25</span>
                 <span>50 mi</span>
