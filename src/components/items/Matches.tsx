@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
@@ -12,11 +11,11 @@ interface MatchesProps {
   onSelectMatch: (id: string) => void;
 }
 
-const Matches: React.FC<MatchesProps> = ({ 
-  matches, 
-  selectedItemName, 
-  selectedMatchId, 
-  onSelectMatch 
+const Matches: React.FC<MatchesProps> = ({
+  matches,
+  selectedItemName,
+  selectedMatchId,
+  onSelectMatch
 }) => {
   // State to keep track of viewport size
   const [itemsPerRow, setItemsPerRow] = useState(3);
@@ -47,24 +46,18 @@ const Matches: React.FC<MatchesProps> = ({
     ? displayedMatches.findIndex(match => match.id === selectedMatch.id)
     : -1;
 
-  // Navigation functions - Fixed to properly update state and selection
+  // Navigation functions - Only update selectedMatchId to leverage effect
   const navigateToPrevMatch = () => {
-    console.log('Navigate to previous - current index:', currentMatchIndex);
     if (currentMatchIndex > 0) {
       const prevMatch = displayedMatches[currentMatchIndex - 1];
-      console.log('Previous match:', prevMatch);
-      setSelectedMatch(prevMatch);
-      onSelectMatch(prevMatch.id);
+      onSelectMatch(prevMatch.id); // Only update id
     }
   };
 
   const navigateToNextMatch = () => {
-    console.log('Navigate to next - current index:', currentMatchIndex);
     if (currentMatchIndex < displayedMatches.length - 1) {
       const nextMatch = displayedMatches[currentMatchIndex + 1];
-      console.log('Next match:', nextMatch);
-      setSelectedMatch(nextMatch);
-      onSelectMatch(nextMatch.id);
+      onSelectMatch(nextMatch.id); // Only update id
     }
   };
   

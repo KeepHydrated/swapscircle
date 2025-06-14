@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
@@ -29,7 +28,7 @@ interface ItemDetailsPopupProps {
   totalItems?: number;
 }
 
-const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({ 
+const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   item, 
   isOpen,
   onClose,
@@ -89,9 +88,31 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     <>
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <DialogOverlay className="bg-black/80" />
-        <DialogContent className={`max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
+        <DialogContent className={`relative max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}>
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
+          {/* Navigation arrows attached to the left/right border of modal */}
+          {showNavigation && isOpen && (
+            <>
+              <button
+                onClick={handleNavigatePrev}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-50 border border-gray-200"
+                aria-label="Previous match"
+                style={{ boxShadow: "0px 2px 8px #0001" }}
+              >
+                <ChevronLeft className="w-6 h-6 text-gray-700" />
+              </button>
+              
+              <button
+                onClick={handleNavigateNext}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-50 border border-gray-200"
+                aria-label="Next match"
+                style={{ boxShadow: "0px 2px 8px #0001" }}
+              >
+                <ChevronRight className="w-6 h-6 text-gray-700" />
+              </button>
+            </>
+          )}
           {/* Action buttons component */}
           <ActionButtons 
             item={item} 
@@ -104,10 +125,10 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           />
           
           <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px] overflow-hidden">
-            {/* Left side - Image Carousel with reduced width */}
+            {/* Left side - Image Carousel */}
             <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
             
-            {/* Right side - Item details with showProfileInfo prop */}
+            {/* Right side - Item details */}
             <ItemDetailsContent 
               name={item.name} 
               showProfileInfo={showProfileInfo} 
@@ -115,27 +136,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Navigation arrows positioned outside the modal */}
-      {showNavigation && isOpen && (
-        <>
-          <button
-            onClick={handleNavigatePrev}
-            className="fixed left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-50 border border-gray-200"
-            aria-label="Previous match"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
-          </button>
-          
-          <button
-            onClick={handleNavigateNext}
-            className="fixed right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-50 border border-gray-200"
-            aria-label="Next match"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
-          </button>
-        </>
-      )}
     </>
   );
 };
