@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Home from "./pages/Home";
 import PostItem from "./pages/PostItem";
+import EditItem from "./pages/EditItem";
 import Messages from "./pages/Messages";
 import Messages2 from "./pages/Messages2";
 import Messages3 from "./pages/Messages3";
@@ -36,6 +37,11 @@ const App = () => (
               <Route path="/post-item" element={
                 <RequireAuth>
                   <PostItem />
+                </RequireAuth>
+              } />
+              <Route path="/edit-item/:itemId" element={
+                <RequireAuth>
+                  <EditItem />
                 </RequireAuth>
               } />
               <Route path="/messages" element={

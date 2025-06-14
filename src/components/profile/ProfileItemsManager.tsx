@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Item } from '@/types/item';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
-import ItemEditDialog from '@/components/items/ItemEditDialog';
 import { toast } from 'sonner';
 import { 
   AlertDialog,
@@ -20,9 +20,8 @@ interface ProfileItemsManagerProps {
 }
 
 const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems, onItemClick }) => {
+  const navigate = useNavigate();
   const [items, setItems] = useState<Item[]>(initialItems);
-  const [editingItem, setEditingItem] = useState<Item | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -32,16 +31,14 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     if (onItemClick) {
       onItemClick(item.id);
     } else {
-      // Otherwise, use the original behavior
-      setEditingItem(item);
-      setIsEditDialogOpen(true);
+      // Otherwise, navigate to edit page
+      navigate(`/edit-item/${item.id}`);
     }
   };
 
-  // Function to handle edit icon click
+  // Function to handle edit icon click - navigate to edit page
   const handleEditClick = (item: Item) => {
-    setEditingItem(item);
-    setIsEditDialogOpen(true);
+    navigate(`/edit-item/${item.id}`);
   };
 
   // Function to handle copy icon click
@@ -75,37 +72,14 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     setIsDeleteDialogOpen(false);
   };
 
-  // Function to save edited item
-  const handleSaveItem = (updatedItem: Item) => {
-    setItems(prevItems => 
-      prevItems.map(item => 
-        item.id === updatedItem.id ? updatedItem : item
-      )
-    );
-    toast.success(`${updatedItem.name} has been updated successfully.`);
-  };
-
-  // Custom version of ItemsForTradeTab that catches action clicks
-  const customItemClick = (item: Item) => {
-    handleItemClick(item);
-  };
-
   return (
     <>
       <ItemsForTradeTab 
         items={items} 
-        onItemClick={customItemClick} 
+        onItemClick={handleItemClick} 
         onEditClick={handleEditClick}
         onCopyClick={handleCopyClick}
         onDeleteClick={handleDeleteClick}
-      />
-      
-      {/* Item Edit Dialog */}
-      <ItemEditDialog
-        item={editingItem}
-        isOpen={isEditDialogOpen}
-        onClose={() => setIsEditDialogOpen(false)}
-        onSave={handleSaveItem}
       />
 
       {/* Delete Confirmation Dialog */}
