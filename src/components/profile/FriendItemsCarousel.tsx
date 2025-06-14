@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 import CarouselItemCard from './carousel/CarouselItemCard';
-import ItemDetailsPopup from './carousel/ItemDetailsPopup';
+import ItemDetailsModal from './carousel/ItemDetailsModal';
 
 interface FriendItemsCarouselProps {
   items: MatchItem[];
@@ -19,8 +19,18 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 }) => {
   const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
 
+  const handleItemClick = (item: MatchItem) => {
+    console.log("[FriendItemsCarousel] Opening modal for item:", item);
+    setSelectedItem(item);
+  };
+
+  const handleCloseModal = () => {
+    console.log("[FriendItemsCarousel] Closing modal");
+    setSelectedItem(null);
+  };
+
   const handleLikeClick = (e: React.MouseEvent, item: MatchItem) => {
-    e.stopPropagation(); // Prevent triggering selection when clicking heart
+    e.stopPropagation();
     onLikeItem(item.id);
     
     toast({
@@ -29,30 +39,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     });
   };
 
-  const handleItemClick = (item: MatchItem) => {
-    // Add debugging
-    console.log("[FriendItemsCarousel] Item clicked:", item);
-    toast({
-      title: "Item Clicked",
-      description: `You clicked: ${item.name}`
-    });
-    setSelectedItem(item);
-  };
-
-  const handleClosePopup = () => {
-    setSelectedItem(null);
-  };
-
-  const handlePopupLikeClick = (item: MatchItem) => {
+  const handleModalLikeClick = (item: MatchItem) => {
+    console.log("[FriendItemsCarousel] Modal like clicked for:", item);
     onLikeItem(item.id);
     
-    // Update the selected item's liked status in the local state
-    if (selectedItem && selectedItem.id === item.id) {
-      setSelectedItem({
-        ...selectedItem,
-        liked: !selectedItem.liked
-      });
-    }
+    // Update the selected item to reflect the new liked status
+    setSelectedItem(prev => prev ? { ...prev, liked: !prev.liked } : null);
     
     toast({
       title: item.liked ? "Removed from favorites" : "Added to favorites",
@@ -63,6 +55,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   return (
     <div className="relative w-full h-full flex flex-col">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
+      
       <ScrollArea className="flex-grow h-80">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pr-2">
           {items.map((item) => (
@@ -77,16 +70,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         </div>
       </ScrollArea>
 
-      {/* Item details lightbox popup */}
-      {selectedItem && (
-        <ItemDetailsPopup
-          item={selectedItem}
-          isOpen={!!selectedItem}
-          onClose={handleClosePopup}
-          onLikeClick={handlePopupLikeClick}
-          className="z-[1050]" // Ensure popup is above all
-        />
-      )}
+      <ItemDetailsModal
+        item={selectedItem}
+        isOpen={!!selectedItem}
+        onClose={handleCloseModal}
+        onLikeClick={handleModalLikeClick}
+      />
     </div>
   );
 };
