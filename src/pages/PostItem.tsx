@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2 } from 'lucide-react';
+import { Save, Check, Loader2, Package, Heart, Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
@@ -195,30 +194,66 @@ const PostItem: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <Header />
-      <div className="flex-1 p-4 md:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+      
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="flex items-center justify-center mb-4">
+            <Sparkles className="h-8 w-8 mr-3 text-yellow-300" />
+            <h1 className="text-4xl font-bold">Create Your Trade Listing</h1>
+            <Sparkles className="h-8 w-8 ml-3 text-yellow-300" />
+          </div>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            Share what you have and discover what you want. Connect with fellow traders and make meaningful exchanges.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex-1 p-6 md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* What You're Offering Column */}
-          <ItemOfferingForm
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
-            images={images}
-            setImages={setImages}
-            category={category}
-            setCategory={setCategory}
-            subcategory={subcategory}
-            setSubcategory={setSubcategory}
-            condition={condition}
-            setCondition={setCondition}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-          />
+          <div className="space-y-6">
+            <div className="flex items-center mb-6">
+              <div className="bg-blue-100 p-3 rounded-full mr-4">
+                <Package className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">What You're Offering</h2>
+                <p className="text-gray-600">Tell us about the item you want to trade</p>
+              </div>
+            </div>
+            <ItemOfferingForm
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              images={images}
+              setImages={setImages}
+              category={category}
+              setCategory={setCategory}
+              subcategory={subcategory}
+              setSubcategory={setSubcategory}
+              condition={condition}
+              setCondition={setCondition}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+            />
+          </div>
           
           {/* What You're Looking For Column */}
-          <div>
+          <div className="space-y-6">
+            <div className="flex items-center mb-6">
+              <div className="bg-purple-100 p-3 rounded-full mr-4">
+                <Heart className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">What You're Looking For</h2>
+                <p className="text-gray-600">Describe what you'd like to receive in return</p>
+              </div>
+            </div>
+            
             {/* Saved preferences list */}
             <SavedPreferencesList
               show={showSavedPreferences && savedPreferences.length > 0}
@@ -243,31 +278,48 @@ const PostItem: React.FC = () => {
           </div>
         </div>
         
-        {/* Submit and Save Preferences Buttons */}
-        <div className="flex justify-end mt-8 max-w-6xl mx-auto">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12 max-w-7xl mx-auto">
           <Button
             variant="outline"
-            className="mr-4 flex items-center bg-green-600 hover:bg-green-700 text-white"
+            className="flex items-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
             onClick={() => setSaveDialogOpen(true)}
           >
-            <Save className="mr-2 h-4 w-4" /> Save Preferences
+            <Save className="mr-2 h-5 w-5" />
+            Save Preferences
           </Button>
+          
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-trademate-dark hover:bg-trademate-blue text-white"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Creating Your Listing...
               </>
             ) : (
               <>
-                <Check className="mr-2 h-4 w-4" /> Submit Item
+                <Check className="mr-2 h-5 w-5" />
+                Create Trade Listing
               </>
             )}
           </Button>
+        </div>
+        
+        {/* Progress Indicator */}
+        <div className="mt-8 max-w-md mx-auto">
+          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+            <div className={`w-3 h-3 rounded-full ${title ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <span>Item Details</span>
+            <div className="w-6 h-0.5 bg-gray-300"></div>
+            <div className={`w-3 h-3 rounded-full ${lookingForText || selectedCategories.length ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <span>Preferences</span>
+            <div className="w-6 h-0.5 bg-gray-300"></div>
+            <div className={`w-3 h-3 rounded-full ${isSubmitting ? 'bg-blue-500 animate-pulse' : 'bg-gray-300'}`}></div>
+            <span>Submit</span>
+          </div>
         </div>
       </div>
 
@@ -294,13 +346,13 @@ const PostItem: React.FC = () => {
 
       {/* Button to show saved preferences */}
       {savedPreferences.length > 0 && (
-        <div className="fixed bottom-4 left-4">
+        <div className="fixed bottom-6 left-6 z-50">
           <Button 
             onClick={() => setShowSavedPreferences(!showSavedPreferences)}
             variant="outline"
-            className="bg-white shadow"
+            className="bg-white shadow-lg hover:shadow-xl border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition-all duration-200"
           >
-            {showSavedPreferences ? 'Hide Saved' : 'Load Saved'}
+            {showSavedPreferences ? 'Hide Saved Preferences' : 'Load Saved Preferences'}
           </Button>
         </div>
       )}

@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, Upload, X } from 'lucide-react';
 import { 
   Select, 
   SelectContent, 
@@ -91,6 +90,11 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
     }
   };
 
+  const removeImage = (index: number) => {
+    const updatedImages = images.filter((_, i) => i !== index);
+    setImages(updatedImages);
+  };
+
   // Get subcategories based on selected category
   const getSubcategories = () => {
     if (!category) return [];
@@ -98,16 +102,15 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4 text-trademate-blue">What You're Offering</h2>
-      
-      <div className="space-y-6">
+    <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      <div className="space-y-8">
         {/* Image Upload */}
         <div>
-          <Label htmlFor="images">Add Images</Label>
-          <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
-            <ImagePlus className="h-10 w-10 text-gray-400 mb-2" />
-            <p className="text-sm text-gray-500">Upload up to 5 images</p>
+          <Label htmlFor="images" className="text-lg font-semibold text-gray-800 mb-3 block">Add Images</Label>
+          <div className="mt-2 border-2 border-dashed border-blue-300 rounded-xl p-8 flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+            <Upload className="h-12 w-12 text-blue-500 mb-3" />
+            <p className="text-lg font-medium text-blue-700 mb-1">Upload your item photos</p>
+            <p className="text-sm text-blue-600 mb-4">Add up to 5 high-quality images</p>
             <input
               id="images"
               type="file"
@@ -118,21 +121,30 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
             />
             <Button 
               variant="outline" 
-              className="mt-2"
+              className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 px-6 py-2"
               onClick={() => document.getElementById('images')?.click()}
             >
-              Select Images
+              <ImagePlus className="mr-2 h-4 w-4" />
+              Choose Images
             </Button>
             
             {images.length > 0 && (
-              <div className="mt-4 grid grid-cols-3 gap-2 w-full">
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
                 {images.map((image, index) => (
-                  <div key={index} className="relative h-20 bg-gray-100 rounded-md overflow-hidden">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`Preview ${index}`}
-                      className="h-full w-full object-cover"
-                    />
+                  <div key={index} className="relative group">
+                    <div className="relative h-24 bg-gray-100 rounded-lg overflow-hidden">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Preview ${index}`}
+                        className="h-full w-full object-cover"
+                      />
+                      <button
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -141,96 +153,102 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         </div>
         
         {/* Title */}
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
+        <div className="space-y-3">
+          <Label htmlFor="title" className="text-lg font-semibold text-gray-800">Item Title</Label>
           <Input 
             id="title" 
-            placeholder="What are you offering for trade?" 
+            placeholder="Give your item a catchy title..." 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="h-12 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
         
         {/* Description */}
-        <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
+        <div className="space-y-3">
+          <Label htmlFor="description" className="text-lg font-semibold text-gray-800">Description</Label>
           <Textarea 
             id="description" 
-            placeholder="Describe your trade item in detail..." 
-            rows={4}
+            placeholder="Tell potential traders about your item's condition, history, and any special features..." 
+            rows={5}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
         
-        {/* Condition */}
-        <div className="space-y-2">
-          <Label htmlFor="condition">Condition</Label>
-          <Select value={condition} onValueChange={setCondition}>
-            <SelectTrigger id="condition" className="w-full">
-              <SelectValue placeholder="Select condition" />
-            </SelectTrigger>
-            <SelectContent>
-              {conditions.map((cond) => (
-                <SelectItem key={cond} value={cond}>{cond}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        {/* Category */}
-        <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
-          <Select 
-            value={category} 
-            onValueChange={(value) => {
-              setCategory(value);
-              setSubcategory(""); // Reset subcategory when category changes
-            }}
-          >
-            <SelectTrigger id="category" className="w-full">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(categories).map((cat) => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        {/* Subcategory - only show if category is selected */}
-        {category && (
-          <div className="space-y-2">
-            <Label htmlFor="subcategory">Subcategory</Label>
-            <Select value={subcategory} onValueChange={setSubcategory}>
-              <SelectTrigger id="subcategory" className="w-full">
-                <SelectValue placeholder="Select a subcategory" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Condition */}
+          <div className="space-y-3">
+            <Label htmlFor="condition" className="text-lg font-semibold text-gray-800">Condition</Label>
+            <Select value={condition} onValueChange={setCondition}>
+              <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
+                <SelectValue placeholder="Select condition" />
               </SelectTrigger>
               <SelectContent>
-                {getSubcategories().map((subcat) => (
-                  <SelectItem key={subcat} value={subcat}>{subcat}</SelectItem>
+                {conditions.map((cond) => (
+                  <SelectItem key={cond} value={cond} className="text-base py-3">{cond}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-        )}
+          
+          {/* Category */}
+          <div className="space-y-3">
+            <Label htmlFor="category" className="text-lg font-semibold text-gray-800">Category</Label>
+            <Select 
+              value={category} 
+              onValueChange={(value) => {
+                setCategory(value);
+                setSubcategory(""); // Reset subcategory when category changes
+              }}
+            >
+              <SelectTrigger id="category" className="h-12 text-base border-gray-300 focus:border-blue-500">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(categories).map((cat) => (
+                  <SelectItem key={cat} value={cat} className="text-base py-3">{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         
-        {/* Price Range */}
-        <div className="space-y-2">
-          <Label htmlFor="price-range">Price Range</Label>
-          <Select value={priceRange} onValueChange={setPriceRange}>
-            <SelectTrigger id="price-range" className="w-full">
-              <SelectValue placeholder="Select price range" />
-            </SelectTrigger>
-            <SelectContent>
-              {priceRanges.map((range) => (
-                <SelectItem key={range} value={range}>
-                  {range}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Subcategory - only show if category is selected */}
+          {category && (
+            <div className="space-y-3">
+              <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-800">Subcategory</Label>
+              <Select value={subcategory} onValueChange={setSubcategory}>
+                <SelectTrigger id="subcategory" className="h-12 text-base border-gray-300 focus:border-blue-500">
+                  <SelectValue placeholder="Select a subcategory" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getSubcategories().map((subcat) => (
+                    <SelectItem key={subcat} value={subcat} className="text-base py-3">{subcat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          
+          {/* Price Range */}
+          <div className="space-y-3">
+            <Label htmlFor="price-range" className="text-lg font-semibold text-gray-800">Estimated Value</Label>
+            <Select value={priceRange} onValueChange={setPriceRange}>
+              <SelectTrigger id="price-range" className="h-12 text-base border-gray-300 focus:border-blue-500">
+                <SelectValue placeholder="Select value range" />
+              </SelectTrigger>
+              <SelectContent>
+                {priceRanges.map((range) => (
+                  <SelectItem key={range} value={range} className="text-base py-3">
+                    {range}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
     </div>
