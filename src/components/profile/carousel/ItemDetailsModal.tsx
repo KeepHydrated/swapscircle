@@ -46,49 +46,35 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           Item details for {item.name}
         </DialogDescription>
         
-        {/* Navigation and action buttons */}
-        <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
-          <div className="flex gap-2">
-            {onNavigatePrev && (
-              <button
-                onClick={onNavigatePrev}
-                className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Previous item"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
-              </button>
-            )}
-            {onNavigateNext && (
-              <button
-                onClick={onNavigateNext}
-                className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Next item"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
-              </button>
-            )}
-          </div>
-          
-          <div className="flex gap-2">
-            {onLikeClick && (
-              <button
-                onClick={handleLikeClick}
-                className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label={item.liked ? "Remove from favorites" : "Add to favorites"}
-              >
-                <Heart 
-                  className={`w-5 h-5 ${item.liked ? "text-red-500 fill-red-500" : "text-gray-600"}`}
-                />
-              </button>
-            )}
+        {/* Close button - top right, smaller size */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4 text-gray-600" />
+        </button>
+
+        {/* Navigation buttons */}
+        <div className="absolute top-4 left-4 z-10 flex gap-2">
+          {onNavigatePrev && (
             <button
-              onClick={onClose}
+              onClick={onNavigatePrev}
               className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="Close"
+              aria-label="Previous item"
             >
-              <X className="w-5 h-5 text-gray-600" />
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
             </button>
-          </div>
+          )}
+          {onNavigateNext && (
+            <button
+              onClick={onNavigateNext}
+              className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              aria-label="Next item"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
         </div>
 
         {/* Position indicator */}
@@ -99,13 +85,25 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         )}
 
         <div className="flex flex-col md:flex-row h-[80vh]">
-          {/* Image Section */}
+          {/* Image Section with like button on the right */}
           <div className="md:w-3/5 bg-black relative">
             <img 
               src={item.image} 
               alt={item.name}
               className="w-full h-full object-cover"
             />
+            {/* Like button positioned on the right side of the image */}
+            {onLikeClick && (
+              <button
+                onClick={handleLikeClick}
+                className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+                aria-label={item.liked ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Heart 
+                  className={`w-6 h-6 ${item.liked ? "text-red-500 fill-red-500" : "text-gray-600"}`}
+                />
+              </button>
+            )}
           </div>
 
           {/* Content Section */}
