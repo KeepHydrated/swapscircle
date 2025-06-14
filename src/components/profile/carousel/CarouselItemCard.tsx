@@ -26,7 +26,7 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
   return (
     <div className="flex flex-col">
       <Card 
-        className="overflow-hidden cursor-pointer"
+        className="overflow-hidden cursor-pointer bg-white"
         onClick={onItemClick}
       >
         <div className="relative">
@@ -49,8 +49,8 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
             />
           </div>
         </div>
-        <CardContent className="p-3">
-          <h3 className="font-medium text-center truncate" title={item.name}>{item.name}</h3>
+        <CardContent className="p-3 bg-white">
+          <h3 className="font-medium text-center truncate text-gray-900" title={item.name}>{item.name}</h3>
         </CardContent>
       </Card>
     </div>
