@@ -88,15 +88,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     fetchItemDetails();
   }, [item?.id, open]);
 
-  if (!item) return null;
-
-  const displayItem = fullItem || item;
-
   // Image carousel
   const allImages = images.length > 0 
     ? images 
     : [
-        displayItem.image,
+        (fullItem || item)?.image,
         "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
         "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
       ];
@@ -110,6 +106,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const memberSince = userProfile?.created_at 
     ? new Date(userProfile.created_at).getFullYear()
     : 2023;
+
+  // --- Hook declarations END, now return null if item missing
+  if (!item) return null;
+
+  const displayItem = fullItem || item;
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
@@ -255,3 +256,4 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 };
 
 export default ExploreItemModal;
+
