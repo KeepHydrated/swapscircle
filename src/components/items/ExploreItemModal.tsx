@@ -1,8 +1,9 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { X, ArrowLeft, ArrowRight, Heart } from "lucide-react";
 import { Item } from "@/types/item";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ExploreItemModalProps {
   open: boolean;
@@ -13,15 +14,12 @@ interface ExploreItemModalProps {
   onLike?: () => void;
 }
 
-const profile = {
-  name: "Emma Wilson",
-  avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-  stars: 4.8,
-  reviews: 42,
-  since: 2023,
-  distance: "2.3 mi away",
-  response: "~1 hr response",
-};
+interface UserProfile {
+  name: string;
+  avatar_url: string;
+  username?: string;
+  created_at: string;
+}
 
 const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   open,
@@ -31,22 +29,87 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   liked,
   onLike,
 }) => {
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [fullItem, setFullItem] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch complete item details and user profile from database
+  useEffect(() => {
+    if (!item?.id || !open) return;
+
+    const fetchItemDetails = async () => {
+      setLoading(true);
+      try {
+        // Fetch complete item details
+        const { data: itemData, error: itemError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('id', item.id)
+          .single();
+
+        if (itemError) {
+          console.error('Error fetching item:', itemError);
+          setFullItem(item);
+        } else {
+          setFullItem({
+            ...itemData,
+            image: itemData.image_url || item.image
+          });
+        }
+
+        // Fetch user profile
+        if (itemData?.user_id) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('name, avatar_url, username, created_at')
+            .eq('id', itemData.user_id)
+            .single();
+
+          if (profileError) {
+            console.error('Error fetching user profile:', profileError);
+            // Fallback to default profile
+            setUserProfile({
+              name: "User",
+              avatar_url: "https://randomuser.me/api/portraits/women/44.jpg",
+              created_at: new Date().toISOString()
+            });
+          } else {
+            setUserProfile(profileData);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching modal data:', error);
+        setFullItem(item);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItemDetails();
+  }, [item?.id, open]);
+
   if (!item) return null;
 
+  const displayItem = fullItem || item;
+
   // Image carousel
-  const allImages =
-    images.length > 0
-      ? images
-      : [
-          item.image,
-          "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-          "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-        ];
+  const allImages = images.length > 0 
+    ? images 
+    : [
+        displayItem.image,
+        "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
+        "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
+      ];
   const [slide, setSlide] = React.useState(0);
 
   React.useEffect(() => {
     setSlide(0);
   }, [item]);
+
+  // Calculate user stats
+  const memberSince = userProfile?.created_at 
+    ? new Date(userProfile.created_at).getFullYear()
+    : 2023;
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
@@ -68,7 +131,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
             <img
               src={allImages[slide]}
-              alt={item.name}
+              alt={displayItem.name}
               className="object-cover w-full h-full"
               style={{ minHeight: 320 }}
             />
@@ -117,63 +180,78 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               />
             </button>
           </div>
+          
           {/* Details */}
           <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
-            <div className="flex items-center justify-between mb-2 gap-3">
-              <h2 className="text-2xl font-bold text-gray-900 truncate">
-                {item.name}
-              </h2>
-            </div>
-            <div className="bg-gray-50 p-3 mb-4 text-gray-700 rounded-lg text-base min-h-[66px]">
-              {item.description ||
-                "No description. This item has been gently used and well maintained."}
-            </div>
-            <div className="mb-3 flex flex-wrap gap-3 items-center text-sm">
-              <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full">
-                <span className="w-2 h-2 bg-green-400 inline-block rounded-full" />
-                <span className="text-green-700">Brand New</span>
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
               </div>
-              {item.category && (
-                <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full text-blue-700">
-                  <span className="">🏷️</span>
-                  {item.category}
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-2 gap-3">
+                  <h2 className="text-2xl font-bold text-gray-900 truncate">
+                    {displayItem.name}
+                  </h2>
                 </div>
-              )}
-              {item.tags && item.tags.length > 0 && (
-                <div className="flex items-center gap-2 px-3 py-1 bg-violet-50 rounded-full text-violet-700">
-                  <span className="">🍽️</span>
-                  {item.tags[0]}
+                
+                <div className="bg-gray-50 p-3 mb-4 text-gray-700 rounded-lg text-base min-h-[66px]">
+                  {displayItem.description ||
+                    "No description. This item has been gently used and well maintained."}
                 </div>
-              )}
-            </div>
-            {/* [FAKE] profile info for demo */}
-            <div className="flex gap-3 items-center mt-auto pt-6">
-              <img
-                src={profile.avatar}
-                alt={profile.name}
-                className="w-11 h-11 rounded-full border object-cover"
-              />
-              <div>
-                <span className="font-semibold text-gray-900">
-                  {profile.name}
-                </span>
-                <span className="ml-2 text-yellow-500 text-xs font-semibold">
-                  ★ {profile.stars}{" "}
-                  <span className="text-gray-400 font-normal ml-1">
-                    ({profile.reviews})
-                  </span>
-                </span>
-                <div className="flex text-xs text-gray-500 mt-1 gap-4">
-                  <span>Since {profile.since}</span>
-                  <span>· {profile.distance}</span>
-                  <span>· {profile.response}</span>
+                
+                <div className="mb-3 flex flex-wrap gap-3 items-center text-sm">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full">
+                    <span className="w-2 h-2 bg-green-400 inline-block rounded-full" />
+                    <span className="text-green-700">{displayItem.condition || "Good"}</span>
+                  </div>
+                  {displayItem.category && (
+                    <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full text-blue-700">
+                      <span className="">🏷️</span>
+                      {displayItem.category}
+                    </div>
+                  )}
+                  {displayItem.tags && displayItem.tags.length > 0 && (
+                    <div className="flex items-center gap-2 px-3 py-1 bg-violet-50 rounded-full text-violet-700">
+                      <span className="">🍽️</span>
+                      {displayItem.tags[0]}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
+                
+                {/* User profile info */}
+                {userProfile && (
+                  <div className="flex gap-3 items-center mt-auto pt-6">
+                    <img
+                      src={userProfile.avatar_url || "https://randomuser.me/api/portraits/women/44.jpg"}
+                      alt={userProfile.name}
+                      className="w-11 h-11 rounded-full border object-cover"
+                    />
+                    <div>
+                      <span className="font-semibold text-gray-900">
+                        {userProfile.name || userProfile.username || "Unknown User"}
+                      </span>
+                      <span className="ml-2 text-yellow-500 text-xs font-semibold">
+                        ★ 4.8{" "}
+                        <span className="text-gray-400 font-normal ml-1">
+                          (42)
+                        </span>
+                      </span>
+                      <div className="flex text-xs text-gray-500 mt-1 gap-4">
+                        <span>Since {memberSince}</span>
+                        <span>· 2.3 mi away</span>
+                        <span>· ~1 hr response</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
+
 export default ExploreItemModal;
