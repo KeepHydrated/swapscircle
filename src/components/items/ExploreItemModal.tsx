@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { X, ArrowLeft, ArrowRight, Heart } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 interface ExploreItemModalProps {
   open: boolean;
@@ -103,6 +103,14 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const memberSince = userProfile?.created_at 
     ? new Date(userProfile.created_at).getFullYear()
     : 2023;
+
+  // Add handler for trade
+  const handleTradeNow = () => {
+    toast({
+      title: "Trade request started!",
+      description: "You’ve started a trade request for this item.",
+    });
+  };
 
   // --- Hook declarations END, now return null if item missing
   if (!item) return null;
@@ -253,6 +261,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     </div>
                   </div>
                 )}
+                {/* Trade Now Button */}
+                <div className="mt-7 flex justify-center">
+                  <button
+                    onClick={handleTradeNow}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md transition-colors w-full max-w-xs active:scale-[0.97]"
+                  >
+                    Trade Now
+                  </button>
+                </div>
               </>
             )}
           </div>

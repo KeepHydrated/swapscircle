@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { ChevronLeft, ChevronRight, X, Heart } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 interface ItemDetailsModalProps {
   item: MatchItem | null;
@@ -35,12 +35,21 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     }
   };
 
+  // Trade button handler for this modal
+  const handleTradeNow = () => {
+    toast({
+      title: "Trade request started!",
+      description: "You’ve started a trade request for this item.",
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className="max-w-4xl w-[95vw] max-h-[90vh] p-0 overflow-hidden"
         aria-describedby="item-description"
       >
+        
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         <DialogDescription id="item-description" className="sr-only">
           Item details for {item.name}
@@ -153,6 +162,16 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   </div>
                 </div>
               )}
+              
+              {/* Trade Now Button */}
+              <div className="mt-7 flex justify-center">
+                <button
+                  onClick={handleTradeNow}
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md transition-colors w-full max-w-xs active:scale-[0.97]"
+                >
+                  Trade Now
+                </button>
+              </div>
             </div>
           </div>
         </div>
