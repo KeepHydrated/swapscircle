@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -25,7 +24,7 @@ const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [profileKey, setProfileKey] = useState(0);
 
-  // New: State for bio and location
+  // State for bio and location
   const [profileBio, setProfileBio] = useState('');
   const [profileLocation, setProfileLocation] = useState('');
 
@@ -44,9 +43,14 @@ const UserProfile: React.FC = () => {
           .maybeSingle();
         if (error) {
           console.error('Failed to fetch bio/location:', error);
+          setProfileBio('');
+          setProfileLocation('');
         } else if (data) {
           setProfileBio(data.bio || "");
           setProfileLocation(data.location || "");
+        } else {
+          setProfileBio('');
+          setProfileLocation('');
         }
       }
     };
