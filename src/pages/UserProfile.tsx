@@ -17,30 +17,48 @@ import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
   const { user, supabaseConfigured } = useAuth();
-  // State for active tab
   const [activeTab, setActiveTab] = useState('available');
-  
-  // State for user data
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userTrades, setUserTrades] = useState<CompletedTrade[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profileKey, setProfileKey] = useState(0); // Key to force re-render when profile updates
+  const [profileKey, setProfileKey] = useState(0);
 
-  // Listen for auth context changes to refresh profile
+  // New: State for bio and location
+  const [profileBio, setProfileBio] = useState('');
+  const [profileLocation, setProfileLocation] = useState('');
+
   useEffect(() => {
     setProfileKey(prev => prev + 1);
   }, [user?.name, user?.avatar_url]);
 
-  // Fetch user items and data
+  // Fetch profile bio and location from Supabase (profiles table)
+  useEffect(() => {
+    const fetchProfileExtras = async () => {
+      if (user && user.id && supabaseConfigured) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('bio, location')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (error) {
+          console.error('Failed to fetch bio/location:', error);
+        } else if (data) {
+          setProfileBio(data.bio || "");
+          setProfileLocation(data.location || "");
+        }
+      }
+    };
+    fetchProfileExtras();
+  }, [user, supabaseConfigured]);
+
   useEffect(() => {
     if (user) {
       const fetchUserData = async () => {
         setLoading(true);
         try {
           if (!supabaseConfigured) {
-            // If not configured, use mock data or empty arrays
             setUserItems([]);
             setUserTrades([]);
             setUserReviews([]);
@@ -49,21 +67,16 @@ const UserProfile: React.FC = () => {
             setLoading(false);
             return;
           }
-          
-          // Fetch user items
           try {
             const { data: items, error: itemsError } = await supabase
               .from('items')
               .select('*')
               .eq('user_id', user.id);
-            
             if (itemsError) {
               console.error('Error fetching items:', itemsError);
               toast.error('Error loading items');
               setUserItems([]);
             } else if (items && Array.isArray(items)) {
-              console.log('Fetched items from database:', items);
-              // Convert to MatchItem format
               const formattedItems = items.map(item => ({
                 id: item.id,
                 name: item.name,
@@ -74,8 +87,6 @@ const UserProfile: React.FC = () => {
                 tags: item.tags,
                 liked: false
               }));
-              
-              console.log('Formatted items for display:', formattedItems);
               setUserItems(formattedItems);
             } else {
               setUserItems([]);
@@ -84,34 +95,30 @@ const UserProfile: React.FC = () => {
             console.error('Error in items fetch:', error);
             setUserItems([]);
           }
-          
-          // For now, we'll use empty arrays for trades, reviews, and friends
-          // These would be fetched from your Supabase tables once you set them up
           setUserTrades([]);
           setUserReviews([]);
           setUserFriends([]);
-          
         } catch (error) {
           console.error('Error fetching user data:', error);
         } finally {
           setLoading(false);
         }
       };
-      
       fetchUserData();
     }
   }, [user, supabaseConfigured]);
-  
+
   if (!user) {
     return null; // Should be handled by RequireAuth
   }
 
+  // Use the fetched bio and location if available
   const profileData = {
     name: user?.name || 'User',
-    description: 'Your profile description goes here. Edit your profile in Settings to update this information.',
+    description: profileBio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
     rating: 0,
     reviewCount: userReviews.length,
-    location: 'Update your location in Settings',
+    location: profileLocation || 'Update your location in Settings',
     memberSince: new Date().getFullYear().toString(),
     avatar_url: user?.avatar_url,
   };
@@ -119,7 +126,7 @@ const UserProfile: React.FC = () => {
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
-        {/* Profile Header - use key to force re-render */}
+        {/* Profile Header */}
         <ProfileHeader 
           key={profileKey}
           profile={profileData}
@@ -127,8 +134,6 @@ const UserProfile: React.FC = () => {
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
         />
-
-        {/* Tabs */}
         <Tabs 
           value={activeTab} 
           onValueChange={setActiveTab}
@@ -162,8 +167,6 @@ const UserProfile: React.FC = () => {
               Friends
             </TabsTrigger>
           </TabsList>
-
-          {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
             {loading ? (
               <div className="flex justify-center py-10">
@@ -173,18 +176,12 @@ const UserProfile: React.FC = () => {
               <ProfileItemsManager initialItems={userItems} />
             )}
           </TabsContent>
-
-          {/* Completed Trades Tab Content */}
           <TabsContent value="completed" className="p-6">
             <CompletedTradesTab trades={userTrades} />
           </TabsContent>
-          
-          {/* Reviews Tab Content */}
           <TabsContent value="reviews" className="p-6">
             <ReviewsTab reviews={userReviews} />
           </TabsContent>
-          
-          {/* Friends Tab Content */}
           <TabsContent value="friends" className="p-6">
             <FriendsTab friends={userFriends} />
           </TabsContent>
