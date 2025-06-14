@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
@@ -61,24 +62,24 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
 
   // Add debugging
-  console.log('ItemDetailsPopup props:', {
-    showNavigation,
-    currentIndex,
-    totalItems,
-    hasNavigatePrev: !!onNavigatePrev,
-    hasNavigateNext: !!onNavigateNext
-  });
+  // console.log('ItemDetailsPopup props:', {
+  //   showNavigation,
+  //   currentIndex,
+  //   totalItems,
+  //   hasNavigatePrev: !!onNavigatePrev,
+  //   hasNavigateNext: !!onNavigateNext
+  // });
 
   // Handle navigation with debugging
   const handleNavigatePrev = () => {
-    console.log('Prev button clicked');
+    // console.log('Prev button clicked');
     if (onNavigatePrev) {
       onNavigatePrev();
     }
   };
 
   const handleNavigateNext = () => {
-    console.log('Next button clicked');
+    // console.log('Next button clicked');
     if (onNavigateNext) {
       onNavigateNext();
     }
@@ -89,7 +90,21 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <DialogOverlay className="bg-black/80" />
         <DialogContent
-          className={`relative max-w-3xl p-0 border-none bg-white rounded-lg overflow-hidden ${className}`}
+          className={`
+            relative 
+            max-w-3xl 
+            w-full
+            p-0 
+            border-none
+            bg-white
+            rounded-lg
+            overflow-hidden
+            left-1/2 top-1/2
+            -translate-x-1/2 -translate-y-1/2
+            fixed
+            shadow-lg
+            ${className}
+          `}
         >
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
@@ -115,7 +130,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                   boxShadow: "0px 2px 10px #0002"
                 }}
               >
-                {/* Only use allowed lucide-react icons */}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                   className="lucide lucide-arrow-left w-6 h-6 text-gray-700"
@@ -181,3 +195,4 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 };
 
 export default ItemDetailsPopup;
+
