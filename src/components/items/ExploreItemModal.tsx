@@ -56,6 +56,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         asChild
       >
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
+          {/* Close button - top right, smaller size */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4 text-gray-600" />
+          </button>
+
           {/* Carousel */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
             <img
@@ -97,17 +106,9 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 />
               ))}
             </div>
-            {/* Modal close button */}
+            {/* Like button positioned on the right side of the image */}
             <button
-              onClick={onClose}
-              className="absolute right-4 top-4 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white hover:bg-gray-100 shadow-lg"
-              aria-label="Close modal"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            {/* Like icon */}
-            <button
-              className="absolute right-16 top-4 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white hover:bg-gray-100 shadow"
+              className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
               onClick={onLike}
               aria-label={liked ? "Unlike" : "Like"}
             >
