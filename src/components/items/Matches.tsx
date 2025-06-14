@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
@@ -117,8 +116,7 @@ const Matches: React.FC<MatchesProps> = ({
   }, [matches, selectedMatchId, setSelectedMatch]);
 
   return (
--    <div className="lg:w-1/2 flex flex-col h-full">
-+    <div className="w-full flex flex-col h-full">
+    <div className="w-full flex flex-col h-full">
       <h2 className="text-2xl font-bold mb-4">
         Matches for {selectedItemName || 'Selected Item'}
       </h2>
@@ -151,4 +149,3 @@ const Matches: React.FC<MatchesProps> = ({
 };
 
 export default Matches;
-
