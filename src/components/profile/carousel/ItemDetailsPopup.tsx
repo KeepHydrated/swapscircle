@@ -76,7 +76,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       {/* Overlay: pure black */}
       <DialogOverlay className="bg-black/100" />
-      {/* Use a transparent Content, no padding, to build our own card centered inside */}
+      {/* Only ONE child inside DialogContent asChild */}
       <DialogContent
         asChild
         className={`
@@ -86,14 +86,15 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           ${className}
         `}
       >
+        {/* Only one direct child: a relative container for everything */}
         <div className="w-full h-full flex items-center justify-center relative pointer-events-none">
-          {/* Centered Card */}
+          {/* Centered Card (main content) */}
           <div
             className="
               relative pointer-events-auto
               bg-white rounded-2xl shadow-2xl
-              max-w-4xl w-[98vw] md:w-[830px] 
-              max-h-[90vh] min-h-[540px] flex flex-col
+              max-w-[1200px] w-[99vw] md:w-[1050px] 
+              max-h-[93vh] min-h-[580px] flex flex-col
               justify-center
               overflow-visible
               animate-fade-in
@@ -112,15 +113,15 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
               canEdit={canEdit}
             />
             {/* Card Main Content: Row with images and info */}
-            <div className="flex flex-col md:flex-row h-[500px] md:h-[520px]">
+            <div className="flex flex-col md:flex-row h-[520px] md:h-[540px]">
               {/* Left: Images */}
               <ItemImageCarousel
                 images={images}
                 itemName={item.name}
-                className="md:w-[54%] w-full h-60 md:h-full rounded-l-2xl object-cover"
+                className="md:w-[54%] w-full h-64 md:h-full rounded-l-2xl object-cover"
               />
               {/* Right: Info, Centered vertically and horizontally */}
-              <div className="flex-1 flex items-center justify-center px-6 py-3">
+              <div className="flex-1 flex items-center justify-center px-8 py-5">
                 <ItemDetailsContent 
                   name={item.name} 
                   showProfileInfo={showProfileInfo} 
@@ -128,57 +129,60 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
               </div>
             </div>
           </div>
-          {/* Navigation arrows: On the sides of the card, attached from outside, perfectly centered */}
+          {/* Navigation arrows: absolutely attach to the sides of the card */}
           {showNavigation && (
             <>
-              {/* Arrow LEFT: On the immediate left OUTSIDE the card */}
+              {/* Arrow LEFT: Vertically centered, flush against left card border */}
               <button
                 onClick={handleNavigatePrev}
                 className="
                   absolute
+                  z-50
                   top-1/2
                   left-1/2
                   -translate-y-1/2
-                  -translate-x-[calc(50%_+_490px)] md:-translate-x-[calc(50%_+_465px)]
-                  w-14 h-14
-                  bg-white border border-gray-200 rounded-full shadow-lg
+                  -translate-x-[calc(50%_+_590px)]
+                  md:-translate-x-[calc(50%_+_540px)]
+                  w-16 h-16
+                  bg-white border border-gray-200 rounded-full shadow-xl
                   flex items-center justify-center
                   hover:bg-gray-50
-                  z-50 transition-colors
+                  transition-colors
                   focus:outline-none focus:ring-2 focus:ring-primary
                   pointer-events-auto
                 "
                 aria-label="Previous match"
                 style={{
-                  // These are fallback for precise positioning beside .max-w-4xl card (w-[830px]), but flexible for mobile
-                  minWidth: 48, minHeight: 48
+                  minWidth: 56, minHeight: 56
                 }}
               >
-                <ChevronLeft className="w-7 h-7 text-gray-700" />
+                <ChevronLeft className="w-8 h-8 text-gray-700" />
               </button>
-              {/* Arrow RIGHT: On the immediate right OUTSIDE the card */}
+              {/* Arrow RIGHT: Vertically centered, flush against right card border */}
               <button
                 onClick={handleNavigateNext}
                 className="
                   absolute
+                  z-50
                   top-1/2
                   left-1/2
                   -translate-y-1/2
-                  translate-x-[calc(50%_+_490px)] md:translate-x-[calc(50%_+_465px)]
-                  w-14 h-14
-                  bg-white border border-gray-200 rounded-full shadow-lg
+                  translate-x-[calc(50%_+_590px)]
+                  md:translate-x-[calc(50%_+_540px)]
+                  w-16 h-16
+                  bg-white border border-gray-200 rounded-full shadow-xl
                   flex items-center justify-center
                   hover:bg-gray-50
-                  z-50 transition-colors
+                  transition-colors
                   focus:outline-none focus:ring-2 focus:ring-primary
                   pointer-events-auto
                 "
                 aria-label="Next match"
                 style={{
-                  minWidth: 48, minHeight: 48
+                  minWidth: 56, minHeight: 56
                 }}
               >
-                <ChevronRight className="w-7 h-7 text-gray-700" />
+                <ChevronRight className="w-8 h-8 text-gray-700" />
               </button>
             </>
           )}
