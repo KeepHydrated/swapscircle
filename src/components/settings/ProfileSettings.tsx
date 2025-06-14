@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,7 +60,7 @@ const ProfileSettings: React.FC = () => {
 
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('name, email, bio, location, avatar_url')
+        .select('name, email, username, bio, location, avatar_url')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -74,7 +73,7 @@ const ProfileSettings: React.FC = () => {
       if (profile) {
         form.reset({
           name: profile.name ?? "",
-          username: (profile.email && profile.email.includes('@')) ? profile.email.split('@')[0] : "",
+          username: profile.username ?? "", // use username from DB
           email: profile.email ?? "",
           bio: profile.bio ?? "",
           location: profile.location ?? "",
@@ -96,6 +95,7 @@ const ProfileSettings: React.FC = () => {
         .from('profiles')
         .update({
           name: data.name,
+          username: data.username, // update username in DB
           bio: data.bio,
           location: data.location,
           avatar_url: avatarUrl,
@@ -243,7 +243,7 @@ const ProfileSettings: React.FC = () => {
                     <FormItem>
                       <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your username" {...field} disabled />
+                        <Input placeholder="Your username" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -318,4 +318,3 @@ const ProfileSettings: React.FC = () => {
 };
 
 export default ProfileSettings;
-
