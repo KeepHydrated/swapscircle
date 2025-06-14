@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
-import { Star, Users, Pencil } from 'lucide-react';
+import { Star, Users } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client'; 
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
@@ -11,7 +11,6 @@ import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
-import { Button } from '@/components/ui/button';
 import { MatchItem } from '@/types/item';
 import { CompletedTrade } from '@/types/profile';
 import { toast } from 'sonner';
@@ -27,6 +26,12 @@ const UserProfile: React.FC = () => {
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileKey, setProfileKey] = useState(0); // Key to force re-render when profile updates
+
+  // Listen for auth context changes to refresh profile
+  useEffect(() => {
+    setProfileKey(prev => prev + 1);
+  }, [user?.name, user?.avatar_url]);
 
   // Fetch user items and data
   useEffect(() => {
@@ -101,10 +106,10 @@ const UserProfile: React.FC = () => {
 
   const profileData = {
     name: user?.name || 'User',
-    description: 'Your profile description goes here. Edit your profile to update this information.',
+    description: 'Your profile description goes here. Edit your profile in Settings to update this information.',
     rating: 0,
     reviewCount: userReviews.length,
-    location: 'Update your location',
+    location: 'Update your location in Settings',
     memberSince: new Date().getFullYear().toString(),
     avatar_url: user?.avatar_url,
   };
@@ -112,8 +117,9 @@ const UserProfile: React.FC = () => {
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
-        {/* Profile Header */}
+        {/* Profile Header - use key to force re-render */}
         <ProfileHeader 
+          key={profileKey}
           profile={profileData}
           friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}

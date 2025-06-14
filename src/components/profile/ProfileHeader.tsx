@@ -42,11 +42,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     return stars;
   };
 
+  // Use a timestamp to ensure avatar updates are reflected
+  const avatarSrc = profile.avatar_url 
+    ? `${profile.avatar_url}${profile.avatar_url.includes('?') ? '&' : '?'}t=${Date.now()}`
+    : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop";
+
   return (
     <div className="flex flex-col md:flex-row p-6 bg-white border-b">
       <div className="flex-shrink-0 mr-6 flex justify-center md:justify-start mb-4 md:mb-0">
         <Avatar className="w-32 h-32 border-4 border-primary">
-          <AvatarImage src={profile.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"} />
+          <AvatarImage 
+            src={avatarSrc}
+            alt={`${profile.name}'s avatar`}
+          />
           <AvatarFallback>{profile.name?.substring(0, 2) || "AM"}</AvatarFallback>
         </Avatar>
       </div>

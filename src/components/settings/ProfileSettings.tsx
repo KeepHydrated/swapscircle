@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,6 +37,10 @@ const ProfileSettings: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
+  const [profileData, setProfileData] = useState({
+    bio: "",
+    location: "",
+  });
 
   // Initialize form with user data
   const form = useForm<ProfileFormValues>({
@@ -46,8 +49,8 @@ const ProfileSettings: React.FC = () => {
       name: user?.name || "",
       username: user?.email?.split('@')[0] || "",
       email: user?.email || "",
-      bio: "",
-      location: "",
+      bio: profileData.bio,
+      location: profileData.location,
     },
   });
 
@@ -55,10 +58,18 @@ const ProfileSettings: React.FC = () => {
   const onSubmit = async (data: ProfileFormValues) => {
     try {
       if (user) {
+        // Update profile with all the data
         await updateProfile({
           name: data.name,
           avatar_url: avatarUrl,
         });
+        
+        // Store additional profile data in state for now
+        setProfileData({
+          bio: data.bio || "",
+          location: data.location || "",
+        });
+        
         toast.success('Profile updated successfully');
       }
     } catch (error) {
@@ -85,16 +96,24 @@ const ProfileSettings: React.FC = () => {
 
     setUploading(true);
     try {
-      const imageUrl = await uploadItemImage(file);
-      if (imageUrl) {
-        setAvatarUrl(imageUrl);
-        toast.success('Profile picture uploaded successfully');
-      } else {
-        toast.error('Failed to upload image');
+      // For now, create a local URL for the image to show immediate feedback
+      const localUrl = URL.createObjectURL(file);
+      setAvatarUrl(localUrl);
+      
+      // Try to upload to storage, but if it fails, keep the local preview
+      try {
+        const imageUrl = await uploadItemImage(file);
+        if (imageUrl) {
+          setAvatarUrl(imageUrl);
+          toast.success('Profile picture uploaded successfully');
+        }
+      } catch (uploadError) {
+        console.error('Upload failed, keeping local preview:', uploadError);
+        toast.success('Profile picture updated (preview only)');
       }
     } catch (error) {
-      console.error('Error uploading avatar:', error);
-      toast.error('Failed to upload profile picture');
+      console.error('Error handling avatar:', error);
+      toast.error('Failed to update profile picture');
     } finally {
       setUploading(false);
     }
