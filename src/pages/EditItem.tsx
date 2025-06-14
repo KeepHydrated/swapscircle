@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
@@ -8,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
 import { Item } from '@/types/item';
+import { fetchItemById, updateItem } from '@/services/authService';
 
 const EditItem: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
@@ -49,26 +49,28 @@ const EditItem: React.FC = () => {
     }
   ];
 
-  // Load item data when component mounts
+  // Load item data from DB on mount
   useEffect(() => {
-    if (itemId) {
-      // In a real app, you'd fetch from Supabase here
-      const item = mockItems.find(item => item.id === itemId);
-      
-      if (item) {
-        setTitle(item.name);
-        setDescription(item.description || '');
-        setCategory(item.category || '');
-        setCondition(item.condition || '');
-        setPriceRange(item.priceRange || '');
-        // For subcategory, you'd need to determine it from the item data
-        setSubcategory('');
-      } else {
-        toast.error('Item not found');
-        navigate('/profile');
+    async function load() {
+      setLoading(true);
+      if (itemId) {
+        const item = await fetchItemById(itemId);
+        if (item) {
+          setTitle(item.name || '');
+          setDescription(item.description || '');
+          setCategory(item.category || '');
+          setCondition(item.condition || '');
+          setPriceRange(item.priceRange || '');
+          setSubcategory('');
+          // images field is not handled from DB yet
+        } else {
+          toast.error('Item not found');
+          navigate('/profile');
+        }
       }
+      setLoading(false);
     }
-    setLoading(false);
+    load();
   }, [itemId, navigate]);
 
   const handleSubmit = async () => {
@@ -91,19 +93,20 @@ const EditItem: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // In a real app, you'd update the item in Supabase here
-      console.log('Updating item:', {
-        id: itemId,
-        name: title,
-        description,
-        category,
-        condition,
-        priceRange,
-        subcategory
-      });
-      
-      toast.success('Your item has been updated successfully!');
-      navigate('/profile');
+      if (itemId) {
+        const success = await updateItem(itemId, {
+          name: title,
+          description,
+          category,
+          condition,
+          priceRange,
+          // tags/subcategory can be added here if needed
+        });
+        if (success) {
+          toast.success('Your item has been updated successfully!');
+          navigate('/');
+        }
+      }
     } catch (error) {
       console.error('Error updating item:', error);
       toast.error('There was an error updating your item. Please try again.');

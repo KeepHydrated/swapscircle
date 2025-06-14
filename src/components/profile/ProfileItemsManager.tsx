@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '@/types/item';
@@ -37,7 +36,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     }
   };
 
-  // Function to handle edit icon click - navigate to edit page
+  // Edit button: go to edit-item/:id
   const handleEditClick = (item: Item) => {
     navigate(`/edit-item/${item.id}`);
   };
@@ -61,13 +60,13 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     setIsDeleteDialogOpen(true);
   };
 
-  // Function to confirm deletion
-  const confirmDelete = () => {
+  // Delete item from DB
+  const confirmDelete = async () => {
     if (itemToDelete) {
-      setItems(prevItems => 
-        prevItems.filter(item => item.id !== itemToDelete.id)
-      );
-      toast.success(`${itemToDelete.name} has been deleted`);
+      const ok = await deleteItem(itemToDelete.id);
+      if (ok) {
+        setItems(prevItems => prevItems.filter(item => item.id !== itemToDelete.id));
+      }
       setItemToDelete(null);
     }
     setIsDeleteDialogOpen(false);

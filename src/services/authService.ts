@@ -412,3 +412,66 @@ export const isItemLiked = async (itemId: string): Promise<boolean> => {
     return false;
   }
 };
+
+// Fetch item by ID from DB (NEW)
+export const fetchItemById = async (itemId: string) => {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .eq('id', itemId)
+      .maybeSingle();
+    if (error) {
+      console.error('Error fetching item by id:', error);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error('Error fetching item by id:', error);
+    return null;
+  }
+};
+
+// Update item by ID (NEW)
+export const updateItem = async (itemId: string, updates: Partial<Item>) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase not configured');
+    return false;
+  }
+  try {
+    const { error } = await supabase
+      .from('items')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', itemId);
+    if (error) {
+      toast.error('Failed to update item');
+      return false;
+    }
+    toast.success('Item updated!');
+    return true;
+  } catch (error) {
+    toast.error('Failed to update item');
+    return false;
+  }
+};
+
+// Delete item by ID (NEW)
+export const deleteItem = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase not configured');
+    return false;
+  }
+  try {
+    const { error } = await supabase.from('items').delete().eq('id', itemId);
+    if (error) {
+      toast.error('Error deleting item');
+      return false;
+    }
+    toast.success('Item deleted!');
+    return true;
+  } catch (error) {
+    toast.error('Error deleting item');
+    return false;
+  }
+};
