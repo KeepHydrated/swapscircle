@@ -58,16 +58,15 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     <div className="relative w-full h-full flex flex-col">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       <ScrollArea className="flex-grow">
-        <div className="space-y-4 pr-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pr-2">
           {items.map((item) => (
-            <div key={item.id} className="w-full">
-              <CarouselItemCard
-                item={item}
-                isSelected={selectedItem?.id === item.id}
-                onItemClick={() => handleItemClick(item)}
-                onLikeClick={handleLikeClick}
-              />
-            </div>
+            <CarouselItemCard
+              key={item.id}
+              item={item}
+              isSelected={selectedItem?.id === item.id}
+              onItemClick={() => handleItemClick(item)}
+              onLikeClick={handleLikeClick}
+            />
           ))}
         </div>
       </ScrollArea>
