@@ -8,6 +8,7 @@ import ItemCard from '@/components/items/ItemCard';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { isItemLiked, likeItem, unlikeItem } from '@/services/authService';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from '@/hooks/use-toast';
 
 const Home: React.FC = () => {
   // Friend/fake items remain only for the top carousel demo
@@ -63,6 +64,20 @@ const Home: React.FC = () => {
     }
   ]);
 
+  // Define handler for liking friend items (local state only)
+  const handleLikeFriendItem = (itemId: string) => {
+    setFriendItems(prev =>
+      prev.map(item =>
+        item.id === itemId ? { ...item, liked: !item.liked } : item
+      )
+    );
+    const toggled = friendItems.find(item => item.id === itemId)?.liked;
+    toast({
+      title: toggled ? "Removed from favorites" : "Added to favorites",
+      description: `Item has been ${toggled ? "removed from" : "added to"} your favorites.`,
+    });
+  };
+
   // Fetch all items from DB to show in Explore section
   const { items: dbItems, loading: dbItemsLoading, error: dbItemsError } = useDbItems();
 
@@ -95,7 +110,10 @@ const Home: React.FC = () => {
   // Handle like/unlike for Explore items (calls DB and updates local state)
   const handleLikeExploreItem = async (itemId: string) => {
     if (!user || !supabaseConfigured) {
-      window.toast?.error?.('Please log in to like items.'); // fallback near-global toast
+      toast({
+        title: 'Please log in to like items.',
+        variant: 'destructive',
+      });
       return;
     }
     const isCurrentlyLiked = likedMap[itemId];
@@ -171,7 +189,7 @@ const Home: React.FC = () => {
                         liked={!!likedMap[item.id]}
                         onSelect={() => handleOpenModal(item)}
                         onLike={handleLikeExploreItem}
-                        showLikeButton // NEW: force the like button in Explore section
+                        showLikeButton // force the like button in Explore section
                       />
                     </div>
                   ))}
