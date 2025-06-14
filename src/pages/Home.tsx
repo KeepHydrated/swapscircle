@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
@@ -177,15 +176,9 @@ const Home: React.FC = () => {
             />
           </div>
 
+          {/* Removed the My Items component and its containing column */}
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* My Items Component */}
-            <MyItems 
-              items={myItems} 
-              selectedItemId={selectedItemId}
-              onSelectItem={handleSelectItem}
-            />
-
-            {/* Matches Component */}
+            {/* Only Matches Component remains */}
             <Matches 
               matches={filteredMatches}
               selectedItemName={selectedItem?.name || ''}
