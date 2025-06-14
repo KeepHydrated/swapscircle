@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
-import MyItems from '@/components/items/MyItems';
-import Matches from '@/components/items/Matches';
-import { Item, MatchItem } from '@/types/item';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
 import { useDbItems } from '@/hooks/useDbItems';
+import ItemCard from '@/components/items/ItemCard';
 
 const Home: React.FC = () => {
-  // Friend/fake items remain for carousel demo only
-  const [friendItems, setFriendItems] = useState<MatchItem[]>([
+  // Friend/fake items remain only for the top carousel demo
+  const [friendItems, setFriendItems] = useState([
     {
       id: "f1",
       name: "Vintage Camera Collection",
@@ -61,45 +60,10 @@ const Home: React.FC = () => {
     }
   ]);
 
-  // My user-created items (still demo for now)
-  const myItems: Item[] = [
-    { 
-      id: '1', 
-      name: 'Vintage Camera', 
-      image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32', 
-      category: 'photography',
-      condition: 'Brand New',
-      description: 'Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality vintage camera at a great value.',
-      tags: ['Electronics', 'Photography', 'Collectibles'],
-      priceRange: '$100 - $250'
-    }
-  ];
-
-  // Fetch all items from DB to show as Matches
+  // Fetch all items from DB to show in Explore section
   const { items: dbItems, loading: dbItemsLoading, error: dbItemsError } = useDbItems();
 
-  // State for selecting my item
-  const [selectedItemId, setSelectedItemId] = useState<string>('1');
-  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
-
-  // Like tracking now handled per-match component for DB items
-
-  // Find selected item (still demo, modifiable if you want to fetch your own items from DB)
-  const selectedItem = myItems.find(item => item.id === selectedItemId);
-
-  // Only show matches with a matching category to the "selected item" (remains as logic)
-  const filteredMatches = dbItems.filter(dbItem =>
-    selectedItem ? dbItem.category === selectedItem.category : true
-  );
-
-  // Handle selection
-  const handleSelectItem = (id: string) => {
-    setSelectedItemId(id);
-    setSelectedMatchId(null);
-  };
-  const handleSelectMatch = (id: string) => setSelectedMatchId(id || null);
-
-  // Friend items like/unlike (mock, unchanged)
+  // Friend items like/unlike (demo)
   const handleLikeFriendItem = (itemId: string) => {
     setFriendItems(items =>
       items.map(item =>
@@ -120,6 +84,7 @@ const Home: React.FC = () => {
             />
           </div>
           <div className="flex-1 min-h-0">
+            <h2 className="text-2xl font-bold mb-4">Explore Items</h2>
             {dbItemsLoading ? (
               <div className="flex justify-center items-center min-h-[200px]">
                 <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -127,12 +92,19 @@ const Home: React.FC = () => {
             ) : dbItemsError ? (
               <div className="text-red-600 text-center">{dbItemsError}</div>
             ) : (
-              <Matches 
-                matches={filteredMatches}
-                selectedItemName={selectedItem?.name || ''}
-                selectedMatchId={selectedMatchId}
-                onSelectMatch={handleSelectMatch}
-              />
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {dbItems.map(item => (
+                  <ItemCard
+                    key={item.id}
+                    id={item.id}
+                    name={item.name}
+                    image={item.image}
+                    isSelected={false}
+                    isMatch={false}
+                    onSelect={() => {}}
+                  />
+                ))}
+              </div>
             )}
           </div>
         </div>
