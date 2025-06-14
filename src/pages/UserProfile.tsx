@@ -4,7 +4,6 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Star, Users } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client'; 
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
@@ -16,140 +15,179 @@ import { CompletedTrade } from '@/types/profile';
 import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
-  const { user, supabaseConfigured } = useAuth();
+  // ALL user info is fetched from Supabase profiles table, not from context
   const [activeTab, setActiveTab] = useState('available');
+  const [userProfile, setUserProfile] = useState<null | {
+    id: string;
+    name: string;
+    avatar_url: string;
+    bio: string;
+    location: string;
+    created_at: string;
+  }>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userTrades, setUserTrades] = useState<CompletedTrade[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [profileKey, setProfileKey] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  // State for bio and location
-  const [profileBio, setProfileBio] = useState('');
-  const [profileLocation, setProfileLocation] = useState('');
-
-  // To ensure fetchProfileExtras is stable for cleanup/add/remove event listeners
-  const fetchProfileExtras = useCallback(async () => {
-    if (user && user.id && supabaseConfigured) {
-      console.log("[UserProfile] Fetching profile bio and location from DB for user:", user.id);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('bio, location')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (error) {
-        console.error('[UserProfile] Failed to fetch bio/location:', error);
-        setProfileBio('');
-        setProfileLocation('');
-      } else if (data) {
-        setProfileBio(data.bio || "");
-        setProfileLocation(data.location || "");
-        console.log("[UserProfile] Got bio:", data.bio, "location:", data.location);
-      } else {
-        setProfileBio('');
-        setProfileLocation('');
-        console.log("[UserProfile] No bio/location data returned.");
+  // Fetch current user's profile from DB
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setUserProfile(null);
+    try {
+      // Try getting session for user id
+      const { data: auth } = await supabase.auth.getSession();
+      const user_id = auth?.session?.user?.id;
+      if (!user_id) {
+        setError("No user session found.");
+        setLoading(false);
+        return;
       }
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, name, avatar_url, bio, location, created_at')
+        .eq('id', user_id)
+        .maybeSingle();
+
+      if (profileError) {
+        setError("Failed to fetch profile from database.");
+        setLoading(false);
+        return;
+      }
+      if (!profile) {
+        setError("Profile not found in database.");
+        setLoading(false);
+        return;
+      }
+
+      setUserProfile({
+        id: profile.id,
+        name: profile.name || "User",
+        avatar_url: profile.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop",
+        bio: profile.bio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
+        location: profile.location || 'Update your location in Settings',
+        created_at: profile.created_at,
+      });
+      setProfileKey(prev => prev + 1);
+    } catch (e) {
+      setError("Failed to load profile.");
+    } finally {
+      setLoading(false);
     }
-  }, [user, supabaseConfigured]);
+  }, []);
 
-  // Force re-render profile header key if name/avatar_url changed
+  // Refetch DB profile on mount, tab visibility/focus
   useEffect(() => {
-    setProfileKey(prev => prev + 1);
-  }, [user?.name, user?.avatar_url]);
-
-  // Fetch extended profile info (bio/location)
-  useEffect(() => {
-    fetchProfileExtras();
-  }, [fetchProfileExtras]);
-
-  // Listen for page focus/visibilitychange to update profile info
+    fetchProfile();
+  }, [fetchProfile]);
   useEffect(() => {
     function handleRefreshOnFocusOrVisibility() {
       if (document.visibilityState === 'visible') {
-        fetchProfileExtras();
+        fetchProfile();
       }
     }
-
-    window.addEventListener('focus', fetchProfileExtras);
+    window.addEventListener('focus', fetchProfile);
     document.addEventListener('visibilitychange', handleRefreshOnFocusOrVisibility);
-
     return () => {
-      window.removeEventListener('focus', fetchProfileExtras);
+      window.removeEventListener('focus', fetchProfile);
       document.removeEventListener('visibilitychange', handleRefreshOnFocusOrVisibility);
     };
-  }, [fetchProfileExtras]);
+  }, [fetchProfile]);
 
+  // Fetch user's items for trade (by Supabase user id)
   useEffect(() => {
-    if (user && supabaseConfigured) {
-      const fetchUserData = async () => {
-        setLoading(true);
-        try {
-          // Fetch user items from DB
-          const { data: items, error: itemsError } = await supabase
-            .from('items')
-            .select('*')
-            .eq('user_id', user.id);
-          if (itemsError) {
-            console.error('Error fetching items:', itemsError);
-            toast.error('Error loading items');
-            setUserItems([]);
-          } else if (items && Array.isArray(items)) {
-            const formattedItems = items.map(item => ({
-              id: item.id,
-              name: item.name,
-              image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-              category: item.category,
-              condition: item.condition,
-              description: item.description,
-              tags: item.tags,
-              liked: false,
-            }));
-            setUserItems(formattedItems);
-          } else {
-            setUserItems([]);
-          }
+    const fetchUserItems = async () => {
+      setUserItems([]);
+      if (!userProfile?.id) return;
+      try {
+        const { data: items, error: itemsError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('user_id', userProfile.id);
 
-          // The following data will come from DB in the future. Now, return empty arrays (no mocks)
-          setUserTrades([]);
-          setUserReviews([]);
-          setUserFriends([]);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+        if (itemsError) {
+          console.error('Error fetching items:', itemsError);
+          toast.error('Error loading items');
           setUserItems([]);
-          setUserTrades([]);
-          setUserReviews([]);
-          setUserFriends([]);
-        } finally {
-          setLoading(false);
+        } else if (items && Array.isArray(items)) {
+          const formattedItems = items.map(item => ({
+            id: item.id,
+            name: item.name,
+            image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+            category: item.category,
+            condition: item.condition,
+            description: item.description,
+            tags: item.tags,
+            liked: false,
+          }));
+          setUserItems(formattedItems);
         }
-      };
-      fetchUserData();
-    }
-  }, [user, supabaseConfigured]);
+      } catch (error) {
+        setUserItems([]);
+      }
+    };
+    if (userProfile?.id) fetchUserItems();
+  }, [userProfile]);
 
-  if (!user) {
-    return null; // Should be handled by RequireAuth
+  // The following features are not yet backed by Supabase; empty for now
+  useEffect(() => {
+    setUserTrades([]);
+    setUserReviews([]);
+    setUserFriends([]);
+  }, [userProfile?.id]);
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full" />
+        </div>
+      </MainLayout>
+    );
   }
 
-  // Use the fetched bio and location if available
-  const profileData = {
-    name: user?.name || 'User',
-    description: profileBio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
-    rating: 0, // Placeholder until implemented in DB. Remove this when ratings are implemented
-    reviewCount: userReviews.length,
-    location: profileLocation || 'Update your location in Settings',
-    memberSince: new Date().getFullYear().toString(),  // Placeholder, replace with user's actual date if stored
-    avatar_url: user?.avatar_url,
-  };
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="py-20 flex flex-col items-center">
+          <div className="text-lg font-semibold text-red-500">{error}</div>
+          <button className="mt-6 px-4 py-2 rounded bg-primary text-white" onClick={() => fetchProfile()}>
+            Retry
+          </button>
+        </div>
+      </MainLayout>
+    );
+  }
 
-  console.log("[UserProfile] Render profileData:", profileData);
+  if (!userProfile) {
+    return (
+      <MainLayout>
+        <div className="py-20 flex flex-col items-center">
+          <div className="text-lg">No profile found.</div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  const profileData = {
+    name: userProfile.name,
+    description: userProfile.bio,
+    rating: 0, // Placeholder for now.
+    reviewCount: userReviews.length,
+    location: userProfile.location,
+    memberSince: userProfile.created_at
+      ? new Date(userProfile.created_at).getFullYear().toString()
+      : "",
+    avatar_url: userProfile.avatar_url,
+  };
 
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
-        {/* Profile Header */}
         <ProfileHeader 
           key={profileKey}
           profile={profileData}
