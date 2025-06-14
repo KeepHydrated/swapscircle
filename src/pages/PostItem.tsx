@@ -194,18 +194,18 @@ const PostItem: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12 px-4">
+      {/* Hero Section - Updated to match site theme */}
+      <div className="bg-white border-b border-gray-200 py-8 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center mb-4">
-            <Sparkles className="h-8 w-8 mr-3 text-yellow-300" />
-            <h1 className="text-4xl font-bold">Create Your Trade Listing</h1>
-            <Sparkles className="h-8 w-8 ml-3 text-yellow-300" />
+            <Sparkles className="h-6 w-6 mr-3 text-blue-600" />
+            <h1 className="text-3xl font-bold text-gray-900">Create Your Trade Listing</h1>
+            <Sparkles className="h-6 w-6 ml-3 text-blue-600" />
           </div>
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Share what you have and discover what you want. Connect with fellow traders and make meaningful exchanges.
           </p>
         </div>
@@ -216,11 +216,11 @@ const PostItem: React.FC = () => {
           {/* What You're Offering Column */}
           <div className="space-y-6">
             <div className="flex items-center mb-6">
-              <div className="bg-blue-100 p-3 rounded-full mr-4">
+              <div className="bg-blue-50 p-3 rounded-full mr-4">
                 <Package className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">What You're Offering</h2>
+                <h2 className="text-2xl font-bold text-gray-900">What You're Offering</h2>
                 <p className="text-gray-600">Tell us about the item you want to trade</p>
               </div>
             </div>
@@ -245,11 +245,11 @@ const PostItem: React.FC = () => {
           {/* What You're Looking For Column */}
           <div className="space-y-6">
             <div className="flex items-center mb-6">
-              <div className="bg-purple-100 p-3 rounded-full mr-4">
+              <div className="bg-purple-50 p-3 rounded-full mr-4">
                 <Heart className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">What You're Looking For</h2>
+                <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
                 <p className="text-gray-600">Describe what you'd like to receive in return</p>
               </div>
             </div>
@@ -282,7 +282,7 @@ const PostItem: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12 max-w-7xl mx-auto">
           <Button
             variant="outline"
-            className="flex items-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
+            className="flex items-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-sm hover:shadow-md transition-all duration-200"
             onClick={() => setSaveDialogOpen(true)}
           >
             <Save className="mr-2 h-5 w-5" />
@@ -292,7 +292,7 @@ const PostItem: React.FC = () => {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {isSubmitting ? (
               <>

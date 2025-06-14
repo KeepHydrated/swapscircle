@@ -102,15 +102,15 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-      <div className="space-y-8">
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+      <div className="space-y-6">
         {/* Image Upload */}
         <div>
-          <Label htmlFor="images" className="text-lg font-semibold text-gray-800 mb-3 block">Add Images</Label>
-          <div className="mt-2 border-2 border-dashed border-blue-300 rounded-xl p-8 flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
-            <Upload className="h-12 w-12 text-blue-500 mb-3" />
-            <p className="text-lg font-medium text-blue-700 mb-1">Upload your item photos</p>
-            <p className="text-sm text-blue-600 mb-4">Add up to 5 high-quality images</p>
+          <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Add Images</Label>
+          <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+            <Upload className="h-10 w-10 text-gray-400 mb-3" />
+            <p className="text-base font-medium text-gray-700 mb-1">Upload your item photos</p>
+            <p className="text-sm text-gray-500 mb-4">Add up to 5 high-quality images</p>
             <input
               id="images"
               type="file"
@@ -121,7 +121,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
             />
             <Button 
               variant="outline" 
-              className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 px-6 py-2"
+              className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2"
               onClick={() => document.getElementById('images')?.click()}
             >
               <ImagePlus className="mr-2 h-4 w-4" />
@@ -153,49 +153,49 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         </div>
         
         {/* Title */}
-        <div className="space-y-3">
-          <Label htmlFor="title" className="text-lg font-semibold text-gray-800">Item Title</Label>
+        <div className="space-y-2">
+          <Label htmlFor="title" className="text-lg font-semibold text-gray-900">Item Title</Label>
           <Input 
             id="title" 
             placeholder="Give your item a catchy title..." 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="h-12 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            className="h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
         
         {/* Description */}
-        <div className="space-y-3">
-          <Label htmlFor="description" className="text-lg font-semibold text-gray-800">Description</Label>
+        <div className="space-y-2">
+          <Label htmlFor="description" className="text-lg font-semibold text-gray-900">Description</Label>
           <Textarea 
             id="description" 
             placeholder="Tell potential traders about your item's condition, history, and any special features..." 
-            rows={5}
+            rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Condition */}
-          <div className="space-y-3">
-            <Label htmlFor="condition" className="text-lg font-semibold text-gray-800">Condition</Label>
+          <div className="space-y-2">
+            <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition</Label>
             <Select value={condition} onValueChange={setCondition}>
               <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
                 <SelectValue placeholder="Select condition" />
               </SelectTrigger>
               <SelectContent>
                 {conditions.map((cond) => (
-                  <SelectItem key={cond} value={cond} className="text-base py-3">{cond}</SelectItem>
+                  <SelectItem key={cond} value={cond} className="text-base py-2">{cond}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           
           {/* Category */}
-          <div className="space-y-3">
-            <Label htmlFor="category" className="text-lg font-semibold text-gray-800">Category</Label>
+          <div className="space-y-2">
+            <Label htmlFor="category" className="text-lg font-semibold text-gray-900">Category</Label>
             <Select 
               value={category} 
               onValueChange={(value) => {
@@ -208,25 +208,25 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(categories).map((cat) => (
-                  <SelectItem key={cat} value={cat} className="text-base py-3">{cat}</SelectItem>
+                  <SelectItem key={cat} value={cat} className="text-base py-2">{cat}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Subcategory - only show if category is selected */}
           {category && (
-            <div className="space-y-3">
-              <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-800">Subcategory</Label>
+            <div className="space-y-2">
+              <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-900">Subcategory</Label>
               <Select value={subcategory} onValueChange={setSubcategory}>
                 <SelectTrigger id="subcategory" className="h-12 text-base border-gray-300 focus:border-blue-500">
                   <SelectValue placeholder="Select a subcategory" />
                 </SelectTrigger>
                 <SelectContent>
                   {getSubcategories().map((subcat) => (
-                    <SelectItem key={subcat} value={subcat} className="text-base py-3">{subcat}</SelectItem>
+                    <SelectItem key={subcat} value={subcat} className="text-base py-2">{subcat}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -234,15 +234,15 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           )}
           
           {/* Price Range */}
-          <div className="space-y-3">
-            <Label htmlFor="price-range" className="text-lg font-semibold text-gray-800">Estimated Value</Label>
+          <div className="space-y-2">
+            <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Estimated Value</Label>
             <Select value={priceRange} onValueChange={setPriceRange}>
               <SelectTrigger id="price-range" className="h-12 text-base border-gray-300 focus:border-blue-500">
                 <SelectValue placeholder="Select value range" />
               </SelectTrigger>
               <SelectContent>
                 {priceRanges.map((range) => (
-                  <SelectItem key={range} value={range} className="text-base py-3">
+                  <SelectItem key={range} value={range} className="text-base py-2">
                     {range}
                   </SelectItem>
                 ))}
