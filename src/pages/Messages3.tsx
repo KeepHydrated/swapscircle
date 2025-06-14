@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -65,7 +64,7 @@ const Messages3 = () => {
           <h2 className="text-xl font-medium mb-6 text-gray-600">Your Match Opportunities</h2>
           
           {/* Item matches carousel */}
-          <div className="relative px-12"> {/* Added padding for arrow space */}
+          <div className="relative px-12">
             <Carousel
               setApi={setApi}
               className="w-full"
@@ -134,7 +133,7 @@ const Messages3 = () => {
               </Button>
               
               <div className="bg-white rounded-lg overflow-hidden">
-                <ItemDetailsPopup
+                <ItemDetailsModal
                   item={selectedMatch}
                   isOpen={true}
                   onClose={handleClosePopup}

@@ -134,7 +134,7 @@ const Matches: React.FC<MatchesProps> = ({
       
       {/* Popup for displaying match details */}
       {selectedMatch && (
-        <ItemDetailsPopup
+        <ItemDetailsModal
           item={selectedMatch}
           isOpen={!!selectedMatch}
           onClose={handleClosePopup}
