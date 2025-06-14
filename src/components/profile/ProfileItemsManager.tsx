@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '@/types/item';
@@ -13,6 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { deleteItem } from '@/services/authService'; // <-- FIX: properly import
 
 interface ProfileItemsManagerProps {
   initialItems: Item[];

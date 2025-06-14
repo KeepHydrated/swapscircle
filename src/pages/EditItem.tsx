@@ -21,7 +21,7 @@ const EditItem: React.FC = () => {
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<string>(""); // UI uses camelCase
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -60,7 +60,7 @@ const EditItem: React.FC = () => {
           setDescription(item.description || '');
           setCategory(item.category || '');
           setCondition(item.condition || '');
-          setPriceRange(item.priceRange || '');
+          setPriceRange(item.price_range || ''); // Map snake_case from DB to camelCase in component state
           setSubcategory('');
           // images field is not handled from DB yet
         } else {
@@ -74,34 +74,30 @@ const EditItem: React.FC = () => {
   }, [itemId, navigate]);
 
   const handleSubmit = async () => {
-    // Validation
     if (!title.trim()) {
       toast.error('Please enter a title for your item');
       return;
     }
-
     if (!category) {
       toast.error('Please select a category for your item');
       return;
     }
-
     if (!condition) {
       toast.error('Please select the condition of your item');
       return;
     }
-
     setIsSubmitting(true);
-    
     try {
       if (itemId) {
-        const success = await updateItem(itemId, {
+        const updates: any = {
           name: title,
           description,
           category,
           condition,
-          priceRange,
+          price_range: priceRange, // Map camelCase UI state to snake_case DB column
           // tags/subcategory can be added here if needed
-        });
+        };
+        const success = await updateItem(itemId, updates);
         if (success) {
           toast.success('Your item has been updated successfully!');
           navigate('/');
