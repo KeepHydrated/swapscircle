@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -28,34 +28,54 @@ const UserProfile: React.FC = () => {
   const [profileBio, setProfileBio] = useState('');
   const [profileLocation, setProfileLocation] = useState('');
 
+  // To ensure fetchProfileExtras is stable for cleanup/add/remove event listeners
+  const fetchProfileExtras = useCallback(async () => {
+    if (user && user.id && supabaseConfigured) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('bio, location')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (error) {
+        console.error('Failed to fetch bio/location:', error);
+        setProfileBio('');
+        setProfileLocation('');
+      } else if (data) {
+        setProfileBio(data.bio || "");
+        setProfileLocation(data.location || "");
+      } else {
+        setProfileBio('');
+        setProfileLocation('');
+      }
+    }
+  }, [user, supabaseConfigured]);
+
+  // Force re-render profile header key if name/avatar_url changed
   useEffect(() => {
     setProfileKey(prev => prev + 1);
   }, [user?.name, user?.avatar_url]);
 
-  // Fetch profile bio and location from Supabase (profiles table)
+  // Fetch extended profile info (bio/location)
   useEffect(() => {
-    const fetchProfileExtras = async () => {
-      if (user && user.id && supabaseConfigured) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('bio, location')
-          .eq('id', user.id)
-          .maybeSingle();
-        if (error) {
-          console.error('Failed to fetch bio/location:', error);
-          setProfileBio('');
-          setProfileLocation('');
-        } else if (data) {
-          setProfileBio(data.bio || "");
-          setProfileLocation(data.location || "");
-        } else {
-          setProfileBio('');
-          setProfileLocation('');
-        }
-      }
-    };
     fetchProfileExtras();
-  }, [user, supabaseConfigured]);
+  }, [fetchProfileExtras]);
+
+  // Listen for page focus/visibilitychange to update profile info
+  useEffect(() => {
+    function handleRefreshOnFocusOrVisibility() {
+      if (document.visibilityState === 'visible') {
+        fetchProfileExtras();
+      }
+    }
+
+    window.addEventListener('focus', fetchProfileExtras);
+    document.addEventListener('visibilitychange', handleRefreshOnFocusOrVisibility);
+
+    return () => {
+      window.removeEventListener('focus', fetchProfileExtras);
+      document.removeEventListener('visibilitychange', handleRefreshOnFocusOrVisibility);
+    };
+  }, [fetchProfileExtras]);
 
   useEffect(() => {
     if (user && supabaseConfigured) {
