@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
@@ -51,7 +52,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9'
   ];
 
-  // Handle like click with popup closing
   const handleLikeClick = (item: MatchItem) => {
     if (onLikeClick) {
       onLikeClick(item);
@@ -60,25 +60,13 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 
   const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
 
-  // Add debugging
-  // console.log('ItemDetailsPopup props:', {
-  //   showNavigation,
-  //   currentIndex,
-  //   totalItems,
-  //   hasNavigatePrev: !!onNavigatePrev,
-  //   hasNavigateNext: !!onNavigateNext
-  // });
-
-  // Handle navigation with debugging
   const handleNavigatePrev = () => {
-    // console.log('Prev button clicked');
     if (onNavigatePrev) {
       onNavigatePrev();
     }
   };
 
   const handleNavigateNext = () => {
-    // console.log('Next button clicked');
     if (onNavigateNext) {
       onNavigateNext();
     }
@@ -107,7 +95,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
         >
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
-          {/* Navigation arrows: positioned outside the modal border, centered vertically */}
+          {/* Navigation arrows visually outside the modal border, attached at center */}
           {showNavigation && isOpen && (
             <>
               {/* Left arrow */}
@@ -115,14 +103,16 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 onClick={handleNavigatePrev}
                 className="
                   absolute
-                  -left-7
+                  left-0
                   top-1/2
+                  -translate-x-1/2
                   -translate-y-1/2
                   w-12 h-12
                   bg-white shadow-lg border border-gray-200
                   rounded-full flex items-center justify-center
                   hover:bg-gray-50
-                  z-[70] transition-colors
+                  z-[70]
+                  transition-colors
                   focus:outline-none focus:ring-2 focus:ring-primary
                 "
                 aria-label="Previous match"
@@ -134,14 +124,16 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 onClick={handleNavigateNext}
                 className="
                   absolute
-                  -right-7
+                  right-0
                   top-1/2
+                  translate-x-1/2
                   -translate-y-1/2
                   w-12 h-12
                   bg-white shadow-lg border border-gray-200
                   rounded-full flex items-center justify-center
                   hover:bg-gray-50
-                  z-[70] transition-colors
+                  z-[70]
+                  transition-colors
                   focus:outline-none focus:ring-2 focus:ring-primary
                 "
                 aria-label="Next match"
@@ -182,3 +174,4 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 };
 
 export default ItemDetailsPopup;
+
