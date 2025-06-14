@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import MyItems from '@/components/items/MyItems';
@@ -167,18 +168,17 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <HomeWithLocationFilter>
-        <div className="flex-1 p-4 md:p-6">
-          {/* Friend's Items Section */}
-          <div className="mb-8">
+        <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
+          {/* Friend's Items Section - fixed height container */}
+          <div className="mb-8 h-64">
             <FriendItemsCarousel 
               items={friendItems} 
               onLikeItem={handleLikeFriendItem} 
             />
           </div>
 
-          {/* Removed the My Items component and its containing column */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Only Matches Component remains */}
+          {/* Matches Component - takes remaining space */}
+          <div className="flex-1 min-h-0">
             <Matches 
               matches={filteredMatches}
               selectedItemName={selectedItem?.name || ''}
