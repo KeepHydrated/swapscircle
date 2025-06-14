@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,11 +54,42 @@ const ProfileSettings: React.FC = () => {
     },
   });
 
+  // ---- NEW HELPER FUNCTION TO CREATE PROFILE ROW IF MISSING ----
+  const createProfileIfMissing = async () => {
+    if (!user) return;
+    // Attempt to fetch profile
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (!profile) {
+      // No profile row exists! Try to create minimal default row
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          name: user.name || user.email?.split('@')[0] || "User",
+          email: user.email || "",
+          avatar_url: user.avatar_url || "",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      if (!insertError) {
+        // Optionally reload page to pick up new profile row.
+        // window.location.reload();
+      }
+    }
+  };
+
   // Fetch user profile data from Supabase on mount and set form values
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
       setInitialLoading(true);
+
+      // Ensure profile row exists!
+      await createProfileIfMissing();
 
       console.log("[ProfileSettings] Fetching profile from DB for user:", user.id);
 
