@@ -108,7 +108,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
         >
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
-          {/* Navigation arrows - flush to the modal border */}
+          {/* Navigation arrows - outside the modal border */}
           {showNavigation && isOpen && (
             <>
               <button
@@ -116,8 +116,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 className="
                   absolute left-0 top-1/2
                   -translate-y-1/2
+                  -translate-x-full
                   w-11 h-11
-                  -translate-x-1/2
                   bg-white/90 hover:bg-white
                   rounded-full border border-gray-200
                   flex items-center justify-center
@@ -143,8 +143,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
                 className="
                   absolute right-0 top-1/2
                   -translate-y-1/2
+                  translate-x-full
                   w-11 h-11
-                  translate-x-1/2
                   bg-white/90 hover:bg-white
                   rounded-full border border-gray-200
                   flex items-center justify-center
