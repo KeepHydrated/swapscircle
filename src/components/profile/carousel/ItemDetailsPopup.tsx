@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchItem } from '@/types/item';
@@ -108,62 +107,46 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
         >
           <DialogTitle className="sr-only">{item.name}</DialogTitle>
           
-          {/* Navigation arrows - outside the modal border */}
+          {/* Navigation arrows: positioned outside the modal border, centered vertically */}
           {showNavigation && isOpen && (
             <>
+              {/* Left arrow */}
               <button
                 onClick={handleNavigatePrev}
                 className="
-                  absolute left-0 top-1/2
+                  absolute
+                  -left-7
+                  top-1/2
                   -translate-y-1/2
-                  -translate-x-full
-                  w-11 h-11
-                  bg-white/90 hover:bg-white
-                  rounded-full border border-gray-200
-                  flex items-center justify-center
-                  shadow-lg transition-colors
-                  z-50 outline-none
-                  focus:ring-2 focus:ring-primary
+                  w-12 h-12
+                  bg-white shadow-lg border border-gray-200
+                  rounded-full flex items-center justify-center
+                  hover:bg-gray-50
+                  z-[70] transition-colors
+                  focus:outline-none focus:ring-2 focus:ring-primary
                 "
                 aria-label="Previous match"
-                style={{
-                  boxShadow: "0px 2px 10px #0002"
-                }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  className="lucide lucide-arrow-left w-6 h-6 text-gray-700"
-                >
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
+                <ChevronLeft className="w-7 h-7 text-gray-700" />
               </button>
+              {/* Right arrow */}
               <button
                 onClick={handleNavigateNext}
                 className="
-                  absolute right-0 top-1/2
+                  absolute
+                  -right-7
+                  top-1/2
                   -translate-y-1/2
-                  translate-x-full
-                  w-11 h-11
-                  bg-white/90 hover:bg-white
-                  rounded-full border border-gray-200
-                  flex items-center justify-center
-                  shadow-lg transition-colors
-                  z-50 outline-none
-                  focus:ring-2 focus:ring-primary
+                  w-12 h-12
+                  bg-white shadow-lg border border-gray-200
+                  rounded-full flex items-center justify-center
+                  hover:bg-gray-50
+                  z-[70] transition-colors
+                  focus:outline-none focus:ring-2 focus:ring-primary
                 "
                 aria-label="Next match"
-                style={{
-                  boxShadow: "0px 2px 10px #0002"
-                }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  className="lucide lucide-arrow-right w-6 h-6 text-gray-700"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
+                <ChevronRight className="w-7 h-7 text-gray-700" />
               </button>
             </>
           )}
@@ -180,7 +163,11 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           
           <div className="flex flex-col md:flex-row h-[60vh] max-h-[550px] overflow-hidden">
             {/* Left side - Image Carousel */}
-            <ItemImageCarousel images={images} itemName={item.name} className="md:w-[50%]" />
+            <ItemImageCarousel
+              images={images}
+              itemName={item.name}
+              className="md:w-[50%]"
+            />
             
             {/* Right side - Item details */}
             <ItemDetailsContent 
@@ -195,4 +182,3 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 };
 
 export default ItemDetailsPopup;
-
