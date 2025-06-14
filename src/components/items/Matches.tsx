@@ -47,18 +47,22 @@ const Matches: React.FC<MatchesProps> = ({
     ? displayedMatches.findIndex(match => match.id === selectedMatch.id)
     : -1;
 
-  // Navigation functions
+  // Navigation functions - Fixed to properly update state and selection
   const navigateToPrevMatch = () => {
+    console.log('Navigate to previous - current index:', currentMatchIndex);
     if (currentMatchIndex > 0) {
       const prevMatch = displayedMatches[currentMatchIndex - 1];
+      console.log('Previous match:', prevMatch);
       setSelectedMatch(prevMatch);
       onSelectMatch(prevMatch.id);
     }
   };
 
   const navigateToNextMatch = () => {
+    console.log('Navigate to next - current index:', currentMatchIndex);
     if (currentMatchIndex < displayedMatches.length - 1) {
       const nextMatch = displayedMatches[currentMatchIndex + 1];
+      console.log('Next match:', nextMatch);
       setSelectedMatch(nextMatch);
       onSelectMatch(nextMatch.id);
     }

@@ -61,6 +61,30 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 
   const showNavigation = onNavigatePrev && onNavigateNext && totalItems && totalItems > 1;
 
+  // Add debugging
+  console.log('ItemDetailsPopup props:', {
+    showNavigation,
+    currentIndex,
+    totalItems,
+    hasNavigatePrev: !!onNavigatePrev,
+    hasNavigateNext: !!onNavigateNext
+  });
+
+  // Handle navigation with debugging
+  const handleNavigatePrev = () => {
+    console.log('Prev button clicked');
+    if (onNavigatePrev) {
+      onNavigatePrev();
+    }
+  };
+
+  const handleNavigateNext = () => {
+    console.log('Next button clicked');
+    if (onNavigateNext) {
+      onNavigateNext();
+    }
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -96,7 +120,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
       {showNavigation && isOpen && (
         <>
           <button
-            onClick={onNavigatePrev}
+            onClick={handleNavigatePrev}
             className="fixed left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-50 border border-gray-200"
             aria-label="Previous match"
           >
@@ -104,7 +128,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           </button>
           
           <button
-            onClick={onNavigateNext}
+            onClick={handleNavigateNext}
             className="fixed right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors z-50 border border-gray-200"
             aria-label="Next match"
           >
