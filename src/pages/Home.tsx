@@ -169,8 +169,8 @@ const Home: React.FC = () => {
       <Header />
       <HomeWithLocationFilter>
         <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
-          {/* Friend's Items Section - fixed height container */}
-          <div className="mb-8 h-64">
+          {/* Friend's Items Section - increased height container */}
+          <div className="mb-8 h-96">
             <FriendItemsCarousel 
               items={friendItems} 
               onLikeItem={handleLikeFriendItem} 
