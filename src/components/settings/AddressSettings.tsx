@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const AddressSettings: React.FC = () => {
@@ -14,6 +15,41 @@ const AddressSettings: React.FC = () => {
     zipCode: '',
     country: 'United States'
   });
+  const [loading, setLoading] = useState(false);
+
+  // Fetch current user's address profile on mount
+  useEffect(() => {
+    const fetchAddress = async () => {
+      setLoading(true);
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('street, city, state, zip_code')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (error) {
+          toast.error("Failed to load address.");
+        } else if (data) {
+          setAddress({
+            street: data.street || '',
+            city: data.city || '',
+            state: data.state || '',
+            zipCode: data.zip_code || '',
+            country: 'United States'
+          });
+        }
+      }
+      setLoading(false);
+    };
+    fetchAddress();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,10 +59,32 @@ const AddressSettings: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Address saved successfully');
-    console.log('Address saved:', address);
+    setLoading(true);
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          zip_code: address.zipCode,
+        })
+        .eq('id', user.id);
+      if (error) {
+        toast.error("Failed to save address.");
+      } else {
+        toast.success('Address saved successfully');
+      }
+    } else {
+      toast.error('You must be logged in.');
+    }
+    setLoading(false);
   };
 
   return (
@@ -47,6 +105,7 @@ const AddressSettings: React.FC = () => {
               value={address.street}
               onChange={handleChange}
               placeholder="123 Main St"
+              disabled={loading}
             />
           </div>
           
@@ -59,6 +118,7 @@ const AddressSettings: React.FC = () => {
                 value={address.city}
                 onChange={handleChange}
                 placeholder="San Francisco"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -69,6 +129,7 @@ const AddressSettings: React.FC = () => {
                 value={address.state}
                 onChange={handleChange}
                 placeholder="California"
+                disabled={loading}
               />
             </div>
           </div>
@@ -82,6 +143,7 @@ const AddressSettings: React.FC = () => {
                 value={address.zipCode}
                 onChange={handleChange}
                 placeholder="94105"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -97,7 +159,9 @@ const AddressSettings: React.FC = () => {
             </div>
           </div>
           
-          <Button type="submit">Save Address</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Save Address"}
+          </Button>
         </form>
       </CardContent>
     </Card>
