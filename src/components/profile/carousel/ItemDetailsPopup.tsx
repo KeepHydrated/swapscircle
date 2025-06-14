@@ -76,6 +76,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   React.useEffect(() => {
     if (isOpen) {
       console.log("[ItemDetailsPopup] Modal OPEN for item:", item);
+      // Extra debug
+      window.__lastItemDetailsPopupOpened = item;
     }
   }, [isOpen, item]);
 
@@ -83,17 +85,33 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) onClose();
     }}>
+      {/* VISIBLE DEBUG ONLY */}
       <DialogContent
         className={`
           max-w-[1200px] w-[99vw] md:w-[1050px]
           max-h-[93vh] min-h-[580px] flex flex-col justify-center
-          relative bg-white rounded-2xl shadow-2xl p-0 border-0
+          relative bg-white rounded-2xl shadow-2xl p-0 border-4 border-red-500
           ${className}
           animate-fade-in
         `}
-        // Removed onPointerDownOutside
-        style={{ overflow: "visible" }}
+        style={{
+          overflow: "visible",
+          zIndex: 50000, // maximize zIndex
+          backgroundColor: "rgba(255,255,255,0.98)" // make sure it's NOT transparent
+        }}
       >
+        <div style={{
+          color: 'red',
+          fontSize: 40,
+          textAlign: 'center',
+          fontWeight: 900,
+          border: '4px solid orange',
+          margin: 8,
+          background: 'rgba(255,255,0,0.1)',
+          borderRadius: 12
+        }}>
+          DEBUG: MODAL IS OPEN!
+        </div>
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
         <DialogDescription>
           Details and actions for item: {item.name}
@@ -108,7 +126,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           onDeleteClick={onDeleteClick}
           canEdit={canEdit}
         />
-        {/* Card Main Content: Row with images and info */}
         <div className="flex flex-col md:flex-row h-[520px] md:h-[540px]">
           {/* Left: Images */}
           <ItemImageCarousel
@@ -116,7 +133,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             itemName={item.name}
             className="md:w-[54%] w-full h-64 md:h-full rounded-l-2xl object-cover"
           />
-          {/* Right: Info, Centered vertically and horizontally */}
+          {/* Right: Info */}
           <div className="flex-1 flex items-center justify-center px-8 py-5">
             <ItemDetailsContent 
               name={item.name} 
@@ -124,10 +141,8 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             />
           </div>
         </div>
-        {/* Navigation arrows: absolutely attach to the sides of the card */}
         {showNavigation && (
           <>
-            {/* Arrow LEFT */}
             <button
               onClick={handleNavigatePrev}
               className="
@@ -152,7 +167,6 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
             >
               <ChevronLeft className="w-8 h-8 text-gray-700" />
             </button>
-            {/* Arrow RIGHT */}
             <button
               onClick={handleNavigateNext}
               className="
