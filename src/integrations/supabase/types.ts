@@ -120,6 +120,7 @@ export type Database = {
           location: string | null
           name: string | null
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -130,6 +131,7 @@ export type Database = {
           location?: string | null
           name?: string | null
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -140,6 +142,7 @@ export type Database = {
           location?: string | null
           name?: string | null
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
