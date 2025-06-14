@@ -77,7 +77,7 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     if (isOpen) {
       console.log("[ItemDetailsPopup] Modal OPEN for item:", item);
       // Extra debug
-      window.__lastItemDetailsPopupOpened = item;
+      (window as any).__lastItemDetailsPopupOpened = item;
     }
   }, [isOpen, item]);
 
