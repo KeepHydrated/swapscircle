@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -6,7 +5,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { Star } from 'lucide-react';
 import { MatchItem } from '@/types/item';
-import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
+import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
 
@@ -108,7 +107,7 @@ const OtherPersonProfile: React.FC = () => {
 
       {/* Item Details Popup - no edit controls for other person's items */}
       {popupItem && (
-        <ItemDetailsPopup 
+        <ItemDetailsModal 
           item={popupItem}
           isOpen={!!popupItem}
           onClose={handlePopupClose}

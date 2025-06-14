@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
+import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { 
   Carousel, 
   CarouselContent, 

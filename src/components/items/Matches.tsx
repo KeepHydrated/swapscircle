@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
-import ItemDetailsPopup from '@/components/profile/carousel/ItemDetailsPopup';
+import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import MatchesContainer from './matches/MatchesContainer';
 import { useMatchActions } from './matches/useMatchActions';
 
