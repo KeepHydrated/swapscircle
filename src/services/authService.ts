@@ -221,7 +221,7 @@ export const postItem = async (item: Item) => {
   }
 };
 
-// New function to handle image upload
+// Updated function to handle image upload
 export const uploadItemImage = async (file: File): Promise<string | null> => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
@@ -239,30 +239,7 @@ export const uploadItemImage = async (file: File): Promise<string | null> => {
     const fileName = `${session.user.id}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
     const filePath = `${session.user.id}/${fileName}`;
 
-    // Check if the bucket exists
-    let { data: bucket } = await supabase.storage.getBucket('item-images');
-    
-    // Create the bucket if it doesn't exist
-    if (!bucket) {
-      try {
-        // Create the bucket
-        const { error: createBucketError } = await supabase.storage.createBucket('item-images', {
-          public: true,
-          fileSizeLimit: 5242880, // 5MB
-          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
-        });
-
-        if (createBucketError) {
-          console.error('Error creating bucket:', createBucketError);
-          toast.error('Error creating storage bucket');
-          return null;
-        }
-      } catch (error) {
-        console.error('Error checking/creating bucket:', error);
-      }
-    }
-
-    // Upload the file
+    // Upload the file to the existing bucket
     const { error: uploadError } = await supabase.storage
       .from('item-images')
       .upload(filePath, file);
