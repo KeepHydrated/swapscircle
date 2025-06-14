@@ -46,18 +46,22 @@ const Matches: React.FC<MatchesProps> = ({
     ? displayedMatches.findIndex(match => match.id === selectedMatch.id)
     : -1;
 
-  // Navigation functions - Only update selectedMatchId to leverage effect
+  // Navigation functions - update selectedMatchId to leverage effect
   const navigateToPrevMatch = () => {
     if (currentMatchIndex > 0) {
       const prevMatch = displayedMatches[currentMatchIndex - 1];
-      onSelectMatch(prevMatch.id); // Only update id
+      if (prevMatch) {
+        onSelectMatch(prevMatch.id);
+      }
     }
   };
 
   const navigateToNextMatch = () => {
     if (currentMatchIndex < displayedMatches.length - 1) {
       const nextMatch = displayedMatches[currentMatchIndex + 1];
-      onSelectMatch(nextMatch.id); // Only update id
+      if (nextMatch) {
+        onSelectMatch(nextMatch.id);
+      }
     }
   };
   
