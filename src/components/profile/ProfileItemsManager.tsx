@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '@/types/item';
@@ -25,14 +26,14 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Function to handle clicking on an item to edit
+  // Function to handle clicking on an item - navigate to item details page
   const handleItemClick = (item: Item) => {
     // If onItemClick prop is provided, call it with the item id
     if (onItemClick) {
       onItemClick(item.id);
     } else {
-      // Otherwise, navigate to edit page
-      navigate(`/edit-item/${item.id}`);
+      // Navigate to item details page (you may need to adjust this route)
+      navigate(`/item/${item.id}`);
     }
   };
 

@@ -62,6 +62,7 @@ const UserProfile: React.FC = () => {
               toast.error('Error loading items');
               setUserItems([]);
             } else if (items && Array.isArray(items)) {
+              console.log('Fetched items from database:', items);
               // Convert to MatchItem format
               const formattedItems = items.map(item => ({
                 id: item.id,
@@ -74,6 +75,7 @@ const UserProfile: React.FC = () => {
                 liked: false
               }));
               
+              console.log('Formatted items for display:', formattedItems);
               setUserItems(formattedItems);
             } else {
               setUserItems([]);
