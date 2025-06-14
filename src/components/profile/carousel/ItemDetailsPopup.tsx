@@ -5,8 +5,8 @@ import { MatchItem } from '@/types/item';
 import {
   Dialog,
   DialogContent,
-  DialogOverlay,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import ItemImageCarousel from './popup/ItemImageCarousel';
 import ItemDetailsContent from './popup/ItemDetailsContent';
@@ -72,9 +72,17 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
     }
   };
 
+  // Debug: log when the dialog opens
+  React.useEffect(() => {
+    if (isOpen) {
+      console.log("[ItemDetailsPopup] Modal OPEN for item:", item);
+    }
+  }, [isOpen, item]);
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      {/* Overlay is included by DialogContent itself, don't manually add it here! */}
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) onClose();
+    }}>
       <DialogContent
         className={`
           max-w-[1200px] w-[99vw] md:w-[1050px]
@@ -83,10 +91,13 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
           ${className}
           animate-fade-in
         `}
-        onPointerDownOutside={onClose}
+        // Removed onPointerDownOutside
         style={{ overflow: "visible" }}
       >
         <DialogTitle className="sr-only">{item.name}</DialogTitle>
+        <DialogDescription>
+          Details and actions for item: {item.name}
+        </DialogDescription>
         {/* Action Buttons inside card, top-right */}
         <ActionButtons 
           item={item} 
@@ -174,4 +185,3 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 };
 
 export default ItemDetailsPopup;
-
