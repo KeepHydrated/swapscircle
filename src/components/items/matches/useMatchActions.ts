@@ -32,86 +32,84 @@ export const useMatchActions = (
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const navigate = useNavigate();
 
-  // Load liked status for all matches on component mount (for UUIDs only)
-  useEffect(() => {
-    const loadLikedStatus = async () => {
-      if (!user || !supabaseConfigured || matches.length === 0) {
-        return;
-      }
-
-      const likedStatus: Record<string, boolean> = {};
-
-      for (const match of matches) {
-        if (isValidUUID(match.id)) {
-          try {
-            const liked = await isItemLiked(match.id);
-            likedStatus[match.id] = liked;
-          } catch (e) {
-            // If error, set false/skip
-            likedStatus[match.id] = false;
-          }
+  // Helper: load liked status for all UUID-backed matches
+  const loadLikedStatus = async () => {
+    if (!user || !supabaseConfigured || matches.length === 0) {
+      setLikedItems({});
+      return;
+    }
+    const likedStatus: Record<string, boolean> = {};
+    for (const match of matches) {
+      if (isValidUUID(match.id)) {
+        try {
+          const liked = await isItemLiked(match.id);
+          likedStatus[match.id] = liked;
+        } catch (e) {
+          likedStatus[match.id] = false;
         }
       }
+    }
+    setLikedItems(likedStatus);
+  };
 
-      setLikedItems(likedStatus);
-    };
-
+  // Load liked status on mount and when user/supabase/matches change
+  useEffect(() => {
     loadLikedStatus();
+    // eslint-disable-next-line
   }, [matches, user, supabaseConfigured]);
 
-  // Handle liking an item
+  // Handle liking/unliking an item
   const handleLike = async (id: string) => {
     if (!user) {
       toast.error('Please log in to like items');
       return;
     }
+
     const isCurrentlyLiked = likedItems[id];
 
-    // Check if it's a UUID (DB backed)
     if (supabaseConfigured && isValidUUID(id)) {
-      // Optimistic update
+      // Optimistically update
       setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
 
+      let success = false;
       try {
-        let success = false;
         if (isCurrentlyLiked) {
           success = await unlikeItem(id);
         } else {
           success = await likeItem(id);
         }
-
-        if (success && !isCurrentlyLiked) {
-          const match = matches.find(m => m.id === id);
-          if (match) {
-            toast(`You matched with ${match.name}! Check your messages.`);
-
-            setTimeout(() => {
-              navigate('/messages', {
-                state: {
-                  likedItem: {
-                    ...match,
-                    liked: true
-                  }
-                }
-              });
-            }, 1000);
-          }
-        }
-
-        if (!success) {
-          setLikedItems(prev => ({ ...prev, [id]: isCurrentlyLiked }));
-        }
       } catch (error) {
-        setLikedItems(prev => ({ ...prev, [id]: isCurrentlyLiked }));
-        console.error('Error handling like:', error);
+        console.error('DB like/unlike error:', error);
+        success = false;
       }
-    } else {
-      // Local mock/demo-only logic for non-UUIDs
-      setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
+
+      // Always reload DB status to reflect true value
+      await loadLikedStatus();
+
+      if (success && !isCurrentlyLiked) {
+        const match = matches.find(m => m.id === id);
+        if (match) {
+          toast(`You matched with ${match.name}! Check your messages.`);
+          setTimeout(() => {
+            navigate('/messages', {
+              state: {
+                likedItem: {
+                  ...match,
+                  liked: true,
+                },
+              },
+            });
+          }, 1000);
+        }
+      }
+      return;
     }
+
+    // For mock/demo items (non-UUID): do only local toggle, do NOT call DB or expect item on liked page.
+    setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
+    toast.info('Like/unlike works only for real items (not demo items)!');
   };
 
-  // Handle selecting an item with popup display
   const handleItemSelect = (id: string) => {
     const match = matches.find(m => m.id === id);
     if (match) {
@@ -120,13 +118,11 @@ export const useMatchActions = (
     }
   };
 
-  // Handle popup like click
   const handlePopupLikeClick = (item: MatchItem) => {
     handleLike(item.id);
     setSelectedMatch(null);
   };
 
-  // Close the popup
   const handleClosePopup = () => {
     setSelectedMatch(null);
   };
@@ -142,4 +138,3 @@ export const useMatchActions = (
     setSelectedMatch
   };
 };
-
