@@ -9,6 +9,8 @@ interface ExploreItemModalProps {
   item: Item | null;
   onClose: () => void;
   images?: string[];
+  liked?: boolean;
+  onLike?: () => void;
 }
 
 const profile = {
@@ -26,10 +28,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   item,
   onClose,
   images = [],
+  liked,
+  onLike,
 }) => {
   if (!item) return null;
 
-  // Simple image carousel (demo)
+  // Image carousel
   const allImages =
     images.length > 0
       ? images
@@ -102,8 +106,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               <X className="w-6 h-6" />
             </button>
             {/* Like icon */}
-            <button className="absolute right-16 top-4 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white hover:bg-gray-100 shadow">
-              <Heart className="w-6 h-6 text-gray-400" />
+            <button
+              className="absolute right-16 top-4 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white hover:bg-gray-100 shadow"
+              onClick={onLike}
+              aria-label={liked ? "Unlike" : "Like"}
+            >
+              <Heart
+                className={`w-6 h-6 ${liked ? "text-red-500" : "text-gray-400"}`}
+                fill={liked ? "red" : "none"}
+              />
             </button>
           </div>
           {/* Details */}

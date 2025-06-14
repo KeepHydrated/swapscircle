@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
 import { useDbItems } from '@/hooks/useDbItems';
 import ItemCard from '@/components/items/ItemCard';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { isItemLiked, likeItem, unlikeItem } from '@/services/authService';
+import { useAuth } from '@/context/AuthContext';
 
 const Home: React.FC = () => {
   // Friend/fake items remain only for the top carousel demo
@@ -64,18 +66,61 @@ const Home: React.FC = () => {
   // Fetch all items from DB to show in Explore section
   const { items: dbItems, loading: dbItemsLoading, error: dbItemsError } = useDbItems();
 
-  // Friend items like/unlike (demo)
-  const handleLikeFriendItem = (itemId: string) => {
-    setFriendItems(items =>
-      items.map(item =>
-        item.id === itemId ? { ...item, liked: !item.liked } : item
-      )
-    );
+  // Liked items state for DB-backed items (by id)
+  const { user, supabaseConfigured } = useAuth();
+  const [likedMap, setLikedMap] = useState<{[id: string]: boolean}>({});
+
+  // Load liked statuses for all displayed dbItems
+  useEffect(() => {
+    async function fetchLikedStates() {
+      if (!user || !supabaseConfigured) {
+        setLikedMap({});
+        return;
+      }
+      // Only reload for new items
+      const newMap: {[id: string]: boolean} = {};
+      await Promise.all(
+        dbItems.map(async (item) => {
+          const liked = await isItemLiked(item.id);
+          newMap[item.id] = liked;
+        })
+      );
+      setLikedMap(newMap);
+    }
+    if (dbItems && dbItems.length > 0) {
+      fetchLikedStates();
+    }
+  }, [user, supabaseConfigured, dbItems]);
+
+  // Handle like/unlike for Explore items (calls DB and updates local state)
+  const handleLikeExploreItem = async (itemId: string) => {
+    if (!user || !supabaseConfigured) {
+      window.toast?.error?.('Please log in to like items.'); // fallback near-global toast
+      return;
+    }
+    const isCurrentlyLiked = likedMap[itemId];
+    let success = false;
+    if (isCurrentlyLiked) {
+      success = await unlikeItem(itemId);
+    } else {
+      success = await likeItem(itemId);
+    }
+    // Always re-fetch status after DB mutation (could have failed)
+    const newLiked = await isItemLiked(itemId);
+    setLikedMap(prev => ({ ...prev, [itemId]: newLiked }));
   };
 
   // Modal state for Explore Items
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalItem, setModalItem] = useState(null);
+  const [modalItem, setModalItem] = useState<any>(null);
+
+  // Track modal's like status separately for instant UI update
+  const [modalLiked, setModalLiked] = useState(false);
+
+  // Sync modalLiked whenever modalItem or likedMap changes
+  useEffect(() => {
+    setModalLiked((modalItem && likedMap[modalItem.id]) ?? false);
+  }, [modalItem, likedMap]);
 
   const handleOpenModal = (item: any) => {
     setModalItem(item);
@@ -85,6 +130,12 @@ const Home: React.FC = () => {
   const handleCloseModal = () => {
     setModalItem(null);
     setModalOpen(false);
+  };
+
+  const handleModalLike = async () => {
+    if (!modalItem) return;
+    await handleLikeExploreItem(modalItem.id);
+    setModalLiked(liked => !liked); // UI instant
   };
 
   return (
@@ -117,7 +168,10 @@ const Home: React.FC = () => {
                         image={item.image}
                         isSelected={false}
                         isMatch={false}
+                        liked={!!likedMap[item.id]}
                         onSelect={() => handleOpenModal(item)}
+                        onLike={handleLikeExploreItem}
+                        showLikeButton // NEW: force the like button in Explore section
                       />
                     </div>
                   ))}
@@ -127,6 +181,8 @@ const Home: React.FC = () => {
                   item={modalItem}
                   onClose={handleCloseModal}
                   images={modalItem?.images}
+                  liked={modalLiked}
+                  onLike={handleModalLike}
                 />
               </>
             )}
