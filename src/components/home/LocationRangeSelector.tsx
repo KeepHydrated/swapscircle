@@ -1,14 +1,11 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Slider } from "@/components/ui/slider";
 import { MapPin } from 'lucide-react';
-
 interface LocationRangeSelectorProps {
   onLocationChange: (value: string) => void;
   initialValue?: string;
 }
-
-const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({ 
+const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
   onLocationChange,
   initialValue = 'nationwide'
 }) => {
@@ -43,15 +40,12 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
         setIsOpen(false);
       }
     };
-    
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  return (
-    <div className="mb-6 bg-card border border-border rounded-xl p-4 shadow-lg backdrop-blur-sm">
+  return <div className="mb-6 bg-card border border-border rounded-xl p-4 shadow-lg backdrop-blur-sm px-[16px] my-[8px]">
       <div className="flex items-center flex-wrap gap-3">
         <div className="flex items-center">
           <MapPin className="h-5 w-5 text-primary mr-2" />
@@ -60,10 +54,7 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
         
         <div className="relative" ref={dropdownRef}>
           {/* Dropdown button */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="bg-muted border border-border rounded-md px-3 py-1.5 w-48 text-left flex items-center justify-between text-sm text-foreground hover:bg-muted/80 transition-colors"
-          >
+          <button onClick={() => setIsOpen(!isOpen)} className="bg-muted border border-border rounded-md px-3 py-1.5 w-48 text-left flex items-center justify-between text-sm text-foreground hover:bg-muted/80 transition-colors">
             <span>{selectionType === 'all' ? 'All of US' : `Within ${rangeValue} miles`}</span>
             <svg className="w-4 h-4 ml-2 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
@@ -71,59 +62,36 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
           </button>
           
           {/* Dropdown menu */}
-          {isOpen && (
-            <div className="absolute z-10 mt-1 w-48 bg-popover border border-border rounded-md shadow-xl">
+          {isOpen && <div className="absolute z-10 mt-1 w-48 bg-popover border border-border rounded-md shadow-xl">
               <ul>
-                <li 
-                  className="px-4 py-2 hover:bg-muted cursor-pointer flex items-center text-foreground"
-                  onClick={() => handleSelectionChange('all')}
-                >
-                  {selectionType === 'all' && (
-                    <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <li className="px-4 py-2 hover:bg-muted cursor-pointer flex items-center text-foreground" onClick={() => handleSelectionChange('all')}>
+                  {selectionType === 'all' && <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  )}
+                    </svg>}
                   <span className={`${selectionType === 'all' ? 'font-medium text-primary' : ''} text-sm`}>All of US</span>
                 </li>
-                <li 
-                  className="px-4 py-2 hover:bg-muted cursor-pointer flex items-center text-foreground"
-                  onClick={() => handleSelectionChange('range')}
-                >
-                  {selectionType === 'range' && (
-                    <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <li className="px-4 py-2 hover:bg-muted cursor-pointer flex items-center text-foreground" onClick={() => handleSelectionChange('range')}>
+                  {selectionType === 'range' && <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  )}
+                    </svg>}
                   <span className={`${selectionType === 'range' ? 'font-medium text-primary' : ''} text-sm`}>Specific range</span>
                 </li>
               </ul>
-            </div>
-          )}
+            </div>}
         </div>
         
         {/* Range slider (appears when "Specific range" is selected) */}
-        {selectionType === 'range' && (
-          <div className="ml-2 flex items-center flex-1">
+        {selectionType === 'range' && <div className="ml-2 flex items-center flex-1">
             <div className="w-full max-w-[200px]">
-              <Slider
-                defaultValue={[rangeValue]}
-                min={1}
-                max={50}
-                step={1}
-                onValueChange={handleRangeChange}
-                className="w-full"
-              />
+              <Slider defaultValue={[rangeValue]} min={1} max={50} step={1} onValueChange={handleRangeChange} className="w-full" />
               <div className="flex justify-between text-xs text-muted-foreground mt-1 px-1">
                 <span>1</span>
                 <span>25</span>
                 <span>50 mi</span>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default LocationRangeSelector;
