@@ -53,7 +53,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
       <DialogOverlay className="bg-black/80" />
       <DialogContent
         className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none"
-        asChild
       >
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           {/* Close button - top right, smaller size */}
