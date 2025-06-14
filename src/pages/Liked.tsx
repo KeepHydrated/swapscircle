@@ -4,7 +4,7 @@ import { Heart } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { MatchItem } from '@/types/item';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { fetchLikedItems, unlikeItem } from '@/services/authService';
 import { toast } from 'sonner';
 
 const Liked: React.FC = () => {
@@ -13,7 +13,7 @@ const Liked: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLikedItems = async () => {
+    const loadLikedItems = async () => {
       if (!user || !supabaseConfigured) {
         // Use mock data when not configured
         setLikedItems([
@@ -41,9 +41,21 @@ const Liked: React.FC = () => {
       }
 
       try {
-        // In a real implementation, you would fetch liked items from a likes table
-        // For now, we'll just show an empty state
-        setLikedItems([]);
+        const data = await fetchLikedItems();
+        
+        // Transform the data to match MatchItem format
+        const formattedItems: MatchItem[] = data.map((likedItem: any) => ({
+          id: likedItem.items.id,
+          name: likedItem.items.name,
+          image: likedItem.items.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+          category: likedItem.items.category,
+          condition: likedItem.items.condition,
+          description: likedItem.items.description,
+          tags: likedItem.items.tags,
+          liked: true
+        }));
+
+        setLikedItems(formattedItems);
       } catch (error) {
         console.error('Error fetching liked items:', error);
         toast.error('Error loading liked items');
@@ -52,12 +64,25 @@ const Liked: React.FC = () => {
       }
     };
 
-    fetchLikedItems();
+    loadLikedItems();
   }, [user, supabaseConfigured]);
 
-  const handleUnlike = (itemId: string) => {
-    setLikedItems(prev => prev.filter(item => item.id !== itemId));
-    toast.success('Item removed from liked');
+  const handleUnlike = async (itemId: string) => {
+    if (!user || !supabaseConfigured) {
+      // For mock data, just remove from the list
+      setLikedItems(prev => prev.filter(item => item.id !== itemId));
+      toast.success('Item removed from liked');
+      return;
+    }
+
+    try {
+      const success = await unlikeItem(itemId);
+      if (success) {
+        setLikedItems(prev => prev.filter(item => item.id !== itemId));
+      }
+    } catch (error) {
+      console.error('Error unliking item:', error);
+    }
   };
 
   if (loading) {

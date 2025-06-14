@@ -262,3 +262,153 @@ export const uploadItemImage = async (file: File): Promise<string | null> => {
     return null;
   }
 };
+
+// New function to like an item
+export const likeItem = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return false;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to like an item.');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('liked_items')
+      .insert({
+        user_id: session.user.id,
+        item_id: itemId
+      });
+
+    if (error) {
+      // Handle duplicate like (user already liked this item)
+      if (error.code === '23505') {
+        toast.info('Item already liked!');
+        return true;
+      }
+      console.error('Error liking item:', error);
+      toast.error('Error liking item');
+      return false;
+    }
+
+    toast.success('Item liked!');
+    return true;
+  } catch (error: any) {
+    console.error('Error liking item:', error);
+    toast.error(error.message || 'Error liking item');
+    return false;
+  }
+};
+
+// New function to unlike an item
+export const unlikeItem = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return false;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to unlike an item.');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('liked_items')
+      .delete()
+      .eq('user_id', session.user.id)
+      .eq('item_id', itemId);
+
+    if (error) {
+      console.error('Error unliking item:', error);
+      toast.error('Error unliking item');
+      return false;
+    }
+
+    toast.success('Item unliked!');
+    return true;
+  } catch (error: any) {
+    console.error('Error unliking item:', error);
+    toast.error(error.message || 'Error unliking item');
+    return false;
+  }
+};
+
+// New function to fetch liked items for a user
+export const fetchLikedItems = async () => {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('liked_items')
+      .select(`
+        id,
+        created_at,
+        items (
+          id,
+          name,
+          description,
+          image_url,
+          category,
+          condition,
+          tags
+        )
+      `)
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching liked items:', error);
+      toast.error('Error loading liked items');
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching liked items:', error);
+    return [];
+  }
+};
+
+// New function to check if an item is liked by the current user
+export const isItemLiked = async (itemId: string): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    return false;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      return false;
+    }
+
+    const { data, error } = await supabase
+      .from('liked_items')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .eq('item_id', itemId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error checking if item is liked:', error);
+      return false;
+    }
+
+    return !!data;
+  } catch (error) {
+    console.error('Error checking if item is liked:', error);
+    return false;
+  }
+};
