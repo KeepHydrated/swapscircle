@@ -20,6 +20,7 @@ import ProfileDuplicate from "./pages/ProfileDuplicate";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
+import Liked from "./pages/Liked";
 import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/item/:itemId" element={<ItemDetails />} />
+              <Route path="/liked" element={<Liked />} />
               <Route path="/post-item" element={
                 <RequireAuth>
                   <PostItem />

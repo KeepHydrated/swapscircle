@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle } from 'lucide-react';
+import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MobileMenu } from './MobileMenu';
@@ -74,6 +74,13 @@ const Header = () => {
               </Tooltip>
             </TooltipProvider>
           )}
+
+          <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+            <Link to="/liked">
+              <Heart className="w-5 h-5" />
+              <span className="sr-only">Liked Items</span>
+            </Link>
+          </Button>
 
           {(user || !supabaseConfigured) ? (
             <>
