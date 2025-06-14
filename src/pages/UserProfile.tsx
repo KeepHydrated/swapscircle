@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -31,21 +32,24 @@ const UserProfile: React.FC = () => {
   // To ensure fetchProfileExtras is stable for cleanup/add/remove event listeners
   const fetchProfileExtras = useCallback(async () => {
     if (user && user.id && supabaseConfigured) {
+      console.log("[UserProfile] Fetching profile bio and location from DB for user:", user.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('bio, location')
         .eq('id', user.id)
         .maybeSingle();
       if (error) {
-        console.error('Failed to fetch bio/location:', error);
+        console.error('[UserProfile] Failed to fetch bio/location:', error);
         setProfileBio('');
         setProfileLocation('');
       } else if (data) {
         setProfileBio(data.bio || "");
         setProfileLocation(data.location || "");
+        console.log("[UserProfile] Got bio:", data.bio, "location:", data.location);
       } else {
         setProfileBio('');
         setProfileLocation('');
+        console.log("[UserProfile] No bio/location data returned.");
       }
     }
   }, [user, supabaseConfigured]);
@@ -140,6 +144,8 @@ const UserProfile: React.FC = () => {
     avatar_url: user?.avatar_url,
   };
 
+  console.log("[UserProfile] Render profileData:", profileData);
+
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
@@ -209,3 +215,4 @@ const UserProfile: React.FC = () => {
 };
 
 export default UserProfile;
+

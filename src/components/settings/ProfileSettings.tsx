@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,8 @@ const ProfileSettings: React.FC = () => {
       if (!user) return;
       setInitialLoading(true);
 
+      console.log("[ProfileSettings] Fetching profile from DB for user:", user.id);
+
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('name, email, username, bio, location, avatar_url')
@@ -69,13 +72,15 @@ const ProfileSettings: React.FC = () => {
       if (error) {
         toast.error('Error loading profile');
         setInitialLoading(false);
+        console.error("[ProfileSettings] Error loading profile:", error);
         return;
       }
 
       if (profile) {
+        console.log("[ProfileSettings] Profile loaded:", profile);
         form.reset({
           name: profile.name ?? "",
-          username: profile.username ?? "", // use username from DB
+          username: profile.username ?? "",
           email: profile.email ?? "",
           bio: profile.bio ?? "",
           location: profile.location ?? "",
@@ -93,11 +98,12 @@ const ProfileSettings: React.FC = () => {
   const onSubmit = async (data: ProfileFormValues) => {
     if (!user) return;
     try {
+      console.log("[ProfileSettings] Updating profile in DB for user:", user.id, "with data:", data, "avatar:", avatarUrl);
       const { error } = await supabase
         .from('profiles')
         .update({
           name: data.name,
-          username: data.username, // update username in DB
+          username: data.username,
           bio: data.bio,
           location: data.location,
           avatar_url: avatarUrl,
@@ -106,6 +112,7 @@ const ProfileSettings: React.FC = () => {
         .eq('id', user.id);
 
       if (error) {
+        console.error("[ProfileSettings] Error updating profile:", error);
         throw error;
       }
 
@@ -115,9 +122,10 @@ const ProfileSettings: React.FC = () => {
         avatar_url: avatarUrl,
       });
 
+      console.log("[ProfileSettings] Profile updated successfully!");
       toast.success('Profile updated successfully');
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('[ProfileSettings] Error updating profile:', error);
       toast.error('Failed to update profile');
     }
   };
@@ -146,6 +154,7 @@ const ProfileSettings: React.FC = () => {
 
       // Upload to storage, update avatar URL in db
       try {
+        console.log("[ProfileSettings] Uploading avatar image...");
         const imageUrl = await uploadItemImage(file);
         if (imageUrl) {
           setAvatarUrl(imageUrl);
@@ -162,14 +171,15 @@ const ProfileSettings: React.FC = () => {
             });
           }
 
+          console.log("[ProfileSettings] Profile picture uploaded and saved to db:", imageUrl);
           toast.success('Profile picture uploaded successfully');
         }
       } catch (uploadError) {
-        console.error('Upload failed, keeping local preview:', uploadError);
+        console.error('[ProfileSettings] Upload failed, keeping local preview:', uploadError);
         toast.success('Profile picture updated (preview only)');
       }
     } catch (error) {
-      console.error('Error handling avatar:', error);
+      console.error('[ProfileSettings] Error handling avatar:', error);
       toast.error('Failed to update profile picture');
     } finally {
       setUploading(false);
