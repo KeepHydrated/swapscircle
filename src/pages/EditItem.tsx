@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2 } from 'lucide-react';
+import { Save, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
@@ -60,7 +61,8 @@ const EditItem: React.FC = () => {
           setDescription(item.description || '');
           setCategory(item.category || '');
           setCondition(item.condition || '');
-          setPriceRange(item.price_range || ''); // Map snake_case from DB to camelCase in component state
+          // Explicitly grab price_range from returned DB object
+          setPriceRange((item as any).price_range || '');
           setSubcategory('');
           // images field is not handled from DB yet
         } else {
