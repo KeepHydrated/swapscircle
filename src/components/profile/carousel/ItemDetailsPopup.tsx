@@ -75,14 +75,14 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       {/* Overlay: pure black */}
-      <DialogOverlay className="bg-black/100" />
+      <DialogOverlay className="bg-black/100 z-[1040]" />
       {/* Only ONE child inside DialogContent asChild */}
       <DialogContent
         asChild
         className={`
           fixed inset-0 flex items-center justify-center
           p-0 border-0 bg-transparent shadow-none 
-          z-50
+          z-[1050]
           ${className}
         `}
       >
@@ -193,4 +193,3 @@ const ItemDetailsPopup: React.FC<ItemDetailsPopupProps> = ({
 };
 
 export default ItemDetailsPopup;
-

@@ -30,6 +30,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   };
 
   const handleItemClick = (item: MatchItem) => {
+    // Add debugging
+    console.log("[FriendItemsCarousel] Item clicked:", item);
+    toast({
+      title: "Item Clicked",
+      description: `You clicked: ${item.name}`
+    });
     setSelectedItem(item);
   };
 
@@ -78,6 +84,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
           isOpen={!!selectedItem}
           onClose={handleClosePopup}
           onLikeClick={handlePopupLikeClick}
+          className="z-[1050]" // Ensure popup is above all
         />
       )}
     </div>
