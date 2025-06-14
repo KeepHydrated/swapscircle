@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,6 +13,7 @@ import { toast } from 'sonner';
 import { Pencil, Upload } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { uploadItemImage } from '@/services/authService';
+import { supabase } from '@/integrations/supabase/client';
 
 // Create form schema
 const profileFormSchema = z.object({
@@ -37,41 +39,81 @@ const ProfileSettings: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
-  const [profileData, setProfileData] = useState({
-    bio: "",
-    location: "",
-  });
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // Initialize form with user data
+  // Initialize form with empty values at first, update once Supabase data loads
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: user?.name || "",
-      username: user?.email?.split('@')[0] || "",
-      email: user?.email || "",
-      bio: profileData.bio,
-      location: profileData.location,
+      name: "",
+      username: "",
+      email: "",
+      bio: "",
+      location: "",
     },
   });
 
+  // Fetch user profile data from Supabase on mount and set form values
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      setInitialLoading(true);
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('name, email, bio, location, avatar_url')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        toast.error('Error loading profile');
+        setInitialLoading(false);
+        return;
+      }
+
+      if (profile) {
+        form.reset({
+          name: profile.name ?? "",
+          username: (profile.email && profile.email.includes('@')) ? profile.email.split('@')[0] : "",
+          email: profile.email ?? "",
+          bio: profile.bio ?? "",
+          location: profile.location ?? "",
+        });
+        setAvatarUrl(profile.avatar_url ?? "");
+      }
+      setInitialLoading(false);
+    };
+
+    fetchProfile();
+    // eslint-disable-next-line
+  }, [user]);
+
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
+    if (!user) return;
     try {
-      if (user) {
-        // Update profile with all the data
-        await updateProfile({
+      const { error } = await supabase
+        .from('profiles')
+        .update({
           name: data.name,
+          bio: data.bio,
+          location: data.location,
           avatar_url: avatarUrl,
-        });
-        
-        // Store additional profile data in state for now
-        setProfileData({
-          bio: data.bio || "",
-          location: data.location || "",
-        });
-        
-        toast.success('Profile updated successfully');
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        throw error;
       }
+
+      // Also update name/avatar_url in AuthContext user object
+      await updateProfile({
+        name: data.name,
+        avatar_url: avatarUrl,
+      });
+
+      toast.success('Profile updated successfully');
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile');
@@ -99,12 +141,25 @@ const ProfileSettings: React.FC = () => {
       // For now, create a local URL for the image to show immediate feedback
       const localUrl = URL.createObjectURL(file);
       setAvatarUrl(localUrl);
-      
-      // Try to upload to storage, but if it fails, keep the local preview
+
+      // Upload to storage, update avatar URL in db
       try {
         const imageUrl = await uploadItemImage(file);
         if (imageUrl) {
           setAvatarUrl(imageUrl);
+
+          // Save immediately to DB (optional)
+          if (user) {
+            await supabase
+              .from("profiles")
+              .update({ avatar_url: imageUrl, updated_at: new Date().toISOString() })
+              .eq("id", user.id);
+            
+            await updateProfile({
+              avatar_url: imageUrl,
+            });
+          }
+
           toast.success('Profile picture uploaded successfully');
         }
       } catch (uploadError) {
@@ -130,7 +185,7 @@ const ProfileSettings: React.FC = () => {
       <CardContent>
         <div className="flex items-center gap-5 pb-6 mb-6 border-b">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={avatarUrl || user?.avatar_url || "https://github.com/shadcn.png"} alt="Profile" />
+            <AvatarImage src={avatarUrl || "https://github.com/shadcn.png"} alt="Profile" />
             <AvatarFallback>{user?.name?.substring(0, 2) || "US"}</AvatarFallback>
           </Avatar>
           <div>
@@ -160,100 +215,107 @@ const ProfileSettings: React.FC = () => {
           </div>
         </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {initialLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your username" {...field} disabled />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
               <FormField
                 control={form.control}
-                name="name"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your full name" {...field} />
+                      <Input type="email" placeholder="Your email address" {...field} disabled />
                     </FormControl>
+                    <FormDescription>
+                      Email cannot be changed from this form.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              
               <FormField
                 control={form.control}
-                name="username"
+                name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your username" {...field} />
+                      <Input placeholder="Your location" {...field} />
                     </FormControl>
+                    <FormDescription>
+                      City and state where you're located.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="Your email address" {...field} disabled />
-                  </FormControl>
-                  <FormDescription>
-                    Email cannot be changed from this form.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Your location" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    City and state where you're located.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Tell a bit about yourself" 
-                      className="min-h-[120px]" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Tell others about yourself and what kinds of items you like to trade.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <Button type="submit" disabled={uploading}>
-              {uploading ? 'Uploading...' : 'Save Changes'}
-            </Button>
-          </form>
-        </Form>
+              
+              <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Tell a bit about yourself" 
+                        className="min-h-[120px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Tell others about yourself and what kinds of items you like to trade.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <Button type="submit" disabled={uploading}>
+                {uploading ? 'Uploading...' : 'Save Changes'}
+              </Button>
+            </form>
+          </Form>
+        )}
       </CardContent>
     </Card>
   );
 };
 
 export default ProfileSettings;
+
