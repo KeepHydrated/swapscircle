@@ -7,7 +7,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 import CarouselItemCard from './carousel/CarouselItemCard';
@@ -65,32 +64,35 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   return (
     <div className="relative w-full h-full flex flex-col">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
-      <ScrollArea className="flex-grow">
-        <div ref={carouselRef}>
+      <div className="flex-grow overflow-hidden">
+        <div ref={carouselRef} className="h-full">
           <Carousel
             opts={{
               align: "start",
               loop: true,
+              dragFree: true,
             }}
-            className="w-full"
+            className="w-full h-full"
           >
-            <CarouselContent>
+            <CarouselContent className="h-full">
               {items.map((item) => (
-                <CarouselItem key={item.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
-                  <CarouselItemCard
-                    item={item}
-                    isSelected={selectedItem?.id === item.id}
-                    onItemClick={() => handleItemClick(item)}
-                    onLikeClick={handleLikeClick}
-                  />
+                <CarouselItem key={item.id} className="basis-auto min-w-0 shrink-0 pl-4">
+                  <div className="w-48 h-full">
+                    <CarouselItemCard
+                      item={item}
+                      isSelected={selectedItem?.id === item.id}
+                      onItemClick={() => handleItemClick(item)}
+                      onLikeClick={handleLikeClick}
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80" />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80" />
+            <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white z-10" />
+            <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white z-10" />
           </Carousel>
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Item details lightbox popup */}
       {selectedItem && (
