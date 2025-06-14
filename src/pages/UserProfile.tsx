@@ -58,52 +58,45 @@ const UserProfile: React.FC = () => {
   }, [user, supabaseConfigured]);
 
   useEffect(() => {
-    if (user) {
+    if (user && supabaseConfigured) {
       const fetchUserData = async () => {
         setLoading(true);
         try {
-          if (!supabaseConfigured) {
+          // Fetch user items from DB
+          const { data: items, error: itemsError } = await supabase
+            .from('items')
+            .select('*')
+            .eq('user_id', user.id);
+          if (itemsError) {
+            console.error('Error fetching items:', itemsError);
+            toast.error('Error loading items');
             setUserItems([]);
-            setUserTrades([]);
-            setUserReviews([]);
-            setUserFriends([]);
-            toast.error("Supabase not configured. Using demo mode with empty data.");
-            setLoading(false);
-            return;
-          }
-          try {
-            const { data: items, error: itemsError } = await supabase
-              .from('items')
-              .select('*')
-              .eq('user_id', user.id);
-            if (itemsError) {
-              console.error('Error fetching items:', itemsError);
-              toast.error('Error loading items');
-              setUserItems([]);
-            } else if (items && Array.isArray(items)) {
-              const formattedItems = items.map(item => ({
-                id: item.id,
-                name: item.name,
-                image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-                category: item.category,
-                condition: item.condition,
-                description: item.description,
-                tags: item.tags,
-                liked: false
-              }));
-              setUserItems(formattedItems);
-            } else {
-              setUserItems([]);
-            }
-          } catch (error) {
-            console.error('Error in items fetch:', error);
+          } else if (items && Array.isArray(items)) {
+            const formattedItems = items.map(item => ({
+              id: item.id,
+              name: item.name,
+              image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+              category: item.category,
+              condition: item.condition,
+              description: item.description,
+              tags: item.tags,
+              liked: false,
+            }));
+            setUserItems(formattedItems);
+          } else {
             setUserItems([]);
           }
+
+          // The following data will come from DB in the future. Now, return empty arrays (no mocks)
           setUserTrades([]);
           setUserReviews([]);
           setUserFriends([]);
         } catch (error) {
           console.error('Error fetching user data:', error);
+          setUserItems([]);
+          setUserTrades([]);
+          setUserReviews([]);
+          setUserFriends([]);
         } finally {
           setLoading(false);
         }
@@ -120,10 +113,10 @@ const UserProfile: React.FC = () => {
   const profileData = {
     name: user?.name || 'User',
     description: profileBio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
-    rating: 0,
+    rating: 0, // Placeholder until implemented in DB. Remove this when ratings are implemented
     reviewCount: userReviews.length,
     location: profileLocation || 'Update your location in Settings',
-    memberSince: new Date().getFullYear().toString(),
+    memberSince: new Date().getFullYear().toString(),  // Placeholder, replace with user's actual date if stored
     avatar_url: user?.avatar_url,
   };
 
