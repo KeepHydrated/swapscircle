@@ -158,6 +158,86 @@ export type Database = {
         }
         Relationships: []
       }
+      trade_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          owner_id: string
+          owner_item_id: string
+          requester_id: string
+          requester_item_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_id: string
+          owner_item_id: string
+          requester_id: string
+          requester_item_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_id?: string
+          owner_item_id?: string
+          requester_id?: string
+          requester_item_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_conversations_owner_item_id_fkey"
+            columns: ["owner_item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_conversations_requester_item_id_fkey"
+            columns: ["requester_item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trade_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          sender_id: string
+          trade_conversation_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          sender_id: string
+          trade_conversation_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          sender_id?: string
+          trade_conversation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_messages_trade_conversation_id_fkey"
+            columns: ["trade_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "trade_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
