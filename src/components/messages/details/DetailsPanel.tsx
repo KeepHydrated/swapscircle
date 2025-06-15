@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Utensils, DollarSign } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,6 +12,7 @@ interface DetailsPanelProps {
     id: number;
     item1: { name: string; image: string };
     item2: { name: string; image: string };
+    partnerId: string;
   } | null;
 }
 
