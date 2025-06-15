@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Liked from "./pages/Liked";
+import Trades from "./pages/Trades";
 import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
@@ -82,6 +83,11 @@ const App = () => (
               <Route path="/settings" element={
                 <RequireAuth>
                   <Settings />
+                </RequireAuth>
+              } />
+              <Route path="/trades" element={
+                <RequireAuth>
+                  <Trades />
                 </RequireAuth>
               } />
               <Route path="*" element={<NotFound />} />

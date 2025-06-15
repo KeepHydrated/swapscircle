@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Heart } from 'lucide-react';
+import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Heart, Handshake } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MobileMenu } from './MobileMenu';
@@ -126,6 +126,12 @@ const Header = () => {
                     <Link to="/profile" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/trades" className="flex w-full cursor-pointer items-center">
+                      <Handshake className="mr-2 h-4 w-4" />
+                      <span>Trades</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
