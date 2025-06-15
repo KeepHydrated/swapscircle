@@ -3,6 +3,7 @@ import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Utensils, Dolla
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import useEmblaCarousel from 'embla-carousel-react';
 import ItemDetails from './ItemDetails';
+import TradeDetailsTabs from './TradeDetailsTabs';
 
 // Define the interfaces for the props
 interface DetailsPanelProps {
@@ -65,45 +66,13 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   
   return (
     <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
-      {/* Item connection display with fixed height to match other headers */}
+      {/* Trade Details Tabs */}
       {selectedPair && (
-        <div className="p-4 border-b border-gray-200 bg-white h-16 flex items-center">
-          {/* Item connection display - simplified to ensure alignment */}
-          <div className="flex flex-row items-center justify-between bg-gray-100 px-3 py-2 rounded-md w-full">
-            {/* First item - clickable */}
-            <div 
-              className={`flex items-center cursor-pointer transition-all ${selectedItem === 'item1' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
-              onClick={() => handleSelectItem('item1')}
-            >
-              <Avatar className="h-8 w-8 bg-gray-50">
-                <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
-                <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
-              </Avatar>
-              <span className={`text-xs ml-2 truncate max-w-[80px] ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
-                {selectedPair.item1.name}
-              </span>
-            </div>
-            
-            {/* Exchange icon */}
-            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100">
-              <ArrowLeftRight className="h-3 w-3 text-blue-600" />
-            </div>
-            
-            {/* Second item - clickable */}
-            <div 
-              className={`flex items-center cursor-pointer transition-all ${selectedItem === 'item2' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
-              onClick={() => handleSelectItem('item2')}
-            >
-              <Avatar className="h-8 w-8 bg-gray-50">
-                <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
-                <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
-              </Avatar>
-              <span className={`text-xs ml-2 truncate max-w-[80px] ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
-                {selectedPair.item2.name}
-              </span>
-            </div>
-          </div>
-        </div>
+        <TradeDetailsTabs 
+          selectedPair={selectedPair}
+          selectedItem={selectedItem}
+          onSelectItem={handleSelectItem}
+        />
       )}
       
       {/* Image Carousel - made smaller */}
