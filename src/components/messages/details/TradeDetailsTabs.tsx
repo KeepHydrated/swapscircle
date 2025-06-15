@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X } from 'lucide-react';
 import { updateTradeStatus } from '@/services/tradeService';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { fetchUserTradeConversations } from '@/services/tradeService';
 
 interface TradeDetailsTabsProps {
   selectedPair: {
@@ -25,6 +26,15 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   onSelectItem
 }) => {
   const queryClient = useQueryClient();
+
+  // Fetch trade status to check if already accepted
+  const { data: tradeConversations = [] } = useQuery({
+    queryKey: ['trade-conversations'],
+    queryFn: fetchUserTradeConversations,
+  });
+
+  const currentTrade = tradeConversations.find((tc: any) => tc.id === selectedPair.partnerId);
+  const isTradeAccepted = currentTrade?.status === 'accepted' || currentTrade?.status === 'completed';
 
   const acceptTradeMutation = useMutation({
     mutationFn: () => updateTradeStatus(selectedPair.partnerId, 'accepted'),
@@ -207,27 +217,34 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
           </TabsContent>
         </div>
         
-        {/* Action buttons at the bottom */}
+        {/* Action buttons at the bottom or accepted status */}
         <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              className="w-full text-red-600 border-red-200 hover:bg-red-50"
-              onClick={handleRejectTrade}
-              disabled={rejectTradeMutation.isPending}
-            >
-              <X className="w-4 h-4 mr-2" />
-              {rejectTradeMutation.isPending ? 'Rejecting...' : 'Reject'}
-            </Button>
-            <Button 
-              className="w-full bg-green-600 hover:bg-green-700"
-              onClick={handleAcceptTrade}
-              disabled={acceptTradeMutation.isPending}
-            >
-              <Check className="w-4 h-4 mr-2" />
-              {acceptTradeMutation.isPending ? 'Accepting...' : 'Accept'}
-            </Button>
-          </div>
+          {isTradeAccepted ? (
+            <div className="flex items-center justify-center py-3 bg-green-50 rounded-lg border border-green-200">
+              <Check className="w-5 h-5 mr-2 text-green-600" />
+              <span className="text-green-700 font-medium">Trade Accepted</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                variant="outline" 
+                className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                onClick={handleRejectTrade}
+                disabled={rejectTradeMutation.isPending}
+              >
+                <X className="w-4 h-4 mr-2" />
+                {rejectTradeMutation.isPending ? 'Rejecting...' : 'Reject'}
+              </Button>
+              <Button 
+                className="w-full bg-green-600 hover:bg-green-700"
+                onClick={handleAcceptTrade}
+                disabled={acceptTradeMutation.isPending}
+              >
+                <Check className="w-4 h-4 mr-2" />
+                {acceptTradeMutation.isPending ? 'Accepting...' : 'Accept'}
+              </Button>
+            </div>
+          )}
         </div>
       </Tabs>
     </div>
