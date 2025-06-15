@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftRight, ChevronLeft, ChevronRight, Check, Home, Utensils, DollarSign } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -67,42 +68,46 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
       {/* Item connection display at the top of the right panel */}
       {selectedPair && (
         <div className="p-4 border-b border-gray-200">
-          <div className="flex flex-row items-center justify-between bg-gray-200 px-3 py-3 rounded-md mb-4 h-20">
-            {/* First item - clickable */}
-            <div 
-              className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item1' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
-              onClick={() => handleSelectItem('item1')}
-            >
-              <div className={`p-0.5 rounded-full ${selectedItem === 'item1' ? 'bg-blue-100' : ''}`}>
-                <Avatar className="h-12 w-12 bg-gray-100">
+          <div className="flex flex-col bg-gray-200 px-3 py-3 rounded-md mb-4">
+            {/* Your Item section */}
+            <div className="mb-3">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Your Item</h4>
+              <div 
+                className={`flex items-center cursor-pointer transition-all p-2 rounded ${selectedItem === 'item1' ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-100'}`}
+                onClick={() => handleSelectItem('item1')}
+              >
+                <Avatar className="h-12 w-12 bg-gray-100 mr-3 flex-shrink-0">
                   <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
                   <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
                 </Avatar>
+                <span className={`text-sm flex-1 ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+                  {selectedPair.item1.name}
+                </span>
               </div>
-              <span className={`text-xs mt-1 truncate w-full text-center ${selectedItem === 'item1' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
-                {selectedPair.item1.name}
-              </span>
             </div>
             
             {/* Exchange icon */}
-            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100">
-              <ArrowLeftRight className="h-3 w-3 text-blue-600" />
+            <div className="flex items-center justify-center mb-3">
+              <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100">
+                <ArrowLeftRight className="h-3 w-3 text-blue-600" />
+              </div>
             </div>
             
-            {/* Second item - clickable */}
-            <div 
-              className={`flex flex-col items-center cursor-pointer transition-all w-[40%] ${selectedItem === 'item2' ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
-              onClick={() => handleSelectItem('item2')}
-            >
-              <div className={`p-0.5 rounded-full ${selectedItem === 'item2' ? 'bg-blue-100' : ''}`}>
-                <Avatar className="h-12 w-12 bg-gray-100">
+            {/* Their Item section */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Their Item</h4>
+              <div 
+                className={`flex items-center cursor-pointer transition-all p-2 rounded ${selectedItem === 'item2' ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-100'}`}
+                onClick={() => handleSelectItem('item2')}
+              >
+                <Avatar className="h-12 w-12 bg-gray-100 mr-3 flex-shrink-0">
                   <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
                   <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
                 </Avatar>
+                <span className={`text-sm flex-1 ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
+                  {selectedPair.item2.name}
+                </span>
               </div>
-              <span className={`text-xs mt-1 truncate w-full text-center ${selectedItem === 'item2' ? 'font-bold text-blue-700' : 'text-gray-700'}`}>
-                {selectedPair.item2.name}
-              </span>
             </div>
           </div>
         </div>
