@@ -48,17 +48,17 @@ const ItemCard: React.FC<ItemCardProps> = ({
             <Avatar className="h-full w-full rounded-none">
               <AvatarImage src={image} alt={name} className="object-cover" />
               <AvatarFallback className="rounded-none text-gray-400 text-xs">
-                400 × 320
+                320 × 240
               </AvatarFallback>
             </Avatar>
             {(showLikeButton || isMatch) && (
               <button
-                className="absolute top-3 right-3 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white hover:bg-gray-100 shadow-lg"
+                className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white hover:bg-gray-100 shadow-lg"
                 aria-label="Like item"
                 onClick={handleHeartClick}
               >
                 <Heart 
-                  className={`h-5 w-5 ${liked ? "text-red-500" : "text-gray-400"}`}
+                  className={`h-4 w-4 ${liked ? "text-red-500" : "text-gray-400"}`}
                   fill={liked ? "red" : "none"}
                 />
               </button>
@@ -66,12 +66,12 @@ const ItemCard: React.FC<ItemCardProps> = ({
           </div>
           {isSelected && !isMatch && (
             <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
-              <Check className="h-5 w-5" />
+              <Check className="h-4 w-4" />
             </div>
           )}
         </div>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-center truncate" title={name}>
+        <CardContent className="p-2">
+          <h3 className="font-medium text-center truncate text-sm" title={name}>
             {name}
           </h3>
         </CardContent>

@@ -56,8 +56,8 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     <div className="relative w-full h-full flex flex-col">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       
-      <ScrollArea className="flex-grow h-80">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pr-2">
+      <ScrollArea className="flex-grow h-64">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pr-2">
           {items.map((item) => (
             <CarouselItemCard
               key={item.id}

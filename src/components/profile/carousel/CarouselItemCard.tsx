@@ -34,23 +34,23 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
             <Avatar className="h-full w-full rounded-none">
               <AvatarImage src={item.image} alt={item.name} className="object-cover" />
               <AvatarFallback className="rounded-none text-gray-400 text-xs">
-                400 × 320
+                320 × 240
               </AvatarFallback>
             </Avatar>
           </div>
           
           <div 
-            className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100"
+            className="absolute bottom-1 right-1 bg-white rounded-full p-1.5 shadow-md cursor-pointer hover:bg-gray-100"
             onClick={handleHeartClick}
           >
             <Heart 
-              className={`h-5 w-5 ${item.liked ? "text-red-500" : "text-gray-400"}`} 
+              className={`h-4 w-4 ${item.liked ? "text-red-500" : "text-gray-400"}`} 
               fill={item.liked ? "red" : "none"} 
             />
           </div>
         </div>
-        <CardContent className="p-3">
-          <h3 className="font-medium text-center truncate" title={item.name}>{item.name}</h3>
+        <CardContent className="p-2">
+          <h3 className="font-medium text-center truncate text-sm" title={item.name}>{item.name}</h3>
         </CardContent>
       </Card>
     </div>

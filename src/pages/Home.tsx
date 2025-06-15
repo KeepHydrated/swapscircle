@@ -161,7 +161,7 @@ const Home: React.FC = () => {
       <Header />
       <HomeWithLocationFilter>
         <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
-          <div className="mb-8 h-96">
+          <div className="mb-6 h-80">
             <FriendItemsCarousel 
               items={friendItems} 
               onLikeItem={handleLikeFriendItem} 
@@ -177,7 +177,7 @@ const Home: React.FC = () => {
               <div className="text-red-600 text-center">{dbItemsError}</div>
             ) : (
               <>
-                <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                   {dbItems.map(item => (
                     <div key={item.id} className="flex">
                       <ItemCard
