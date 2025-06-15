@@ -51,11 +51,11 @@ const Header = () => {
   const isAuthPage = window.location.pathname === '/auth';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-trademate-blue dark:text-blue-400">TradeMate</h1>
+            <h1 className="text-2xl font-bold text-trademate-blue">TradeMate</h1>
           </Link>
         </div>
 
@@ -115,13 +115,13 @@ const Header = () => {
                       {user?.avatar_url ? (
                         <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                       ) : null}
-                      <AvatarFallback className="bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
+                      <AvatarFallback className="bg-purple-100 text-purple-800">
                         {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-900">
+                <DropdownMenuContent align="end" className="w-56 bg-white">
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />
