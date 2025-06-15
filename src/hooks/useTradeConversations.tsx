@@ -37,7 +37,7 @@ export const useTradeConversations = () => {
       setLoading(true);
       try {
         const tradeConversations = await fetchUserTradeConversations();
-        console.log('Fetched trade conversations:', tradeConversations);
+        console.log('Processing trade conversations:', tradeConversations);
         
         // Get current user
         const { data: session } = await supabase.auth.getSession();
@@ -55,9 +55,9 @@ export const useTradeConversations = () => {
         tradeConversations.forEach((tc: any, index: number) => {
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
-          const otherPersonProfile = isRequester ? tc.owner_profile : tc.requester_profile;
           const myItem = isRequester ? tc.requester_item : tc.owner_item;
           const theirItem = isRequester ? tc.owner_item : tc.requester_item;
+          const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
@@ -75,10 +75,10 @@ export const useTradeConversations = () => {
 
           displayExchangePairs.push(exchangePair);
 
-          // Create conversation display
+          // Create conversation display with fallback name
           const conversation: ConversationDisplay = {
             id: tc.id,
-            name: otherPersonProfile?.name || 'Unknown User',
+            name: `Trading Partner`,
             lastMessage: `Trading ${myItem?.name} for ${theirItem?.name}`,
             time: new Date(tc.updated_at).toLocaleDateString(),
             rating: 5,
@@ -89,6 +89,9 @@ export const useTradeConversations = () => {
 
           displayConversations.push(conversation);
         });
+
+        console.log('Display conversations:', displayConversations);
+        console.log('Display exchange pairs:', displayExchangePairs);
 
         setConversations(displayConversations);
         setExchangePairs(displayExchangePairs);

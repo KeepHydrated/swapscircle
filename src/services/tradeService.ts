@@ -82,14 +82,13 @@ export const fetchUserTradeConversations = async () => {
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session?.user) return [];
 
+    // First, get the basic trade conversations with items
     const { data: conversations, error } = await supabase
       .from('trade_conversations')
       .select(`
         *,
         requester_item:items!trade_conversations_requester_item_id_fkey(*),
-        owner_item:items!trade_conversations_owner_item_id_fkey(*),
-        requester_profile:profiles!trade_conversations_requester_id_fkey(*),
-        owner_profile:profiles!trade_conversations_owner_id_fkey(*)
+        owner_item:items!trade_conversations_owner_item_id_fkey(*)
       `)
       .or(`requester_id.eq.${session.session.user.id},owner_id.eq.${session.session.user.id}`)
       .order('updated_at', { ascending: false });
@@ -99,6 +98,7 @@ export const fetchUserTradeConversations = async () => {
       return [];
     }
 
+    console.log('Fetched trade conversations:', conversations);
     return conversations || [];
   } catch (error) {
     console.error('Error fetching trade conversations:', error);
@@ -108,12 +108,10 @@ export const fetchUserTradeConversations = async () => {
 
 export const fetchTradeMessages = async (conversationId: string) => {
   try {
-    const { data: messages, error } = await supabase
+    // First try with profile join, if that fails, fetch without profiles
+    let { data: messages, error } = await supabase
       .from('trade_messages')
-      .select(`
-        *,
-        sender_profile:profiles!trade_messages_sender_id_fkey(*)
-      `)
+      .select('*')
       .eq('trade_conversation_id', conversationId)
       .order('created_at', { ascending: true });
 
@@ -122,6 +120,7 @@ export const fetchTradeMessages = async (conversationId: string) => {
       return [];
     }
 
+    console.log('Fetched messages:', messages);
     return messages || [];
   } catch (error) {
     console.error('Error fetching trade messages:', error);
