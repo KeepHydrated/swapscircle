@@ -52,7 +52,7 @@ export const useTradeConversations = () => {
         const displayConversations: ConversationDisplay[] = [];
         const displayExchangePairs: ExchangePairDisplay[] = [];
 
-        tradeConversations.forEach((tc: TradeConversation, index: number) => {
+        tradeConversations.forEach((tc: any, index: number) => {
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
           const otherPersonProfile = isRequester ? tc.owner_profile : tc.requester_profile;

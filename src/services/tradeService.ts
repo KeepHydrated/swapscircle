@@ -7,13 +7,55 @@ export interface TradeConversation {
   owner_id: string;
   requester_item_id: string;
   owner_item_id: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'completed';
+  status: string;
   created_at: string;
   updated_at: string;
-  requester_item?: any;
-  owner_item?: any;
-  requester_profile?: any;
-  owner_profile?: any;
+  requester_item?: {
+    id: string;
+    name: string;
+    image_url: string;
+    category: string;
+    condition: string;
+    description: string;
+    tags: string[];
+    user_id: string;
+    created_at: string;
+    updated_at: string;
+  };
+  owner_item?: {
+    id: string;
+    name: string;
+    image_url: string;
+    category: string;
+    condition: string;
+    description: string;
+    tags: string[];
+    user_id: string;
+    created_at: string;
+    updated_at: string;
+  };
+  requester_profile?: {
+    id: string;
+    name: string;
+    email: string;
+    avatar_url: string;
+    bio: string;
+    location: string;
+    username: string;
+    created_at: string;
+    updated_at: string;
+  };
+  owner_profile?: {
+    id: string;
+    name: string;
+    email: string;
+    avatar_url: string;
+    bio: string;
+    location: string;
+    username: string;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface TradeMessage {
@@ -22,7 +64,17 @@ export interface TradeMessage {
   sender_id: string;
   message: string;
   created_at: string;
-  sender_profile?: any;
+  sender_profile?: {
+    id: string;
+    name: string;
+    email: string;
+    avatar_url: string;
+    bio: string;
+    location: string;
+    username: string;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export const fetchUserTradeConversations = async () => {

@@ -57,7 +57,18 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           return;
         }
 
-        setMyItems(items || []);
+        // Map database items to Item type
+        const mappedItems: Item[] = (items || []).map(item => ({
+          id: item.id,
+          name: item.name,
+          image: item.image_url || '/placeholder.svg',
+          category: item.category,
+          condition: item.condition,
+          description: item.description,
+          tags: item.tags
+        }));
+
+        setMyItems(mappedItems);
       } catch (error) {
         console.error('Error fetching items:', error);
         toast({
@@ -210,7 +221,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                   
                   <div className="aspect-square overflow-hidden rounded-t-lg bg-gray-100">
                     <img
-                      src={item.image || item.image_url || '/placeholder.svg'}
+                      src={item.image || '/placeholder.svg'}
                       alt={item.name}
                       className="w-full h-full object-cover"
                     />
