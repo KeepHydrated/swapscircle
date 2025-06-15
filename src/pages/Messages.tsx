@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
@@ -6,6 +5,7 @@ import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
+import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 
 const Messages = () => {
   const {
@@ -23,6 +23,7 @@ const Messages = () => {
   } = useTradeConversations();
 
   const [messageText, setMessageText] = useState('');
+  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item1');
   const queryClient = useQueryClient();
 
   // Fetch messages for active conversation
@@ -60,6 +61,10 @@ const Messages = () => {
       conversationId: activeConversation,
       message: messageText.trim()
     });
+  };
+
+  const handleSelectItem = (item: 'item1' | 'item2') => {
+    setSelectedItem(item);
   };
 
   if (loading) {
@@ -257,40 +262,14 @@ const Messages = () => {
             )}
           </div>
           
-          {/* Right sidebar - Details panel */}
+          {/* Right sidebar - Details panel with tabs */}
           <div className="w-80 border-l border-gray-200 bg-gray-50">
             {selectedPair ? (
-              <div className="p-4">
-                <h3 className="font-medium mb-4">Trade Details</h3>
-                
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Your Item</h4>
-                  <div className="bg-white rounded-lg p-3 border">
-                    <img 
-                      src={selectedPair.item1.image} 
-                      alt={selectedPair.item1.name}
-                      className="w-full h-32 object-cover rounded mb-2"
-                    />
-                    <p className="font-medium text-sm">{selectedPair.item1.name}</p>
-                  </div>
-                </div>
-                
-                <div className="text-center mb-4">
-                  <span className="text-blue-600 text-lg">↕</span>
-                </div>
-                
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Their Item</h4>
-                  <div className="bg-white rounded-lg p-3 border">
-                    <img 
-                      src={selectedPair.item2.image} 
-                      alt={selectedPair.item2.name}
-                      className="w-full h-32 object-cover rounded mb-2"
-                    />
-                    <p className="font-medium text-sm">{selectedPair.item2.name}</p>
-                  </div>
-                </div>
-              </div>
+              <TradeDetailsTabs 
+                selectedPair={selectedPair}
+                selectedItem={selectedItem}
+                onSelectItem={handleSelectItem}
+              />
             ) : (
               <div className="flex items-center justify-center h-full">
                 <p className="text-gray-500 text-center">
