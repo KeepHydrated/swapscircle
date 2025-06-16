@@ -23,24 +23,21 @@ interface MyItemsProps {
 
 const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }) => {
   const myItemsRef = useRef<HTMLDivElement>(null);
-  
-  // Removed click outside handler that was clearing the selection
-  // This ensures the selected item stays selected
 
   return (
-    <div className="lg:w-1/2 sticky top-0 pb-6">
-      <h2 className="text-2xl font-bold mb-4">My Items</h2>
-      <ScrollArea className="h-[calc(100vh-240px)]">
-        <div className="grid grid-cols-2 gap-4 pr-4" ref={myItemsRef}>
+    <div className="h-full">
+      <ScrollArea className="h-[calc(100vh-320px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pr-4" ref={myItemsRef}>
           {items.map((item) => (
-            <ItemCard 
-              key={item.id}
-              id={item.id}
-              name={item.name}
-              image={item.image}
-              isSelected={selectedItemId === item.id}
-              onSelect={onSelectItem}
-            />
+            <div key={item.id} className="transform transition-all duration-200 hover:scale-105">
+              <ItemCard 
+                id={item.id}
+                name={item.name}
+                image={item.image}
+                isSelected={selectedItemId === item.id}
+                onSelect={onSelectItem}
+              />
+            </div>
           ))}
         </div>
       </ScrollArea>

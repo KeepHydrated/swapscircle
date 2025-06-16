@@ -24,21 +24,21 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   likedItems,
   detailsRef
 }) => {
-  // Simply render all matches in a grid with no details section
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pr-2" ref={detailsRef}>
+    <div className={`grid ${itemsPerRow === 3 ? 'grid-cols-3' : 'grid-cols-2'} gap-6 pr-2`} ref={detailsRef}>
       {displayedMatches.map(match => (
-        <ItemCard
-          key={match.id}
-          id={match.id}
-          name={match.name}
-          image={match.image}
-          isMatch={true}
-          liked={likedItems[match.id] || match.liked}
-          isSelected={selectedMatchId === match.id}
-          onSelect={onSelectItem}
-          onLike={onLike}
-        />
+        <div key={match.id} className="transform transition-all duration-200 hover:scale-105">
+          <ItemCard
+            id={match.id}
+            name={match.name}
+            image={match.image}
+            isMatch={true}
+            liked={likedItems[match.id] || match.liked}
+            isSelected={selectedMatchId === match.id}
+            onSelect={onSelectItem}
+            onLike={onLike}
+          />
+        </div>
       ))}
     </div>
   );

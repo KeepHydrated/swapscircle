@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
@@ -19,7 +18,7 @@ const Matches: React.FC<MatchesProps> = ({
   onSelectMatch
 }) => {
   // State to keep track of viewport size
-  const [itemsPerRow, setItemsPerRow] = useState(3);
+  const [itemsPerRow, setItemsPerRow] = useState(2);
   
   // Refs for click outside detection
   const matchesContainerRef = useRef<HTMLDivElement>(null);
@@ -69,7 +68,13 @@ const Matches: React.FC<MatchesProps> = ({
   // Update itemsPerRow based on window size
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerRow(window.innerWidth >= 768 ? 3 : 2);
+      if (window.innerWidth >= 1280) {
+        setItemsPerRow(3); // xl screens
+      } else if (window.innerWidth >= 1024) {
+        setItemsPerRow(2); // lg screens
+      } else {
+        setItemsPerRow(2); // smaller screens
+      }
     };
     
     // Set initial value
@@ -118,19 +123,28 @@ const Matches: React.FC<MatchesProps> = ({
 
   return (
     <div className="w-full flex flex-col h-full">
-      <h2 className="text-2xl font-bold mb-4">
-        Matches for {selectedItemName || 'Selected Item'}
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+        Matches for <span className="text-primary">{selectedItemName}</span>
       </h2>
-      <div ref={matchesContainerRef} className="flex-grow">
-        <MatchesContainer
-          displayedMatches={displayedMatches}
-          selectedMatchId={selectedMatchId}
-          itemsPerRow={itemsPerRow}
-          likedItems={likedItems}
-          onSelectItem={handleItemSelect}
-          onLike={handleLike}
-        />
-      </div>
+      
+      {displayedMatches.length === 0 ? (
+        <div className="text-center text-gray-500 py-12 flex-1 flex flex-col justify-center">
+          <div className="text-6xl mb-4">🔍</div>
+          <p className="text-lg font-medium mb-2">No matches found</p>
+          <p className="text-sm">Try updating your preferences or check back later</p>
+        </div>
+      ) : (
+        <div ref={matchesContainerRef} className="flex-grow">
+          <MatchesContainer
+            displayedMatches={displayedMatches}
+            selectedMatchId={selectedMatchId}
+            itemsPerRow={itemsPerRow}
+            likedItems={likedItems}
+            onSelectItem={handleItemSelect}
+            onLike={handleLike}
+          />
+        </div>
+      )}
       
       {/* Popup for displaying match details */}
       {selectedMatch && (
