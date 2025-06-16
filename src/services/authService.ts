@@ -179,8 +179,14 @@ export const getCurrentSession = async () => {
   }
 };
 
-// New function to post an item
-export const postItem = async (item: Item) => {
+// New function to post an item with preferences
+export const postItem = async (item: Item & {
+  lookingForCategories?: string[];
+  lookingForConditions?: string[];
+  lookingForDescription?: string;
+  priceRangeMin?: number;
+  priceRangeMax?: number;
+}) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
     return null;
@@ -194,7 +200,17 @@ export const postItem = async (item: Item) => {
     }
 
     const itemToInsert = {
-      ...item,
+      name: item.name,
+      description: item.description,
+      image_url: item.image_url,
+      category: item.category,
+      condition: item.condition,
+      tags: item.tags,
+      looking_for_categories: item.lookingForCategories,
+      looking_for_conditions: item.lookingForConditions,
+      looking_for_description: item.lookingForDescription,
+      price_range_min: item.priceRangeMin,
+      price_range_max: item.priceRangeMax,
       user_id: session.user.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()

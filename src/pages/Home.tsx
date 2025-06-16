@@ -4,7 +4,11 @@ import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
 import { useDbItems } from '@/hooks/useDbItems';
+import { useUserItems } from '@/hooks/useUserItems';
+import { useMatches } from '@/hooks/useMatches';
 import ItemCard from '@/components/items/ItemCard';
+import MyItems from '@/components/items/MyItems';
+import Matches from '@/components/items/Matches';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { isItemLiked, likeItem, unlikeItem } from '@/services/authService';
 import { useAuth } from '@/context/AuthContext';
@@ -78,37 +82,40 @@ const Home: React.FC = () => {
     });
   };
 
-  // Fetch all items from DB to show in Explore section
-  const { items: dbItems, loading: dbItemsLoading, error: dbItemsError } = useDbItems();
-
-  // Liked items state for DB-backed items (by id)
+  // User's items and matching functionality
   const { user, supabaseConfigured } = useAuth();
-  const [likedMap, setLikedMap] = useState<{[id: string]: boolean}>({});
+  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
+  
+  // Selected items state
+  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  
+  // Get selected user item
+  const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
+  
+  // Get matches for selected item
+  const { matches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
 
-  // Load liked statuses for all displayed dbItems
+  // Auto-select first user item when items load
   useEffect(() => {
-    async function fetchLikedStates() {
-      if (!user || !supabaseConfigured) {
-        setLikedMap({});
-        return;
-      }
-      // Only reload for new items
-      const newMap: {[id: string]: boolean} = {};
-      await Promise.all(
-        dbItems.map(async (item) => {
-          const liked = await isItemLiked(item.id);
-          newMap[item.id] = liked;
-        })
-      );
-      setLikedMap(newMap);
+    if (userItems.length > 0 && !selectedUserItemId) {
+      setSelectedUserItemId(userItems[0].id);
     }
-    if (dbItems && dbItems.length > 0) {
-      fetchLikedStates();
-    }
-  }, [user, supabaseConfigured, dbItems]);
+  }, [userItems, selectedUserItemId]);
 
-  // Handle like/unlike for Explore items (calls DB and updates local state)
-  const handleLikeExploreItem = async (itemId: string) => {
+  // Handle selecting a user item
+  const handleSelectUserItem = (itemId: string) => {
+    setSelectedUserItemId(itemId);
+    setSelectedMatchId(null); // Clear match selection when changing user item
+  };
+
+  // Handle selecting a match
+  const handleSelectMatch = (matchId: string) => {
+    setSelectedMatchId(matchId);
+  };
+
+  // Handle liking matches
+  const handleLikeMatch = async (itemId: string) => {
     if (!user || !supabaseConfigured) {
       toast({
         title: 'Please log in to like items.',
@@ -116,44 +123,26 @@ const Home: React.FC = () => {
       });
       return;
     }
-    const isCurrentlyLiked = likedMap[itemId];
+    
+    const match = matches.find(m => m.id === itemId);
+    if (!match) return;
+    
+    const isCurrentlyLiked = match.liked;
     let success = false;
+    
     if (isCurrentlyLiked) {
       success = await unlikeItem(itemId);
     } else {
       success = await likeItem(itemId);
     }
-    // Always re-fetch status after DB mutation (could have failed)
-    const newLiked = await isItemLiked(itemId);
-    setLikedMap(prev => ({ ...prev, [itemId]: newLiked }));
-  };
-
-  // Modal state for Explore Items
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalItem, setModalItem] = useState<any>(null);
-
-  // Track modal's like status separately for instant UI update
-  const [modalLiked, setModalLiked] = useState(false);
-
-  // Sync modalLiked whenever modalItem or likedMap changes
-  useEffect(() => {
-    setModalLiked((modalItem && likedMap[modalItem.id]) ?? false);
-  }, [modalItem, likedMap]);
-
-  const handleOpenModal = (item: any) => {
-    setModalItem(item);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalItem(null);
-    setModalOpen(false);
-  };
-
-  const handleModalLike = async () => {
-    if (!modalItem) return;
-    await handleLikeExploreItem(modalItem.id);
-    setModalLiked(liked => !liked); // UI instant
+    
+    if (success) {
+      // The useMatches hook will automatically refresh, but we can provide immediate feedback
+      toast({
+        title: isCurrentlyLiked ? "Removed from favorites" : "Added to favorites",
+        description: `${match.name} has been ${isCurrentlyLiked ? "removed from" : "added to"} your favorites.`,
+      });
+    }
   };
 
   return (
@@ -161,48 +150,61 @@ const Home: React.FC = () => {
       <Header />
       <HomeWithLocationFilter>
         <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
+          {/* Friend Items Carousel */}
           <div className="mb-6 h-80">
             <FriendItemsCarousel 
               items={friendItems} 
               onLikeItem={handleLikeFriendItem} 
             />
           </div>
+
+          {/* Main Two-Column Layout */}
           <div className="flex-1 min-h-0">
-            <h2 className="text-2xl font-bold mb-4">Explore Items</h2>
-            {dbItemsLoading ? (
-              <div className="flex justify-center items-center min-h-[200px]">
-                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-              </div>
-            ) : dbItemsError ? (
-              <div className="text-red-600 text-center">{dbItemsError}</div>
-            ) : (
-              <>
-                <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {dbItems.map(item => (
-                    <div key={item.id} className="flex">
-                      <ItemCard
-                        id={item.id}
-                        name={item.name}
-                        image={item.image}
-                        isSelected={false}
-                        isMatch={false}
-                        liked={!!likedMap[item.id]}
-                        onSelect={() => handleOpenModal(item)}
-                        onLike={handleLikeExploreItem}
-                        showLikeButton // force the like button in Explore section
-                      />
+            {user && supabaseConfigured ? (
+              <div className="flex flex-col lg:flex-row gap-6 h-full">
+                {/* Left Column - Your Items */}
+                <div className="lg:w-2/5">
+                  <h2 className="text-2xl font-bold mb-4">Your Items</h2>
+                  {userItemsLoading ? (
+                    <div className="flex justify-center items-center min-h-[200px]">
+                      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
                     </div>
-                  ))}
+                  ) : userItemsError ? (
+                    <div className="text-red-600 text-center">{userItemsError}</div>
+                  ) : userItems.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      <p>You haven't posted any items yet.</p>
+                      <p className="text-sm mt-2">Post an item to see matching opportunities!</p>
+                    </div>
+                  ) : (
+                    <MyItems
+                      items={userItems}
+                      selectedItemId={selectedUserItemId}
+                      onSelectItem={handleSelectUserItem}
+                    />
+                  )}
                 </div>
-                <ExploreItemModal
-                  open={modalOpen}
-                  item={modalItem}
-                  onClose={handleCloseModal}
-                  images={modalItem?.images}
-                  liked={modalLiked}
-                  onLike={handleModalLike}
-                />
-              </>
+
+                {/* Right Column - Matching Items */}
+                <div className="lg:w-3/5">
+                  {selectedUserItem ? (
+                    <Matches
+                      matches={matches}
+                      selectedItemName={selectedUserItem.name}
+                      selectedMatchId={selectedMatchId}
+                      onSelectMatch={handleSelectMatch}
+                    />
+                  ) : (
+                    <div className="text-center text-gray-500 py-8">
+                      <p>Select one of your items to see potential matches</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 py-8">
+                <p>Please log in to see your items and find matches</p>
+              </div>
             )}
           </div>
         </div>
