@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Home, Menu, PieChart, Plus, Search, Settings, User, Heart } from 'lucide-react';
+import { Bell, Home, Menu, PieChart, Plus, Search, Settings, User } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -32,10 +32,6 @@ export const MobileMenu = () => {
           <Link to="/" className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-muted">
             <Home className="w-5 h-5" />
             <span>Dashboard</span>
-          </Link>
-          <Link to="/liked" className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-muted">
-            <Heart className="w-5 h-5" />
-            <span>Liked Items</span>
           </Link>
           <Link to="/markets" className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-muted">
             <PieChart className="w-5 h-5" />
