@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2, Package, Heart, Sparkles } from 'lucide-react';
+import { Save, Check, Loader2, Package, Heart } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
