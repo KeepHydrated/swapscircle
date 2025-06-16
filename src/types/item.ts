@@ -11,6 +11,12 @@ export interface Item {
   description?: string;
   tags?: string[];
   priceRange?: string;
+  // New preference fields for "What You're Looking For"
+  lookingForCategories?: string[];
+  lookingForConditions?: string[];
+  lookingForDescription?: string;
+  priceRangeMin?: number;
+  priceRangeMax?: number;
 }
 
 export interface MatchItem extends Item {
