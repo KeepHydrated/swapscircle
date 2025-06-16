@@ -197,20 +197,6 @@ const PostItem: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       
-      {/* Hero Section - Updated to match site theme */}
-      <div className="bg-white border-b border-gray-200 py-8 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center mb-4">
-            <Sparkles className="h-6 w-6 mr-3 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Create Your Trade Listing</h1>
-            <Sparkles className="h-6 w-6 ml-3 text-blue-600" />
-          </div>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Share what you have and discover what you want. Connect with fellow traders and make meaningful exchanges.
-          </p>
-        </div>
-      </div>
-
       <div className="flex-1 p-6 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* What You're Offering Column */}
