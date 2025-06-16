@@ -87,7 +87,6 @@ const Home: React.FC = () => {
   
   // Selected items state - no auto-selection
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
-  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
@@ -98,12 +97,6 @@ const Home: React.FC = () => {
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
     setSelectedUserItemId(itemId);
-    setSelectedMatchId(null); // Clear match selection when changing user item
-  };
-
-  // Handle selecting a match
-  const handleSelectMatch = (matchId: string) => {
-    setSelectedMatchId(matchId);
   };
 
   // Handle liking matches
@@ -184,8 +177,6 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
-                      selectedMatchId={selectedMatchId}
-                      onSelectMatch={handleSelectMatch}
                     />
                   ) : (
                     <div className="h-full flex flex-col">

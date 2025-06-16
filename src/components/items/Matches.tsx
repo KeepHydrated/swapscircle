@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
@@ -7,34 +8,23 @@ import { useMatchActions } from './matches/useMatchActions';
 interface MatchesProps {
   matches: MatchItem[];
   selectedItemName: string;
-  selectedMatchId: string | null;
-  onSelectMatch: (id: string) => void;
 }
 
 const Matches: React.FC<MatchesProps> = ({
   matches,
-  selectedItemName,
-  selectedMatchId,
-  onSelectMatch
+  selectedItemName
 }) => {
-  // State to keep track of viewport size
-  const [itemsPerRow, setItemsPerRow] = useState(2);
-  
-  // Refs for click outside detection
-  const matchesContainerRef = useRef<HTMLDivElement>(null);
-  const detailsRef = useRef<HTMLDivElement>(null);
-
   // Get match actions from our custom hook
   const {
     likedItems,
     removedItems,
     selectedMatch,
     handleLike,
-    handleItemSelect,
+    handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
     setSelectedMatch
-  } = useMatchActions(matches, onSelectMatch);
+  } = useMatchActions(matches);
   
   // Filter out removed/matched items
   const displayedMatches = matches.filter(match => 
@@ -46,12 +36,12 @@ const Matches: React.FC<MatchesProps> = ({
     ? displayedMatches.findIndex(match => match.id === selectedMatch.id)
     : -1;
 
-  // Navigation functions - update selectedMatchId to leverage effect
+  // Navigation functions
   const navigateToPrevMatch = () => {
     if (currentMatchIndex > 0) {
       const prevMatch = displayedMatches[currentMatchIndex - 1];
       if (prevMatch) {
-        onSelectMatch(prevMatch.id);
+        setSelectedMatch(prevMatch);
       }
     }
   };
@@ -60,47 +50,10 @@ const Matches: React.FC<MatchesProps> = ({
     if (currentMatchIndex < displayedMatches.length - 1) {
       const nextMatch = displayedMatches[currentMatchIndex + 1];
       if (nextMatch) {
-        onSelectMatch(nextMatch.id);
+        setSelectedMatch(nextMatch);
       }
     }
   };
-  
-  // Always use 2 items per row for consistent smaller sizing
-  useEffect(() => {
-    setItemsPerRow(2);
-  }, []);
-
-  // Handle click outside to close details
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectedMatchId) {
-        // Check if the click is outside both the matches container and the details
-        const isOutsideMatches = matchesContainerRef.current && !matchesContainerRef.current.contains(event.target as Node);
-        const isOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
-        
-        if (isOutsideMatches && isOutsideDetails) {
-          // Don't clear the selection completely anymore
-          // Just close the popup by setting selectedMatch to null
-          setSelectedMatch(null);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [selectedMatchId, onSelectMatch, setSelectedMatch]);
-
-  // Effect to update selectedMatch when matches or selectedMatchId change
-  useEffect(() => {
-    if (selectedMatchId && matches.length > 0) {
-      const match = matches.find(m => m.id === selectedMatchId);
-      if (match) {
-        setSelectedMatch(match);
-      }
-    }
-  }, [matches, selectedMatchId, setSelectedMatch]);
 
   return (
     <div className="w-full flex flex-col h-full">
@@ -115,19 +68,17 @@ const Matches: React.FC<MatchesProps> = ({
           <p className="text-sm">Try updating your preferences or check back later</p>
         </div>
       ) : (
-        <div ref={matchesContainerRef} className="flex-grow">
+        <div className="flex-grow">
           <MatchesContainer
             displayedMatches={displayedMatches}
-            selectedMatchId={selectedMatchId}
-            itemsPerRow={itemsPerRow}
             likedItems={likedItems}
-            onSelectItem={handleItemSelect}
+            onOpenModal={handleOpenModal}
             onLike={handleLike}
           />
         </div>
       )}
       
-      {/* Popup for displaying match details */}
+      {/* Modal for displaying match details */}
       {selectedMatch && (
         <ItemDetailsModal
           item={selectedMatch}

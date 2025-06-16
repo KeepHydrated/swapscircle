@@ -16,15 +16,14 @@ export interface UseMatchActionsResult {
   removedItems: string[];
   selectedMatch: MatchItem | null;
   handleLike: (id: string) => void;
-  handleItemSelect: (id: string) => void;
+  handleOpenModal: (id: string) => void;
   handlePopupLikeClick: (item: MatchItem) => void;
   handleClosePopup: () => void;
   setSelectedMatch: (match: MatchItem | null) => void;
 }
 
 export const useMatchActions = (
-  matches: MatchItem[],
-  onSelectMatch: (id: string) => void
+  matches: MatchItem[]
 ): UseMatchActionsResult => {
   const { user, supabaseConfigured } = useAuth();
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
@@ -110,11 +109,10 @@ export const useMatchActions = (
     toast.info('Like/unlike works only for real items (not demo items)!');
   };
 
-  const handleItemSelect = (id: string) => {
+  const handleOpenModal = (id: string) => {
     const match = matches.find(m => m.id === id);
     if (match) {
       setSelectedMatch(match);
-      onSelectMatch(id);
     }
   };
 
@@ -132,7 +130,7 @@ export const useMatchActions = (
     removedItems,
     selectedMatch,
     handleLike,
-    handleItemSelect,
+    handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
     setSelectedMatch

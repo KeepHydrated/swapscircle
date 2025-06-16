@@ -5,11 +5,7 @@ import { MatchItem } from '@/types/item';
 
 interface MatchesGridProps {
   displayedMatches: MatchItem[];
-  selectedMatchId: string | null;
-  selectedIndex: number;
-  selectedRowIndex: number;
-  itemsPerRow: number;
-  onSelectItem: (id: string) => void;
+  onOpenModal: (id: string) => void;
   onLike: (id: string) => void;
   likedItems: Record<string, boolean>;
   detailsRef: React.RefObject<HTMLDivElement>;
@@ -17,9 +13,7 @@ interface MatchesGridProps {
 
 const MatchesGrid: React.FC<MatchesGridProps> = ({
   displayedMatches,
-  selectedMatchId,
-  itemsPerRow,
-  onSelectItem,
+  onOpenModal,
   onLike,
   likedItems,
   detailsRef
@@ -34,8 +28,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
             image={match.image}
             isMatch={true}
             liked={likedItems[match.id] || match.liked}
-            isSelected={selectedMatchId === match.id}
-            onSelect={onSelectItem}
+            onSelect={onOpenModal}
             onLike={onLike}
           />
         </div>
