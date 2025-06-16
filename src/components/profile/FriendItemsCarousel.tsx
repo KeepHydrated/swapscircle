@@ -1,10 +1,16 @@
 
 import React, { useState } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 import CarouselItemCard from './carousel/CarouselItemCard';
 import ItemDetailsModal from './carousel/ItemDetailsModal';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface FriendItemsCarouselProps {
   items: MatchItem[];
@@ -56,19 +62,32 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     <div className="relative w-full h-full flex flex-col">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       
-      <ScrollArea className="flex-grow h-64">
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pr-2">
-          {items.map((item) => (
-            <CarouselItemCard
-              key={item.id}
-              item={item}
-              isSelected={selectedItem?.id === item.id}
-              onItemClick={() => handleItemClick(item)}
-              onLikeClick={handleLikeClick}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+      <div className="flex-grow">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: false,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
+            {items.map((item) => (
+              <CarouselItem key={item.id} className="pl-2 md:pl-4 basis-auto">
+                <div className="w-48">
+                  <CarouselItemCard
+                    item={item}
+                    isSelected={selectedItem?.id === item.id}
+                    onItemClick={() => handleItemClick(item)}
+                    onLikeClick={handleLikeClick}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-2" />
+          <CarouselNext className="right-2" />
+        </Carousel>
+      </div>
 
       <ItemDetailsModal
         item={selectedItem}
