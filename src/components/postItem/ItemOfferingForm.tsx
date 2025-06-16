@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -177,24 +178,24 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Condition */}
-          <div className="space-y-2">
-            <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition</Label>
-            <Select value={condition} onValueChange={setCondition}>
-              <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
-                <SelectValue placeholder="Select condition" />
-              </SelectTrigger>
-              <SelectContent>
-                {conditions.map((cond) => (
-                  <SelectItem key={cond} value={cond} className="text-base py-2">{cond}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          {/* Category */}
-          <div className="space-y-2">
+        {/* Condition */}
+        <div className="space-y-2">
+          <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition</Label>
+          <Select value={condition} onValueChange={setCondition}>
+            <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
+              <SelectValue placeholder="Select condition" />
+            </SelectTrigger>
+            <SelectContent>
+              {conditions.map((cond) => (
+                <SelectItem key={cond} value={cond} className="text-base py-2">{cond}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* Category and Subcategory in same row */}
+        <div className="flex gap-4">
+          <div className="flex-1 space-y-2">
             <Label htmlFor="category" className="text-lg font-semibold text-gray-900">Category</Label>
             <Select 
               value={category} 
@@ -213,12 +214,10 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               </SelectContent>
             </Select>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
           {/* Subcategory - only show if category is selected */}
           {category && (
-            <div className="space-y-2">
+            <div className="flex-1 space-y-2">
               <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-900">Subcategory</Label>
               <Select value={subcategory} onValueChange={setSubcategory}>
                 <SelectTrigger id="subcategory" className="h-12 text-base border-gray-300 focus:border-blue-500">
@@ -232,23 +231,23 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               </Select>
             </div>
           )}
-          
-          {/* Price Range */}
-          <div className="space-y-2">
-            <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Estimated Value</Label>
-            <Select value={priceRange} onValueChange={setPriceRange}>
-              <SelectTrigger id="price-range" className="h-12 text-base border-gray-300 focus:border-blue-500">
-                <SelectValue placeholder="Select value range" />
-              </SelectTrigger>
-              <SelectContent>
-                {priceRanges.map((range) => (
-                  <SelectItem key={range} value={range} className="text-base py-2">
-                    {range}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        </div>
+        
+        {/* Estimated Value */}
+        <div className="space-y-2">
+          <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Estimated Value</Label>
+          <Select value={priceRange} onValueChange={setPriceRange}>
+            <SelectTrigger id="price-range" className="h-12 text-base border-gray-300 focus:border-blue-500">
+              <SelectValue placeholder="Select value range" />
+            </SelectTrigger>
+            <SelectContent>
+              {priceRanges.map((range) => (
+                <SelectItem key={range} value={range} className="text-base py-2">
+                  {range}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
