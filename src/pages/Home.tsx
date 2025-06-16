@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
@@ -86,7 +85,7 @@ const Home: React.FC = () => {
   const { user, supabaseConfigured } = useAuth();
   const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
   
-  // Selected items state - removed auto-selection
+  // Selected items state - no auto-selection
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   
@@ -142,9 +141,9 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <HomeWithLocationFilter>
-        <div className="flex-1 p-6 md:p-8 flex flex-col h-full">
+        <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
           {/* Friend Items Carousel */}
-          <div className="mb-8 h-80">
+          <div className="mb-6 h-64">
             <FriendItemsCarousel 
               items={friendItems} 
               onLikeItem={handleLikeFriendItem} 
@@ -154,57 +153,56 @@ const Home: React.FC = () => {
           {/* Main Two-Column Layout */}
           <div className="flex-1 min-h-0">
             {user && supabaseConfigured ? (
-              <div className="flex flex-col xl:flex-row gap-8 h-full">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
                 {/* Left Column - Your Items */}
-                <div className="xl:w-2/5">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full">
-                    <h2 className="text-3xl font-bold mb-6 text-gray-800">Your Items</h2>
-                    {userItemsLoading ? (
-                      <div className="flex justify-center items-center min-h-[300px]">
-                        <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full"></div>
-                      </div>
-                    ) : userItemsError ? (
-                      <div className="text-red-600 text-center bg-red-50 p-6 rounded-lg">{userItemsError}</div>
-                    ) : userItems.length === 0 ? (
-                      <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-lg">
-                        <div className="text-6xl mb-4">📦</div>
-                        <p className="text-lg font-medium mb-2">You haven't posted any items yet.</p>
-                        <p className="text-sm">Post an item to see matching opportunities!</p>
-                      </div>
-                    ) : (
-                      <MyItems
-                        items={userItems}
-                        selectedItemId={selectedUserItemId}
-                        onSelectItem={handleSelectUserItem}
-                      />
-                    )}
-                  </div>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                  <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
+                  {userItemsLoading ? (
+                    <div className="flex justify-center items-center min-h-[300px]">
+                      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                    </div>
+                  ) : userItemsError ? (
+                    <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
+                  ) : userItems.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
+                      <div className="text-4xl mb-3">📦</div>
+                      <p className="text-base font-medium mb-1">No items yet</p>
+                      <p className="text-sm">Post an item to see matches!</p>
+                    </div>
+                  ) : (
+                    <MyItems
+                      items={userItems}
+                      selectedItemId={selectedUserItemId}
+                      onSelectItem={handleSelectUserItem}
+                    />
+                  )}
                 </div>
 
-                {/* Right Column - Matching Items */}
-                <div className="xl:w-3/5">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full">
-                    {selectedUserItem ? (
-                      <Matches
-                        matches={matches}
-                        selectedItemName={selectedUserItem.name}
-                        selectedMatchId={selectedMatchId}
-                        onSelectMatch={handleSelectMatch}
-                      />
-                    ) : (
-                      <div className="text-center text-gray-500 py-12 h-full flex flex-col justify-center">
-                        <div className="text-6xl mb-4">🎯</div>
-                        <p className="text-lg font-medium mb-2">Select one of your items</p>
-                        <p className="text-sm">Choose an item from the left to see potential matches</p>
+                {/* Right Column - Matches */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                  {selectedUserItem ? (
+                    <Matches
+                      matches={matches}
+                      selectedItemName={selectedUserItem.name}
+                      selectedMatchId={selectedMatchId}
+                      onSelectMatch={handleSelectMatch}
+                    />
+                  ) : (
+                    <div className="h-full flex flex-col">
+                      <h2 className="text-2xl font-bold mb-4 text-gray-800">Matches</h2>
+                      <div className="flex-1 flex flex-col justify-center items-center text-gray-500 py-8">
+                        <div className="text-4xl mb-3">🎯</div>
+                        <p className="text-base font-medium mb-1">Select an item</p>
+                        <p className="text-sm text-center">Choose an item from the left to see potential matches</p>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
-              <div className="text-center text-gray-500 py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-                <div className="text-6xl mb-4">🔐</div>
-                <p className="text-lg font-medium mb-2">Please log in</p>
+              <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="text-4xl mb-3">🔐</div>
+                <p className="text-base font-medium mb-1">Please log in</p>
                 <p className="text-sm">Sign in to see your items and find matches</p>
               </div>
             )}

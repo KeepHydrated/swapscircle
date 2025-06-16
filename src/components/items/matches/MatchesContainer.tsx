@@ -36,7 +36,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
 
   return (
     <div className="relative">
-      <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-240px)]">
+      <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-280px)]">
         <MatchesGrid
           displayedMatches={displayedMatches}
           selectedMatchId={selectedMatchId}

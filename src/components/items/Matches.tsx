@@ -65,28 +65,9 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
   
-  // Update itemsPerRow based on window size
+  // Always use 2 items per row for consistent smaller sizing
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1280) {
-        setItemsPerRow(3); // xl screens
-      } else if (window.innerWidth >= 1024) {
-        setItemsPerRow(2); // lg screens
-      } else {
-        setItemsPerRow(2); // smaller screens
-      }
-    };
-    
-    // Set initial value
-    handleResize();
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Clean up
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    setItemsPerRow(2);
   }, []);
 
   // Handle click outside to close details
@@ -123,14 +104,14 @@ const Matches: React.FC<MatchesProps> = ({
 
   return (
     <div className="w-full flex flex-col h-full">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">
         Matches for <span className="text-primary">{selectedItemName}</span>
       </h2>
       
       {displayedMatches.length === 0 ? (
-        <div className="text-center text-gray-500 py-12 flex-1 flex flex-col justify-center">
-          <div className="text-6xl mb-4">🔍</div>
-          <p className="text-lg font-medium mb-2">No matches found</p>
+        <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
+          <div className="text-4xl mb-3">🔍</div>
+          <p className="text-base font-medium mb-1">No matches found</p>
           <p className="text-sm">Try updating your preferences or check back later</p>
         </div>
       ) : (

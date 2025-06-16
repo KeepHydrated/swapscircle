@@ -25,7 +25,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   detailsRef
 }) => {
   return (
-    <div className={`grid ${itemsPerRow === 3 ? 'grid-cols-3' : 'grid-cols-2'} gap-6 pr-2`} ref={detailsRef}>
+    <div className="grid grid-cols-2 gap-3 pr-2" ref={detailsRef}>
       {displayedMatches.map(match => (
         <div key={match.id} className="transform transition-all duration-200 hover:scale-105">
           <ItemCard
