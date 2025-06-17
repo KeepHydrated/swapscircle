@@ -70,34 +70,35 @@ export const useMatchActions = (
       // Optimistically update
       setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
 
-      let result = false;
       try {
+        let result;
         if (isCurrentlyLiked) {
           result = await unlikeItem(id);
         } else {
           result = await likeItem(id);
         }
+
+        // Always reload DB status to reflect true value
+        await loadLikedStatus();
+
+        // Handle mutual match result - check if result is an object with match data
+        if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
+          if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            // Only navigate to messages if there's a confirmed mutual match
+            setTimeout(() => {
+              navigate('/messages', {
+                state: {
+                  newMatch: true,
+                  matchData: result.matchData,
+                },
+              });
+            }, 2000); // Give user time to see the success message
+          }
+        }
       } catch (error) {
         console.error('DB like/unlike error:', error);
-        result = false;
-      }
-
-      // Always reload DB status to reflect true value
-      await loadLikedStatus();
-
-      // Handle mutual match result
-      if (result && typeof result === 'object' && result.success && !isCurrentlyLiked) {
-        if (result.isMatch) {
-          // Only navigate to messages if there's a confirmed mutual match
-          setTimeout(() => {
-            navigate('/messages', {
-              state: {
-                newMatch: true,
-                matchData: result.matchData,
-              },
-            });
-          }, 2000); // Give user time to see the success message
-        }
+        // Revert optimistic update on error
+        setLikedItems(prev => ({ ...prev, [id]: isCurrentlyLiked }));
       }
       return;
     }
