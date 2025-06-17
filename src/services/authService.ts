@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { checkForMutualMatch, createMatch } from './mutualMatchingService';
 
 export type User = {
   id: string;
@@ -279,7 +280,7 @@ export const uploadItemImage = async (file: File): Promise<string | null> => {
   }
 };
 
-// New function to like an item
+// New function to like an item with mutual matching logic
 export const likeItem = async (itemId: string) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
@@ -293,10 +294,13 @@ export const likeItem = async (itemId: string) => {
       return false;
     }
 
+    const currentUserId = session.user.id;
+
+    // First, like the item
     const { error } = await supabase
       .from('liked_items')
       .insert({
-        user_id: session.user.id,
+        user_id: currentUserId,
         item_id: itemId
       });
 
@@ -311,8 +315,40 @@ export const likeItem = async (itemId: string) => {
       return false;
     }
 
-    toast.success('Item liked!');
-    return true;
+    // Check for mutual match
+    const matchResult = await checkForMutualMatch(currentUserId, itemId);
+    
+    if (matchResult.isMatch && matchResult.matchData) {
+      // Create the confirmed match
+      const match = await createMatch(
+        currentUserId,
+        matchResult.matchData.otherUserId,
+        matchResult.matchData.myItemId,
+        matchResult.matchData.otherUserItemId
+      );
+
+      if (match) {
+        // Get item names for the notification
+        const { data: myItem } = await supabase
+          .from('items')
+          .select('name')
+          .eq('id', matchResult.matchData.myItemId)
+          .single();
+
+        const { data: theirItem } = await supabase
+          .from('items')
+          .select('name')
+          .eq('id', matchResult.matchData.otherUserItemId)
+          .single();
+
+        toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}"`);
+        return { success: true, isMatch: true, matchData: match };
+      }
+    } else {
+      toast.success('Item liked!');
+    }
+
+    return { success: true, isMatch: false };
   } catch (error: any) {
     console.error('Error liking item:', error);
     toast.error(error.message || 'Error liking item');

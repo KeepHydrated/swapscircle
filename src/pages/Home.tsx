@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
@@ -9,7 +10,6 @@ import ItemCard from '@/components/items/ItemCard';
 import MyItems from '@/components/items/MyItems';
 import Matches from '@/components/items/Matches';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
-import { isItemLiked, likeItem, unlikeItem } from '@/services/authService';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
@@ -97,37 +97,6 @@ const Home: React.FC = () => {
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
     setSelectedUserItemId(itemId);
-  };
-
-  // Handle liking matches
-  const handleLikeMatch = async (itemId: string) => {
-    if (!user || !supabaseConfigured) {
-      toast({
-        title: 'Please log in to like items.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    const match = matches.find(m => m.id === itemId);
-    if (!match) return;
-    
-    const isCurrentlyLiked = match.liked;
-    let success = false;
-    
-    if (isCurrentlyLiked) {
-      success = await unlikeItem(itemId);
-    } else {
-      success = await likeItem(itemId);
-    }
-    
-    if (success) {
-      // The useMatches hook will automatically refresh, but we can provide immediate feedback
-      toast({
-        title: isCurrentlyLiked ? "Removed from favorites" : "Added to favorites",
-        description: `${match.name} has been ${isCurrentlyLiked ? "removed from" : "added to"} your favorites.`,
-      });
-    }
   };
 
   return (

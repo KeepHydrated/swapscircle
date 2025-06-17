@@ -92,6 +92,48 @@ export type Database = {
           },
         ]
       }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          user1_id: string
+          user1_item_id: string
+          user2_id: string
+          user2_item_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user1_id: string
+          user1_item_id: string
+          user2_id: string
+          user2_item_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user1_id?: string
+          user1_item_id?: string
+          user2_id?: string
+          user2_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user1_item"
+            columns: ["user1_item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user2_item"
+            columns: ["user2_item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           content: string

@@ -57,7 +57,7 @@ export const useMatchActions = (
     // eslint-disable-next-line
   }, [matches, user, supabaseConfigured]);
 
-  // Handle liking/unliking an item
+  // Handle liking/unliking an item with mutual matching logic
   const handleLike = async (id: string) => {
     if (!user) {
       toast.error('Please log in to like items');
@@ -70,41 +70,39 @@ export const useMatchActions = (
       // Optimistically update
       setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
 
-      let success = false;
+      let result = false;
       try {
         if (isCurrentlyLiked) {
-          success = await unlikeItem(id);
+          result = await unlikeItem(id);
         } else {
-          success = await likeItem(id);
+          result = await likeItem(id);
         }
       } catch (error) {
         console.error('DB like/unlike error:', error);
-        success = false;
+        result = false;
       }
 
       // Always reload DB status to reflect true value
       await loadLikedStatus();
 
-      if (success && !isCurrentlyLiked) {
-        const match = matches.find(m => m.id === id);
-        if (match) {
-          toast(`You matched with ${match.name}! Check your messages.`);
+      // Handle mutual match result
+      if (result && typeof result === 'object' && result.success && !isCurrentlyLiked) {
+        if (result.isMatch) {
+          // Only navigate to messages if there's a confirmed mutual match
           setTimeout(() => {
             navigate('/messages', {
               state: {
-                likedItem: {
-                  ...match,
-                  liked: true,
-                },
+                newMatch: true,
+                matchData: result.matchData,
               },
             });
-          }, 1000);
+          }, 2000); // Give user time to see the success message
         }
       }
       return;
     }
 
-    // For mock/demo items (non-UUID): do only local toggle, do NOT call DB or expect item on liked page.
+    // For mock/demo items (non-UUID): do only local toggle
     setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
     toast.info('Like/unlike works only for real items (not demo items)!');
   };
