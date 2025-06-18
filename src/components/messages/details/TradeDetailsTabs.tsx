@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -235,7 +234,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
               </p>
               
               {/* Property Tags */}
-              <div className="grid grid-cols-2 gap-1.5 text-sm mb-3">
+              <div className="grid grid-cols-2 gap-1.5 text-sm">
                 <div className="flex items-center gap-2">
                   <Tag className="h-4 w-4 text-gray-500" />
                   <span>Electronics</span>
@@ -251,37 +250,6 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-gray-500" />
                   <span>$150 - $300</span>
-                </div>
-              </div>
-              
-              {/* Owner information */}
-              <div className="pt-3 border-t border-gray-200">
-                <div className="flex items-center mb-2">
-                  <Avatar className="h-6 w-6 mr-2">
-                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                    <AvatarFallback>EW</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h4 className="text-xs font-semibold">Emma Wilson</h4>
-                    <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                  <div className="flex items-center">
-                    <Calendar className="h-2.5 w-2.5 mr-1" />
-                    <span>Since 2023</span>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <MapPin className="h-2.5 w-2.5 mr-1" />
-                    <span>2.3 mi away</span>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <Clock className="h-2.5 w-2.5 mr-1" />
-                    <span>~1 hour</span>
-                  </div>
                 </div>
               </div>
             </div>
