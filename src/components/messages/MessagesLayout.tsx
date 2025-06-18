@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ExchangeCarousel from '@/components/messages/ExchangeCarousel';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
 import DetailsPanel from '@/components/messages/details/DetailsPanel';
@@ -34,16 +33,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
 }) => {
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
-      {/* Item exchange carousel with reduced height */}
-      <div className="w-full border-b border-gray-200 bg-white z-20 flex items-center px-2 sticky top-0">
-        <ExchangeCarousel 
-          exchangePairs={exchangePairs}
-          selectedPairId={selectedPairId}
-          onPairSelect={onPairSelect}
-        />
-      </div>
-      
-      {/* Three columns with consistent header heights */}
+      {/* Three columns layout */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - Conversations */}
         <div className="w-[350px] border-r border-gray-200 overflow-hidden flex flex-col">
