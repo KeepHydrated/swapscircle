@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,14 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=400&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=400&auto=format&fit=crop"
+  ];
+
+  // Sample images for their item
+  const theirItemImages = [
+    selectedPair.item2.image || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=400&h=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1515378791036-0648a814c963?w=400&h=400&auto=format&fit=crop"
   ];
 
   // Fetch trade status to check if already accepted
@@ -81,6 +90,14 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   };
 
   const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === itemImages.length - 1 ? 0 : prev + 1));
+  };
+
+  const handlePrevTheirImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? theirItemImages.length - 1 : prev - 1));
+  };
+
+  const handleNextTheirImage = () => {
     setCurrentImageIndex((prev) => (prev === itemImages.length - 1 ? 0 : prev + 1));
   };
 
@@ -178,81 +195,93 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
             </div>
           </div>
         ) : (
-          <div className="bg-gray-50 rounded-lg p-3 border flex-1">
-            <div className="flex items-center mb-3">
-              <Avatar className="h-12 w-12 bg-gray-100 mr-3 flex-shrink-0">
-                <AvatarImage src={selectedPair.item2.image} alt={selectedPair.item2.name} />
-                <AvatarFallback>{selectedPair.item2.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium text-sm">{selectedPair.item2.name}</p>
-                <p className="text-xs text-gray-600">Their Item</p>
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            {/* Their Item Image with Navigation */}
+            <div className="relative aspect-square bg-gray-100 w-full h-32">
+              <img 
+                src={theirItemImages[currentImageIndex]} 
+                alt={selectedPair.item2.name} 
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={handlePrevTheirImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+              
+              <button
+                onClick={handleNextTheirImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                aria-label="Next image"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-700" />
+              </button>
+              
+              {/* Image Counter */}
+              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
+                {currentImageIndex + 1}/{theirItemImages.length}
               </div>
             </div>
             
-            <div className="mb-3">
-              <p className="text-gray-700 text-xs mt-1 bg-white p-2 rounded-md">
+            {/* Their Item Details */}
+            <div className="p-4">
+              <h3 className="font-semibold text-lg mb-2">{selectedPair.item2.name}</h3>
+              <p className="text-gray-600 text-sm mb-3">
                 Excellent condition. This {selectedPair.item2.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.
               </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-1.5 mb-2">
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
-                  <Check className="w-2 h-2 text-green-600" />
-                </div>
-                <span className="text-gray-800 text-xs">Excellent</span>
-              </div>
               
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
-                  <DollarSign className="w-2 h-2 text-green-600" />
+              {/* Property Tags */}
+              <div className="grid grid-cols-2 gap-1.5 text-sm mb-3">
+                <div className="flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-gray-500" />
+                  <span>Electronics</span>
                 </div>
-                <span className="text-gray-800 text-xs">$150 - $300</span>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center mr-1">
-                  <Home className="w-2 h-2 text-blue-600" />
+                <div className="flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-gray-500" />
+                  <span>Tech</span>
                 </div>
-                <span className="text-gray-800 text-xs">Electronics</span>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-purple-100 flex items-center justify-center mr-1">
-                  <Utensils className="w-2 h-2 text-purple-600" />
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-gray-500" />
+                  <span>Excellent</span>
                 </div>
-                <span className="text-gray-800 text-xs">Tech</span>
-              </div>
-            </div>
-            
-            {/* Owner information */}
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <div className="flex items-center mb-2">
-                <Avatar className="h-6 w-6 mr-2">
-                  <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                  <AvatarFallback>EW</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h4 className="text-xs font-semibold">Emma Wilson</h4>
-                  <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-gray-500" />
+                  <span>$150 - $300</span>
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                <div className="flex items-center">
-                  <Calendar className="h-2.5 w-2.5 mr-1" />
-                  <span>Since 2023</span>
+              {/* Owner information */}
+              <div className="pt-3 border-t border-gray-200">
+                <div className="flex items-center mb-2">
+                  <Avatar className="h-6 w-6 mr-2">
+                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
+                    <AvatarFallback>EW</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="text-xs font-semibold">Emma Wilson</h4>
+                    <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                  </div>
                 </div>
                 
-                <div className="flex items-center">
-                  <MapPin className="h-2.5 w-2.5 mr-1" />
-                  <span>2.3 mi away</span>
-                </div>
-                
-                <div className="flex items-center">
-                  <Clock className="h-2.5 w-2.5 mr-1" />
-                  <span>~1 hour</span>
+                <div className="flex flex-wrap gap-2 text-xs text-gray-600">
+                  <div className="flex items-center">
+                    <Calendar className="h-2.5 w-2.5 mr-1" />
+                    <span>Since 2023</span>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <MapPin className="h-2.5 w-2.5 mr-1" />
+                    <span>2.3 mi away</span>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <Clock className="h-2.5 w-2.5 mr-1" />
+                    <span>~1 hour</span>
+                  </div>
                 </div>
               </div>
             </div>
