@@ -24,9 +24,12 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
   title = "Your Friend's Items"
 }) => {
   const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const handleItemClick = (item: MatchItem) => {
     console.log("[FriendItemsCarousel] Opening modal for item:", item);
+    const index = items.findIndex(i => i.id === item.id);
+    setCurrentIndex(index);
     setSelectedItem(item);
   };
 
@@ -56,6 +59,22 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
       title: item.liked ? "Removed from favorites" : "Added to favorites",
       description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
     });
+  };
+
+  const handleNavigatePrev = () => {
+    if (currentIndex > 0) {
+      const newIndex = currentIndex - 1;
+      setCurrentIndex(newIndex);
+      setSelectedItem(items[newIndex]);
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (currentIndex < items.length - 1) {
+      const newIndex = currentIndex + 1;
+      setCurrentIndex(newIndex);
+      setSelectedItem(items[newIndex]);
+    }
   };
 
   return (
@@ -94,6 +113,10 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
         isOpen={!!selectedItem}
         onClose={handleCloseModal}
         onLikeClick={handleModalLikeClick}
+        onNavigatePrev={handleNavigatePrev}
+        onNavigateNext={handleNavigateNext}
+        currentIndex={currentIndex}
+        totalItems={items.length}
       />
     </div>
   );
