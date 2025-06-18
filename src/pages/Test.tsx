@@ -27,8 +27,8 @@ const Test = () => {
         <div className="text-left">
           <p className="text-sm text-gray-500 mb-4">6/15/2025</p>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* First Profile with Item and Review Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* First Profile with Item */}
             <div className="space-y-4">
               {/* Profile Section */}
               <div>
@@ -84,50 +84,6 @@ const Test = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Review Section */}
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="font-semibold text-lg mb-4">Your Review</h3>
-                
-                {/* Star Rating */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-1 mb-2">
-                    {Array(5).fill(0).map((_, index) => (
-                      <Star
-                        key={index}
-                        className={`h-6 w-6 cursor-pointer transition-colors ${
-                          index < rating 
-                            ? "text-yellow-400 fill-yellow-400" 
-                            : "text-gray-300 hover:text-yellow-200"
-                        }`}
-                        onClick={() => handleStarClick(index)}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    {rating > 0 ? `${rating} out of 5 stars` : 'Click to rate'}
-                  </p>
-                </div>
-
-                {/* Comment Box */}
-                <div className="mb-4">
-                  <Textarea
-                    placeholder="Share your experience with this trade..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="min-h-[100px]"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button 
-                  onClick={handleSubmitReview}
-                  disabled={rating === 0 || comment.trim() === ''}
-                  className="w-full"
-                >
-                  Submit Review
-                </Button>
               </div>
             </div>
 
@@ -188,6 +144,52 @@ const Test = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Review Section */}
+            <div className="space-y-4">
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="font-semibold text-lg mb-4">Your Review</h3>
+                
+                {/* Star Rating */}
+                <div className="mb-4">
+                  <div className="flex items-center gap-1 mb-2">
+                    {Array(5).fill(0).map((_, index) => (
+                      <Star
+                        key={index}
+                        className={`h-6 w-6 cursor-pointer transition-colors ${
+                          index < rating 
+                            ? "text-yellow-400 fill-yellow-400" 
+                            : "text-gray-300 hover:text-yellow-200"
+                        }`}
+                        onClick={() => handleStarClick(index)}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {rating > 0 ? `${rating} out of 5 stars` : 'Click to rate'}
+                  </p>
+                </div>
+
+                {/* Comment Box */}
+                <div className="mb-4">
+                  <Textarea
+                    placeholder="Share your experience with this trade..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    className="min-h-[100px]"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button 
+                  onClick={handleSubmitReview}
+                  disabled={rating === 0 || comment.trim() === ''}
+                  className="w-full"
+                >
+                  Submit Review
+                </Button>
               </div>
             </div>
           </div>
