@@ -11,7 +11,7 @@ const Test = () => {
         <div className="text-left">
           <p className="text-sm text-gray-500 mb-4">6/15/2025</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-8">
             {/* First Profile */}
             <div>
               <div className="flex items-center gap-3 mb-4">
