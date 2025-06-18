@@ -39,7 +39,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none relative">
+      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none relative flex items-center justify-center min-h-[92vh]">
         {/* Navigation buttons - positioned in the dark overlay area, outside the white box */}
         {canNavigatePrev && (
           <button
@@ -61,7 +61,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           </button>
         )}
 
-        <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
+        {/* Main content container - the white box */}
+        <div className="flex w-full max-w-4xl h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in mx-8">
           {/* Like button - positioned to the left of close button */}
           <button
             onClick={handleLikeClick}
@@ -95,7 +96,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           {/* Details */}
           <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
             {/* Title */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-6">
               {item.name}
             </h2>
             
