@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from "lucide-react";
 import { MatchItem } from '@/types/item';
 
@@ -40,6 +40,12 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none relative flex items-center justify-center min-h-[92vh]">
+        {/* Hidden accessibility elements */}
+        <DialogTitle className="sr-only">{item.name}</DialogTitle>
+        <DialogDescription className="sr-only">
+          Item details for {item.name}. {item.description || "Item details and information."}
+        </DialogDescription>
+
         {/* Navigation buttons - positioned in the dark overlay area, outside the white box */}
         {canNavigatePrev && (
           <button
