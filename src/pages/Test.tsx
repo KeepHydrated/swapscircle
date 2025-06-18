@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -52,7 +51,7 @@ const Test = () => {
 
               {/* Item Section */}
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100 max-w-md">
+                <div className="aspect-square bg-gray-100 w-32 h-32">
                   <img 
                     src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=400&h=400&auto=format&fit=crop" 
                     alt="Vintage Camera" 
@@ -115,7 +114,7 @@ const Test = () => {
 
               {/* Item Section */}
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100 max-w-md">
+                <div className="aspect-square bg-gray-100 w-32 h-32">
                   <img 
                     src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop" 
                     alt="MacBook Pro" 
