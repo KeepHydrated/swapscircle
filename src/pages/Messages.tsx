@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
@@ -8,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Clock } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
+import MessageInput from '@/components/messages/MessageInput';
 
 const Messages = () => {
   const {
@@ -217,26 +219,11 @@ const Messages = () => {
                   )}
                 </div>
                 
-                {/* Message input */}
-                <div className="p-4 border-t border-gray-200 bg-white">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Type a message..."
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2"
-                    />
-                    <button 
-                      onClick={handleSendMessage}
-                      disabled={!messageText.trim() || sendMessageMutation.isPending}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg"
-                    >
-                      {sendMessageMutation.isPending ? 'Sending...' : 'Send'}
-                    </button>
-                  </div>
-                </div>
+                {/* Message input - using the MessageInput component */}
+                <MessageInput 
+                  onMarkCompleted={() => handleTradeCompleted(activeConversation)}
+                  conversationId={activeConversation}
+                />
               </div>
             ) : (
               <div className="flex items-center justify-center h-full">
