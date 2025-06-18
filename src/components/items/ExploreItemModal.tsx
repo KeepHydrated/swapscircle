@@ -197,34 +197,35 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-2 gap-3">
-                  <h2 className="text-2xl font-bold text-gray-900 truncate">
-                    {displayItem.name}
-                  </h2>
-                </div>
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  {displayItem.name}
+                </h2>
                 
-                <div className="bg-gray-50 p-3 mb-4 text-gray-700 rounded-lg text-base min-h-[66px]">
+                {/* Description */}
+                <p className="text-gray-700 text-base mb-6 leading-relaxed">
                   {displayItem.description ||
-                    "No description. This item has been gently used and well maintained."}
-                </div>
+                    "Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts."}
+                </p>
                 
-                <div className="mb-3 flex flex-wrap gap-3 items-center text-sm">
-                  <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full">
-                    <span className="w-2 h-2 bg-green-400 inline-block rounded-full" />
-                    <span className="text-green-700">{displayItem.condition || "Good"}</span>
+                {/* Tags in 2x2 grid */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <span className="text-lg">🏷️</span>
+                    <span className="text-sm">{displayItem.category || "Electronics"}</span>
                   </div>
-                  {displayItem.category && (
-                    <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full text-blue-700">
-                      <span className="">🏷️</span>
-                      {displayItem.category}
-                    </div>
-                  )}
-                  {displayItem.tags && displayItem.tags.length > 0 && (
-                    <div className="flex items-center gap-2 px-3 py-1 bg-violet-50 rounded-full text-violet-700">
-                      <span className="">🍽️</span>
-                      {displayItem.tags[0]}
-                    </div>
-                  )}
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <span className="text-lg">📷</span>
+                    <span className="text-sm">{displayItem.tags?.[0] || "Cameras"}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <span className="text-lg">⭐</span>
+                    <span className="text-sm">{displayItem.condition || "Excellent"}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <span className="text-lg">💰</span>
+                    <span className="text-sm">$150 - $200</span>
+                  </div>
                 </div>
                 
                 {/* User profile info */}
