@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
@@ -145,53 +144,6 @@ const Messages = () => {
           <div className="flex-1 overflow-hidden">
             {activeConversation ? (
               <div className="flex flex-col h-full">
-                {/* Trading Partner Header */}
-                <div className="p-4 border-b border-gray-200 bg-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg">Trading Partner</h3>
-                    </div>
-                    {selectedPair && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Trading:</span> {selectedPair.item1.name} ↔ {selectedPair.item2.name}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Partner information */}
-                  <div className="flex items-center mt-3 pt-3 border-t border-gray-100">
-                    <Avatar className="h-8 w-8 mr-3">
-                      <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                      <AvatarFallback>EW</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-sm font-semibold">Emma Wilson</h4>
-                          <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
-                        </div>
-                        
-                        <div className="flex items-center gap-4 text-xs text-gray-600">
-                          <div className="flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            <span>Since 2023</span>
-                          </div>
-                          
-                          <div className="flex items-center">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            <span>2.3 mi away</span>
-                          </div>
-                          
-                          <div className="flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            <span>~1 hour</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
                 {/* Messages area */}
                 <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
                   {messagesLoading ? (
