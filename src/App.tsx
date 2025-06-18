@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
+import Test from "./pages/Test";
 import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/test" element={<Test />} />
               <Route path="/item/:itemId" element={<ItemDetails />} />
               <Route path="/post-item" element={
                 <RequireAuth>
