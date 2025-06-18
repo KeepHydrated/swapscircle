@@ -74,7 +74,7 @@ const Messages = () => {
   if (loading) {
     return (
       <MainLayout>
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-center items-center h-[calc(100vh-80px)]">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
         </div>
       </MainLayout>
@@ -82,8 +82,16 @@ const Messages = () => {
   }
 
   return (
-    <MainLayout>
-      <div className="flex h-screen overflow-hidden">        
+    <div className="flex flex-col h-screen">
+      {/* Header */}
+      <div className="flex-shrink-0">
+        <div className="h-16 bg-white border-b border-gray-200">
+          {/* Add your header content here if needed */}
+        </div>
+      </div>
+      
+      {/* Main content area */}
+      <div className="flex flex-1 overflow-hidden">        
         {/* Left sidebar - Conversations */}
         <div className="w-[350px] border-r border-gray-200 flex flex-col">
           {conversations.length > 0 ? (
@@ -250,7 +258,7 @@ const Messages = () => {
           )}
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 };
 
