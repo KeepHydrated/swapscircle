@@ -23,7 +23,6 @@ import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
-import Test2 from "./pages/Test2";
 import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
@@ -40,7 +39,6 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/test" element={<Test />} />
-              <Route path="/test2" element={<Test2 />} />
               <Route path="/test-messages" element={<TestMessages />} />
               <Route path="/item/:itemId" element={<ItemDetails />} />
               <Route path="/post-item" element={
