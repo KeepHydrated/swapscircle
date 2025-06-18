@@ -40,6 +40,27 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
+        {/* Navigation buttons - positioned in the dark overlay area */}
+        {canNavigatePrev && (
+          <button
+            onClick={onNavigatePrev}
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            aria-label="Previous item"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+        )}
+
+        {canNavigateNext && (
+          <button
+            onClick={onNavigateNext}
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            aria-label="Next item"
+          >
+            <ArrowRight className="w-6 h-6 text-gray-700" />
+          </button>
+        )}
+
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           {/* Like button - positioned to the left of close button */}
           <button
@@ -61,27 +82,6 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           >
             <X className="w-4 h-4 text-gray-600" />
           </button>
-
-          {/* Navigation buttons */}
-          {canNavigatePrev && (
-            <button
-              onClick={onNavigatePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
-              aria-label="Previous item"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </button>
-          )}
-
-          {canNavigateNext && (
-            <button
-              onClick={onNavigateNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
-              aria-label="Next item"
-            >
-              <ArrowRight className="w-5 h-5 text-gray-600" />
-            </button>
-          )}
 
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
