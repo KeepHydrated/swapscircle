@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from "lucide-react";
 import { MatchItem } from '@/types/item';
 
@@ -39,14 +39,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none relative flex items-center justify-center min-h-[92vh]">
-        {/* Hidden accessibility elements */}
-        <DialogTitle className="sr-only">{item.name}</DialogTitle>
-        <DialogDescription className="sr-only">
-          Item details for {item.name}. {item.description || "Item details and information."}
-        </DialogDescription>
-
-        {/* Navigation buttons - positioned in the dark overlay area, outside the white box */}
+      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
+        {/* Navigation buttons - positioned in the dark overlay area */}
         {canNavigatePrev && (
           <button
             onClick={onNavigatePrev}
@@ -67,8 +61,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           </button>
         )}
 
-        {/* Main content container - the white box */}
-        <div className="flex w-full max-w-4xl h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in mx-8">
+        <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           {/* Like button - positioned to the left of close button */}
           <button
             onClick={handleLikeClick}
@@ -102,7 +95,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           {/* Details */}
           <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
             {/* Title */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-4">
               {item.name}
             </h2>
             
