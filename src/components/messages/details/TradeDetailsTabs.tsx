@@ -105,12 +105,12 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full">
       <h3 className="font-medium mb-4">Trade Details</h3>
       
-      {/* Item Selector with consistent height */}
+      {/* Item Selector with consistent height and perfect alignment */}
       <div className="mb-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex gap-3">
           <button
             onClick={() => onSelectItem('item1')}
-            className={`h-12 px-4 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
+            className={`flex-1 h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
               selectedItem === 'item1' 
                 ? 'bg-blue-50 border-blue-200 text-blue-700' 
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
@@ -120,7 +120,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
           </button>
           <button
             onClick={() => onSelectItem('item2')}
-            className={`h-12 px-4 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
+            className={`flex-1 h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
               selectedItem === 'item2' 
                 ? 'bg-blue-50 border-blue-200 text-blue-700' 
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
