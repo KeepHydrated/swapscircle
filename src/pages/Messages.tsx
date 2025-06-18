@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
@@ -5,6 +6,8 @@ import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Calendar, MapPin, Clock } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 
 const Messages = () => {
