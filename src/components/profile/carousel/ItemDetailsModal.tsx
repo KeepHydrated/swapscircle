@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
-import { X, Heart } from "lucide-react";
+import { X, Heart, ArrowLeft, ArrowRight } from "lucide-react";
 import { MatchItem } from '@/types/item';
 
 interface ItemDetailsModalProps {
@@ -9,6 +9,11 @@ interface ItemDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLikeClick: (item: MatchItem) => void;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  currentIndex?: number;
+  totalItems?: number;
+  showProfileInfo?: boolean;
 }
 
 const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
@@ -16,12 +21,20 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   isOpen,
   onClose,
   onLikeClick,
+  onNavigatePrev,
+  onNavigateNext,
+  currentIndex,
+  totalItems,
+  showProfileInfo = true,
 }) => {
   if (!item) return null;
 
   const handleLikeClick = () => {
     onLikeClick(item);
   };
+
+  const canNavigatePrev = onNavigatePrev && typeof currentIndex === 'number' && currentIndex > 0;
+  const canNavigateNext = onNavigateNext && typeof currentIndex === 'number' && typeof totalItems === 'number' && currentIndex < totalItems - 1;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -36,6 +49,27 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           >
             <X className="w-4 h-4 text-gray-600" />
           </button>
+
+          {/* Navigation buttons */}
+          {canNavigatePrev && (
+            <button
+              onClick={onNavigatePrev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
+              aria-label="Previous item"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
+
+          {canNavigateNext && (
+            <button
+              onClick={onNavigateNext}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
+              aria-label="Next item"
+            >
+              <ArrowRight className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
 
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
@@ -90,30 +124,32 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               </div>
             </div>
             
-            {/* User profile info */}
-            <div className="flex gap-3 items-center mt-auto pt-6">
-              <img
-                src="https://randomuser.me/api/portraits/women/44.jpg"
-                alt="User"
-                className="w-11 h-11 rounded-full border object-cover"
-              />
-              <div>
-                <span className="font-semibold text-gray-900">
-                  Sarah Chen
-                </span>
-                <span className="ml-2 text-yellow-500 text-xs font-semibold">
-                  ★ 4.8{" "}
-                  <span className="text-gray-400 font-normal ml-1">
-                    (42)
+            {/* User profile info - only show if showProfileInfo is true */}
+            {showProfileInfo && (
+              <div className="flex gap-3 items-center mt-auto pt-6">
+                <img
+                  src="https://randomuser.me/api/portraits/women/44.jpg"
+                  alt="User"
+                  className="w-11 h-11 rounded-full border object-cover"
+                />
+                <div>
+                  <span className="font-semibold text-gray-900">
+                    Sarah Chen
                   </span>
-                </span>
-                <div className="flex text-xs text-gray-500 mt-1 gap-4">
-                  <span>Since 2023</span>
-                  <span>· 2.3 mi away</span>
-                  <span>· ~1 hr response</span>
+                  <span className="ml-2 text-yellow-500 text-xs font-semibold">
+                    ★ 4.8{" "}
+                    <span className="text-gray-400 font-normal ml-1">
+                      (42)
+                    </span>
+                  </span>
+                  <div className="flex text-xs text-gray-500 mt-1 gap-4">
+                    <span>Since 2023</span>
+                    <span>· 2.3 mi away</span>
+                    <span>· ~1 hr response</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </DialogContent>
