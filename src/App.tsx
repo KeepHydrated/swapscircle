@@ -21,7 +21,6 @@ import ProfileDuplicate from "./pages/ProfileDuplicate";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
-import Trades from "./pages/Trades";
 import Test from "./pages/Test";
 import RequireAuth from "./components/auth/RequireAuth";
 
@@ -85,11 +84,6 @@ const App = () => (
               <Route path="/settings" element={
                 <RequireAuth>
                   <Settings />
-                </RequireAuth>
-              } />
-              <Route path="/trades" element={
-                <RequireAuth>
-                  <Trades />
                 </RequireAuth>
               } />
               <Route path="*" element={<NotFound />} />
