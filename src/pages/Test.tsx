@@ -3,22 +3,29 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Calendar, MapPin, Clock, Tag, Layers, Shield, DollarSign, Star } from 'lucide-react';
+import ReviewDialog from '@/components/profile/trade/ReviewDialog';
+import { TradeReview } from '@/types/trade';
 
 const Test = () => {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-
-  const handleStarClick = (starIndex: number) => {
-    setRating(starIndex + 1);
+  const [hasLeftReview, setHasLeftReview] = useState(false);
+  
+  // Sample review data - you can replace this with actual data
+  const myReview: TradeReview = {
+    rating: 5,
+    comment: "Great trading experience! The camera was exactly as described and Emma was very responsive.",
+    date: "6/14/2025"
   };
 
-  const handleSubmitReview = () => {
+  const theirReview: TradeReview = {
+    rating: 4,
+    comment: "Smooth transaction, would trade again!",
+    date: "6/14/2025"
+  };
+
+  const handleSubmitReview = (comment: string, rating: number) => {
     console.log('Review submitted:', { rating, comment });
-    // Reset form after submission
-    setRating(0);
-    setComment('');
+    setHasLeftReview(true);
   };
 
   return (
@@ -131,10 +138,6 @@ const Test = () => {
                       <span>Electronics</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span>$800 - $1000</span>
-                    </div>
-                    <div className="flex items-center gap-2">
                       <Layers className="h-4 w-4 text-gray-500" />
                       <span>Laptops</span>
                     </div>
@@ -142,54 +145,63 @@ const Test = () => {
                       <Shield className="h-4 w-4 text-gray-500" />
                       <span>Good</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span>$800 - $1000</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Review Section */}
+            {/* Reviews Section */}
             <div className="space-y-4">
+              {/* Your Review */}
               <div className="bg-white rounded-lg border border-gray-200 p-4">
                 <h3 className="font-semibold text-lg mb-4">Your Review</h3>
                 
-                {/* Star Rating */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-1 mb-2">
-                    {Array(5).fill(0).map((_, index) => (
-                      <Star
-                        key={index}
-                        className={`h-6 w-6 cursor-pointer transition-colors ${
-                          index < rating 
-                            ? "text-yellow-400 fill-yellow-400" 
-                            : "text-gray-300 hover:text-yellow-200"
-                        }`}
-                        onClick={() => handleStarClick(index)}
-                      />
-                    ))}
+                {hasLeftReview ? (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="flex text-yellow-400">
+                        {Array(5).fill(0).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${i < myReview.rating ? "fill-yellow-400" : "text-gray-300"}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-gray-700 text-sm mb-2">{myReview.comment}</p>
+                    <p className="text-xs text-gray-500">Reviewed on {myReview.date}</p>
                   </div>
-                  <p className="text-sm text-gray-500">
-                    {rating > 0 ? `${rating} out of 5 stars` : 'Click to rate'}
-                  </p>
-                </div>
-
-                {/* Comment Box */}
-                <div className="mb-4">
-                  <Textarea
-                    placeholder="Share your experience with this trade..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="min-h-[100px]"
+                ) : (
+                  <ReviewDialog
+                    type="leave"
+                    traderId="Emma Wilson"
+                    onSubmitReview={handleSubmitReview}
                   />
-                </div>
+                )}
+              </div>
 
-                {/* Submit Button */}
-                <Button 
-                  onClick={handleSubmitReview}
-                  disabled={rating === 0 || comment.trim() === ''}
-                  className="w-full"
-                >
-                  Submit Review
-                </Button>
+              {/* Their Review */}
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="font-semibold text-lg mb-4">Their Review</h3>
+                
+                <div>
+                  <div className="flex items-center mb-2">
+                    <div className="flex text-yellow-400">
+                      {Array(5).fill(0).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < theirReview.rating ? "fill-yellow-400" : "text-gray-300"}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-sm mb-2">{theirReview.comment}</p>
+                  <p className="text-xs text-gray-500">Reviewed on {theirReview.date}</p>
+                </div>
               </div>
             </div>
           </div>
