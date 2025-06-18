@@ -1,6 +1,5 @@
-
 import React from 'react';
-import MainLayout from '@/components/layout/MainLayout';
+import Header from '@/components/layout/Header';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
 import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -73,22 +72,19 @@ const Messages = () => {
 
   if (loading) {
     return (
-      <MainLayout>
-        <div className="flex justify-center items-center h-[calc(100vh-80px)]">
+      <div className="flex flex-col h-screen">
+        <Header />
+        <div className="flex justify-center items-center flex-1">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
         </div>
-      </MainLayout>
+      </div>
     );
   }
 
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
-      <div className="flex-shrink-0">
-        <div className="h-16 bg-white border-b border-gray-200">
-          {/* Add your header content here if needed */}
-        </div>
-      </div>
+      <Header />
       
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">        
