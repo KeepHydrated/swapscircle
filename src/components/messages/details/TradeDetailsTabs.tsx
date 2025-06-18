@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X, Tag, Layers, Shield } from 'lucide-react';
 import { updateTradeStatus } from '@/services/tradeService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -101,51 +100,41 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
       {/* Item Details Content */}
       <div className="flex-1 flex flex-col">
         {selectedItem === 'item1' ? (
-          <div className="bg-gray-50 rounded-lg p-3 border flex-1">
-            <div className="flex items-center mb-3">
-              <Avatar className="h-12 w-12 bg-gray-100 mr-3 flex-shrink-0">
-                <AvatarImage src={selectedPair.item1.image} alt={selectedPair.item1.name} />
-                <AvatarFallback>{selectedPair.item1.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium text-sm">{selectedPair.item1.name}</p>
-                <p className="text-xs text-gray-600">Your Item</p>
-              </div>
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            {/* Item Image */}
+            <div className="aspect-square bg-gray-100 w-full h-32">
+              <img 
+                src={selectedPair.item1.image || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop"} 
+                alt={selectedPair.item1.name} 
+                className="w-full h-full object-cover"
+              />
             </div>
             
-            <div className="mb-3">
-              <p className="text-gray-700 text-xs mt-1 bg-white p-2 rounded-md">
-                Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {selectedPair.item1.name.toLowerCase()} at a great value.
+            {/* Item Details */}
+            <div className="p-4">
+              <h3 className="font-semibold text-lg mb-2">{selectedPair.item1.name}</h3>
+              <p className="text-gray-600 text-sm mb-3">
+                Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts.
               </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-1.5 mb-2">
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
-                  <Check className="w-2 h-2 text-green-600" />
-                </div>
-                <span className="text-gray-800 text-xs">Brand New</span>
-              </div>
               
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
-                  <DollarSign className="w-2 h-2 text-green-600" />
+              {/* Property Tags */}
+              <div className="grid grid-cols-2 gap-1.5 text-sm">
+                <div className="flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-gray-500" />
+                  <span>Electronics</span>
                 </div>
-                <span className="text-gray-800 text-xs">$100 - $250</span>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center mr-1">
-                  <Home className="w-2 h-2 text-blue-600" />
+                <div className="flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-gray-500" />
+                  <span>Cameras</span>
                 </div>
-                <span className="text-gray-800 text-xs">Home & Garden</span>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-purple-100 flex items-center justify-center mr-1">
-                  <Utensils className="w-2 h-2 text-purple-600" />
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-gray-500" />
+                  <span>Excellent</span>
                 </div>
-                <span className="text-gray-800 text-xs">Kitchen</span>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-gray-500" />
+                  <span>$150 - $200</span>
+                </div>
               </div>
             </div>
           </div>
