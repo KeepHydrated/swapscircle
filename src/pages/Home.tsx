@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
@@ -212,9 +211,7 @@ const Home: React.FC = () => {
                   ) : (
                     <div className="h-full flex flex-col">
                       <h2 className="text-2xl font-bold mb-4 text-gray-800">Matches</h2>
-                      {/* Show sample matches even when no item is selected for testing */}
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-4">Sample matches for testing:</p>
                         <Matches
                           matches={sampleMatches}
                           selectedItemName="Sample Item"
