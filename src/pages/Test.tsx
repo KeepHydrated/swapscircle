@@ -49,21 +49,6 @@ const Test = () => {
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Since 2023</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>2.3 mi away</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>~1 hour</span>
-                  </div>
-                </div>
               </div>
 
               {/* Item Section */}
@@ -166,21 +151,6 @@ const Test = () => {
                       <span className="text-gray-300">★</span>
                       <span className="ml-1 text-gray-600 text-sm font-medium">(28)</span>
                     </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Since 2024</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>1.8 mi away</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>~45 min</span>
                   </div>
                 </div>
               </div>
