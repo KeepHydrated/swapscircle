@@ -1,7 +1,8 @@
+
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, MapPin, Clock } from 'lucide-react';
+import { Calendar, MapPin, Clock, Tag, Layers, Shield, DollarSign } from 'lucide-react';
 
 const Test = () => {
   return (
@@ -64,10 +65,22 @@ const Test = () => {
                     Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts.
                   </p>
                   <div className="space-y-1 text-sm">
-                    <div><span className="font-medium">Category:</span> Electronics</div>
-                    <div><span className="font-medium">Subcategory:</span> Cameras</div>
-                    <div><span className="font-medium">Condition:</span> Excellent</div>
-                    <div><span className="font-medium">Value:</span> $150 - $200</div>
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4 text-gray-500" />
+                      <span>Electronics</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Layers className="h-4 w-4 text-gray-500" />
+                      <span>Cameras</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-gray-500" />
+                      <span>Excellent</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span>$150 - $200</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -127,10 +140,22 @@ const Test = () => {
                     2020 MacBook Pro in great condition. Fast performance for work and creative projects.
                   </p>
                   <div className="space-y-1 text-sm">
-                    <div><span className="font-medium">Category:</span> Electronics</div>
-                    <div><span className="font-medium">Subcategory:</span> Laptops</div>
-                    <div><span className="font-medium">Condition:</span> Good</div>
-                    <div><span className="font-medium">Value:</span> $800 - $1000</div>
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4 text-gray-500" />
+                      <span>Electronics</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Layers className="h-4 w-4 text-gray-500" />
+                      <span>Laptops</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-gray-500" />
+                      <span>Good</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span>$800 - $1000</span>
+                    </div>
                   </div>
                 </div>
               </div>
