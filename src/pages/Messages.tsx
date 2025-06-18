@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
@@ -79,52 +80,7 @@ const Messages = () => {
 
   return (
     <MainLayout>
-      <div className="flex flex-col h-[calc(100vh-64px)]">
-        {/* Item exchange carousel */}
-        <div className="w-full border-b border-gray-200 bg-white z-20 h-24 flex items-center px-2 sticky top-0">
-          {exchangePairs.length > 0 ? (
-            <div className="w-full">
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                {exchangePairs.map((pair) => (
-                  <div
-                    key={pair.id}
-                    className={`flex-shrink-0 cursor-pointer rounded-lg p-3 border-2 transition-all ${
-                      selectedPairId === pair.id 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    onClick={() => handlePairSelect(pair.partnerId, pair.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <img 
-                        src={pair.item1.image} 
-                        alt={pair.item1.name}
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
-                      <span className="text-sm">↔</span>
-                      <img 
-                        src={pair.item2.image} 
-                        alt={pair.item2.name}
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
-                    </div>
-                    <div className="mt-2 text-center">
-                      <p className="text-xs text-gray-600 truncate max-w-[120px]">
-                        {pair.item1.name} ↔ {pair.item2.name}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="w-full text-center py-8">
-              <p className="text-gray-500">No trade conversations yet</p>
-              <p className="text-sm text-gray-400">Start trading to see conversations here!</p>
-            </div>
-          )}
-        </div>
-        
+      <div className="flex flex-col h-[calc(100vh-64px)]">        
         {/* Three columns layout */}
         <div className="flex flex-1 overflow-hidden">
           {/* Left sidebar - Conversations */}
