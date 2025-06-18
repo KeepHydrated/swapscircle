@@ -64,10 +64,14 @@ const Test = () => {
                   <p className="text-gray-600 text-sm mb-3">
                     Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts.
                   </p>
-                  <div className="space-y-1 text-sm">
+                  <div className="grid grid-cols-2 gap-1.5 text-sm">
                     <div className="flex items-center gap-2">
                       <Tag className="h-4 w-4 text-gray-500" />
                       <span>Electronics</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span>$150 - $200</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Layers className="h-4 w-4 text-gray-500" />
@@ -76,10 +80,6 @@ const Test = () => {
                     <div className="flex items-center gap-2">
                       <Shield className="h-4 w-4 text-gray-500" />
                       <span>Excellent</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span>$150 - $200</span>
                     </div>
                   </div>
                 </div>
@@ -139,10 +139,14 @@ const Test = () => {
                   <p className="text-gray-600 text-sm mb-3">
                     2020 MacBook Pro in great condition. Fast performance for work and creative projects.
                   </p>
-                  <div className="space-y-1 text-sm">
+                  <div className="grid grid-cols-2 gap-1.5 text-sm">
                     <div className="flex items-center gap-2">
                       <Tag className="h-4 w-4 text-gray-500" />
                       <span>Electronics</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span>$800 - $1000</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Layers className="h-4 w-4 text-gray-500" />
@@ -151,10 +155,6 @@ const Test = () => {
                     <div className="flex items-center gap-2">
                       <Shield className="h-4 w-4 text-gray-500" />
                       <span>Good</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span>$800 - $1000</span>
                     </div>
                   </div>
                 </div>
