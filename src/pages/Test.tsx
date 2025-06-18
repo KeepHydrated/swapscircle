@@ -13,7 +13,7 @@ const Test = () => {
           
           <div className="space-y-8">
             {/* First Profile with Item */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
               {/* Profile Section */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -52,7 +52,7 @@ const Test = () => {
 
               {/* Item Section */}
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100">
+                <div className="aspect-square bg-gray-100 max-w-md">
                   <img 
                     src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=400&h=400&auto=format&fit=crop" 
                     alt="Vintage Camera" 
@@ -75,7 +75,7 @@ const Test = () => {
             </div>
 
             {/* Second Profile with Item */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
               {/* Profile Section */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -115,7 +115,7 @@ const Test = () => {
 
               {/* Item Section */}
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100">
+                <div className="aspect-square bg-gray-100 max-w-md">
                   <img 
                     src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop" 
                     alt="MacBook Pro" 
