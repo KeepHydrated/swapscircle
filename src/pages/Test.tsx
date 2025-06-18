@@ -86,16 +86,16 @@ const Test = () => {
                       <span>Electronics</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span>$150 - $200</span>
-                    </div>
-                    <div className="flex items-center gap-2">
                       <Layers className="h-4 w-4 text-gray-500" />
                       <span>Cameras</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Shield className="h-4 w-4 text-gray-500" />
                       <span>Excellent</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <span>$150 - $200</span>
                     </div>
                   </div>
                 </div>
