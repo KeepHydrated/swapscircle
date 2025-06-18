@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from "lucide-react";
 import { MatchItem } from '@/types/item';
 
@@ -40,11 +40,14 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
-        {/* Navigation buttons - positioned in the dark overlay area */}
+        <DialogTitle className="sr-only">Item Details</DialogTitle>
+        <DialogDescription className="sr-only">View item details and information</DialogDescription>
+        
+        {/* Navigation buttons - positioned further to the edges */}
         {canNavigatePrev && (
           <button
             onClick={onNavigatePrev}
-            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
             aria-label="Previous item"
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -54,7 +57,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         {canNavigateNext && (
           <button
             onClick={onNavigateNext}
-            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
             aria-label="Next item"
           >
             <ArrowRight className="w-6 h-6 text-gray-700" />
