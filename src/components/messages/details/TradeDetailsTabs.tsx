@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X, Tag, Layers, Shield } from 'lucide-react';
+import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X, Tag, Layers, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import { updateTradeStatus } from '@/services/tradeService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -25,6 +25,15 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   onSelectItem
 }) => {
   const queryClient = useQueryClient();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Sample images for the carousel (you can replace these with actual item images)
+  const itemImages = [
+    selectedPair.item1.image || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=400&auto=format&fit=crop"
+  ];
 
   // Fetch trade status to check if already accepted
   const { data: tradeConversations = [] } = useQuery({
@@ -67,6 +76,14 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     rejectTradeMutation.mutate();
   };
 
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? itemImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === itemImages.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full">
       <h3 className="font-medium mb-4">Trade Details</h3>
@@ -101,13 +118,35 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
       <div className="flex-1 flex flex-col">
         {selectedItem === 'item1' ? (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            {/* Item Image */}
-            <div className="aspect-square bg-gray-100 w-full h-32">
+            {/* Item Image with Navigation */}
+            <div className="relative aspect-square bg-gray-100 w-full h-32">
               <img 
-                src={selectedPair.item1.image || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop"} 
+                src={itemImages[currentImageIndex]} 
                 alt={selectedPair.item1.name} 
                 className="w-full h-full object-cover"
               />
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={handlePrevImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+              
+              <button
+                onClick={handleNextImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                aria-label="Next image"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-700" />
+              </button>
+              
+              {/* Image Counter */}
+              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
+                {currentImageIndex + 1}/{itemImages.length}
+              </div>
             </div>
             
             {/* Item Details */}
