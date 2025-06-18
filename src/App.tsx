@@ -11,7 +11,6 @@ import PostItem from "./pages/PostItem";
 import EditItem from "./pages/EditItem";
 import ItemDetails from "./pages/ItemDetails";
 import Messages from "./pages/Messages";
-import Messages2 from "./pages/Messages2";
 import Messages3 from "./pages/Messages3";
 import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
@@ -51,11 +50,6 @@ const App = () => (
               <Route path="/messages" element={
                 <RequireAuth>
                   <Messages />
-                </RequireAuth>
-              } />
-              <Route path="/messages2" element={
-                <RequireAuth>
-                  <Messages2 />
                 </RequireAuth>
               } />
               <Route path="/messages3" element={
