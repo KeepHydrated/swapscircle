@@ -39,8 +39,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
-      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
-        {/* Navigation buttons - positioned in the dark overlay area */}
+      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none relative">
+        {/* Navigation buttons - positioned in the dark overlay area, outside the white box */}
         {canNavigatePrev && (
           <button
             onClick={onNavigatePrev}
