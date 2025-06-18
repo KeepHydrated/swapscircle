@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
-import { X, Heart, ArrowLeft, ArrowRight } from "lucide-react";
+import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from "lucide-react";
 import { MatchItem } from '@/types/item';
 
 interface ItemDetailsModalProps {
@@ -107,19 +107,19 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
             {/* Tags in 2x2 grid */}
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="flex items-center gap-3 text-gray-600">
-                <span className="text-lg">🏷️</span>
+                <Tag className="w-4 h-4" />
                 <span className="text-sm">{item.category || "Electronics"}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
-                <span className="text-lg">📷</span>
+                <Camera className="w-4 h-4" />
                 <span className="text-sm">{item.tags?.[0] || "Cameras"}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
-                <span className="text-lg">⭐</span>
+                <Shield className="w-4 h-4" />
                 <span className="text-sm">{item.condition || "Excellent"}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
-                <span className="text-lg">💰</span>
+                <DollarSign className="w-4 h-4" />
                 <span className="text-sm">$150 - $200</span>
               </div>
             </div>
