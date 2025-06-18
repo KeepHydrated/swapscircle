@@ -1,14 +1,110 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import MatchesList from "@/components/MatchesList";
+import Header from "@/components/layout/Header";
 import { UserRound, ChevronDown, ChevronUp, PenLine, MessageCircle, Calendar, Clock, ArrowRight, Navigation, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import RequestRiderDialog from "@/components/RequestRiderDialog";
-import RideRequestCard from "@/components/shared/RideRequestCard";
+
+// Simple placeholder components for missing ones
+const MatchesList = ({ filter, showFilter }: { filter: string; showFilter: boolean }) => (
+  <div className="space-y-4">
+    <div className="text-center text-gray-500 py-8">
+      Matches for {filter} will be displayed here
+    </div>
+  </div>
+);
+
+const RideRequestCard = ({ 
+  id, from, to, date, time, description, onEdit, showEditButton, addTopPadding 
+}: {
+  id: number;
+  from: string;
+  to: string;
+  date: string;
+  time: string;
+  description: string;
+  onEdit: () => void;
+  showEditButton: boolean;
+  addTopPadding: boolean;
+}) => (
+  <Card className={`${addTopPadding ? 'pt-12' : ''}`}>
+    <CardContent className="p-6">
+      <div className="space-y-4">
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-green-600" />
+              <span className="text-sm font-medium">From</span>
+            </div>
+            <p className="text-gray-700">{from}</p>
+          </div>
+        </div>
+        
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-red-600" />
+              <span className="text-sm font-medium">To</span>
+            </div>
+            <p className="text-gray-700">{to}</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Calendar className="h-4 w-4 text-gray-500" />
+              <span className="text-sm font-medium">Date</span>
+            </div>
+            <p className="text-gray-600">{date}</p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Clock className="h-4 w-4 text-gray-500" />
+              <span className="text-sm font-medium">Time</span>
+            </div>
+            <p className="text-gray-600">{time}</p>
+          </div>
+        </div>
+        
+        <div>
+          <p className="text-gray-700 text-sm">{description}</p>
+        </div>
+        
+        {showEditButton && (
+          <div className="flex justify-end">
+            <Button onClick={onEdit} variant="outline" size="sm">
+              <PenLine className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          </div>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const RequestRiderDialog = ({ 
+  open, onOpenChange, initialData, onSave 
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  initialData: any;
+  onSave: (data: any) => void;
+}) => (
+  <div className={`${open ? 'block' : 'hidden'}`}>
+    {/* Simple placeholder dialog */}
+    <div className="fixed inset-0 bg-black/50 z-50" onClick={() => onOpenChange(false)}>
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg">
+        <h3 className="text-lg font-semibold mb-4">Edit Ride Request</h3>
+        <p className="text-gray-600 mb-4">Edit functionality coming soon...</p>
+        <Button onClick={() => onOpenChange(false)}>Close</Button>
+      </div>
+    </div>
+  </div>
+);
 
 const Test2 = () => {
   const navigate = useNavigate();
@@ -87,7 +183,7 @@ const Test2 = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="sticky top-0 z-10">
-        <Header onModeChange={handleModeChange} onProfileClick={handleProfileNavigation} />
+        <Header />
       </div>
 
       <main className="w-full max-w-[100%] mx-auto px-4 py-6 flex-1">
