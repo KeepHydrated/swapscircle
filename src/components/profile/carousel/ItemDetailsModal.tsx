@@ -41,6 +41,18 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
       <DialogOverlay className="bg-black/80" />
       <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
+          {/* Like button - positioned to the left of close button */}
+          <button
+            onClick={handleLikeClick}
+            className="absolute top-3 right-12 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
+            aria-label={item.liked ? "Unlike" : "Like"}
+          >
+            <Heart
+              className={`w-4 h-4 ${item.liked ? "text-red-500" : "text-gray-600"}`}
+              fill={item.liked ? "red" : "none"}
+            />
+          </button>
+
           {/* Close button */}
           <button
             onClick={onClose}
@@ -78,23 +90,12 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               alt={item.name}
               className="object-cover w-full h-full"
             />
-            {/* Like button positioned on the right side of the image */}
-            <button
-              className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
-              onClick={handleLikeClick}
-              aria-label={item.liked ? "Unlike" : "Like"}
-            >
-              <Heart
-                className={`w-6 h-6 ${item.liked ? "text-red-500" : "text-gray-400"}`}
-                fill={item.liked ? "red" : "none"}
-              />
-            </button>
           </div>
           
           {/* Details */}
           <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
             {/* Title */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-4">
               {item.name}
             </h2>
             
