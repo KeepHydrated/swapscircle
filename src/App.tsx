@@ -52,7 +52,7 @@ const App = () => (
                   <Messages />
                 </RequireAuth>
               } />
-              <Route path="/messages3" element={
+              <Route path="/your-match-opportunities" element={
                 <RequireAuth>
                   <Messages3 />
                 </RequireAuth>
