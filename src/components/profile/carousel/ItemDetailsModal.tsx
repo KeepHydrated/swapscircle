@@ -43,11 +43,11 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         <DialogTitle className="sr-only">Item Details</DialogTitle>
         <DialogDescription className="sr-only">View item details and information</DialogDescription>
         
-        {/* Navigation buttons - positioned further to the edges */}
+        {/* Navigation buttons - positioned outside the content box */}
         {canNavigatePrev && (
           <button
             onClick={onNavigatePrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            className="absolute -left-16 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
             aria-label="Previous item"
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -57,7 +57,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         {canNavigateNext && (
           <button
             onClick={onNavigateNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            className="absolute -right-16 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
             aria-label="Next item"
           >
             <ArrowRight className="w-6 h-6 text-gray-700" />
