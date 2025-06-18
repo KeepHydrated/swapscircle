@@ -12,6 +12,7 @@ import Matches from '@/components/items/Matches';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import { MatchItem } from '@/types/item';
 
 const Home: React.FC = () => {
   // Friend/fake items remain only for the top carousel demo
@@ -67,6 +68,64 @@ const Home: React.FC = () => {
     }
   ]);
 
+  // Sample matches for testing
+  const sampleMatches: MatchItem[] = [
+    {
+      id: "m1",
+      name: "Professional DSLR Camera",
+      image: "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a",
+      liked: false,
+      category: "photography",
+      condition: "excellent",
+      description: "Canon EOS R5 with 24-70mm lens, barely used, perfect for professional photography."
+    },
+    {
+      id: "m2",
+      name: "Vintage Guitar Amp",
+      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+      liked: false,
+      category: "music",
+      condition: "good",
+      description: "Classic tube amp from the 70s, great warm sound for studio recordings."
+    },
+    {
+      id: "m3",
+      name: "MacBook Pro 16-inch",
+      image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
+      liked: false,
+      category: "electronics",
+      condition: "excellent",
+      description: "M1 Pro chip, 32GB RAM, 1TB SSD. Perfect for creative work and development."
+    },
+    {
+      id: "m4",
+      name: "Artisan Coffee Maker",
+      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
+      liked: false,
+      category: "home",
+      condition: "like-new",
+      description: "Professional espresso machine with built-in grinder, makes café-quality coffee."
+    },
+    {
+      id: "m5",
+      name: "Designer Handbag",
+      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62",
+      liked: false,
+      category: "fashion",
+      condition: "excellent",
+      description: "Limited edition designer bag, authentic with original packaging and certificates."
+    },
+    {
+      id: "m6",
+      name: "Gaming Setup Complete",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e",
+      liked: false,
+      category: "electronics",
+      condition: "good",
+      description: "High-end gaming PC with RTX 4080, 32GB RAM, mechanical keyboard and gaming mouse."
+    }
+  ];
+
   // Define handler for liking friend items (local state only)
   const handleLikeFriendItem = (itemId: string) => {
     setFriendItems(prev =>
@@ -91,8 +150,11 @@ const Home: React.FC = () => {
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
   
-  // Get matches for selected item
-  const { matches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
+  // Get matches for selected item (real matches from DB)
+  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
+
+  // Combine real matches with sample matches for testing
+  const matches = selectedUserItem ? [...dbMatches, ...sampleMatches] : sampleMatches;
 
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
@@ -150,10 +212,13 @@ const Home: React.FC = () => {
                   ) : (
                     <div className="h-full flex flex-col">
                       <h2 className="text-2xl font-bold mb-4 text-gray-800">Matches</h2>
-                      <div className="flex-1 flex flex-col justify-center items-center text-gray-500 py-8">
-                        <div className="text-4xl mb-3">🎯</div>
-                        <p className="text-base font-medium mb-1">Select an item</p>
-                        <p className="text-sm text-center">Choose an item from the left to see potential matches</p>
+                      {/* Show sample matches even when no item is selected for testing */}
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600 mb-4">Sample matches for testing:</p>
+                        <Matches
+                          matches={sampleMatches}
+                          selectedItemName="Sample Item"
+                        />
                       </div>
                     </div>
                   )}
