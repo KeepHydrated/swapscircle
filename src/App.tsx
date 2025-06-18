@@ -13,6 +13,7 @@ import ItemDetails from "./pages/ItemDetails";
 import Messages from "./pages/Messages";
 import Messages2 from "./pages/Messages2";
 import Messages3 from "./pages/Messages3";
+import TestMessages from "./pages/TestMessages";
 import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/test" element={<Test />} />
               <Route path="/test2" element={<Test2 />} />
+              <Route path="/test-messages" element={<TestMessages />} />
               <Route path="/item/:itemId" element={<ItemDetails />} />
               <Route path="/post-item" element={
                 <RequireAuth>
