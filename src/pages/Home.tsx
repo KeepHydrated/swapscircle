@@ -152,8 +152,8 @@ const Home: React.FC = () => {
   // Get matches for selected item (real matches from DB)
   const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
 
-  // Combine real matches with sample matches for testing
-  const matches = selectedUserItem ? [...dbMatches, ...sampleMatches] : sampleMatches;
+  // Combine real matches with sample matches for testing (but prioritize real matches)
+  const matches = selectedUserItem ? [...dbMatches, ...sampleMatches.slice(0, 3)] : [];
 
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
