@@ -143,8 +143,15 @@ const Home: React.FC = () => {
   const { user, supabaseConfigured } = useAuth();
   const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
   
-  // Selected items state - no auto-selection
+  // Selected items state - auto-select first item
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  
+  // Auto-select first item when userItems are loaded
+  useEffect(() => {
+    if (userItems.length > 0 && !selectedUserItemId) {
+      setSelectedUserItemId(userItems[0].id);
+    }
+  }, [userItems, selectedUserItemId]);
   
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
