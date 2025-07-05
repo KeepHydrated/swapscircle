@@ -131,9 +131,6 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold text-trademate-blue">What You're Looking For</h2>
-      </div>
       
       <div className="space-y-6">
         <div className="space-y-2">
