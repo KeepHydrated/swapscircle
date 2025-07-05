@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -40,14 +41,21 @@ const Test = () => {
               {/* Profile Section */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png" alt="Emma Wilson" />
-                    <AvatarFallback className="bg-purple-100 text-purple-800">
-                      EW
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link to="/other-person-profile">
+                    <Avatar className="h-12 w-12 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                      <AvatarImage src="/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png" alt="Emma Wilson" />
+                      <AvatarFallback className="bg-purple-100 text-purple-800">
+                        EW
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div>
-                    <h2 className="font-semibold text-lg">Emma Wilson</h2>
+                    <Link 
+                      to="/other-person-profile" 
+                      className="font-semibold text-lg hover:text-blue-600 transition-colors"
+                    >
+                      Emma Wilson
+                    </Link>
                     <div className="flex items-center text-yellow-400">
                       {Array(5).fill(0).map((_, i) => (
                         <span key={i}>★</span>
@@ -99,14 +107,21 @@ const Test = () => {
               {/* Profile Section */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="/lovable-uploads/6de02767-04e3-4b51-93af-053033a1c111.png" alt="Marcus Chen" />
-                    <AvatarFallback className="bg-blue-100 text-blue-800">
-                      MC
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link to="/other-person-profile">
+                    <Avatar className="h-12 w-12 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                      <AvatarImage src="/lovable-uploads/6de02767-04e3-4b51-93af-053033a1c111.png" alt="Marcus Chen" />
+                      <AvatarFallback className="bg-blue-100 text-blue-800">
+                        MC
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div>
-                    <h2 className="font-semibold text-lg">Marcus Chen</h2>
+                    <Link 
+                      to="/other-person-profile" 
+                      className="font-semibold text-lg hover:text-blue-600 transition-colors"
+                    >
+                      Marcus Chen
+                    </Link>
                     <div className="flex items-center text-yellow-400">
                       {Array(4).fill(0).map((_, i) => (
                         <span key={i}>★</span>
