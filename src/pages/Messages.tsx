@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
 import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
@@ -107,14 +108,22 @@ const Messages = () => {
                       onClick={() => setActiveConversation(conversation.id)}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Link 
+                          to="/other-person-profile" 
+                          className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-purple-200 transition-colors"
+                        >
                           <span className="text-purple-800 font-medium text-sm">
                             {conversation.name.substring(0, 2)}
                           </span>
-                        </div>
+                        </Link>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-medium truncate">{conversation.name}</h3>
+                            <Link 
+                              to="/other-person-profile" 
+                              className="font-medium truncate hover:text-blue-600 transition-colors"
+                            >
+                              {conversation.name}
+                            </Link>
                             <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                           </div>
                           
@@ -151,14 +160,21 @@ const Messages = () => {
               {/* Partner information header */}
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-center">
-                  <Avatar className="h-8 w-8 mr-3">
-                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                    <AvatarFallback>EW</AvatarFallback>
-                  </Avatar>
+                  <Link to="/other-person-profile">
+                    <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                      <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
+                      <AvatarFallback>EW</AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="text-sm font-semibold">Emma Wilson</h4>
+                        <Link 
+                          to="/other-person-profile" 
+                          className="text-sm font-semibold hover:text-blue-600 transition-colors"
+                        >
+                          Emma Wilson
+                        </Link>
                         <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
                       </div>
                       
