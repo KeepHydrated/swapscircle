@@ -15,13 +15,15 @@ interface OtherProfileTabContentProps {
   items: MatchItem[];
   setPopupItem: (item: MatchItem | null) => void;
   onLikeItem: (id: string) => void;
+  isFriend: boolean;
 }
 
 const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({ 
   activeTab, 
   items,
   setPopupItem,
-  onLikeItem
+  onLikeItem,
+  isFriend
 }) => {
   // Handle item click to show popup
   const handleItemClick = (id: string) => {
@@ -37,6 +39,11 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
       {/* Available Items Tab Content */}
       {activeTab === 'available' && (
         <div className="p-6 space-y-6">
+          {!isFriend && (
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <p className="text-muted-foreground">You must be friends to like items from this profile</p>
+            </div>
+          )}
           <ScrollArea className="h-[calc(100vh-320px)]">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
               {items.map((item) => (
@@ -49,6 +56,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                   liked={item.liked}
                   onSelect={handleItemClick}
                   onLike={onLikeItem}
+                  disableLike={!isFriend}
                 />
               ))}
             </div>

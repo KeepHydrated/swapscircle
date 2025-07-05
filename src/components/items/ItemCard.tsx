@@ -16,6 +16,7 @@ interface ItemCardProps {
   onLike?: (id: string) => void;
   showLikeButton?: boolean;
   compact?: boolean;
+  disableLike?: boolean;
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ 
@@ -28,7 +29,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   onSelect,
   onLike,
   showLikeButton,
-  compact = false
+  compact = false,
+  disableLike = false
 }) => {
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -53,7 +55,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 {name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            {(showLikeButton || isMatch) && (
+            {(showLikeButton || isMatch) && !disableLike && (
               <button
                 className={`absolute top-1.5 right-1.5 z-10 flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
                 aria-label="Like item"

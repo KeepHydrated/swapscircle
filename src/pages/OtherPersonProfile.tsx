@@ -19,6 +19,8 @@ const OtherPersonProfile: React.FC = () => {
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+  // State for friendship status - defaulting to false (not friends)
+  const [isFriend, setIsFriend] = useState(false);
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
@@ -61,7 +63,11 @@ const OtherPersonProfile: React.FC = () => {
             onReviewsClick={() => navigateToTab('reviews')}
           />
           <div className="absolute top-6 right-6">
-            <FriendRequestButton userId="profile1" initialStatus="none" />
+            <FriendRequestButton 
+              userId="profile1" 
+              initialStatus="none" 
+              onStatusChange={(status) => setIsFriend(status === 'accepted')}
+            />
           </div>
         </div>
 
@@ -100,6 +106,7 @@ const OtherPersonProfile: React.FC = () => {
               items={itemsWithLikedStatus}
               setPopupItem={setPopupItem}
               onLikeItem={handleLikeItem}
+              isFriend={isFriend}
             />
           </Tabs>
         </div>
