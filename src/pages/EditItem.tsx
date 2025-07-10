@@ -3,10 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, Package, Heart } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
+import PreferencesForm, { SavedPreference } from '@/components/postItem/PreferencesForm';
+import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
+import SavedPreferencesList from '@/components/postItem/SavedPreferencesList';
 import { Item } from '@/types/item';
 import { fetchItemById, updateItem } from '@/services/authService';
 
@@ -22,33 +25,30 @@ const EditItem: React.FC = () => {
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<string>(""); // UI uses camelCase
+  const [priceRange, setPriceRange] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  // Preferences form state
+  const [lookingForText, setLookingForText] = useState<string>("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  
+  // Dialog state
+  const [preferenceName, setPreferenceName] = useState<string>("");
+  const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
+  const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
+  const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
 
-  // Mock data for demonstration - in real app, this would come from the database
-  const mockItems: Item[] = [
-    {
-      id: '1',
-      name: 'Vintage Camera',
-      image: 'https://images.unsplash.com/photo-1606983340126-99ab4feaa64a',
-      category: 'Electronics',
-      condition: 'Good',
-      description: 'A beautiful vintage camera in excellent working condition.',
-      tags: ['photography', 'vintage'],
-      priceRange: '$100-$250'
-    },
-    {
-      id: '2', 
-      name: 'Gaming Headset',
-      image: 'https://images.unsplash.com/photo-1599669454699-248893623440',
-      category: 'Electronics',
-      condition: 'Like New',
-      description: 'High-quality gaming headset with surround sound.',
-      tags: ['gaming', 'audio'],
-      priceRange: '$50-$100'
+  // Load saved preferences from localStorage on component mount
+  useEffect(() => {
+    const savedPrefs = localStorage.getItem('tradeMatePreferences');
+    if (savedPrefs) {
+      setSavedPreferences(JSON.parse(savedPrefs));
     }
-  ];
+  }, []);
 
   // Load item data from DB on mount
   useEffect(() => {
@@ -61,10 +61,21 @@ const EditItem: React.FC = () => {
           setDescription(item.description || '');
           setCategory(item.category || '');
           setCondition(item.condition || '');
-          // Explicitly grab price_range from returned DB object
           setPriceRange((item as any).price_range || '');
           setSubcategory('');
-          // images field is not handled from DB yet
+          
+          // Load preferences data
+          setLookingForText((item as any).looking_for_description || '');
+          setSelectedCategories((item as any).looking_for_categories || []);
+          setSelectedConditions((item as any).looking_for_conditions || []);
+          
+          // Convert price range to array format if exists
+          if ((item as any).price_range_min || (item as any).price_range_max) {
+            const min = (item as any).price_range_min || 0;
+            const max = (item as any).price_range_max || 999999;
+            const range = `$${min}-$${max}`;
+            setSelectedPriceRanges([range]);
+          }
         } else {
           toast.error('Item not found');
           navigate('/profile');
@@ -74,6 +85,55 @@ const EditItem: React.FC = () => {
     }
     load();
   }, [itemId, navigate]);
+
+  // Save current preferences
+  const savePreferences = () => {
+    if (!preferenceName.trim()) {
+      toast.error("Please enter a name for your preferences");
+      return;
+    }
+
+    const newPreference: SavedPreference = {
+      id: Date.now().toString(),
+      name: preferenceName,
+      lookingFor: lookingForText,
+      selectedCategories,
+      selectedSubcategories,
+      selectedPriceRanges,
+      selectedConditions
+    };
+
+    const updatedPreferences = [...savedPreferences, newPreference];
+    setSavedPreferences(updatedPreferences);
+    localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
+    
+    toast.success("Your preferences have been saved");
+    
+    setSaveDialogOpen(false);
+    setPreferenceName("");
+  };
+
+  // Apply a saved preference
+  const applyPreference = (preference: SavedPreference) => {
+    setLookingForText(preference.lookingFor);
+    setSelectedCategories(preference.selectedCategories);
+    setSelectedSubcategories(preference.selectedSubcategories);
+    setSelectedPriceRanges(preference.selectedPriceRanges);
+    setSelectedConditions(preference.selectedConditions);
+    
+    toast.success(`"${preference.name}" has been applied to your search`);
+    
+    setShowSavedPreferences(false);
+  };
+
+  // Delete a saved preference
+  const deletePreference = (id: string) => {
+    const updatedPreferences = savedPreferences.filter(pref => pref.id !== id);
+    setSavedPreferences(updatedPreferences);
+    localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
+    
+    toast.success("Preference has been removed");
+  };
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -96,13 +156,17 @@ const EditItem: React.FC = () => {
           description,
           category,
           condition,
-          price_range: priceRange, // Map camelCase UI state to snake_case DB column
-          // tags/subcategory can be added here if needed
+          price_range: priceRange,
+          looking_for_categories: selectedCategories,
+          looking_for_conditions: selectedConditions,
+          looking_for_description: lookingForText,
+          price_range_min: priceRange ? parseFloat(priceRange.split('-')[0].replace('$', '')) : undefined,
+          price_range_max: priceRange ? parseFloat(priceRange.split('-')[1].replace('$', '')) : undefined,
         };
         const success = await updateItem(itemId, updates);
         if (success) {
           toast.success('Your item has been updated successfully!');
-          navigate('/');
+          navigate('/profile');
         }
       }
     } catch (error) {
@@ -129,61 +193,137 @@ const EditItem: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="flex-1 p-4 md:p-6">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Edit Item</h1>
-            <p className="text-gray-600">Update your item details below.</p>
+      
+      <div className="flex-1 p-6 md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+          {/* What You're Offering Column */}
+          <div className="space-y-6">
+            <div className="flex items-center mb-6">
+              <div className="bg-blue-50 p-3 rounded-full mr-4">
+                <Package className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">What You're Offering</h2>
+                <p className="text-gray-600">Update your item details</p>
+              </div>
+            </div>
+            <ItemOfferingForm
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              images={images}
+              setImages={setImages}
+              category={category}
+              setCategory={setCategory}
+              subcategory={subcategory}
+              setSubcategory={setSubcategory}
+              condition={condition}
+              setCondition={setCondition}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+            />
           </div>
-
-          <ItemOfferingForm
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
-            images={images}
-            setImages={setImages}
-            category={category}
-            setCategory={setCategory}
-            subcategory={subcategory}
-            setSubcategory={setSubcategory}
-            condition={condition}
-            setCondition={setCondition}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-          />
+          
+          {/* What You're Looking For Column */}
+          <div className="space-y-6">
+            <div className="flex items-center mb-6">
+              <div className="bg-purple-50 p-3 rounded-full mr-4">
+                <Heart className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
+                <p className="text-gray-600">Update what you'd like to receive in return</p>
+              </div>
+            </div>
+            
+            {/* Saved preferences list */}
+            <SavedPreferencesList
+              show={showSavedPreferences && savedPreferences.length > 0}
+              preferences={savedPreferences}
+              onApply={applyPreference}
+              onDelete={deletePreference}
+            />
+            
+            {/* Preferences form */}
+            <PreferencesForm 
+              lookingForText={lookingForText}
+              setLookingForText={setLookingForText}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+              selectedSubcategories={selectedSubcategories}
+              setSelectedSubcategories={setSelectedSubcategories}
+              selectedPriceRanges={selectedPriceRanges}
+              setSelectedPriceRanges={setSelectedPriceRanges}
+              selectedConditions={selectedConditions}
+              setSelectedConditions={setSelectedConditions}
+            />
+          </div>
         </div>
         
-        {/* Submit and Cancel Buttons */}
-        <div className="flex justify-end mt-8 max-w-2xl mx-auto space-x-4">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12 max-w-7xl mx-auto">
+          <Button
+            variant="outline"
+            className="flex items-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-sm hover:shadow-md transition-all duration-200"
+            onClick={() => setSaveDialogOpen(true)}
+          >
+            <Save className="mr-2 h-5 w-5" />
+            Save Preferences
+          </Button>
+          
           <Button
             variant="outline"
             onClick={handleCancel}
             disabled={isSubmitting}
+            className="px-8 py-3 text-lg font-medium"
           >
             Cancel
           </Button>
+          
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-trademate-dark hover:bg-trademate-blue text-white"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Updating...
               </>
             ) : (
               <>
-                <Save className="mr-2 h-4 w-4" />
+                <Save className="mr-2 h-5 w-5" />
                 Update Item
               </>
             )}
           </Button>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <SavePreferenceDialog 
+        open={saveDialogOpen}
+        onOpenChange={setSaveDialogOpen}
+        preferenceName={preferenceName}
+        setPreferenceName={setPreferenceName}
+        onSave={savePreferences}
+      />
+
+      {/* Button to show saved preferences */}
+      {savedPreferences.length > 0 && (
+        <div className="fixed bottom-6 left-6 z-50">
+          <Button 
+            onClick={() => setShowSavedPreferences(!showSavedPreferences)}
+            variant="outline"
+            className="bg-white shadow-lg hover:shadow-xl border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition-all duration-200"
+          >
+            {showSavedPreferences ? 'Hide Saved Preferences' : 'Load Saved Preferences'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
