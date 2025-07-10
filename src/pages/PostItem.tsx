@@ -168,7 +168,7 @@ const PostItem: React.FC = () => {
       // Create item tags from subcategory if selected
       const tags = subcategory ? [subcategory] : [];
       
-      // Post the item to Supabase
+      // Post the item to Supabase with preferences
       const newItem = await postItem({
         name: title,
         description,
@@ -176,6 +176,11 @@ const PostItem: React.FC = () => {
         category,
         condition,
         tags,
+        lookingForCategories: selectedCategories,
+        lookingForConditions: selectedConditions,
+        lookingForDescription: lookingForText,
+        priceRangeMin: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
+        priceRangeMax: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
       });
       
       if (newItem) {
