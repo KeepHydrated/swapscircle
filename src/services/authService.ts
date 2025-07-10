@@ -486,7 +486,7 @@ export const fetchItemById = async (itemId: string) => {
 };
 
 // Update item by ID (NEW)
-export const updateItem = async (itemId: string, updates: Partial<Item>) => {
+export const updateItem = async (itemId: string, updates: any) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase not configured');
     return false;
@@ -497,12 +497,14 @@ export const updateItem = async (itemId: string, updates: Partial<Item>) => {
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', itemId);
     if (error) {
+      console.error('Error updating item:', error);
       toast.error('Failed to update item');
       return false;
     }
     toast.success('Item updated!');
     return true;
   } catch (error) {
+    console.error('Error updating item:', error);
     toast.error('Failed to update item');
     return false;
   }

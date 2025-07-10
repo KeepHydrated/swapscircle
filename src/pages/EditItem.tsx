@@ -57,6 +57,8 @@ const EditItem: React.FC = () => {
       if (itemId) {
         const item = await fetchItemById(itemId);
         if (item) {
+          console.log('Loaded item from database:', item);
+          
           setTitle(item.name || '');
           setDescription(item.description || '');
           setCategory(item.category || '');
@@ -65,6 +67,11 @@ const EditItem: React.FC = () => {
           setSubcategory('');
           
           // Load preferences data
+          console.log('Looking for description:', (item as any).looking_for_description);
+          console.log('Looking for categories:', (item as any).looking_for_categories);
+          console.log('Looking for conditions:', (item as any).looking_for_conditions);
+          console.log('Price range min/max:', (item as any).price_range_min, (item as any).price_range_max);
+          
           setLookingForText((item as any).looking_for_description || '');
           setSelectedCategories((item as any).looking_for_categories || []);
           setSelectedConditions((item as any).looking_for_conditions || []);
