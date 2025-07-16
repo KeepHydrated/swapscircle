@@ -38,7 +38,7 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
           <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
             <DollarSign className="w-2 h-2 text-green-600" />
           </div>
-          <span className="text-gray-800 text-xs">$100 - $250</span>
+          <span className="text-gray-800 text-xs">100 - 250</span>
         </div>
         
         <div className="flex items-center">

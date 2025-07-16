@@ -211,7 +211,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
               <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
                 <DollarSign className="w-3 h-3 text-green-600" />
               </div>
-              <span className="text-gray-800 text-sm">$100 - $250</span>
+              <span className="text-gray-800 text-sm">100 - 250</span>
             </li>
           </ul>
         </div>

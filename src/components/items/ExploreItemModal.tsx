@@ -224,7 +224,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <span className="text-lg">💰</span>
-                    <span className="text-sm">$150 - $200</span>
+                    <span className="text-sm">150 - 200</span>
                   </div>
                 </div>
                 

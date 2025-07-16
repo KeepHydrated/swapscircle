@@ -189,7 +189,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-gray-500" />
-                  <span>$150 - $200</span>
+                  <span>150 - 200</span>
                 </div>
               </div>
             </div>
@@ -250,7 +250,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-gray-500" />
-                  <span>$150 - $300</span>
+                  <span>150 - 300</span>
                 </div>
               </div>
             </div>
