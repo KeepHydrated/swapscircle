@@ -57,12 +57,12 @@ const conditions = [
 
 // Price ranges updated to cap at $1,000
 const priceRanges = [
-  "$0 - $50",
-  "$50 - $100",
-  "$100 - $250",
-  "$250 - $500",
-  "$500 - $750",
-  "$750 - $1,000"
+  "0 - 50",
+  "50 - 100",
+  "100 - 250",
+  "250 - 500",
+  "500 - 750",
+  "750 - 1,000"
 ];
 
 const PreferencesForm: React.FC<PreferencesFormProps> = ({

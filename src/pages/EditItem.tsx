@@ -80,7 +80,7 @@ const EditItem: React.FC = () => {
           if ((item as any).price_range_min || (item as any).price_range_max) {
             const min = (item as any).price_range_min || 0;
             const max = (item as any).price_range_max || 999999;
-            const range = `$${min}-$${max}`;
+            const range = `${min}-${max}`;
             setSelectedPriceRanges([range]);
           }
         } else {

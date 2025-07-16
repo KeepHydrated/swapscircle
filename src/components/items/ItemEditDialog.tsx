@@ -21,7 +21,7 @@ interface ItemEditDialogProps {
 
 const conditionOptions = ["New", "Excellent", "Good", "Fair", "Poor", "For parts"];
 const categoryOptions = ["Electronics", "Clothing", "Sports", "Gaming", "Music", "Books", "Collectibles", "Photography", "Art", "Vehicles", "Other"];
-const priceRangeOptions = ["$0-$25", "$25-$50", "$50-$100", "$100-$200", "$200-$500", "$500+"];
+const priceRangeOptions = ["0-25", "25-50", "50-100", "100-200", "200-500", "500+"];
 
 const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
   item,

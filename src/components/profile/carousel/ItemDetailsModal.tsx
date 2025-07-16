@@ -124,7 +124,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               </div>
               <div className="flex items-center gap-3 text-gray-600">
                 <DollarSign className="w-4 h-4" />
-                <span className="text-sm">$150 - $200</span>
+                <span className="text-sm">150 - 200</span>
               </div>
             </div>
             
