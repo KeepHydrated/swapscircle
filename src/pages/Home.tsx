@@ -14,58 +14,8 @@ import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 
 const Home: React.FC = () => {
-  // Friend/fake items remain only for the top carousel demo
-  const [friendItems, setFriendItems] = useState([
-    {
-      id: "f1",
-      name: "Vintage Camera Collection",
-      image: "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848",
-      liked: false,
-      category: "photography"
-    },
-    {
-      id: "f2",
-      name: "Handcrafted Leather Journal",
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
-      liked: true,
-      category: "crafts"
-    },
-    {
-      id: "f3",
-      name: "Mid-Century Modern Lamp",
-      image: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15",
-      liked: false,
-      category: "home"
-    },
-    {
-      id: "f4",
-      name: "Vintage Wristwatch",
-      image: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade",
-      liked: false,
-      category: "accessories"
-    },
-    {
-      id: "f5",
-      name: "Antique Typewriter",
-      image: "https://images.unsplash.com/photo-1558522195-e1201b090344",
-      liked: false,
-      category: "collectibles"
-    },
-    {
-      id: "f6",
-      name: "Rare Comic Book Collection",
-      image: "https://images.unsplash.com/photo-1608889825205-eebdb9fc5806",
-      liked: true,
-      category: "collectibles"
-    },
-    {
-      id: "f7",
-      name: "Vintage Record Player",
-      image: "https://images.unsplash.com/photo-1461360228754-6e81c478b862",
-      liked: false,
-      category: "music"
-    }
-  ]);
+  // Friend items - empty for now
+  const [friendItems, setFriendItems] = useState([]);
 
 
   // Define handler for liking friend items (local state only)
