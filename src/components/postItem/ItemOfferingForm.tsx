@@ -218,21 +218,6 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           )}
         </div>
         
-        {/* Condition */}
-        <div className="space-y-2">
-          <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition</Label>
-          <Select value={condition} onValueChange={setCondition}>
-            <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
-              <SelectValue placeholder="Select condition" />
-            </SelectTrigger>
-            <SelectContent>
-              {conditions.map((cond) => (
-                <SelectItem key={cond} value={cond} className="text-base py-2">{cond}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
         {/* Estimated Value */}
         <div className="space-y-2">
           <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Estimated Value</Label>
@@ -245,6 +230,21 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
                 <SelectItem key={range} value={range} className="text-base py-2">
                   {range}
                 </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* Condition */}
+        <div className="space-y-2">
+          <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition</Label>
+          <Select value={condition} onValueChange={setCondition}>
+            <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
+              <SelectValue placeholder="Select condition" />
+            </SelectTrigger>
+            <SelectContent>
+              {conditions.map((cond) => (
+                <SelectItem key={cond} value={cond} className="text-base py-2">{cond}</SelectItem>
               ))}
             </SelectContent>
           </Select>
