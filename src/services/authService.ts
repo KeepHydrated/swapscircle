@@ -317,6 +317,7 @@ export const likeItem = async (itemId: string) => {
     }
 
     // Check for mutual match
+    console.log('DEBUG: About to check mutual match for item:', itemId, 'current user:', currentUserId);
     const matchResult = await checkForMutualMatch(currentUserId, itemId);
     
     if (matchResult.isMatch && matchResult.matchData) {
