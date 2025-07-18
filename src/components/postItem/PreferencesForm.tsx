@@ -192,28 +192,6 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
           </div>
         )}
         
-        {/* Price Range Section */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-medium">Price Range (Select all that apply)</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {priceRanges.map((range) => (
-              <div key={range} className="flex items-center space-x-2">
-                <Checkbox 
-                  id={`price-range-${range}`}
-                  checked={selectedPriceRanges.includes(range)}
-                  onCheckedChange={() => togglePriceRange(range)}
-                />
-                <Label 
-                  htmlFor={`price-range-${range}`}
-                  className="text-base font-normal cursor-pointer"
-                >
-                  {range}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-        
         {/* Condition Section */}
         <div className="space-y-4">
           <h3 className="text-xl font-medium">Condition (Select all that apply)</h3>
@@ -230,6 +208,28 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
                   className="text-base font-normal cursor-pointer"
                 >
                   {condition}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Price Range Section */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-medium">Price Range (Select all that apply)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {priceRanges.map((range) => (
+              <div key={range} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`price-range-${range}`}
+                  checked={selectedPriceRanges.includes(range)}
+                  onCheckedChange={() => togglePriceRange(range)}
+                />
+                <Label 
+                  htmlFor={`price-range-${range}`}
+                  className="text-base font-normal cursor-pointer"
+                >
+                  {range}
                 </Label>
               </div>
             ))}
