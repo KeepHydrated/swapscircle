@@ -220,7 +220,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         
         {/* Estimated Value */}
         <div className="space-y-2">
-          <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Estimated Value</Label>
+          <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Price Range</Label>
           <Select value={priceRange} onValueChange={setPriceRange}>
             <SelectTrigger id="price-range" className="h-12 text-base border-gray-300 focus:border-blue-500">
               <SelectValue placeholder="Select value range" />
