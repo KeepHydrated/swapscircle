@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -15,8 +16,9 @@ import { CompletedTrade } from '@/types/profile';
 import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
-  // ALL user info is fetched from Supabase profiles table, not from context
-  const [activeTab, setActiveTab] = useState('available');
+  const [searchParams] = useSearchParams();
+  // Get tab from URL or default to 'available'
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'available');
   const [userProfile, setUserProfile] = useState<null | {
     id: string;
     name: string;

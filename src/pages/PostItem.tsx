@@ -328,8 +328,8 @@ const PostItem: React.FC = () => {
         onOpenChange={(open) => {
           setShowSuccessDialog(open);
           if (!open) {
-            // Navigate to homepage when dialog is closed (Done button)
-            navigate('/');
+            // Navigate to profile page's Items For Trade tab when dialog is closed (Done button)
+            navigate('/profile?tab=available');
           }
         }}
         selectedPreferenceOption={selectedPreferenceOption}
