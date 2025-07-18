@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '@/types/item';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
@@ -26,6 +26,11 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   const [items, setItems] = useState<Item[]>(initialItems);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  // Update items when initialItems changes
+  useEffect(() => {
+    setItems(initialItems);
+  }, [initialItems]);
 
   // Function to handle clicking on an item - navigate to item details page
   const handleItemClick = (item: Item) => {
