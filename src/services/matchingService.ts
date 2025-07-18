@@ -1,4 +1,3 @@
-
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item, MatchItem } from '@/types/item';
 
