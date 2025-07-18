@@ -22,9 +22,24 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
+    // Get items that the current user has already liked
+    const { data: likedItems, error: likedError } = await supabase
+      .from('liked_items')
+      .select('item_id')
+      .eq('user_id', currentUserId);
+
+    if (likedError) {
+      console.error('Error fetching liked items:', likedError);
+    }
+
+    const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
+
+    // Filter out items that the current user has already liked
+    const availableItems = allItems.filter(item => !likedItemIds.has(item.id));
+
     const matches: Array<MatchItem & { matchScore: number }> = [];
 
-    for (const otherItem of allItems) {
+    for (const otherItem of availableItems) {
       let matchScore = 0;
       let isMatch = false;
 
