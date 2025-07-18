@@ -32,10 +32,16 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error('Error fetching liked items:', likedError);
     }
 
+    console.log('Debug - Current user:', currentUserId);
+    console.log('Debug - Liked items:', likedItems);
+    console.log('Debug - Total items before filtering:', allItems.length);
+
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
+    console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
 
     // Filter out items that the current user has already liked
     const availableItems = allItems.filter(item => !likedItemIds.has(item.id));
+    console.log('Debug - Available items after filtering:', availableItems.length);
 
     const matches: Array<MatchItem & { matchScore: number }> = [];
 

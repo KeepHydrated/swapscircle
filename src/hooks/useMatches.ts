@@ -23,16 +23,17 @@ export function useMatches(selectedItem: Item | null) {
       setError(null);
 
       try {
+        console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id);
         const matchingItems = await findMatchingItems(selectedItem, user.id);
         
-        // Check liked status for each match
-        const matchesWithLikedStatus = await Promise.all(
-          matchingItems.map(async (match) => {
-            const liked = await isItemLiked(match.id);
-            return { ...match, liked };
-          })
-        );
+        // Since findMatchingItems already filters out liked items,
+        // all returned items should have liked: false
+        const matchesWithLikedStatus = matchingItems.map(match => ({
+          ...match,
+          liked: false
+        }));
 
+        console.log('Debug - Final matches with liked status:', matchesWithLikedStatus);
         setMatches(matchesWithLikedStatus);
       } catch (e: any) {
         setError(e.message || "Failed to fetch matches.");
