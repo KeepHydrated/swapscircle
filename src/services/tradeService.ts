@@ -186,3 +186,47 @@ export const updateTradeStatus = async (conversationId: string, status: 'accepte
     throw error;
   }
 };
+
+// Create a new trade conversation when items match
+export const createTradeConversation = async (
+  requesterId: string,
+  ownerId: string,
+  requesterItemId: string,
+  ownerItemId: string
+): Promise<TradeConversation | null> => {
+  try {
+    // Check if conversation already exists
+    const { data: existingConversation } = await supabase
+      .from('trade_conversations')
+      .select('*')
+      .or(`and(requester_id.eq.${requesterId},owner_id.eq.${ownerId},requester_item_id.eq.${requesterItemId},owner_item_id.eq.${ownerItemId}),and(requester_id.eq.${ownerId},owner_id.eq.${requesterId},requester_item_id.eq.${ownerItemId},owner_item_id.eq.${requesterItemId})`)
+      .maybeSingle();
+
+    if (existingConversation) {
+      return existingConversation;
+    }
+
+    // Create new trade conversation
+    const { data, error } = await supabase
+      .from('trade_conversations')
+      .insert({
+        requester_id: requesterId,
+        owner_id: ownerId,
+        requester_item_id: requesterItemId,
+        owner_item_id: ownerItemId,
+        status: 'pending'
+      })
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error creating trade conversation:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in createTradeConversation:', error);
+    return null;
+  }
+};

@@ -1,6 +1,7 @@
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { checkForMutualMatch, createMatch } from './mutualMatchingService';
+import { createTradeConversation } from './tradeService';
 
 export type User = {
   id: string;
@@ -328,6 +329,14 @@ export const likeItem = async (itemId: string) => {
       );
 
       if (match) {
+        // Create trade conversation for the mutual match
+        const tradeConversation = await createTradeConversation(
+          currentUserId,
+          matchResult.matchData.otherUserId,
+          matchResult.matchData.myItemId,
+          matchResult.matchData.otherUserItemId
+        );
+
         // Get item names for the notification
         const { data: myItem } = await supabase
           .from('items')
@@ -341,8 +350,13 @@ export const likeItem = async (itemId: string) => {
           .eq('id', matchResult.matchData.otherUserItemId)
           .single();
 
-        toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}"`);
-        return { success: true, isMatch: true, matchData: match };
+        if (tradeConversation) {
+          toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}". A new chat has been created!`);
+        } else {
+          toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}"`);
+        }
+        
+        return { success: true, isMatch: true, matchData: match, conversationId: tradeConversation?.id };
       }
     } else {
       toast.success('Item liked!');
