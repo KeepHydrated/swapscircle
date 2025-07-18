@@ -146,7 +146,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         
         {/* Categories Section */}
         <div className="space-y-4">
-          <h3 className="text-xl font-medium">Categories (Select all that apply)</h3>
+          <h3 className="text-xl font-medium">Categories</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.keys(categories).map((categoryName) => (
               <div key={categoryName} className="flex items-center space-x-2">
@@ -169,7 +169,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         {/* Subcategories Section - Only shown when categories are selected */}
         {selectedCategories.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-xl font-medium">Subcategories (Select all that apply)</h3>
+            <h3 className="text-xl font-medium">Subcategories</h3>
             {selectedCategories.map((categoryName) => (
               <div key={`subcats-${categoryName}`} className="space-y-2">
                 {categories[categoryName as keyof typeof categories].map((subcat) => (
@@ -194,7 +194,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         
         {/* Condition Section */}
         <div className="space-y-4">
-          <h3 className="text-xl font-medium">Condition (Select all that apply)</h3>
+          <h3 className="text-xl font-medium">Condition</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {conditions.map((condition) => (
               <div key={condition} className="flex items-center space-x-2">
@@ -216,7 +216,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         
         {/* Price Range Section */}
         <div className="space-y-4">
-          <h3 className="text-xl font-medium">Price Range (Select all that apply)</h3>
+          <h3 className="text-xl font-medium">Price Range</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {priceRanges.map((range) => (
               <div key={range} className="flex items-center space-x-2">
