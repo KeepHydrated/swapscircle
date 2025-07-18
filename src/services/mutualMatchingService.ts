@@ -27,6 +27,8 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
   }
 
   try {
+    console.log('DEBUG: Checking for mutual match', { currentUserId, likedItemId });
+    
     // First, get the owner of the liked item
     const { data: likedItem, error: itemError } = await supabase
       .from('items')
@@ -40,6 +42,7 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
     }
 
     const otherUserId = likedItem.user_id;
+    console.log('DEBUG: Other user ID:', otherUserId);
 
     // Check if the other user has liked any of the current user's items
     const { data: mutualLikes, error: likesError } = await supabase
@@ -51,6 +54,8 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
       .eq('user_id', otherUserId)
       .eq('items.user_id', currentUserId);
 
+    console.log('DEBUG: Mutual likes query result:', { mutualLikes, likesError });
+
     if (likesError) {
       console.error('Error checking mutual likes:', likesError);
       return { isMatch: false };
@@ -59,6 +64,12 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
     if (mutualLikes && mutualLikes.length > 0) {
       // We have a mutual match! Return the details
       const myItemId = mutualLikes[0].item_id;
+      
+      console.log('DEBUG: Found mutual match!', {
+        otherUserId,
+        otherUserItemId: likedItemId,
+        myItemId
+      });
       
       return {
         isMatch: true,
@@ -70,6 +81,7 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
       };
     }
 
+    console.log('DEBUG: No mutual match found');
     return { isMatch: false };
   } catch (error) {
     console.error('Error in checkForMutualMatch:', error);
