@@ -325,7 +325,13 @@ const PostItem: React.FC = () => {
 
       <SuccessDialog 
         open={showSuccessDialog}
-        onOpenChange={setShowSuccessDialog}
+        onOpenChange={(open) => {
+          setShowSuccessDialog(open);
+          if (!open) {
+            // Navigate to homepage when dialog is closed (Done button)
+            navigate('/');
+          }
+        }}
         selectedPreferenceOption={selectedPreferenceOption}
         setSelectedPreferenceOption={setSelectedPreferenceOption}
         showPreferenceOptions={showPreferenceOptions}
