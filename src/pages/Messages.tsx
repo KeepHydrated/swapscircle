@@ -114,6 +114,7 @@ const Messages = () => {
                         e.stopPropagation();
                         console.log('Conversation clicked:', conversation.id);
                         setActiveConversation(conversation.id);
+                        setSelectedItem('item2'); // Reset to "Their Item" when clicking new conversation
                         resetSelectedPair();
                         console.log('Reset selectedPairId to null');
                       }}
