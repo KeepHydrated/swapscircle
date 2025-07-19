@@ -146,7 +146,8 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
         {/* Replace with ItemDetails component */}
         <ItemDetails 
           name={selectedPair ? selectedPair[selectedItem].name : "Selected Item"} 
-          showProfileInfo={false} 
+          showProfileInfo={true}
+          profileData={selectedPair?.partnerProfile}
         />
       </div>
     </div>
