@@ -19,10 +19,8 @@ interface ItemDetailsProps {
 const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
   // Map usernames to their consistent profile review data
   const getUserReviewData = (username?: string) => {
-    console.log('Getting review data for username:', username);
-    
     if (!username) {
-      return { rating: 4.0, reviewCount: 5 };
+      return { rating: 0.0, reviewCount: 0 };
     }
     
     // Define consistent review data for known users
@@ -43,19 +41,15 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
       reviewCount: 10 + (username.length * 3) % 50
     };
     
-    console.log('Review data for', username, ':', result);
     return result;
   };
 
   const reviewData = getUserReviewData(profileData?.username);
   
-  // Create star display
+  // Create star display - handle 0 rating case
   const fullStars = Math.floor(reviewData.rating);
   const hasHalfStar = reviewData.rating % 1 >= 0.5;
-  const stars = '★'.repeat(fullStars) + (hasHalfStar ? '☆' : '');
-  
-  console.log('ItemDetails - profileData:', profileData);
-  console.log('ItemDetails - final stars:', stars, 'reviewCount:', reviewData.reviewCount);
+  const stars = reviewData.rating === 0 ? '☆☆☆☆☆' : '★'.repeat(fullStars) + (hasHalfStar ? '☆' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
   
   return (
     <div className="p-3">
