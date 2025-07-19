@@ -306,25 +306,32 @@ export const likeItem = async (itemId: string) => {
     console.log('DEBUG: Current user ID:', currentUserId);
 
     // First, check if already liked to avoid duplicate constraint error
-    const { data: existingLike } = await supabase
+    console.log('DEBUG: Checking if item is already liked...');
+    const { data: existingLike, error: checkError } = await supabase
       .from('liked_items')
       .select('id')
       .eq('user_id', currentUserId)
       .eq('item_id', itemId)
       .maybeSingle();
 
+    console.log('DEBUG: Existing like check result:', { existingLike, checkError });
+
     if (existingLike) {
+      console.log('DEBUG: Item already liked, returning early');
       toast.info('Item already liked!');
       return { success: true, isMatch: false };
     }
 
     // Now like the item
+    console.log('DEBUG: Inserting new like...');
     const { error } = await supabase
       .from('liked_items')
       .insert({
         user_id: currentUserId,
         item_id: itemId
       });
+
+    console.log('DEBUG: Insert like result:', { error });
 
     if (error) {
       console.error('Error liking item:', error);
