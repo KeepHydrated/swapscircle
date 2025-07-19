@@ -2,7 +2,7 @@
 import React from 'react';
 import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
 import { Conversation, ExchangePair } from '@/hooks/useConversations';
 
@@ -52,6 +52,10 @@ const ConversationList = ({
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Avatar className="h-12 w-12">
+                    <AvatarImage 
+                      src={(conversation as any).otherUserProfile?.avatar_url} 
+                      alt={`${conversation.name}'s avatar`} 
+                    />
                     <AvatarFallback className="bg-purple-100 text-purple-800">
                       {conversation.name.substring(0, 2)}
                     </AvatarFallback>
