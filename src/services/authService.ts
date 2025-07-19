@@ -341,6 +341,13 @@ export const likeItem = async (itemId: string) => {
       );
 
       if (match) {
+        console.log('DEBUG: Creating trade conversation for mutual match:', {
+          currentUserId,
+          otherUserId: matchResult.matchData.otherUserId,
+          myItemId: matchResult.matchData.myItemId,
+          otherUserItemId: matchResult.matchData.otherUserItemId
+        });
+        
         // Create trade conversation for the mutual match
         const tradeConversation = await createTradeConversation(
           currentUserId,
@@ -348,6 +355,8 @@ export const likeItem = async (itemId: string) => {
           matchResult.matchData.myItemId,
           matchResult.matchData.otherUserItemId
         );
+        
+        console.log('DEBUG: Trade conversation created:', tradeConversation);
 
         // Get item names for the notification
         const { data: myItem } = await supabase
