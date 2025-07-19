@@ -283,7 +283,10 @@ export const uploadItemImage = async (file: File): Promise<string | null> => {
 
 // New function to like an item with mutual matching logic
 export const likeItem = async (itemId: string) => {
+  console.log('DEBUG: likeItem function called with itemId:', itemId);
+  
   if (!isSupabaseConfigured()) {
+    console.log('DEBUG: Supabase not configured');
     toast.error('Supabase is not configured. Please add environment variables.');
     return false;
   }
