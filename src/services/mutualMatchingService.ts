@@ -67,13 +67,19 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
     const myItemIds = myItems?.map(item => item.id) || [];
     console.log('DEBUG: My item IDs that other user could have liked:', myItemIds);
     
-    const { data: mutualLikes, error: likesError } = await supabase
+    // Try a different approach - get all liked_items for the other user first
+    const { data: allOtherUserLikes, error: allLikesError } = await supabase
       .from('liked_items')
       .select('item_id')
-      .eq('user_id', otherUserId)
-      .in('item_id', myItemIds);
+      .eq('user_id', otherUserId);
       
-    console.log('DEBUG: Mutual likes found:', mutualLikes);
+    console.log('DEBUG: All items liked by other user:', allOtherUserLikes);
+    
+    // Now find the intersection manually
+    const mutualLikes = allOtherUserLikes?.filter(like => myItemIds.includes(like.item_id)) || [];
+    const likesError = allLikesError;
+      
+    console.log('DEBUG: Mutual likes found (manual intersection):', mutualLikes);
     console.log('DEBUG: Query - Looking for user', otherUserId, 'liking any of my items:', myItemIds);
 
     console.log('DEBUG: Mutual likes query result:', { mutualLikes, likesError });
