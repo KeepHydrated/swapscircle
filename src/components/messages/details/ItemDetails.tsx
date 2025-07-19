@@ -44,6 +44,10 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
   const reviewData = generateReviewData(profileData?.username);
   const stars = '★'.repeat(Math.floor(reviewData.rating)) + (reviewData.rating % 1 >= 0.5 ? '☆' : '');
   
+  console.log('ItemDetails - profileData:', profileData);
+  console.log('ItemDetails - reviewData:', reviewData);
+  console.log('ItemDetails - stars:', stars);
+  
   return (
     <div className="p-3">
       <h2 className="text-lg font-bold text-gray-900 mb-2 truncate">
