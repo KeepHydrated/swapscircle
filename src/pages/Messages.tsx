@@ -162,6 +162,12 @@ const Messages = () => {
         <div className="flex-1 flex flex-col">
           {activeConversation ? (
             <>
+              {/* Debug log for activeChat */}
+              {(() => {
+                console.log('DEBUG - Messages page activeChat:', activeChat);
+                console.log('DEBUG - Messages page activeConversation:', activeConversation);
+                return null;
+              })()}
               {/* Partner information header */}
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-center">
