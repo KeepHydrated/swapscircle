@@ -164,8 +164,8 @@ const Messages = () => {
             <>
               {/* Debug log for activeChat */}
               {(() => {
-                console.log('DEBUG - Messages page activeChat:', activeChat);
-                console.log('DEBUG - Messages page activeConversation:', activeConversation);
+  console.log('DEBUG - Messages page activeChat:', JSON.stringify(activeChat, null, 2));
+  console.log('DEBUG - Messages page activeConversation:', activeConversation);
                 return null;
               })()}
               {/* Partner information header */}

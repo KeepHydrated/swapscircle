@@ -123,9 +123,8 @@ export const useTradeConversations = () => {
           console.log('DEBUG - Created conversation:', {
             id: tc.id,
             otherUserId,
-            otherUserProfile,
-            finalOtherUserProfile: conversation.otherUserProfile,
-            fullOtherUserProfile: JSON.stringify(conversation.otherUserProfile, null, 2)
+            otherUserProfile: JSON.stringify(otherUserProfile, null, 2),
+            finalOtherUserProfile: JSON.stringify(conversation.otherUserProfile, null, 2)
           });
 
           displayConversations.push(conversation);
