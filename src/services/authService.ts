@@ -297,7 +297,20 @@ export const likeItem = async (itemId: string) => {
 
     const currentUserId = session.user.id;
 
-    // First, like the item
+    // First, check if already liked to avoid duplicate constraint error
+    const { data: existingLike } = await supabase
+      .from('liked_items')
+      .select('id')
+      .eq('user_id', currentUserId)
+      .eq('item_id', itemId)
+      .maybeSingle();
+
+    if (existingLike) {
+      toast.info('Item already liked!');
+      return { success: true, isMatch: false };
+    }
+
+    // Now like the item
     const { error } = await supabase
       .from('liked_items')
       .insert({
@@ -306,11 +319,6 @@ export const likeItem = async (itemId: string) => {
       });
 
     if (error) {
-      // Handle duplicate like (user already liked this item)
-      if (error.code === '23505') {
-        toast.info('Item already liked!');
-        return true;
-      }
       console.error('Error liking item:', error);
       toast.error('Error liking item');
       return false;

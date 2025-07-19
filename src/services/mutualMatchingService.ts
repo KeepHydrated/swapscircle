@@ -55,6 +55,7 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
       .eq('items.user_id', currentUserId);
 
     console.log('DEBUG: Mutual likes query result:', { mutualLikes, likesError });
+    console.log('DEBUG: Query details - Looking for likes by user:', otherUserId, 'on items owned by:', currentUserId);
 
     if (likesError) {
       console.error('Error checking mutual likes:', likesError);
