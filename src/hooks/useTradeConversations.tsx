@@ -58,6 +58,7 @@ export const useTradeConversations = () => {
         // Get current user
         const { data: session } = await supabase.auth.getSession();
         const currentUserId = session?.session?.user?.id;
+        console.log('DEBUG - Current authenticated user ID:', currentUserId);
 
         if (!currentUserId) {
           setLoading(false);
