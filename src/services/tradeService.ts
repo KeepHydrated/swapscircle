@@ -82,13 +82,15 @@ export const fetchUserTradeConversations = async () => {
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session?.user) return [];
 
-    // First, get the basic trade conversations with items
+    // First, get the basic trade conversations with items and profiles
     const { data: conversations, error } = await supabase
       .from('trade_conversations')
       .select(`
         *,
         requester_item:items!trade_conversations_requester_item_id_fkey(*),
-        owner_item:items!trade_conversations_owner_item_id_fkey(*)
+        owner_item:items!trade_conversations_owner_item_id_fkey(*),
+        requester_profile:profiles!trade_conversations_requester_id_fkey(*),
+        owner_profile:profiles!trade_conversations_owner_id_fkey(*)
       `)
       .or(`requester_id.eq.${session.session.user.id},owner_id.eq.${session.session.user.id}`)
       .order('updated_at', { ascending: false });

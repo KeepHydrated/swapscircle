@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Conversation } from '@/hooks/useConversations';
+import { ConversationDisplay } from '@/hooks/useTradeConversations';
 import ChatHeader from './ChatHeader';
 import MessageDisplay from './MessageDisplay';
 import MessageInput from './MessageInput';
 
 interface ChatAreaProps {
-  activeChat: Conversation | undefined;
+  activeChat: ConversationDisplay | undefined;
   onSendFirstMessage?: (conversationId: string) => void;
   onTradeCompleted?: (conversationId: string) => void;
 }

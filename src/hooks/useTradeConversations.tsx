@@ -14,6 +14,17 @@ export interface ConversationDisplay {
   distance?: string;
   isNew?: boolean;
   isCompleted?: boolean;
+  otherUserProfile?: {
+    id: string;
+    name: string;
+    email: string;
+    avatar_url: string;
+    bio: string;
+    location: string;
+    username: string;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface ExchangePairDisplay {
@@ -58,6 +69,7 @@ export const useTradeConversations = () => {
           const myItem = isRequester ? tc.requester_item : tc.owner_item;
           const theirItem = isRequester ? tc.owner_item : tc.requester_item;
           const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
+          const otherUserProfile = isRequester ? tc.owner_profile : tc.requester_profile;
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
@@ -75,16 +87,17 @@ export const useTradeConversations = () => {
 
           displayExchangePairs.push(exchangePair);
 
-          // Create conversation display with fallback name
+          // Create conversation display with profile data
           const conversation: ConversationDisplay = {
             id: tc.id,
-            name: `Trading Partner`,
+            name: otherUserProfile?.name || `Trading Partner`,
             lastMessage: `Trading ${myItem?.name} for ${theirItem?.name}`,
             time: new Date(tc.updated_at).toLocaleDateString(),
             rating: 5,
             distance: '2.3 mi away',
             isNew: tc.status === 'pending',
-            isCompleted: tc.status === 'completed'
+            isCompleted: tc.status === 'completed',
+            otherUserProfile: otherUserProfile
           };
 
           displayConversations.push(conversation);
