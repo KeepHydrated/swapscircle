@@ -2,6 +2,7 @@ import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { checkForMutualMatch, createMatch } from './mutualMatchingService';
 import { createTradeConversation } from './tradeService';
+import { createMatchNotification } from './notificationService';
 
 export type User = {
   id: string;
@@ -370,6 +371,26 @@ export const likeItem = async (itemId: string) => {
           .select('name')
           .eq('id', matchResult.matchData.otherUserItemId)
           .single();
+
+        // Create notifications for both users
+        try {
+          await createMatchNotification(
+            currentUserId,
+            myItem?.name || 'your item',
+            theirItem?.name || 'their item',
+            matchResult.matchData.otherUserId
+          );
+          
+          await createMatchNotification(
+            matchResult.matchData.otherUserId,
+            theirItem?.name || 'their item',
+            myItem?.name || 'your item',
+            currentUserId
+          );
+        } catch (notificationError) {
+          console.error('Error creating match notifications:', notificationError);
+          // Don't fail the match if notifications fail
+        }
 
         if (tradeConversation) {
           toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}". A new chat has been created!`);

@@ -3,6 +3,7 @@ import React from 'react';
 import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { MobileMenu } from './MobileMenu';
 import {
   DropdownMenu,
@@ -15,10 +16,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
+import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
+  const unreadCount = useUnreadNotifications();
 
   const handleLogout = async () => {
     await signOut();
@@ -94,10 +97,18 @@ const Header = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="hidden md:flex"
+                className="hidden md:flex relative"
                 onClick={handleNotificationsClick}
               >
                 <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0"
+                  >
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </Badge>
+                )}
                 <span className="sr-only">Notifications</span>
               </Button>
               

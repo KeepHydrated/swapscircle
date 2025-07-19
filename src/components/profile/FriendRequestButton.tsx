@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { UserPlus, UserCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { createFriendRequestNotification, createFriendRequestAcceptedNotification } from '@/services/notificationService';
 
 export type FriendRequestStatus = 'none' | 'pending' | 'pending-received' | 'accepted' | 'rejected';
 
@@ -66,6 +67,13 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         return;
       }
 
+      // Get requester profile for notification
+      const { data: requesterProfile } = await supabase
+        .from('profiles')
+        .select('name, username')
+        .eq('id', user.id)
+        .single();
+
       const { error } = await supabase
         .from('friend_requests')
         .insert({
@@ -75,6 +83,15 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         });
 
       if (error) throw error;
+      
+      // Create notification for recipient
+      const requesterName = requesterProfile?.name || requesterProfile?.username || 'Someone';
+      try {
+        await createFriendRequestNotification(userId, requesterName);
+      } catch (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        // Don't fail the friend request if notification fails
+      }
       
       setStatus('pending');
       if (onStatusChange) onStatusChange('pending');
@@ -97,6 +114,13 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         return;
       }
 
+      // Get accepter profile for notification
+      const { data: accepterProfile } = await supabase
+        .from('profiles')
+        .select('name, username')
+        .eq('id', user.id)
+        .single();
+
       const { error } = await supabase
         .from('friend_requests')
         .update({ status: 'accepted' })
@@ -107,6 +131,15 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         });
 
       if (error) throw error;
+      
+      // Create notification for original requester
+      const accepterName = accepterProfile?.name || accepterProfile?.username || 'Someone';
+      try {
+        await createFriendRequestAcceptedNotification(userId, accepterName);
+      } catch (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        // Don't fail the friend request if notification fails
+      }
       
       setStatus('accepted');
       if (onStatusChange) onStatusChange('accepted');
