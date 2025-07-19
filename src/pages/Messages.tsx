@@ -92,9 +92,6 @@ const Messages = () => {
       <div className="flex flex-1 overflow-hidden">        
         {/* Left sidebar - Conversations */}
         <div className="w-[350px] border-r border-gray-200 flex flex-col">
-          <div className="p-2 bg-yellow-100 text-xs">
-            Debug: {conversations.length} conversations, active: {activeConversation}
-          </div>
           {conversations.length > 0 ? (
             <div className="flex flex-col h-full">
               <div className="p-4 border-b border-gray-200 bg-white flex items-center flex-shrink-0">
