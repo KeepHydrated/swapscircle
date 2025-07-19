@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ItemDetailsProps {
   name: string;
@@ -13,39 +14,40 @@ interface ItemDetailsProps {
     avatar_url?: string;
     created_at: string;
     location?: string;
+    id?: string;
   };
 }
 
 const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
   console.log('ItemDetails rendered with:', { name, showProfileInfo, profileData });
-  // Map usernames to their consistent profile review data
-  const getUserReviewData = (username?: string) => {
-    if (!username) {
-      return { rating: 0.0, reviewCount: 0 };
-    }
-    
-    // Define consistent review data for known users
-    const userReviewMap: { [key: string]: { rating: number; reviewCount: number } } = {
-      "Jack": { rating: 0.0, reviewCount: 0 },
-      "hhhhhh": { rating: 4.2, reviewCount: 18 },
-      "Jordan Taylor": { rating: 4.8, reviewCount: 92 },
-      "Alex Morgan": { rating: 4.7, reviewCount: 56 },
-      "Sam Wilson": { rating: 4.5, reviewCount: 23 },
-      "Casey Brown": { rating: 4.8, reviewCount: 41 },
-      "Morgan Lee": { rating: 4.6, reviewCount: 29 },
-      "Taylor Smith": { rating: 4.9, reviewCount: 67 }
-    };
-    
-    // Return mapped data or generate consistent fallback
-    const result = userReviewMap[username] || {
-      rating: 4.0 + (username.length % 10) * 0.1,
-      reviewCount: 10 + (username.length * 3) % 50
-    };
-    
-    return result;
-  };
+  const [reviewData, setReviewData] = useState({ rating: 0.0, reviewCount: 0 });
 
-  const reviewData = getUserReviewData(profileData?.username);
+  // Fetch reviews for the specific user when profile data changes
+  useEffect(() => {
+    const fetchUserReviews = async () => {
+      if (!profileData?.id) {
+        setReviewData({ rating: 0.0, reviewCount: 0 });
+        return;
+      }
+
+      try {
+        // For now, we'll use placeholder data since reviews aren't implemented yet
+        // Once you have a reviews table, you can fetch real reviews here:
+        // const { data: reviews } = await supabase
+        //   .from('reviews')
+        //   .select('rating')
+        //   .eq('reviewed_user_id', profileData.id);
+        
+        // For now, set to 0 until reviews are implemented
+        setReviewData({ rating: 0.0, reviewCount: 0 });
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        setReviewData({ rating: 0.0, reviewCount: 0 });
+      }
+    };
+
+    fetchUserReviews();
+  }, [profileData?.id]);
   
   // Create star display - handle 0 rating case
   const fullStars = Math.floor(reviewData.rating);

@@ -16,6 +16,7 @@ interface TradeDetailsTabsProps {
     item2: { name: string; image: string };
     partnerId: string;
     partnerProfile?: {
+      id: string;
       username: string;
       avatar_url?: string;
       created_at: string;

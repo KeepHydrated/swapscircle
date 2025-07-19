@@ -32,6 +32,7 @@ export interface ExchangePairDisplay {
   item2: { name: string; image: string };
   partnerId: string;
   partnerProfile?: {
+    id: string;
     username: string;
     avatar_url?: string;
     created_at: string;
@@ -91,6 +92,7 @@ export const useTradeConversations = () => {
               image: theirItem?.image_url || '/placeholder.svg'
             },
             partnerProfile: otherUserProfile ? {
+              id: otherUserId,
               username: otherUserProfile.username,
               avatar_url: otherUserProfile.avatar_url,
               created_at: otherUserProfile.created_at,
