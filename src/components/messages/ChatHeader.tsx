@@ -13,6 +13,9 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => {
   const profile = activeChat.otherUserProfile;
+  console.log('ChatHeader - activeChat:', activeChat);
+  console.log('ChatHeader - profile:', profile);
+  
   const profileName = profile?.name || activeChat.name;
   const avatarUrl = profile?.avatar_url || "/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png";
   const location = profile?.location || "2.3 mi away";
