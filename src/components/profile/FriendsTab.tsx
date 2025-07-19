@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { Friend } from '@/types/profile';
 import { supabase } from '@/integrations/supabase/client';
@@ -259,17 +260,37 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                       >
                         View Profile
                       </Button>
-                      <Button 
-                        variant="destructive"
-                        size="sm"
-                        className="px-3"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user');
-                        }}
-                      >
-                        <UserX className="h-4 w-4" />
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="destructive"
+                            size="sm"
+                            className="px-3"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            <UserX className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Unfriend {friend.profiles?.name || friend.profiles?.username}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to unfriend {friend.profiles?.name || friend.profiles?.username}? This action cannot be undone and you'll need to send a new friend request to connect again.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Unfriend
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 </CardContent>
