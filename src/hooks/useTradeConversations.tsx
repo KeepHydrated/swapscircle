@@ -64,6 +64,7 @@ export const useTradeConversations = () => {
         const displayExchangePairs: ExchangePairDisplay[] = [];
 
         console.log('Processing trade conversations:', tradeConversations);
+        console.log('DETAILED: First conversation structure:', JSON.stringify(tradeConversations[0], null, 2));
 
         tradeConversations.forEach((tc: any, index: number) => {
           console.log('Processing conversation:', tc);
