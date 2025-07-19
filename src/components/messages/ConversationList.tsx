@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,6 +19,15 @@ const ConversationList = ({
   setActiveConversation,
   exchangePairs = []
 }: ConversationListProps) => {
+  // Debug: Log conversation data when it changes
+  useEffect(() => {
+    console.log('ConversationList conversations:', conversations);
+    conversations.forEach((conv, index) => {
+      console.log(`Conversation ${index}:`, conv);
+      console.log(`Avatar URL for ${conv.name}:`, (conv as any).otherUserProfile?.avatar_url);
+    });
+  }, [conversations]);
+
   return (
     <>
       {/* Fixed height header with consistent padding and styling */}
