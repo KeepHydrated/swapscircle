@@ -144,6 +144,23 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
     }
   };
 
+  const handleUnfriend = async (requestId: string, friendName: string) => {
+    try {
+      const { error } = await supabase
+        .from('friend_requests')
+        .delete()
+        .eq('id', requestId);
+
+      if (error) throw error;
+      
+      toast.success(`Unfriended ${friendName}`);
+      fetchFriendRequests(); // Refresh the data
+    } catch (error) {
+      console.error('Error unfriending:', error);
+      toast.error("Failed to unfriend");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-10">
@@ -231,16 +248,29 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                     <h3 className="font-medium text-lg mb-1 text-center">
                       {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
                     </h3>
-                    <Button 
-                      variant="outline"
-                      className="w-full mt-2" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleViewProfile(friend.profiles?.id);
-                      }}
-                    >
-                      View Profile
-                    </Button>
+                    <div className="flex space-x-2 w-full mt-2">
+                      <Button 
+                        variant="outline"
+                        className="flex-1" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewProfile(friend.profiles?.id);
+                        }}
+                      >
+                        View Profile
+                      </Button>
+                      <Button 
+                        variant="destructive"
+                        size="sm"
+                        className="px-3"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user');
+                        }}
+                      >
+                        <UserX className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
