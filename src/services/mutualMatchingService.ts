@@ -55,6 +55,14 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
     
     console.log('DEBUG: My items (owned by current user):', myItems);
     
+    // Let's also check what the other user has liked
+    const { data: otherUserLikes, error: otherLikesError } = await supabase
+      .from('liked_items')
+      .select('item_id')
+      .eq('user_id', otherUserId);
+    
+    console.log('DEBUG: Other user likes (all items liked by other user):', otherUserLikes);
+    
     const { data: mutualLikes, error: likesError } = await supabase
       .from('liked_items')
       .select(`
