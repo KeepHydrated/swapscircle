@@ -119,11 +119,15 @@ const Messages = () => {
                       }}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-purple-800 font-medium text-sm">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage 
+                            src={conversation.otherUserProfile?.avatar_url} 
+                            alt={`${conversation.name}'s avatar`} 
+                          />
+                          <AvatarFallback className="bg-purple-100 text-purple-800">
                             {conversation.name.substring(0, 2)}
-                          </span>
-                        </div>
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
                             <div className="font-medium truncate">
