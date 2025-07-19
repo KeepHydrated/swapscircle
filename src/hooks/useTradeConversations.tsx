@@ -63,20 +63,13 @@ export const useTradeConversations = () => {
         const displayConversations: ConversationDisplay[] = [];
         const displayExchangePairs: ExchangePairDisplay[] = [];
 
-        console.log('Processing trade conversations:', tradeConversations);
-        console.log('DETAILED: First conversation structure:', JSON.stringify(tradeConversations[0], null, 2));
-
         tradeConversations.forEach((tc: any, index: number) => {
-          console.log('Processing conversation:', tc);
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
           const myItem = isRequester ? tc.requester_item : tc.owner_item;
           const theirItem = isRequester ? tc.owner_item : tc.requester_item;
           const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
           const otherUserProfile = isRequester ? tc.owner_profile : tc.requester_profile;
-          
-          console.log('Other user profile:', otherUserProfile);
-          console.log('Is requester:', isRequester, 'Current user:', currentUserId, 'Other user:', otherUserId);
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
@@ -94,7 +87,7 @@ export const useTradeConversations = () => {
 
           displayExchangePairs.push(exchangePair);
 
-          // Create conversation display with profile data
+          // Create conversation display with profile data or fallbacks
           const conversation: ConversationDisplay = {
             id: tc.id,
             name: otherUserProfile?.name || `Trading Partner`,
@@ -104,7 +97,17 @@ export const useTradeConversations = () => {
             distance: '2.3 mi away',
             isNew: tc.status === 'pending',
             isCompleted: tc.status === 'completed',
-            otherUserProfile: otherUserProfile
+            otherUserProfile: otherUserProfile || {
+              id: otherUserId,
+              name: 'Trading Partner',
+              email: '',
+              avatar_url: '',
+              bio: '',
+              location: '2.3 mi away',
+              username: '',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
           };
 
           displayConversations.push(conversation);
