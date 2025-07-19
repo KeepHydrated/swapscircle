@@ -120,6 +120,13 @@ export const useTradeConversations = () => {
             }
           };
 
+          console.log('DEBUG - Created conversation:', {
+            id: tc.id,
+            otherUserId,
+            otherUserProfile,
+            finalOtherUserProfile: conversation.otherUserProfile
+          });
+
           displayConversations.push(conversation);
         });
 
