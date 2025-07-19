@@ -12,6 +12,7 @@ interface ChatAreaProps {
 }
 
 const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatAreaProps) => {
+  console.log('ChatArea DEBUG - activeChat:', activeChat);
   if (!activeChat) {
     return (
       <div className="flex flex-col h-full bg-white">
