@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { UserPlus, UserCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export type FriendRequestStatus = 'none' | 'pending' | 'pending-received' | 'accepted' | 'rejected';
 
@@ -20,18 +21,67 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   const [status, setStatus] = useState<FriendRequestStatus>(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
   
+  // Check existing friend request status on mount
+  useEffect(() => {
+    const checkFriendRequestStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: friendRequests } = await supabase
+          .from('friend_requests')
+          .select('*')
+          .or(`and(requester_id.eq.${user.id},recipient_id.eq.${userId}),and(requester_id.eq.${userId},recipient_id.eq.${user.id})`);
+
+        if (friendRequests && friendRequests.length > 0) {
+          const request = friendRequests[0];
+          if (request.status === 'accepted') {
+            setStatus('accepted');
+          } else if (request.status === 'pending') {
+            if (request.requester_id === user.id) {
+              setStatus('pending');
+            } else {
+              setStatus('pending-received');
+            }
+          } else if (request.status === 'rejected') {
+            setStatus('rejected');
+          }
+        }
+      } catch (error) {
+        console.error('Error checking friend request status:', error);
+      }
+    };
+
+    if (userId) {
+      checkFriendRequestStatus();
+    }
+  }, [userId]);
+  
   const handleSendRequest = async () => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in to send friend requests");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('friend_requests')
+        .insert({
+          requester_id: user.id,
+          recipient_id: userId,
+          status: 'pending'
+        });
+
+      if (error) throw error;
       
-      // Update status
       setStatus('pending');
       if (onStatusChange) onStatusChange('pending');
       
       toast.success("Friend request sent!");
     } catch (error) {
+      console.error('Error sending friend request:', error);
       toast.error("Failed to send friend request");
     } finally {
       setIsLoading(false);
@@ -41,15 +91,29 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   const handleAcceptRequest = async () => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('friend_requests')
+        .update({ status: 'accepted' })
+        .match({ 
+          requester_id: userId,
+          recipient_id: user.id,
+          status: 'pending'
+        });
+
+      if (error) throw error;
       
-      // Update status
       setStatus('accepted');
       if (onStatusChange) onStatusChange('accepted');
       
       toast.success("Friend request accepted!");
     } catch (error) {
+      console.error('Error accepting friend request:', error);
       toast.error("Failed to accept friend request");
     } finally {
       setIsLoading(false);
@@ -59,15 +123,29 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   const handleRejectRequest = async () => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('friend_requests')
+        .update({ status: 'rejected' })
+        .match({ 
+          requester_id: userId,
+          recipient_id: user.id,
+          status: 'pending'
+        });
+
+      if (error) throw error;
       
-      // Update status
       setStatus('rejected');
       if (onStatusChange) onStatusChange('rejected');
       
       toast.success("Friend request rejected");
     } catch (error) {
+      console.error('Error rejecting friend request:', error);
       toast.error("Failed to reject friend request");
     } finally {
       setIsLoading(false);
