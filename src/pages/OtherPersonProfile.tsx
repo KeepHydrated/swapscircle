@@ -18,9 +18,10 @@ const OtherPersonProfile: React.FC = () => {
   // State for profile data and loading
   const [profileData, setProfileData] = useState(otherPersonProfileData);
   const [isLoading, setIsLoading] = useState(!!userId); // Only show loading if we have a userId to fetch
+  const [userItems, setUserItems] = useState<any[]>([]);
   
   // Convert items to MatchItems and add liked property
-  const itemsAsMatchItems: MatchItem[] = getOtherPersonItems().map(item => ({...item, liked: false}));
+  const itemsAsMatchItems: MatchItem[] = userItems.map(item => ({...item, liked: false}));
   
   // Fetch profile data if userId is provided
   useEffect(() => {
@@ -33,29 +34,43 @@ const OtherPersonProfile: React.FC = () => {
       setIsLoading(true);
       console.log('Fetching profile for userId:', userId);
       try {
-        const { data, error } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .maybeSingle();
         
-        if (error) {
-          console.error('Error fetching profile:', error);
+        const { data: itemsData, error: itemsError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('user_id', userId);
+        
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
           setIsLoading(false);
           return;
         }
         
-        if (data) {
-          console.log('Fetched profile data:', data);
+        if (itemsError) {
+          console.error('Error fetching items:', itemsError);
+        }
+        
+        if (profileData) {
+          console.log('Fetched profile data:', profileData);
           setProfileData({
-            name: data.username || data.name || 'Unknown User',
-            description: data.bio || 'No bio available',
+            name: profileData.username || profileData.name || 'Unknown User',
+            description: profileData.bio || 'No bio available',
             rating: 0, // Show 0 rating until we implement real reviews
             reviewCount: 0, // Show 0 reviews until we implement real reviews
-            location: data.location || 'Update your location in Settings',
-            memberSince: new Date(data.created_at).getFullYear().toString(),
+            location: profileData.location || 'Update your location in Settings',
+            memberSince: new Date(profileData.created_at).getFullYear().toString(),
             friendCount: 0 // Show 0 friends until we implement real friends
           });
+        }
+        
+        if (itemsData) {
+          console.log('Fetched items data:', itemsData);
+          setUserItems(itemsData);
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
