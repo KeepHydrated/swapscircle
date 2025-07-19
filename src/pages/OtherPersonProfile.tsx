@@ -24,7 +24,11 @@ const OtherPersonProfile: React.FC = () => {
   const [userItems, setUserItems] = useState<any[]>([]);
   
   // Convert items to MatchItems and add liked property
-  const itemsAsMatchItems: MatchItem[] = userItems.map(item => ({...item, liked: false}));
+  const itemsAsMatchItems: MatchItem[] = userItems.map(item => ({
+    ...item, 
+    image: item.image_url, // Map image_url to image for ItemCard component
+    liked: false
+  }));
   
   // Fetch profile data if userId is provided
   useEffect(() => {
