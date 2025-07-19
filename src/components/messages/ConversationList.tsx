@@ -41,7 +41,10 @@ const ConversationList = ({
             <div 
               key={conversation.id}
               className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
-              onClick={() => setActiveConversation(conversation.id)}
+              onClick={() => {
+                console.log('Conversation clicked:', conversation.id);
+                setActiveConversation(conversation.id);
+              }}
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
