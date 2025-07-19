@@ -16,6 +16,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
   console.log('ChatHeader DEBUG - activeChat:', activeChat);
   console.log('ChatHeader DEBUG - profile:', profile);
   console.log('ChatHeader DEBUG - otherUserProfile.id:', profile?.id);
+  console.log('ChatHeader DEBUG - Link URL will be:', `/other-person-profile?userId=${profile?.id}`);
   
   const profileName = profile?.username || activeChat.name;
   console.log('ChatHeader DEBUG - profileName:', profileName);
