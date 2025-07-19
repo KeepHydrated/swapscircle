@@ -42,6 +42,8 @@ export const useMatchActions = (
 
   // Handle liking/unliking an item with mutual matching logic
   const handleLike = async (id: string) => {
+    console.log('DEBUG: handleLike called with id:', id);
+    
     if (!user) {
       toast.error('Please log in to like items');
       return;
