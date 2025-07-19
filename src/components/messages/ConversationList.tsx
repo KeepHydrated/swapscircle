@@ -44,18 +44,18 @@ const ConversationList = ({
               onClick={() => setActiveConversation(conversation.id)}
             >
               <div className="flex items-start gap-4">
-                <Link to="/profile-duplicate" className="flex-shrink-0">
+                <div className="flex-shrink-0">
                   <Avatar className="h-12 w-12">
                     <AvatarFallback className="bg-purple-100 text-purple-800">
                       {conversation.name.substring(0, 2)}
                     </AvatarFallback>
                   </Avatar>
-                </Link>
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
-                    <Link to="/profile-duplicate" className="hover:underline">
+                    <div>
                       <h3 className="font-medium truncate">{conversation.name}</h3>
-                    </Link>
+                    </div>
                     <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                   </div>
                   
