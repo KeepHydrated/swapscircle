@@ -13,7 +13,12 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => {
   const profile = activeChat.otherUserProfile;
+  console.log('ChatHeader DEBUG - activeChat:', activeChat);
+  console.log('ChatHeader DEBUG - profile:', profile);
+  
   const profileName = profile?.name || activeChat.name;
+  console.log('ChatHeader DEBUG - profileName:', profileName);
+  
   const avatarUrl = profile?.avatar_url || "/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png";
   const location = profile?.location || "2.3 mi away";
   const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : 2023;
