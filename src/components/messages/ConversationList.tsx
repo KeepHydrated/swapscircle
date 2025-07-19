@@ -40,8 +40,11 @@ const ConversationList = ({
           return (
             <div 
               key={conversation.id}
-              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
-              onClick={() => {
+              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 relative z-10 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
+              style={{ pointerEvents: 'auto' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('Conversation clicked:', conversation.id);
                 setActiveConversation(conversation.id);
               }}
