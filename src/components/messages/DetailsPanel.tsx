@@ -8,8 +8,26 @@ import useEmblaCarousel from 'embla-carousel-react';
 interface DetailsPanelProps {
   selectedPair?: {
     id: number;
-    item1: { name: string; image: string };
-    item2: { name: string; image: string };
+    item1: { 
+      name: string; 
+      image: string;
+      description?: string;
+      category?: string;
+      condition?: string;
+      price_range_min?: number;
+      price_range_max?: number;
+      tags?: string[];
+    };
+    item2: { 
+      name: string; 
+      image: string;
+      description?: string;
+      category?: string;
+      condition?: string;
+      price_range_min?: number;
+      price_range_max?: number;
+      tags?: string[];
+    };
   } | null;
 }
 
@@ -180,39 +198,54 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
           </h2>
           
           <p className="text-gray-700 mb-6">
-            Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {selectedPair ? selectedPair[selectedItem].name.toLowerCase() : "item"} at a great value.
+            {selectedPair ? (
+              selectedPair[selectedItem].description || 
+              `${selectedPair[selectedItem].condition || 'Good'} condition. This ${selectedPair[selectedItem].name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`
+            ) : (
+              "Item description will appear here when an item is selected."
+            )}
           </p>
           
           <hr className="mb-4" />
           
           <ul className="flex flex-wrap gap-3">
-            <li className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                <Check className="w-3 h-3 text-green-600" />
-              </div>
-              <span className="text-gray-800 text-sm">Brand New</span>
-            </li>
+            {selectedPair && selectedPair[selectedItem].condition && (
+              <li className="flex items-center">
+                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                  <Check className="w-3 h-3 text-green-600" />
+                </div>
+                <span className="text-gray-800 text-sm">{selectedPair[selectedItem].condition}</span>
+              </li>
+            )}
             
-            <li className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                <Home className="w-3 h-3 text-blue-600" />
-              </div>
-              <span className="text-gray-800 text-sm">Home & Garden</span>
-            </li>
+            {selectedPair && selectedPair[selectedItem].category && (
+              <li className="flex items-center">
+                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                  <Home className="w-3 h-3 text-blue-600" />
+                </div>
+                <span className="text-gray-800 text-sm">{selectedPair[selectedItem].category}</span>
+              </li>
+            )}
             
-            <li className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mr-2">
-                <Utensils className="w-3 h-3 text-purple-600" />
-              </div>
-              <span className="text-gray-800 text-sm">Kitchen Appliances</span>
-            </li>
+            {selectedPair && selectedPair[selectedItem].tags && selectedPair[selectedItem].tags!.length > 0 && (
+              <li className="flex items-center">
+                <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mr-2">
+                  <Utensils className="w-3 h-3 text-purple-600" />
+                </div>
+                <span className="text-gray-800 text-sm">{selectedPair[selectedItem].tags![0]}</span>
+              </li>
+            )}
             
-            <li className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                <DollarSign className="w-3 h-3 text-green-600" />
-              </div>
-              <span className="text-gray-800 text-sm">100 - 250</span>
-            </li>
+            {selectedPair && (selectedPair[selectedItem].price_range_min || selectedPair[selectedItem].price_range_max) && (
+              <li className="flex items-center">
+                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                  <DollarSign className="w-3 h-3 text-green-600" />
+                </div>
+                <span className="text-gray-800 text-sm">
+                  {selectedPair[selectedItem].price_range_min || 0} - {selectedPair[selectedItem].price_range_max || '∞'}
+                </span>
+              </li>
+            )}
           </ul>
         </div>
       </div>
