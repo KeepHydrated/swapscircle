@@ -292,13 +292,18 @@ export const likeItem = async (itemId: string) => {
   }
 
   try {
+    console.log('DEBUG: Getting current session...');
     const session = await getCurrentSession();
+    console.log('DEBUG: Session:', session?.user?.id);
+    
     if (!session?.user) {
+      console.log('DEBUG: No user session found');
       toast.error('You must be logged in to like an item.');
       return false;
     }
 
     const currentUserId = session.user.id;
+    console.log('DEBUG: Current user ID:', currentUserId);
 
     // First, check if already liked to avoid duplicate constraint error
     const { data: existingLike } = await supabase
