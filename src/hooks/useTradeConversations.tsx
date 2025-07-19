@@ -175,7 +175,9 @@ export const useTradeConversations = () => {
       distance: "Unknown distance"
     };
 
-  const selectedPair = exchangePairs.find(pair => pair.id === selectedPairId);
+  const selectedPair = exchangePairs.find(pair => 
+    selectedPairId ? pair.id === selectedPairId : pair.partnerId === activeConversation
+  );
 
   const handlePairSelect = (partnerId: string, pairId: number) => {
     setActiveConversation(partnerId);
