@@ -108,7 +108,6 @@ const Messages = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        alert(`Clicked conversation: ${conversation.id}`);
                         console.log('Conversation clicked:', conversation.id);
                         setActiveConversation(conversation.id);
                       }}
@@ -175,7 +174,26 @@ const Messages = () => {
                         >
                           {activeChat.otherUserProfile?.username || activeChat.name}
                         </Link>
-                        <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                        <div className="flex text-amber-400 text-xs">
+                          {(() => {
+                            const username = activeChat.otherUserProfile?.username;
+                            const userReviewMap: { [key: string]: { rating: number; reviewCount: number } } = {
+                              "Jack": { rating: 0.0, reviewCount: 0 },
+                              "hhhhhh": { rating: 4.2, reviewCount: 18 },
+                              "Jordan Taylor": { rating: 4.8, reviewCount: 92 },
+                              "Alex Morgan": { rating: 4.7, reviewCount: 56 },
+                              "Sam Wilson": { rating: 4.5, reviewCount: 23 },
+                              "Casey Brown": { rating: 4.8, reviewCount: 41 },
+                              "Morgan Lee": { rating: 4.6, reviewCount: 29 },
+                              "Taylor Smith": { rating: 4.9, reviewCount: 67 }
+                            };
+                            const reviewData = userReviewMap[username || ''] || { rating: 4.0, reviewCount: 5 };
+                            const fullStars = Math.floor(reviewData.rating);
+                            const hasHalfStar = reviewData.rating % 1 >= 0.5;
+                            const stars = reviewData.rating === 0 ? '☆☆☆☆☆' : '★'.repeat(fullStars) + (hasHalfStar ? '☆' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
+                            return `${stars} (${reviewData.reviewCount})`;
+                          })()}
+                        </div>
                       </div>
                       
                       <div className="flex items-center gap-4 text-xs text-gray-600">
