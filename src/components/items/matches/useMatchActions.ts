@@ -31,31 +31,14 @@ export const useMatchActions = (
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const navigate = useNavigate();
 
-  // Helper: load liked status for all UUID-backed matches
-  const loadLikedStatus = async () => {
-    if (!user || !supabaseConfigured || matches.length === 0) {
-      setLikedItems({});
-      return;
-    }
-    const likedStatus: Record<string, boolean> = {};
-    for (const match of matches) {
-      if (isValidUUID(match.id)) {
-        try {
-          const liked = await isItemLiked(match.id);
-          likedStatus[match.id] = liked;
-        } catch (e) {
-          likedStatus[match.id] = false;
-        }
-      }
-    }
-    setLikedItems(likedStatus);
-  };
-
-  // Load liked status on mount and when user/supabase/matches change
+  // Initialize all matches as not liked for this specific matching session
   useEffect(() => {
-    loadLikedStatus();
-    // eslint-disable-next-line
-  }, [matches, user, supabaseConfigured]);
+    const initialLikedStatus: Record<string, boolean> = {};
+    matches.forEach(match => {
+      initialLikedStatus[match.id] = false;
+    });
+    setLikedItems(initialLikedStatus);
+  }, [matches]);
 
   // Handle liking/unliking an item with mutual matching logic
   const handleLike = async (id: string) => {
@@ -78,8 +61,7 @@ export const useMatchActions = (
           result = await likeItem(id);
         }
 
-        // Always reload DB status to reflect true value
-        await loadLikedStatus();
+        // Keep the optimistic update - no need to reload from DB
 
         // Handle mutual match result - check if result is an object with match data
         if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
