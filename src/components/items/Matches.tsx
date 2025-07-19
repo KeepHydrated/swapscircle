@@ -26,9 +26,9 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches);
   
-  // Filter out removed/matched items
+  // Filter out removed/liked items
   const displayedMatches = matches.filter(match => 
-    !removedItems.includes(match.id) && !match.liked
+    !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
   // Find current index in displayed matches
