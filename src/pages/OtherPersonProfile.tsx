@@ -16,7 +16,10 @@ const OtherPersonProfile: React.FC = () => {
   const userId = searchParams.get('userId');
   
   // State for profile data and loading
-  const [profileData, setProfileData] = useState(otherPersonProfileData);
+  const [profileData, setProfileData] = useState({
+    ...otherPersonProfileData,
+    avatar_url: undefined as string | undefined
+  });
   const [isLoading, setIsLoading] = useState(!!userId); // Only show loading if we have a userId to fetch
   const [userItems, setUserItems] = useState<any[]>([]);
   
@@ -64,7 +67,8 @@ const OtherPersonProfile: React.FC = () => {
             reviewCount: 0, // Show 0 reviews until we implement real reviews
             location: profileData.location || 'Update your location in Settings',
             memberSince: new Date(profileData.created_at).getFullYear().toString(),
-            friendCount: 0 // Show 0 friends until we implement real friends
+            friendCount: 0, // Show 0 friends until we implement real friends
+            avatar_url: profileData.avatar_url
           });
         }
         
