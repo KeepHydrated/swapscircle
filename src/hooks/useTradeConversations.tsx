@@ -63,13 +63,19 @@ export const useTradeConversations = () => {
         const displayConversations: ConversationDisplay[] = [];
         const displayExchangePairs: ExchangePairDisplay[] = [];
 
+        console.log('Processing trade conversations:', tradeConversations);
+
         tradeConversations.forEach((tc: any, index: number) => {
+          console.log('Processing conversation:', tc);
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
           const myItem = isRequester ? tc.requester_item : tc.owner_item;
           const theirItem = isRequester ? tc.owner_item : tc.requester_item;
           const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
           const otherUserProfile = isRequester ? tc.owner_profile : tc.requester_profile;
+          
+          console.log('Other user profile:', otherUserProfile);
+          console.log('Is requester:', isRequester, 'Current user:', currentUserId, 'Other user:', otherUserId);
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
