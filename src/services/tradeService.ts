@@ -108,11 +108,16 @@ export const fetchUserTradeConversations = async () => {
       ...conversations.map(c => c.owner_id)
     ])];
 
+    console.log('User IDs to fetch profiles for:', userIds);
+
     // Fetch profiles for all users involved
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('*')
       .in('id', userIds);
+
+    console.log('Fetched profiles:', profiles);
+    console.log('Profile fetch error:', profilesError);
 
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError);
