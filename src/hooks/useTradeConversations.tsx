@@ -70,6 +70,11 @@ export const useTradeConversations = () => {
           const theirItem = isRequester ? tc.owner_item : tc.requester_item;
           const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
           const otherUserProfile = isRequester ? tc.owner_profile : tc.requester_profile;
+          
+          console.log('DEBUG - Trade conversation:', tc.id);
+          console.log('DEBUG - Other user profile:', otherUserProfile);
+          console.log('DEBUG - Is requester:', isRequester);
+          console.log('DEBUG - Current user ID:', currentUserId);
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
