@@ -162,8 +162,8 @@ const Messages = () => {
                 <div className="flex items-center">
                   <Link to="/other-person-profile">
                     <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                      <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                      <AvatarFallback>EW</AvatarFallback>
+                      <AvatarImage src={activeChat.otherUserProfile?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"} />
+                      <AvatarFallback>{(activeChat.otherUserProfile?.name || activeChat.name).substring(0, 2)}</AvatarFallback>
                     </Avatar>
                   </Link>
                   <div className="flex-1">
@@ -173,7 +173,7 @@ const Messages = () => {
                           to="/other-person-profile" 
                           className="text-sm font-semibold hover:text-blue-600 transition-colors"
                         >
-                          Emma Wilson
+                          {activeChat.otherUserProfile?.name || activeChat.name}
                         </Link>
                         <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
                       </div>
@@ -181,12 +181,12 @@ const Messages = () => {
                       <div className="flex items-center gap-4 text-xs text-gray-600">
                         <div className="flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
-                          <span>Since 2023</span>
+                          <span>Since {activeChat.otherUserProfile?.created_at ? new Date(activeChat.otherUserProfile.created_at).getFullYear() : 2023}</span>
                         </div>
                         
                         <div className="flex items-center">
                           <MapPin className="h-3 w-3 mr-1" />
-                          <span>2.3 mi away</span>
+                          <span>{activeChat.otherUserProfile?.location || "2.3 mi away"}</span>
                         </div>
                         
                         <div className="flex items-center">
