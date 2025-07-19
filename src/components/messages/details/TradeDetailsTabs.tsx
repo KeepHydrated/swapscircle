@@ -12,8 +12,26 @@ import { fetchUserTradeConversations } from '@/services/tradeService';
 interface TradeDetailsTabsProps {
   selectedPair: {
     id: number;
-    item1: { name: string; image: string };
-    item2: { name: string; image: string };
+    item1: { 
+      name: string; 
+      image: string;
+      description?: string;
+      category?: string;
+      condition?: string;
+      price_range_min?: number;
+      price_range_max?: number;
+      tags?: string[];
+    };
+    item2: { 
+      name: string; 
+      image: string;
+      description?: string;
+      category?: string;
+      condition?: string;
+      price_range_min?: number;
+      price_range_max?: number;
+      tags?: string[];
+    };
     partnerId: string;
     partnerProfile?: {
       id: string;
@@ -177,27 +195,36 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
             <div className="p-4">
               <h3 className="font-semibold text-lg mb-2">{selectedPair.item1.name}</h3>
               <p className="text-gray-600 text-sm mb-3">
-                Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts.
+                {selectedPair.item1.description || 
+                `${selectedPair.item1.condition || 'Good'} condition. This ${selectedPair.item1.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`}
               </p>
               
               {/* Property Tags */}
               <div className="grid grid-cols-2 gap-1.5 text-sm">
-                <div className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-gray-500" />
-                  <span>Electronics</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-gray-500" />
-                  <span>Cameras</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-gray-500" />
-                  <span>Excellent</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-gray-500" />
-                  <span>150 - 200</span>
-                </div>
+                {selectedPair.item1.category && (
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item1.category}</span>
+                  </div>
+                )}
+                {selectedPair.item1.tags && selectedPair.item1.tags.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Layers className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item1.tags[0]}</span>
+                  </div>
+                )}
+                {selectedPair.item1.condition && (
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item1.condition}</span>
+                  </div>
+                )}
+                {(selectedPair.item1.price_range_min || selectedPair.item1.price_range_max) && (
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item1.price_range_min || 0} - {selectedPair.item1.price_range_max || '∞'}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -238,27 +265,36 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
             <div className="p-4">
               <h3 className="font-semibold text-lg mb-2">{selectedPair.item2.name}</h3>
               <p className="text-gray-600 text-sm mb-3">
-                Excellent condition. This {selectedPair.item2.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.
+                {selectedPair.item2.description || 
+                `${selectedPair.item2.condition || 'Good'} condition. This ${selectedPair.item2.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`}
               </p>
               
               {/* Property Tags */}
               <div className="grid grid-cols-2 gap-1.5 text-sm">
-                <div className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-gray-500" />
-                  <span>Electronics</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-gray-500" />
-                  <span>Tech</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-gray-500" />
-                  <span>Excellent</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-gray-500" />
-                  <span>150 - 300</span>
-                </div>
+                {selectedPair.item2.category && (
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item2.category}</span>
+                  </div>
+                )}
+                {selectedPair.item2.tags && selectedPair.item2.tags.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Layers className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item2.tags[0]}</span>
+                  </div>
+                )}
+                {selectedPair.item2.condition && (
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item2.condition}</span>
+                  </div>
+                )}
+                {(selectedPair.item2.price_range_min || selectedPair.item2.price_range_max) && (
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <span>{selectedPair.item2.price_range_min || 0} - {selectedPair.item2.price_range_max || '∞'}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

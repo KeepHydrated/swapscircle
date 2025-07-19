@@ -28,8 +28,26 @@ export interface ConversationDisplay {
 
 export interface ExchangePairDisplay {
   id: number;
-  item1: { name: string; image: string };
-  item2: { name: string; image: string };
+  item1: { 
+    name: string; 
+    image: string;
+    description?: string;
+    category?: string;
+    condition?: string;
+    price_range_min?: number;
+    price_range_max?: number;
+    tags?: string[];
+  };
+  item2: { 
+    name: string; 
+    image: string;
+    description?: string;
+    category?: string;
+    condition?: string;
+    price_range_min?: number;
+    price_range_max?: number;
+    tags?: string[];
+  };
   partnerId: string;
   partnerProfile?: {
     id: string;
@@ -85,11 +103,23 @@ export const useTradeConversations = () => {
             partnerId: tc.id,
             item1: {
               name: myItem?.name || 'Your Item',
-              image: myItem?.image_url || '/placeholder.svg'
+              image: myItem?.image_url || '/placeholder.svg',
+              description: myItem?.description,
+              category: myItem?.category,
+              condition: myItem?.condition,
+              price_range_min: myItem?.price_range_min,
+              price_range_max: myItem?.price_range_max,
+              tags: myItem?.tags
             },
             item2: {
               name: theirItem?.name || 'Their Item', 
-              image: theirItem?.image_url || '/placeholder.svg'
+              image: theirItem?.image_url || '/placeholder.svg',
+              description: theirItem?.description,
+              category: theirItem?.category,
+              condition: theirItem?.condition,
+              price_range_min: theirItem?.price_range_min,
+              price_range_max: theirItem?.price_range_max,
+              tags: theirItem?.tags
             },
             partnerProfile: otherUserProfile ? {
               id: otherUserId,
