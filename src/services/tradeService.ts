@@ -82,15 +82,13 @@ export const fetchUserTradeConversations = async () => {
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session?.user) return [];
 
-    // First, get the basic trade conversations with items and profiles
+    // Get trade conversations with items
     const { data: conversations, error } = await supabase
       .from('trade_conversations')
       .select(`
         *,
         requester_item:items!trade_conversations_requester_item_id_fkey(*),
-        owner_item:items!trade_conversations_owner_item_id_fkey(*),
-        requester_profile:profiles!trade_conversations_requester_id_fkey(*),
-        owner_profile:profiles!trade_conversations_owner_id_fkey(*)
+        owner_item:items!trade_conversations_owner_item_id_fkey(*)
       `)
       .or(`requester_id.eq.${session.session.user.id},owner_id.eq.${session.session.user.id}`)
       .order('updated_at', { ascending: false });
@@ -100,8 +98,41 @@ export const fetchUserTradeConversations = async () => {
       return [];
     }
 
-    console.log('Fetched trade conversations:', conversations);
-    return conversations || [];
+    if (!conversations || conversations.length === 0) {
+      return [];
+    }
+
+    // Get unique user IDs from conversations
+    const userIds = [...new Set([
+      ...conversations.map(c => c.requester_id),
+      ...conversations.map(c => c.owner_id)
+    ])];
+
+    // Fetch profiles for all users involved
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', userIds);
+
+    if (profilesError) {
+      console.error('Error fetching profiles:', profilesError);
+      // Continue without profiles if there's an error
+    }
+
+    // Add profile data to conversations
+    const conversationsWithProfiles = conversations.map(conversation => {
+      const requesterProfile = profiles?.find(p => p.id === conversation.requester_id);
+      const ownerProfile = profiles?.find(p => p.id === conversation.owner_id);
+      
+      return {
+        ...conversation,
+        requester_profile: requesterProfile,
+        owner_profile: ownerProfile
+      };
+    });
+
+    console.log('Fetched trade conversations:', conversationsWithProfiles);
+    return conversationsWithProfiles || [];
   } catch (error) {
     console.error('Error fetching trade conversations:', error);
     return [];
