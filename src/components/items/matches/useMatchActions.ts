@@ -31,14 +31,37 @@ export const useMatchActions = (
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const navigate = useNavigate();
 
-  // Initialize all matches as not liked for this specific matching session
+  // Load actual liked status from database for this specific matching session
+  const loadLikedStatus = async () => {
+    if (!user || !supabaseConfigured || matches.length === 0) {
+      const initialLikedStatus: Record<string, boolean> = {};
+      matches.forEach(match => {
+        initialLikedStatus[match.id] = false;
+      });
+      setLikedItems(initialLikedStatus);
+      return;
+    }
+    
+    const likedStatus: Record<string, boolean> = {};
+    for (const match of matches) {
+      if (isValidUUID(match.id)) {
+        try {
+          const liked = await isItemLiked(match.id);
+          likedStatus[match.id] = liked;
+        } catch (e) {
+          likedStatus[match.id] = false;
+        }
+      } else {
+        likedStatus[match.id] = false;
+      }
+    }
+    setLikedItems(likedStatus);
+  };
+
   useEffect(() => {
-    const initialLikedStatus: Record<string, boolean> = {};
-    matches.forEach(match => {
-      initialLikedStatus[match.id] = false;
-    });
-    setLikedItems(initialLikedStatus);
-  }, [matches]);
+    loadLikedStatus();
+    // eslint-disable-next-line
+  }, [matches, user, supabaseConfigured]);
 
   // Handle liking/unliking an item with mutual matching logic
   const handleLike = async (id: string) => {
