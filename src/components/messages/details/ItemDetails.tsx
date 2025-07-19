@@ -17,6 +17,33 @@ interface ItemDetailsProps {
 }
 
 const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
+  // Generate review data based on user profile
+  const generateReviewData = (username?: string) => {
+    if (!username) return { rating: 5, reviewCount: 0 };
+    
+    // Simple hash function to generate consistent but different reviews per user
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+      const char = username.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    
+    const ratings = [4.2, 4.5, 4.8, 4.9, 5.0];
+    const counts = [12, 18, 24, 32, 42, 56, 67];
+    
+    const ratingIndex = Math.abs(hash) % ratings.length;
+    const countIndex = Math.abs(hash) % counts.length;
+    
+    return {
+      rating: ratings[ratingIndex],
+      reviewCount: counts[countIndex]
+    };
+  };
+
+  const reviewData = generateReviewData(profileData?.username);
+  const stars = '★'.repeat(Math.floor(reviewData.rating)) + (reviewData.rating % 1 >= 0.5 ? '☆' : '');
+  
   return (
     <div className="p-3">
       <h2 className="text-lg font-bold text-gray-900 mb-2 truncate">
@@ -77,7 +104,7 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
                 {/* Name and rating to the right of avatar */}
                 <div>
                   <h3 className="text-xs font-semibold">{profileData?.username || 'Unknown User'}</h3>
-                  <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
+                  <div className="flex text-amber-400 text-xs">{stars} <span className="text-gray-500 ml-1">({reviewData.reviewCount})</span></div>
                 </div>
               </div>
             </div>
