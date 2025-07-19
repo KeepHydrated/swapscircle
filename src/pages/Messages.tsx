@@ -28,7 +28,7 @@ const Messages = () => {
   } = useTradeConversations();
 
   const [messageText, setMessageText] = useState('');
-  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item1');
+  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
   const queryClient = useQueryClient();
 
   // Fetch messages for active conversation

@@ -20,7 +20,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item1');
+  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
   
   // Sample image placeholders for the carousel
   useEffect(() => {
