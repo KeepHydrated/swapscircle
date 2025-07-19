@@ -15,8 +15,9 @@ const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
   
-  // State for profile data
+  // State for profile data and loading
   const [profileData, setProfileData] = useState(otherPersonProfileData);
+  const [isLoading, setIsLoading] = useState(!!userId); // Only show loading if we have a userId to fetch
   
   // Convert items to MatchItems and add liked property
   const itemsAsMatchItems: MatchItem[] = getOtherPersonItems().map(item => ({...item, liked: false}));
@@ -24,35 +25,42 @@ const OtherPersonProfile: React.FC = () => {
   // Fetch profile data if userId is provided
   useEffect(() => {
     const fetchProfile = async () => {
-      if (userId) {
-        console.log('Fetching profile for userId:', userId);
-        try {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
-          
-          if (error) {
-            console.error('Error fetching profile:', error);
-            return;
-          }
-          
-          if (data) {
-            console.log('Fetched profile data:', data);
-            setProfileData({
-              name: data.username || data.name || 'Unknown User',
-              description: data.bio || 'No bio available',
-              rating: 5, // Default rating
-              reviewCount: 42, // Default review count
-              location: data.location || '2.3 mi away',
-              memberSince: new Date(data.created_at).getFullYear().toString(),
-              friendCount: 15 // Default friend count
-            });
-          }
-        } catch (error) {
+      if (!userId) {
+        setIsLoading(false);
+        return;
+      }
+      
+      setIsLoading(true);
+      console.log('Fetching profile for userId:', userId);
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+        
+        if (error) {
           console.error('Error fetching profile:', error);
+          setIsLoading(false);
+          return;
         }
+        
+        if (data) {
+          console.log('Fetched profile data:', data);
+          setProfileData({
+            name: data.username || data.name || 'Unknown User',
+            description: data.bio || 'No bio available',
+            rating: 5, // Default rating
+            reviewCount: 42, // Default review count
+            location: data.location || '2.3 mi away',
+            memberSince: new Date(data.created_at).getFullYear().toString(),
+            friendCount: 15 // Default friend count
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -97,6 +105,28 @@ const OtherPersonProfile: React.FC = () => {
     ...item,
     liked: likedItems[item.id] || false
   }));
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="bg-card rounded-lg shadow-sm overflow-hidden">
+          <div className="p-6 animate-pulse">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-20 w-20 bg-gray-200 rounded-full"></div>
+              <div className="space-y-2">
+                <div className="h-6 bg-gray-200 rounded w-32"></div>
+                <div className="h-4 bg-gray-200 rounded w-24"></div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            </div>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
