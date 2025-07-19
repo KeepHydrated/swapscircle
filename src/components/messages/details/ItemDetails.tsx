@@ -17,6 +17,7 @@ interface ItemDetailsProps {
 }
 
 const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
+  console.log('ItemDetails rendered with:', { name, showProfileInfo, profileData });
   // Map usernames to their consistent profile review data
   const getUserReviewData = (username?: string) => {
     if (!username) {
