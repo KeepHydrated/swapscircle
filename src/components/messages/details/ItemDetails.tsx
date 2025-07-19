@@ -24,13 +24,16 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
 
   // Fetch reviews for the specific user when profile data changes
   useEffect(() => {
-    const fetchUserReviews = async () => {
+  const fetchUserReviews = async () => {
+      console.log('fetchUserReviews called with profileData:', profileData);
       if (!profileData?.id) {
+        console.log('No profile ID found, setting default review data');
         setReviewData({ rating: 0.0, reviewCount: 0 });
         return;
       }
 
       try {
+        console.log('Fetching reviews for user ID:', profileData.id);
         // For now, we'll use placeholder data since reviews aren't implemented yet
         // Once you have a reviews table, you can fetch real reviews here:
         // const { data: reviews } = await supabase
@@ -40,6 +43,7 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
         
         // For now, set to 0 until reviews are implemented
         setReviewData({ rating: 0.0, reviewCount: 0 });
+        console.log('Set review data to 0 for user:', profileData.username);
       } catch (error) {
         console.error('Error fetching reviews:', error);
         setReviewData({ rating: 0.0, reviewCount: 0 });
