@@ -107,7 +107,7 @@ const Messages = () => {
                   return (
                     <div 
                       key={conversation.id}
-                      className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
+                      className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
