@@ -116,7 +116,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
       {/* Image Carousel - made smaller */}
       <div className="flex-1 flex flex-col">
         {/* Main image container with navigation buttons - reduced height */}
-        <div className="relative h-56 bg-gray-100 overflow-hidden">
+        <div className="relative h-72 bg-gray-100 overflow-hidden">
           <div className="overflow-hidden w-full h-full" ref={emblaRef}>
             <div className="flex h-full">
               {imageUrls.map((url, index) => (
