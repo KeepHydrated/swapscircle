@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserPlus, UserCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +22,8 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
 }) => {
   const [status, setStatus] = useState<FriendRequestStatus>(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
+  const [friendRequestId, setFriendRequestId] = useState<string | null>(null);
+  const [otherUserName, setOtherUserName] = useState<string>('');
   
   // Check existing friend request status on mount
   useEffect(() => {
@@ -29,6 +32,17 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // Get other user's profile for name
+        const { data: otherProfile } = await supabase
+          .from('profiles')
+          .select('name, username')
+          .eq('id', userId)
+          .single();
+
+        if (otherProfile) {
+          setOtherUserName(otherProfile.name || otherProfile.username || 'this user');
+        }
+
         const { data: friendRequests } = await supabase
           .from('friend_requests')
           .select('*')
@@ -36,6 +50,8 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
 
         if (friendRequests && friendRequests.length > 0) {
           const request = friendRequests[0];
+          setFriendRequestId(request.id);
+          
           if (request.status === 'accepted') {
             setStatus('accepted');
           } else if (request.status === 'pending') {
@@ -241,6 +257,35 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       setIsLoading(false);
     }
   };
+
+  const handleUnfriend = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !friendRequestId) {
+        toast.error("Cannot unfriend at this time");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('friend_requests')
+        .delete()
+        .eq('id', friendRequestId);
+
+      if (error) throw error;
+      
+      setStatus('none');
+      setFriendRequestId(null);
+      if (onStatusChange) onStatusChange('none');
+      
+      toast.success(`Unfriended ${otherUserName}`);
+    } catch (error) {
+      console.error('Error unfriending:', error);
+      toast.error("Failed to unfriend");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // Button for sending a friend request
   if (status === 'none') {
@@ -294,15 +339,47 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
     );
   }
   
-  // Button for accepted friend request
+  // Button group for accepted friend request (friends with unfriend option)
   if (status === 'accepted') {
     return (
-      <Button 
-        variant="secondary"
-      >
-        <UserCheck className="mr-2 h-4 w-4" />
-        Friends
-      </Button>
+      <div className="flex space-x-2">
+        <Button 
+          variant="secondary"
+          disabled
+        >
+          <UserCheck className="mr-2 h-4 w-4" />
+          Friends
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="outline"
+              size="sm"
+              className="px-3"
+              disabled={isLoading}
+            >
+              <UserX className="h-4 w-4" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Unfriend {otherUserName}</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to unfriend {otherUserName}? This action cannot be undone and you'll need to send a new friend request to connect again.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleUnfriend}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Unfriend
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     );
   }
   
