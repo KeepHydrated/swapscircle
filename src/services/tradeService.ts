@@ -111,7 +111,7 @@ export const fetchUserTradeConversations = async () => {
     // Fetch profiles for all users involved
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, username, email, avatar_url, bio, location, created_at, updated_at')
       .in('id', userIds);
 
     if (profilesError) {

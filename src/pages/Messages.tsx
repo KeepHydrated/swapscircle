@@ -163,7 +163,7 @@ const Messages = () => {
                   <Link to="/other-person-profile">
                     <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
                       <AvatarImage src={activeChat.otherUserProfile?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"} />
-                      <AvatarFallback>{(activeChat.otherUserProfile?.name || activeChat.name).substring(0, 2)}</AvatarFallback>
+                      <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 2)}</AvatarFallback>
                     </Avatar>
                   </Link>
                   <div className="flex-1">
@@ -173,7 +173,7 @@ const Messages = () => {
                           to="/other-person-profile" 
                           className="text-sm font-semibold hover:text-blue-600 transition-colors"
                         >
-                          {activeChat.otherUserProfile?.name || activeChat.name}
+                          {activeChat.otherUserProfile?.username || activeChat.name}
                         </Link>
                         <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
                       </div>

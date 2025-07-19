@@ -16,12 +16,11 @@ export interface ConversationDisplay {
   isCompleted?: boolean;
   otherUserProfile?: {
     id: string;
-    name: string;
+    username: string;
     email: string;
     avatar_url: string;
     bio: string;
     location: string;
-    username: string;
     created_at: string;
     updated_at: string;
   };
@@ -92,10 +91,9 @@ export const useTradeConversations = () => {
 
           displayExchangePairs.push(exchangePair);
 
-          // Create conversation display with profile data or fallbacks
           const conversation: ConversationDisplay = {
             id: tc.id,
-            name: otherUserProfile?.name || `Trading Partner`,
+            name: otherUserProfile?.username || `Trading Partner`,
             lastMessage: `Trading ${myItem?.name} for ${theirItem?.name}`,
             time: new Date(tc.updated_at).toLocaleDateString(),
             rating: 5,
@@ -104,12 +102,11 @@ export const useTradeConversations = () => {
             isCompleted: tc.status === 'completed',
             otherUserProfile: otherUserProfile || {
               id: otherUserId,
-              name: 'Trading Partner',
+              username: 'Trading Partner',
               email: '',
               avatar_url: '',
               bio: '',
               location: '2.3 mi away',
-              username: '',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             }

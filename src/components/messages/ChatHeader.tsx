@@ -16,7 +16,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
   console.log('ChatHeader DEBUG - activeChat:', activeChat);
   console.log('ChatHeader DEBUG - profile:', profile);
   
-  const profileName = profile?.name || activeChat.name;
+  const profileName = profile?.username || activeChat.name;
   console.log('ChatHeader DEBUG - profileName:', profileName);
   
   const avatarUrl = profile?.avatar_url || "/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png";
