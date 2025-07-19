@@ -108,6 +108,7 @@ const Messages = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        alert(`Clicked conversation: ${conversation.id}`);
                         console.log('Conversation clicked:', conversation.id);
                         setActiveConversation(conversation.id);
                       }}
