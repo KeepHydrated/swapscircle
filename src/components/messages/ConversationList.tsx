@@ -40,7 +40,7 @@ const ConversationList = ({
           return (
             <div 
               key={conversation.id}
-              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 relative z-10 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
+              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 relative z-10 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
               style={{ pointerEvents: 'auto' }}
               onClick={(e) => {
                 e.preventDefault();
