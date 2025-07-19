@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -8,10 +8,56 @@ import { MatchItem } from '@/types/item';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const OtherPersonProfile: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userId');
+  
+  // State for profile data
+  const [profileData, setProfileData] = useState(otherPersonProfileData);
+  
   // Convert items to MatchItems and add liked property
   const itemsAsMatchItems: MatchItem[] = getOtherPersonItems().map(item => ({...item, liked: false}));
+  
+  // Fetch profile data if userId is provided
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (userId) {
+        console.log('Fetching profile for userId:', userId);
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+          
+          if (error) {
+            console.error('Error fetching profile:', error);
+            return;
+          }
+          
+          if (data) {
+            console.log('Fetched profile data:', data);
+            setProfileData({
+              name: data.username || data.name || 'Unknown User',
+              description: data.bio || 'No bio available',
+              rating: 5, // Default rating
+              reviewCount: 42, // Default review count
+              location: data.location || '2.3 mi away',
+              memberSince: new Date(data.created_at).getFullYear().toString(),
+              friendCount: 15 // Default friend count
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error);
+        }
+      }
+    };
+    
+    fetchProfile();
+  }, [userId]);
 
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
@@ -58,13 +104,13 @@ const OtherPersonProfile: React.FC = () => {
         {/* Profile Header with Friend Request Button */}
         <div className="relative">
           <ProfileHeader 
-            profile={otherPersonProfileData} 
-            friendCount={otherPersonProfileData.friendCount}
+            profile={profileData} 
+            friendCount={profileData.friendCount}
             onReviewsClick={() => navigateToTab('reviews')}
           />
           <div className="absolute top-6 right-6">
             <FriendRequestButton 
-              userId="profile1" 
+              userId={userId || "profile1"} 
               initialStatus="none" 
               onStatusChange={(status) => setIsFriend(status === 'accepted')}
             />
