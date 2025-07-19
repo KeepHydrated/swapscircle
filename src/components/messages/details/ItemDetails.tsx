@@ -27,7 +27,7 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
     
     // Define consistent review data for known users
     const userReviewMap: { [key: string]: { rating: number; reviewCount: number } } = {
-      "Jack": { rating: 4.9, reviewCount: 34 },
+      "Jack": { rating: 0.0, reviewCount: 0 },
       "hhhhhh": { rating: 4.2, reviewCount: 18 },
       "Jordan Taylor": { rating: 4.8, reviewCount: 92 },
       "Alex Morgan": { rating: 4.7, reviewCount: 56 },
