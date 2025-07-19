@@ -19,7 +19,11 @@ interface ItemDetailsProps {
 const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
   // Generate review data based on user profile
   const generateReviewData = (username?: string) => {
-    if (!username) return { rating: 5, reviewCount: 0 };
+    console.log('Generating review data for username:', username);
+    if (!username) {
+      console.log('No username provided, returning default');
+      return { rating: 4.0, reviewCount: 5 };
+    }
     
     // Simple hash function to generate consistent but different reviews per user
     let hash = 0;
@@ -29,20 +33,27 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
       hash = hash & hash; // Convert to 32bit integer
     }
     
-    const ratings = [4.2, 4.5, 4.8, 4.9, 5.0];
-    const counts = [12, 18, 24, 32, 42, 56, 67];
+    const ratings = [4.2, 4.5, 4.7, 4.8, 4.9];
+    const counts = [8, 15, 23, 29, 37, 44];
     
     const ratingIndex = Math.abs(hash) % ratings.length;
     const countIndex = Math.abs(hash) % counts.length;
     
-    return {
+    const result = {
       rating: ratings[ratingIndex],
       reviewCount: counts[countIndex]
     };
+    
+    console.log('Generated review data:', result);
+    return result;
   };
 
   const reviewData = generateReviewData(profileData?.username);
-  const stars = '★'.repeat(Math.floor(reviewData.rating)) + (reviewData.rating % 1 >= 0.5 ? '☆' : '');
+  
+  // Create star display
+  const fullStars = Math.floor(reviewData.rating);
+  const hasHalfStar = reviewData.rating % 1 >= 0.5;
+  const stars = '★'.repeat(fullStars) + (hasHalfStar ? '☆' : '');
   
   console.log('ItemDetails - profileData:', profileData);
   console.log('ItemDetails - reviewData:', reviewData);
