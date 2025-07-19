@@ -8,9 +8,15 @@ import { Link } from 'react-router-dom';
 interface ItemDetailsProps {
   name: string;
   showProfileInfo?: boolean;
+  profileData?: {
+    username: string;
+    avatar_url?: string;
+    created_at: string;
+    location?: string;
+  };
 }
 
-const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
+const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
   return (
     <div className="p-3">
       <h2 className="text-lg font-bold text-gray-900 mb-2 truncate">
@@ -64,13 +70,13 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
               {/* Avatar and name/rating in the same row */}
               <div className="flex items-center mb-2">
                 <Avatar className="h-8 w-8 mr-2">
-                  <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop" />
-                  <AvatarFallback>EW</AvatarFallback>
+                  <AvatarImage src={profileData?.avatar_url || undefined} />
+                  <AvatarFallback>{profileData?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                 </Avatar>
                 
                 {/* Name and rating to the right of avatar */}
                 <div>
-                  <h3 className="text-xs font-semibold">Emma Wilson</h3>
+                  <h3 className="text-xs font-semibold">{profileData?.username || 'Unknown User'}</h3>
                   <div className="flex text-amber-400 text-xs">★★★★★ <span className="text-gray-500 ml-1">(42)</span></div>
                 </div>
               </div>
@@ -81,12 +87,12 @@ const ItemDetails = ({ name, showProfileInfo = true }: ItemDetailsProps) => {
           <div className="flex flex-wrap gap-3 text-xs text-gray-600 pl-0">
             <div className="flex items-center">
               <Calendar className="h-2.5 w-2.5 mr-1 flex-shrink-0" />
-              <span>Since 2023</span>
+              <span>Since {profileData?.created_at ? new Date(profileData.created_at).getFullYear() : '2023'}</span>
             </div>
             
             <div className="flex items-center">
               <MapPin className="h-2.5 w-2.5 mr-1 flex-shrink-0" />
-              <span>2.3 mi away</span>
+              <span>{profileData?.location || '2.3 mi away'}</span>
             </div>
             
             <div className="flex items-center">

@@ -13,6 +13,12 @@ interface DetailsPanelProps {
     item1: { name: string; image: string };
     item2: { name: string; image: string };
     partnerId: string;
+    partnerProfile?: {
+      username: string;
+      avatar_url?: string;
+      created_at: string;
+      location?: string;
+    };
   } | null;
 }
 

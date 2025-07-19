@@ -31,6 +31,12 @@ export interface ExchangePairDisplay {
   item1: { name: string; image: string };
   item2: { name: string; image: string };
   partnerId: string;
+  partnerProfile?: {
+    username: string;
+    avatar_url?: string;
+    created_at: string;
+    location?: string;
+  };
 }
 
 export const useTradeConversations = () => {
@@ -86,7 +92,13 @@ export const useTradeConversations = () => {
             item2: {
               name: theirItem?.name || 'Their Item', 
               image: theirItem?.image_url || '/placeholder.svg'
-            }
+            },
+            partnerProfile: otherUserProfile ? {
+              username: otherUserProfile.username,
+              avatar_url: otherUserProfile.avatar_url,
+              created_at: otherUserProfile.created_at,
+              location: otherUserProfile.location
+            } : undefined
           };
 
           displayExchangePairs.push(exchangePair);
