@@ -118,6 +118,7 @@ export const fetchUserTradeConversations = async () => {
 
     console.log('Fetched profiles:', profiles);
     console.log('Profile fetch error:', profilesError);
+    console.log('Profile details:', JSON.stringify(profiles, null, 2));
 
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError);
