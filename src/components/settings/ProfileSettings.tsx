@@ -16,9 +16,6 @@ import { supabase } from '@/integrations/supabase/client';
 
 // Create form schema
 const profileFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
@@ -46,7 +43,6 @@ const ProfileSettings: React.FC = () => {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: "",
       username: "",
       email: "",
       bio: "",
@@ -95,7 +91,7 @@ const ProfileSettings: React.FC = () => {
 
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('name, email, username, bio, location, avatar_url')
+        .select('email, username, bio, location, avatar_url')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -109,7 +105,6 @@ const ProfileSettings: React.FC = () => {
       if (profile) {
         console.log("[ProfileSettings] Profile loaded:", profile);
         form.reset({
-          name: profile.name ?? "",
           username: profile.username ?? "",
           email: profile.email ?? "",
           bio: profile.bio ?? "",
@@ -132,7 +127,6 @@ const ProfileSettings: React.FC = () => {
       const { error } = await supabase
         .from('profiles')
         .update({
-          name: data.name,
           username: data.username,
           bio: data.bio,
           location: data.location,
@@ -146,9 +140,8 @@ const ProfileSettings: React.FC = () => {
         throw error;
       }
 
-      // Also update name/avatar_url in AuthContext user object
+      // Also update avatar_url in AuthContext user object
       await updateProfile({
-        name: data.name,
         avatar_url: avatarUrl,
       });
 
@@ -264,34 +257,19 @@ const ProfileSettings: React.FC = () => {
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your full name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your username" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
               <FormField
                 control={form.control}
