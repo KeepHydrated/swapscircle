@@ -305,25 +305,8 @@ export const likeItem = async (itemId: string) => {
     const currentUserId = session.user.id;
     console.log('DEBUG: Current user ID:', currentUserId);
 
-    // First, check if already liked to avoid duplicate constraint error
-    console.log('DEBUG: Checking if item is already liked...');
-    const { data: existingLike, error: checkError } = await supabase
-      .from('liked_items')
-      .select('id')
-      .eq('user_id', currentUserId)
-      .eq('item_id', itemId)
-      .maybeSingle();
-
-    console.log('DEBUG: Existing like check result:', { existingLike, checkError });
-
-    if (existingLike) {
-      console.log('DEBUG: Item already liked, returning early');
-      toast.info('Item already liked!');
-      return { success: true, isMatch: false };
-    }
-
-    // Now like the item
-    console.log('DEBUG: Inserting new like...');
+    // Skip the existing like check since we allow re-liking items for different matches
+    console.log('DEBUG: Inserting new like (allowing duplicates for different matches)...');
     const { error } = await supabase
       .from('liked_items')
       .insert({
@@ -334,9 +317,14 @@ export const likeItem = async (itemId: string) => {
     console.log('DEBUG: Insert like result:', { error });
 
     if (error) {
-      console.error('Error liking item:', error);
-      toast.error('Error liking item');
-      return false;
+      // Handle duplicate like gracefully
+      if (error.code === '23505') {
+        console.log('DEBUG: Like already exists, but checking for mutual match anyway...');
+      } else {
+        console.error('Error liking item:', error);
+        toast.error('Error liking item');
+        return false;
+      }
     }
 
     // Check for mutual match
