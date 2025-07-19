@@ -50,11 +50,11 @@ const OtherPersonProfile: React.FC = () => {
           setProfileData({
             name: data.username || data.name || 'Unknown User',
             description: data.bio || 'No bio available',
-            rating: 5, // Default rating
-            reviewCount: 42, // Default review count
-            location: data.location || '2.3 mi away',
+            rating: 0, // Show 0 rating until we implement real reviews
+            reviewCount: 0, // Show 0 reviews until we implement real reviews
+            location: data.location || 'Update your location in Settings',
             memberSince: new Date(data.created_at).getFullYear().toString(),
-            friendCount: 15 // Default friend count
+            friendCount: 0 // Show 0 friends until we implement real friends
           });
         }
       } catch (error) {
