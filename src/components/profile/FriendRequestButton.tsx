@@ -67,6 +67,31 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         return;
       }
 
+      // Check if there's already a friend request and handle it
+      const { data: existingRequests } = await supabase
+        .from('friend_requests')
+        .select('*')
+        .or(`and(requester_id.eq.${user.id},recipient_id.eq.${userId}),and(requester_id.eq.${userId},recipient_id.eq.${user.id})`);
+
+      if (existingRequests && existingRequests.length > 0) {
+        const existingRequest = existingRequests[0];
+        
+        // If there's a rejected request, delete it first
+        if (existingRequest.status === 'rejected') {
+          await supabase
+            .from('friend_requests')
+            .delete()
+            .eq('id', existingRequest.id);
+        } else if (existingRequest.status === 'pending') {
+          // If already pending, don't send again
+          toast.error("Friend request already sent");
+          return;
+        } else if (existingRequest.status === 'accepted') {
+          toast.error("You are already friends");
+          return;
+        }
+      }
+
       // Get requester profile for notification
       const { data: requesterProfile } = await supabase
         .from('profiles')
