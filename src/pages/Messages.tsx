@@ -105,25 +105,24 @@ const Messages = () => {
                     <div 
                       key={conversation.id}
                       className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-gray-50' : ''}`}
-                      onClick={() => setActiveConversation(conversation.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Conversation clicked:', conversation.id);
+                        setActiveConversation(conversation.id);
+                      }}
                     >
                       <div className="flex items-start gap-4">
-                        <Link 
-                          to="/other-person-profile" 
-                          className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-purple-200 transition-colors"
-                        >
+                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
                           <span className="text-purple-800 font-medium text-sm">
                             {conversation.name.substring(0, 2)}
                           </span>
-                        </Link>
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
-                            <Link 
-                              to="/other-person-profile" 
-                              className="font-medium truncate hover:text-blue-600 transition-colors"
-                            >
+                            <div className="font-medium truncate">
                               {conversation.name}
-                            </Link>
+                            </div>
                             <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                           </div>
                           
