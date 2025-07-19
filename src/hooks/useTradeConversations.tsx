@@ -184,6 +184,10 @@ export const useTradeConversations = () => {
     setSelectedPairId(pairId);
   };
 
+  const resetSelectedPair = () => {
+    setSelectedPairId(null);
+  };
+
   const handleSendFirstMessage = (conversationId: string) => {
     // Update conversation to mark as no longer new
     setConversations(prevConversations => 
@@ -231,6 +235,7 @@ export const useTradeConversations = () => {
     handlePairSelect,
     handleSendFirstMessage,
     handleTradeCompleted,
+    resetSelectedPair,
     loading
   };
 };

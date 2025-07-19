@@ -23,6 +23,7 @@ const Messages = () => {
     handlePairSelect,
     handleSendFirstMessage,
     handleTradeCompleted,
+    resetSelectedPair,
     loading
   } = useTradeConversations();
 
@@ -113,6 +114,8 @@ const Messages = () => {
                         e.stopPropagation();
                         console.log('Conversation clicked:', conversation.id);
                         setActiveConversation(conversation.id);
+                        resetSelectedPair();
+                        console.log('Reset selectedPairId to null');
                       }}
                     >
                       <div className="flex items-start gap-4">
