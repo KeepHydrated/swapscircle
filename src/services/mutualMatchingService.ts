@@ -45,17 +45,26 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
     console.log('DEBUG: Other user ID:', otherUserId);
 
     // Check if the other user has liked any of the current user's items
+    console.log('DEBUG: Query details - Looking for likes by user:', otherUserId, 'on items owned by:', currentUserId);
+    
+    // First, let's see what items the current user owns
+    const { data: myItems, error: myItemsError } = await supabase
+      .from('items')
+      .select('id, name')
+      .eq('user_id', currentUserId);
+    
+    console.log('DEBUG: My items (owned by current user):', myItems);
+    
     const { data: mutualLikes, error: likesError } = await supabase
       .from('liked_items')
       .select(`
         item_id,
-        items!inner(user_id)
+        items!inner(user_id, name)
       `)
       .eq('user_id', otherUserId)
       .eq('items.user_id', currentUserId);
 
     console.log('DEBUG: Mutual likes query result:', { mutualLikes, likesError });
-    console.log('DEBUG: Query details - Looking for likes by user:', otherUserId, 'on items owned by:', currentUserId);
 
     if (likesError) {
       console.error('Error checking mutual likes:', likesError);
