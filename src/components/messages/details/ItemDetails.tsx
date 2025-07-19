@@ -17,38 +17,37 @@ interface ItemDetailsProps {
 }
 
 const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
-  // Generate review data based on user profile
-  const generateReviewData = (username?: string) => {
-    console.log('Generating review data for username:', username);
+  // Map usernames to their consistent profile review data
+  const getUserReviewData = (username?: string) => {
+    console.log('Getting review data for username:', username);
+    
     if (!username) {
-      console.log('No username provided, returning default');
       return { rating: 4.0, reviewCount: 5 };
     }
     
-    // Simple hash function to generate consistent but different reviews per user
-    let hash = 0;
-    for (let i = 0; i < username.length; i++) {
-      const char = username.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    
-    const ratings = [4.2, 4.5, 4.7, 4.8, 4.9];
-    const counts = [8, 15, 23, 29, 37, 44];
-    
-    const ratingIndex = Math.abs(hash) % ratings.length;
-    const countIndex = Math.abs(hash) % counts.length;
-    
-    const result = {
-      rating: ratings[ratingIndex],
-      reviewCount: counts[countIndex]
+    // Define consistent review data for known users
+    const userReviewMap: { [key: string]: { rating: number; reviewCount: number } } = {
+      "Jack": { rating: 4.9, reviewCount: 34 },
+      "hhhhhh": { rating: 4.2, reviewCount: 18 },
+      "Jordan Taylor": { rating: 4.8, reviewCount: 92 },
+      "Alex Morgan": { rating: 4.7, reviewCount: 56 },
+      "Sam Wilson": { rating: 4.5, reviewCount: 23 },
+      "Casey Brown": { rating: 4.8, reviewCount: 41 },
+      "Morgan Lee": { rating: 4.6, reviewCount: 29 },
+      "Taylor Smith": { rating: 4.9, reviewCount: 67 }
     };
     
-    console.log('Generated review data:', result);
+    // Return mapped data or generate consistent fallback
+    const result = userReviewMap[username] || {
+      rating: 4.0 + (username.length % 10) * 0.1,
+      reviewCount: 10 + (username.length * 3) % 50
+    };
+    
+    console.log('Review data for', username, ':', result);
     return result;
   };
 
-  const reviewData = generateReviewData(profileData?.username);
+  const reviewData = getUserReviewData(profileData?.username);
   
   // Create star display
   const fullStars = Math.floor(reviewData.rating);
@@ -56,8 +55,7 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
   const stars = '★'.repeat(fullStars) + (hasHalfStar ? '☆' : '');
   
   console.log('ItemDetails - profileData:', profileData);
-  console.log('ItemDetails - reviewData:', reviewData);
-  console.log('ItemDetails - stars:', stars);
+  console.log('ItemDetails - final stars:', stars, 'reviewCount:', reviewData.reviewCount);
   
   return (
     <div className="p-3">
