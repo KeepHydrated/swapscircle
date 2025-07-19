@@ -184,6 +184,38 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       setIsLoading(false);
     }
   };
+
+  const handleUnsendRequest = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('friend_requests')
+        .delete()
+        .match({ 
+          requester_id: user.id,
+          recipient_id: userId,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+      
+      setStatus('none');
+      if (onStatusChange) onStatusChange('none');
+      
+      toast.success("Friend request unsent");
+    } catch (error) {
+      console.error('Error unsending friend request:', error);
+      toast.error("Failed to unsend friend request");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // Button for sending a friend request
   if (status === 'none') {
@@ -202,11 +234,12 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   if (status === 'pending') {
     return (
       <Button 
-        variant="secondary"
-        disabled={true}
+        variant="outline"
+        onClick={handleUnsendRequest}
+        disabled={isLoading}
       >
-        <UserCheck className="mr-2 h-4 w-4" />
-        Request Sent
+        <UserX className="mr-2 h-4 w-4" />
+        Unsend Request
       </Button>
     );
   }
