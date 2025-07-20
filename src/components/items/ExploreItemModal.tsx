@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { X, ArrowLeft, ArrowRight, Heart } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ExploreItemModalProps {
   open: boolean;
@@ -74,7 +75,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               created_at: new Date().toISOString()
             });
           } else {
-            console.log('Profile data fetched:', profileData);
+            console.log('Profile data fetched:', JSON.stringify(profileData, null, 2));
             setUserProfile(profileData);
           }
         }
@@ -114,6 +115,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
       <DialogContent
         className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none"
       >
+        <VisuallyHidden>
+          <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
+          <DialogDescription>View details for this item including description and owner information</DialogDescription>
+        </VisuallyHidden>
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           {/* Close button - top right, smaller size */}
           <button
