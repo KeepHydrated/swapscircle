@@ -24,7 +24,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
 
   return (
     <div className="relative">
-      <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-280px)]">
+      <div className="overflow-x-auto overflow-y-hidden h-auto">
         <MatchesGrid
           displayedMatches={displayedMatches}
           onOpenModal={onOpenModal}
@@ -33,7 +33,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
           likedItems={likedItems}
           detailsRef={detailsRef}
         />
-      </ScrollArea>
+      </div>
     </div>
   );
 };

@@ -21,9 +21,9 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   detailsRef
 }) => {
   return (
-    <div className="grid grid-cols-2 gap-2 pr-2" ref={detailsRef}>
+    <div className="flex gap-2 min-w-max p-2" ref={detailsRef}>
       {displayedMatches.map(match => (
-        <div key={match.id} className="transform transition-all duration-200 hover:scale-105">
+        <div key={match.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
           <ItemCard
             id={match.id}
             name={match.name}
@@ -33,6 +33,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
             onSelect={onOpenModal}
             onLike={onLike}
             onReject={onReject}
+            compact={true}
           />
         </div>
       ))}

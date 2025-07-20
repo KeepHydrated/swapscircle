@@ -348,22 +348,24 @@ const Test: React.FC = () => {
                           <p className="text-sm">Add friends to see their items here</p>
                         </div>
                         ) : (
-                          <div className="flex-1 overflow-y-auto">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="overflow-x-auto overflow-y-hidden p-2">
+                            <div className="flex gap-2 min-w-max">
                               {friendItems
                                 .filter(item => !rejectedFriendItems.includes(item.id))
                                 .map((item) => (
-                              <ItemCard
-                                key={item.id}
-                                id={item.id}
-                                name={item.name}
-                                image={item.image}
+                              <div key={item.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
+                                <ItemCard
+                                  id={item.id}
+                                  name={item.name}
+                                  image={item.image}
                                   liked={item.liked}
                                   onSelect={() => {}} // No selection needed for friends' items
                                   onLike={() => handleLikeFriendItem(item.id)}
                                   onReject={() => handleRejectFriendItem(item.id)}
                                   showLikeButton={true}
-                              />
+                                  compact={true}
+                                />
+                              </div>
                             ))}
                           </div>
                         </div>
