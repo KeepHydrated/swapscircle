@@ -23,7 +23,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   return (
     <div className="flex gap-2 min-w-max p-2" ref={detailsRef}>
       {displayedMatches.map(match => (
-        <div key={match.id} className="flex-shrink-0 w-48 transform transition-all duration-200 hover:scale-105">
+        <div key={match.id} className="flex-shrink-0 w-64 transform transition-all duration-200 hover:scale-105">
           <ItemCard
             id={match.id}
             name={match.name}

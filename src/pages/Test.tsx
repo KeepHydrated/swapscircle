@@ -362,7 +362,7 @@ const Test: React.FC = () => {
                               {friendItems
                                 .filter(item => !rejectedFriendItems.includes(item.id))
                                 .map((item) => (
-                              <div key={item.id} className="flex-shrink-0 w-48 transform transition-all duration-200 hover:scale-105">
+                              <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200 hover:scale-105">
                                 <ItemCard
                                   id={item.id}
                                   name={item.name}
