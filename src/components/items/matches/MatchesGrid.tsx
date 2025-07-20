@@ -7,6 +7,7 @@ interface MatchesGridProps {
   displayedMatches: MatchItem[];
   onOpenModal: (id: string) => void;
   onLike: (id: string) => void;
+  onReject: (id: string) => void;
   likedItems: Record<string, boolean>;
   detailsRef: React.RefObject<HTMLDivElement>;
 }
@@ -15,6 +16,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   displayedMatches,
   onOpenModal,
   onLike,
+  onReject,
   likedItems,
   detailsRef
 }) => {
@@ -30,6 +32,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
             liked={likedItems[match.id] || match.liked}
             onSelect={onOpenModal}
             onLike={onLike}
+            onReject={onReject}
           />
         </div>
       ))}

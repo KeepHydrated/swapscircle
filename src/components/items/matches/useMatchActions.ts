@@ -16,6 +16,7 @@ export interface UseMatchActionsResult {
   removedItems: string[];
   selectedMatch: MatchItem | null;
   handleLike: (id: string) => void;
+  handleReject: (id: string) => void;
   handleOpenModal: (id: string) => void;
   handlePopupLikeClick: (item: MatchItem) => void;
   handleClosePopup: () => void;
@@ -115,6 +116,12 @@ export const useMatchActions = (
     toast.info('Like/unlike works only for real items (not demo items)!');
   };
 
+  // Handle rejecting an item (removing it from matches)
+  const handleReject = (id: string) => {
+    setRemovedItems(prev => [...prev, id]);
+    toast.success('Item removed from matches');
+  };
+
   const handleOpenModal = (id: string) => {
     const match = matches.find(m => m.id === id);
     if (match) {
@@ -136,6 +143,7 @@ export const useMatchActions = (
     removedItems,
     selectedMatch,
     handleLike,
+    handleReject,
     handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,

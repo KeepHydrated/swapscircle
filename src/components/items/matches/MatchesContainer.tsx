@@ -9,13 +9,15 @@ interface MatchesContainerProps {
   likedItems: Record<string, boolean>;
   onOpenModal: (id: string) => void;
   onLike: (id: string) => void;
+  onReject: (id: string) => void;
 }
 
 const MatchesContainer: React.FC<MatchesContainerProps> = ({
   displayedMatches,
   likedItems,
   onOpenModal,
-  onLike
+  onLike,
+  onReject
 }) => {
   const detailsRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -27,6 +29,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
           displayedMatches={displayedMatches}
           onOpenModal={onOpenModal}
           onLike={onLike}
+          onReject={onReject}
           likedItems={likedItems}
           detailsRef={detailsRef}
         />

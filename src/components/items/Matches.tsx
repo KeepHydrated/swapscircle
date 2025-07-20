@@ -21,6 +21,7 @@ const Matches: React.FC<MatchesProps> = ({
     removedItems,
     selectedMatch,
     handleLike,
+    handleReject,
     handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
@@ -80,6 +81,7 @@ const Matches: React.FC<MatchesProps> = ({
             likedItems={likedItems}
             onOpenModal={handleOpenModal}
             onLike={handleLike}
+            onReject={handleReject}
           />
         </div>
       )}
