@@ -1,228 +1,375 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import MainLayout from '@/components/layout/MainLayout';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { RotateCcw } from 'lucide-react';
+import Header from '@/components/layout/Header';
+import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
+
+import { useDbItems } from '@/hooks/useDbItems';
+import { useUserItems } from '@/hooks/useUserItems';
+import { useMatches } from '@/hooks/useMatches';
+import ItemCard from '@/components/items/ItemCard';
+import MyItems from '@/components/items/MyItems';
+import Matches from '@/components/items/Matches';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
+import { MatchItem } from '@/types/item';
+import { supabase } from '@/integrations/supabase/client';
+import { likeItem, unlikeItem } from '@/services/authService';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Clock, Tag, Layers, Shield, DollarSign, Star } from 'lucide-react';
-import ReviewDialog from '@/components/profile/trade/ReviewDialog';
-import { TradeReview } from '@/types/trade';
 
-const Test = () => {
-  const [hasLeftReview, setHasLeftReview] = useState(false);
+const Test: React.FC = () => {
+  // User's authentication and navigation
+  const { user, supabaseConfigured } = useAuth();
+  const navigate = useNavigate();
   
-  // Sample review data - you can replace this with actual data
-  const myReview: TradeReview = {
-    rating: 5,
-    comment: "Great trading experience! The camera was exactly as described and Emma was very responsive.",
-    date: "6/14/2025"
+  // Friend items - fetch from friends
+  const [friendItems, setFriendItems] = useState([]);
+  const [friendItemsLoading, setFriendItemsLoading] = useState(false);
+  const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
+  const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
+
+  // Fetch friends' items
+  const fetchFriendsItems = async () => {
+    if (!user) return;
+    
+    setFriendItemsLoading(true);
+    try {
+      // Get all accepted friend requests where current user is involved
+      const { data: friendRequests, error: friendsError } = await supabase
+        .from('friend_requests')
+        .select('requester_id, recipient_id')
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+
+      if (friendsError) {
+        console.error('Error fetching friends:', friendsError);
+        return;
+      }
+
+      if (!friendRequests || friendRequests.length === 0) {
+        setFriendItems([]);
+        return;
+      }
+
+      // Get friend user IDs (excluding current user)
+      const friendIds = friendRequests.map(req => 
+        req.requester_id === user.id ? req.recipient_id : req.requester_id
+      );
+
+      // Fetch items from all friends and their profiles separately
+      const { data: friendItemsData, error: itemsError } = await supabase
+        .from('items')
+        .select('*')
+        .in('user_id', friendIds);
+
+      if (itemsError) {
+        console.error('Error fetching friend items:', itemsError);
+        return;
+      }
+
+      // Fetch profiles for the friends
+      const { data: friendProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, name, username, avatar_url')
+        .in('id', friendIds);
+
+      if (profilesError) {
+        console.error('Error fetching friend profiles:', profilesError);
+      }
+
+      // Create a map of user_id to profile for quick lookup
+      const profileMap = (friendProfiles || []).reduce((acc, profile) => {
+        acc[profile.id] = profile;
+        return acc;
+      }, {} as Record<string, any>);
+
+      // Format items for the carousel
+      const formattedFriendItems = friendItemsData?.map(item => {
+        const ownerProfile = profileMap[item.user_id];
+        return {
+          id: item.id,
+          name: item.name,
+          image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+          category: item.category,
+          condition: item.condition,
+          description: item.description,
+          price_range_min: item.price_range_min,
+          price_range_max: item.price_range_max,
+          tags: item.tags,
+          liked: false,
+          ownerName: ownerProfile?.name || ownerProfile?.username || 'Unknown',
+          ownerAvatar: ownerProfile?.avatar_url,
+          user_id: item.user_id
+        };
+      }) || [];
+
+      setFriendItems(formattedFriendItems);
+    } catch (error) {
+      console.error('Error fetching friends items:', error);
+    } finally {
+      setFriendItemsLoading(false);
+    }
   };
 
-  const theirReview: TradeReview = {
-    rating: 4,
-    comment: "Smooth transaction, would trade again!",
-    date: "6/14/2025"
+  // Fetch friends' items when user changes or component mounts
+  useEffect(() => {
+    if (user && supabaseConfigured) {
+      fetchFriendsItems();
+    } else {
+      setFriendItems([]);
+    }
+  }, [user, supabaseConfigured]);
+
+  // Define handler for liking friend items with mutual matching
+  const handleLikeFriendItem = async (itemId: string) => {
+    if (!user) {
+      toast.error('Please log in to like items');
+      return;
+    }
+
+    const currentItem = friendItems.find(item => item.id === itemId);
+    if (!currentItem) return;
+
+    // Track the action for undo (keep only last 3 actions)
+    setLastFriendActions(prev => {
+      const newAction = { type: 'like' as const, itemId, wasLiked: currentItem.liked };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
+
+    // Optimistically update UI
+    setFriendItems(prev =>
+      prev.map(item =>
+        item.id === itemId ? { ...item, liked: !item.liked } : item
+      )
+    );
+
+    try {
+      const isCurrentlyLiked = currentItem.liked;
+      let result;
+      
+      if (isCurrentlyLiked) {
+        result = await unlikeItem(itemId);
+        toast.success("Removed from favorites");
+      } else {
+        result = await likeItem(itemId);
+        
+        // Check for mutual match result
+        if (result && typeof result === 'object' && 'success' in result && result.success) {
+          if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            toast.success("It's a match! 🎉 Starting conversation...");
+            // Navigate to messages after a delay
+            setTimeout(() => {
+              navigate('/messages', {
+                state: {
+                  newMatch: true,
+                  matchData: result.matchData,
+                },
+              });
+            }, 2000);
+          } else {
+            toast.success("Added to favorites");
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error liking friend item:', error);
+      // Revert optimistic update on error
+      setFriendItems(prev =>
+        prev.map(item =>
+          item.id === itemId ? { ...item, liked: currentItem.liked } : item
+        )
+      );
+      toast.error('Failed to update like status');
+    }
   };
 
-  const handleSubmitReview = (comment: string, rating: number) => {
-    console.log('Review submitted:', { rating, comment });
-    setHasLeftReview(true);
+  // Handle rejecting friend items
+  const handleRejectFriendItem = (itemId: string) => {
+    // Track the action for undo (keep only last 3 actions)
+    setLastFriendActions(prev => {
+      const newAction = { type: 'reject' as const, itemId };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
+    setRejectedFriendItems(prev => [...prev, itemId]);
+    toast.success('Item removed from friends\' items');
+  };
+
+  // Handle undo for friend items
+  const handleUndoFriendAction = () => {
+    if (lastFriendActions.length === 0) return;
+
+    const actionToUndo = lastFriendActions[0]; // Get most recent action
+
+    if (actionToUndo.type === 'like') {
+      // Undo like action - revert to previous liked state
+      setFriendItems(prev =>
+        prev.map(item =>
+          item.id === actionToUndo.itemId 
+            ? { ...item, liked: actionToUndo.wasLiked || false }
+            : item
+        )
+      );
+      toast.success('Like action undone');
+    } else if (actionToUndo.type === 'reject') {
+      // Undo reject action - restore item to friends' items
+      setRejectedFriendItems(prev => prev.filter(id => id !== actionToUndo.itemId));
+      toast.success('Reject action undone');
+    }
+
+    // Remove the undone action from the list
+    setLastFriendActions(prev => prev.slice(1));
+  };
+
+  // User's items and matching functionality
+  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
+  
+  // Selected items state - auto-select first item
+  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  
+  // Auto-select first item when userItems are loaded
+  useEffect(() => {
+    if (userItems.length > 0 && !selectedUserItemId) {
+      setSelectedUserItemId(userItems[0].id);
+    }
+  }, [userItems, selectedUserItemId]);
+  
+  // Get selected user item
+  const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
+  
+  // Get matches for selected item (real matches from DB)
+  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
+
+  // Use only real matches from database
+  const matches = selectedUserItem ? dbMatches : [];
+
+  // Handle selecting a user item
+  const handleSelectUserItem = (itemId: string) => {
+    setSelectedUserItemId(itemId);
   };
 
   return (
-    <MainLayout>
-      <div className="max-w-6xl mx-auto">
-        <div className="text-left">
-          <p className="text-sm text-gray-500 mb-4">6/15/2025</p>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* First Profile with Item */}
-            <div className="space-y-4">
-              {/* Profile Section */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Link to="/other-person-profile">
-                    <Avatar className="h-12 w-12 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                      <AvatarImage src="/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png" alt="Emma Wilson" />
-                      <AvatarFallback className="bg-purple-100 text-purple-800">
-                        EW
-                      </AvatarFallback>
-                    </Avatar>
-                  </Link>
-                  <div>
-                    <Link 
-                      to="/other-person-profile" 
-                      className="font-semibold text-lg hover:text-blue-600 transition-colors"
-                    >
-                      Emma Wilson
-                    </Link>
-                    <div className="flex items-center text-yellow-400">
-                      {Array(5).fill(0).map((_, i) => (
-                        <span key={i}>★</span>
-                      ))}
-                      <span className="ml-1 text-gray-600 text-sm font-medium">(42)</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Header />
+      <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
 
-              {/* Item Section */}
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100 w-32 h-32">
-                  <img 
-                    src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=400&h=400&auto=format&fit=crop" 
-                    alt="Vintage Camera" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-2">Vintage Film Camera</h3>
-                  <p className="text-gray-600 text-sm mb-3">
-                    Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts.
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Tag className="h-4 w-4 text-gray-500" />
-                      <span>Electronics</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Layers className="h-4 w-4 text-gray-500" />
-                      <span>Cameras</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-gray-500" />
-                      <span>Excellent</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span>150 - 200</span>
-                    </div>
+        {/* Main Two-Column Layout */}
+        <div className="flex-1 min-h-0">
+          {user && supabaseConfigured ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+              {/* Left Column - Your Items */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
+                {userItemsLoading ? (
+                  <div className="flex justify-center items-center min-h-[300px]">
+                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Second Profile with Item */}
-            <div className="space-y-4">
-              {/* Profile Section */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Link to="/other-person-profile">
-                    <Avatar className="h-12 w-12 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                      <AvatarImage src="/lovable-uploads/6de02767-04e3-4b51-93af-053033a1c111.png" alt="Marcus Chen" />
-                      <AvatarFallback className="bg-blue-100 text-blue-800">
-                        MC
-                      </AvatarFallback>
-                    </Avatar>
-                  </Link>
-                  <div>
-                    <Link 
-                      to="/other-person-profile" 
-                      className="font-semibold text-lg hover:text-blue-600 transition-colors"
-                    >
-                      Marcus Chen
-                    </Link>
-                    <div className="flex items-center text-yellow-400">
-                      {Array(4).fill(0).map((_, i) => (
-                        <span key={i}>★</span>
-                      ))}
-                      <span className="text-gray-300">★</span>
-                      <span className="ml-1 text-gray-600 text-sm font-medium">(28)</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Item Section */}
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100 w-32 h-32">
-                  <img 
-                    src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop" 
-                    alt="MacBook Pro" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-2">MacBook Pro 13-inch</h3>
-                  <p className="text-gray-600 text-sm mb-3">
-                    2020 MacBook Pro in great condition. Fast performance for work and creative projects.
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Tag className="h-4 w-4 text-gray-500" />
-                      <span>Electronics</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Layers className="h-4 w-4 text-gray-500" />
-                      <span>Laptops</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-gray-500" />
-                      <span>Good</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
-                      <span>800 - 1000</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Reviews Section */}
-            <div className="space-y-4">
-              {/* Your Review */}
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="font-semibold text-lg mb-4">Your Review</h3>
-                
-                {hasLeftReview ? (
-                  <div>
-                    <div className="flex items-center mb-2">
-                      <div className="flex text-yellow-400">
-                        {Array(5).fill(0).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${i < myReview.rating ? "fill-yellow-400" : "text-gray-300"}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-gray-700 text-sm mb-2">{myReview.comment}</p>
-                    <p className="text-xs text-gray-500">Reviewed on {myReview.date}</p>
+                ) : userItemsError ? (
+                  <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
+                ) : userItems.length === 0 ? (
+                  <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
+                    <div className="text-4xl mb-3">📦</div>
+                    <p className="text-base font-medium mb-1">No items yet</p>
+                    <p className="text-sm">Post an item to see matches!</p>
                   </div>
                 ) : (
-                  <ReviewDialog
-                    type="leave"
-                    traderId="Emma Wilson"
-                    onSubmitReview={handleSubmitReview}
+                  <MyItems
+                    items={userItems}
+                    selectedItemId={selectedUserItemId}
+                    onSelectItem={handleSelectUserItem}
                   />
                 )}
               </div>
 
-              {/* Their Review */}
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="font-semibold text-lg mb-4">Their Review</h3>
-                
-                <div>
-                  <div className="flex items-center mb-2">
-                    <div className="flex text-yellow-400">
-                      {Array(5).fill(0).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${i < theirReview.rating ? "fill-yellow-400" : "text-gray-300"}`}
-                        />
-                      ))}
+              {/* Right Column - Matches and Friends Items */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <Tabs defaultValue="matches" className="h-full flex flex-col">
+                  <TabsList className="grid w-full grid-cols-2 mb-4">
+                    <TabsTrigger value="matches">Matches</TabsTrigger>
+                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="matches" className="flex-1 mt-0">
+                    {selectedUserItem ? (
+                      <Matches
+                        matches={matches}
+                        selectedItemName={selectedUserItem.name}
+                      />
+                    ) : (
+                      <div className="h-full flex flex-col">
+                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                          <div className="text-4xl mb-3">🔍</div>
+                          <p className="text-base font-medium mb-1">No item selected</p>
+                          <p className="text-sm">Select an item to see matches</p>
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+                  
+                    <TabsContent value="friends" className="flex-1 mt-0">
+                      <div className="h-full flex flex-col">
+                        <div className="flex justify-end mb-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+            onClick={handleUndoFriendAction}
+            disabled={lastFriendActions.length === 0}
+                            className="flex items-center gap-2"
+                          >
+            <RotateCcw className="h-4 w-4" />
+            Undo
+          </Button>
+                        </div>
+                      {friendItemsLoading ? (
+                        <div className="flex-1 flex justify-center items-center">
+                          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                        </div>
+                      ) : friendItems.length === 0 ? (
+                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                          <div className="text-4xl mb-3">👥</div>
+                          <p className="text-base font-medium mb-1">No friends' items</p>
+                          <p className="text-sm">Add friends to see their items here</p>
+                        </div>
+                        ) : (
+                          <div className="flex-1 overflow-y-auto">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {friendItems
+                                .filter(item => !rejectedFriendItems.includes(item.id))
+                                .map((item) => (
+                              <ItemCard
+                                key={item.id}
+                                id={item.id}
+                                name={item.name}
+                                image={item.image}
+                                  liked={item.liked}
+                                  onSelect={() => {}} // No selection needed for friends' items
+                                  onLike={() => handleLikeFriendItem(item.id)}
+                                  onReject={() => handleRejectFriendItem(item.id)}
+                                  showLikeButton={true}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <p className="text-gray-700 text-sm mb-2">{theirReview.comment}</p>
-                  <p className="text-xs text-gray-500">Reviewed on {theirReview.date}</p>
-                </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="text-4xl mb-3">🔐</div>
+              <p className="text-base font-medium mb-1">Please log in</p>
+              <p className="text-sm">Sign in to see your items and find matches</p>
+            </div>
+          )}
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 };
 
