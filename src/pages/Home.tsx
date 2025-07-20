@@ -25,6 +25,7 @@ const Home: React.FC = () => {
   // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
   const [friendItemsLoading, setFriendItemsLoading] = useState(false);
+  const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
 
   // Fetch friends' items
   const fetchFriendsItems = async () => {
@@ -175,6 +176,12 @@ const Home: React.FC = () => {
     }
   };
 
+  // Handle rejecting friend items
+  const handleRejectFriendItem = (itemId: string) => {
+    setRejectedFriendItems(prev => [...prev, itemId]);
+    toast.success('Item removed from friends\' items');
+  };
+
   // User's items and matching functionality
   const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
   
@@ -273,19 +280,22 @@ const Home: React.FC = () => {
                           <p className="text-base font-medium mb-1">No friends' items</p>
                           <p className="text-sm">Add friends to see their items here</p>
                         </div>
-                      ) : (
-                        <div className="flex-1 overflow-y-auto">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {friendItems.map((item) => (
+                        ) : (
+                          <div className="flex-1 overflow-y-auto">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {friendItems
+                                .filter(item => !rejectedFriendItems.includes(item.id))
+                                .map((item) => (
                               <ItemCard
                                 key={item.id}
                                 id={item.id}
                                 name={item.name}
                                 image={item.image}
-                                liked={item.liked}
-                                onSelect={() => {}} // No selection needed for friends' items
-                                onLike={() => handleLikeFriendItem(item.id)}
-                                showLikeButton={true}
+                                  liked={item.liked}
+                                  onSelect={() => {}} // No selection needed for friends' items
+                                  onLike={() => handleLikeFriendItem(item.id)}
+                                  onReject={() => handleRejectFriendItem(item.id)}
+                                  showLikeButton={true}
                               />
                             ))}
                           </div>

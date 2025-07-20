@@ -66,8 +66,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </Avatar>
             {(showLikeButton || isMatch) && !disableLike && (
               <div className="absolute top-1.5 right-1.5 z-10 flex gap-1">
-                {/* Reject button (X) - only show for matches */}
-                {isMatch && onReject && (
+                {/* Reject button (X) - show for matches or when onReject is provided */}
+                {(isMatch || (showLikeButton && onReject)) && onReject && (
                   <button
                     className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
                     aria-label="Reject item"
