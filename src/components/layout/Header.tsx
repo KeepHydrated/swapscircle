@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MobileMenu } from './MobileMenu';
+import HeaderLocationSelector from './HeaderLocationSelector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -80,6 +81,12 @@ const Header = () => {
 
           {(user || !supabaseConfigured) ? (
             <>
+              <div className="hidden md:flex">
+                <HeaderLocationSelector 
+                  onLocationChange={(value) => console.log('Location changed to:', value)}
+                />
+              </div>
+              
               <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
                 <Link to="/post-item">
                   <Plus className="w-5 h-5" />
