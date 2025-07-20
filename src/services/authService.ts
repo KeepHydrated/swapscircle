@@ -284,7 +284,6 @@ export const uploadItemImage = async (file: File): Promise<string | null> => {
 
 // New function to like an item with mutual matching logic
 export const likeItem = async (itemId: string) => {
-  console.log('DEBUG: ========== LIKE ITEM CALLED ==========');
   console.log('DEBUG: likeItem function called with itemId:', itemId);
   
   if (!isSupabaseConfigured()) {

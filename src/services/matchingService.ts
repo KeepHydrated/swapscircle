@@ -22,25 +22,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
-    // Get friend relationships (both ways)
-    const { data: friendships, error: friendError } = await supabase
-      .from('friend_requests')
-      .select('requester_id, recipient_id')
-      .eq('status', 'accepted')
-      .or(`requester_id.eq.${currentUserId},recipient_id.eq.${currentUserId}`);
-
-    if (friendError) {
-      console.error('Error fetching friendships:', friendError);
-    }
-
-    // Get friend user IDs
-    const friendIds = new Set(
-      friendships?.map(fr => 
-        fr.requester_id === currentUserId ? fr.recipient_id : fr.requester_id
-      ) || []
-    );
-
-    // Get items that the current user has already liked (for filtering non-friend items)
+    // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
       .from('liked_items')
       .select('item_id')
@@ -57,12 +39,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
     console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
 
-    // Separate friends' items from other items
-    const friendsItems = allItems.filter(item => friendIds.has(item.user_id));
-    const nonFriendsItems = allItems.filter(item => !friendIds.has(item.user_id) && !likedItemIds.has(item.id));
-
-    // Combine all available items (all friends' items + non-liked non-friends' items)
-    const availableItems = [...friendsItems, ...nonFriendsItems];
+    // Don't filter out liked items - allow re-liking the same item
+    const availableItems = allItems; // Show all items from other users
     console.log('Debug - Available items after filtering:', availableItems.length);
 
     const matches: Array<MatchItem & { matchScore: number }> = [];
@@ -70,13 +48,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     for (const otherItem of availableItems) {
       let matchScore = 0;
       let isMatch = false;
-      const isFriend = friendIds.has(otherItem.user_id);
-
-      // Friends' items are always shown, regardless of matching criteria
-      if (isFriend) {
-        isMatch = true;
-        matchScore = 10; // High base score for friends' items
-      }
 
       // Check if this other item matches what the current user is looking for
       if (selectedItem.lookingForCategories && selectedItem.lookingForCategories.length > 0) {
@@ -149,8 +120,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           description: otherItem.description,
           tags: otherItem.tags,
           liked: false, // Will be determined by like status
-          isFriend,
-          user_id: otherItem.user_id,
           matchScore // Add match score for potential sorting
         });
       }

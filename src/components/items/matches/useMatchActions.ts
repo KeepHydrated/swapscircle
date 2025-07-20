@@ -65,13 +65,9 @@ export const useMatchActions = (
 
   // Handle liking/unliking an item with mutual matching logic
   const handleLike = async (id: string) => {
-    console.log('DEBUG CLICK: ========== LIKE BUTTON CLICKED ==========');
-    console.log('DEBUG CLICK: handleLike called with id:', id);
-    console.log('DEBUG CLICK: Current user:', user?.id);
-    console.log('DEBUG CLICK: Supabase configured:', supabaseConfigured);
+    console.log('DEBUG: handleLike called with id:', id);
     
     if (!user) {
-      console.log('DEBUG CLICK: No user - showing login error');
       toast.error('Please log in to like items');
       return;
     }

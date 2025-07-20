@@ -21,8 +21,6 @@ export interface Item {
 
 export interface MatchItem extends Item {
   liked?: boolean;
-  isFriend?: boolean;
-  user_id?: string;
 }
 
 // CompletedTrade is now imported from @/types/trade
