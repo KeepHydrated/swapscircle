@@ -277,11 +277,24 @@ const Test: React.FC = () => {
                     <p className="text-sm">Post an item to see matches!</p>
                   </div>
                 ) : (
-                  <MyItems
-                    items={userItems}
-                    selectedItemId={selectedUserItemId}
-                    onSelectItem={handleSelectUserItem}
-                  />
+                  <div className="h-full">
+                    <div className="h-[calc(100vh-300px)] overflow-x-auto overflow-y-hidden">
+                      <div className="flex gap-2 pb-2 min-w-max">
+                        {userItems.map((item) => (
+                          <div key={item.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
+                            <ItemCard 
+                              id={item.id}
+                              name={item.name}
+                              image={item.image}
+                              isSelected={selectedUserItemId === item.id}
+                              onSelect={handleSelectUserItem}
+                              compact={true}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
 
