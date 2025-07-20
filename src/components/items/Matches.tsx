@@ -75,7 +75,7 @@ const Matches: React.FC<MatchesProps> = ({
           className="flex items-center gap-2"
         >
           <RotateCcw className="h-4 w-4" />
-          Undo {lastActions.length > 0 && `(${lastActions.length})`}
+          Undo
         </Button>
       </div>
       

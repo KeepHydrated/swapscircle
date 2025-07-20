@@ -320,7 +320,7 @@ const Home: React.FC = () => {
                             className="flex items-center gap-2"
                           >
             <RotateCcw className="h-4 w-4" />
-            Undo {lastFriendActions.length > 0 && `(${lastFriendActions.length})`}
+            Undo
           </Button>
                         </div>
                       {friendItemsLoading ? (
