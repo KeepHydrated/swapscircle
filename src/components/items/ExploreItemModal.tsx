@@ -130,21 +130,21 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         </VisuallyHidden>
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           {/* Top-right buttons */}
-          <div className="absolute top-3 right-3 flex gap-2 z-20">
+          <div className="absolute top-4 right-4 flex gap-3 z-20">
             <button
               onClick={onClose}
-              className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
               aria-label="Close"
             >
-              <X className="w-4 h-4 text-gray-600" />
+              <X className="w-5 h-5 text-gray-500" />
             </button>
             <button
-              className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
               onClick={onLike}
               aria-label={liked ? "Unlike" : "Like"}
             >
               <Heart
-                className={`w-6 h-6 ${liked ? "text-red-500" : "text-gray-400"}`}
+                className={`w-5 h-5 ${liked ? "text-red-500" : "text-gray-400"}`}
                 fill={liked ? "red" : "none"}
               />
             </button>
