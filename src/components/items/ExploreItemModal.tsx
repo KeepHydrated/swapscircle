@@ -238,17 +238,16 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   <div className="flex gap-3 items-center mt-auto pt-6">
                     <img
                       src={userProfile.avatar_url || "https://randomuser.me/api/portraits/women/44.jpg"}
-                      alt={userProfile.name}
+                      alt={userProfile.name || userProfile.username}
                       className="w-11 h-11 rounded-full border object-cover"
                     />
                     <div>
                       <span className="font-semibold text-gray-900">
-                        {userProfile.name || userProfile.username || "Unknown User"}
+                        {userProfile.username || userProfile.name || "Unknown User"}
                       </span>
                       <div className="flex text-xs text-gray-500 mt-1 gap-4">
-                        <span>Since {memberSince}</span>
-                        <span>· 1.8 mi away</span>
-                        <span>· ~30 min response</span>
+                        <span>Member since {memberSince}</span>
+                        <span>· Update your location in Settings</span>
                       </div>
                     </div>
                   </div>
