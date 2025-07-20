@@ -308,9 +308,6 @@ const Test: React.FC = () => {
                       <TabsTrigger value="friends">Friends' Items</TabsTrigger>
                     </TabsList>
                     <div className="flex items-center gap-2">
-                      <HeaderLocationSelector 
-                        onLocationChange={(value) => console.log('Location changed to:', value)}
-                      />
                       <Button
                         variant="outline"
                         size="sm"
@@ -325,6 +322,11 @@ const Test: React.FC = () => {
                   </div>
                   
                   <TabsContent value="matches" className="flex-1 mt-0">
+                    <div className="flex items-center justify-end mb-4">
+                      <HeaderLocationSelector 
+                        onLocationChange={(value) => console.log('Location changed to:', value)}
+                      />
+                    </div>
                     {selectedUserItem ? (
                       <Matches
                         matches={matches}
