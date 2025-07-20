@@ -33,9 +33,16 @@ const ItemCard: React.FC<ItemCardProps> = ({
   disableLike = false
 }) => {
   const handleHeartClick = (e: React.MouseEvent) => {
+    console.log('DEBUG HEART: ========== HEART CLICKED ==========');
+    console.log('DEBUG HEART: Heart clicked for item:', id);
+    console.log('DEBUG HEART: Current liked status:', liked);
+    console.log('DEBUG HEART: onLike function exists:', !!onLike);
     e.stopPropagation();
     if (onLike) {
+      console.log('DEBUG HEART: Calling onLike with id:', id);
       onLike(id);
+    } else {
+      console.log('DEBUG HEART: No onLike function provided!');
     }
   };
 
