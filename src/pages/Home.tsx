@@ -30,6 +30,10 @@ const Home: React.FC = () => {
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
   const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
 
+  // Modal state
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
   // Fetch friends' items
   const fetchFriendsItems = async () => {
     if (!user) return;
@@ -251,6 +255,18 @@ const Home: React.FC = () => {
     setSelectedUserItemId(itemId);
   };
 
+  // Handle opening item modal
+  const handleOpenItemModal = (item: any) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
+
+  // Handle closing item modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedItem(null);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
@@ -345,7 +361,7 @@ const Home: React.FC = () => {
                                 name={item.name}
                                 image={item.image}
                                   liked={item.liked}
-                                  onSelect={() => {}} // No selection needed for friends' items
+                                  onSelect={() => handleOpenItemModal(item)}
                                   onLike={() => handleLikeFriendItem(item.id)}
                                   onReject={() => handleRejectFriendItem(item.id)}
                                   showLikeButton={true}
@@ -368,6 +384,15 @@ const Home: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Explore Item Modal */}
+      <ExploreItemModal
+        open={modalOpen}
+        item={selectedItem}
+        onClose={handleCloseModal}
+        liked={selectedItem?.liked}
+        onLike={() => selectedItem && handleLikeFriendItem(selectedItem.id)}
+      />
     </div>
   );
 };
