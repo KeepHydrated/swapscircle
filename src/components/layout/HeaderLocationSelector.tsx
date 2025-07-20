@@ -58,7 +58,7 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
       </button>
       
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-48 bg-background border border-border rounded-lg shadow-lg z-50">
+        <div className="absolute top-full left-0 mt-1 w-56 bg-background border border-border rounded-lg shadow-lg z-50">
           <div className="py-1">
             <button
               onClick={() => handleSelectionChange('all')}
