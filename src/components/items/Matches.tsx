@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { RotateCcw } from 'lucide-react';
 import { MatchItem } from '@/types/item';
+import { Button } from '@/components/ui/button';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import MatchesContainer from './matches/MatchesContainer';
 import { useMatchActions } from './matches/useMatchActions';
@@ -20,8 +22,10 @@ const Matches: React.FC<MatchesProps> = ({
     likedItems,
     removedItems,
     selectedMatch,
+    lastAction,
     handleLike,
     handleReject,
+    handleUndo,
     handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
@@ -63,6 +67,16 @@ const Matches: React.FC<MatchesProps> = ({
         <HeaderLocationSelector 
           onLocationChange={(value) => console.log('Location changed to:', value)}
         />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleUndo}
+          disabled={!lastAction}
+          className="flex items-center gap-2"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Undo
+        </Button>
       </div>
       
       {displayedMatches.length === 0 ? (

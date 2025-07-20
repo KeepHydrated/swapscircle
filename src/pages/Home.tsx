@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { RotateCcw } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 
@@ -16,6 +17,7 @@ import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem } from '@/services/authService';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 
 const Home: React.FC = () => {
   // User's authentication and navigation
@@ -26,6 +28,7 @@ const Home: React.FC = () => {
   const [friendItems, setFriendItems] = useState([]);
   const [friendItemsLoading, setFriendItemsLoading] = useState(false);
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
+  const [lastFriendAction, setLastFriendAction] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean } | null>(null);
 
   // Fetch friends' items
   const fetchFriendsItems = async () => {
@@ -129,6 +132,9 @@ const Home: React.FC = () => {
     const currentItem = friendItems.find(item => item.id === itemId);
     if (!currentItem) return;
 
+    // Track the action for undo
+    setLastFriendAction({ type: 'like', itemId, wasLiked: currentItem.liked });
+
     // Optimistically update UI
     setFriendItems(prev =>
       prev.map(item =>
@@ -178,8 +184,33 @@ const Home: React.FC = () => {
 
   // Handle rejecting friend items
   const handleRejectFriendItem = (itemId: string) => {
+    // Track the action for undo
+    setLastFriendAction({ type: 'reject', itemId });
     setRejectedFriendItems(prev => [...prev, itemId]);
     toast.success('Item removed from friends\' items');
+  };
+
+  // Handle undo for friend items
+  const handleUndoFriendAction = () => {
+    if (!lastFriendAction) return;
+
+    if (lastFriendAction.type === 'like') {
+      // Undo like action - revert to previous liked state
+      setFriendItems(prev =>
+        prev.map(item =>
+          item.id === lastFriendAction.itemId 
+            ? { ...item, liked: lastFriendAction.wasLiked || false }
+            : item
+        )
+      );
+      toast.success('Like action undone');
+    } else if (lastFriendAction.type === 'reject') {
+      // Undo reject action - restore item to friends' items
+      setRejectedFriendItems(prev => prev.filter(id => id !== lastFriendAction.itemId));
+      toast.success('Reject action undone');
+    }
+
+    setLastFriendAction(null);
   };
 
   // User's items and matching functionality
@@ -267,8 +298,20 @@ const Home: React.FC = () => {
                     )}
                   </TabsContent>
                   
-                  <TabsContent value="friends" className="flex-1 mt-0">
+                    <TabsContent value="friends" className="flex-1 mt-0">
                       <div className="h-full flex flex-col">
+                        <div className="flex justify-end mb-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleUndoFriendAction}
+                            disabled={!lastFriendAction}
+                            className="flex items-center gap-2"
+                          >
+                            <RotateCcw className="h-4 w-4" />
+                            Undo
+                          </Button>
+                        </div>
                       {friendItemsLoading ? (
                         <div className="flex-1 flex justify-center items-center">
                           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>

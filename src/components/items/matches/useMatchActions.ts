@@ -15,8 +15,10 @@ export interface UseMatchActionsResult {
   likedItems: Record<string, boolean>;
   removedItems: string[];
   selectedMatch: MatchItem | null;
+  lastAction: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean } | null;
   handleLike: (id: string) => void;
   handleReject: (id: string) => void;
+  handleUndo: () => void;
   handleOpenModal: (id: string) => void;
   handlePopupLikeClick: (item: MatchItem) => void;
   handleClosePopup: () => void;
@@ -30,6 +32,7 @@ export const useMatchActions = (
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   const [removedItems, setRemovedItems] = useState<string[]>([]);
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
+  const [lastAction, setLastAction] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean } | null>(null);
   const navigate = useNavigate();
 
   // Load actual liked status from database for this specific matching session
@@ -75,6 +78,9 @@ export const useMatchActions = (
 
     const isCurrentlyLiked = likedItems[id];
 
+    // Track the action for undo
+    setLastAction({ type: 'like', itemId: id, wasLiked: isCurrentlyLiked });
+
     if (supabaseConfigured && isValidUUID(id)) {
       // Optimistically update
       setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
@@ -118,8 +124,30 @@ export const useMatchActions = (
 
   // Handle rejecting an item (removing it from matches)
   const handleReject = (id: string) => {
+    // Track the action for undo
+    setLastAction({ type: 'reject', itemId: id });
     setRemovedItems(prev => [...prev, id]);
     toast.success('Item removed from matches');
+  };
+
+  // Handle undo last action
+  const handleUndo = () => {
+    if (!lastAction) return;
+
+    if (lastAction.type === 'like') {
+      // Undo like action - revert to previous liked state
+      setLikedItems(prev => ({ 
+        ...prev, 
+        [lastAction.itemId]: lastAction.wasLiked || false 
+      }));
+      toast.success('Like action undone');
+    } else if (lastAction.type === 'reject') {
+      // Undo reject action - restore item to matches
+      setRemovedItems(prev => prev.filter(id => id !== lastAction.itemId));
+      toast.success('Reject action undone');
+    }
+
+    setLastAction(null);
   };
 
   const handleOpenModal = (id: string) => {
@@ -142,8 +170,10 @@ export const useMatchActions = (
     likedItems,
     removedItems,
     selectedMatch,
+    lastAction,
     handleLike,
     handleReject,
+    handleUndo,
     handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
