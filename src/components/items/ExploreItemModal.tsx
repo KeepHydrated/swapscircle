@@ -258,7 +258,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
                         onClick={handleProfileClick}
                       >
-                        {userProfile.username || userProfile.name || "Unknown User"}
+                        {userProfile.name || userProfile.username || "Unknown User"}
                       </span>
                       <span className="ml-2 text-yellow-500 text-xs font-semibold">
                         ★ 4.8{" "}
