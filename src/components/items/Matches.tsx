@@ -26,9 +26,9 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches);
   
-  // Filter out removed/liked items
+  // Filter out removed items, but keep all friends' items (even if liked)
   const displayedMatches = matches.filter(match => 
-    !removedItems.includes(match.id) && !likedItems[match.id]
+    !removedItems.includes(match.id) && (match.isFriend || !likedItems[match.id])
   );
 
   // Find current index in displayed matches
