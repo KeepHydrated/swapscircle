@@ -60,9 +60,6 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Matches for <span className="text-primary">{selectedItemName}</span>
-        </h2>
         <HeaderLocationSelector 
           onLocationChange={(value) => console.log('Location changed to:', value)}
         />
