@@ -74,6 +74,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               created_at: new Date().toISOString()
             });
           } else {
+            console.log('Profile data fetched:', profileData);
             setUserProfile(profileData);
           }
         }
@@ -252,6 +253,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         <span>· ~30 min response</span>
                       </div>
                     </div>
+                  </div>
+                )}
+                {/* Debug info */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="text-xs text-gray-400 mt-2">
+                    Debug: Profile - {userProfile ? JSON.stringify(userProfile) : 'No profile'}
                   </div>
                 )}
               </>
