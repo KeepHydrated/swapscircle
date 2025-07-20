@@ -234,57 +234,55 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {acceptedFriends.map(friend => (
-              <Card key={friend.id} className="overflow-hidden">
-                <CardContent className="p-0">
-                  <div 
-                    className="p-5 flex flex-col items-center cursor-pointer" 
-                    onClick={() => handleViewProfile(friend.profiles?.id)}
-                  >
-                    <Avatar className="h-20 w-20 mb-4">
-                      <AvatarImage src={friend.profiles?.avatar_url} alt={friend.profiles?.name || friend.profiles?.username} />
-                      <AvatarFallback>
-                        {(friend.profiles?.name || friend.profiles?.username || 'U').substring(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <h3 className="font-medium text-lg mb-1 text-center">
-                      {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
-                    </h3>
-                    <div className="flex justify-end w-full mt-2">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="destructive"
-                            size="sm"
-                            className="px-3"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <UserX className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Unfriend {friend.profiles?.name || friend.profiles?.username}</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to unfriend {friend.profiles?.name || friend.profiles?.username}? This action cannot be undone and you'll need to send a new friend request to connect again.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction 
-                              onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Unfriend
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+               <Card key={friend.id} className="overflow-hidden relative">
+                 <CardContent className="p-0">
+                   <div 
+                     className="p-5 flex flex-col items-center cursor-pointer" 
+                     onClick={() => handleViewProfile(friend.profiles?.id)}
+                   >
+                     <AlertDialog>
+                       <AlertDialogTrigger asChild>
+                         <Button 
+                           variant="destructive"
+                           size="sm"
+                           className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
+                           onClick={(e) => {
+                             e.stopPropagation();
+                           }}
+                         >
+                           <UserX className="h-4 w-4" />
+                         </Button>
+                       </AlertDialogTrigger>
+                       <AlertDialogContent>
+                         <AlertDialogHeader>
+                           <AlertDialogTitle>Unfriend {friend.profiles?.name || friend.profiles?.username}</AlertDialogTitle>
+                           <AlertDialogDescription>
+                             Are you sure you want to unfriend {friend.profiles?.name || friend.profiles?.username}? This action cannot be undone and you'll need to send a new friend request to connect again.
+                           </AlertDialogDescription>
+                         </AlertDialogHeader>
+                         <AlertDialogFooter>
+                           <AlertDialogCancel>Cancel</AlertDialogCancel>
+                           <AlertDialogAction 
+                             onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
+                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                           >
+                             Unfriend
+                           </AlertDialogAction>
+                         </AlertDialogFooter>
+                       </AlertDialogContent>
+                     </AlertDialog>
+                     <Avatar className="h-20 w-20 mb-4">
+                       <AvatarImage src={friend.profiles?.avatar_url} alt={friend.profiles?.name || friend.profiles?.username} />
+                       <AvatarFallback>
+                         {(friend.profiles?.name || friend.profiles?.username || 'U').substring(0, 2)}
+                       </AvatarFallback>
+                     </Avatar>
+                     <h3 className="font-medium text-lg mb-1 text-center">
+                       {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
+                     </h3>
+                   </div>
+                 </CardContent>
+               </Card>
             ))}
           </div>
         )}
