@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
@@ -10,14 +11,16 @@ import MyItems from '@/components/items/MyItems';
 import Matches from '@/components/items/Matches';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
+import { likeItem, unlikeItem } from '@/services/authService';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const Home: React.FC = () => {
-  // User's authentication
+  // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
+  const navigate = useNavigate();
   
   // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
@@ -115,18 +118,61 @@ const Home: React.FC = () => {
     }
   }, [user, supabaseConfigured]);
 
-  // Define handler for liking friend items (local state only)
-  const handleLikeFriendItem = (itemId: string) => {
+  // Define handler for liking friend items with mutual matching
+  const handleLikeFriendItem = async (itemId: string) => {
+    if (!user) {
+      toast.error('Please log in to like items');
+      return;
+    }
+
+    const currentItem = friendItems.find(item => item.id === itemId);
+    if (!currentItem) return;
+
+    // Optimistically update UI
     setFriendItems(prev =>
       prev.map(item =>
         item.id === itemId ? { ...item, liked: !item.liked } : item
       )
     );
-    const toggled = friendItems.find(item => item.id === itemId)?.liked;
-    toast({
-      title: toggled ? "Removed from favorites" : "Added to favorites",
-      description: `Item has been ${toggled ? "removed from" : "added to"} your favorites.`,
-    });
+
+    try {
+      const isCurrentlyLiked = currentItem.liked;
+      let result;
+      
+      if (isCurrentlyLiked) {
+        result = await unlikeItem(itemId);
+        toast.success("Removed from favorites");
+      } else {
+        result = await likeItem(itemId);
+        
+        // Check for mutual match result
+        if (result && typeof result === 'object' && 'success' in result && result.success) {
+          if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            toast.success("It's a match! 🎉 Starting conversation...");
+            // Navigate to messages after a delay
+            setTimeout(() => {
+              navigate('/messages', {
+                state: {
+                  newMatch: true,
+                  matchData: result.matchData,
+                },
+              });
+            }, 2000);
+          } else {
+            toast.success("Added to favorites");
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error liking friend item:', error);
+      // Revert optimistic update on error
+      setFriendItems(prev =>
+        prev.map(item =>
+          item.id === itemId ? { ...item, liked: currentItem.liked } : item
+        )
+      );
+      toast.error('Failed to update like status');
+    }
   };
 
   // User's items and matching functionality
