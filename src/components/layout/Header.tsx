@@ -81,7 +81,7 @@ const Header = () => {
 
           {(user || !supabaseConfigured) ? (
             <>
-              <div className="hidden md:flex">
+              <div className="hidden md:flex mr-2">
                 <HeaderLocationSelector 
                   onLocationChange={(value) => console.log('Location changed to:', value)}
                 />
