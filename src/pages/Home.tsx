@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
-import HomeWithLocationFilter from '@/components/home/HomeWithLocationFilter';
+
 import { useDbItems } from '@/hooks/useDbItems';
 import { useUserItems } from '@/hooks/useUserItems';
 import { useMatches } from '@/hooks/useMatches';
@@ -205,108 +205,106 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <HomeWithLocationFilter>
-        <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
+      <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
 
-          {/* Main Two-Column Layout */}
-          <div className="flex-1 min-h-0">
-            {user && supabaseConfigured ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-                {/* Left Column - Your Items */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
-                  {userItemsLoading ? (
-                    <div className="flex justify-center items-center min-h-[300px]">
-                      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-                    </div>
-                  ) : userItemsError ? (
-                    <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
-                  ) : userItems.length === 0 ? (
-                    <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
-                      <div className="text-4xl mb-3">📦</div>
-                      <p className="text-base font-medium mb-1">No items yet</p>
-                      <p className="text-sm">Post an item to see matches!</p>
-                    </div>
-                  ) : (
-                    <MyItems
-                      items={userItems}
-                      selectedItemId={selectedUserItemId}
-                      onSelectItem={handleSelectUserItem}
-                    />
-                  )}
-                </div>
+        {/* Main Two-Column Layout */}
+        <div className="flex-1 min-h-0">
+          {user && supabaseConfigured ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+              {/* Left Column - Your Items */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
+                {userItemsLoading ? (
+                  <div className="flex justify-center items-center min-h-[300px]">
+                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                  </div>
+                ) : userItemsError ? (
+                  <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
+                ) : userItems.length === 0 ? (
+                  <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
+                    <div className="text-4xl mb-3">📦</div>
+                    <p className="text-base font-medium mb-1">No items yet</p>
+                    <p className="text-sm">Post an item to see matches!</p>
+                  </div>
+                ) : (
+                  <MyItems
+                    items={userItems}
+                    selectedItemId={selectedUserItemId}
+                    onSelectItem={handleSelectUserItem}
+                  />
+                )}
+              </div>
 
-                {/* Right Column - Matches and Friends Items */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                  <Tabs defaultValue="matches" className="h-full flex flex-col">
-                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                      <TabsTrigger value="matches">Matches</TabsTrigger>
-                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="matches" className="flex-1 mt-0">
-                      {selectedUserItem ? (
-                        <Matches
-                          matches={matches}
-                          selectedItemName={selectedUserItem.name}
-                        />
+              {/* Right Column - Matches and Friends Items */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <Tabs defaultValue="matches" className="h-full flex flex-col">
+                  <TabsList className="grid w-full grid-cols-2 mb-4">
+                    <TabsTrigger value="matches">Matches</TabsTrigger>
+                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="matches" className="flex-1 mt-0">
+                    {selectedUserItem ? (
+                      <Matches
+                        matches={matches}
+                        selectedItemName={selectedUserItem.name}
+                      />
+                    ) : (
+                      <div className="h-full flex flex-col">
+                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                          <div className="text-4xl mb-3">🔍</div>
+                          <p className="text-base font-medium mb-1">No item selected</p>
+                          <p className="text-sm">Select an item to see matches</p>
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+                  
+                  <TabsContent value="friends" className="flex-1 mt-0">
+                    <div className="h-full flex flex-col">
+                      <h3 className="text-lg font-semibold mb-4">Your Friends' Items</h3>
+                      {friendItemsLoading ? (
+                        <div className="flex-1 flex justify-center items-center">
+                          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                        </div>
+                      ) : friendItems.length === 0 ? (
+                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                          <div className="text-4xl mb-3">👥</div>
+                          <p className="text-base font-medium mb-1">No friends' items</p>
+                          <p className="text-sm">Add friends to see their items here</p>
+                        </div>
                       ) : (
-                        <div className="h-full flex flex-col">
-                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                            <div className="text-4xl mb-3">🔍</div>
-                            <p className="text-base font-medium mb-1">No item selected</p>
-                            <p className="text-sm">Select an item to see matches</p>
+                        <div className="flex-1 overflow-y-auto">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {friendItems.map((item) => (
+                              <ItemCard
+                                key={item.id}
+                                id={item.id}
+                                name={item.name}
+                                image={item.image}
+                                liked={item.liked}
+                                onSelect={() => {}} // No selection needed for friends' items
+                                onLike={() => handleLikeFriendItem(item.id)}
+                                showLikeButton={true}
+                              />
+                            ))}
                           </div>
                         </div>
                       )}
-                    </TabsContent>
-                    
-                    <TabsContent value="friends" className="flex-1 mt-0">
-                      <div className="h-full flex flex-col">
-                        <h3 className="text-lg font-semibold mb-4">Your Friends' Items</h3>
-                        {friendItemsLoading ? (
-                          <div className="flex-1 flex justify-center items-center">
-                            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-                          </div>
-                        ) : friendItems.length === 0 ? (
-                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                            <div className="text-4xl mb-3">👥</div>
-                            <p className="text-base font-medium mb-1">No friends' items</p>
-                            <p className="text-sm">Add friends to see their items here</p>
-                          </div>
-                        ) : (
-                          <div className="flex-1 overflow-y-auto">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              {friendItems.map((item) => (
-                                <ItemCard
-                                  key={item.id}
-                                  id={item.id}
-                                  name={item.name}
-                                  image={item.image}
-                                  liked={item.liked}
-                                  onSelect={() => {}} // No selection needed for friends' items
-                                  onLike={() => handleLikeFriendItem(item.id)}
-                                  showLikeButton={true}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
-            ) : (
-              <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="text-4xl mb-3">🔐</div>
-                <p className="text-base font-medium mb-1">Please log in</p>
-                <p className="text-sm">Sign in to see your items and find matches</p>
-              </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="text-4xl mb-3">🔐</div>
+              <p className="text-base font-medium mb-1">Please log in</p>
+              <p className="text-sm">Sign in to see your items and find matches</p>
+            </div>
+          )}
         </div>
-      </HomeWithLocationFilter>
+      </div>
     </div>
   );
 };
