@@ -260,7 +260,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       </span>
                       <div className="flex text-xs text-gray-500 mt-1 gap-4">
                         <span>Member since {memberSince}</span>
-                        <span>· Update your location in Settings</span>
                       </div>
                     </div>
                   </div>
