@@ -27,7 +27,8 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
   }
 
   try {
-    console.log('DEBUG: Checking for mutual match', { currentUserId, likedItemId });
+    console.log('DEBUG MUTUAL: ========== CHECKING MUTUAL MATCH ==========');
+    console.log('DEBUG MUTUAL: Checking for mutual match', { currentUserId, likedItemId });
     
     // First, get the owner of the liked item
     const { data: likedItem, error: itemError } = await supabase
