@@ -277,8 +277,8 @@ const Test: React.FC = () => {
                     <p className="text-sm">Post an item to see matches!</p>
                   </div>
                 ) : (
-                  <div className="h-full">
-                    <div className="h-[calc(100vh-300px)] overflow-x-auto overflow-y-hidden p-2">
+                  <div className="h-auto">
+                    <div className="overflow-x-auto overflow-y-hidden p-2">
                       <div className="flex gap-2 min-w-max">
                         {userItems.map((item) => (
                           <div key={item.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
