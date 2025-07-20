@@ -62,18 +62,11 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
           <div className="py-1">
             <button
               onClick={() => handleSelectionChange('all')}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center ${
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
                 selectionType === 'all' ? 'bg-muted text-primary font-medium' : 'text-foreground'
               }`}
             >
-              {selectionType === 'all' && (
-                <div className="w-4 h-4 mr-2 text-primary">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              )}
-              <span className={selectionType !== 'all' ? 'ml-6' : ''}>All of US</span>
+              All of US
             </button>
             
             <div className="border-t border-border my-1" />
@@ -82,20 +75,11 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
               <button
                 key={range}
                 onClick={() => handleSelectionChange('range', range)}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center ${
+                className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
                   selectionType === 'range' && rangeValue === range ? 'bg-muted text-primary font-medium' : 'text-foreground'
                 }`}
               >
-                {selectionType === 'range' && rangeValue === range && (
-                  <div className="w-4 h-4 mr-2 text-primary">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                )}
-                <span className={selectionType !== 'range' || rangeValue !== range ? 'ml-6' : ''}>
-                  Within {range} miles
-                </span>
+                Within {range} miles
               </button>
             ))}
           </div>
