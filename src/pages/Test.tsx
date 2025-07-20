@@ -231,6 +231,7 @@ const Test: React.FC = () => {
   
   // Selected items state - auto-select first item
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<string>('matches');
   
   // Auto-select first item when userItems are loaded
   useEffect(() => {
@@ -301,13 +302,18 @@ const Test: React.FC = () => {
 
               {/* Right Column - Matches and Friends Items */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <Tabs defaultValue="matches" className="h-full flex flex-col">
+                <Tabs defaultValue="matches" onValueChange={setActiveTab} className="h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <TabsList className="grid grid-cols-2 w-auto">
                       <TabsTrigger value="matches">Matches</TabsTrigger>
                       <TabsTrigger value="friends">Friends' Items</TabsTrigger>
                     </TabsList>
                     <div className="flex items-center gap-2">
+                      {activeTab === 'matches' && (
+                        <HeaderLocationSelector 
+                          onLocationChange={(value) => console.log('Location changed to:', value)}
+                        />
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
@@ -322,11 +328,6 @@ const Test: React.FC = () => {
                   </div>
                   
                   <TabsContent value="matches" className="flex-1 mt-0">
-                    <div className="flex items-center justify-end mb-4">
-                      <HeaderLocationSelector 
-                        onLocationChange={(value) => console.log('Location changed to:', value)}
-                      />
-                    </div>
                     {selectedUserItem ? (
                       <Matches
                         matches={matches}
