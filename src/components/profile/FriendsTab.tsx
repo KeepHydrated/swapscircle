@@ -249,17 +249,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                     <h3 className="font-medium text-lg mb-1 text-center">
                       {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
                     </h3>
-                    <div className="flex space-x-2 w-full mt-2">
-                      <Button 
-                        variant="outline"
-                        className="flex-1" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewProfile(friend.profiles?.id);
-                        }}
-                      >
-                        View Profile
-                      </Button>
+                    <div className="flex justify-end w-full mt-2">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button 
