@@ -81,11 +81,6 @@ const Header = () => {
 
           {(user || !supabaseConfigured) ? (
             <>
-              <div className="hidden md:flex mr-2">
-                <HeaderLocationSelector 
-                  onLocationChange={(value) => console.log('Location changed to:', value)}
-                />
-              </div>
               
               <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
                 <Link to="/post-item">
