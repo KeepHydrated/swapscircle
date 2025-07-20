@@ -268,8 +268,7 @@ const Home: React.FC = () => {
                   </TabsContent>
                   
                   <TabsContent value="friends" className="flex-1 mt-0">
-                    <div className="h-full flex flex-col">
-                      <h3 className="text-lg font-semibold mb-4">Your Friends' Items</h3>
+                      <div className="h-full flex flex-col">
                       {friendItemsLoading ? (
                         <div className="flex-1 flex justify-center items-center">
                           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
