@@ -260,7 +260,7 @@ const Test: React.FC = () => {
         {/* Main Two-Column Layout */}
         <div className="flex-1 min-h-0">
           {user && supabaseConfigured ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+            <div className="grid grid-cols-1 gap-6 h-full">
               {/* Left Column - Your Items */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
                 <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
