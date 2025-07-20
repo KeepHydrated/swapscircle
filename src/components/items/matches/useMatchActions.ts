@@ -15,7 +15,7 @@ export interface UseMatchActionsResult {
   likedItems: Record<string, boolean>;
   removedItems: string[];
   selectedMatch: MatchItem | null;
-  lastAction: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean } | null;
+  lastActions: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[];
   handleLike: (id: string) => void;
   handleReject: (id: string) => void;
   handleUndo: () => void;
@@ -32,7 +32,7 @@ export const useMatchActions = (
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   const [removedItems, setRemovedItems] = useState<string[]>([]);
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
-  const [lastAction, setLastAction] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean } | null>(null);
+  const [lastActions, setLastActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
   const navigate = useNavigate();
 
   // Load actual liked status from database for this specific matching session
@@ -78,8 +78,12 @@ export const useMatchActions = (
 
     const isCurrentlyLiked = likedItems[id];
 
-    // Track the action for undo
-    setLastAction({ type: 'like', itemId: id, wasLiked: isCurrentlyLiked });
+    // Track the action for undo (keep only last 3 actions)
+    setLastActions(prev => {
+      const newAction = { type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
 
     if (supabaseConfigured && isValidUUID(id)) {
       // Optimistically update
@@ -124,30 +128,37 @@ export const useMatchActions = (
 
   // Handle rejecting an item (removing it from matches)
   const handleReject = (id: string) => {
-    // Track the action for undo
-    setLastAction({ type: 'reject', itemId: id });
+    // Track the action for undo (keep only last 3 actions)
+    setLastActions(prev => {
+      const newAction = { type: 'reject' as const, itemId: id };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
     setRemovedItems(prev => [...prev, id]);
     toast.success('Item removed from matches');
   };
 
   // Handle undo last action
   const handleUndo = () => {
-    if (!lastAction) return;
+    if (lastActions.length === 0) return;
 
-    if (lastAction.type === 'like') {
+    const actionToUndo = lastActions[0]; // Get most recent action
+
+    if (actionToUndo.type === 'like') {
       // Undo like action - revert to previous liked state
       setLikedItems(prev => ({ 
         ...prev, 
-        [lastAction.itemId]: lastAction.wasLiked || false 
+        [actionToUndo.itemId]: actionToUndo.wasLiked || false 
       }));
       toast.success('Like action undone');
-    } else if (lastAction.type === 'reject') {
+    } else if (actionToUndo.type === 'reject') {
       // Undo reject action - restore item to matches
-      setRemovedItems(prev => prev.filter(id => id !== lastAction.itemId));
+      setRemovedItems(prev => prev.filter(id => id !== actionToUndo.itemId));
       toast.success('Reject action undone');
     }
 
-    setLastAction(null);
+    // Remove the undone action from the list
+    setLastActions(prev => prev.slice(1));
   };
 
   const handleOpenModal = (id: string) => {
@@ -170,7 +181,7 @@ export const useMatchActions = (
     likedItems,
     removedItems,
     selectedMatch,
-    lastAction,
+    lastActions,
     handleLike,
     handleReject,
     handleUndo,

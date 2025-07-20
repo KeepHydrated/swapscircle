@@ -22,7 +22,7 @@ const Matches: React.FC<MatchesProps> = ({
     likedItems,
     removedItems,
     selectedMatch,
-    lastAction,
+    lastActions,
     handleLike,
     handleReject,
     handleUndo,
@@ -71,11 +71,11 @@ const Matches: React.FC<MatchesProps> = ({
           variant="outline"
           size="sm"
           onClick={handleUndo}
-          disabled={!lastAction}
+          disabled={lastActions.length === 0}
           className="flex items-center gap-2"
         >
           <RotateCcw className="h-4 w-4" />
-          Undo
+          Undo {lastActions.length > 0 && `(${lastActions.length})`}
         </Button>
       </div>
       

@@ -28,7 +28,7 @@ const Home: React.FC = () => {
   const [friendItems, setFriendItems] = useState([]);
   const [friendItemsLoading, setFriendItemsLoading] = useState(false);
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
-  const [lastFriendAction, setLastFriendAction] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean } | null>(null);
+  const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
 
   // Fetch friends' items
   const fetchFriendsItems = async () => {
@@ -132,8 +132,12 @@ const Home: React.FC = () => {
     const currentItem = friendItems.find(item => item.id === itemId);
     if (!currentItem) return;
 
-    // Track the action for undo
-    setLastFriendAction({ type: 'like', itemId, wasLiked: currentItem.liked });
+    // Track the action for undo (keep only last 3 actions)
+    setLastFriendActions(prev => {
+      const newAction = { type: 'like' as const, itemId, wasLiked: currentItem.liked };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
 
     // Optimistically update UI
     setFriendItems(prev =>
@@ -184,33 +188,40 @@ const Home: React.FC = () => {
 
   // Handle rejecting friend items
   const handleRejectFriendItem = (itemId: string) => {
-    // Track the action for undo
-    setLastFriendAction({ type: 'reject', itemId });
+    // Track the action for undo (keep only last 3 actions)
+    setLastFriendActions(prev => {
+      const newAction = { type: 'reject' as const, itemId };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
     setRejectedFriendItems(prev => [...prev, itemId]);
     toast.success('Item removed from friends\' items');
   };
 
   // Handle undo for friend items
   const handleUndoFriendAction = () => {
-    if (!lastFriendAction) return;
+    if (lastFriendActions.length === 0) return;
 
-    if (lastFriendAction.type === 'like') {
+    const actionToUndo = lastFriendActions[0]; // Get most recent action
+
+    if (actionToUndo.type === 'like') {
       // Undo like action - revert to previous liked state
       setFriendItems(prev =>
         prev.map(item =>
-          item.id === lastFriendAction.itemId 
-            ? { ...item, liked: lastFriendAction.wasLiked || false }
+          item.id === actionToUndo.itemId 
+            ? { ...item, liked: actionToUndo.wasLiked || false }
             : item
         )
       );
       toast.success('Like action undone');
-    } else if (lastFriendAction.type === 'reject') {
+    } else if (actionToUndo.type === 'reject') {
       // Undo reject action - restore item to friends' items
-      setRejectedFriendItems(prev => prev.filter(id => id !== lastFriendAction.itemId));
+      setRejectedFriendItems(prev => prev.filter(id => id !== actionToUndo.itemId));
       toast.success('Reject action undone');
     }
 
-    setLastFriendAction(null);
+    // Remove the undone action from the list
+    setLastFriendActions(prev => prev.slice(1));
   };
 
   // User's items and matching functionality
@@ -304,13 +315,13 @@ const Home: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={handleUndoFriendAction}
-                            disabled={!lastFriendAction}
+            onClick={handleUndoFriendAction}
+            disabled={lastFriendActions.length === 0}
                             className="flex items-center gap-2"
                           >
-                            <RotateCcw className="h-4 w-4" />
-                            Undo
-                          </Button>
+            <RotateCcw className="h-4 w-4" />
+            Undo {lastFriendActions.length > 0 && `(${lastFriendActions.length})`}
+          </Button>
                         </div>
                       {friendItemsLoading ? (
                         <div className="flex-1 flex justify-center items-center">
