@@ -246,17 +246,18 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 
                 {/* User profile info */}
                 {userProfile && (
-                  <div 
-                    className="flex gap-3 items-center mt-auto pt-6 cursor-pointer hover:bg-gray-50 -mx-4 px-4 py-2 rounded-lg transition-colors"
-                    onClick={handleProfileClick}
-                  >
+                  <div className="flex gap-3 items-center mt-auto pt-6">
                     <img
                       src={userProfile.avatar_url || "https://randomuser.me/api/portraits/women/44.jpg"}
                       alt={userProfile.name || userProfile.username}
-                      className="w-11 h-11 rounded-full border object-cover"
+                      className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={handleProfileClick}
                     />
                     <div>
-                      <span className="font-semibold text-gray-900 hover:text-primary transition-colors">
+                      <span 
+                        className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                        onClick={handleProfileClick}
+                      >
                         {userProfile.username || userProfile.name || "Unknown User"}
                       </span>
                       <div className="flex text-xs text-gray-500 mt-1 gap-4">
