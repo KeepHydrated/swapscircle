@@ -33,7 +33,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Test />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/test" element={<Test />} />
               <Route path="/trades" element={<Test />} />
