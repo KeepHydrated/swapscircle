@@ -246,12 +246,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       <span className="font-semibold text-gray-900">
                         {userProfile.name || userProfile.username || "Unknown User"}
                       </span>
-                      <span className="ml-2 text-yellow-500 text-xs font-semibold">
-                        ★ 4.9{" "}
-                        <span className="text-gray-400 font-normal ml-1">
-                          (28)
-                        </span>
-                      </span>
                       <div className="flex text-xs text-gray-500 mt-1 gap-4">
                         <span>Since {memberSince}</span>
                         <span>· 1.8 mi away</span>
