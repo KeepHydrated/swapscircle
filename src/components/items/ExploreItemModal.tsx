@@ -254,12 +254,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     </div>
                   </div>
                 )}
-                {/* Debug info */}
-                {process.env.NODE_ENV === 'development' && (
-                  <div className="text-xs text-gray-400 mt-2">
-                    Debug: Profile - {userProfile ? JSON.stringify(userProfile) : 'No profile'}
-                  </div>
-                )}
               </>
             )}
           </div>
