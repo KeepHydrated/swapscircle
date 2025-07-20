@@ -332,12 +332,8 @@ export const likeItem = async (itemId: string) => {
     // Check for mutual match
     console.log('DEBUG: About to check mutual match for item:', itemId, 'current user:', currentUserId);
     const matchResult = await checkForMutualMatch(currentUserId, itemId);
-    console.log('DEBUG: Mutual match result:', matchResult);
     
     if (matchResult.isMatch && matchResult.matchData) {
-      console.log('DEBUG: ========== MUTUAL MATCH FOUND! ==========');
-      console.log('DEBUG: Match data:', matchResult.matchData);
-      
       // Create the confirmed match
       const match = await createMatch(
         currentUserId,
@@ -345,7 +341,6 @@ export const likeItem = async (itemId: string) => {
         matchResult.matchData.myItemId,
         matchResult.matchData.otherUserItemId
       );
-      console.log('DEBUG: Created match record:', match);
 
       if (match) {
         console.log('DEBUG: Creating trade conversation for mutual match:', {
