@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 
 import { useDbItems } from '@/hooks/useDbItems';
@@ -301,10 +302,27 @@ const Test: React.FC = () => {
               {/* Right Column - Matches and Friends Items */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
                 <Tabs defaultValue="matches" className="h-full flex flex-col">
-                  <TabsList className="grid w-full grid-cols-2 mb-4">
-                    <TabsTrigger value="matches">Matches</TabsTrigger>
-                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                  </TabsList>
+                  <div className="flex items-center justify-between mb-4">
+                    <TabsList className="grid grid-cols-2 w-auto">
+                      <TabsTrigger value="matches">Matches</TabsTrigger>
+                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                    </TabsList>
+                    <div className="flex items-center gap-2">
+                      <HeaderLocationSelector 
+                        onLocationChange={(value) => console.log('Location changed to:', value)}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleUndoFriendAction}
+                        disabled={lastFriendActions.length === 0}
+                        className="flex items-center gap-2"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        Undo
+                      </Button>
+                    </div>
+                  </div>
                   
                   <TabsContent value="matches" className="flex-1 mt-0">
                     {selectedUserItem ? (
@@ -325,18 +343,6 @@ const Test: React.FC = () => {
                   
                     <TabsContent value="friends" className="flex-1 mt-0">
                       <div className="h-full flex flex-col">
-                        <div className="flex justify-end mb-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-            onClick={handleUndoFriendAction}
-            disabled={lastFriendActions.length === 0}
-                            className="flex items-center gap-2"
-                          >
-            <RotateCcw className="h-4 w-4" />
-            Undo
-          </Button>
-                        </div>
                       {friendItemsLoading ? (
                         <div className="flex-1 flex justify-center items-center">
                           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
