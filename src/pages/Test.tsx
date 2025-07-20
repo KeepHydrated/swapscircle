@@ -32,6 +32,10 @@ const Test: React.FC = () => {
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
   const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
 
+  // Modal state
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
   // Fetch friends' items
   const fetchFriendsItems = async () => {
     if (!user) return;
@@ -254,6 +258,18 @@ const Test: React.FC = () => {
     setSelectedUserItemId(itemId);
   };
 
+  // Handle opening item modal
+  const handleOpenItemModal = (item: any) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
+
+  // Handle closing item modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedItem(null);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
@@ -327,22 +343,22 @@ const Test: React.FC = () => {
                     </div>
                   </div>
                   
-                  <TabsContent value="matches" className="flex-1 mt-0">
-                    {selectedUserItem ? (
-                      <Matches
-                        matches={matches}
-                        selectedItemName={selectedUserItem.name}
-                      />
-                    ) : (
-                      <div className="h-full flex flex-col">
-                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                          <div className="text-4xl mb-3">🔍</div>
-                          <p className="text-base font-medium mb-1">No item selected</p>
-                          <p className="text-sm">Select an item to see matches</p>
-                        </div>
-                      </div>
-                    )}
-                  </TabsContent>
+                   <TabsContent value="matches" className="flex-1 mt-0">
+                     {selectedUserItem ? (
+                       <Matches
+                         matches={matches}
+                         selectedItemName={selectedUserItem.name}
+                       />
+                     ) : (
+                       <div className="h-full flex flex-col">
+                         <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                           <div className="text-4xl mb-3">🔍</div>
+                           <p className="text-base font-medium mb-1">No item selected</p>
+                           <p className="text-sm">Select an item to see matches</p>
+                         </div>
+                       </div>
+                     )}
+                   </TabsContent>
                   
                     <TabsContent value="friends" className="flex-1 mt-0">
                       <div className="h-full flex flex-col">
@@ -368,7 +384,7 @@ const Test: React.FC = () => {
                                   name={item.name}
                                   image={item.image}
                                   liked={item.liked}
-                                  onSelect={() => {}} // No selection needed for friends' items
+                                  onSelect={() => handleOpenItemModal(item)}
                                   onLike={() => handleLikeFriendItem(item.id)}
                                   onReject={() => handleRejectFriendItem(item.id)}
                                   showLikeButton={true}
@@ -392,6 +408,15 @@ const Test: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Explore Item Modal */}
+      <ExploreItemModal
+        open={modalOpen}
+        item={selectedItem}
+        onClose={handleCloseModal}
+        liked={selectedItem?.liked}
+        onLike={() => selectedItem && handleLikeFriendItem(selectedItem.id)}
+      />
     </div>
   );
 };
