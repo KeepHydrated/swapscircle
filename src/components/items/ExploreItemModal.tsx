@@ -75,7 +75,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               created_at: new Date().toISOString()
             });
           } else {
-            console.log('Profile data fetched:', JSON.stringify(profileData, null, 2));
             setUserProfile(profileData);
           }
         }
