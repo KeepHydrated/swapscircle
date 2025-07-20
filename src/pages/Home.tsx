@@ -12,11 +12,107 @@ import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
+import { supabase } from '@/integrations/supabase/client';
 
 const Home: React.FC = () => {
-  // Friend items - empty for now
+  // User's authentication
+  const { user, supabaseConfigured } = useAuth();
+  
+  // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
+  const [friendItemsLoading, setFriendItemsLoading] = useState(false);
 
+  // Fetch friends' items
+  const fetchFriendsItems = async () => {
+    if (!user) return;
+    
+    setFriendItemsLoading(true);
+    try {
+      // Get all accepted friend requests where current user is involved
+      const { data: friendRequests, error: friendsError } = await supabase
+        .from('friend_requests')
+        .select('requester_id, recipient_id')
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+
+      if (friendsError) {
+        console.error('Error fetching friends:', friendsError);
+        return;
+      }
+
+      if (!friendRequests || friendRequests.length === 0) {
+        setFriendItems([]);
+        return;
+      }
+
+      // Get friend user IDs (excluding current user)
+      const friendIds = friendRequests.map(req => 
+        req.requester_id === user.id ? req.recipient_id : req.requester_id
+      );
+
+      // Fetch items from all friends and their profiles separately
+      const { data: friendItemsData, error: itemsError } = await supabase
+        .from('items')
+        .select('*')
+        .in('user_id', friendIds);
+
+      if (itemsError) {
+        console.error('Error fetching friend items:', itemsError);
+        return;
+      }
+
+      // Fetch profiles for the friends
+      const { data: friendProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, name, username, avatar_url')
+        .in('id', friendIds);
+
+      if (profilesError) {
+        console.error('Error fetching friend profiles:', profilesError);
+      }
+
+      // Create a map of user_id to profile for quick lookup
+      const profileMap = (friendProfiles || []).reduce((acc, profile) => {
+        acc[profile.id] = profile;
+        return acc;
+      }, {} as Record<string, any>);
+
+      // Format items for the carousel
+      const formattedFriendItems = friendItemsData?.map(item => {
+        const ownerProfile = profileMap[item.user_id];
+        return {
+          id: item.id,
+          name: item.name,
+          image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+          category: item.category,
+          condition: item.condition,
+          description: item.description,
+          price_range_min: item.price_range_min,
+          price_range_max: item.price_range_max,
+          tags: item.tags,
+          liked: false,
+          ownerName: ownerProfile?.name || ownerProfile?.username || 'Unknown',
+          ownerAvatar: ownerProfile?.avatar_url,
+          user_id: item.user_id
+        };
+      }) || [];
+
+      setFriendItems(formattedFriendItems);
+    } catch (error) {
+      console.error('Error fetching friends items:', error);
+    } finally {
+      setFriendItemsLoading(false);
+    }
+  };
+
+  // Fetch friends' items when user changes or component mounts
+  useEffect(() => {
+    if (user && supabaseConfigured) {
+      fetchFriendsItems();
+    } else {
+      setFriendItems([]);
+    }
+  }, [user, supabaseConfigured]);
 
   // Define handler for liking friend items (local state only)
   const handleLikeFriendItem = (itemId: string) => {
@@ -33,7 +129,6 @@ const Home: React.FC = () => {
   };
 
   // User's items and matching functionality
-  const { user, supabaseConfigured } = useAuth();
   const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
   
   // Selected items state - auto-select first item
