@@ -266,20 +266,23 @@ const PostItem: React.FC = () => {
               selectedConditions={selectedConditions}
               setSelectedConditions={setSelectedConditions}
             />
+            
+            {/* Save Preferences Button - moved to bottom of right column */}
+            <div className="pt-6">
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-sm hover:shadow-md transition-all duration-200"
+                onClick={() => setSaveDialogOpen(true)}
+              >
+                <Save className="mr-2 h-5 w-5" />
+                Save Preferences
+              </Button>
+            </div>
           </div>
         </div>
         
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12 max-w-7xl mx-auto">
-          <Button
-            variant="outline"
-            className="flex items-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-sm hover:shadow-md transition-all duration-200"
-            onClick={() => setSaveDialogOpen(true)}
-          >
-            <Save className="mr-2 h-5 w-5" />
-            Save Preferences
-          </Button>
-          
+        <div className="flex justify-center mt-12 max-w-7xl mx-auto">
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
