@@ -98,17 +98,41 @@ const Matches: React.FC<MatchesProps> = ({
       
       {/* Modal for displaying match details */}
       {selectedMatch && (
-        <ItemDetailsModal
-          item={selectedMatch}
-          isOpen={!!selectedMatch}
-          onClose={handleClosePopup}
-          onLikeClick={handlePopupLikeClick}
-          onNavigatePrev={navigateToPrevMatch}
-          onNavigateNext={navigateToNextMatch}
-          currentIndex={currentMatchIndex}
-          totalItems={displayedMatches.length}
-          skipDataFetch={true} // Skip API calls since we already have match data
-        />
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-4 max-w-2xl w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">{selectedMatch.name}</h2>
+              <button 
+                onClick={handleClosePopup}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="aspect-video bg-gray-200 rounded mb-4">
+              <img 
+                src={selectedMatch.image} 
+                alt={selectedMatch.name}
+                className="w-full h-full object-cover rounded"
+              />
+            </div>
+            <p>{selectedMatch.description || "No description"}</p>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => handlePopupLikeClick(selectedMatch)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                ❤️ Like
+              </button>
+              <button
+                onClick={handleClosePopup}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
