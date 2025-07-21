@@ -7,12 +7,12 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Star, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client'; 
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
-import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
+
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
 import { MatchItem } from '@/types/item';
-import { CompletedTrade } from '@/types/profile';
+
 import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
@@ -28,7 +28,7 @@ const UserProfile: React.FC = () => {
     created_at: string;
   }>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
-  const [userTrades, setUserTrades] = useState<CompletedTrade[]>([]);
+  
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,7 +137,6 @@ const UserProfile: React.FC = () => {
 
   // The following features are not yet backed by Supabase; empty for now
   useEffect(() => {
-    setUserTrades([]);
     setUserReviews([]);
     setUserFriends([]);
   }, [userProfile?.id]);
@@ -210,12 +209,6 @@ const UserProfile: React.FC = () => {
               Items For Trade
             </TabsTrigger>
             <TabsTrigger 
-              value="completed" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-            >
-              Completed Trades
-            </TabsTrigger>
-            <TabsTrigger 
               value="reviews" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
@@ -238,9 +231,6 @@ const UserProfile: React.FC = () => {
             ) : (
               <ProfileItemsManager initialItems={userItems} />
             )}
-          </TabsContent>
-          <TabsContent value="completed" className="p-6">
-            <CompletedTradesTab trades={userTrades} />
           </TabsContent>
           <TabsContent value="reviews" className="p-6">
             <ReviewsTab reviews={userReviews} />

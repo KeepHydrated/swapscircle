@@ -4,14 +4,14 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
-import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
+
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users, ArrowLeft } from 'lucide-react';
 import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { mockUsers, mockUserItems, mockUserTrades } from '@/data/mockUsers';
+import { mockUsers, mockUserItems } from '@/data/mockUsers';
 import { ProfileUser } from '@/types/profile';
 import { toast } from 'sonner';
 
@@ -37,8 +37,6 @@ const OtherProfile: React.FC = () => {
     mockUserItems[safeUserId] || []
   );
   
-  // Get user's completed trades
-  const completedTrades = mockUserTrades[safeUserId] || [];
 
   // Get user's reviews and friends
   const reviews = getUserReviews(safeUserId);
@@ -129,12 +127,6 @@ const OtherProfile: React.FC = () => {
               Items For Trade
             </TabsTrigger>
             <TabsTrigger 
-              value="completed" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-            >
-              Completed Trades
-            </TabsTrigger>
-            <TabsTrigger 
               value="reviews" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
@@ -155,10 +147,6 @@ const OtherProfile: React.FC = () => {
             <ItemsForTradeTab items={availableItems} onItemClick={handleItemClick} />
           </TabsContent>
 
-          {/* Completed Trades Tab Content */}
-          <TabsContent value="completed" className="p-6">
-            <CompletedTradesTab trades={completedTrades} />
-          </TabsContent>
           
           {/* Reviews Tab Content */}
           <TabsContent value="reviews" className="p-6">

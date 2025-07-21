@@ -14,14 +14,6 @@ export interface ProfileUser {
   friendStatus: FriendRequestStatus;
 }
 
-export interface CompletedTrade {
-  id: number;
-  name: string;
-  tradedFor: string;
-  tradedWith: string;
-  tradeDate: string;
-  image: string;
-}
 
 export interface Friend {
   id: string;

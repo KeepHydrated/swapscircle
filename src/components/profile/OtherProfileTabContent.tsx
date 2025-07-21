@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import CompletedTradesTab from '@/components/profile/CompletedTradesTab';
+
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import ItemCard from '@/components/items/ItemCard';
 import { MatchItem } from '@/types/item';
 
 // Import mock data
-import { myCompletedTrades } from '@/data/mockMyTrades';
+
 import { myReviews } from '@/data/mockMyReviews';
 
 interface OtherProfileTabContentProps {
@@ -64,12 +64,6 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
         </div>
       )}
 
-      {/* Completed Trades Tab Content */}
-      {activeTab === 'completed' && (
-        <div className="p-6">
-          <CompletedTradesTab trades={myCompletedTrades} />
-        </div>
-      )}
       
       {/* Reviews Tab Content */}
       {activeTab === 'reviews' && (

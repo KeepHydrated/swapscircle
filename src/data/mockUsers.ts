@@ -1,4 +1,4 @@
-import { ProfileUser, CompletedTrade } from "@/types/profile";
+import { ProfileUser } from "@/types/profile";
 import { MatchItem } from "@/types/item";
 
 // Mock users data
@@ -148,73 +148,3 @@ export const mockUserItems: Record<string, MatchItem[]> = {
   ]
 };
 
-// Mock completed trades
-export const mockUserTrades: Record<string, CompletedTrade[]> = {
-  "user1": [
-    {
-      id: 101,
-      name: "Designer Handbag",
-      tradedFor: "Vintage Camera",
-      tradedWith: "Michael R.",
-      tradeDate: "April 10, 2025",
-      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3"
-    },
-    {
-      id: 102,
-      name: "Antique Brooch",
-      tradedFor: "First Edition Book",
-      tradedWith: "Sophia T.",
-      tradeDate: "March 22, 2025",
-      image: "https://images.unsplash.com/photo-1586878341523-7c1ef1a0e9c0"
-    }
-  ],
-  "user2": [
-    {
-      id: 103,
-      name: "Nintendo 64 Console",
-      tradedFor: "Bluetooth Speaker",
-      tradedWith: "Alex P.",
-      tradeDate: "May 5, 2025",
-      image: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e"
-    },
-    {
-      id: 104,
-      name: "Record Player",
-      tradedFor: "Gaming Headset",
-      tradedWith: "Emma L.",
-      tradeDate: "April 17, 2025",
-      image: "https://images.unsplash.com/photo-1487887235947-a955ef187fcc"
-    }
-  ],
-  // Add trades for friends
-  "friend1": [
-    {
-      id: 105,
-      name: "Vintage Jewelry Box",
-      tradedFor: "Antique Book Collection",
-      tradedWith: "Emma S.",
-      tradeDate: "March 15, 2025",
-      image: "https://images.unsplash.com/photo-1616646187794-d3007d1923a0"
-    }
-  ],
-  "friend2": [
-    {
-      id: 106,
-      name: "Audio Amplifier",
-      tradedFor: "Vintage Speakers",
-      tradedWith: "David P.",
-      tradeDate: "February 10, 2025",
-      image: "https://images.unsplash.com/photo-1545454675-3531b543be5d"
-    }
-  ],
-  "friend3": [
-    {
-      id: 107,
-      name: "Designer Scarf",
-      tradedFor: "Vintage Sunglasses",
-      tradedWith: "Oliver K.",
-      tradeDate: "April 5, 2025",
-      image: "https://images.unsplash.com/photo-1520975661595-6453be3f7070"
-    }
-  ]
-};

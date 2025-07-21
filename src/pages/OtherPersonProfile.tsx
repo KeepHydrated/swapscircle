@@ -185,12 +185,6 @@ const OtherPersonProfile: React.FC = () => {
                 Items For Trade
               </TabsTrigger>
               <TabsTrigger 
-                value="completed" 
-                className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-              >
-                Completed Trades
-              </TabsTrigger>
-              <TabsTrigger 
                 value="reviews" 
                 className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
               >

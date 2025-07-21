@@ -45,7 +45,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
         onMarkCompleted();
       }
       
-      toast.success("Trade has been completed! You can now leave a review in your Completed Trades tab.");
+      toast.success("Trade has been completed! You can now leave a review.");
     }, 3000);
   };
 
