@@ -305,20 +305,6 @@ const PostItem: React.FC = () => {
             )}
           </Button>
         </div>
-        
-        {/* Progress Indicator */}
-        <div className="mt-8 max-w-md mx-auto">
-          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
-            <div className={`w-3 h-3 rounded-full ${title ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <span>Item Details</span>
-            <div className="w-6 h-0.5 bg-gray-300"></div>
-            <div className={`w-3 h-3 rounded-full ${lookingForText || selectedCategories.length ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <span>Preferences</span>
-            <div className="w-6 h-0.5 bg-gray-300"></div>
-            <div className={`w-3 h-3 rounded-full ${isSubmitting ? 'bg-blue-500 animate-pulse' : 'bg-gray-300'}`}></div>
-            <span>Submit</span>
-          </div>
-        </div>
       </div>
 
       {/* Dialogs */}
