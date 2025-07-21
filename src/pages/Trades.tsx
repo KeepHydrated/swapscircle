@@ -213,7 +213,7 @@ const Trades = () => {
             {/* Right side - reviews */}
             {trade.status === 'completed' && (
               <div className="w-72 pl-4 border-l border-gray-200 space-y-3">
-                <h4 className="font-medium text-gray-900 mb-3">Reviews</h4>
+                
                 
                 {/* Their review of you */}
                 <div className="bg-gray-50 p-3 rounded-lg">
