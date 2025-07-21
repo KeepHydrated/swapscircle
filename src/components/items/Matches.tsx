@@ -37,9 +37,12 @@ const Matches: React.FC<MatchesProps> = ({
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
     console.log('DEBUG: Matches useEffect - lastActions:', lastActions);
+    console.log('DEBUG: Matches useEffect - onUndoAvailable prop:', onUndoAvailable);
     if (onUndoAvailable) {
       console.log('DEBUG: Calling onUndoAvailable with:', lastActions.length > 0, lastActions.length > 0 ? 'handleUndo function' : null);
       onUndoAvailable(lastActions.length > 0, lastActions.length > 0 ? handleUndo : null);
+    } else {
+      console.log('DEBUG: onUndoAvailable prop is not provided');
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
