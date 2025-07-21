@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchUserTradeConversations } from '@/services/tradeService';
 import { checkReviewEligibility } from '@/services/reviewService';
 import { useNavigate } from 'react-router-dom';
-import { Clock, MessageCircle, CheckCircle, XCircle, Star, ArrowUpDown } from 'lucide-react';
+import { Clock, MessageCircle, CheckCircle, XCircle, Star, ArrowLeftRight } from 'lucide-react';
 import { format } from 'date-fns';
 import ReviewModal from '@/components/trade/ReviewModal';
 
@@ -97,7 +97,7 @@ const Trades = () => {
             </div>
             
             <div className="flex items-center justify-center px-2">
-              <ArrowUpDown className="w-4 h-4 text-gray-400" />
+              <ArrowLeftRight className="w-4 h-4 text-gray-400" />
             </div>
             
             <div className="flex flex-col items-center">
