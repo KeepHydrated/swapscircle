@@ -30,6 +30,16 @@ const Home: React.FC = () => {
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
   const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
   const [activeTab, setActiveTab] = useState('matches');
+  
+  // State to track undo functionality for matches
+  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
+  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
+  
+  // Handler for matches undo availability
+  const handleMatchesUndoAvailable = (hasActions: boolean, undoFn: () => void) => {
+    setMatchesUndoAvailable(hasActions);
+    setMatchesUndoFn(() => undoFn);
+  };
 
   // Modal state
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -312,19 +322,17 @@ const Home: React.FC = () => {
                     <TabsTrigger value="test">🧪 Test</TabsTrigger>
                   </TabsList>
                   
-                  {/* Contextual Undo Button - Only for friends */}
-                  {activeTab === 'friends' && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleUndoFriendAction}
-                      disabled={lastFriendActions.length === 0}
-                      className="flex items-center gap-2"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                      Undo
-                    </Button>
-                  )}
+                  {/* Contextual Undo Button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={activeTab === 'friends' ? handleUndoFriendAction : matchesUndoFn || (() => {})}
+                    disabled={activeTab === 'friends' ? lastFriendActions.length === 0 : !matchesUndoAvailable}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Undo
+                  </Button>
                 </div>
                 
                 <TabsContent value="matches" className="flex-1 mt-0">
@@ -332,6 +340,7 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
+                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
@@ -349,6 +358,7 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
+                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
