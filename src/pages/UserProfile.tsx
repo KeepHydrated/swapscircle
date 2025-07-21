@@ -127,7 +127,11 @@ const UserProfile: React.FC = () => {
             tags: item.tags,
             liked: false,
             is_hidden: item.is_hidden,
-          }));
+          })).sort((a, b) => {
+            // Show visible items first (is_hidden: false), then hidden items (is_hidden: true)
+            if (a.is_hidden === b.is_hidden) return 0;
+            return a.is_hidden ? 1 : -1;
+          });
           setUserItems(formattedItems);
         }
       } catch (error) {
