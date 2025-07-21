@@ -277,12 +277,15 @@ const Home: React.FC = () => {
 
   // Check if undo is available based on active tab
   const isUndoAvailable = () => {
+    console.log('DEBUG: isUndoAvailable called - activeTab:', activeTab);
     if (activeTab === 'friends') {
+      console.log('DEBUG: Friends tab - lastFriendActions.length:', lastFriendActions.length);
       return lastFriendActions.length > 0;
     } else if (activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') {
-      console.log('DEBUG: Checking undo available for matches - matchesUndoAvailable:', matchesUndoAvailable);
+      console.log('DEBUG: Matches tab - matchesUndoAvailable:', matchesUndoAvailable);
       return matchesUndoAvailable;
     }
+    console.log('DEBUG: No matching tab, returning false');
     return false;
   };
   // Get selected user item
