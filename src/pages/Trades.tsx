@@ -100,6 +100,7 @@ const Trades = () => {
   const rejectedTrades = trades.filter((trade: any) => trade.status === 'rejected');
 
   const TradeCard = ({ trade }: { trade: any }) => {
+    console.log('TradeCard trade object:', trade);
     // Determine the other user based on current user ID
     const otherUser = trade.requester_id === currentUserId 
       ? trade.owner_profile 
