@@ -44,14 +44,17 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-  // Reset states immediately when item changes to prevent showing stale data
+  // Immediately mark as ready when we have the item and skipDataFetch is true
   useEffect(() => {
-    if (skipDataFetch && item) {
-      // Immediately set the correct states when skipping data fetch
+    if (item && skipDataFetch) {
+      setIsReady(true);
       setFullItem(null); // Clear any previous fullItem data
       setUserProfile(preloadedUserProfile || null);
       setLoading(false);
+    } else if (item && !skipDataFetch) {
+      setIsReady(false); // Will be set to true after data fetch
     }
   }, [item?.id, skipDataFetch, preloadedUserProfile]);
 
@@ -111,6 +114,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         setFullItem(item);
       } finally {
         setLoading(false);
+        setIsReady(true);
       }
     };
 
@@ -133,7 +137,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     }
   };
 
-  if (!item) return null;
+  if (!item || !isReady) return null;
 
   // Use fullItem or fallback to item - but when skipDataFetch is true, always use item
   const displayItem = skipDataFetch ? item : (fullItem || item);
