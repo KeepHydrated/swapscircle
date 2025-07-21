@@ -631,3 +631,64 @@ export const unhideItem = async (itemId: string): Promise<boolean> => {
     return false;
   }
 };
+
+// Function to fetch reviews for a user
+export const fetchUserReviews = async (userId: string) => {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(`
+        id,
+        rating,
+        comment,
+        created_at,
+        reviewer_id
+      `)
+      .eq('reviewee_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching reviews:', error);
+      return [];
+    }
+
+    // For each review, fetch the reviewer's profile
+    const formattedReviews = await Promise.all(
+      (data || []).map(async (review) => {
+        try {
+          const { data: reviewerProfile } = await supabase
+            .from('profiles')
+            .select('username, name')
+            .eq('id', review.reviewer_id)
+            .maybeSingle();
+
+          return {
+            id: review.id,
+            user: reviewerProfile?.name || reviewerProfile?.username || 'Anonymous User',
+            rating: review.rating,
+            comment: review.comment || '',
+            date: new Date(review.created_at).toLocaleDateString()
+          };
+        } catch (profileError) {
+          console.error('Error fetching reviewer profile:', profileError);
+          return {
+            id: review.id,
+            user: 'Anonymous User',
+            rating: review.rating,
+            comment: review.comment || '',
+            date: new Date(review.created_at).toLocaleDateString()
+          };
+        }
+      })
+    );
+
+    return formattedReviews;
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return [];
+  }
+};

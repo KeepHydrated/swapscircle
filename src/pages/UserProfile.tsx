@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Star, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client'; 
+import { fetchUserReviews } from '@/services/authService';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 
 import ReviewsTab from '@/components/profile/ReviewsTab';
@@ -141,10 +142,17 @@ const UserProfile: React.FC = () => {
     if (userProfile?.id) fetchUserItems();
   }, [userProfile]);
 
-  // The following features are not yet backed by Supabase; empty for now
+  // Fetch user reviews and friends
   useEffect(() => {
-    setUserReviews([]);
-    setUserFriends([]);
+    const fetchReviews = async () => {
+      if (userProfile?.id) {
+        const reviews = await fetchUserReviews(userProfile.id);
+        setUserReviews(reviews);
+      }
+    };
+    
+    fetchReviews();
+    setUserFriends([]); // Friends feature not implemented yet
   }, [userProfile?.id]);
 
   if (loading) {
