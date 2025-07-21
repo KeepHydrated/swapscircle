@@ -2,9 +2,11 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useNavigate } from 'react-router-dom';
 
 interface Review {
   id: string | number;
+  reviewer_id?: string;
   user: string;
   avatar_url?: string;
   rating: number;
@@ -17,6 +19,12 @@ interface ReviewsTabProps {
 }
 
 const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
+  const navigate = useNavigate();
+
+  const handleProfileClick = (reviewerId: string) => {
+    navigate(`/other-profile/${reviewerId}`);
+  };
+
   if (reviews.length === 0) {
     return (
       <div className="text-center py-8">
@@ -32,7 +40,10 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
       {reviews.map(review => (
         <div key={review.id} className="bg-white rounded-lg border p-4 shadow-sm">
           <div className="flex items-start space-x-3 mb-3">
-            <Avatar className="h-10 w-10">
+            <Avatar 
+              className={`h-10 w-10 transition-opacity ${review.reviewer_id ? 'cursor-pointer hover:opacity-80' : ''}`}
+              onClick={() => review.reviewer_id && handleProfileClick(review.reviewer_id)}
+            >
               <AvatarImage src={review.avatar_url} />
               <AvatarFallback>
                 {review.user?.charAt(0).toUpperCase() || 'U'}
@@ -40,7 +51,12 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1">
-                <div className="font-medium text-gray-900">{review.user}</div>
+                <div 
+                  className={`font-medium text-gray-900 transition-colors ${review.reviewer_id ? 'cursor-pointer hover:text-blue-600' : ''}`}
+                  onClick={() => review.reviewer_id && handleProfileClick(review.reviewer_id)}
+                >
+                  {review.user}
+                </div>
                 <div className="text-sm text-muted-foreground">{review.date}</div>
               </div>
               <div className="flex items-center mb-2">

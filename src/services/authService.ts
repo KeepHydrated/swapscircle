@@ -668,6 +668,7 @@ export const fetchUserReviews = async (userId: string) => {
 
           return {
             id: review.id,
+            reviewer_id: review.reviewer_id,
             user: reviewerProfile?.username || reviewerProfile?.name || 'Anonymous User',
             avatar_url: reviewerProfile?.avatar_url,
             rating: review.rating,
@@ -678,6 +679,7 @@ export const fetchUserReviews = async (userId: string) => {
           console.error('Error fetching reviewer profile:', profileError);
           return {
             id: review.id,
+            reviewer_id: review.reviewer_id,
             user: 'Anonymous User',
             avatar_url: undefined,
             rating: review.rating,
