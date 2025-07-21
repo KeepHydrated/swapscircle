@@ -80,6 +80,7 @@ const Trades = () => {
   };
 
   const handleOpenChat = (tradeId: string) => {
+    console.log('Opening chat for trade ID:', tradeId);
     navigate(`/messages?conversation=${tradeId}`);
   };
 
