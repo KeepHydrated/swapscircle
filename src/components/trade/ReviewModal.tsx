@@ -27,10 +27,7 @@ const ReviewModal = ({ isOpen, onClose, tradeConversationId, revieweeId, reviewe
     onSuccess: () => {
       toast.success('Review submitted successfully!');
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
-      // Invalidate all trade-reviews queries regardless of trade IDs
-      queryClient.invalidateQueries({ 
-        predicate: (query) => query.queryKey[0] === 'trade-reviews'
-      });
+      queryClient.invalidateQueries({ queryKey: ['trade-reviews'] });
       queryClient.invalidateQueries({ queryKey: ['reviewEligibility', tradeConversationId] });
       onClose();
       setRating(0);

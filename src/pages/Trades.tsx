@@ -28,8 +28,8 @@ const Trades = () => {
   });
 
   // Fetch reviews for all trades
-  const { data: allReviews = [] } = useQuery({
-    queryKey: ['trade-reviews', trades.map(t => t.id)],
+  const { data: allReviews = [], refetch: refetchReviews } = useQuery({
+    queryKey: ['trade-reviews'],
     queryFn: async () => {
       if (trades.length === 0) return [];
       
