@@ -99,9 +99,10 @@ const Trades = () => {
   const rejectedTrades = trades.filter((trade: any) => trade.status === 'rejected');
 
   const TradeCard = ({ trade }: { trade: any }) => {
-    const otherUser = trade.requester_profile?.id !== trade.owner_profile?.id 
-      ? (trade.requester_profile || trade.owner_profile)
-      : trade.owner_profile;
+    // Determine the other user based on current user ID
+    const otherUser = trade.requester_id === currentUserId 
+      ? trade.owner_profile 
+      : trade.requester_profile;
 
     // Get reviews for this trade
     const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
