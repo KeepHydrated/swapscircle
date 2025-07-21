@@ -14,6 +14,10 @@ interface ExploreItemModalProps {
   images?: string[];
   liked?: boolean;
   onLike?: () => void;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  currentIndex?: number;
+  totalItems?: number;
 }
 
 interface UserProfile {
@@ -30,6 +34,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   images = [],
   liked,
   onLike,
+  onNavigatePrev,
+  onNavigateNext,
+  currentIndex,
+  totalItems,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -187,6 +195,28 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 ))}
               </div>
             )}
+            {/* Navigation arrows */}
+            {onNavigatePrev && onNavigateNext && totalItems && totalItems > 1 && (
+              <>
+                <button
+                  onClick={onNavigatePrev}
+                  disabled={currentIndex === 0}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-3 hover:scale-105 transition z-20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Previous item"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={onNavigateNext}
+                  disabled={currentIndex === totalItems - 1}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-3 hover:scale-105 transition z-20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Next item"
+                >
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+
             {/* Top-right buttons positioned over the image */}
             <div className="absolute top-4 right-4 flex gap-3 z-20">
               <button

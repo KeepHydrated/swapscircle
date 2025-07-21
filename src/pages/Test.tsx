@@ -270,6 +270,33 @@ const Test: React.FC = () => {
     setSelectedItem(null);
   };
 
+  // Get displayed friends items (excluding rejected ones)
+  const displayedFriendItems = friendItems.filter(item => !rejectedFriendItems.includes(item.id));
+  
+  // Find current index in displayed friend items
+  const currentFriendItemIndex = selectedItem 
+    ? displayedFriendItems.findIndex(item => item.id === selectedItem.id)
+    : -1;
+
+  // Navigation functions for friends items
+  const navigateToPrevFriendItem = () => {
+    if (currentFriendItemIndex > 0) {
+      const prevItem = displayedFriendItems[currentFriendItemIndex - 1];
+      if (prevItem) {
+        setSelectedItem(prevItem);
+      }
+    }
+  };
+
+  const navigateToNextFriendItem = () => {
+    if (currentFriendItemIndex < displayedFriendItems.length - 1) {
+      const nextItem = displayedFriendItems[currentFriendItemIndex + 1];
+      if (nextItem) {
+        setSelectedItem(nextItem);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
@@ -416,6 +443,10 @@ const Test: React.FC = () => {
         onClose={handleCloseModal}
         liked={selectedItem?.liked}
         onLike={() => selectedItem && handleLikeFriendItem(selectedItem.id)}
+        onNavigatePrev={navigateToPrevFriendItem}
+        onNavigateNext={navigateToNextFriendItem}
+        currentIndex={currentFriendItemIndex}
+        totalItems={displayedFriendItems.length}
       />
     </div>
   );
