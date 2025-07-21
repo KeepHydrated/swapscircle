@@ -209,17 +209,6 @@ const Trades = () => {
                   Open Chat
                 </Button>
                 
-                {trade.status === 'completed' && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleLeaveReview(trade)}
-                    className="flex items-center"
-                  >
-                    <Star className="w-4 h-4 mr-1" />
-                    Review
-                  </Button>
-                )}
               </div>
             </div>
 
@@ -262,7 +251,18 @@ const Trades = () => {
                       {yourReview.comment || 'No comment provided'}
                     </p>
                   ) : (
-                    <p className="text-sm text-gray-400 italic">No review yet</p>
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-400 italic">No review yet</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleLeaveReview(trade)}
+                        className="w-full"
+                      >
+                        <Star className="w-4 h-4 mr-1" />
+                        Leave Review
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
