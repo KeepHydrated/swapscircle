@@ -260,6 +260,7 @@ const Test: React.FC = () => {
 
   // Handle opening item modal
   const handleOpenItemModal = (item: any) => {
+    console.log('OPENING MODAL with item:', item);
     setSelectedItem(item);
     setModalOpen(true);
   };
