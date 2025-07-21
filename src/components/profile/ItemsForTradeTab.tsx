@@ -66,21 +66,25 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 className="h-8 w-8 bg-white/90 hover:bg-white" 
                 onClick={(e) => { 
                   e.stopPropagation(); 
-                  if (onHideClick) onHideClick(item);
+                  if (onDeleteClick) onDeleteClick(item);
                 }}
               >
-                <EyeOff className="h-4 w-4 text-blue-500" />
+                <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
+            </div>
+
+            {/* Hide Icon - Top Right */}
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button 
                 size="icon" 
                 variant="secondary" 
                 className="h-8 w-8 bg-white/90 hover:bg-white" 
                 onClick={(e) => { 
                   e.stopPropagation(); 
-                  if (onDeleteClick) onDeleteClick(item);
+                  if (onHideClick) onHideClick(item);
                 }}
               >
-                <Trash2 className="h-4 w-4 text-red-500" />
+                <EyeOff className="h-4 w-4 text-blue-500" />
               </Button>
             </div>
           </div>
