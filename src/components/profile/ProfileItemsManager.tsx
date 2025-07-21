@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { deleteItem, hideItem } from '@/services/authService'; // <-- FIX: properly import
+import { deleteItem, hideItem, unhideItem } from '@/services/authService';
 
 interface ProfileItemsManagerProps {
   initialItems: Item[];
@@ -67,12 +67,18 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     setIsDeleteDialogOpen(true);
   };
 
-  // Function to handle hide icon click
+  // Function to handle hide/unhide toggle
   const handleHideClick = async (item: Item) => {
-    const success = await hideItem(item.id);
+    const isHidden = (item as any).is_hidden;
+    const success = isHidden ? await unhideItem(item.id) : await hideItem(item.id);
+    
     if (success) {
-      // Remove the item from the visible list immediately
-      setItems(prevItems => prevItems.filter(prevItem => prevItem.id !== item.id));
+      // Update the item in the list with the new hidden state
+      setItems(prevItems => prevItems.map(prevItem => 
+        prevItem.id === item.id 
+          ? { ...prevItem, is_hidden: !isHidden } as Item
+          : prevItem
+      ));
     }
   };
 

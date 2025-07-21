@@ -4,17 +4,14 @@ import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
-import { Star, Users, EyeOff } from 'lucide-react';
+import { Star, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client'; 
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
-import HiddenItemsTab from '@/components/profile/HiddenItemsTab';
 import { MatchItem } from '@/types/item';
-import { useUserHiddenItems } from '@/hooks/useUserHiddenItems';
-import { unhideItem, deleteItem } from '@/services/authService';
 
 import { toast } from 'sonner';
 
@@ -31,44 +28,12 @@ const UserProfile: React.FC = () => {
     created_at: string;
   }>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
-  const { hiddenItems, loading: hiddenLoading, refetch: refetchHidden } = useUserHiddenItems();
   
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [profileKey, setProfileKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  // Handle unhiding items
-  const handleUnhideItem = async (item: any) => {
-    const success = await unhideItem(item.id);
-    if (success) {
-      refetchHidden();
-      // Optionally refetch visible items to show the unhidden item
-      if (userProfile?.id) {
-        const { data: items } = await supabase
-          .from('items')
-          .select('*')
-          .eq('user_id', userProfile.id)
-          .eq('is_available', true)
-          .eq('is_hidden', false);
-        
-        if (items) {
-          const formattedItems = items.map(item => ({
-            id: item.id,
-            name: item.name,
-            image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-            category: item.category,
-            condition: item.condition,
-            description: item.description,
-            tags: item.tags,
-            liked: false,
-          }));
-          setUserItems(formattedItems);
-        }
-      }
-    }
-  };
 
   // Fetch current user's profile from DB
   const fetchProfile = useCallback(async () => {
@@ -145,8 +110,7 @@ const UserProfile: React.FC = () => {
           .from('items')
           .select('*')
           .eq('user_id', userProfile.id)
-          .eq('is_available', true) // Only show available items
-          .eq('is_hidden', false); // Only show non-hidden items
+          .eq('is_available', true); // Show all available items (hidden and visible)
 
         if (itemsError) {
           console.error('Error fetching items:', itemsError);
@@ -246,13 +210,6 @@ const UserProfile: React.FC = () => {
               Items For Trade
             </TabsTrigger>
             <TabsTrigger 
-              value="hidden" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-            >
-              <EyeOff className="mr-2 h-4 w-4" />
-              Hidden Items
-            </TabsTrigger>
-            <TabsTrigger 
               value="reviews" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
@@ -275,17 +232,6 @@ const UserProfile: React.FC = () => {
             ) : (
               <ProfileItemsManager initialItems={userItems} />
             )}
-          </TabsContent>
-          <TabsContent value="hidden" className="p-6">
-            <HiddenItemsTab 
-              items={hiddenItems} 
-              onItemClick={() => {}} 
-              onUnhideClick={handleUnhideItem}
-              onDeleteClick={async (item) => {
-                const success = await deleteItem(item.id);
-                if (success) refetchHidden();
-              }}
-            />
           </TabsContent>
           <TabsContent value="reviews" className="p-6">
             <ReviewsTab reviews={userReviews} />
