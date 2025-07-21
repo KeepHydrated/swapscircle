@@ -111,7 +111,8 @@ const UserProfile: React.FC = () => {
           .from('items')
           .select('*')
           .eq('user_id', userProfile.id)
-          .eq('is_available', true); // Show all available items (hidden and visible)
+          .eq('is_available', true)
+          .order('updated_at', { ascending: false }); // Show most recently updated items first
 
         if (itemsError) {
           console.error('Error fetching items:', itemsError);
