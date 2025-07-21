@@ -376,12 +376,12 @@ const Trades = () => {
               setSelectedTradeForReview(null);
             }}
             tradeConversationId={selectedTradeForReview.id}
-            revieweeId={selectedTradeForReview.requester_profile?.id === selectedTradeForReview.owner_profile?.id 
+            revieweeId={selectedTradeForReview.requester_id === currentUserId 
               ? selectedTradeForReview.owner_profile?.id 
-              : (selectedTradeForReview.requester_profile?.id || selectedTradeForReview.owner_profile?.id)}
-            revieweeName={selectedTradeForReview.requester_profile?.id === selectedTradeForReview.owner_profile?.id 
+              : selectedTradeForReview.requester_profile?.id}
+            revieweeName={selectedTradeForReview.requester_id === currentUserId 
               ? selectedTradeForReview.owner_profile?.username 
-              : (selectedTradeForReview.requester_profile?.username || selectedTradeForReview.owner_profile?.username)}
+              : selectedTradeForReview.requester_profile?.username}
           />
         )}
 
