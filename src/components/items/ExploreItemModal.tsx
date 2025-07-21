@@ -141,6 +141,28 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <DialogDescription>View details for this item including description and owner information</DialogDescription>
         </VisuallyHidden>
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
+          
+          {/* Navigation arrows positioned on sides of entire modal */}
+          {onNavigatePrev && onNavigateNext && totalItems && totalItems > 1 && (
+            <>
+              <button
+                onClick={onNavigatePrev}
+                disabled={currentIndex === 0}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Previous item"
+              >
+                <ArrowLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={onNavigateNext}
+                disabled={currentIndex === totalItems - 1}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Next item"
+              >
+                <ArrowRight className="w-6 h-6" />
+              </button>
+            </>
+          )}
 
           {/* Carousel */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
@@ -195,28 +217,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 ))}
               </div>
             )}
-            {/* Navigation arrows */}
-            {onNavigatePrev && onNavigateNext && totalItems && totalItems > 1 && (
-              <>
-                <button
-                  onClick={onNavigatePrev}
-                  disabled={currentIndex === 0}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-3 hover:scale-105 transition z-20 disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Previous item"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={onNavigateNext}
-                  disabled={currentIndex === totalItems - 1}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-3 hover:scale-105 transition z-20 disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Next item"
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </>
-            )}
-
             {/* Top-right buttons positioned over the image */}
             <div className="absolute top-4 right-4 flex gap-3 z-20">
               <button
