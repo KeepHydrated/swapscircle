@@ -237,6 +237,10 @@ const Test: React.FC = () => {
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('matches');
   
+  // Matches undo state - will be set by the Matches component
+  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
+  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
+  
   // Auto-select first item when userItems are loaded
   useEffect(() => {
     if (userItems.length > 0 && !selectedUserItemId) {
@@ -296,6 +300,31 @@ const Test: React.FC = () => {
         setSelectedItem(nextItem);
       }
     }
+  };
+
+  // Handle matches undo availability callback
+  const handleMatchesUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
+    setMatchesUndoAvailable(available);
+    setMatchesUndoFn(() => undoFn);
+  };
+
+  // Unified undo handler that works based on active tab
+  const handleUndo = () => {
+    if (activeTab === 'friends') {
+      handleUndoFriendAction();
+    } else if (activeTab === 'matches' && matchesUndoFn) {
+      matchesUndoFn();
+    }
+  };
+
+  // Check if undo is available based on active tab
+  const isUndoAvailable = () => {
+    if (activeTab === 'friends') {
+      return lastFriendActions.length > 0;
+    } else if (activeTab === 'matches') {
+      return matchesUndoAvailable;
+    }
+    return false;
   };
 
   return (
@@ -361,8 +390,8 @@ const Test: React.FC = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleUndoFriendAction}
-                        disabled={lastFriendActions.length === 0}
+                        onClick={handleUndo}
+                        disabled={!isUndoAvailable()}
                         className="flex items-center gap-2"
                       >
                         <RotateCcw className="h-4 w-4" />
@@ -376,6 +405,7 @@ const Test: React.FC = () => {
                        <Matches
                          matches={matches}
                          selectedItemName={selectedUserItem.name}
+                         onUndoAvailable={handleMatchesUndoAvailable}
                        />
                      ) : (
                        <div className="h-full flex flex-col">
