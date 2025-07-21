@@ -96,7 +96,7 @@ const Trades = () => {
               </span>
             </div>
             
-            <div className="flex items-center justify-center px-2">
+            <div className="flex items-center justify-center px-2 pt-5">
               <ArrowLeftRight className="w-4 h-4 text-gray-400" />
             </div>
             
