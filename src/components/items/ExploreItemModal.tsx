@@ -62,18 +62,22 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
         // Fetch user profile
         if (itemData?.user_id) {
+          console.log('Fetching profile for user:', itemData.user_id);
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('name, avatar_url, username, created_at')
             .eq('id', itemData.user_id)
             .single();
 
+          console.log('Profile data received:', profileData);
+          console.log('Profile error:', profileError);
+
           if (profileError) {
             console.error('Error fetching user profile:', profileError);
-            // Fallback to default profile
+            // Use minimal fallback without hardcoded data
             setUserProfile({
-              name: "User",
-              avatar_url: "https://randomuser.me/api/portraits/women/44.jpg",
+              name: "Unknown User",
+              avatar_url: "",
               created_at: new Date().toISOString()
             });
           } else {
@@ -102,10 +106,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     setSlide(0);
   }, [item]);
 
-  // Calculate user stats
+  // Calculate user stats - only show if we have actual data
   const memberSince = userProfile?.created_at 
     ? new Date(userProfile.created_at).getFullYear()
-    : 2023;
+    : null;
 
   // Handle navigation to user profile
   const handleProfileClick = () => {
@@ -220,39 +224,49 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 
                 {/* Description */}
                 <p className="text-gray-700 text-base mb-6 leading-relaxed">
-                  {displayItem.description ||
-                    "Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts."}
+                  {displayItem.description || "No description provided."}
                 </p>
                 
                 {/* Tags in 2x2 grid */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="flex items-center gap-3 text-gray-600">
                     <span className="text-lg">🏷️</span>
-                    <span className="text-sm">{displayItem.category || "Electronics"}</span>
+                    <span className="text-sm">{displayItem.category || "No category"}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
-                    <span className="text-lg">📷</span>
-                    <span className="text-sm">{displayItem.tags?.[0] || "Cameras"}</span>
+                    <span className="text-lg">🏷️</span>
+                    <span className="text-sm">{displayItem.tags?.[0] || "No tags"}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <span className="text-lg">⭐</span>
-                    <span className="text-sm">{displayItem.condition || "Excellent"}</span>
+                    <span className="text-sm">{displayItem.condition || "Not specified"}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <span className="text-lg">💰</span>
-                    <span className="text-sm">150 - 200</span>
-                  </div>
+                  {(displayItem.price_range_min || displayItem.price_range_max) && (
+                    <div className="flex items-center gap-3 text-gray-600">
+                      <span className="text-lg">💰</span>
+                      <span className="text-sm">
+                        {displayItem.price_range_min && displayItem.price_range_max 
+                          ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
+                          : displayItem.price_range_min 
+                            ? `From $${displayItem.price_range_min}`
+                            : `Up to $${displayItem.price_range_max}`
+                        }
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* User profile info */}
                 {userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
-                    <img
-                      src={userProfile.avatar_url || "https://randomuser.me/api/portraits/women/44.jpg"}
-                      alt={userProfile.name || userProfile.username}
-                      className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={handleProfileClick}
-                    />
+                    {userProfile.avatar_url && (
+                      <img
+                        src={userProfile.avatar_url}
+                        alt={userProfile.name || userProfile.username}
+                        className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={handleProfileClick}
+                      />
+                    )}
                     <div>
                       <span 
                         className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
@@ -260,9 +274,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       >
                         {userProfile.name || userProfile.username || "Unknown User"}
                       </span>
-                       <div className="flex text-xs text-gray-500 mt-1">
-                         <span>Since {memberSince}</span>
-                       </div>
+                       {memberSince && (
+                         <div className="flex text-xs text-gray-500 mt-1">
+                           <span>Since {memberSince}</span>
+                         </div>
+                       )}
                     </div>
                   </div>
                 )}
