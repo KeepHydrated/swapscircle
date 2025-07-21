@@ -325,20 +325,20 @@ const Home: React.FC = () => {
                     )}
                   </TabsContent>
                   
-                    <TabsContent value="friends" className="flex-1 mt-0">
-                      <div className="h-full flex flex-col">
-                        <div className="flex justify-end mb-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-            onClick={handleUndoFriendAction}
-            disabled={lastFriendActions.length === 0}
-                            className="flex items-center gap-2"
-                          >
-            <RotateCcw className="h-4 w-4" />
-            Undo
-          </Button>
-                        </div>
+                  <TabsContent value="friends" className="flex-1 mt-0">
+                    <div className="h-full flex flex-col">
+                      <div className="flex justify-end mb-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleUndoFriendAction}
+                          disabled={lastFriendActions.length === 0}
+                          className="flex items-center gap-2"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                          Undo
+                        </Button>
+                      </div>
                       {friendItemsLoading ? (
                         <div className="flex-1 flex justify-center items-center">
                           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -349,25 +349,13 @@ const Home: React.FC = () => {
                           <p className="text-base font-medium mb-1">No friends' items</p>
                           <p className="text-sm">Add friends to see their items here</p>
                         </div>
-                        ) : (
-                          <div className="flex-1 overflow-y-auto">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              {friendItems
-                                .filter(item => !rejectedFriendItems.includes(item.id))
-                                .map((item) => (
-                              <ItemCard
-                                key={item.id}
-                                id={item.id}
-                                name={item.name}
-                                image={item.image}
-                                  liked={item.liked}
-                                  onSelect={() => handleOpenItemModal(item)}
-                                  onLike={() => handleLikeFriendItem(item.id)}
-                                  onReject={() => handleRejectFriendItem(item.id)}
-                                  showLikeButton={true}
-                              />
-                            ))}
-                          </div>
+                      ) : (
+                        <div className="flex-1 overflow-hidden">
+                          <FriendItemsCarousel
+                            items={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
+                            onLikeItem={handleLikeFriendItem}
+                            title=""
+                          />
                         </div>
                       )}
                     </div>
