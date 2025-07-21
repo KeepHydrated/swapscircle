@@ -141,6 +141,11 @@ const OtherPersonProfile: React.FC = () => {
 
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
+  
+  // Reset tab to 'available' when userId changes
+  useEffect(() => {
+    setActiveTab('available');
+  }, [userId]);
   // State for popup
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
   // State to track liked items
