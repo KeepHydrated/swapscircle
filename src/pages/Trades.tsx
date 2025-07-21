@@ -37,11 +37,7 @@ const Trades = () => {
       
       const { data, error } = await supabase
         .from('reviews')
-        .select(`
-          *,
-          reviewer:profiles!reviewer_id(username, avatar_url),
-          reviewee:profiles!reviewee_id(username, avatar_url)
-        `)
+        .select('*')
         .in('trade_conversation_id', trades.map(t => t.id));
       
       if (error) {
