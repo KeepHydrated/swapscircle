@@ -84,24 +84,32 @@ const Trades = () => {
             {getStatusBadge(trade)}
           </div>
 
-          <div className="flex items-center justify-center mb-3">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-start space-x-4 mb-3">
+            <div className="flex flex-col items-center">
               <img 
                 src={trade.requester_item?.image_url} 
                 alt={trade.requester_item?.name}
-                className="w-12 h-12 object-cover rounded"
+                className="w-12 h-12 object-cover rounded mb-1"
               />
+              <span className="text-sm text-gray-600 font-medium text-center">
+                {trade.requester_item?.name}
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-center flex-1">
               <ArrowUpDown className="w-4 h-4 text-gray-400" />
+            </div>
+            
+            <div className="flex flex-col items-center">
               <img 
                 src={trade.owner_item?.image_url} 
                 alt={trade.owner_item?.name}
-                className="w-12 h-12 object-cover rounded"
+                className="w-12 h-12 object-cover rounded mb-1"
               />
+              <span className="text-sm text-gray-600 font-medium text-center">
+                {trade.owner_item?.name}
+              </span>
             </div>
-          </div>
-
-          <div className="text-sm text-gray-600 mb-3 text-center">
-            <strong>{trade.requester_item?.name}</strong> ↔ <strong>{trade.owner_item?.name}</strong>
           </div>
 
           <div className="flex space-x-2">
