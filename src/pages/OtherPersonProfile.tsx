@@ -10,6 +10,8 @@ import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonP
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { likeItem, unlikeItem, isItemLiked } from '@/services/authService';
+import { toast } from 'sonner';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -41,6 +43,10 @@ const OtherPersonProfile: React.FC = () => {
       setIsLoading(true);
       console.log('Fetching profile for userId:', userId);
       try {
+        // Get current user for friend status checking
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        setCurrentUserId(currentUser?.id || null);
+
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -79,6 +85,20 @@ const OtherPersonProfile: React.FC = () => {
         if (itemsData) {
           console.log('Fetched items data:', itemsData);
           setUserItems(itemsData);
+          
+          // Load liked status for each item if user is logged in
+          if (currentUser) {
+            const likedStatus: Record<string, boolean> = {};
+            for (const item of itemsData) {
+              try {
+                const liked = await isItemLiked(item.id);
+                likedStatus[item.id] = liked;
+              } catch (e) {
+                likedStatus[item.id] = false;
+              }
+            }
+            setLikedItems(likedStatus);
+          }
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -98,6 +118,7 @@ const OtherPersonProfile: React.FC = () => {
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   // State for friendship status - defaulting to false (not friends)
   const [isFriend, setIsFriend] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
@@ -115,12 +136,56 @@ const OtherPersonProfile: React.FC = () => {
     setPopupItem(null);
   };
 
-  // Handle liking an item
-  const handleLikeItem = (id: string) => {
-    setLikedItems(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+  // Handle liking an item - now with real backend calls
+  const handleLikeItem = async (id: string) => {
+    if (!currentUserId) {
+      toast.error('Please log in to like items');
+      return;
+    }
+
+    if (!isFriend) {
+      toast.error('You must be friends to like items from this profile');
+      return;
+    }
+
+    const currentLikedStatus = likedItems[id] || false;
+
+    try {
+      // Optimistically update UI
+      setLikedItems(prev => ({
+        ...prev,
+        [id]: !currentLikedStatus
+      }));
+
+      if (currentLikedStatus) {
+        // Unlike the item
+        const success = await unlikeItem(id);
+        if (!success) {
+          // Revert on failure
+          setLikedItems(prev => ({
+            ...prev,
+            [id]: currentLikedStatus
+          }));
+        }
+      } else {
+        // Like the item
+        const result = await likeItem(id);
+        if (!result || !result.success) {
+          // Revert on failure
+          setLikedItems(prev => ({
+            ...prev,
+            [id]: currentLikedStatus
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error liking/unliking item:', error);
+      // Revert optimistic update
+      setLikedItems(prev => ({
+        ...prev,
+        [id]: currentLikedStatus
+      }));
+    }
   };
 
   // Update items with liked status
