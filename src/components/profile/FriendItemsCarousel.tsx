@@ -81,6 +81,9 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 
   return (
     <div className="relative w-full h-full flex flex-col">
+      <div className="text-center p-4 bg-red-500 text-white font-bold">
+        FRIENDS CAROUSEL IS WORKING - YOU SHOULD SEE NAVIGATION ARROWS
+      </div>
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       
       <div className="flex-grow">
