@@ -137,6 +137,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
   // Use fullItem or fallback to item - but when skipDataFetch is true, always use item
   const displayItem = skipDataFetch ? item : (fullItem || item);
+  
+  // Ensure consistent image source to prevent flashing
+  const imageSource = displayItem?.image || displayItem?.image_url;
 
   const handleLikeClick = () => {
     onLikeClick(item);
@@ -177,7 +180,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
             <img
-              src={displayItem.image || displayItem.image_url}
+              src={imageSource}
               alt={displayItem.name}
               className="object-cover w-full h-full"
             />
