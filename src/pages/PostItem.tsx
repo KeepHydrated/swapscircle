@@ -235,14 +235,27 @@ const PostItem: React.FC = () => {
           
           {/* What You're Looking For Column */}
           <div className="space-y-6">
-            <div className="flex items-center mb-6">
-              <div className="bg-purple-50 p-3 rounded-full mr-4">
-                <Heart className="h-6 w-6 text-purple-600" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="bg-purple-50 p-3 rounded-full mr-4">
+                  <Heart className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
+                  <p className="text-gray-600">Describe what you'd like to receive in return</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
-                <p className="text-gray-600">Describe what you'd like to receive in return</p>
-              </div>
+              
+              {/* Load Saved Preferences Button - moved to top right */}
+              {savedPreferences.length > 0 && (
+                <Button 
+                  onClick={() => setShowSavedPreferences(!showSavedPreferences)}
+                  variant="outline"
+                  className="bg-white shadow-sm hover:shadow-md border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition-all duration-200"
+                >
+                  {showSavedPreferences ? 'Hide Saved Preferences' : 'Load Saved Preferences'}
+                </Button>
+              )}
             </div>
             
             {/* Saved preferences list */}
@@ -344,18 +357,6 @@ const PostItem: React.FC = () => {
         onAddNewItem={addNewItem}
       />
 
-      {/* Button to show saved preferences */}
-      {savedPreferences.length > 0 && (
-        <div className="fixed bottom-6 left-6 z-50">
-          <Button 
-            onClick={() => setShowSavedPreferences(!showSavedPreferences)}
-            variant="outline"
-            className="bg-white shadow-lg hover:shadow-xl border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition-all duration-200"
-          >
-            {showSavedPreferences ? 'Hide Saved Preferences' : 'Load Saved Preferences'}
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
