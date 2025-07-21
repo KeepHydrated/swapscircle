@@ -12,11 +12,14 @@ import { useNavigate } from 'react-router-dom';
 import { Clock, MessageCircle, CheckCircle, XCircle, Star, ArrowLeftRight } from 'lucide-react';
 import { format } from 'date-fns';
 import ReviewModal from '@/components/trade/ReviewModal';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
 
 const Trades = () => {
   const navigate = useNavigate();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedTradeForReview, setSelectedTradeForReview] = useState<any>(null);
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const { data: trades = [], isLoading } = useQuery({
     queryKey: ['trade-conversations'],
@@ -89,7 +92,11 @@ const Trades = () => {
               <img 
                 src={trade.requester_item?.image_url} 
                 alt={trade.requester_item?.name}
-                className="w-12 h-12 object-cover rounded mb-1"
+                className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                onClick={() => {
+                  setSelectedItem(trade.requester_item);
+                  setShowItemModal(true);
+                }}
               />
               <span className="text-sm text-gray-600 font-medium text-center">
                 {trade.requester_item?.name}
@@ -104,7 +111,11 @@ const Trades = () => {
               <img 
                 src={trade.owner_item?.image_url} 
                 alt={trade.owner_item?.name}
-                className="w-12 h-12 object-cover rounded mb-1"
+                className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                onClick={() => {
+                  setSelectedItem(trade.owner_item);
+                  setShowItemModal(true);
+                }}
               />
               <span className="text-sm text-gray-600 font-medium text-center">
                 {trade.owner_item?.name}
@@ -249,6 +260,18 @@ const Trades = () => {
             revieweeName={selectedTradeForReview.requester_profile?.id === selectedTradeForReview.owner_profile?.id 
               ? selectedTradeForReview.owner_profile?.username 
               : (selectedTradeForReview.requester_profile?.username || selectedTradeForReview.owner_profile?.username)}
+          />
+        )}
+
+        {/* Item Modal */}
+        {showItemModal && selectedItem && (
+          <ExploreItemModal
+            item={selectedItem}
+            open={showItemModal}
+            onClose={() => {
+              setShowItemModal(false);
+              setSelectedItem(null);
+            }}
           />
         )}
       </div>
