@@ -268,6 +268,7 @@ const Trades = () => {
           <ExploreItemModal
             item={selectedItem}
             open={showItemModal}
+            hideActions={true}
             onClose={() => {
               setShowItemModal(false);
               setSelectedItem(null);
