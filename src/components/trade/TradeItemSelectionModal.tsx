@@ -46,6 +46,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           .from('items')
           .select('*')
           .eq('user_id', session.session.user.id)
+          .eq('is_available', true) // Only show available items
           .order('created_at', { ascending: false });
 
         if (error) {

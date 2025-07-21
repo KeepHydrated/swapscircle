@@ -21,7 +21,8 @@ export function useDbItems() {
       try {
         const { data, error } = await supabase
           .from('items')
-          .select('id, name, image_url, category, condition, description, tags');
+          .select('id, name, image_url, category, condition, description, tags')
+          .eq('is_available', true); // Only show available items
 
         if (error) throw error;
 

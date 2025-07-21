@@ -69,7 +69,8 @@ const OtherPersonProfile: React.FC = () => {
         const { data: itemsData, error: itemsError } = await supabase
           .from('items')
           .select('*')
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .eq('is_available', true); // Only show available items
         
         if (profileError) {
           console.error('Error fetching profile:', profileError);

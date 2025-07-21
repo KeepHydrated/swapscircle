@@ -70,11 +70,12 @@ const Home: React.FC = () => {
         req.requester_id === user.id ? req.recipient_id : req.requester_id
       );
 
-      // Fetch items from all friends and their profiles separately
+      // Fetch available items from all friends and their profiles separately
       const { data: friendItemsData, error: itemsError } = await supabase
         .from('items')
         .select('*')
-        .in('user_id', friendIds);
+        .in('user_id', friendIds)
+        .eq('is_available', true); // Only show available items
 
       if (itemsError) {
         console.error('Error fetching friend items:', itemsError);

@@ -109,7 +109,8 @@ const UserProfile: React.FC = () => {
         const { data: items, error: itemsError } = await supabase
           .from('items')
           .select('*')
-          .eq('user_id', userProfile.id);
+          .eq('user_id', userProfile.id)
+          .eq('is_available', true); // Only show available items
 
         if (itemsError) {
           console.error('Error fetching items:', itemsError);
