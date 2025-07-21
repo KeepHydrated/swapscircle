@@ -302,19 +302,26 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         onClick={handleProfileClick}
                       />
                     )}
-                    <div>
-                      <span 
-                        className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
-                        onClick={handleProfileClick}
-                      >
-                        {userProfile.name || userProfile.username || "Unknown User"}
-                      </span>
-                       {memberSince && (
-                         <div className="flex text-xs text-gray-500 mt-1">
-                           <span>Since {memberSince}</span>
-                         </div>
-                       )}
-                    </div>
+                     <div>
+                       <span 
+                         className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                         onClick={handleProfileClick}
+                       >
+                         {(() => {
+                           console.log('Rendering profile name. userProfile:', userProfile);
+                           console.log('userProfile.name:', userProfile.name);
+                           console.log('userProfile.username:', userProfile.username);
+                           const displayName = userProfile.name || userProfile.username || "Unknown User";
+                           console.log('Final display name:', displayName);
+                           return displayName;
+                         })()}
+                       </span>
+                        {memberSince && (
+                          <div className="flex text-xs text-gray-500 mt-1">
+                            <span>Since {memberSince}</span>
+                          </div>
+                        )}
+                     </div>
                   </div>
                 )}
               </>
