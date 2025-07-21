@@ -303,9 +303,10 @@ const Home: React.FC = () => {
               {/* Right Column - Matches and Friends Items */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
                 <Tabs defaultValue="matches" className="h-full flex flex-col">
-                  <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsList className="grid w-full grid-cols-3 mb-4">
                     <TabsTrigger value="matches">Matches</TabsTrigger>
                     <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                    <TabsTrigger value="test">Test</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="matches" className="flex-1 mt-0">
@@ -359,6 +360,23 @@ const Home: React.FC = () => {
                         </div>
                       )}
                     </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="test" className="flex-1 mt-0">
+                    {selectedUserItem ? (
+                      <Matches
+                        matches={matches}
+                        selectedItemName={`Test - ${selectedUserItem.name}`}
+                      />
+                    ) : (
+                      <div className="h-full flex flex-col">
+                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                          <div className="text-4xl mb-3">🧪</div>
+                          <p className="text-base font-medium mb-1">No item selected</p>
+                          <p className="text-sm">Select an item to see test matches</p>
+                        </div>
+                      </div>
+                    )}
                   </TabsContent>
                 </Tabs>
               </div>
