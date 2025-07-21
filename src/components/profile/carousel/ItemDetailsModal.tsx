@@ -131,7 +131,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         {canNavigatePrev && (
           <button
             onClick={onNavigatePrev}
-            className="absolute -left-16 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
             aria-label="Previous item"
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -141,7 +141,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         {canNavigateNext && (
           <button
             onClick={onNavigateNext}
-            className="absolute -right-16 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
             aria-label="Next item"
           >
             <ArrowRight className="w-6 h-6 text-gray-700" />
