@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
 import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
+import { fetchUserReviews } from '@/services/authService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, MapPin, Clock } from 'lucide-react';
+import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 import MessageInput from '@/components/messages/MessageInput';
 
@@ -36,6 +37,13 @@ const Messages = () => {
     queryKey: ['trade-messages', activeConversation],
     queryFn: () => activeConversation ? fetchTradeMessages(activeConversation) : Promise.resolve([]),
     enabled: !!activeConversation,
+  });
+
+  // Fetch reviews for the active chat partner
+  const { data: partnerReviews = [] } = useQuery({
+    queryKey: ['partner-reviews', activeChat?.otherUserProfile?.id],
+    queryFn: () => activeChat?.otherUserProfile?.id ? fetchUserReviews(activeChat.otherUserProfile.id) : Promise.resolve([]),
+    enabled: !!activeChat?.otherUserProfile?.id,
   });
 
   // Send message mutation
