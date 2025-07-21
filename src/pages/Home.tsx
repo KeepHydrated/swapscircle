@@ -306,7 +306,7 @@ const Home: React.FC = () => {
                   <TabsList className="grid w-full grid-cols-3 mb-4">
                     <TabsTrigger value="matches">Matches</TabsTrigger>
                     <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    <TabsTrigger value="test">Test</TabsTrigger>
+                    <TabsTrigger value="test">🧪 Test</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="matches" className="flex-1 mt-0">
