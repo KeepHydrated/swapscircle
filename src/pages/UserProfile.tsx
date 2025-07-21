@@ -252,7 +252,7 @@ const UserProfile: React.FC = () => {
                 <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
               </div>
             ) : (
-              <ProfileItemsManager initialItems={userItems} />
+              <ProfileItemsManager initialItems={userItems} userProfile={userProfile} />
             )}
           </TabsContent>
           <TabsContent value="reviews" className="p-6">

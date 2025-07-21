@@ -20,6 +20,7 @@ interface ExploreItemModalProps {
   totalItems?: number;
   hideActions?: boolean; // New prop to hide X and heart buttons
   disableActions?: boolean; // New prop to show but disable X and heart buttons
+  userProfile?: UserProfile; // Optional pre-loaded user profile to skip API call
 }
 
 interface UserProfile {
@@ -42,6 +43,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   totalItems,
   hideActions = false,
   disableActions = false,
+  userProfile: preloadedUserProfile,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -60,6 +62,18 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     const fetchItemDetails = async () => {
       setLoading(true);
       try {
+        // If we have pre-loaded user profile (own items), skip API calls
+        if (preloadedUserProfile && disableActions) {
+          console.log('MODAL DEBUG: Using preloaded data for own item');
+          setFullItem({
+            ...item,
+            image: item.image || (item as any)?.image_url
+          });
+          setUserProfile(preloadedUserProfile);
+          setLoading(false);
+          return;
+        }
+
         // Fetch complete item details
         console.log('MODAL DEBUG: Fetching item details for ID:', item.id);
         const { data: itemData, error: itemError } = await supabase

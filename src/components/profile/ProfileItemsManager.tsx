@@ -20,9 +20,17 @@ import { deleteItem, hideItem, unhideItem } from '@/services/authService';
 interface ProfileItemsManagerProps {
   initialItems: Item[];
   onItemClick?: (itemId: string) => void;
+  userProfile?: {
+    id: string;
+    name: string;
+    avatar_url: string;
+    bio: string;
+    location: string;
+    created_at: string;
+  };
 }
 
-const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems, onItemClick }) => {
+const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems, onItemClick, userProfile }) => {
   const navigate = useNavigate();
   const [items, setItems] = useState<Item[]>(initialItems);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
@@ -141,6 +149,12 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
             setSelectedItem(null);
           }}
           disableActions={true} // Show buttons but disable them for own items
+          userProfile={userProfile ? {
+            name: userProfile.name,
+            avatar_url: userProfile.avatar_url,
+            username: userProfile.name,
+            created_at: userProfile.created_at
+          } : undefined}
         />
       )}
     </>
