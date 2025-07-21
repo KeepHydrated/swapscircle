@@ -4,56 +4,134 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
-
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users, ArrowLeft } from 'lucide-react';
 import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { mockUsers, mockUserItems } from '@/data/mockUsers';
-import { ProfileUser } from '@/types/profile';
+import { supabase } from '@/integrations/supabase/client';
+import { fetchUserReviews } from '@/services/authService';
+import { MatchItem } from '@/types/item';
 import { toast } from 'sonner';
-
-// Separate data into dedicated files
-import { getUserReviews } from '@/data/mockReviews';
-import { getUserFriends } from '@/data/mockFriends';
 
 const OtherProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   
-  // Default to user1 if no userId is provided
-  const safeUserId = userId || "user1";
-  
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Get user data
-  const [profile, setProfile] = useState<ProfileUser | undefined>(mockUsers[safeUserId]);
-  
-  // Get user's items for trade
-  const [availableItems, setAvailableItems] = useState(
-    mockUserItems[safeUserId] || []
-  );
-  
+  // State for profile data
+  const [profile, setProfile] = useState<any>(null);
+  const [userItems, setUserItems] = useState<MatchItem[]>([]);
+  const [userReviews, setUserReviews] = useState<any[]>([]);
+  const [userFriends, setUserFriends] = useState<any[]>([]);
 
-  // Get user's reviews and friends
-  const reviews = getUserReviews(safeUserId);
-  const friends = getUserFriends(safeUserId);
-
-  // Effect to show toast when user is not found
+  // Fetch user profile and data
   useEffect(() => {
-    if (!profile && userId) {
-      toast.error(`User with ID "${userId}" not found`);
-    }
-  }, [profile, userId]);
+    const fetchUserData = async () => {
+      if (!userId) {
+        setError("No user ID provided");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch user profile
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, username, name, avatar_url, bio, location, created_at')
+          .eq('id', userId)
+          .maybeSingle();
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          setError("Failed to fetch user profile");
+          setLoading(false);
+          return;
+        }
+
+        if (!profileData) {
+          setError("User not found");
+          setLoading(false);
+          return;
+        }
+
+        // Set profile data
+        setProfile({
+          id: profileData.id,
+          name: profileData.name || profileData.username || "User",
+          description: profileData.bio || 'No bio available',
+          avatar_url: profileData.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop',
+          location: profileData.location || 'Location not specified',
+          memberSince: profileData.created_at ? new Date(profileData.created_at).getFullYear().toString() : new Date().getFullYear().toString(),
+          rating: 0, // Will calculate from reviews
+          reviewCount: 0, // Will calculate from reviews
+          friendStatus: 'none' as FriendRequestStatus
+        });
+
+        // Fetch user's items (only visible ones)
+        const { data: itemsData, error: itemsError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('is_available', true)
+          .eq('is_hidden', false);
+
+        if (itemsError) {
+          console.error('Error fetching items:', itemsError);
+        } else if (itemsData) {
+          const formattedItems = itemsData.map(item => ({
+            id: item.id,
+            name: item.name,
+            image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+            category: item.category,
+            condition: item.condition,
+            description: item.description,
+            tags: item.tags,
+            liked: false,
+          }));
+          setUserItems(formattedItems);
+        }
+
+        // Fetch user's reviews
+        const reviews = await fetchUserReviews(userId);
+        setUserReviews(reviews);
+
+        // Update profile with review data
+        if (reviews.length > 0) {
+          const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+          setProfile((prev: any) => ({
+            ...prev,
+            rating: Math.round(averageRating * 10) / 10,
+            reviewCount: reviews.length
+          }));
+        }
+
+        // Friends functionality not implemented yet
+        setUserFriends([]);
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError("Failed to load user data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   const handleGoBack = () => {
     navigate(-1);
   };
 
-  // Handle friend request status change
   const handleFriendStatusChange = (status: FriendRequestStatus) => {
     if (profile) {
       setProfile({
@@ -63,18 +141,28 @@ const OtherProfile: React.FC = () => {
     }
   };
 
-  if (!profile) {
+  const handleItemClick = () => {}; // Empty function for ItemsForTradeTab
+
+  if (loading) {
     return (
       <MainLayout>
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">User not found</h1>
-          <Button onClick={handleGoBack}>Go Back</Button>
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       </MainLayout>
     );
   }
 
-  const handleItemClick = () => {}; // Empty function for ItemsForTradeTab
+  if (error || !profile) {
+    return (
+      <MainLayout>
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-4">{error || "User not found"}</h1>
+          <Button onClick={handleGoBack}>Go Back</Button>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -107,8 +195,9 @@ const OtherProfile: React.FC = () => {
             reviewCount: profile.reviewCount,
             location: profile.location,
             memberSince: profile.memberSince,
+            avatar_url: profile.avatar_url,
           }}
-          friendCount={friends.length}
+          friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
         />
@@ -144,18 +233,17 @@ const OtherProfile: React.FC = () => {
 
           {/* Available Items Tab Content */}
           <TabsContent value="available" className="p-6">
-            <ItemsForTradeTab items={availableItems} onItemClick={handleItemClick} />
+            <ItemsForTradeTab items={userItems} onItemClick={handleItemClick} />
           </TabsContent>
 
-          
           {/* Reviews Tab Content */}
           <TabsContent value="reviews" className="p-6">
-            <ReviewsTab reviews={reviews} />
+            <ReviewsTab reviews={userReviews} />
           </TabsContent>
           
           {/* Friends Tab Content */}
           <TabsContent value="friends" className="p-6">
-            <FriendsTab friends={friends} />
+            <FriendsTab friends={userFriends} />
           </TabsContent>
         </Tabs>
       </div>
