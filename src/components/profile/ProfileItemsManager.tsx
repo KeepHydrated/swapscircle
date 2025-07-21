@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { deleteItem } from '@/services/authService'; // <-- FIX: properly import
+import { deleteItem, hideItem } from '@/services/authService'; // <-- FIX: properly import
 
 interface ProfileItemsManagerProps {
   initialItems: Item[];
@@ -67,6 +67,15 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     setIsDeleteDialogOpen(true);
   };
 
+  // Function to handle hide icon click
+  const handleHideClick = async (item: Item) => {
+    const success = await hideItem(item.id);
+    if (success) {
+      // Remove the item from the visible list immediately
+      setItems(prevItems => prevItems.filter(prevItem => prevItem.id !== item.id));
+    }
+  };
+
   // Delete item from DB
   const confirmDelete = async () => {
     if (itemToDelete) {
@@ -87,6 +96,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
         onEditClick={handleEditClick}
         onCopyClick={handleCopyClick}
         onDeleteClick={handleDeleteClick}
+        onHideClick={handleHideClick}
       />
 
       {/* Delete Confirmation Dialog */}

@@ -576,12 +576,58 @@ export const deleteItem = async (itemId: string) => {
     const { error } = await supabase.from('items').delete().eq('id', itemId);
     if (error) {
       toast.error('Error deleting item');
+      console.error('Error deleting item:', error);
       return false;
     }
-    toast.success('Item deleted!');
     return true;
   } catch (error) {
-    toast.error('Error deleting item');
+    console.error('Error deleting item:', error);
+    toast.error('Failed to delete item');
+    return false;
+  }
+};
+
+// Hide/unhide item functions
+export const hideItem = async (itemId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('items')
+      .update({ is_hidden: true, updated_at: new Date().toISOString() })
+      .eq('id', itemId);
+
+    if (error) {
+      toast.error('Error hiding item');
+      console.error('Error hiding item:', error);
+      return false;
+    }
+    
+    toast.success('Item hidden successfully');
+    return true;
+  } catch (error) {
+    console.error('Error hiding item:', error);
+    toast.error('Failed to hide item');
+    return false;
+  }
+};
+
+export const unhideItem = async (itemId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('items')
+      .update({ is_hidden: false, updated_at: new Date().toISOString() })
+      .eq('id', itemId);
+
+    if (error) {
+      toast.error('Error unhiding item');
+      console.error('Error unhiding item:', error);
+      return false;
+    }
+    
+    toast.success('Item shown successfully');
+    return true;
+  } catch (error) {
+    console.error('Error unhiding item:', error);
+    toast.error('Failed to show item');
     return false;
   }
 };

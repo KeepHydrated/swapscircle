@@ -70,7 +70,8 @@ const OtherPersonProfile: React.FC = () => {
           .from('items')
           .select('*')
           .eq('user_id', userId)
-          .eq('is_available', true); // Only show available items
+          .eq('is_available', true) // Only show available items
+          .eq('is_hidden', false); // Only show non-hidden items
         
         if (profileError) {
           console.error('Error fetching profile:', profileError);

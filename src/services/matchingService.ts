@@ -7,12 +7,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
   }
 
   try {
-    // Get all available items from other users
+    // Get all available and visible items from other users
     const { data: allItems, error: itemsError } = await supabase
       .from('items')
       .select('*')
       .neq('user_id', currentUserId)
-      .eq('is_available', true); // Only show available items
+      .eq('is_available', true) // Only show available items
+      .eq('is_hidden', false); // Only show non-hidden items
 
     if (itemsError) {
       console.error('Error fetching items:', itemsError);

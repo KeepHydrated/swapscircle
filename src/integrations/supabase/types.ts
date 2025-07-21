@@ -50,6 +50,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_available: boolean
+          is_hidden: boolean
           looking_for_categories: string[] | null
           looking_for_conditions: string[] | null
           looking_for_description: string | null
@@ -68,6 +69,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_available?: boolean
+          is_hidden?: boolean
           looking_for_categories?: string[] | null
           looking_for_conditions?: string[] | null
           looking_for_description?: string | null
@@ -86,6 +88,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_available?: boolean
+          is_hidden?: boolean
           looking_for_categories?: string[] | null
           looking_for_conditions?: string[] | null
           looking_for_description?: string | null
