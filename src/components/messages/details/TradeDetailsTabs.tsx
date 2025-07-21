@@ -162,7 +162,6 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 
   return (
     <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full">
-      <h3 className="font-medium mb-4">Trade Details</h3>
       
       {/* Item Selector with consistent height and perfect alignment */}
       <div className="mb-4">
