@@ -248,17 +248,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
                     <img
-                      src={userProfile.avatar_url || "https://randomuser.me/api/portraits/women/44.jpg"}
-                      alt={userProfile.name || userProfile.username}
-                      className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={handleProfileClick}
+                      src="https://randomuser.me/api/portraits/women/44.jpg"
+                      alt="User"
+                      className="w-11 h-11 rounded-full border object-cover"
                     />
                     <div>
-                      <span 
-                        className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
-                        onClick={handleProfileClick}
-                      >
-                        {userProfile.name || userProfile.username || "Unknown User"}
+                      <span className="font-semibold text-gray-900">
+                        Sarah Chen
                       </span>
                       <span className="ml-2 text-yellow-500 text-xs font-semibold">
                         ★ 4.8{" "}
@@ -267,7 +263,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         </span>
                       </span>
                       <div className="flex text-xs text-gray-500 mt-1 gap-4">
-                        <span>Since {memberSince}</span>
+                        <span>Since 2023</span>
                         <span>· 2.3 mi away</span>
                         <span>· ~1 hr response</span>
                       </div>
