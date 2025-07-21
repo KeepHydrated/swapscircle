@@ -140,7 +140,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
             setIsItemModalOpen(false);
             setSelectedItem(null);
           }}
-          hideActions={true} // Hide X and heart buttons for own items
+          disableActions={true} // Show buttons but disable them for own items
         />
       )}
     </>

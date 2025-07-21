@@ -19,6 +19,7 @@ interface ExploreItemModalProps {
   currentIndex?: number;
   totalItems?: number;
   hideActions?: boolean; // New prop to hide X and heart buttons
+  disableActions?: boolean; // New prop to show but disable X and heart buttons
 }
 
 interface UserProfile {
@@ -40,6 +41,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   currentIndex,
   totalItems,
   hideActions = false,
+  disableActions = false,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -254,16 +256,26 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {!hideActions && (
               <div className="absolute top-4 right-4 flex gap-3 z-20">
                 <button
-                  onClick={onClose}
-                  className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+                  onClick={disableActions ? undefined : onClose}
+                  className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
+                    disableActions 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:bg-gray-50 cursor-pointer'
+                  }`}
                   aria-label="Close"
+                  disabled={disableActions}
                 >
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
                 <button
-                  className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-                  onClick={onLike}
+                  className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
+                    disableActions 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:bg-gray-50 cursor-pointer'
+                  }`}
+                  onClick={disableActions ? undefined : onLike}
                   aria-label={liked ? "Unlike" : "Like"}
+                  disabled={disableActions}
                 >
                   <Heart
                     className={`w-5 h-5 ${liked ? "text-red-500" : "text-gray-400"}`}
