@@ -169,7 +169,10 @@ export const useTradeConversations = () => {
         setConversations(displayConversations);
         setExchangePairs(displayExchangePairs);
 
-        // Handle navigation from trade creation
+        // Handle navigation from trade creation or URL parameters
+        const searchParams = new URLSearchParams(location.search);
+        const conversationParam = searchParams.get('conversation');
+        
         if (location.state?.tradeConversationId && location.state?.newTrade) {
           const newTradeId = location.state.tradeConversationId;
           setActiveConversation(newTradeId);
@@ -184,6 +187,16 @@ export const useTradeConversations = () => {
             title: "Trade conversation started!",
             description: "You can now chat with the item owner.",
           });
+        } else if (conversationParam && displayConversations.find(conv => conv.id === conversationParam)) {
+          // Handle URL parameter ?conversation=xyz
+          console.log('Setting active conversation from URL parameter:', conversationParam);
+          setActiveConversation(conversationParam);
+          
+          // Find the corresponding pair
+          const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === conversationParam);
+          if (pairIndex !== -1) {
+            setSelectedPairId(displayExchangePairs[pairIndex].id);
+          }
         } else if (displayConversations.length > 0) {
           // Set first conversation as active if none is selected
           setActiveConversation(displayConversations[0].id);
@@ -202,7 +215,7 @@ export const useTradeConversations = () => {
     };
 
     loadTradeConversations();
-  }, [location.state]);
+  }, [location.state, location.search]);
 
   const activeChat = conversations.find(conv => conv.id === activeConversation) || 
     { 
