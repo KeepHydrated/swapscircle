@@ -302,13 +302,12 @@ const Home: React.FC = () => {
 
               {/* Right Column - Matches and Friends Items */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <div className="text-red-500 font-bold mb-2">DEBUG: TABS SHOULD BE HERE</div>
                 <Tabs defaultValue="matches" className="h-full flex flex-col">
-                  <TabsList className="grid w-full grid-cols-4 mb-4 bg-yellow-200">
-                    <TabsTrigger value="matches" className="bg-blue-200">Matches</TabsTrigger>
-                    <TabsTrigger value="matches2" className="bg-green-200">Matches 2</TabsTrigger>
-                    <TabsTrigger value="friends" className="bg-pink-200">Friends' Items</TabsTrigger>
-                    <TabsTrigger value="test" className="bg-purple-200">🧪 Test</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-4 mb-4">
+                    <TabsTrigger value="matches">Matches</TabsTrigger>
+                    <TabsTrigger value="matches2">Matches 2</TabsTrigger>
+                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                    <TabsTrigger value="test">🧪 Test</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="matches" className="flex-1 mt-0">
