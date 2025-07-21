@@ -107,6 +107,7 @@ const Matches: React.FC<MatchesProps> = ({
           onNavigateNext={navigateToNextMatch}
           currentIndex={currentMatchIndex}
           totalItems={displayedMatches.length}
+          skipDataFetch={true} // Skip API calls since we already have match data
         />
       )}
     </div>

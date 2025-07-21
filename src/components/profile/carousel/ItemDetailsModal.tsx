@@ -23,6 +23,8 @@ interface ItemDetailsModalProps {
   currentIndex?: number;
   totalItems?: number;
   showProfileInfo?: boolean;
+  preloadedUserProfile?: UserProfile; // Optional pre-loaded user profile to skip API call
+  skipDataFetch?: boolean; // Skip all API calls if we already have the data
 }
 
 const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
@@ -35,6 +37,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   currentIndex,
   totalItems,
   showProfileInfo = true,
+  preloadedUserProfile,
+  skipDataFetch = false,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -46,6 +50,15 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     if (!item?.id || !isOpen) return;
 
     const fetchItemDetails = async () => {
+      // If we should skip data fetch, use the item as-is
+      if (skipDataFetch) {
+        setFullItem(item);
+        if (preloadedUserProfile) {
+          setUserProfile(preloadedUserProfile);
+        }
+        return;
+      }
+
       setLoading(true);
       try {
         // Fetch complete item details
@@ -65,8 +78,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           });
         }
 
-        // Fetch user profile
-        if (itemData?.user_id) {
+        // Fetch user profile if not preloaded
+        if (!preloadedUserProfile && itemData?.user_id) {
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('name, avatar_url, username, created_at')
@@ -83,6 +96,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           } else {
             setUserProfile(profileData);
           }
+        } else if (preloadedUserProfile) {
+          setUserProfile(preloadedUserProfile);
         }
       } catch (error) {
         console.error('Error fetching modal data:', error);
