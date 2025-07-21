@@ -26,6 +26,7 @@ const Home: React.FC = () => {
   
   // Tab state
   const [activeTab, setActiveTab] = useState('matches');
+  console.log('DEBUG: Current activeTab:', activeTab);
   
   // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
@@ -251,6 +252,7 @@ const Home: React.FC = () => {
   // Handle matches undo availability callback
   const handleMatchesUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
     console.log('DEBUG: handleMatchesUndoAvailable called - available:', available, 'undoFn:', undoFn);
+    console.log('DEBUG: Current activeTab when callback called:', activeTab);
     setMatchesUndoAvailable(available);
     setMatchesUndoFn(() => undoFn);
   };
@@ -344,7 +346,10 @@ const Home: React.FC = () => {
         <div className="flex-1 min-h-0">
           {user && supabaseConfigured ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-              <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={setActiveTab}>
+              <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={(value) => {
+                console.log('DEBUG: Tab changed to:', value);
+                setActiveTab(value);
+              }}>
                 <div className="flex justify-between items-center mb-4">
                   <TabsList className="grid grid-cols-4">
                     <TabsTrigger value="matches">Matches</TabsTrigger>
