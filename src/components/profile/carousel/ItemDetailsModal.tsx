@@ -1,8 +1,17 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from "lucide-react";
 import { MatchItem } from '@/types/item';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from "react-router-dom";
+
+interface UserProfile {
+  name: string;
+  avatar_url: string;
+  username?: string;
+  created_at: string;
+}
 
 interface ItemDetailsModalProps {
   item: MatchItem | null;
@@ -27,7 +36,82 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   totalItems,
   showProfileInfo = true,
 }) => {
+  const navigate = useNavigate();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [fullItem, setFullItem] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch complete item details and user profile from database
+  useEffect(() => {
+    if (!item?.id || !isOpen) return;
+
+    const fetchItemDetails = async () => {
+      setLoading(true);
+      try {
+        // Fetch complete item details
+        const { data: itemData, error: itemError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('id', item.id)
+          .single();
+
+        if (itemError) {
+          console.error('Error fetching item:', itemError);
+          setFullItem(item);
+        } else {
+          setFullItem({
+            ...itemData,
+            image: itemData.image_url || item.image
+          });
+        }
+
+        // Fetch user profile
+        if (itemData?.user_id) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('name, avatar_url, username, created_at')
+            .eq('id', itemData.user_id)
+            .single();
+
+          if (profileError) {
+            console.error('Error fetching user profile:', profileError);
+            setUserProfile({
+              name: "Unknown User",
+              avatar_url: "",
+              created_at: new Date().toISOString()
+            });
+          } else {
+            setUserProfile(profileData);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching modal data:', error);
+        setFullItem(item);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItemDetails();
+  }, [item?.id, isOpen]);
+
+  // Calculate user stats - only show if we have actual data
+  const memberSince = userProfile?.created_at 
+    ? new Date(userProfile.created_at).getFullYear()
+    : null;
+
+  // Handle navigation to user profile
+  const handleProfileClick = () => {
+    if (fullItem?.user_id) {
+      onClose(); // Close the modal first
+      navigate(`/other-person-profile?userId=${fullItem.user_id}`);
+    }
+  };
+
   if (!item) return null;
+
+  // Use fullItem or fallback to item
+  const displayItem = fullItem || item;
 
   const handleLikeClick = () => {
     onLikeClick(item);
@@ -89,70 +173,86 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
             <img
-              src={item.image}
-              alt={item.name}
+              src={displayItem.image || displayItem.image_url}
+              alt={displayItem.name}
               className="object-cover w-full h-full"
             />
           </div>
           
           {/* Details */}
           <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
-            {/* Title */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-4">
-              {item.name}
-            </h2>
-            
-            {/* Description */}
-            <p className="text-gray-700 text-base mb-6 leading-relaxed">
-              {item.description ||
-                "Beautiful vintage 35mm film camera in excellent working condition. Perfect for photography enthusiasts."}
-            </p>
-            
-            {/* Tags in 2x2 grid */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="flex items-center gap-3 text-gray-600">
-                <Tag className="w-4 h-4" />
-                <span className="text-sm">{item.category || "Electronics"}</span>
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
               </div>
-              <div className="flex items-center gap-3 text-gray-600">
-                <Camera className="w-4 h-4" />
-                <span className="text-sm">{item.tags?.[0] || "Cameras"}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600">
-                <Shield className="w-4 h-4" />
-                <span className="text-sm">{item.condition || "Excellent"}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600">
-                <DollarSign className="w-4 h-4" />
-                <span className="text-sm">150 - 200</span>
-              </div>
-            </div>
-            
-            {/* User profile info - only show if showProfileInfo is true */}
-            {showProfileInfo && (
-              <div className="flex gap-3 items-center mt-auto pt-6">
-                <img
-                  src="https://randomuser.me/api/portraits/women/44.jpg"
-                  alt="User"
-                  className="w-11 h-11 rounded-full border object-cover"
-                />
-                <div>
-                  <span className="font-semibold text-gray-900">
-                    Sarah Chen
-                  </span>
-                  <span className="ml-2 text-yellow-500 text-xs font-semibold">
-                    ★ 4.8{" "}
-                    <span className="text-gray-400 font-normal ml-1">
-                      (42)
-                    </span>
-                  </span>
-                  <div className="flex text-xs text-gray-500 mt-1 gap-4">
-                    <span>Since 2023</span>
-                    <span>· 2.3 mi away</span>
-                    <span>· ~1 hr response</span>
+            ) : (
+              <>
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-4">
+                  {displayItem.name}
+                </h2>
+                
+                {/* Description */}
+                <p className="text-gray-700 text-base mb-6 leading-relaxed">
+                  {displayItem.description || "No description provided."}
+                </p>
+                
+                {/* Tags in 2x2 grid */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <Tag className="w-4 h-4" />
+                    <span className="text-sm">{displayItem.category || "No category"}</span>
                   </div>
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <Camera className="w-4 h-4" />
+                    <span className="text-sm">{displayItem.tags?.[0] || "No tags"}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <Shield className="w-4 h-4" />
+                    <span className="text-sm">{displayItem.condition || "Not specified"}</span>
+                  </div>
+                  {(displayItem.price_range_min || displayItem.price_range_max) && (
+                    <div className="flex items-center gap-3 text-gray-600">
+                      <DollarSign className="w-4 h-4" />
+                      <span className="text-sm">
+                        {displayItem.price_range_min && displayItem.price_range_max 
+                          ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
+                          : displayItem.price_range_min 
+                            ? `From $${displayItem.price_range_min}`
+                            : `Up to $${displayItem.price_range_max}`
+                        }
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
+                
+                {/* User profile info - only show if showProfileInfo is true */}
+                {showProfileInfo && userProfile && (
+                  <div className="flex gap-3 items-center mt-auto pt-6">
+                    {userProfile.avatar_url && (
+                      <img
+                        src={userProfile.avatar_url}
+                        alt={userProfile.name || userProfile.username}
+                        className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={handleProfileClick}
+                      />
+                    )}
+                    <div>
+                      <span 
+                        className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                        onClick={handleProfileClick}
+                      >
+                        {userProfile.name || userProfile.username || "Unknown User"}
+                      </span>
+                      {memberSince && (
+                        <div className="flex text-xs text-gray-500 mt-1">
+                          <span>Since {memberSince}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
