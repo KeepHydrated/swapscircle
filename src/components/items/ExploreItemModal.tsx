@@ -69,12 +69,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         }
 
         // Fetch user profile
-        if (itemData?.user_id) {
-          console.log('Fetching profile for user:', itemData.user_id);
+        const userIdToFetch = itemData?.user_id || (item as any)?.user_id;
+        if (userIdToFetch) {
+          console.log('Fetching profile for user:', userIdToFetch);
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('name, avatar_url, username, created_at')
-            .eq('id', itemData.user_id)
+            .eq('id', userIdToFetch)
             .single();
 
           console.log('Profile data received:', profileData);
@@ -91,6 +92,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           } else {
             setUserProfile(profileData);
           }
+        } else {
+          console.log('No user_id found for profile fetch. Item data:', itemData, 'Original item:', item);
         }
       } catch (error) {
         console.error('Error fetching modal data:', error);
