@@ -373,21 +373,25 @@ const Home: React.FC = () => {
                 </div>
                 
                 <TabsContent value="matches" className="flex-1 mt-0">
-                  {selectedUserItem ? (
-                    <Matches
-                      matches={matches}
-                      selectedItemName={selectedUserItem.name}
-                      onUndoAvailable={handleMatchesUndoAvailable}
-                    />
-                  ) : (
-                    <div className="h-full flex flex-col">
-                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                        <div className="text-4xl mb-3">🔍</div>
-                        <p className="text-base font-medium mb-1">No item selected</p>
-                        <p className="text-sm">Select an item to see matches</p>
+                  {(() => {
+                    console.log('DEBUG: Rendering matches tab - selectedUserItem:', selectedUserItem);
+                    console.log('DEBUG: matches length:', matches.length);
+                    return selectedUserItem ? (
+                      <Matches
+                        matches={matches}
+                        selectedItemName={selectedUserItem.name}
+                        onUndoAvailable={handleMatchesUndoAvailable}
+                      />
+                    ) : (
+                      <div className="h-full flex flex-col">
+                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                          <div className="text-4xl mb-3">🔍</div>
+                          <p className="text-base font-medium mb-1">No item selected</p>
+                          <p className="text-sm">Select an item to see matches</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </TabsContent>
                 
                 <TabsContent value="matches2" className="flex-1 mt-0">
