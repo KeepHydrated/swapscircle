@@ -29,18 +29,6 @@ const Home: React.FC = () => {
   const [friendItemsLoading, setFriendItemsLoading] = useState(false);
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
   const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
-  const [activeTab, setActiveTab] = useState('matches');
-  
-  // State to track undo functionality for matches
-  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
-  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
-  
-  // Handler for matches undo availability
-  const handleMatchesUndoAvailable = (hasActions: boolean, undoFn: () => void) => {
-    console.log('handleMatchesUndoAvailable called:', hasActions, undoFn);
-    setMatchesUndoAvailable(hasActions);
-    setMatchesUndoFn(() => undoFn);
-  };
 
   // Modal state
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -314,45 +302,19 @@ const Home: React.FC = () => {
         <div className="flex-1 min-h-0">
           {user && supabaseConfigured ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-              <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={(value) => setActiveTab(value)}>
-                <div className="flex justify-between items-center mb-4">
-                  <TabsList className="grid grid-cols-4 w-auto">
-                    <TabsTrigger value="matches">Matches</TabsTrigger>
-                    <TabsTrigger value="matches2">Matches 2</TabsTrigger>
-                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    <TabsTrigger value="test">🧪 Test</TabsTrigger>
-                  </TabsList>
-                  
-                  {/* Contextual Undo Button */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      console.log('Undo button clicked, activeTab:', activeTab);
-                      console.log('Friends actions:', lastFriendActions.length);
-                      console.log('Matches undo available:', matchesUndoAvailable);
-                      console.log('Matches undo function:', matchesUndoFn);
-                      
-                      if (activeTab === 'friends') {
-                        handleUndoFriendAction();
-                      } else if (matchesUndoFn) {
-                        matchesUndoFn();
-                      }
-                    }}
-                    disabled={activeTab === 'friends' ? lastFriendActions.length === 0 : !matchesUndoAvailable}
-                    className="flex items-center gap-2"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    Undo ({activeTab === 'friends' ? lastFriendActions.length : matchesUndoAvailable ? 'ON' : 'OFF'})
-                  </Button>
-                </div>
+              <Tabs defaultValue="matches" className="h-full flex flex-col">
+                <TabsList className="grid w-full grid-cols-4 mb-4">
+                  <TabsTrigger value="matches">Matches</TabsTrigger>
+                  <TabsTrigger value="matches2">Matches 2</TabsTrigger>
+                  <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                  <TabsTrigger value="test">🧪 Test</TabsTrigger>
+                </TabsList>
                 
                 <TabsContent value="matches" className="flex-1 mt-0">
                   {selectedUserItem ? (
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
-                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
@@ -370,7 +332,6 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
-                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
@@ -385,6 +346,18 @@ const Home: React.FC = () => {
                 
                 <TabsContent value="friends" className="flex-1 mt-0">
                   <div className="h-full flex flex-col">
+                    <div className="flex justify-end mb-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleUndoFriendAction}
+                        disabled={lastFriendActions.length === 0}
+                        className="flex items-center gap-2"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        Undo
+                      </Button>
+                    </div>
                     {friendItemsLoading ? (
                       <div className="flex-1 flex justify-center items-center">
                         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
