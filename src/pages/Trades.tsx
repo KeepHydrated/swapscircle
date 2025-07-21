@@ -33,6 +33,8 @@ const Trades = () => {
     queryFn: async () => {
       if (trades.length === 0) return [];
       
+      console.log('Fetching reviews for trades:', trades.map(t => t.id));
+      
       const { data, error } = await supabase
         .from('reviews')
         .select(`
@@ -47,6 +49,7 @@ const Trades = () => {
         return [];
       }
       
+      console.log('Fetched reviews:', data);
       return data || [];
     },
     enabled: trades.length > 0,

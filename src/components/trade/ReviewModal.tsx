@@ -25,10 +25,12 @@ const ReviewModal = ({ isOpen, onClose, tradeConversationId, revieweeId, reviewe
     mutationFn: (data: { rating: number; comment?: string }) =>
       createReview(tradeConversationId, revieweeId, data.rating, data.comment),
     onSuccess: () => {
+      console.log('Review submitted successfully, invalidating queries...');
       toast.success('Review submitted successfully!');
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
       queryClient.invalidateQueries({ queryKey: ['trade-reviews'] });
       queryClient.invalidateQueries({ queryKey: ['reviewEligibility', tradeConversationId] });
+      console.log('Queries invalidated');
       onClose();
       setRating(0);
       setComment('');
