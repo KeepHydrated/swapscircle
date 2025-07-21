@@ -126,6 +126,7 @@ const UserProfile: React.FC = () => {
             description: item.description,
             tags: item.tags,
             liked: false,
+            is_hidden: item.is_hidden,
           }));
           setUserItems(formattedItems);
         }
