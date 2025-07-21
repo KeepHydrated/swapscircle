@@ -148,6 +148,9 @@ const UserProfile: React.FC = () => {
       if (userProfile?.id) {
         const reviews = await fetchUserReviews(userProfile.id);
         setUserReviews(reviews);
+        
+        // Update profile key to force ProfileHeader re-render with new review data
+        setProfileKey(prev => prev + 1);
       }
     };
     
@@ -188,10 +191,15 @@ const UserProfile: React.FC = () => {
     );
   }
 
+  // Calculate average rating from reviews
+  const averageRating = userReviews.length > 0 
+    ? Math.round((userReviews.reduce((sum, review) => sum + review.rating, 0) / userReviews.length) * 10) / 10
+    : 0;
+
   const profileData = {
     name: userProfile.name,
     description: userProfile.bio,
-    rating: 0, // Placeholder for now.
+    rating: averageRating,
     reviewCount: userReviews.length,
     location: userProfile.location,
     memberSince: userProfile.created_at
