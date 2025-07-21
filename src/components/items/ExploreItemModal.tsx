@@ -46,17 +46,26 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
-    if (!item?.id || !open) return;
+    if (!item?.id || !open) {
+      console.log('MODAL DEBUG: Skipping fetch - item.id:', item?.id, 'open:', open);
+      return;
+    }
+
+    console.log('MODAL DEBUG: Starting fetch for item:', item);
 
     const fetchItemDetails = async () => {
       setLoading(true);
       try {
         // Fetch complete item details
+        console.log('MODAL DEBUG: Fetching item details for ID:', item.id);
         const { data: itemData, error: itemError } = await supabase
           .from('items')
           .select('*')
           .eq('id', item.id)
           .single();
+
+        console.log('MODAL DEBUG: Item data received:', itemData);
+        console.log('MODAL DEBUG: Item error:', itemError);
 
         if (itemError) {
           console.error('Error fetching item:', itemError);
@@ -70,16 +79,20 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
         // Fetch user profile
         const userIdToFetch = itemData?.user_id || (item as any)?.user_id;
+        console.log('MODAL DEBUG: User ID to fetch:', userIdToFetch);
+        console.log('MODAL DEBUG: From itemData.user_id:', itemData?.user_id);
+        console.log('MODAL DEBUG: From item.user_id:', (item as any)?.user_id);
+        
         if (userIdToFetch) {
-          console.log('Fetching profile for user:', userIdToFetch);
+          console.log('MODAL DEBUG: Fetching profile for user:', userIdToFetch);
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('name, avatar_url, username, created_at')
             .eq('id', userIdToFetch)
             .single();
 
-          console.log('Profile data received:', profileData);
-          console.log('Profile error:', profileError);
+          console.log('MODAL DEBUG: Profile data received:', profileData);
+          console.log('MODAL DEBUG: Profile error:', profileError);
 
           if (profileError) {
             console.error('Error fetching user profile:', profileError);
@@ -93,11 +106,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             setUserProfile(profileData);
           }
         } else {
-          console.log('No user_id found for profile fetch. Item data:', itemData, 'Original item:', item);
+          console.log('MODAL DEBUG: No user_id found for profile fetch');
+          setUserProfile(null);
         }
       } catch (error) {
         console.error('Error fetching modal data:', error);
         setFullItem(item);
+        setUserProfile(null);
       } finally {
         setLoading(false);
       }
