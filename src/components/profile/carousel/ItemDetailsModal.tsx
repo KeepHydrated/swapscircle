@@ -117,6 +117,15 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     onLikeClick(item);
   };
 
+  // Debug navigation props
+  console.log('ItemDetailsModal navigation props:', {
+    hasOnNavigatePrev: !!onNavigatePrev,
+    hasOnNavigateNext: !!onNavigateNext,
+    currentIndex,
+    totalItems,
+    itemId: item?.id
+  });
+
   const canNavigatePrev = onNavigatePrev && typeof currentIndex === 'number' && currentIndex > 0;
   const canNavigateNext = onNavigateNext && typeof currentIndex === 'number' && typeof totalItems === 'number' && currentIndex < totalItems - 1;
 
