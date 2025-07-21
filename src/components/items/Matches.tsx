@@ -63,19 +63,6 @@ const Matches: React.FC<MatchesProps> = ({
 
   return (
     <div className="w-full flex flex-col h-full">
-      {/* Undo button */}
-      <div className="flex justify-end mb-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleUndo}
-          disabled={lastActions.length === 0}
-          className="flex items-center gap-2"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Undo
-        </Button>
-      </div>
       
       {displayedMatches.length === 0 ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">

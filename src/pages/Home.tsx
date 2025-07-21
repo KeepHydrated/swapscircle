@@ -303,12 +303,24 @@ const Home: React.FC = () => {
           {user && supabaseConfigured ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
               <Tabs defaultValue="matches" className="h-full flex flex-col">
-                <TabsList className="grid w-full grid-cols-4 mb-4">
-                  <TabsTrigger value="matches">Matches</TabsTrigger>
-                  <TabsTrigger value="matches2">Matches 2</TabsTrigger>
-                  <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                  <TabsTrigger value="test">🧪 Test</TabsTrigger>
-                </TabsList>
+                <div className="flex justify-between items-center mb-4">
+                  <TabsList className="grid grid-cols-4">
+                    <TabsTrigger value="matches">Matches</TabsTrigger>
+                    <TabsTrigger value="matches2">Matches 2</TabsTrigger>
+                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                    <TabsTrigger value="test">🧪 Test</TabsTrigger>
+                  </TabsList>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleUndoFriendAction}
+                    disabled={lastFriendActions.length === 0}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Undo
+                  </Button>
+                </div>
                 
                 <TabsContent value="matches" className="flex-1 mt-0">
                   {selectedUserItem ? (
@@ -346,18 +358,6 @@ const Home: React.FC = () => {
                 
                 <TabsContent value="friends" className="flex-1 mt-0">
                   <div className="h-full flex flex-col">
-                    <div className="flex justify-end mb-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleUndoFriendAction}
-                        disabled={lastFriendActions.length === 0}
-                        className="flex items-center gap-2"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                        Undo
-                      </Button>
-                    </div>
                     {friendItemsLoading ? (
                       <div className="flex-1 flex justify-center items-center">
                         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
