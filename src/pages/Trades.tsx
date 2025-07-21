@@ -84,7 +84,7 @@ const Trades = () => {
             {getStatusBadge(trade)}
           </div>
 
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-center mb-3">
             <div className="flex items-center space-x-2">
               <img 
                 src={trade.requester_item?.image_url} 
