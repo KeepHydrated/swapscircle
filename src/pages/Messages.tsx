@@ -193,12 +193,25 @@ const Messages = () => {
                         >
                           {activeChat.otherUserProfile?.username || activeChat.name}
                         </Link>
-                        <div className="flex text-amber-400 text-xs">
+                        <div className="flex items-center text-amber-400 text-xs">
                           {(() => {
-                            // Show 0 rating and 0 reviews for all users until reviews are implemented
-                            const reviewData = { rating: 0.0, reviewCount: 0 };
-                            const stars = '☆☆☆☆☆';
-                            return `${stars} (${reviewData.reviewCount})`;
+                            const avgRating = partnerReviews.length > 0 
+                              ? partnerReviews.reduce((sum, review) => sum + review.rating, 0) / partnerReviews.length 
+                              : 0;
+                            const fullStars = Math.floor(avgRating);
+                            const reviewCount = partnerReviews.length;
+                            
+                            return (
+                              <>
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className={`h-3 w-3 ${star <= fullStars ? 'fill-current' : ''}`}
+                                  />
+                                ))}
+                                <span className="ml-1">({reviewCount})</span>
+                              </>
+                            );
                           })()}
                         </div>
                       </div>
