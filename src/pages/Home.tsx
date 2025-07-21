@@ -272,132 +272,131 @@ const Home: React.FC = () => {
       <Header />
       <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
 
-        {/* Main Two-Column Layout */}
+        {/* Your Items Section - Full Width */}
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
+            {userItemsLoading ? (
+              <div className="flex justify-center items-center min-h-[300px]">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+              </div>
+            ) : userItemsError ? (
+              <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
+            ) : userItems.length === 0 ? (
+              <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
+                <div className="text-4xl mb-3">📦</div>
+                <p className="text-base font-medium mb-1">No items yet</p>
+                <p className="text-sm">Post an item to see matches!</p>
+              </div>
+            ) : (
+              <MyItems
+                items={userItems}
+                selectedItemId={selectedUserItemId}
+                onSelectItem={handleSelectUserItem}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Tabs Section - Full Width */}
         <div className="flex-1 min-h-0">
           {user && supabaseConfigured ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-              {/* Left Column - Your Items */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
-                {userItemsLoading ? (
-                  <div className="flex justify-center items-center min-h-[300px]">
-                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-                  </div>
-                ) : userItemsError ? (
-                  <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
-                ) : userItems.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
-                    <div className="text-4xl mb-3">📦</div>
-                    <p className="text-base font-medium mb-1">No items yet</p>
-                    <p className="text-sm">Post an item to see matches!</p>
-                  </div>
-                ) : (
-                  <MyItems
-                    items={userItems}
-                    selectedItemId={selectedUserItemId}
-                    onSelectItem={handleSelectUserItem}
-                  />
-                )}
-              </div>
-
-              {/* Right Column - Matches and Friends Items */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <Tabs defaultValue="matches" className="h-full flex flex-col">
-                  <TabsList className="grid w-full grid-cols-4 mb-4">
-                    <TabsTrigger value="matches">Matches</TabsTrigger>
-                    <TabsTrigger value="matches2">Matches 2</TabsTrigger>
-                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    <TabsTrigger value="test">🧪 Test</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="matches" className="flex-1 mt-0">
-                    {selectedUserItem ? (
-                      <Matches
-                        matches={matches}
-                        selectedItemName={selectedUserItem.name}
-                      />
-                    ) : (
-                      <div className="h-full flex flex-col">
-                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                          <div className="text-4xl mb-3">🔍</div>
-                          <p className="text-base font-medium mb-1">No item selected</p>
-                          <p className="text-sm">Select an item to see matches</p>
-                        </div>
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="matches2" className="flex-1 mt-0">
-                    {selectedUserItem ? (
-                      <Matches
-                        matches={matches}
-                        selectedItemName={selectedUserItem.name}
-                      />
-                    ) : (
-                      <div className="h-full flex flex-col">
-                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                          <div className="text-4xl mb-3">🔍</div>
-                          <p className="text-base font-medium mb-1">No item selected</p>
-                          <p className="text-sm">Select an item to see matches</p>
-                        </div>
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="friends" className="flex-1 mt-0">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+              <Tabs defaultValue="matches" className="h-full flex flex-col">
+                <TabsList className="grid w-full grid-cols-4 mb-4">
+                  <TabsTrigger value="matches">Matches</TabsTrigger>
+                  <TabsTrigger value="matches2">Matches 2</TabsTrigger>
+                  <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                  <TabsTrigger value="test">🧪 Test</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="matches" className="flex-1 mt-0">
+                  {selectedUserItem ? (
+                    <Matches
+                      matches={matches}
+                      selectedItemName={selectedUserItem.name}
+                    />
+                  ) : (
                     <div className="h-full flex flex-col">
-                      <div className="flex justify-end mb-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleUndoFriendAction}
-                          disabled={lastFriendActions.length === 0}
-                          className="flex items-center gap-2"
-                        >
-                          <RotateCcw className="h-4 w-4" />
-                          Undo
-                        </Button>
+                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                        <div className="text-4xl mb-3">🔍</div>
+                        <p className="text-base font-medium mb-1">No item selected</p>
+                        <p className="text-sm">Select an item to see matches</p>
                       </div>
-                      {friendItemsLoading ? (
-                        <div className="flex-1 flex justify-center items-center">
-                          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-                        </div>
-                      ) : friendItems.length === 0 ? (
-                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                          <div className="text-4xl mb-3">👥</div>
-                          <p className="text-base font-medium mb-1">No friends' items</p>
-                          <p className="text-sm">Add friends to see their items here</p>
-                        </div>
-                      ) : (
-                        <div className="flex-1 overflow-hidden">
-                          <FriendItemsCarousel
-                            items={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
-                            onLikeItem={handleLikeFriendItem}
-                            title=""
-                          />
-                        </div>
-                      )}
                     </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="test" className="flex-1 mt-0">
-                    {selectedUserItem ? (
-                      <Matches
-                        matches={matches}
-                        selectedItemName={`Test - ${selectedUserItem.name}`}
-                      />
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="matches2" className="flex-1 mt-0">
+                  {selectedUserItem ? (
+                    <Matches
+                      matches={matches}
+                      selectedItemName={selectedUserItem.name}
+                    />
+                  ) : (
+                    <div className="h-full flex flex-col">
+                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                        <div className="text-4xl mb-3">🔍</div>
+                        <p className="text-base font-medium mb-1">No item selected</p>
+                        <p className="text-sm">Select an item to see matches</p>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="friends" className="flex-1 mt-0">
+                  <div className="h-full flex flex-col">
+                    <div className="flex justify-end mb-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleUndoFriendAction}
+                        disabled={lastFriendActions.length === 0}
+                        className="flex items-center gap-2"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        Undo
+                      </Button>
+                    </div>
+                    {friendItemsLoading ? (
+                      <div className="flex-1 flex justify-center items-center">
+                        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                      </div>
+                    ) : friendItems.length === 0 ? (
+                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                        <div className="text-4xl mb-3">👥</div>
+                        <p className="text-base font-medium mb-1">No friends' items</p>
+                        <p className="text-sm">Add friends to see their items here</p>
+                      </div>
                     ) : (
-                      <div className="h-full flex flex-col">
-                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                          <div className="text-4xl mb-3">🧪</div>
-                          <p className="text-base font-medium mb-1">No item selected</p>
-                          <p className="text-sm">Select an item to see test matches</p>
-                        </div>
+                      <div className="flex-1 overflow-hidden">
+                        <FriendItemsCarousel
+                          items={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
+                          onLikeItem={handleLikeFriendItem}
+                          title=""
+                        />
                       </div>
                     )}
-                  </TabsContent>
-                </Tabs>
-              </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="test" className="flex-1 mt-0">
+                  {selectedUserItem ? (
+                    <Matches
+                      matches={matches}
+                      selectedItemName={`Test - ${selectedUserItem.name}`}
+                    />
+                  ) : (
+                    <div className="h-full flex flex-col">
+                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                        <div className="text-4xl mb-3">🧪</div>
+                        <p className="text-base font-medium mb-1">No item selected</p>
+                        <p className="text-sm">Select an item to see test matches</p>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             </div>
           ) : (
             <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
