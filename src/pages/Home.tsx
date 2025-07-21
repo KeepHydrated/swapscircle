@@ -241,6 +241,9 @@ const Home: React.FC = () => {
   
   // Selected items state - auto-select first item
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  console.log('DEBUG: selectedUserItemId:', selectedUserItemId);
+  console.log('DEBUG: userItems:', userItems);
+  console.log('DEBUG: userItems.length:', userItems.length);
   
   // Auto-select first item when userItems are loaded
   useEffect(() => {
@@ -290,6 +293,7 @@ const Home: React.FC = () => {
   };
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
+  console.log('DEBUG: selectedUserItem:', selectedUserItem);
   
   // Get matches for selected item (real matches from DB)
   const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
