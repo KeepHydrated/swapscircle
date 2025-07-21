@@ -183,11 +183,9 @@ const PostItem: React.FC = () => {
       });
       
       if (newItem) {
-        // Show success dialog
-        setShowSuccessDialog(true);
-        setShowPreferenceOptions(true);
-        setSelectedPreferenceOption("clear");
         toast.success('Your item has been posted successfully!');
+        // Navigate directly to homepage
+        navigate('/');
       }
     } catch (error) {
       console.error('Error posting item:', error);
