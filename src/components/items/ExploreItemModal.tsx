@@ -322,14 +322,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                          className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
                          onClick={handleProfileClick}
                        >
-                         {(() => {
-                           console.log('Rendering profile name. userProfile:', userProfile);
-                           console.log('userProfile.name:', userProfile.name);
-                           console.log('userProfile.username:', userProfile.username);
-                           const displayName = userProfile.name || userProfile.username || "Unknown User";
-                           console.log('Final display name:', displayName);
-                           return displayName;
-                         })()}
+                         {userProfile.username || userProfile.name || "Unknown User"}
                        </span>
                         {memberSince && (
                           <div className="flex text-xs text-gray-500 mt-1">
