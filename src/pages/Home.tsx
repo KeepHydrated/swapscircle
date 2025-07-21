@@ -250,16 +250,26 @@ const Home: React.FC = () => {
   
   // Handle matches undo availability callback
   const handleMatchesUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
+    console.log('DEBUG: handleMatchesUndoAvailable called - available:', available, 'undoFn:', undoFn);
     setMatchesUndoAvailable(available);
     setMatchesUndoFn(() => undoFn);
   };
 
   // Unified undo handler that works based on active tab
   const handleUndo = () => {
+    console.log('DEBUG: handleUndo called, activeTab:', activeTab);
+    console.log('DEBUG: lastFriendActions.length:', lastFriendActions.length);
+    console.log('DEBUG: matchesUndoAvailable:', matchesUndoAvailable);
+    console.log('DEBUG: matchesUndoFn:', matchesUndoFn);
+    
     if (activeTab === 'friends') {
+      console.log('DEBUG: Calling handleUndoFriendAction');
       handleUndoFriendAction();
     } else if ((activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && matchesUndoFn) {
+      console.log('DEBUG: Calling matchesUndoFn');
       matchesUndoFn();
+    } else {
+      console.log('DEBUG: No undo action available');
     }
   };
 
@@ -268,6 +278,7 @@ const Home: React.FC = () => {
     if (activeTab === 'friends') {
       return lastFriendActions.length > 0;
     } else if (activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') {
+      console.log('DEBUG: Checking undo available for matches - matchesUndoAvailable:', matchesUndoAvailable);
       return matchesUndoAvailable;
     }
     return false;
