@@ -183,6 +183,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               src={imageSource}
               alt={displayItem.name}
               className="object-cover w-full h-full"
+              key={`${item?.id}-${imageSource}`}
             />
             
             {/* Heart and Close buttons - positioned over the image */}
