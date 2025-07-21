@@ -63,7 +63,7 @@ const Matches: React.FC<MatchesProps> = ({
 
   return (
     <div className="w-full flex flex-col h-full">
-      {/* Undo button */}
+      {/* Undo button for matches */}
       <div className="flex justify-end mb-4">
         <Button
           variant="outline"
