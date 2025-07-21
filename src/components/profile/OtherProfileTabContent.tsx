@@ -6,13 +6,10 @@ import ReviewsTab from '@/components/profile/ReviewsTab';
 import ItemCard from '@/components/items/ItemCard';
 import { MatchItem } from '@/types/item';
 
-// Import mock data
-
-import { myReviews } from '@/data/mockMyReviews';
-
 interface OtherProfileTabContentProps {
   activeTab: string;
   items: MatchItem[];
+  reviews: any[];
   setPopupItem: (item: MatchItem | null) => void;
   onLikeItem: (id: string) => void;
   isFriend: boolean;
@@ -21,6 +18,7 @@ interface OtherProfileTabContentProps {
 const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({ 
   activeTab, 
   items,
+  reviews,
   setPopupItem,
   onLikeItem,
   isFriend
@@ -68,7 +66,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
       {/* Reviews Tab Content */}
       {activeTab === 'reviews' && (
         <div className="p-6">
-          <ReviewsTab reviews={myReviews} />
+          <ReviewsTab reviews={reviews} />
         </div>
       )}
     </>

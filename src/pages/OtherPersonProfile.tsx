@@ -10,7 +10,7 @@ import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonP
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { likeItem, unlikeItem, isItemLiked } from '@/services/authService';
+import { likeItem, unlikeItem, isItemLiked, fetchUserReviews } from '@/services/authService';
 import { toast } from 'sonner';
 
 const OtherPersonProfile: React.FC = () => {
@@ -24,6 +24,7 @@ const OtherPersonProfile: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(!!userId); // Only show loading if we have a userId to fetch
   const [userItems, setUserItems] = useState<any[]>([]);
+  const [userReviews, setUserReviews] = useState<any[]>([]);
   
   // Convert items to MatchItems and add liked property
   const itemsAsMatchItems: MatchItem[] = userItems.map(item => ({
@@ -85,11 +86,24 @@ const OtherPersonProfile: React.FC = () => {
         
         if (profileData) {
           console.log('Fetched profile data:', profileData);
+          
+          // Fetch reviews for this user
+          const reviews = await fetchUserReviews(userId);
+          console.log('Fetched reviews:', reviews);
+          setUserReviews(reviews);
+          
+          // Calculate average rating from reviews
+          let averageRating = 0;
+          if (reviews.length > 0) {
+            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+            averageRating = Math.round((totalRating / reviews.length) * 10) / 10;
+          }
+          
           setProfileData({
             name: profileData.username || profileData.name || 'Unknown User',
             description: profileData.bio || 'No bio available',
-            rating: 0, // Show 0 rating until we implement real reviews
-            reviewCount: 0, // Show 0 reviews until we implement real reviews
+            rating: averageRating,
+            reviewCount: reviews.length,
             location: profileData.location || 'Update your location in Settings',
             memberSince: new Date(profileData.created_at).getFullYear().toString(),
             friendCount: 0, // Show 0 friends until we implement real friends
@@ -277,6 +291,7 @@ const OtherPersonProfile: React.FC = () => {
             <OtherProfileTabContent 
               activeTab={activeTab}
               items={itemsWithLikedStatus}
+              reviews={userReviews}
               setPopupItem={setPopupItem}
               onLikeItem={handleLikeItem}
               isFriend={isFriend}
