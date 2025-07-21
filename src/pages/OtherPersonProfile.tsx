@@ -47,6 +47,19 @@ const OtherPersonProfile: React.FC = () => {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         setCurrentUserId(currentUser?.id || null);
 
+        // Check friend status if user is logged in
+        if (currentUser) {
+          const { data: friendRequests } = await supabase
+            .from('friend_requests')
+            .select('*')
+            .or(`and(requester_id.eq.${currentUser.id},recipient_id.eq.${userId}),and(requester_id.eq.${userId},recipient_id.eq.${currentUser.id})`)
+            .eq('status', 'accepted');
+          
+          const areFriends = friendRequests && friendRequests.length > 0;
+          setIsFriend(areFriends);
+          console.log('Friend status:', areFriends);
+        }
+
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
