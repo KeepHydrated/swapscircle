@@ -50,9 +50,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     if (!item?.id || !isOpen) return;
 
     const fetchItemDetails = async () => {
-      // If we should skip data fetch, use the item as-is
+      // If we should skip data fetch, use the item as-is and don't update states
       if (skipDataFetch) {
-        setFullItem(item);
+        // Only set user profile if we have preloaded data, but don't touch fullItem
         if (preloadedUserProfile) {
           setUserProfile(preloadedUserProfile);
         }
@@ -108,7 +108,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     };
 
     fetchItemDetails();
-  }, [item?.id, isOpen]);
+  }, [item?.id, isOpen, skipDataFetch, preloadedUserProfile]);
 
   // Calculate user stats - only show if we have actual data
   const memberSince = userProfile?.created_at 
@@ -117,16 +117,17 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
   // Handle navigation to user profile
   const handleProfileClick = () => {
-    if (fullItem?.user_id) {
+    const userId = skipDataFetch ? (item as any)?.user_id : fullItem?.user_id;
+    if (userId) {
       onClose(); // Close the modal first
-      navigate(`/other-person-profile?userId=${fullItem.user_id}`);
+      navigate(`/other-person-profile?userId=${userId}`);
     }
   };
 
   if (!item) return null;
 
-  // Use fullItem or fallback to item
-  const displayItem = fullItem || item;
+  // Use fullItem or fallback to item - but when skipDataFetch is true, always use item
+  const displayItem = skipDataFetch ? item : (fullItem || item);
 
   const handleLikeClick = () => {
     onLikeClick(item);
