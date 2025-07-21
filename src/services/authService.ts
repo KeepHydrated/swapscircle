@@ -662,13 +662,14 @@ export const fetchUserReviews = async (userId: string) => {
         try {
           const { data: reviewerProfile } = await supabase
             .from('profiles')
-            .select('username, name')
+            .select('username, name, avatar_url')
             .eq('id', review.reviewer_id)
             .maybeSingle();
 
           return {
             id: review.id,
-            user: reviewerProfile?.name || reviewerProfile?.username || 'Anonymous User',
+            user: reviewerProfile?.username || reviewerProfile?.name || 'Anonymous User',
+            avatar_url: reviewerProfile?.avatar_url,
             rating: review.rating,
             comment: review.comment || '',
             date: new Date(review.created_at).toLocaleDateString()
@@ -678,6 +679,7 @@ export const fetchUserReviews = async (userId: string) => {
           return {
             id: review.id,
             user: 'Anonymous User',
+            avatar_url: undefined,
             rating: review.rating,
             comment: review.comment || '',
             date: new Date(review.created_at).toLocaleDateString()
