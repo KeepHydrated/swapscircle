@@ -11,11 +11,13 @@ import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 interface MatchesProps {
   matches: MatchItem[];
   selectedItemName: string;
+  onUndoAvailable?: (available: boolean, undoFn: (() => void) | null) => void;
 }
 
 const Matches: React.FC<MatchesProps> = ({
   matches,
-  selectedItemName
+  selectedItemName,
+  onUndoAvailable
 }) => {
   // Get match actions from our custom hook
   const {
@@ -31,6 +33,13 @@ const Matches: React.FC<MatchesProps> = ({
     handleClosePopup,
     setSelectedMatch
   } = useMatchActions(matches);
+  
+  // Notify parent about undo availability whenever lastActions changes
+  useEffect(() => {
+    if (onUndoAvailable) {
+      onUndoAvailable(lastActions.length > 0, lastActions.length > 0 ? handleUndo : null);
+    }
+  }, [lastActions, onUndoAvailable, handleUndo]);
   
   // Filter out removed/liked items
   const displayedMatches = matches.filter(match => 

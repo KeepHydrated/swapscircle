@@ -24,11 +24,18 @@ const Home: React.FC = () => {
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
   
+  // Tab state
+  const [activeTab, setActiveTab] = useState('matches');
+  
   // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
   const [friendItemsLoading, setFriendItemsLoading] = useState(false);
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
   const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
+
+  // Matches undo state - will be set by the Matches component
+  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
+  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
 
   // Modal state
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -241,6 +248,30 @@ const Home: React.FC = () => {
     }
   }, [userItems, selectedUserItemId]);
   
+  // Handle matches undo availability callback
+  const handleMatchesUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
+    setMatchesUndoAvailable(available);
+    setMatchesUndoFn(() => undoFn);
+  };
+
+  // Unified undo handler that works based on active tab
+  const handleUndo = () => {
+    if (activeTab === 'friends') {
+      handleUndoFriendAction();
+    } else if ((activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && matchesUndoFn) {
+      matchesUndoFn();
+    }
+  };
+
+  // Check if undo is available based on active tab
+  const isUndoAvailable = () => {
+    if (activeTab === 'friends') {
+      return lastFriendActions.length > 0;
+    } else if (activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') {
+      return matchesUndoAvailable;
+    }
+    return false;
+  };
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
   
@@ -302,7 +333,7 @@ const Home: React.FC = () => {
         <div className="flex-1 min-h-0">
           {user && supabaseConfigured ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-              <Tabs defaultValue="matches" className="h-full flex flex-col">
+              <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={setActiveTab}>
                 <div className="flex justify-between items-center mb-4">
                   <TabsList className="grid grid-cols-4">
                     <TabsTrigger value="matches">Matches</TabsTrigger>
@@ -313,8 +344,8 @@ const Home: React.FC = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={handleUndoFriendAction}
-                    disabled={lastFriendActions.length === 0}
+                    onClick={handleUndo}
+                    disabled={!isUndoAvailable()}
                     className="flex items-center gap-2"
                   >
                     <RotateCcw className="h-4 w-4" />
@@ -327,6 +358,7 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
+                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
@@ -344,6 +376,7 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={selectedUserItem.name}
+                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
@@ -385,6 +418,7 @@ const Home: React.FC = () => {
                     <Matches
                       matches={matches}
                       selectedItemName={`Test - ${selectedUserItem.name}`}
+                      onUndoAvailable={handleMatchesUndoAvailable}
                     />
                   ) : (
                     <div className="h-full flex flex-col">
