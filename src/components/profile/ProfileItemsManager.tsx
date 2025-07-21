@@ -56,7 +56,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
       name: `${item.name} (Copy)`
     };
     
-    setItems(prevItems => [...prevItems, newItem]);
+    setItems(prevItems => [newItem, ...prevItems]);
     
     toast.success(`${item.name} has been duplicated`);
   };
