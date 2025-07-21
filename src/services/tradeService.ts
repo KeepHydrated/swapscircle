@@ -243,6 +243,32 @@ export const updateTradeStatus = async (conversationId: string, status: 'accepte
   }
 };
 
+export const rejectTrade = async (conversationId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('trade_conversations')
+      .update({ 
+        status: 'rejected',
+        requester_accepted: false,
+        owner_accepted: false,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', conversationId)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error rejecting trade:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error rejecting trade:', error);
+    throw error;
+  }
+};
+
 // Create a new trade conversation when items match
 export const createTradeConversation = async (
   requesterId: string,

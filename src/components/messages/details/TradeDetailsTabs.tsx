@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { updateTradeAcceptance, fetchUserTradeConversations } from '@/services/tradeService';
+import { updateTradeAcceptance, rejectTrade, fetchUserTradeConversations } from '@/services/tradeService';
 import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -120,7 +120,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   });
 
   const rejectTradeMutation = useMutation({
-    mutationFn: () => updateTradeAcceptance(selectedPair.partnerId, userRole, false),
+    mutationFn: () => rejectTrade(selectedPair.partnerId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
       toast.success('Trade rejected.');
