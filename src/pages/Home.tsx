@@ -350,19 +350,13 @@ const Home: React.FC = () => {
                           <p className="text-sm">Add friends to see their items here</p>
                         </div>
                       ) : (
-                        (() => {
-                          const filteredItems = friendItems.filter(item => !rejectedFriendItems.includes(item.id));
-                          console.log('[Home] Rendering FriendItemsCarousel with items:', filteredItems);
-                          return (
-                            <div className="flex-1 overflow-hidden">
-                              <FriendItemsCarousel
-                                items={filteredItems}
-                                onLikeItem={handleLikeFriendItem}
-                                title=""
-                              />
-                            </div>
-                          );
-                        })()
+                        <div className="flex-1 overflow-hidden">
+                          <FriendItemsCarousel
+                            items={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
+                            onLikeItem={handleLikeFriendItem}
+                            title=""
+                          />
+                        </div>
                       )}
                     </div>
                   </TabsContent>
