@@ -100,7 +100,7 @@ const Trades = () => {
             </div>
           </div>
 
-          <div className="text-sm text-gray-600 mb-3">
+          <div className="text-sm text-gray-600 mb-3 text-center">
             <strong>{trade.requester_item?.name}</strong> ↔ <strong>{trade.owner_item?.name}</strong>
           </div>
 
