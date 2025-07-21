@@ -140,10 +140,21 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     : null;
 
   // Handle navigation to user profile
-  const handleProfileClick = () => {
+  const handleProfileClick = async () => {
     if (fullItem?.user_id) {
+      // Get current user ID to check if this is their own profile
+      const { data: { user } } = await supabase.auth.getUser();
+      const currentUserId = user?.id;
+      
       onClose(); // Close the modal first
-      navigate(`/other-person-profile?userId=${fullItem.user_id}`);
+      
+      if (currentUserId === fullItem.user_id) {
+        // It's their own profile - navigate to regular profile page
+        navigate('/profile');
+      } else {
+        // It's someone else's profile - navigate to other person profile
+        navigate(`/other-person-profile?userId=${fullItem.user_id}`);
+      }
     }
   };
 
