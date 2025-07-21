@@ -45,19 +45,26 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  // Reset states immediately when item changes to prevent showing stale data
+  useEffect(() => {
+    if (skipDataFetch && item) {
+      // Immediately set the correct states when skipping data fetch
+      setFullItem(null); // Clear any previous fullItem data
+      setUserProfile(preloadedUserProfile || null);
+      setLoading(false);
+    }
+  }, [item?.id, skipDataFetch, preloadedUserProfile]);
+
   // Fetch complete item details and user profile from database
   useEffect(() => {
     if (!item?.id || !isOpen) return;
+    
+    // Skip all data fetching if we should use existing data
+    if (skipDataFetch) {
+      return; // Don't do anything - states are handled in the reset effect above
+    }
 
     const fetchItemDetails = async () => {
-      // If we should skip data fetch, use the item as-is and don't update states
-      if (skipDataFetch) {
-        // Only set user profile if we have preloaded data, but don't touch fullItem
-        if (preloadedUserProfile) {
-          setUserProfile(preloadedUserProfile);
-        }
-        return;
-      }
 
       setLoading(true);
       try {
@@ -107,8 +114,10 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
       }
     };
 
-    fetchItemDetails();
-  }, [item?.id, isOpen, skipDataFetch, preloadedUserProfile]);
+    if (!skipDataFetch) {
+      fetchItemDetails();
+    }
+  }, [item?.id, isOpen, skipDataFetch]);
 
   // Calculate user stats - only show if we have actual data
   const memberSince = userProfile?.created_at 
@@ -137,7 +146,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const canNavigateNext = onNavigateNext && typeof currentIndex === 'number' && typeof totalItems === 'number' && currentIndex < totalItems - 1;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog key={item?.id} open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
         <DialogTitle className="sr-only">Item Details</DialogTitle>
