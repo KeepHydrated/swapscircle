@@ -95,6 +95,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   const otherUserAccepted = isCurrentUserRequester ? currentTrade?.owner_accepted : currentTrade?.requester_accepted;
   const bothAccepted = userAccepted && otherUserAccepted;
   const isCompleted = currentTrade?.status === 'completed';
+  const isRejected = currentTrade?.status === 'rejected';
 
   // Check review eligibility
   const { data: reviewEligibility } = useQuery({
@@ -335,7 +336,12 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
         
         {/* Action buttons at the bottom or status display */}
         <div className="mt-4 pt-4 border-t border-gray-200">
-          {isCompleted ? (
+          {isRejected ? (
+            <div className="flex items-center justify-center py-3 bg-red-50 rounded-lg border border-red-200">
+              <X className="w-5 h-5 mr-2 text-red-600" />
+              <span className="text-red-700 font-medium">Trade Rejected</span>
+            </div>
+          ) : isCompleted ? (
             <div className="space-y-3">
               <div className="flex items-center justify-center py-3 bg-green-50 rounded-lg border border-green-200">
                 <Check className="w-5 h-5 mr-2 text-green-600" />
