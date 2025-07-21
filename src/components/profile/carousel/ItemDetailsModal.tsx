@@ -149,27 +149,6 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         )}
 
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
-          {/* Like button - positioned to the left of close button */}
-          <button
-            onClick={handleLikeClick}
-            className="absolute top-3 right-12 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
-            aria-label={item.liked ? "Unlike" : "Like"}
-          >
-            <Heart
-              className={`w-4 h-4 ${item.liked ? "text-red-500" : "text-gray-600"}`}
-              fill={item.liked ? "red" : "none"}
-            />
-          </button>
-
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-20"
-            aria-label="Close"
-          >
-            <X className="w-4 h-4 text-gray-600" />
-          </button>
-
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
             <img
@@ -177,6 +156,27 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               alt={displayItem.name}
               className="object-cover w-full h-full"
             />
+            
+            {/* Heart and Close buttons - positioned over the image */}
+            <div className="absolute top-4 right-4 flex gap-3 z-20">
+              <button
+                onClick={onClose}
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+              <button
+                onClick={handleLikeClick}
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+                aria-label={item.liked ? "Unlike" : "Like"}
+              >
+                <Heart
+                  className={`w-5 h-5 ${item.liked ? "text-red-500" : "text-gray-400"}`}
+                  fill={item.liked ? "red" : "none"}
+                />
+              </button>
+            </div>
           </div>
           
           {/* Details */}
