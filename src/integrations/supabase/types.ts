@@ -247,32 +247,79 @@ export type Database = {
         }
         Relationships: []
       }
-      trade_conversations: {
+      reviews: {
         Row: {
+          comment: string | null
           created_at: string
           id: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          trade_conversation_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          trade_conversation_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+          trade_conversation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_trade_conversation_id_fkey"
+            columns: ["trade_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "trade_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trade_conversations: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          owner_accepted: boolean | null
           owner_id: string
           owner_item_id: string
+          requester_accepted: boolean | null
           requester_id: string
           requester_item_id: string
           status: string
           updated_at: string
         }
         Insert: {
+          completed_at?: string | null
           created_at?: string
           id?: string
+          owner_accepted?: boolean | null
           owner_id: string
           owner_item_id: string
+          requester_accepted?: boolean | null
           requester_id: string
           requester_item_id: string
           status?: string
           updated_at?: string
         }
         Update: {
+          completed_at?: string | null
           created_at?: string
           id?: string
+          owner_accepted?: boolean | null
           owner_id?: string
           owner_item_id?: string
+          requester_accepted?: boolean | null
           requester_id?: string
           requester_item_id?: string
           status?: string

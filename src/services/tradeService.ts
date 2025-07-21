@@ -193,6 +193,32 @@ export const sendTradeMessage = async (conversationId: string, message: string) 
   }
 };
 
+export const updateTradeAcceptance = async (conversationId: string, userRole: 'requester' | 'owner', accepted: boolean) => {
+  try {
+    const updateField = userRole === 'requester' ? 'requester_accepted' : 'owner_accepted';
+    
+    const { data, error } = await supabase
+      .from('trade_conversations')
+      .update({ 
+        [updateField]: accepted,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', conversationId)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error updating trade acceptance:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error updating trade acceptance:', error);
+    throw error;
+  }
+};
+
 export const updateTradeStatus = async (conversationId: string, status: 'accepted' | 'rejected' | 'completed') => {
   try {
     const { data, error } = await supabase

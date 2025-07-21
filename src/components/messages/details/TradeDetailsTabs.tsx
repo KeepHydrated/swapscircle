@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, Home, Utensils, DollarSign, MapPin, Clock, Calendar, X, Tag, Layers, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
-import { updateTradeStatus } from '@/services/tradeService';
+import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { updateTradeAcceptance, fetchUserTradeConversations } from '@/services/tradeService';
+import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { fetchUserTradeConversations } from '@/services/tradeService';
+import ReviewModal from '@/components/trade/ReviewModal';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TradeDetailsTabsProps {
   selectedPair: {
@@ -52,6 +52,17 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
+  // Get current user
+  React.useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setCurrentUserId(session?.user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
 
   // Sample images for the carousel (you can replace these with actual item images)
   const itemImages = [
@@ -69,20 +80,38 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     "https://images.unsplash.com/photo-1515378791036-0648a814c963?w=400&h=400&auto=format&fit=crop"
   ];
 
-  // Fetch trade status to check if already accepted
+  // Fetch trade status to check acceptance status
   const { data: tradeConversations = [] } = useQuery({
     queryKey: ['trade-conversations'],
     queryFn: fetchUserTradeConversations,
   });
 
   const currentTrade = tradeConversations.find((tc: any) => tc.id === selectedPair.partnerId);
-  const isTradeAccepted = currentTrade?.status === 'accepted' || currentTrade?.status === 'completed';
+  const isCurrentUserRequester = currentTrade?.requester_id === currentUserId;
+  const isCurrentUserOwner = currentTrade?.owner_id === currentUserId;
+  const userRole: 'requester' | 'owner' = isCurrentUserRequester ? 'requester' : 'owner';
+  
+  const userAccepted = isCurrentUserRequester ? currentTrade?.requester_accepted : currentTrade?.owner_accepted;
+  const otherUserAccepted = isCurrentUserRequester ? currentTrade?.owner_accepted : currentTrade?.requester_accepted;
+  const bothAccepted = userAccepted && otherUserAccepted;
+  const isCompleted = currentTrade?.status === 'completed';
+
+  // Check review eligibility
+  const { data: reviewEligibility } = useQuery({
+    queryKey: ['reviewEligibility', selectedPair.partnerId],
+    queryFn: () => checkReviewEligibility(selectedPair.partnerId),
+    enabled: isCompleted
+  });
 
   const acceptTradeMutation = useMutation({
-    mutationFn: () => updateTradeStatus(selectedPair.partnerId, 'accepted'),
+    mutationFn: () => updateTradeAcceptance(selectedPair.partnerId, userRole, true),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
-      toast.success('Trade accepted successfully!');
+      if (otherUserAccepted) {
+        toast.success('Trade completed! Both parties have accepted.');
+      } else {
+        toast.success('Trade accepted! Waiting for the other party to accept.');
+      }
     },
     onError: (error) => {
       console.error('Error accepting trade:', error);
@@ -91,7 +120,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   });
 
   const rejectTradeMutation = useMutation({
-    mutationFn: () => updateTradeStatus(selectedPair.partnerId, 'rejected'),
+    mutationFn: () => updateTradeAcceptance(selectedPair.partnerId, userRole, false),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
       toast.success('Trade rejected.');
@@ -108,6 +137,10 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 
   const handleRejectTrade = () => {
     rejectTradeMutation.mutate();
+  };
+
+  const handleOpenReviewModal = () => {
+    setShowReviewModal(true);
   };
 
   const handlePrevImage = () => {
@@ -300,12 +333,58 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
           </div>
         )}
         
-        {/* Action buttons at the bottom or accepted status */}
+        {/* Action buttons at the bottom or status display */}
         <div className="mt-4 pt-4 border-t border-gray-200">
-          {isTradeAccepted ? (
-            <div className="flex items-center justify-center py-3 bg-green-50 rounded-lg border border-green-200">
-              <Check className="w-5 h-5 mr-2 text-green-600" />
-              <span className="text-green-700 font-medium">Trade Accepted</span>
+          {isCompleted ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-center py-3 bg-green-50 rounded-lg border border-green-200">
+                <Check className="w-5 h-5 mr-2 text-green-600" />
+                <span className="text-green-700 font-medium">Trade Completed</span>
+              </div>
+              {reviewEligibility?.canReview && (
+                <Button 
+                  onClick={handleOpenReviewModal}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                >
+                  <Star className="w-4 h-4 mr-2" />
+                  Leave Review ({reviewEligibility.daysLeft} days left)
+                </Button>
+              )}
+            </div>
+          ) : bothAccepted ? (
+            <div className="flex items-center justify-center py-3 bg-blue-50 rounded-lg border border-blue-200">
+              <Check className="w-5 h-5 mr-2 text-blue-600" />
+              <span className="text-blue-700 font-medium">Both parties accepted - Trade finalizing...</span>
+            </div>
+          ) : userAccepted ? (
+            <div className="flex items-center justify-center py-3 bg-yellow-50 rounded-lg border border-yellow-200">
+              <Check className="w-5 h-5 mr-2 text-yellow-600" />
+              <span className="text-yellow-700 font-medium">You accepted - Waiting for other party</span>
+            </div>
+          ) : otherUserAccepted ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-center py-3 bg-orange-50 rounded-lg border border-orange-200">
+                <span className="text-orange-700 font-medium">The other party accepted - Your response needed</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={handleRejectTrade}
+                  disabled={rejectTradeMutation.isPending}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  {rejectTradeMutation.isPending ? 'Rejecting...' : 'Reject'}
+                </Button>
+                <Button 
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={handleAcceptTrade}
+                  disabled={acceptTradeMutation.isPending}
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  {acceptTradeMutation.isPending ? 'Accepting...' : 'Accept'}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -329,6 +408,17 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
             </div>
           )}
         </div>
+        
+        {/* Review Modal */}
+        {showReviewModal && selectedPair.partnerProfile && (
+          <ReviewModal
+            isOpen={showReviewModal}
+            onClose={() => setShowReviewModal(false)}
+            tradeConversationId={selectedPair.partnerId}
+            revieweeId={selectedPair.partnerProfile.id}
+            revieweeName={selectedPair.partnerProfile.username}
+          />
+        )}
       </div>
     </div>
   );
