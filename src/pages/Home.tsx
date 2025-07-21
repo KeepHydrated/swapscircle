@@ -326,7 +326,18 @@ const Home: React.FC = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={activeTab === 'friends' ? handleUndoFriendAction : matchesUndoFn || (() => {})}
+                    onClick={() => {
+                      console.log('Undo button clicked, activeTab:', activeTab);
+                      console.log('Friends actions:', lastFriendActions.length);
+                      console.log('Matches undo available:', matchesUndoAvailable);
+                      console.log('Matches undo function:', matchesUndoFn);
+                      
+                      if (activeTab === 'friends') {
+                        handleUndoFriendAction();
+                      } else if (matchesUndoFn) {
+                        matchesUndoFn();
+                      }
+                    }}
                     disabled={activeTab === 'friends' ? lastFriendActions.length === 0 : !matchesUndoAvailable}
                     className="flex items-center gap-2"
                   >
