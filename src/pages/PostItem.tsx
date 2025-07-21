@@ -12,6 +12,7 @@ import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
 import PreferencesForm, { SavedPreference } from '@/components/postItem/PreferencesForm';
 import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
 import SavedPreferencesList from '@/components/postItem/SavedPreferencesList';
+import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 import SuccessDialog from '@/components/postItem/SuccessDialog';
 
 const PostItem: React.FC = () => {
@@ -38,8 +39,8 @@ const PostItem: React.FC = () => {
   // Dialog state
   const [preferenceName, setPreferenceName] = useState<string>("");
   const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
+  const [loadDialogOpen, setLoadDialogOpen] = useState<boolean>(false);
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
-  const [showSavedPreferences, setShowSavedPreferences] = useState<boolean>(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("clear");
   const [showPreferenceOptions, setShowPreferenceOptions] = useState(false);
@@ -108,8 +109,6 @@ const PostItem: React.FC = () => {
     setSelectedConditions(preference.selectedConditions);
     
     toast.success(`"${preference.name}" has been applied to your search`);
-    
-    setShowSavedPreferences(false);
   };
 
   // Delete a saved preference
@@ -249,22 +248,16 @@ const PostItem: React.FC = () => {
               {/* Load Saved Preferences Button - moved to top right */}
               {savedPreferences.length > 0 && (
                 <Button 
-                  onClick={() => setShowSavedPreferences(!showSavedPreferences)}
+                  onClick={() => setLoadDialogOpen(true)}
                   variant="outline"
                   className="bg-white shadow-sm hover:shadow-md border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition-all duration-200"
                 >
-                  {showSavedPreferences ? 'Hide Saved Preferences' : 'Load Saved Preferences'}
+                  Load Saved Preferences
                 </Button>
               )}
             </div>
             
-            {/* Saved preferences list */}
-            <SavedPreferencesList
-              show={showSavedPreferences && savedPreferences.length > 0}
-              preferences={savedPreferences}
-              onApply={applyPreference}
-              onDelete={deletePreference}
-            />
+            {/* Saved preferences list - removed from inline display */}
             
             {/* Preferences form */}
             <PreferencesForm 
@@ -337,6 +330,14 @@ const PostItem: React.FC = () => {
         preferenceName={preferenceName}
         setPreferenceName={setPreferenceName}
         onSave={savePreferences}
+      />
+
+      <LoadPreferencesDialog
+        open={loadDialogOpen}
+        onOpenChange={setLoadDialogOpen}
+        preferences={savedPreferences}
+        onApply={applyPreference}
+        onDelete={deletePreference}
       />
 
       <SuccessDialog 
