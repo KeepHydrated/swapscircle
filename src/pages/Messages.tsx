@@ -95,7 +95,6 @@ const Messages = () => {
           {conversations.length > 0 ? (
             <div className="flex flex-col h-full">
               <div className="p-4 border-b border-gray-200 bg-white flex items-center flex-shrink-0">
-                <h2 className="font-semibold">Trade Conversations</h2>
               </div>
               
               <div className="flex-1 overflow-y-auto">
