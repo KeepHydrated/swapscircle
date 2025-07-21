@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '@/types/item';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { toast } from 'sonner';
 import { 
   AlertDialog,
@@ -26,20 +27,23 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   const [items, setItems] = useState<Item[]>(initialItems);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [isItemModalOpen, setIsItemModalOpen] = useState(false);
 
   // Update items when initialItems changes
   useEffect(() => {
     setItems(initialItems);
   }, [initialItems]);
 
-  // Function to handle clicking on an item - navigate to item details page
+  // Function to handle clicking on an item - open modal instead of navigation
   const handleItemClick = (item: Item) => {
     // If onItemClick prop is provided, call it with the item id
     if (onItemClick) {
       onItemClick(item.id);
     } else {
-      // Navigate to item details page (you may need to adjust this route)
-      navigate(`/item/${item.id}`);
+      // Open the item modal
+      setSelectedItem(item);
+      setIsItemModalOpen(true);
     }
   };
 
@@ -126,6 +130,19 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Item Details Modal */}
+      {selectedItem && (
+        <ExploreItemModal
+          open={isItemModalOpen}
+          item={selectedItem}
+          onClose={() => {
+            setIsItemModalOpen(false);
+            setSelectedItem(null);
+          }}
+          hideActions={true} // Hide X and heart buttons for own items
+        />
+      )}
     </>
   );
 };
