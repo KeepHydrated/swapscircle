@@ -259,7 +259,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   onClick={disableActions ? undefined : onClose}
                   className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
                     disableActions 
-                      ? 'opacity-50 cursor-not-allowed' 
+                      ? 'cursor-not-allowed' 
                       : 'hover:bg-gray-50 cursor-pointer'
                   }`}
                   aria-label="Close"
@@ -270,7 +270,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 <button
                   className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
                     disableActions 
-                      ? 'opacity-50 cursor-not-allowed' 
+                      ? 'cursor-not-allowed' 
                       : 'hover:bg-gray-50 cursor-pointer'
                   }`}
                   onClick={disableActions ? undefined : onLike}
