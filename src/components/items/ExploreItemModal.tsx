@@ -145,22 +145,24 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           {/* Navigation arrows positioned on sides of entire modal */}
           {onNavigatePrev && onNavigateNext && totalItems && totalItems > 1 && (
             <>
-              <button
-                onClick={onNavigatePrev}
-                disabled={currentIndex === 0}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30 disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Previous item"
-              >
-                <ArrowLeft className="w-6 h-6" />
-              </button>
-              <button
-                onClick={onNavigateNext}
-                disabled={currentIndex === totalItems - 1}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30 disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Next item"
-              >
-                <ArrowRight className="w-6 h-6" />
-              </button>
+              {currentIndex !== undefined && currentIndex > 0 && (
+                <button
+                  onClick={onNavigatePrev}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30"
+                  aria-label="Previous item"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                </button>
+              )}
+              {currentIndex !== undefined && currentIndex < totalItems - 1 && (
+                <button
+                  onClick={onNavigateNext}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30"
+                  aria-label="Next item"
+                >
+                  <ArrowRight className="w-6 h-6" />
+                </button>
+              )}
             </>
           )}
 
