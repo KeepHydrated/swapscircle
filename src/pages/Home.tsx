@@ -37,6 +37,7 @@ const Home: React.FC = () => {
   
   // Handler for matches undo availability
   const handleMatchesUndoAvailable = (hasActions: boolean, undoFn: () => void) => {
+    console.log('handleMatchesUndoAvailable called:', hasActions, undoFn);
     setMatchesUndoAvailable(hasActions);
     setMatchesUndoFn(() => undoFn);
   };
@@ -342,7 +343,7 @@ const Home: React.FC = () => {
                     className="flex items-center gap-2"
                   >
                     <RotateCcw className="h-4 w-4" />
-                    Undo
+                    Undo ({activeTab === 'friends' ? lastFriendActions.length : matchesUndoAvailable ? 'ON' : 'OFF'})
                   </Button>
                 </div>
                 
