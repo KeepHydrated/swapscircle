@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { fetchUserTradeConversations } from '@/services/tradeService';
 import { checkReviewEligibility } from '@/services/reviewService';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,42 @@ const Trades = () => {
     queryKey: ['trade-conversations'],
     queryFn: fetchUserTradeConversations,
   });
+
+  // Fetch reviews for all trades
+  const { data: allReviews = [] } = useQuery({
+    queryKey: ['trade-reviews', trades.map(t => t.id)],
+    queryFn: async () => {
+      if (trades.length === 0) return [];
+      
+      const { data, error } = await supabase
+        .from('reviews')
+        .select(`
+          *,
+          reviewer:profiles!reviewer_id(username, avatar_url),
+          reviewee:profiles!reviewee_id(username, avatar_url)
+        `)
+        .in('trade_conversation_id', trades.map(t => t.id));
+      
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        return [];
+      }
+      
+      return data || [];
+    },
+    enabled: trades.length > 0,
+  });
+
+  // Get current user ID from auth
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
+  React.useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
 
   const getStatusBadge = (trade: any) => {
     if (trade.status === 'completed') {
@@ -66,84 +103,148 @@ const Trades = () => {
       ? (trade.requester_profile || trade.owner_profile)
       : trade.owner_profile;
 
+    // Get reviews for this trade
+    const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+    const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
+    const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
+
+    const renderStars = (rating: number) => {
+      return Array.from({ length: 5 }, (_, i) => (
+        <Star 
+          key={i} 
+          className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+        />
+      ));
+    };
+
     return (
       <Card className="mb-4">
         <CardContent className="p-4">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center space-x-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={otherUser?.avatar_url} />
-                <AvatarFallback>
-                  {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{otherUser?.username || 'Unknown User'}</p>
-                <p className="text-sm text-gray-500">
-                  {format(new Date(trade.created_at), 'MMM d, yyyy')}
-                </p>
+          <div className="flex justify-between">
+            {/* Left side - existing trade info */}
+            <div className="flex-1 pr-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={otherUser?.avatar_url} />
+                    <AvatarFallback>
+                      {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{otherUser?.username || 'Unknown User'}</p>
+                    <p className="text-sm text-gray-500">
+                      {format(new Date(trade.created_at), 'MMM d, yyyy')}
+                    </p>
+                  </div>
+                </div>
+                {getStatusBadge(trade)}
+              </div>
+
+              <div className="flex items-start space-x-2 mb-3">
+                <div className="flex flex-col items-center">
+                  <img 
+                    src={trade.requester_item?.image_url} 
+                    alt={trade.requester_item?.name}
+                    className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                    onClick={() => {
+                      setSelectedItem(trade.requester_item);
+                      setShowItemModal(true);
+                    }}
+                  />
+                  <span className="text-sm text-gray-600 font-medium text-center">
+                    {trade.requester_item?.name}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-center px-2 pt-5">
+                  <ArrowLeftRight className="w-4 h-4 text-gray-400" />
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <img 
+                    src={trade.owner_item?.image_url} 
+                    alt={trade.owner_item?.name}
+                    className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                    onClick={() => {
+                      setSelectedItem(trade.owner_item);
+                      setShowItemModal(true);
+                    }}
+                  />
+                  <span className="text-sm text-gray-600 font-medium text-center">
+                    {trade.owner_item?.name}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleOpenChat(trade.id)}
+                  className="flex-1"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Open Chat
+                </Button>
+                
+                {trade.status === 'completed' && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleLeaveReview(trade)}
+                    className="flex items-center"
+                  >
+                    <Star className="w-4 h-4 mr-1" />
+                    Review
+                  </Button>
+                )}
               </div>
             </div>
-            {getStatusBadge(trade)}
-          </div>
 
-          <div className="flex items-start space-x-2 mb-3">
-            <div className="flex flex-col items-center">
-              <img 
-                src={trade.requester_item?.image_url} 
-                alt={trade.requester_item?.name}
-                className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
-                onClick={() => {
-                  setSelectedItem(trade.requester_item);
-                  setShowItemModal(true);
-                }}
-              />
-              <span className="text-sm text-gray-600 font-medium text-center">
-                {trade.requester_item?.name}
-              </span>
-            </div>
-            
-            <div className="flex items-center justify-center px-2 pt-5">
-              <ArrowLeftRight className="w-4 h-4 text-gray-400" />
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <img 
-                src={trade.owner_item?.image_url} 
-                alt={trade.owner_item?.name}
-                className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
-                onClick={() => {
-                  setSelectedItem(trade.owner_item);
-                  setShowItemModal(true);
-                }}
-              />
-              <span className="text-sm text-gray-600 font-medium text-center">
-                {trade.owner_item?.name}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleOpenChat(trade.id)}
-              className="flex-1"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Open Chat
-            </Button>
-            
+            {/* Right side - reviews */}
             {trade.status === 'completed' && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleLeaveReview(trade)}
-                className="flex items-center"
-              >
-                <Star className="w-4 h-4 mr-1" />
-                Review
-              </Button>
+              <div className="w-72 pl-4 border-l border-gray-200 space-y-3">
+                <h4 className="font-medium text-gray-900 mb-3">Reviews</h4>
+                
+                {/* Their review of you */}
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Their review</span>
+                    {theirReview && (
+                      <div className="flex">
+                        {renderStars(theirReview.rating)}
+                      </div>
+                    )}
+                  </div>
+                  {theirReview ? (
+                    <p className="text-sm text-gray-600">
+                      {theirReview.comment || 'No comment provided'}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">No review yet</p>
+                  )}
+                </div>
+
+                {/* Your review of them */}
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Your review</span>
+                    {yourReview && (
+                      <div className="flex">
+                        {renderStars(yourReview.rating)}
+                      </div>
+                    )}
+                  </div>
+                  {yourReview ? (
+                    <p className="text-sm text-gray-600">
+                      {yourReview.comment || 'No comment provided'}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">No review yet</p>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </CardContent>
