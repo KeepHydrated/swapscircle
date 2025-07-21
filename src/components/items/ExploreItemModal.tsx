@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -262,20 +262,20 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {/* Tags in 2x2 grid */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="flex items-center gap-3 text-gray-600">
-                    <span className="text-lg">🏷️</span>
+                    <Tag className="w-4 h-4" />
                     <span className="text-sm">{displayItem.category || "No category"}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
-                    <span className="text-lg">🏷️</span>
+                    <Camera className="w-4 h-4" />
                     <span className="text-sm">{displayItem.tags?.[0] || "No tags"}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
-                    <span className="text-lg">⭐</span>
+                    <Shield className="w-4 h-4" />
                     <span className="text-sm">{displayItem.condition || "Not specified"}</span>
                   </div>
                   {(displayItem.price_range_min || displayItem.price_range_max) && (
                     <div className="flex items-center gap-3 text-gray-600">
-                      <span className="text-lg">💰</span>
+                      <DollarSign className="w-4 h-4" />
                       <span className="text-sm">
                         {displayItem.price_range_min && displayItem.price_range_max 
                           ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
