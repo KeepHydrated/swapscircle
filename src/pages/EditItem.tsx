@@ -81,10 +81,13 @@ const EditItem: React.FC = () => {
             const min = (item as any).price_range_min || 0;
             const max = (item as any).price_range_max || 999999;
             
+            console.log('Loading price range from DB:', { min, max });
+            
             // Format should match ItemOfferingForm price ranges: "0 - 50", "50 - 100", etc.
             const range = `${min} - ${max}`;
+            console.log('Setting priceRange to:', range);
             setPriceRange(range); // For the item form
-            setSelectedPriceRanges([`$${min}-$${max}`]); // For preferences form (different format)
+            setSelectedPriceRanges([`${min} - ${max}`]); // For preferences form (same format now)
           }
         } else {
           toast.error('Item not found');
