@@ -97,7 +97,7 @@ const Trades = () => {
   const completedTrades = trades.filter((trade: any) => trade.status === 'completed');
   const rejectedTrades = trades.filter((trade: any) => trade.status === 'rejected');
 
-  const TradeCard = ({ trade }: { trade: any }) => {
+  const TradeCard = ({ trade, hideReviews = false }: { trade: any; hideReviews?: boolean }) => {
     // Determine the other user based on current user ID
     const otherUser = trade.requester_id === currentUserId 
       ? trade.owner_profile 
@@ -120,9 +120,9 @@ const Trades = () => {
     return (
       <Card className="mb-4">
         <CardContent className="p-4">
-          <div className="flex justify-between">
+          <div className={hideReviews ? "" : "flex justify-between"}>
             {/* Left side - existing trade info */}
-            <div className="w-1/2 pr-4">
+            <div className={hideReviews ? "" : "w-1/2 pr-4"}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
                   <Avatar 
@@ -213,7 +213,7 @@ const Trades = () => {
             </div>
 
             {/* Right side - reviews */}
-            {trade.status === 'completed' && (
+            {!hideReviews && trade.status === 'completed' && (
               <div className="w-1/2 pl-4 border-l border-gray-200 space-y-3">
                 
                 
@@ -342,7 +342,7 @@ const Trades = () => {
             ) : (
               <div className="grid grid-cols-2 gap-4">
                 {completedTrades.map((trade: any) => (
-                  <TradeCard key={trade.id} trade={trade} />
+                  <TradeCard key={trade.id} trade={trade} hideReviews={true} />
                 ))}
               </div>
             )}
