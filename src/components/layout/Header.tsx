@@ -4,7 +4,6 @@ import { Bell, Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MobileMenu } from './MobileMenu';
 import HeaderLocationSelector from './HeaderLocationSelector';
 import {
   DropdownMenu,
@@ -171,7 +170,7 @@ const Header = () => {
             </Button>
           ) : null}
 
-          <MobileMenu />
+          
         </div>
       </div>
     </header>
