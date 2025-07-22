@@ -4,9 +4,53 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { fetchUserTradeConversations } from '@/services/tradeService';
+import { getReviewsForTrade, checkReviewEligibility } from '@/services/reviewService';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Star, ArrowLeftRight } from 'lucide-react';
+import { format } from 'date-fns';
+import ReviewModal from '@/components/trade/ReviewModal';
 
 const Trades = () => {
+  const navigate = useNavigate();
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedTradeForReview, setSelectedTradeForReview] = useState<any>(null);
+
+  // Get current user
+  const { data: currentUser } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      return user;
+    },
+  });
+
+  // Fetch trade conversations
+  const { data: trades = [], isLoading } = useQuery({
+    queryKey: ['trade-conversations'],
+    queryFn: fetchUserTradeConversations,
+  });
+
+  // Get completed trades only
+  const completedTrades = trades.filter((trade: any) => trade.status === 'completed');
+
+  // Fetch reviews for completed trades
+  const { data: allReviews = [] } = useQuery({
+    queryKey: ['trade-reviews', completedTrades.map(t => t.id)],
+    queryFn: async () => {
+      if (completedTrades.length === 0) return [];
+      
+      const reviewPromises = completedTrades.map(trade => getReviewsForTrade(trade.id));
+      const reviewsArrays = await Promise.all(reviewPromises);
+      
+      // Flatten the arrays and add trade_conversation_id to each review
+      return reviewsArrays.flat();
+    },
+    enabled: completedTrades.length > 0,
+  });
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star 
@@ -16,6 +60,56 @@ const Trades = () => {
     ));
   };
 
+  const handleOpenChat = (tradeId: string) => {
+    navigate(`/messages?conversation=${tradeId}`);
+  };
+
+  const handleProfileClick = (userId: string) => {
+    navigate(`/other-profile/${userId}`);
+  };
+
+  const handleLeaveReview = async (trade: any) => {
+    const eligibility = await checkReviewEligibility(trade.id);
+    if (eligibility.canReview) {
+      setSelectedTradeForReview(trade);
+      setShowReviewModal(true);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="p-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading your trades...</p>
+            </div>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (completedTrades.length === 0) {
+    return (
+      <MainLayout>
+        <div className="p-6 max-w-7xl mx-auto">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">My Trades</h1>
+            <p className="text-gray-600">Manage your trading activities and conversations</p>
+          </div>
+          <Card>
+            <CardContent className="p-8 text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No completed trades</h3>
+              <p className="text-gray-500">You haven't completed any trades yet.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="p-6 max-w-7xl mx-auto">
@@ -24,109 +118,193 @@ const Trades = () => {
           <p className="text-gray-600">Manage your trading activities and conversations</p>
         </div>
 
-        <div className="flex gap-6">
-          {/* Left side - Trade Details */}
-          <div className="flex-1">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="text-sm text-gray-500">Jul 21, 2025</div>
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                    Completed
-                  </Badge>
-                </div>
+        <div className="space-y-6">
+          {completedTrades.map((trade: any) => {
+            // Determine the other user based on current user ID
+            const otherUser = trade.requester_id === currentUser?.id 
+              ? trade.owner_profile 
+              : trade.requester_profile;
 
-                {/* Trade Items */}
-                <div className="flex items-center justify-center space-x-6 mb-6">
-                  {/* First Item */}
-                  <div className="flex flex-col items-center">
-                    <img 
-                      src="/lovable-uploads/38d2f591-af11-47ac-bf7c-87b79a031630.png" 
-                      alt="Women shirt 2"
-                      className="w-24 h-24 object-cover rounded-lg mb-2"
-                    />
-                    <span className="text-sm font-medium text-gray-700">Women shirt 2</span>
-                  </div>
-                  
-                  {/* Exchange Arrow */}
-                  <div className="flex items-center justify-center">
-                    <ArrowLeftRight className="w-6 h-6 text-gray-400" />
-                  </div>
-                  
-                  {/* Second Item */}
-                  <div className="flex flex-col items-center">
-                    <img 
-                      src="/lovable-uploads/38d2f591-af11-47ac-bf7c-87b79a031630.png" 
-                      alt="Item 3"
-                      className="w-24 h-24 object-cover rounded-lg mb-2"
-                    />
-                    <span className="text-sm font-medium text-gray-700">3</span>
-                  </div>
-                </div>
+            // Determine which items to show
+            const isCurrentUserRequester = trade.requester_id === currentUser?.id;
+            const theirItem = isCurrentUserRequester ? trade.owner_item : trade.requester_item;
+            const yourItem = isCurrentUserRequester ? trade.requester_item : trade.owner_item;
 
-                {/* Open Chat Button */}
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  size="lg"
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Open Chat
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+            // Get reviews for this trade
+            const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+            const yourReview = tradeReviews.find(review => review.reviewer_id === currentUser?.id);
+            const theirReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id);
 
-          {/* Right side - Reviews */}
-          <div className="w-96">
-            <Card>
-              <CardContent className="p-6 space-y-6">
-                {/* Their Review */}
-                <div>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">H</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-900">hhhhhhh's review</span>
-                        <div className="flex">
-                          {renderStars(4)}
+            return (
+              <div key={trade.id} className="flex gap-6">
+                {/* Left side - Trade Details */}
+                <div className="flex-1">
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="text-sm text-gray-500">
+                          {format(new Date(trade.created_at), 'MMM d, yyyy')}
+                        </div>
+                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                          Completed
+                        </Badge>
+                      </div>
+
+                      {/* Trade Items */}
+                      <div className="flex items-center justify-center space-x-6 mb-6">
+                        {/* Their Item */}
+                        <div className="flex flex-col items-center">
+                          <img 
+                            src={theirItem?.image_url || '/placeholder.svg'} 
+                            alt={theirItem?.name || 'Item'}
+                            className="w-24 h-24 object-cover rounded-lg mb-2"
+                          />
+                          <span className="text-sm font-medium text-gray-700 text-center max-w-24 truncate">
+                            {theirItem?.name || 'Unknown Item'}
+                          </span>
+                        </div>
+                        
+                        {/* Exchange Arrow */}
+                        <div className="flex items-center justify-center">
+                          <ArrowLeftRight className="w-6 h-6 text-gray-400" />
+                        </div>
+                        
+                        {/* Your Item */}
+                        <div className="flex flex-col items-center">
+                          <img 
+                            src={yourItem?.image_url || '/placeholder.svg'} 
+                            alt={yourItem?.name || 'Item'}
+                            className="w-24 h-24 object-cover rounded-lg mb-2"
+                          />
+                          <span className="text-sm font-medium text-gray-700 text-center max-w-24 truncate">
+                            {yourItem?.name || 'Unknown Item'}
+                          </span>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    I loved working with this seller! He was an amazing trader. He did such a good job. Bla bla bla
-                  </p>
+
+                      {/* Open Chat Button */}
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        size="lg"
+                        onClick={() => handleOpenChat(trade.id)}
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Open Chat
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </div>
 
-                {/* Divider */}
-                <div className="border-t border-gray-200"></div>
-
-                {/* Your Review */}
-                <div>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">Y</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-900">Your review</span>
-                        <div className="flex">
-                          {renderStars(5)}
+                {/* Right side - Reviews */}
+                <div className="w-96">
+                  <Card>
+                    <CardContent className="p-6 space-y-6">
+                      {/* Their Review */}
+                      <div>
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Avatar 
+                            className="h-8 w-8 cursor-pointer hover:opacity-80"
+                            onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                          >
+                            <AvatarImage src={otherUser?.avatar_url} />
+                            <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">
+                              {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span 
+                                className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                                onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                              >
+                                {otherUser?.username || 'Unknown User'}'s review
+                              </span>
+                              {theirReview && (
+                                <div className="flex">
+                                  {renderStars(theirReview.rating)}
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
+                        {theirReview ? (
+                          <p className="text-gray-600 text-sm leading-relaxed">
+                            {theirReview.comment || 'No comment provided'}
+                          </p>
+                        ) : (
+                          <p className="text-gray-400 text-sm italic">No review yet</p>
+                        )}
                       </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Great seller! He did amazing. Thank you so very much!
-                  </p>
+
+                      {/* Divider */}
+                      <div className="border-t border-gray-200"></div>
+
+                      {/* Your Review */}
+                      <div>
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">Y</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-gray-900">Your review</span>
+                              {yourReview && (
+                                <div className="flex">
+                                  {renderStars(yourReview.rating)}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {yourReview ? (
+                          <p className="text-gray-600 text-sm leading-relaxed">
+                            {yourReview.comment || 'No comment provided'}
+                          </p>
+                        ) : (
+                          <div className="space-y-2">
+                            <p className="text-gray-400 text-sm italic">No review yet</p>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleLeaveReview(trade)}
+                              className="w-full"
+                            >
+                              <Star className="w-4 h-4 mr-1" />
+                              Leave Review
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            );
+          })}
         </div>
+
+        {/* Review Modal */}
+        {showReviewModal && selectedTradeForReview && (
+          <ReviewModal
+            isOpen={showReviewModal}
+            onClose={() => {
+              setShowReviewModal(false);
+              setSelectedTradeForReview(null);
+            }}
+            tradeConversationId={selectedTradeForReview.id}
+            revieweeId={
+              selectedTradeForReview.requester_id === currentUser?.id 
+                ? selectedTradeForReview.owner_id 
+                : selectedTradeForReview.requester_id
+            }
+            revieweeName={
+              selectedTradeForReview.requester_id === currentUser?.id 
+                ? selectedTradeForReview.owner_profile?.username || 'Unknown User'
+                : selectedTradeForReview.requester_profile?.username || 'Unknown User'
+            }
+          />
+        )}
       </div>
     </MainLayout>
   );
