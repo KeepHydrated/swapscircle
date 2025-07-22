@@ -20,6 +20,8 @@ const ReviewModal = ({ isOpen, onClose, tradeConversationId, revieweeId, reviewe
   const [hoveredRating, setHoveredRating] = useState(0);
   const [comment, setComment] = useState('');
   const queryClient = useQueryClient();
+  
+  const MAX_REVIEW_LENGTH = 140; // Character limit for ~2 lines
 
   const createReviewMutation = useMutation({
     mutationFn: (data: { rating: number; comment?: string }) =>
@@ -95,14 +97,25 @@ const ReviewModal = ({ isOpen, onClose, tradeConversationId, revieweeId, reviewe
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Comments (optional)
-            </label>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Comments (optional)
+              </label>
+              <span className={`text-xs ${comment.length > MAX_REVIEW_LENGTH ? 'text-red-500' : 'text-gray-400'}`}>
+                {comment.length}/{MAX_REVIEW_LENGTH}
+              </span>
+            </div>
             <Textarea
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= MAX_REVIEW_LENGTH) {
+                  setComment(value);
+                }
+              }}
               placeholder="Share your experience with this trader..."
               rows={4}
+              maxLength={MAX_REVIEW_LENGTH}
             />
           </div>
 
