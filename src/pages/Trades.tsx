@@ -122,7 +122,7 @@ const Trades = () => {
         <CardContent className="p-4">
           <div className="flex justify-between">
             {/* Left side - existing trade info */}
-            <div className="flex-1 pr-4">
+            <div className="w-1/2 pr-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
                   <Avatar 
@@ -214,7 +214,7 @@ const Trades = () => {
 
             {/* Right side - reviews */}
             {trade.status === 'completed' && (
-              <div className="w-72 pl-4 border-l border-gray-200 space-y-3">
+              <div className="w-1/2 pl-4 border-l border-gray-200 space-y-3">
                 
                 
                 {/* Their review of you */}
