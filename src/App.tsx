@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import PostItem from "./pages/PostItem";
 import EditItem from "./pages/EditItem";
 import ItemDetails from "./pages/ItemDetails";
@@ -35,7 +36,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Test />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/test" element={<Test />} />
               <Route path="/trades" element={
