@@ -77,12 +77,14 @@ const EditItem: React.FC = () => {
           setSelectedConditions((item as any).looking_for_conditions || []);
           
           // Convert price range for both item form and preferences
-          if ((item as any).price_range_min || (item as any).price_range_max) {
+          if ((item as any).price_range_min !== null || (item as any).price_range_max !== null) {
             const min = (item as any).price_range_min || 0;
             const max = (item as any).price_range_max || 999999;
-            const range = `$${min}-$${max}`;
+            
+            // Format should match ItemOfferingForm price ranges: "0 - 50", "50 - 100", etc.
+            const range = `${min} - ${max}`;
             setPriceRange(range); // For the item form
-            setSelectedPriceRanges([range]); // For preferences form
+            setSelectedPriceRanges([`$${min}-$${max}`]); // For preferences form (different format)
           }
         } else {
           toast.error('Item not found');
@@ -177,8 +179,8 @@ const EditItem: React.FC = () => {
           looking_for_categories: selectedCategories,
           looking_for_conditions: selectedConditions,
           looking_for_description: lookingForText,
-          price_range_min: priceRange ? parseFloat(priceRange.split('-')[0].replace('$', '')) : null,
-          price_range_max: priceRange ? parseFloat(priceRange.split('-')[1].replace('$', '')) : null,
+          price_range_min: priceRange ? parseFloat(priceRange.split(' - ')[0]) : null,
+          price_range_max: priceRange ? parseFloat(priceRange.split(' - ')[1]) : null,
         };
         
         console.log('Updates object:', updates);
