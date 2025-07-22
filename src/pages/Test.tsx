@@ -332,19 +332,6 @@ const Test = () => {
                     <div className="w-1/2">
                       <Card className="h-full">
                         <CardContent className="p-4 h-full flex flex-col">
-                          {/* Open Chat Button moved higher */}
-                          <div className="mb-4">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleOpenChat(trade.id)}
-                              className="w-full"
-                            >
-                              <MessageCircle className="w-4 h-4 mr-2" />
-                              Open Chat
-                            </Button>
-                          </div>
-                          
                           <div className="flex-1 space-y-3">
                             {/* Their review of you */}
                             <div className="bg-gray-50 p-3 rounded-lg">
