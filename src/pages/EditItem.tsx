@@ -81,16 +81,21 @@ const EditItem: React.FC = () => {
             const min = (item as any).price_range_min;
             const max = (item as any).price_range_max;
             
-            // Find matching price range from predefined ranges
+            // Find all matching price ranges that fall within the min-max range
             const ranges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
-            const range = ranges.find(r => {
+            const matchingRanges = ranges.filter(r => {
               const [rMin, rMax] = r.split(" - ").map(Number);
-              return rMin === min && rMax === max;
-            }) || "0 - 50";
-
-            console.log('Setting price range to:', range);
-            setPriceRange(range);
-            setSelectedPriceRanges([range]);
+              return (rMin >= min && rMin <= max) || (rMax >= min && rMax <= max) || (min >= rMin && max <= rMax);
+            });
+            
+            console.log('Setting price range to item form:', matchingRanges[0] || "0 - 50");
+            console.log('Setting selected price ranges:', matchingRanges);
+            
+            // For the item offering form, just use the first matching range
+            setPriceRange(matchingRanges[0] || "0 - 50");
+            
+            // For the preferences form, use all matching ranges
+            setSelectedPriceRanges(matchingRanges.length > 0 ? matchingRanges : ["0 - 50"]);
           }
         } else {
           toast.error('Item not found');
@@ -187,11 +192,24 @@ const EditItem: React.FC = () => {
           looking_for_description: lookingForText,
         };
         
-        // Only add price range if it's selected
-        if (priceRange) {
-          const [min, max] = priceRange.split(" - ").map(Number);
-          updates.price_range_min = min;
-          updates.price_range_max = max;
+        // Handle price ranges - we need to convert the multiple selected price ranges
+        // into a single min-max range that encompasses all selections
+        if (selectedPriceRanges.length > 0) {
+          console.log('Selected price ranges:', selectedPriceRanges);
+          
+          // Find the minimum and maximum values across all selected ranges
+          let minValue = Number.MAX_VALUE;
+          let maxValue = 0;
+          
+          selectedPriceRanges.forEach(range => {
+            const [min, max] = range.split(" - ").map(Number);
+            if (min < minValue) minValue = min;
+            if (max > maxValue) maxValue = max;
+          });
+          
+          console.log('Combined price range:', { minValue, maxValue });
+          updates.price_range_min = minValue;
+          updates.price_range_max = maxValue;
         }
         
         console.log('Price range string:', priceRange);
