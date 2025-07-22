@@ -146,7 +146,7 @@ const Test = () => {
                         <img 
                           src={theirItem?.image_url} 
                           alt={theirItem?.name}
-                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-28 h-28 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(theirItem);
                             setShowItemModal(true);
@@ -166,7 +166,7 @@ const Test = () => {
                         <img 
                           src={yourItem?.image_url} 
                           alt={yourItem?.name}
-                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-28 h-28 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(yourItem);
                             setShowItemModal(true);
