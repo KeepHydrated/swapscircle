@@ -339,10 +339,12 @@ const Trades = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
-                {pendingTrades.map((trade: any) => (
-                  <TradeCard key={trade.id} trade={trade} hideReviews={true} />
-                ))}
+              <div className="w-1/2">
+                <div className="space-y-4">
+                  {pendingTrades.map((trade: any) => (
+                    <TradeCard key={trade.id} trade={trade} hideReviews={true} />
+                  ))}
+                </div>
               </div>
             )}
           </TabsContent>
