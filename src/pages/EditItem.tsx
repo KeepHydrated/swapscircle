@@ -173,7 +173,6 @@ const EditItem: React.FC = () => {
           description,
           category,
           condition,
-          price_range: priceRange,
           looking_for_categories: selectedCategories,
           looking_for_conditions: selectedConditions,
           looking_for_description: lookingForText,
