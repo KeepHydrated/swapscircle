@@ -4,7 +4,7 @@ import { MatchItem } from '@/types/item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import MatchesGrid from './MatchesGrid';
 import { MobileMatchesView } from './MobileMatchesView';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile'; // Fixed import
 
 interface MatchesContainerProps {
   displayedMatches: MatchItem[];
