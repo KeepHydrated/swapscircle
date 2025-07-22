@@ -389,7 +389,17 @@ const Test = () => {
                               {/* Their review of you */}
                               <div className="bg-gray-50 p-3 rounded-lg">
                                 <div className="flex items-center justify-between mb-2">
-                                  <span className="text-sm font-medium text-gray-700">Their review</span>
+                                  <div className="flex items-center space-x-2">
+                                    <Avatar className="h-6 w-6">
+                                      <AvatarImage src={trade.requester_id === currentUserId ? trade.owner_profile?.avatar_url : trade.requester_profile?.avatar_url} />
+                                      <AvatarFallback>
+                                        {(trade.requester_id === currentUserId ? trade.owner_profile?.username : trade.requester_profile?.username)?.charAt(0).toUpperCase() || 'U'}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-sm font-medium text-gray-700">
+                                      {trade.requester_id === currentUserId ? trade.owner_profile?.username : trade.requester_profile?.username}'s review
+                                    </span>
+                                  </div>
                                   {theirReview && (
                                     <div className="flex">
                                       {renderStars(theirReview.rating)}
