@@ -20,6 +20,7 @@ interface ItemOfferingFormProps {
   setDescription: (value: string) => void;
   images: File[];
   setImages: (value: File[]) => void;
+  existingImageUrl?: string;
   category: string;
   setCategory: (value: string) => void;
   subcategory: string;
@@ -74,6 +75,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   setDescription,
   images,
   setImages,
+  existingImageUrl,
   category,
   setCategory,
   subcategory,
@@ -129,25 +131,44 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               Choose Images
             </Button>
             
-            {images.length > 0 && (
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
-                {images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <div className="relative h-24 bg-gray-100 rounded-lg overflow-hidden">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Preview ${index}`}
-                        className="h-full w-full object-cover"
-                      />
-                      <button
-                        onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
+            {/* Show existing image if available */}
+            {existingImageUrl && (
+              <div className="mt-6 w-full">
+                <p className="text-sm text-gray-600 mb-2">Current image:</p>
+                <div className="relative group inline-block">
+                  <div className="relative h-32 w-32 bg-gray-100 rounded-lg overflow-hidden">
+                    <img
+                      src={existingImageUrl}
+                      alt="Current item"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                ))}
+                </div>
+              </div>
+            )}
+            
+            {images.length > 0 && (
+              <div className="mt-6 w-full">
+                <p className="text-sm text-gray-600 mb-2">New images to upload:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {images.map((image, index) => (
+                    <div key={index} className="relative group">
+                      <div className="relative h-24 bg-gray-100 rounded-lg overflow-hidden">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Preview ${index}`}
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          onClick={() => removeImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
