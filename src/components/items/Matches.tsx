@@ -77,8 +77,20 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
 
-  // Don't render anything while loading to prevent flashing
-  if (loading) {
+  // Don't render anything while loading OR if we have no selected item to prevent flashing
+  if (loading || !selectedItemName) {
+    return (
+      <div className="w-full flex flex-col h-full">
+        <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
+          <div className="text-4xl mb-3">⏳</div>
+          <p className="text-base font-medium mb-1">Loading matches...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Also don't render if we haven't received matches data yet to prevent stale data
+  if (matches.length === 0 && loading !== false) {
     return (
       <div className="w-full flex flex-col h-full">
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">

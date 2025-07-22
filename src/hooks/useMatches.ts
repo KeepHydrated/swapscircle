@@ -19,6 +19,8 @@ export function useMatches(selectedItem: Item | null) {
         return;
       }
 
+      // Clear previous matches immediately to prevent flashing
+      setMatches([]);
       setLoading(true);
       setError(null);
 
