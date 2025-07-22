@@ -378,17 +378,18 @@ const Home: React.FC = () => {
                   </Button>
                 </div>
                 
-                <TabsContent value="matches" className="flex-1 mt-0">
+                <TabsContent key={`matches-${activeTab}-${selectedUserItemId}`} value="matches" className="flex-1 mt-0">
                   {(() => {
                     console.log('DEBUG: Rendering matches tab - selectedUserItem:', selectedUserItem);
                     console.log('DEBUG: matches length:', matches.length);
-                     return selectedUserItem ? (
-                       <Matches
-                         matches={matches}
-                         selectedItemName={selectedUserItem.name}
-                         onUndoAvailable={handleMatchesUndoAvailable}
-                         loading={matchesLoading}
-                       />
+                    return selectedUserItem ? (
+                      <Matches
+                        key={`matches-component-${selectedUserItem.id}`}
+                        matches={matches}
+                        selectedItemName={selectedUserItem.name}
+                        onUndoAvailable={handleMatchesUndoAvailable}
+                        loading={matchesLoading}
+                      />
                     ) : (
                       <div className="h-full flex flex-col">
                         <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
