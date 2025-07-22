@@ -241,7 +241,7 @@ const Trades = () => {
                                 className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
                                 onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
                               >
-                                {otherUser?.username || 'Unknown User'}'s review
+                                {otherUser?.username || 'Unknown User'}
                               </span>
                               {theirReview && (
                                 <div className="flex">
@@ -281,7 +281,7 @@ const Trades = () => {
                                 className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
                                 onClick={handleMyProfileClick}
                               >
-                                Your review
+                                {currentUser?.profile?.username || 'You'}
                               </span>
                               {yourReview && (
                                 <div className="flex">
