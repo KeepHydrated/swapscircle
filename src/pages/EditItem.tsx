@@ -77,17 +77,20 @@ const EditItem: React.FC = () => {
           setSelectedConditions((item as any).looking_for_conditions || []);
           
           // Convert price range for both item form and preferences
-          if ((item as any).price_range_min !== null || (item as any).price_range_max !== null) {
-            const min = (item as any).price_range_min || 0;
-            const max = (item as any).price_range_max || 999999;
+          if ((item as any).price_range_min !== null && (item as any).price_range_max !== null) {
+            const min = (item as any).price_range_min;
+            const max = (item as any).price_range_max;
             
-            console.log('Loading price range from DB:', { min, max });
-            
-            // Format should match ItemOfferingForm price ranges: "0 - 50", "50 - 100", etc.
-            const range = `${min} - ${max}`;
-            console.log('Setting priceRange to:', range);
-            setPriceRange(range); // For the item form
-            setSelectedPriceRanges([`${min} - ${max}`]); // For preferences form (same format now)
+            // Find matching price range from predefined ranges
+            const ranges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
+            const range = ranges.find(r => {
+              const [rMin, rMax] = r.split(" - ").map(Number);
+              return rMin === min && rMax === max;
+            }) || "0 - 50";
+
+            console.log('Setting price range to:', range);
+            setPriceRange(range);
+            setSelectedPriceRanges([range]);
           }
         } else {
           toast.error('Item not found');
@@ -182,14 +185,16 @@ const EditItem: React.FC = () => {
           looking_for_categories: selectedCategories,
           looking_for_conditions: selectedConditions,
           looking_for_description: lookingForText,
-          price_range_min: priceRange ? parseFloat(priceRange.split(' - ')[0]) : 0,
-          price_range_max: priceRange ? parseFloat(priceRange.split(' - ')[1]) : 0,
         };
         
-        console.log('Price range string:', priceRange);
-        console.log('Parsed min:', priceRange ? parseFloat(priceRange.split(' - ')[0]) : null);
-        console.log('Parsed max:', priceRange ? parseFloat(priceRange.split(' - ')[1]) : null);
+        // Only add price range if it's selected
+        if (priceRange) {
+          const [min, max] = priceRange.split(" - ").map(Number);
+          updates.price_range_min = min;
+          updates.price_range_max = max;
+        }
         
+        console.log('Price range string:', priceRange);
         console.log('Updates object:', updates);
         console.log('Calling updateItem service...');
         
