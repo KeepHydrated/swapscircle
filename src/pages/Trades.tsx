@@ -163,7 +163,7 @@ const Trades = () => {
                         <img 
                           src={theirItem?.image_url} 
                           alt={theirItem?.name}
-                          className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(theirItem);
                             setShowItemModal(true);
@@ -183,7 +183,7 @@ const Trades = () => {
                         <img 
                           src={yourItem?.image_url} 
                           alt={yourItem?.name}
-                          className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(yourItem);
                             setShowItemModal(true);
