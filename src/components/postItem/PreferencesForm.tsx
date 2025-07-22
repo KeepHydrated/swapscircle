@@ -113,10 +113,19 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
 
   // Toggle price range selection
   const togglePriceRange = (range: string) => {
+    console.log('Toggle price range called with:', range);
+    console.log('Current selectedPriceRanges:', selectedPriceRanges);
+    
     if (selectedPriceRanges.includes(range)) {
-      setSelectedPriceRanges(selectedPriceRanges.filter(r => r !== range));
+      console.log('Removing range:', range);
+      const newRanges = selectedPriceRanges.filter(r => r !== range);
+      console.log('New ranges after removal:', newRanges);
+      setSelectedPriceRanges(newRanges);
     } else {
-      setSelectedPriceRanges([...selectedPriceRanges, range]);
+      console.log('Adding range:', range);
+      const newRanges = [...selectedPriceRanges, range];
+      console.log('New ranges after addition:', newRanges);
+      setSelectedPriceRanges(newRanges);
     }
   };
 

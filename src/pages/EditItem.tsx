@@ -81,21 +81,32 @@ const EditItem: React.FC = () => {
             const min = (item as any).price_range_min;
             const max = (item as any).price_range_max;
             
-            // Find all matching price ranges that fall within the min-max range
-            const ranges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
-            const matchingRanges = ranges.filter(r => {
-              const [rMin, rMax] = r.split(" - ").map(Number);
-              return (rMin >= min && rMin <= max) || (rMax >= min && rMax <= max) || (min >= rMin && max <= rMax);
-            });
-            
-            console.log('Setting price range to item form:', matchingRanges[0] || "0 - 50");
-            console.log('Setting selected price ranges:', matchingRanges);
-            
-            // For the item offering form, just use the first matching range
-            setPriceRange(matchingRanges[0] || "0 - 50");
-            
-            // For the preferences form, use all matching ranges
-            setSelectedPriceRanges(matchingRanges.length > 0 ? matchingRanges : ["0 - 50"]);
+            // Check if we have looking_for_price_ranges stored
+            if ((item as any).looking_for_price_ranges && (item as any).looking_for_price_ranges.length > 0) {
+              console.log('Found stored price ranges:', (item as any).looking_for_price_ranges);
+              setSelectedPriceRanges((item as any).looking_for_price_ranges);
+              
+              // For the item form, use the first price range or a formatted min-max
+              const storedRanges = (item as any).looking_for_price_ranges;
+              setPriceRange(storedRanges[0] || `${min} - ${max}`);
+            } else {
+              // Fallback to the old min-max logic
+              // Find all matching price ranges that fall within the min-max range
+              const ranges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
+              const matchingRanges = ranges.filter(r => {
+                const [rMin, rMax] = r.split(" - ").map(Number);
+                return (rMin >= min && rMin <= max) || (rMax >= min && rMax <= max) || (min >= rMin && max <= rMax);
+              });
+              
+              console.log('Setting price range to item form:', matchingRanges[0] || "0 - 50");
+              console.log('Setting selected price ranges:', matchingRanges);
+              
+              // For the item offering form, just use the first matching range
+              setPriceRange(matchingRanges[0] || "0 - 50");
+              
+              // For the preferences form, use all matching ranges
+              setSelectedPriceRanges(matchingRanges.length > 0 ? matchingRanges : ["0 - 50"]);
+            }
           }
         } else {
           toast.error('Item not found');
@@ -192,9 +203,19 @@ const EditItem: React.FC = () => {
           looking_for_description: lookingForText,
         };
         
-        // Handle price ranges - we need to convert the multiple selected price ranges
+        // Debug the actual state of selectedPriceRanges
+        console.log('Raw selectedPriceRanges state:', JSON.stringify(selectedPriceRanges));
+        console.log('Type of selectedPriceRanges:', typeof selectedPriceRanges);
+        console.log('Is array?', Array.isArray(selectedPriceRanges));
+        
+        // Store selectedPriceRanges as array in a database field
+        // This is a workaround since the DB schema has price_range_min and price_range_max fields
+        // but we want to support multiple selected ranges in the UI
+        updates.looking_for_price_ranges = selectedPriceRanges;
+        
+        // Handle price ranges - convert the multiple selected price ranges
         // into a single min-max range that encompasses all selections
-        if (selectedPriceRanges.length > 0) {
+        if (selectedPriceRanges && selectedPriceRanges.length > 0) {
           console.log('Selected price ranges:', selectedPriceRanges);
           
           // Find the minimum and maximum values across all selected ranges
@@ -202,12 +223,21 @@ const EditItem: React.FC = () => {
           let maxValue = 0;
           
           selectedPriceRanges.forEach(range => {
-            const [min, max] = range.split(" - ").map(Number);
+            console.log('Processing range:', range);
+            const parts = range.split(" - ");
+            console.log('Split parts:', parts);
+            
+            const min = parseFloat(parts[0]);
+            const max = parseFloat(parts[1].replace(/,/g, '')); // Remove commas
+            
+            console.log('Parsed min/max:', min, max);
             if (min < minValue) minValue = min;
             if (max > maxValue) maxValue = max;
           });
           
           console.log('Combined price range:', { minValue, maxValue });
+          
+          // Update price_range_min and price_range_max in the database
           updates.price_range_min = minValue;
           updates.price_range_max = maxValue;
         }
