@@ -22,7 +22,7 @@ const EditItem: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
-  const [existingImageUrl, setExistingImageUrl] = useState<string>('');
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
@@ -62,7 +62,9 @@ const EditItem: React.FC = () => {
           
           setTitle(item.name || '');
           setDescription(item.description || '');
-          setExistingImageUrl((item as any).image_url || '');
+          // Handle multiple images - for now just use the single image_url as first image
+          const imageUrl = (item as any).image_url;
+          setExistingImageUrls(imageUrl ? [imageUrl] : []);
           setCategory(item.category || '');
           setCondition(item.condition || '');
           setPriceRange((item as any).price_range || '');
@@ -304,7 +306,8 @@ const EditItem: React.FC = () => {
               setDescription={setDescription}
               images={images}
               setImages={setImages}
-              existingImageUrl={existingImageUrl}
+              existingImageUrls={existingImageUrls}
+              setExistingImageUrls={setExistingImageUrls}
               category={category}
               setCategory={setCategory}
               subcategory={subcategory}
