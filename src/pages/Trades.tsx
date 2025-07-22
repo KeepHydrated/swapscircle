@@ -362,17 +362,21 @@ const Trades = () => {
               <div className="flex gap-6">
                 {/* Left side - Trade cards */}
                 <div className="w-1/2">
-                  <div className="space-y-4">
-                    {completedTrades.map((trade: any) => (
-                      <TradeCard key={trade.id} trade={trade} hideReviews={true} />
+                  <div className="flex flex-col gap-4">
+                    {completedTrades.map((trade: any, index: number) => (
+                      <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
+                        <div className="w-full">
+                          <TradeCard trade={trade} hideReviews={true} />
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
                 
                 {/* Right side - Reviews */}
                 <div className="w-1/2">
-                  <div className="space-y-4">
-                    {completedTrades.map((trade: any) => {
+                  <div className="flex flex-col gap-4">
+                    {completedTrades.map((trade: any, index: number) => {
                       const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
                       const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
                       const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
