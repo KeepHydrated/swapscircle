@@ -20,7 +20,8 @@ interface ItemOfferingFormProps {
   setDescription: (value: string) => void;
   images: File[];
   setImages: (value: File[]) => void;
-  existingImageUrl?: string;
+  existingImageUrls?: string[];
+  setExistingImageUrls?: (urls: string[]) => void;
   category: string;
   setCategory: (value: string) => void;
   subcategory: string;
@@ -75,7 +76,8 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   setDescription,
   images,
   setImages,
-  existingImageUrl,
+  existingImageUrls = [],
+  setExistingImageUrls,
   category,
   setCategory,
   subcategory,
@@ -85,14 +87,13 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   priceRange,
   setPriceRange
 }) => {
-  // For now, only support one image total (existing + new uploads)
-  const totalImages = (existingImageUrl ? 1 : 0) + images.length;
+  const totalImages = existingImageUrls.length + images.length;
+  const MAX_IMAGES = 5;
   
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newImages = Array.from(e.target.files);
-      // If there's an existing image, only allow 0 new images. Otherwise allow 1.
-      const remainingSlots = existingImageUrl ? 0 : 1 - images.length;
+      const remainingSlots = MAX_IMAGES - totalImages;
       const imagesToAdd = newImages.slice(0, remainingSlots);
       setImages([...images, ...imagesToAdd]);
     }
@@ -101,6 +102,13 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   const removeImage = (index: number) => {
     const updatedImages = images.filter((_, i) => i !== index);
     setImages(updatedImages);
+  };
+  
+  const removeExistingImage = (index: number) => {
+    if (setExistingImageUrls) {
+      const updatedUrls = existingImageUrls.filter((_, i) => i !== index);
+      setExistingImageUrls(updatedUrls);
+    }
   };
 
   // Get subcategories based on selected category
@@ -114,11 +122,11 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
       <div className="space-y-6">
         {/* Image Upload */}
         <div>
-          <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Item Image</Label>
+          <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Add Images</Label>
           <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
             <Upload className="h-10 w-10 text-gray-400 mb-3" />
-            <p className="text-base font-medium text-gray-700 mb-1">Upload your item photo</p>
-            <p className="text-sm text-gray-500 mb-4">Add 1 high-quality image</p>
+            <p className="text-base font-medium text-gray-700 mb-1">Upload your item photos</p>
+            <p className="text-sm text-gray-500 mb-4">Add up to 5 high-quality images ({totalImages}/5 used)</p>
             <input
               id="images"
               type="file"
@@ -131,31 +139,41 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               variant="outline" 
               className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2"
               onClick={() => document.getElementById('images')?.click()}
-              disabled={totalImages >= 1}
+              disabled={totalImages >= MAX_IMAGES}
             >
               <ImagePlus className="mr-2 h-4 w-4" />
-              {existingImageUrl ? 'Replace Image' : 'Choose Image'}
+              {totalImages >= MAX_IMAGES ? 'Maximum Images Reached' : 'Choose Images'}
             </Button>
             
-            {/* Show existing image if available */}
-            {existingImageUrl && (
+            {/* Show existing images if available */}
+            {existingImageUrls.length > 0 && (
               <div className="mt-6 w-full">
-                <p className="text-sm text-gray-600 mb-2">Current image:</p>
-                <div className="relative group inline-block">
-                  <div className="relative h-32 w-32 bg-gray-100 rounded-lg overflow-hidden">
-                    <img
-                      src={existingImageUrl}
-                      alt="Current item"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
+                <p className="text-sm text-gray-600 mb-2">Current images:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {existingImageUrls.map((imageUrl, index) => (
+                    <div key={`existing-${index}`} className="relative group">
+                      <div className="relative h-24 bg-gray-100 rounded-lg overflow-hidden">
+                        <img
+                          src={imageUrl}
+                          alt={`Current item ${index + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          onClick={() => removeExistingImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
             
             {images.length > 0 && (
               <div className="mt-6 w-full">
-                <p className="text-sm text-gray-600 mb-2">New image to upload:</p>
+                <p className="text-sm text-gray-600 mb-2">New images to upload:</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {images.map((image, index) => (
                     <div key={`new-${index}`} className="relative group">

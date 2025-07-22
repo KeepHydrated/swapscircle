@@ -22,7 +22,7 @@ const EditItem: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
-  const [existingImageUrl, setExistingImageUrl] = useState<string>('');
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("");
   const [subcategory, setSubcategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
@@ -62,7 +62,16 @@ const EditItem: React.FC = () => {
           
           setTitle(item.name || '');
           setDescription(item.description || '');
-          setExistingImageUrl((item as any).image_url || '');
+          
+          // Handle both old single image_url and new image_urls array
+          if ((item as any).image_urls && Array.isArray((item as any).image_urls)) {
+            setExistingImageUrls((item as any).image_urls);
+          } else if ((item as any).image_url) {
+            setExistingImageUrls([(item as any).image_url]);
+          } else {
+            setExistingImageUrls([]);
+          }
+          
           setCategory(item.category || '');
           setCondition(item.condition || '');
           setPriceRange((item as any).price_range || '');
@@ -205,6 +214,20 @@ const EditItem: React.FC = () => {
           looking_for_description: lookingForText,
         };
         
+        // Handle image updates - combine existing images with new uploads
+        if (existingImageUrls.length > 0 || images.length > 0) {
+          const allImageUrls = [...existingImageUrls];
+          // Note: In a real app, you'd upload the new File objects to storage first
+          // and get their URLs, then add those URLs to the array
+          // For now, we'll just keep the existing images
+          updates.image_urls = allImageUrls;
+          
+          // Also update the legacy image_url field with the first image for backwards compatibility
+          if (allImageUrls.length > 0) {
+            updates.image_url = allImageUrls[0];
+          }
+        }
+        
         // Debug the actual state of selectedPriceRanges
         console.log('Raw selectedPriceRanges state:', JSON.stringify(selectedPriceRanges));
         console.log('Type of selectedPriceRanges:', typeof selectedPriceRanges);
@@ -304,7 +327,8 @@ const EditItem: React.FC = () => {
               setDescription={setDescription}
               images={images}
               setImages={setImages}
-              existingImageUrl={existingImageUrl}
+              existingImageUrls={existingImageUrls}
+              setExistingImageUrls={setExistingImageUrls}
               category={category}
               setCategory={setCategory}
               subcategory={subcategory}
