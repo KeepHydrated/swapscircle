@@ -208,10 +208,10 @@ const EditItem: React.FC = () => {
         console.log('Type of selectedPriceRanges:', typeof selectedPriceRanges);
         console.log('Is array?', Array.isArray(selectedPriceRanges));
         
-        // Store selectedPriceRanges as array in a database field
+        // Store selectedPriceRanges as array in a database field - commented out until migration is applied
         // This is a workaround since the DB schema has price_range_min and price_range_max fields
         // but we want to support multiple selected ranges in the UI
-        updates.looking_for_price_ranges = selectedPriceRanges;
+        // updates.looking_for_price_ranges = selectedPriceRanges;
         
         // Handle price ranges - convert the multiple selected price ranges
         // into a single min-max range that encompasses all selections
