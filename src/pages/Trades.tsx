@@ -159,7 +159,7 @@ const Trades = () => {
             return (
               <div key={trade.id} className="flex gap-6">
                 {/* Left side - Trade Details */}
-                <div className="w-2/5">
+                <div className="w-1/2">
                   <Card>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
@@ -220,7 +220,7 @@ const Trades = () => {
                 </div>
 
                 {/* Right side - Reviews */}
-                <div className="w-96">
+                <div className="w-[28rem]">
                   <Card>
                     <CardContent className="p-6 space-y-6">
                       {/* Their Review */}
