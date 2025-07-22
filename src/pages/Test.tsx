@@ -239,9 +239,9 @@ const Test = () => {
             )}
           </div>
           
-          {/* Open Chat Button - aligned at bottom when reviews are hidden */}
+          {/* Open Chat Button - moved higher when reviews are hidden */}
           {hideReviews && (
-            <div className="mt-3">
+            <div className="mt-4 mb-2">
               <Button 
                 variant="outline" 
                 size="sm"
