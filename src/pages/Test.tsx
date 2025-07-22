@@ -1,487 +1,505 @@
-
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { RotateCcw } from 'lucide-react';
-import Header from '@/components/layout/Header';
-import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
-import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
-
-import { useDbItems } from '@/hooks/useDbItems';
-import { useUserItems } from '@/hooks/useUserItems';
-import { useMatches } from '@/hooks/useMatches';
-import ItemCard from '@/components/items/ItemCard';
-import MyItems from '@/components/items/MyItems';
-import Matches from '@/components/items/Matches';
-import ExploreItemModal from '@/components/items/ExploreItemModal';
-import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
-import { MatchItem } from '@/types/item';
-import { supabase } from '@/integrations/supabase/client';
-import { likeItem, unlikeItem } from '@/services/authService';
+import React, { useState } from 'react';
+import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { fetchUserTradeConversations } from '@/services/tradeService';
+import { checkReviewEligibility } from '@/services/reviewService';
+import { useNavigate } from 'react-router-dom';
+import { Clock, MessageCircle, CheckCircle, XCircle, Star, ArrowLeftRight } from 'lucide-react';
+import { format } from 'date-fns';
+import ReviewModal from '@/components/trade/ReviewModal';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
 
-const Test: React.FC = () => {
-  // User's authentication and navigation
-  const { user, supabaseConfigured } = useAuth();
+const Test = () => {
   const navigate = useNavigate();
-  
-  // Friend items - fetch from friends
-  const [friendItems, setFriendItems] = useState([]);
-  const [friendItemsLoading, setFriendItemsLoading] = useState(false);
-  const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
-  const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
-
-  // Modal state
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedTradeForReview, setSelectedTradeForReview] = useState<any>(null);
+  const [showItemModal, setShowItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
 
-  // Fetch friends' items
-  const fetchFriendsItems = async () => {
-    if (!user) return;
-    
-    setFriendItemsLoading(true);
-    try {
-      // Get all accepted friend requests where current user is involved
-      const { data: friendRequests, error: friendsError } = await supabase
-        .from('friend_requests')
-        .select('requester_id, recipient_id')
-        .eq('status', 'accepted')
-        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+  const { data: trades = [], isLoading } = useQuery({
+    queryKey: ['trade-conversations'],
+    queryFn: fetchUserTradeConversations,
+  });
 
-      if (friendsError) {
-        console.error('Error fetching friends:', friendsError);
-        return;
-      }
-
-      if (!friendRequests || friendRequests.length === 0) {
-        setFriendItems([]);
-        return;
-      }
-
-      // Get friend user IDs (excluding current user)
-      const friendIds = friendRequests.map(req => 
-        req.requester_id === user.id ? req.recipient_id : req.requester_id
-      );
-
-      // Fetch available and visible items from all friends and their profiles separately
-      const { data: friendItemsData, error: itemsError } = await supabase
-        .from('items')
-        .select('*')
-        .in('user_id', friendIds)
-        .eq('is_available', true) // Only show available items
-        .eq('is_hidden', false); // Only show non-hidden items
-
-      if (itemsError) {
-        console.error('Error fetching friend items:', itemsError);
-        return;
-      }
-
-      // Fetch profiles for the friends
-      const { data: friendProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, name, username, avatar_url')
-        .in('id', friendIds);
-
-      if (profilesError) {
-        console.error('Error fetching friend profiles:', profilesError);
-      }
-
-      // Create a map of user_id to profile for quick lookup
-      const profileMap = (friendProfiles || []).reduce((acc, profile) => {
-        acc[profile.id] = profile;
-        return acc;
-      }, {} as Record<string, any>);
-
-      // Format items for the carousel
-      const formattedFriendItems = friendItemsData?.map(item => {
-        const ownerProfile = profileMap[item.user_id];
-        return {
-          id: item.id,
-          name: item.name,
-          image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-          category: item.category,
-          condition: item.condition,
-          description: item.description,
-          price_range_min: item.price_range_min,
-          price_range_max: item.price_range_max,
-          tags: item.tags,
-          liked: false,
-          ownerName: ownerProfile?.name || ownerProfile?.username || 'Unknown',
-          ownerAvatar: ownerProfile?.avatar_url,
-          user_id: item.user_id
-        };
-      }) || [];
-
-      setFriendItems(formattedFriendItems);
-    } catch (error) {
-      console.error('Error fetching friends items:', error);
-    } finally {
-      setFriendItemsLoading(false);
-    }
-  };
-
-  // Fetch friends' items when user changes or component mounts
-  useEffect(() => {
-    if (user && supabaseConfigured) {
-      fetchFriendsItems();
-    } else {
-      setFriendItems([]);
-    }
-  }, [user, supabaseConfigured]);
-
-  // Define handler for liking friend items with mutual matching
-  const handleLikeFriendItem = async (itemId: string) => {
-    if (!user) {
-      toast.error('Please log in to like items');
-      return;
-    }
-
-    const currentItem = friendItems.find(item => item.id === itemId);
-    if (!currentItem) return;
-
-    // Track the action for undo (keep only last 3 actions)
-    setLastFriendActions(prev => {
-      const newAction = { type: 'like' as const, itemId, wasLiked: currentItem.liked };
-      const updated = [newAction, ...prev];
-      return updated.slice(0, 3); // Keep only last 3 actions
-    });
-
-    // Optimistically update UI
-    setFriendItems(prev =>
-      prev.map(item =>
-        item.id === itemId ? { ...item, liked: !item.liked } : item
-      )
-    );
-
-    try {
-      const isCurrentlyLiked = currentItem.liked;
-      let result;
+  // Fetch reviews for all trades
+  const { data: allReviews = [], refetch: refetchReviews } = useQuery({
+    queryKey: ['trade-reviews'],
+    queryFn: async () => {
+      if (trades.length === 0) return [];
       
-      if (isCurrentlyLiked) {
-        result = await unlikeItem(itemId);
-        toast.success("Removed from favorites");
-      } else {
-        result = await likeItem(itemId);
-        
-        // Check for mutual match result
-        if (result && typeof result === 'object' && 'success' in result && result.success) {
-          if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-            toast.success("It's a match! 🎉 Starting conversation...");
-            // Navigate to messages after a delay
-            setTimeout(() => {
-              navigate('/messages', {
-                state: {
-                  newMatch: true,
-                  matchData: result.matchData,
-                },
-              });
-            }, 2000);
-          } else {
-            toast.success("Added to favorites");
-          }
-        }
+      console.log('Fetching reviews for trades:', trades.map(t => t.id));
+      
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .in('trade_conversation_id', trades.map(t => t.id));
+      
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        return [];
       }
-    } catch (error) {
-      console.error('Error liking friend item:', error);
-      // Revert optimistic update on error
-      setFriendItems(prev =>
-        prev.map(item =>
-          item.id === itemId ? { ...item, liked: currentItem.liked } : item
-        )
-      );
-      toast.error('Failed to update like status');
-    }
-  };
+      
+      console.log('Fetched reviews:', data);
+      return data || [];
+    },
+    enabled: trades.length > 0,
+  });
 
-  // Handle rejecting friend items
-  const handleRejectFriendItem = (itemId: string) => {
-    // Track the action for undo (keep only last 3 actions)
-    setLastFriendActions(prev => {
-      const newAction = { type: 'reject' as const, itemId };
-      const updated = [newAction, ...prev];
-      return updated.slice(0, 3); // Keep only last 3 actions
-    });
-    setRejectedFriendItems(prev => [...prev, itemId]);
-    toast.success('Item removed from friends\' items');
-  };
-
-  // Handle undo for friend items
-  const handleUndoFriendAction = () => {
-    if (lastFriendActions.length === 0) return;
-
-    const actionToUndo = lastFriendActions[0]; // Get most recent action
-
-    if (actionToUndo.type === 'like') {
-      // Undo like action - revert to previous liked state
-      setFriendItems(prev =>
-        prev.map(item =>
-          item.id === actionToUndo.itemId 
-            ? { ...item, liked: actionToUndo.wasLiked || false }
-            : item
-        )
-      );
-      toast.success('Like action undone');
-    } else if (actionToUndo.type === 'reject') {
-      // Undo reject action - restore item to friends' items
-      setRejectedFriendItems(prev => prev.filter(id => id !== actionToUndo.itemId));
-      toast.success('Reject action undone');
-    }
-
-    // Remove the undone action from the list
-    setLastFriendActions(prev => prev.slice(1));
-  };
-
-  // User's items and matching functionality
-  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
+  // Get current user ID from auth
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   
-  // Selected items state - auto-select first item
-  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<string>('matches');
-  
-  // Matches undo state - will be set by the Matches component
-  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
-  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
-  
-  // Auto-select first item when userItems are loaded
-  useEffect(() => {
-    if (userItems.length > 0 && !selectedUserItemId) {
-      setSelectedUserItemId(userItems[0].id);
+  React.useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
+
+  const getStatusBadge = (trade: any) => {
+    if (trade.status === 'completed') {
+      return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
     }
-  }, [userItems, selectedUserItemId]);
-  
-  // Get selected user item
-  const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
-  
-  // Get matches for selected item (real matches from DB)
-  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
-
-  // Use only real matches from database
-  const matches = selectedUserItem ? dbMatches : [];
-
-  // Handle selecting a user item
-  const handleSelectUserItem = (itemId: string) => {
-    setSelectedUserItemId(itemId);
+    if (trade.status === 'rejected') {
+      return <Badge variant="destructive">Rejected</Badge>;
+    }
+    if (trade.requester_accepted && trade.owner_accepted) {
+      return <Badge className="bg-blue-100 text-blue-800">Both Accepted</Badge>;
+    }
+    if (trade.requester_accepted || trade.owner_accepted) {
+      return <Badge className="bg-yellow-100 text-yellow-800">Partially Accepted</Badge>;
+    }
+    return <Badge variant="outline">Pending</Badge>;
   };
 
-  // Handle opening item modal
-  const handleOpenItemModal = (item: any) => {
-    console.log('OPENING MODAL with item:', item);
-    setSelectedItem(item);
-    setModalOpen(true);
+  const handleOpenChat = (tradeId: string) => {
+    navigate(`/messages?conversation=${tradeId}`);
   };
 
-  // Handle closing item modal
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedItem(null);
-  };
-
-  // Get displayed friends items (excluding rejected ones)
-  const displayedFriendItems = friendItems.filter(item => !rejectedFriendItems.includes(item.id));
-  
-  // Find current index in displayed friend items
-  const currentFriendItemIndex = selectedItem 
-    ? displayedFriendItems.findIndex(item => item.id === selectedItem.id)
-    : -1;
-
-  // Navigation functions for friends items
-  const navigateToPrevFriendItem = () => {
-    if (currentFriendItemIndex > 0) {
-      const prevItem = displayedFriendItems[currentFriendItemIndex - 1];
-      if (prevItem) {
-        setSelectedItem(prevItem);
-      }
+  const handleLeaveReview = async (trade: any) => {
+    const eligibility = await checkReviewEligibility(trade.id);
+    if (eligibility.canReview) {
+      setSelectedTradeForReview(trade);
+      setShowReviewModal(true);
     }
   };
 
-  const navigateToNextFriendItem = () => {
-    if (currentFriendItemIndex < displayedFriendItems.length - 1) {
-      const nextItem = displayedFriendItems[currentFriendItemIndex + 1];
-      if (nextItem) {
-        setSelectedItem(nextItem);
-      }
-    }
-  };
+  const pendingTrades = trades.filter((trade: any) => 
+    trade.status === 'pending' || (trade.requester_accepted && !trade.owner_accepted) || (!trade.requester_accepted && trade.owner_accepted)
+  );
 
-  // Handle matches undo availability callback
-  const handleMatchesUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
-    setMatchesUndoAvailable(available);
-    setMatchesUndoFn(() => undoFn);
-  };
+  const completedTrades = trades.filter((trade: any) => trade.status === 'completed');
+  const rejectedTrades = trades.filter((trade: any) => trade.status === 'rejected');
 
-  // Unified undo handler that works based on active tab
-  const handleUndo = () => {
-    if (activeTab === 'friends') {
-      handleUndoFriendAction();
-    } else if (activeTab === 'matches' && matchesUndoFn) {
-      matchesUndoFn();
-    }
-  };
+  const TradeCard = ({ trade, hideReviews = false }: { trade: any; hideReviews?: boolean }) => {
+    // Determine the other user based on current user ID
+    const otherUser = trade.requester_id === currentUserId 
+      ? trade.owner_profile 
+      : trade.requester_profile;
 
-  // Check if undo is available based on active tab
-  const isUndoAvailable = () => {
-    if (activeTab === 'friends') {
-      return lastFriendActions.length > 0;
-    } else if (activeTab === 'matches') {
-      return matchesUndoAvailable;
-    }
-    return false;
-  };
+    // Get reviews for this trade
+    const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+    const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
+    const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
 
-  return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-      <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
+    const renderStars = (rating: number) => {
+      return Array.from({ length: 5 }, (_, i) => (
+        <Star 
+          key={i} 
+          className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+        />
+      ));
+    };
 
-        {/* Main Two-Column Layout */}
-        <div className="flex-1 min-h-0">
-          {user && supabaseConfigured ? (
-            <div className="grid grid-cols-1 gap-6 h-full">
-              {/* Left Column - Your Items */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                
-                {userItemsLoading ? (
-                  <div className="flex justify-center items-center min-h-[300px]">
-                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+    return (
+      <Card className="mb-4 h-full">
+        <CardContent className="p-4 h-full flex flex-col">
+          <div className={hideReviews ? "flex-1" : "flex justify-between"}>
+            {/* Left side - existing trade info */}
+            <div className={hideReviews ? "" : "w-1/2 pr-4"}>
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <Avatar 
+                    className="h-10 w-10 cursor-pointer hover:opacity-80"
+                     onClick={() => navigate(`/other-person-profile?userId=${otherUser?.id}`)}
+                  >
+                    <AvatarImage src={otherUser?.avatar_url} />
+                    <AvatarFallback>
+                      {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p 
+                      className="font-medium cursor-pointer hover:text-blue-600"
+                      onClick={() => navigate(`/other-person-profile?userId=${otherUser?.id}`)}
+                    >
+                      {otherUser?.username || 'Unknown User'}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {format(new Date(trade.created_at), 'MMM d, yyyy')}
+                    </p>
                   </div>
-                ) : userItemsError ? (
-                  <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
-                ) : userItems.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
-                    <div className="text-4xl mb-3">📦</div>
-                    <p className="text-base font-medium mb-1">No items yet</p>
-                    <p className="text-sm">Post an item to see matches!</p>
-                  </div>
-                ) : (
-                  <div className="h-auto">
-                    <div className="overflow-x-auto overflow-y-hidden p-2">
-                      <div className="flex gap-2 min-w-max">
-                        {userItems.map((item) => (
-                          <div key={item.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
-                            <ItemCard 
-                              id={item.id}
-                              name={item.name}
-                              image={item.image}
-                              isSelected={selectedUserItemId === item.id}
-                              onSelect={handleSelectUserItem}
-                              compact={true}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </div>
+                {getStatusBadge(trade)}
               </div>
 
-              {/* Right Column - Matches and Friends Items */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <Tabs defaultValue="matches" onValueChange={setActiveTab} className="h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <TabsList className="grid grid-cols-2 w-auto">
-                      <TabsTrigger value="matches">Matches</TabsTrigger>
-                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    </TabsList>
-                    <div className="flex items-center gap-2">
-                      {activeTab === 'matches' && (
-                        <HeaderLocationSelector 
-                          onLocationChange={(value) => console.log('Location changed to:', value)}
+              <div className="flex items-start space-x-2 mb-3">
+                {/* Determine which items to show based on current user */}
+                {(() => {
+                  const isCurrentUserRequester = trade.requester_id === currentUserId;
+                  const theirItem = isCurrentUserRequester ? trade.owner_item : trade.requester_item;
+                  const yourItem = isCurrentUserRequester ? trade.requester_item : trade.owner_item;
+                  
+                  return (
+                    <>
+                      {/* Their item (left side) */}
+                      <div className="flex flex-col items-center">
+                        <img 
+                          src={theirItem?.image_url} 
+                          alt={theirItem?.name}
+                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          onClick={() => {
+                            setSelectedItem(theirItem);
+                            setShowItemModal(true);
+                          }}
                         />
-                      )}
-                      <Button
-                        variant="outline"
+                        <span className="text-sm text-gray-600 font-medium text-center">
+                          {theirItem?.name}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-center px-2 pt-5">
+                        <ArrowLeftRight className="w-4 h-4 text-gray-400" />
+                      </div>
+                      
+                      {/* Your item (right side) */}
+                      <div className="flex flex-col items-center">
+                        <img 
+                          src={yourItem?.image_url} 
+                          alt={yourItem?.name}
+                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          onClick={() => {
+                            setSelectedItem(yourItem);
+                            setShowItemModal(true);
+                          }}
+                        />
+                        <span className="text-sm text-gray-600 font-medium text-center">
+                          {yourItem?.name}
+                        </span>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+
+            {/* Right side - reviews */}
+            {!hideReviews && trade.status === 'completed' && (
+              <div className="w-1/2 pl-4 border-l border-gray-200 space-y-3">
+                
+                
+                {/* Their review of you */}
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Their review</span>
+                    {theirReview && (
+                      <div className="flex">
+                        {renderStars(theirReview.rating)}
+                      </div>
+                    )}
+                  </div>
+                  {theirReview ? (
+                    <p className="text-sm text-gray-600">
+                      {theirReview.comment || 'No comment provided'}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">No review yet</p>
+                  )}
+                </div>
+
+                {/* Your review of them */}
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Your review</span>
+                    {yourReview && (
+                      <div className="flex">
+                        {renderStars(yourReview.rating)}
+                      </div>
+                    )}
+                  </div>
+                  {yourReview ? (
+                    <p className="text-sm text-gray-600">
+                      {yourReview.comment || 'No comment provided'}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-400 italic">No review yet</p>
+                      <Button 
+                        variant="outline" 
                         size="sm"
-                        onClick={handleUndo}
-                        disabled={!isUndoAvailable()}
-                        className="flex items-center gap-2"
+                        onClick={() => handleLeaveReview(trade)}
+                        className="w-full"
                       >
-                        <RotateCcw className="h-4 w-4" />
-                        Undo
+                        <Star className="w-4 h-4 mr-1" />
+                        Leave Review
                       </Button>
                     </div>
-                  </div>
-                  
-                   <TabsContent value="matches" className="flex-1 mt-0">
-                     {selectedUserItem ? (
-                       <Matches
-                         matches={matches}
-                         selectedItemName={selectedUserItem.name}
-                         onUndoAvailable={handleMatchesUndoAvailable}
-                       />
-                     ) : (
-                       <div className="h-full flex flex-col">
-                         <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                           <div className="text-4xl mb-3">🔍</div>
-                           <p className="text-base font-medium mb-1">No item selected</p>
-                           <p className="text-sm">Select an item to see matches</p>
-                         </div>
-                       </div>
-                     )}
-                   </TabsContent>
-                  
-                    <TabsContent value="friends" className="flex-1 mt-0">
-                      <div className="h-full flex flex-col">
-                      {friendItemsLoading ? (
-                        <div className="flex-1 flex justify-center items-center">
-                          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-                        </div>
-                      ) : friendItems.length === 0 ? (
-                        <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                          <div className="text-4xl mb-3">👥</div>
-                          <p className="text-base font-medium mb-1">No friends' items</p>
-                          <p className="text-sm">Add friends to see their items here</p>
-                        </div>
-                        ) : (
-                          <div className="overflow-x-auto overflow-y-hidden p-2">
-                            <div className="flex gap-2 min-w-max">
-                              {friendItems
-                                .filter(item => !rejectedFriendItems.includes(item.id))
-                                .map((item) => (
-                              <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200 hover:scale-105">
-                                <ItemCard
-                                  id={item.id}
-                                  name={item.name}
-                                  image={item.image}
-                                  liked={item.liked}
-                                  onSelect={() => handleOpenItemModal(item)}
-                                  onLike={() => handleLikeFriendItem(item.id)}
-                                  onReject={() => handleRejectFriendItem(item.id)}
-                                  showLikeButton={true}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                  )}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="text-4xl mb-3">🔐</div>
-              <p className="text-base font-medium mb-1">Please log in</p>
-              <p className="text-sm">Sign in to see your items and find matches</p>
+            )}
+          </div>
+          
+          {/* Open Chat Button - aligned at bottom when reviews are hidden */}
+          {hideReviews && (
+            <div className="mt-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleOpenChat(trade.id)}
+                className="w-full"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Open Chat
+              </Button>
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Explore Item Modal */}
-      <ExploreItemModal
-        open={modalOpen}
-        item={selectedItem}
-        onClose={handleCloseModal}
-        liked={selectedItem?.liked}
-        onLike={() => selectedItem && handleLikeFriendItem(selectedItem.id)}
-        onNavigatePrev={navigateToPrevFriendItem}
-        onNavigateNext={navigateToNextFriendItem}
-        currentIndex={currentFriendItemIndex}
-        totalItems={displayedFriendItems.length}
-      />
-    </div>
+          {/* Open Chat Button - inline when reviews are shown */}
+          {!hideReviews && (
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleOpenChat(trade.id)}
+                className="flex-1"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Open Chat
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="p-6 max-w-4xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading your trades...</p>
+            </div>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Test Page</h1>
+          <p className="text-gray-600">This is a duplicate of the trades page for testing</p>
+        </div>
+
+        <Tabs defaultValue="pending" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="pending" className="flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span>Pending ({pendingTrades.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="flex items-center space-x-2">
+              <CheckCircle className="w-4 h-4" />
+              <span>Completed ({completedTrades.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="rejected" className="flex items-center space-x-2">
+              <XCircle className="w-4 h-4" />
+              <span>Rejected ({rejectedTrades.length})</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="pending" className="mt-6">
+            {pendingTrades.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No pending trades</h3>
+                  <p className="text-gray-500">You don't have any pending trade requests at the moment.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="w-1/2">
+                <div className="space-y-4">
+                  {pendingTrades.map((trade: any) => (
+                    <TradeCard key={trade.id} trade={trade} hideReviews={true} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="completed" className="mt-6">
+            {completedTrades.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No completed trades</h3>
+                  <p className="text-gray-500">You haven't completed any trades yet.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {completedTrades.map((trade: any, index: number) => {
+                  const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+                  const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
+                  const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
+                  
+                  const renderStars = (rating: number) => {
+                    return Array.from({ length: 5 }, (_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ));
+                  };
+
+                  return (
+                    <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
+                      {/* Left side - Trade card */}
+                      <div className="w-1/2">
+                        <TradeCard trade={trade} hideReviews={true} />
+                      </div>
+                      
+                      {/* Right side - Review card */}
+                      <div className="w-1/2">
+                        <Card className="h-full">
+                          <CardContent className="p-4 h-full flex flex-col">
+                            <div className="flex-1 space-y-3">
+                              {/* Their review of you */}
+                              <div className="bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-gray-700">Their review</span>
+                                  {theirReview && (
+                                    <div className="flex">
+                                      {renderStars(theirReview.rating)}
+                                    </div>
+                                  )}
+                                </div>
+                                {theirReview ? (
+                                  <p className="text-sm text-gray-600">
+                                    {theirReview.comment || 'No comment provided'}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
+                                )}
+                              </div>
+
+                              {/* Your review of them */}
+                              <div className="bg-blue-50 p-3 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-gray-700">Your review</span>
+                                  {yourReview && (
+                                    <div className="flex">
+                                      {renderStars(yourReview.rating)}
+                                    </div>
+                                  )}
+                                </div>
+                                {yourReview ? (
+                                  <p className="text-sm text-gray-600">
+                                    {yourReview.comment || 'No comment provided'}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Leave Review Button - aligned at bottom */}
+                            {!yourReview && (
+                              <div className="mt-3">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleLeaveReview(trade)}
+                                  className="w-full"
+                                >
+                                  <Star className="w-4 h-4 mr-1" />
+                                  Leave Review
+                                </Button>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="rejected" className="mt-6">
+            {rejectedTrades.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <XCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No rejected trades</h3>
+                  <p className="text-gray-500">You don't have any rejected trades.</p>
+                </CardContent>
+                </Card>
+            ) : (
+              <div>
+                {rejectedTrades.map((trade: any) => (
+                  <TradeCard key={trade.id} trade={trade} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Review Modal */}
+        {showReviewModal && selectedTradeForReview && (
+          <ReviewModal
+            isOpen={showReviewModal}
+            onClose={() => {
+              setShowReviewModal(false);
+              setSelectedTradeForReview(null);
+            }}
+            tradeConversationId={selectedTradeForReview.id}
+            revieweeId={selectedTradeForReview.requester_id === currentUserId 
+              ? selectedTradeForReview.owner_profile?.id 
+              : selectedTradeForReview.requester_profile?.id}
+            revieweeName={selectedTradeForReview.requester_id === currentUserId 
+              ? selectedTradeForReview.owner_profile?.username 
+              : selectedTradeForReview.requester_profile?.username}
+          />
+        )}
+
+        {/* Item Modal */}
+        {showItemModal && selectedItem && (
+          <ExploreItemModal
+            item={selectedItem}
+            open={showItemModal}
+            hideActions={true}
+            onClose={() => {
+              setShowItemModal(false);
+              setSelectedItem(null);
+            }}
+          />
+        )}
+      </div>
+    </MainLayout>
   );
 };
 
