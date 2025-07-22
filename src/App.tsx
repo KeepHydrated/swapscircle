@@ -37,7 +37,6 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Test />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/test" element={<Test />} />
               <Route path="/trades" element={
                 <RequireAuth>
                   <Trades />
