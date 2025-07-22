@@ -407,7 +407,23 @@ const Test = () => {
                               {/* Your review of them */}
                               <div className="bg-blue-50 p-3 rounded-lg">
                                 <div className="flex items-center justify-between mb-2">
-                                  <span className="text-sm font-medium text-gray-700">Your review</span>
+                                  <div className="flex items-center space-x-2">
+                                    <Avatar 
+                                      className="h-6 w-6 cursor-pointer hover:opacity-80"
+                                      onClick={() => navigate(`/profile`)}
+                                    >
+                                      <AvatarImage src={trade.requester_id === currentUserId ? trade.requester_profile?.avatar_url : trade.owner_profile?.avatar_url} />
+                                      <AvatarFallback>
+                                        {(trade.requester_id === currentUserId ? trade.requester_profile?.username : trade.owner_profile?.username)?.charAt(0).toUpperCase() || 'U'}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span 
+                                      className="text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600"
+                                      onClick={() => navigate(`/profile`)}
+                                    >
+                                      Your review
+                                    </span>
+                                  </div>
                                   {yourReview && (
                                     <div className="flex">
                                       {renderStars(yourReview.rating)}
