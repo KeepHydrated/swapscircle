@@ -221,8 +221,8 @@ const Trades = () => {
 
                 {/* Right side - Reviews */}
                 <div className="w-[28rem]">
-                  <Card>
-                    <CardContent className="p-6 space-y-6">
+                  <Card className="h-full">
+                    <CardContent className="p-6 space-y-6 h-full flex flex-col">
                       {/* Their Review */}
                       <div>
                         <div className="flex items-center space-x-3 mb-3">
