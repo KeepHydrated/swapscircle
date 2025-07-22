@@ -397,7 +397,7 @@ const Test: React.FC = () => {
                         className="flex items-center gap-2"
                       >
                         <RotateCcw className="h-4 w-4" />
-                        Undo
+                        <span className="hidden md:inline">Undo</span>
                       </Button>
                     </div>
                   </div>
