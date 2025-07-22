@@ -340,7 +340,7 @@ const Trades = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div>
+              <div className="grid grid-cols-2 gap-4">
                 {completedTrades.map((trade: any) => (
                   <TradeCard key={trade.id} trade={trade} />
                 ))}
