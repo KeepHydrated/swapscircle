@@ -143,21 +143,31 @@ const EditItem: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    console.log('Update button clicked! Starting validation...');
+    console.log('Current values:', { title, category, condition, priceRange });
+    
     if (!title.trim()) {
+      console.log('Validation failed: title is empty');
       toast.error('Please enter a title for your item');
       return;
     }
     if (!category) {
+      console.log('Validation failed: category is empty');
       toast.error('Please select a category for your item');
       return;
     }
     if (!condition) {
+      console.log('Validation failed: condition is empty');
       toast.error('Please select the condition of your item');
       return;
     }
+    
+    console.log('Validation passed, starting update...');
     setIsSubmitting(true);
+    
     try {
       if (itemId) {
+        console.log('Preparing updates for item:', itemId);
         const updates: any = {
           name: title,
           description,
@@ -170,11 +180,23 @@ const EditItem: React.FC = () => {
           price_range_min: priceRange ? parseFloat(priceRange.split('-')[0].replace('$', '')) : undefined,
           price_range_max: priceRange ? parseFloat(priceRange.split('-')[1].replace('$', '')) : undefined,
         };
+        
+        console.log('Updates object:', updates);
+        console.log('Calling updateItem service...');
+        
         const success = await updateItem(itemId, updates);
+        
+        console.log('Update result:', success);
+        
         if (success) {
           toast.success('Your item has been updated successfully!');
           navigate('/profile');
+        } else {
+          toast.error('Update failed - please try again');
         }
+      } else {
+        console.log('No itemId found!');
+        toast.error('No item ID found');
       }
     } catch (error) {
       console.error('Error updating item:', error);
