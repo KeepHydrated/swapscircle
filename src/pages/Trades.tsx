@@ -368,56 +368,62 @@ const Trades = () => {
                       };
 
                       return (
-                        <Card key={`reviews-${trade.id}`}>
-                          <CardContent className="p-4 space-y-3">
-                            {/* Their review of you */}
-                            <div className="bg-gray-50 p-3 rounded-lg">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">Their review</span>
-                                {theirReview && (
-                                  <div className="flex">
-                                    {renderStars(theirReview.rating)}
-                                  </div>
-                                )}
-                              </div>
-                              {theirReview ? (
-                                <p className="text-sm text-gray-600">
-                                  {theirReview.comment || 'No comment provided'}
-                                </p>
-                              ) : (
-                                <p className="text-sm text-gray-400 italic">No review yet</p>
-                              )}
-                            </div>
-
-                            {/* Your review of them */}
-                            <div className="bg-blue-50 p-3 rounded-lg">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">Your review</span>
-                                {yourReview && (
-                                  <div className="flex">
-                                    {renderStars(yourReview.rating)}
-                                  </div>
-                                )}
-                              </div>
-                              {yourReview ? (
-                                <p className="text-sm text-gray-600">
-                                  {yourReview.comment || 'No comment provided'}
-                                </p>
-                              ) : (
-                                <div className="space-y-2">
-                                  <p className="text-sm text-gray-400 italic">No review yet</p>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => handleLeaveReview(trade)}
-                                    className="w-full"
-                                  >
-                                    <Star className="w-4 h-4 mr-1" />
-                                    Leave Review
-                                  </Button>
+                        <Card key={`reviews-${trade.id}`} className="h-full">
+                          <CardContent className="p-4 h-full flex flex-col">
+                            <div className="flex-1 space-y-3">
+                              {/* Their review of you */}
+                              <div className="bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-gray-700">Their review</span>
+                                  {theirReview && (
+                                    <div className="flex">
+                                      {renderStars(theirReview.rating)}
+                                    </div>
+                                  )}
                                 </div>
-                              )}
+                                {theirReview ? (
+                                  <p className="text-sm text-gray-600">
+                                    {theirReview.comment || 'No comment provided'}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
+                                )}
+                              </div>
+
+                              {/* Your review of them */}
+                              <div className="bg-blue-50 p-3 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-gray-700">Your review</span>
+                                  {yourReview && (
+                                    <div className="flex">
+                                      {renderStars(yourReview.rating)}
+                                    </div>
+                                  )}
+                                </div>
+                                {yourReview ? (
+                                  <p className="text-sm text-gray-600">
+                                    {yourReview.comment || 'No comment provided'}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
+                                )}
+                              </div>
                             </div>
+                            
+                            {/* Leave Review Button - aligned at bottom */}
+                            {!yourReview && (
+                              <div className="mt-3">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleLeaveReview(trade)}
+                                  className="w-full"
+                                >
+                                  <Star className="w-4 h-4 mr-1" />
+                                  Leave Review
+                                </Button>
+                              </div>
+                            )}
                           </CardContent>
                         </Card>
                       );
