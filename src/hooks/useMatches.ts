@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Item, MatchItem } from '@/types/item';
 import { findMatchingItems } from '@/services/matchingService';
 import { isItemLiked } from '@/services/authService';
+import { supabase } from '@/integrations/supabase/client';
 
 export function useMatches(selectedItem: Item | null) {
   const [matches, setMatches] = useState<MatchItem[]>([]);
@@ -45,6 +46,27 @@ export function useMatches(selectedItem: Item | null) {
     }
 
     fetchMatches();
+    
+    // Set up real-time subscription to refresh when any items change
+    const channel = supabase
+      .channel('matches-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'items'
+        },
+        (payload) => {
+          console.log('Items table changed, refetching matches...', payload);
+          fetchMatches();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [selectedItem, user, supabaseConfigured]);
 
   return { matches, loading, error };

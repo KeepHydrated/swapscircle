@@ -57,6 +57,28 @@ export function useUserItems() {
     }
 
     fetchUserItems();
+    
+    // Set up real-time subscription to refresh when items change
+    const channel = supabase
+      .channel('user-items-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'items',
+          filter: `user_id=eq.${user?.id}`
+        },
+        () => {
+          console.log('Items changed, refetching...');
+          fetchUserItems();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user, supabaseConfigured]);
 
   return { items, loading, error };
