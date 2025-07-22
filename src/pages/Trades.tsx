@@ -18,12 +18,21 @@ const Trades = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedTradeForReview, setSelectedTradeForReview] = useState<any>(null);
 
-  // Get current user
+  // Get current user with profile data
   const { data: currentUser } = useQuery({
     queryKey: ['current-user'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      return user;
+      if (!user) return null;
+      
+      // Fetch user's profile data
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      return { ...user, profile };
     },
   });
 
@@ -66,6 +75,10 @@ const Trades = () => {
 
   const handleProfileClick = (userId: string) => {
     navigate(`/other-profile/${userId}`);
+  };
+
+  const handleMyProfileClick = () => {
+    navigate('/profile');
   };
 
   const handleLeaveReview = async (trade: any) => {
@@ -243,12 +256,23 @@ const Trades = () => {
                       {/* Your Review */}
                       <div>
                         <div className="flex items-center space-x-3 mb-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">Y</AvatarFallback>
+                          <Avatar 
+                            className="h-8 w-8 cursor-pointer hover:opacity-80"
+                            onClick={handleMyProfileClick}
+                          >
+                            <AvatarImage src={currentUser?.profile?.avatar_url} />
+                            <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">
+                              {currentUser?.profile?.username?.charAt(0).toUpperCase() || 'Y'}
+                            </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <span className="font-medium text-gray-900">Your review</span>
+                              <span 
+                                className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                                onClick={handleMyProfileClick}
+                              >
+                                Your review
+                              </span>
                               {yourReview && (
                                 <div className="flex">
                                   {renderStars(yourReview.rating)}
