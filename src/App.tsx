@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import PostItem from "./pages/PostItem";
 import EditItem from "./pages/EditItem";
 import ItemDetails from "./pages/ItemDetails";
@@ -20,6 +21,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
+import Test from "./pages/Test";
 import OtherProfile from "./pages/OtherProfile";
 import RequireAuth from "./components/auth/RequireAuth";
 
@@ -35,7 +37,9 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/test" element={<Test />} />
               <Route path="/trades" element={
                 <RequireAuth>
                   <Trades />
