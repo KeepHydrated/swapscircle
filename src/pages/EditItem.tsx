@@ -177,8 +177,8 @@ const EditItem: React.FC = () => {
           looking_for_categories: selectedCategories,
           looking_for_conditions: selectedConditions,
           looking_for_description: lookingForText,
-          price_range_min: priceRange ? parseFloat(priceRange.split('-')[0].replace('$', '')) : undefined,
-          price_range_max: priceRange ? parseFloat(priceRange.split('-')[1].replace('$', '')) : undefined,
+          price_range_min: priceRange ? parseFloat(priceRange.split('-')[0].replace('$', '')) : null,
+          price_range_max: priceRange ? parseFloat(priceRange.split('-')[1].replace('$', '')) : null,
         };
         
         console.log('Updates object:', updates);
