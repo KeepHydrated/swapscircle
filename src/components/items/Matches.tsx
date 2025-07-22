@@ -12,12 +12,14 @@ interface MatchesProps {
   matches: MatchItem[];
   selectedItemName: string;
   onUndoAvailable?: (available: boolean, undoFn: (() => void) | null) => void;
+  loading?: boolean; // Add loading prop to prevent flashing
 }
 
 const Matches: React.FC<MatchesProps> = ({
   matches,
   selectedItemName,
-  onUndoAvailable
+  onUndoAvailable,
+  loading = false
 }) => {
   // Get match actions from our custom hook
   const {
@@ -74,6 +76,18 @@ const Matches: React.FC<MatchesProps> = ({
       }
     }
   };
+
+  // Don't render anything while loading to prevent flashing
+  if (loading) {
+    return (
+      <div className="w-full flex flex-col h-full">
+        <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
+          <div className="text-4xl mb-3">⏳</div>
+          <p className="text-base font-medium mb-1">Loading matches...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col h-full">
