@@ -3,6 +3,8 @@ import React, { useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import MatchesGrid from './MatchesGrid';
+import { MobileMatchesView } from './MobileMatchesView';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MatchesContainerProps {
   displayedMatches: MatchItem[];
@@ -21,6 +23,19 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
 }) => {
   const detailsRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <MobileMatchesView
+        matches={displayedMatches}
+        likedItems={likedItems}
+        onLike={onLike}
+        onReject={onReject}
+        onOpenModal={onOpenModal}
+      />
+    );
+  }
 
   return (
     <div className="relative">

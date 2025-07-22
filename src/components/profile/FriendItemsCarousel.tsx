@@ -4,6 +4,8 @@ import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 import CarouselItemCard from './carousel/CarouselItemCard';
 import ItemDetailsModal from './carousel/ItemDetailsModal';
+import { MobileFriendsCarousel } from './MobileFriendsCarousel';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Carousel,
   CarouselContent,
@@ -25,6 +27,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 }) => {
   const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const isMobile = useIsMobile();
 
   const handleItemClick = (item: MatchItem) => {
     console.log("[FriendItemsCarousel] Opening modal for item:", item);
@@ -78,6 +81,30 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
       setSelectedItem(items[newIndex]);
     }
   };
+
+  // Convert MatchItem to the format expected by MobileFriendsCarousel
+  const friendItems = items.map(item => ({
+    id: item.id,
+    title: item.name,
+    image: item.image,
+    description: item.description || '',
+    condition: item.condition || '',
+    category: item.category || '',
+    user: {
+      name: item.userProfile?.name || 'Unknown User',
+      avatar_url: item.userProfile?.avatar_url,
+      id: item.userProfile?.username || item.id // fallback to item id
+    }
+  }));
+
+  if (isMobile) {
+    return (
+      <MobileFriendsCarousel
+        items={friendItems}
+        onLike={onLikeItem}
+      />
+    );
+  }
 
   return (
     <div className="relative w-full h-full flex flex-col">
