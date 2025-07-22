@@ -548,9 +548,17 @@ export const updateItem = async (itemId: string, updates: any) => {
     return false;
   }
   try {
+    // Make a safe copy of updates, excluding potentially problematic fields
+    const safeUpdates = { ...updates };
+    
+    // Remove fields that might not exist in the database
+    if ('looking_for_price_ranges' in safeUpdates) {
+      delete safeUpdates.looking_for_price_ranges;
+    }
+    
     const { error } = await supabase
       .from('items')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update({ ...safeUpdates, updated_at: new Date().toISOString() })
       .eq('id', itemId);
     if (error) {
       console.error('Error updating item:', error);
