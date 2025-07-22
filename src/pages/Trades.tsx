@@ -359,39 +359,31 @@ const Trades = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="flex gap-6">
-                {/* Left side - Trade cards */}
-                <div className="w-1/2">
-                  <div className="flex flex-col gap-4">
-                    {completedTrades.map((trade: any, index: number) => (
-                      <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
-                        <div className="w-full">
-                          <TradeCard trade={trade} hideReviews={true} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Right side - Reviews */}
-                <div className="w-1/2">
-                  <div className="flex flex-col gap-4">
-                    {completedTrades.map((trade: any, index: number) => {
-                      const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
-                      const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
-                      const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
-                      
-                      const renderStars = (rating: number) => {
-                        return Array.from({ length: 5 }, (_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                          />
-                        ));
-                      };
+              <div className="space-y-4">
+                {completedTrades.map((trade: any, index: number) => {
+                  const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+                  const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
+                  const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
+                  
+                  const renderStars = (rating: number) => {
+                    return Array.from({ length: 5 }, (_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ));
+                  };
 
-                      return (
-                        <Card key={`reviews-${trade.id}`} className="h-full">
+                  return (
+                    <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
+                      {/* Left side - Trade card */}
+                      <div className="w-1/2">
+                        <TradeCard trade={trade} hideReviews={true} />
+                      </div>
+                      
+                      {/* Right side - Review card */}
+                      <div className="w-1/2">
+                        <Card className="h-full">
                           <CardContent className="p-4 h-full flex flex-col">
                             <div className="flex-1 space-y-3">
                               {/* Their review of you */}
@@ -449,10 +441,10 @@ const Trades = () => {
                             )}
                           </CardContent>
                         </Card>
-                      );
-                    })}
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </TabsContent>
