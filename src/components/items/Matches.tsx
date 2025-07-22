@@ -135,6 +135,12 @@ const Matches: React.FC<MatchesProps> = ({
           currentIndex={currentMatchIndex}
           totalItems={displayedMatches.length}
           skipDataFetch={true} // Skip API calls since we already have match data
+          preloadedUserProfile={selectedMatch.userProfile ? {
+            name: selectedMatch.userProfile.name,
+            username: selectedMatch.userProfile.username,
+            avatar_url: selectedMatch.userProfile.avatar_url || '',
+            created_at: '2025-01-01T00:00:00Z' // Default since we don't have this in match data
+          } : undefined}
         />
       )}
     </div>
