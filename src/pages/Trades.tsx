@@ -340,10 +340,90 @@ const Trades = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
-                {completedTrades.map((trade: any) => (
-                  <TradeCard key={trade.id} trade={trade} hideReviews={false} />
-                ))}
+              <div className="flex gap-6">
+                {/* Left side - Trade cards */}
+                <div className="flex-1">
+                  <div className="space-y-4">
+                    {completedTrades.map((trade: any) => (
+                      <TradeCard key={trade.id} trade={trade} hideReviews={true} />
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Right side - Reviews */}
+                <div className="w-80">
+                  <div className="space-y-4">
+                    {completedTrades.map((trade: any) => {
+                      const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+                      const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
+                      const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
+                      
+                      const renderStars = (rating: number) => {
+                        return Array.from({ length: 5 }, (_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          />
+                        ));
+                      };
+
+                      return (
+                        <Card key={`reviews-${trade.id}`}>
+                          <CardContent className="p-4 space-y-3">
+                            {/* Their review of you */}
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-gray-700">Their review</span>
+                                {theirReview && (
+                                  <div className="flex">
+                                    {renderStars(theirReview.rating)}
+                                  </div>
+                                )}
+                              </div>
+                              {theirReview ? (
+                                <p className="text-sm text-gray-600">
+                                  {theirReview.comment || 'No comment provided'}
+                                </p>
+                              ) : (
+                                <p className="text-sm text-gray-400 italic">No review yet</p>
+                              )}
+                            </div>
+
+                            {/* Your review of them */}
+                            <div className="bg-blue-50 p-3 rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-gray-700">Your review</span>
+                                {yourReview && (
+                                  <div className="flex">
+                                    {renderStars(yourReview.rating)}
+                                  </div>
+                                )}
+                              </div>
+                              {yourReview ? (
+                                <p className="text-sm text-gray-600">
+                                  {yourReview.comment || 'No comment provided'}
+                                </p>
+                              ) : (
+                                <div className="space-y-2">
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleLeaveReview(trade)}
+                                    className="w-full"
+                                  >
+                                    <Star className="w-4 h-4 mr-1" />
+                                    Leave Review
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             )}
           </TabsContent>
