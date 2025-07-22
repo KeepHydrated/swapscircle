@@ -11,12 +11,15 @@ import { getReviewsForTrade, checkReviewEligibility } from '@/services/reviewSer
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Star, ArrowLeftRight } from 'lucide-react';
 import { format } from 'date-fns';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
 import ReviewModal from '@/components/trade/ReviewModal';
 
 const Trades = () => {
   const navigate = useNavigate();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedTradeForReview, setSelectedTradeForReview] = useState<any>(null);
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   // Get current user with profile data
   const { data: currentUser } = useQuery({
@@ -87,6 +90,11 @@ const Trades = () => {
       setSelectedTradeForReview(trade);
       setShowReviewModal(true);
     }
+  };
+
+  const handleItemClick = (item: any) => {
+    setSelectedItem(item);
+    setShowItemModal(true);
   };
 
   if (isLoading) {
@@ -166,33 +174,35 @@ const Trades = () => {
                       {/* Trade Items */}
                       <div className="flex items-center justify-center space-x-6 mb-6">
                         {/* Their Item */}
-                        <div className="flex flex-col items-center">
-                          <img 
-                            src={theirItem?.image_url || '/placeholder.svg'} 
-                            alt={theirItem?.name || 'Item'}
-                            className="w-24 h-24 object-cover rounded-lg mb-2"
-                          />
-                          <span className="text-sm font-medium text-gray-700 text-center max-w-24 truncate">
-                            {theirItem?.name || 'Unknown Item'}
-                          </span>
-                        </div>
+                         <div className="flex flex-col items-center">
+                           <img 
+                             src={theirItem?.image_url || '/placeholder.svg'} 
+                             alt={theirItem?.name || 'Item'}
+                             className="w-24 h-24 object-cover rounded-lg mb-2 cursor-pointer hover:opacity-80 transition-opacity"
+                             onClick={() => handleItemClick(theirItem)}
+                           />
+                           <span className="text-sm font-medium text-gray-700 text-center max-w-24 truncate">
+                             {theirItem?.name || 'Unknown Item'}
+                           </span>
+                         </div>
                         
                         {/* Exchange Arrow */}
                         <div className="flex items-center justify-center">
                           <ArrowLeftRight className="w-6 h-6 text-gray-400" />
                         </div>
                         
-                        {/* Your Item */}
-                        <div className="flex flex-col items-center">
-                          <img 
-                            src={yourItem?.image_url || '/placeholder.svg'} 
-                            alt={yourItem?.name || 'Item'}
-                            className="w-24 h-24 object-cover rounded-lg mb-2"
-                          />
-                          <span className="text-sm font-medium text-gray-700 text-center max-w-24 truncate">
-                            {yourItem?.name || 'Unknown Item'}
-                          </span>
-                        </div>
+                         {/* Your Item */}
+                         <div className="flex flex-col items-center">
+                           <img 
+                             src={yourItem?.image_url || '/placeholder.svg'} 
+                             alt={yourItem?.name || 'Item'}
+                             className="w-24 h-24 object-cover rounded-lg mb-2 cursor-pointer hover:opacity-80 transition-opacity"
+                             onClick={() => handleItemClick(yourItem)}
+                           />
+                           <span className="text-sm font-medium text-gray-700 text-center max-w-24 truncate">
+                             {yourItem?.name || 'Unknown Item'}
+                           </span>
+                         </div>
                       </div>
 
                       {/* Open Chat Button */}
@@ -327,6 +337,20 @@ const Trades = () => {
                 ? selectedTradeForReview.owner_profile?.username || 'Unknown User'
                 : selectedTradeForReview.requester_profile?.username || 'Unknown User'
             }
+          />
+        )}
+
+        {/* Item Modal */}
+        {showItemModal && selectedItem && (
+          <ExploreItemModal
+            open={showItemModal}
+            item={selectedItem}
+            onClose={() => {
+              setShowItemModal(false);
+              setSelectedItem(null);
+            }}
+            disableActions={true}
+            hideActions={false}
           />
         )}
       </div>
