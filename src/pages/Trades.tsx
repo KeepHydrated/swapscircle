@@ -118,9 +118,9 @@ const Trades = () => {
     };
 
     return (
-      <Card className="mb-4">
-        <CardContent className="p-4">
-          <div className={hideReviews ? "" : "flex justify-between"}>
+      <Card className="mb-4 h-full">
+        <CardContent className="p-4 h-full flex flex-col">
+          <div className={hideReviews ? "flex-1" : "flex justify-between"}>
             {/* Left side - existing trade info */}
             <div className={hideReviews ? "" : "w-1/2 pr-4"}>
               <div className="flex items-start justify-between mb-3">
@@ -197,19 +197,6 @@ const Trades = () => {
                   );
                 })()}
               </div>
-
-              <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleOpenChat(trade.id)}
-                  className="flex-1"
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Open Chat
-                </Button>
-                
-              </div>
             </div>
 
             {/* Right side - reviews */}
@@ -268,6 +255,36 @@ const Trades = () => {
               </div>
             )}
           </div>
+          
+          {/* Open Chat Button - aligned at bottom when reviews are hidden */}
+          {hideReviews && (
+            <div className="mt-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleOpenChat(trade.id)}
+                className="w-full"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Open Chat
+              </Button>
+            </div>
+          )}
+
+          {/* Open Chat Button - inline when reviews are shown */}
+          {!hideReviews && (
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleOpenChat(trade.id)}
+                className="flex-1"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Open Chat
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
