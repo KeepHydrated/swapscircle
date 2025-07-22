@@ -76,12 +76,13 @@ const EditItem: React.FC = () => {
           setSelectedCategories((item as any).looking_for_categories || []);
           setSelectedConditions((item as any).looking_for_conditions || []);
           
-          // Convert price range to array format if exists
+          // Convert price range for both item form and preferences
           if ((item as any).price_range_min || (item as any).price_range_max) {
             const min = (item as any).price_range_min || 0;
             const max = (item as any).price_range_max || 999999;
-            const range = `${min}-${max}`;
-            setSelectedPriceRanges([range]);
+            const range = `$${min}-$${max}`;
+            setPriceRange(range); // For the item form
+            setSelectedPriceRanges([range]); // For preferences form
           }
         } else {
           toast.error('Item not found');
