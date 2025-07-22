@@ -18,6 +18,13 @@ interface ItemCardProps {
   showLikeButton?: boolean;
   compact?: boolean;
   disableLike?: boolean;
+  category?: string;
+  tags?: string[];
+  userProfile?: {
+    name: string;
+    username?: string;
+    avatar_url?: string;
+  };
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ 
@@ -32,7 +39,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
   onReject,
   showLikeButton,
   compact = false,
-  disableLike = false
+  disableLike = false,
+  category,
+  tags,
+  userProfile
 }) => {
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -101,6 +111,39 @@ const ItemCard: React.FC<ItemCardProps> = ({
           <h3 className={`font-semibold text-center text-gray-800 ${compact ? 'text-xs' : 'text-sm'} leading-tight truncate`} title={name}>
             {name}
           </h3>
+          
+          {/* Show category and tags for matches */}
+          {isMatch && (category || (tags && tags.length > 0)) && (
+            <div className="flex flex-col gap-1 mt-2">
+              {category && (
+                <span className="text-xs text-gray-600 text-center truncate">
+                  {category}
+                </span>
+              )}
+              {tags && tags.length > 0 && (
+                <span className="text-xs text-gray-500 text-center truncate">
+                  {tags[0]}
+                </span>
+              )}
+            </div>
+          )}
+          
+          {/* Show user profile for matches */}
+          {isMatch && userProfile && (
+            <div className="flex items-center justify-center gap-2 mt-2 pt-2 border-t border-gray-100">
+              {userProfile.avatar_url && (
+                <Avatar className="h-4 w-4">
+                  <AvatarImage src={userProfile.avatar_url} alt={userProfile.name || userProfile.username} />
+                  <AvatarFallback className="text-xs">
+                    {(userProfile.name || userProfile.username || 'U').charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              )}
+              <span className="text-xs text-gray-600 truncate">
+                {userProfile.username || userProfile.name}
+              </span>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -47,6 +47,27 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
     const matches: Array<MatchItem & { matchScore: number }> = [];
 
+    // Get unique user IDs to fetch profiles in batch
+    const userIds = [...new Set(availableItems.map(item => item.user_id))];
+    
+    // Fetch all user profiles in one query
+    const { data: userProfiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, name, username, avatar_url')
+      .in('id', userIds);
+
+    if (profilesError) {
+      console.error('Error fetching user profiles:', profilesError);
+    }
+
+    // Create a map for quick profile lookup
+    const profileMap = new Map();
+    if (userProfiles) {
+      userProfiles.forEach(profile => {
+        profileMap.set(profile.id, profile);
+      });
+    }
+
     for (const otherItem of availableItems) {
       let matchScore = 0;
       let isMatch = false;
@@ -113,6 +134,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
       // If there's any match, add to results
       if (isMatch) {
+        const userProfile = profileMap.get(otherItem.user_id);
         matches.push({
           id: otherItem.id,
           name: otherItem.name,
@@ -122,6 +144,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           description: otherItem.description,
           tags: otherItem.tags,
           liked: false, // Will be determined by like status
+          userProfile: userProfile ? {
+            name: userProfile.name,
+            username: userProfile.username,
+            avatar_url: userProfile.avatar_url
+          } : undefined,
           matchScore // Add match score for potential sorting
         });
       }

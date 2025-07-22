@@ -33,6 +33,9 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
             onSelect={onOpenModal}
             onLike={onLike}
             onReject={onReject}
+            category={match.category}
+            tags={match.tags}
+            userProfile={match.userProfile}
           />
         </div>
       ))}

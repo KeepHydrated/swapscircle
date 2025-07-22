@@ -21,6 +21,11 @@ export interface Item {
 
 export interface MatchItem extends Item {
   liked?: boolean;
+  userProfile?: {
+    name: string;
+    username?: string;
+    avatar_url?: string;
+  };
 }
 
 // CompletedTrade is now imported from @/types/trade
