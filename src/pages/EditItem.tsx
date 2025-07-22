@@ -186,6 +186,10 @@ const EditItem: React.FC = () => {
           price_range_max: priceRange ? parseFloat(priceRange.split(' - ')[1]) : null,
         };
         
+        console.log('Price range string:', priceRange);
+        console.log('Parsed min:', priceRange ? parseFloat(priceRange.split(' - ')[0]) : null);
+        console.log('Parsed max:', priceRange ? parseFloat(priceRange.split(' - ')[1]) : null);
+        
         console.log('Updates object:', updates);
         console.log('Calling updateItem service...');
         
