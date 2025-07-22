@@ -125,26 +125,9 @@ const Test = () => {
             <div className={hideReviews ? "" : "w-1/2 pr-4"}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <Avatar 
-                    className="h-10 w-10 cursor-pointer hover:opacity-80"
-                     onClick={() => navigate(`/other-person-profile?userId=${otherUser?.id}`)}
-                  >
-                    <AvatarImage src={otherUser?.avatar_url} />
-                    <AvatarFallback>
-                      {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p 
-                      className="font-medium cursor-pointer hover:text-blue-600"
-                      onClick={() => navigate(`/other-person-profile?userId=${otherUser?.id}`)}
-                    >
-                      {otherUser?.username || 'Unknown User'}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {format(new Date(trade.created_at), 'MMM d, yyyy')}
-                    </p>
-                  </div>
+                  <p className="text-sm text-gray-500">
+                    {format(new Date(trade.created_at), 'MMM d, yyyy')}
+                  </p>
                 </div>
                 {getStatusBadge(trade)}
               </div>
