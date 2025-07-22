@@ -125,9 +125,26 @@ const Test = () => {
             <div className={hideReviews ? "" : "w-1/2 pr-4"}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <p className="text-sm text-gray-500">
-                    {format(new Date(trade.created_at), 'MMM d, yyyy')}
-                  </p>
+                  <Avatar 
+                    className="h-10 w-10 cursor-pointer hover:opacity-80"
+                     onClick={() => navigate(`/other-person-profile?userId=${otherUser?.id}`)}
+                  >
+                    <AvatarImage src={otherUser?.avatar_url} />
+                    <AvatarFallback>
+                      {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p 
+                      className="font-medium cursor-pointer hover:text-blue-600"
+                      onClick={() => navigate(`/other-person-profile?userId=${otherUser?.id}`)}
+                    >
+                      {otherUser?.username || 'Unknown User'}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {format(new Date(trade.created_at), 'MMM d, yyyy')}
+                    </p>
+                  </div>
                 </div>
                 {getStatusBadge(trade)}
               </div>
@@ -146,7 +163,7 @@ const Test = () => {
                         <img 
                           src={theirItem?.image_url} 
                           alt={theirItem?.name}
-                          className="w-28 h-28 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(theirItem);
                             setShowItemModal(true);
@@ -166,7 +183,7 @@ const Test = () => {
                         <img 
                           src={yourItem?.image_url} 
                           alt={yourItem?.name}
-                          className="w-28 h-28 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(yourItem);
                             setShowItemModal(true);
@@ -296,137 +313,160 @@ const Test = () => {
           <p className="text-gray-600">This is a duplicate of the trades page for testing</p>
         </div>
 
-        <div className="mt-6">
-          {completedTrades.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No completed trades</h3>
-                <p className="text-gray-500">You haven't completed any trades yet.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {completedTrades.map((trade: any, index: number) => {
-                const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
-                const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
-                const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
-                
-                const renderStars = (rating: number) => {
-                  return Array.from({ length: 5 }, (_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                    />
-                  ));
-                };
+        <Tabs defaultValue="pending" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="pending" className="flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span>Pending ({pendingTrades.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="flex items-center space-x-2">
+              <CheckCircle className="w-4 h-4" />
+              <span>Completed ({completedTrades.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="rejected" className="flex items-center space-x-2">
+              <XCircle className="w-4 h-4" />
+              <span>Rejected ({rejectedTrades.length})</span>
+            </TabsTrigger>
+          </TabsList>
 
-                return (
-                  <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
-                    {/* Left side - Trade card */}
-                    <div className="w-1/2">
-                      <TradeCard trade={trade} hideReviews={true} />
-                    </div>
-                    
-                    {/* Right side - Review card */}
-                    <div className="w-1/2">
-                      <Card className="h-full">
-                        <CardContent className="p-4 h-full flex flex-col">
-                          <div className="flex-1 space-y-3">
-                            {/* Their review of you */}
-                            <div className="bg-gray-50 p-3 rounded-lg">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <Avatar 
-                                    className="h-6 w-6 cursor-pointer hover:opacity-80"
-                                    onClick={() => navigate(`/other-person-profile?userId=${trade.requester_id === currentUserId ? trade.owner_profile?.id : trade.requester_profile?.id}`)}
-                                  >
-                                    <AvatarImage src={trade.requester_id === currentUserId ? trade.owner_profile?.avatar_url : trade.requester_profile?.avatar_url} />
-                                    <AvatarFallback>
-                                      {(trade.requester_id === currentUserId ? trade.owner_profile?.username : trade.requester_profile?.username)?.charAt(0).toUpperCase() || 'U'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <span 
-                                    className="text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600"
-                                    onClick={() => navigate(`/other-person-profile?userId=${trade.requester_id === currentUserId ? trade.owner_profile?.id : trade.requester_profile?.id}`)}
-                                  >
-                                    {trade.requester_id === currentUserId ? trade.owner_profile?.username : trade.requester_profile?.username}'s review
-                                  </span>
+          <TabsContent value="pending" className="mt-6">
+            {pendingTrades.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No pending trades</h3>
+                  <p className="text-gray-500">You don't have any pending trade requests at the moment.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="w-1/2">
+                <div className="space-y-4">
+                  {pendingTrades.map((trade: any) => (
+                    <TradeCard key={trade.id} trade={trade} hideReviews={true} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="completed" className="mt-6">
+            {completedTrades.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No completed trades</h3>
+                  <p className="text-gray-500">You haven't completed any trades yet.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {completedTrades.map((trade: any, index: number) => {
+                  const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+                  const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
+                  const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
+                  
+                  const renderStars = (rating: number) => {
+                    return Array.from({ length: 5 }, (_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ));
+                  };
+
+                  return (
+                    <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
+                      {/* Left side - Trade card */}
+                      <div className="w-1/2">
+                        <TradeCard trade={trade} hideReviews={true} />
+                      </div>
+                      
+                      {/* Right side - Review card */}
+                      <div className="w-1/2">
+                        <Card className="h-full">
+                          <CardContent className="p-4 h-full flex flex-col">
+                            <div className="flex-1 space-y-3">
+                              {/* Their review of you */}
+                              <div className="bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-gray-700">Their review</span>
+                                  {theirReview && (
+                                    <div className="flex">
+                                      {renderStars(theirReview.rating)}
+                                    </div>
+                                  )}
                                 </div>
-                                {theirReview && (
-                                  <div className="flex">
-                                    {renderStars(theirReview.rating)}
-                                  </div>
+                                {theirReview ? (
+                                  <p className="text-sm text-gray-600">
+                                    {theirReview.comment || 'No comment provided'}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
                                 )}
                               </div>
-                              {theirReview ? (
-                                <p className="text-sm text-gray-600">
-                                  {theirReview.comment || 'No comment provided'}
-                                </p>
-                              ) : (
-                                <p className="text-sm text-gray-400 italic">No review yet</p>
-                              )}
-                            </div>
 
-                            {/* Your review of them */}
-                            <div className="bg-blue-50 p-3 rounded-lg">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <Avatar 
-                                    className="h-6 w-6 cursor-pointer hover:opacity-80"
-                                    onClick={() => navigate(`/profile`)}
-                                  >
-                                    <AvatarImage src={trade.requester_id === currentUserId ? trade.requester_profile?.avatar_url : trade.owner_profile?.avatar_url} />
-                                    <AvatarFallback>
-                                      {(trade.requester_id === currentUserId ? trade.requester_profile?.username : trade.owner_profile?.username)?.charAt(0).toUpperCase() || 'U'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <span 
-                                    className="text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600"
-                                    onClick={() => navigate(`/profile`)}
-                                  >
-                                    Your review
-                                  </span>
+                              {/* Your review of them */}
+                              <div className="bg-blue-50 p-3 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-gray-700">Your review</span>
+                                  {yourReview && (
+                                    <div className="flex">
+                                      {renderStars(yourReview.rating)}
+                                    </div>
+                                  )}
                                 </div>
-                                {yourReview && (
-                                  <div className="flex">
-                                    {renderStars(yourReview.rating)}
-                                  </div>
+                                {yourReview ? (
+                                  <p className="text-sm text-gray-600">
+                                    {yourReview.comment || 'No comment provided'}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-gray-400 italic">No review yet</p>
                                 )}
                               </div>
-                              {yourReview ? (
-                                <p className="text-sm text-gray-600">
-                                  {yourReview.comment || 'No comment provided'}
-                                </p>
-                              ) : (
-                                <p className="text-sm text-gray-400 italic">No review yet</p>
-                              )}
                             </div>
-                          </div>
-                          
-                          {/* Leave Review Button - aligned at bottom */}
-                          {!yourReview && (
-                            <div className="mt-3">
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => handleLeaveReview(trade)}
-                                className="w-full"
-                              >
-                                <Star className="w-4 h-4 mr-1" />
-                                Leave Review
-                              </Button>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
+                            
+                            {/* Leave Review Button - aligned at bottom */}
+                            {!yourReview && (
+                              <div className="mt-3">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleLeaveReview(trade)}
+                                  className="w-full"
+                                >
+                                  <Star className="w-4 h-4 mr-1" />
+                                  Leave Review
+                                </Button>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="rejected" className="mt-6">
+            {rejectedTrades.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <XCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No rejected trades</h3>
+                  <p className="text-gray-500">You don't have any rejected trades.</p>
+                </CardContent>
+                </Card>
+            ) : (
+              <div>
+                {rejectedTrades.map((trade: any) => (
+                  <TradeCard key={trade.id} trade={trade} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
 
         {/* Review Modal */}
         {showReviewModal && selectedTradeForReview && (
