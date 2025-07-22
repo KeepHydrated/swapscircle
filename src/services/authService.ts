@@ -562,10 +562,8 @@ export const updateItem = async (itemId: string, updates: any) => {
       .eq('id', itemId);
     if (error) {
       console.error('Error updating item:', error);
-      toast.error('Failed to update item');
       return false;
     }
-    toast.success('Item updated!');
     return true;
   } catch (error) {
     console.error('Error updating item:', error);
