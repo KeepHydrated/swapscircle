@@ -97,7 +97,7 @@ const Trades = () => {
   const completedTrades = trades.filter((trade: any) => trade.status === 'completed');
   const rejectedTrades = trades.filter((trade: any) => trade.status === 'rejected');
 
-  const TradeCard = ({ trade, hideReviews = false }: { trade: any; hideReviews?: boolean }) => {
+  const TradeCard = ({ trade }: { trade: any }) => {
     // Determine the other user based on current user ID
     const otherUser = trade.requester_id === currentUserId 
       ? trade.owner_profile 
@@ -118,11 +118,11 @@ const Trades = () => {
     };
 
     return (
-      <Card className="mb-4 h-full">
-        <CardContent className="p-4 h-full flex flex-col">
-          <div className={hideReviews ? "flex-1" : "flex justify-between"}>
+      <Card className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex justify-between">
             {/* Left side - existing trade info */}
-            <div className={hideReviews ? "" : "w-1/2 pr-4"}>
+            <div className="w-1/2 pr-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
                   <Avatar 
@@ -163,7 +163,7 @@ const Trades = () => {
                         <img 
                           src={theirItem?.image_url} 
                           alt={theirItem?.name}
-                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(theirItem);
                             setShowItemModal(true);
@@ -183,7 +183,7 @@ const Trades = () => {
                         <img 
                           src={yourItem?.image_url} 
                           alt={yourItem?.name}
-                          className="w-20 h-20 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
+                          className="w-12 h-12 object-cover rounded mb-1 cursor-pointer hover:opacity-80"
                           onClick={() => {
                             setSelectedItem(yourItem);
                             setShowItemModal(true);
@@ -197,10 +197,23 @@ const Trades = () => {
                   );
                 })()}
               </div>
+
+              <div className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleOpenChat(trade.id)}
+                  className="flex-1"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Open Chat
+                </Button>
+                
+              </div>
             </div>
 
             {/* Right side - reviews */}
-            {!hideReviews && trade.status === 'completed' && (
+            {trade.status === 'completed' && (
               <div className="w-1/2 pl-4 border-l border-gray-200 space-y-3">
                 
                 
@@ -255,36 +268,6 @@ const Trades = () => {
               </div>
             )}
           </div>
-          
-          {/* Open Chat Button - aligned at bottom when reviews are hidden */}
-          {hideReviews && (
-            <div className="mt-3">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleOpenChat(trade.id)}
-                className="w-full"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Open Chat
-              </Button>
-            </div>
-          )}
-
-          {/* Open Chat Button - inline when reviews are shown */}
-          {!hideReviews && (
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleOpenChat(trade.id)}
-                className="flex-1"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Open Chat
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
     );
@@ -339,12 +322,10 @@ const Trades = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="w-1/2">
-                <div className="space-y-4">
-                  {pendingTrades.map((trade: any) => (
-                    <TradeCard key={trade.id} trade={trade} hideReviews={true} />
-                  ))}
-                </div>
+              <div>
+                {pendingTrades.map((trade: any) => (
+                  <TradeCard key={trade.id} trade={trade} />
+                ))}
               </div>
             )}
           </TabsContent>
@@ -359,92 +340,10 @@ const Trades = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
-                {completedTrades.map((trade: any, index: number) => {
-                  const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
-                  const yourReview = tradeReviews.find(review => review.reviewer_id === currentUserId);
-                  const theirReview = tradeReviews.find(review => review.reviewee_id === currentUserId);
-                  
-                  const renderStars = (rating: number) => {
-                    return Array.from({ length: 5 }, (_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-3 h-3 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                      />
-                    ));
-                  };
-
-                  return (
-                    <div key={`trade-row-${index}`} className="flex gap-6 items-stretch">
-                      {/* Left side - Trade card */}
-                      <div className="w-1/2">
-                        <TradeCard trade={trade} hideReviews={true} />
-                      </div>
-                      
-                      {/* Right side - Review card */}
-                      <div className="w-1/2">
-                        <Card className="h-full">
-                          <CardContent className="p-4 h-full flex flex-col">
-                            <div className="flex-1 space-y-3">
-                              {/* Their review of you */}
-                              <div className="bg-gray-50 p-3 rounded-lg">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-sm font-medium text-gray-700">Their review</span>
-                                  {theirReview && (
-                                    <div className="flex">
-                                      {renderStars(theirReview.rating)}
-                                    </div>
-                                  )}
-                                </div>
-                                {theirReview ? (
-                                  <p className="text-sm text-gray-600">
-                                    {theirReview.comment || 'No comment provided'}
-                                  </p>
-                                ) : (
-                                  <p className="text-sm text-gray-400 italic">No review yet</p>
-                                )}
-                              </div>
-
-                              {/* Your review of them */}
-                              <div className="bg-blue-50 p-3 rounded-lg">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-sm font-medium text-gray-700">Your review</span>
-                                  {yourReview && (
-                                    <div className="flex">
-                                      {renderStars(yourReview.rating)}
-                                    </div>
-                                  )}
-                                </div>
-                                {yourReview ? (
-                                  <p className="text-sm text-gray-600">
-                                    {yourReview.comment || 'No comment provided'}
-                                  </p>
-                                ) : (
-                                  <p className="text-sm text-gray-400 italic">No review yet</p>
-                                )}
-                              </div>
-                            </div>
-                            
-                            {/* Leave Review Button - aligned at bottom */}
-                            {!yourReview && (
-                              <div className="mt-3">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleLeaveReview(trade)}
-                                  className="w-full"
-                                >
-                                  <Star className="w-4 h-4 mr-1" />
-                                  Leave Review
-                                </Button>
-                              </div>
-                            )}
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="grid grid-cols-2 gap-4">
+                {completedTrades.map((trade: any) => (
+                  <TradeCard key={trade.id} trade={trade} />
+                ))}
               </div>
             )}
           </TabsContent>
