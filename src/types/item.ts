@@ -5,6 +5,8 @@ export interface Item {
   id: string;
   name: string;
   image: string;
+  image_url?: string;
+  image_urls?: string[];
   isSelected?: boolean;
   category?: string;
   condition?: string;

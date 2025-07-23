@@ -19,7 +19,7 @@ const ItemEditImage: React.FC<ItemEditImageProps> = ({
   return (
     <div className={`relative rounded-md overflow-hidden aspect-square bg-gray-100 ${className}`}>
       <img 
-        src={image} 
+        src={image || '/placeholder.svg'} 
         alt={name} 
         className="w-full h-full object-cover"
       />
