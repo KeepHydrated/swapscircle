@@ -14,368 +14,1704 @@ export type Database = {
   }
   public: {
     Tables: {
-      friend_requests: {
+      awards: {
         Row: {
-          created_at: string
-          id: string
-          recipient_id: string
-          requester_id: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          recipient_id: string
-          requester_id: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          recipient_id?: string
-          requester_id?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      items: {
-        Row: {
-          category: string | null
-          condition: string | null
+          cost_usd: number
           created_at: string
           description: string | null
+          icon_url: string | null
           id: string
-          image_url: string | null
-          is_available: boolean
-          is_hidden: boolean
-          looking_for_categories: string[] | null
-          looking_for_conditions: string[] | null
-          looking_for_description: string | null
+          like_value: number
           name: string
-          price_range_max: number | null
-          price_range_min: number | null
-          tags: string[] | null
-          updated_at: string
-          user_id: string
         }
         Insert: {
-          category?: string | null
-          condition?: string | null
+          cost_usd: number
           created_at?: string
           description?: string | null
+          icon_url?: string | null
           id?: string
-          image_url?: string | null
-          is_available?: boolean
-          is_hidden?: boolean
-          looking_for_categories?: string[] | null
-          looking_for_conditions?: string[] | null
-          looking_for_description?: string | null
+          like_value?: number
           name: string
-          price_range_max?: number | null
-          price_range_min?: number | null
-          tags?: string[] | null
-          updated_at?: string
-          user_id: string
         }
         Update: {
-          category?: string | null
-          condition?: string | null
+          cost_usd?: number
           created_at?: string
           description?: string | null
+          icon_url?: string | null
           id?: string
-          image_url?: string | null
-          is_available?: boolean
-          is_hidden?: boolean
-          looking_for_categories?: string[] | null
-          looking_for_conditions?: string[] | null
-          looking_for_description?: string | null
+          like_value?: number
           name?: string
-          price_range_max?: number | null
-          price_range_min?: number | null
-          tags?: string[] | null
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
-      liked_items: {
+      book_follows: {
         Row: {
+          book_id: string
           created_at: string
           id: string
-          item_id: string
           user_id: string
         }
         Insert: {
+          book_id: string
           created_at?: string
           id?: string
-          item_id: string
           user_id: string
         }
         Update: {
+          book_id?: string
           created_at?: string
           id?: string
-          item_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "liked_items_item_id_fkey"
-            columns: ["item_id"]
+            foreignKeyName: "book_follows_book_id_fkey"
+            columns: ["book_id"]
             isOneToOne: false
-            referencedRelation: "items"
+            referencedRelation: "books"
             referencedColumns: ["id"]
           },
         ]
       }
-      matches: {
+      book_request_chapters: {
+        Row: {
+          book_request_id: string
+          chapter_number: number
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_epilogue: boolean | null
+          is_prologue: boolean | null
+          title: string | null
+        }
+        Insert: {
+          book_request_id: string
+          chapter_number: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_epilogue?: boolean | null
+          is_prologue?: boolean | null
+          title?: string | null
+        }
+        Update: {
+          book_request_id?: string
+          chapter_number?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_epilogue?: boolean | null
+          is_prologue?: boolean | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_request_chapters_book_request_id_fkey"
+            columns: ["book_request_id"]
+            isOneToOne: false
+            referencedRelation: "book_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_book_request_chapters_request"
+            columns: ["book_request_id"]
+            isOneToOne: false
+            referencedRelation: "book_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_requests: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          author: string
+          chapter_count: number | null
+          cover_url: string | null
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          genre: Database["public"]["Enums"]["book_genre"] | null
+          has_epilogue: boolean
+          has_prologue: boolean
+          id: string
+          isbn: string | null
+          published_year: number | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["book_request_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          author: string
+          chapter_count?: number | null
+          cover_url?: string | null
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          genre?: Database["public"]["Enums"]["book_genre"] | null
+          has_epilogue?: boolean
+          has_prologue?: boolean
+          id?: string
+          isbn?: string | null
+          published_year?: number | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["book_request_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          author?: string
+          chapter_count?: number | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          genre?: Database["public"]["Enums"]["book_genre"] | null
+          has_epilogue?: boolean
+          has_prologue?: boolean
+          id?: string
+          isbn?: string | null
+          published_year?: number | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["book_request_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      books: {
+        Row: {
+          author: string
+          chapter_count: number | null
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          genre: Database["public"]["Enums"]["book_genre"] | null
+          has_epilogue: boolean
+          has_prologue: boolean
+          id: string
+          published_year: number | null
+          title: string
+        }
+        Insert: {
+          author: string
+          chapter_count?: number | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          genre?: Database["public"]["Enums"]["book_genre"] | null
+          has_epilogue?: boolean
+          has_prologue?: boolean
+          id?: string
+          published_year?: number | null
+          title: string
+        }
+        Update: {
+          author?: string
+          chapter_count?: number | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          genre?: Database["public"]["Enums"]["book_genre"] | null
+          has_epilogue?: boolean
+          has_prologue?: boolean
+          id?: string
+          published_year?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "books_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chapter_reactions: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_reactions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapter_saves: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_saves_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapter_views: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_views_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapters: {
+        Row: {
+          book_id: string
+          chapter_number: number
+          created_at: string
+          id: string
+          is_active: boolean
+          is_epilogue: boolean | null
+          is_prologue: boolean | null
+          title: string
+        }
+        Insert: {
+          book_id: string
+          chapter_number: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_epilogue?: boolean | null
+          is_prologue?: boolean | null
+          title: string
+        }
+        Update: {
+          book_id?: string
+          chapter_number?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_epilogue?: boolean | null
+          is_prologue?: boolean | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creator_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          creator_id: string
+          id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          creator_id: string
+          id?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          creator_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "creator_categories_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creator_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creator_follows: {
+        Row: {
+          created_at: string
+          creator_id: string
+          follower_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          follower_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          follower_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      creator_profiles: {
+        Row: {
+          avatar_url: string | null
+          average_rating: number | null
+          banner_url: string | null
+          bio: string | null
+          completed_tasks_count: number | null
+          created_at: string
+          display_name: string
+          id: string
+          is_available: boolean | null
+          is_verified: boolean | null
+          minimum_task_amount: number | null
+          social_links: Json | null
+          total_earnings: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          average_rating?: number | null
+          banner_url?: string | null
+          bio?: string | null
+          completed_tasks_count?: number | null
+          created_at?: string
+          display_name: string
+          id?: string
+          is_available?: boolean | null
+          is_verified?: boolean | null
+          minimum_task_amount?: number | null
+          social_links?: Json | null
+          total_earnings?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          average_rating?: number | null
+          banner_url?: string | null
+          bio?: string | null
+          completed_tasks_count?: number | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_available?: boolean | null
+          is_verified?: boolean | null
+          minimum_task_amount?: number | null
+          social_links?: Json | null
+          total_earnings?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      discussion_likes: {
+        Row: {
+          created_at: string
+          discussion_id: string
+          id: string
+          user_id: string
+          vote_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          discussion_id: string
+          id?: string
+          user_id: string
+          vote_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          discussion_id?: string
+          id?: string
+          user_id?: string
+          vote_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussion_likes_discussion_id_fkey"
+            columns: ["discussion_id"]
+            isOneToOne: false
+            referencedRelation: "discussions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discussions: {
+        Row: {
+          chapter_id: string
+          content: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          content: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussions_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "discussions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      earnings_transactions: {
+        Row: {
+          amount_usd: number
+          award_id: string | null
+          comment_id: string | null
+          created_at: string
+          id: string
+          like_count: number
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount_usd: number
+          award_id?: string | null
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          like_count?: number
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount_usd?: number
+          award_id?: string | null
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          like_count?: number
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "earnings_transactions_award_id_fkey"
+            columns: ["award_id"]
+            isOneToOne: false
+            referencedRelation: "awards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      liked_markets: {
         Row: {
           created_at: string
           id: string
-          user1_id: string
-          user1_item_id: string
-          user2_id: string
-          user2_item_id: string
+          market_id: string
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          user1_id: string
-          user1_item_id: string
-          user2_id: string
-          user2_item_id: string
+          market_id: string
+          user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          user1_id?: string
-          user1_item_id?: string
-          user2_id?: string
-          user2_item_id?: string
+          market_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      liked_vendors: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          vendor_id?: string
+        }
+        Relationships: []
+      }
+      liked_websites: {
+        Row: {
+          audience_rating: number
+          created_at: string
+          creator: string
+          creator_image: string
+          id: string
+          likes: number
+          professional_rating: number
+          user_id: string
+          website_id: string
+          website_image: string
+          website_title: string
+        }
+        Insert: {
+          audience_rating: number
+          created_at?: string
+          creator: string
+          creator_image: string
+          id?: string
+          likes: number
+          professional_rating: number
+          user_id: string
+          website_id: string
+          website_image: string
+          website_title: string
+        }
+        Update: {
+          audience_rating?: number
+          created_at?: string
+          creator?: string
+          creator_image?: string
+          id?: string
+          likes?: number
+          professional_rating?: number
+          user_id?: string
+          website_id?: string
+          website_image?: string
+          website_title?: string
+        }
+        Relationships: []
+      }
+      markets: {
+        Row: {
+          accepts_credit_cards: boolean | null
+          additional_info: string | null
+          address: string | null
+          city: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          description: string
+          has_parking: boolean | null
+          id: string
+          is_outdoor: boolean | null
+          name: string
+          operating_days: string[] | null
+          state: string | null
+          submission_id: string | null
+          updated_at: string
+          vendor_count: string | null
+          website: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          accepts_credit_cards?: boolean | null
+          additional_info?: string | null
+          address?: string | null
+          city?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          description: string
+          has_parking?: boolean | null
+          id?: string
+          is_outdoor?: boolean | null
+          name: string
+          operating_days?: string[] | null
+          state?: string | null
+          submission_id?: string | null
+          updated_at?: string
+          vendor_count?: string | null
+          website?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          accepts_credit_cards?: boolean | null
+          additional_info?: string | null
+          address?: string | null
+          city?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          description?: string
+          has_parking?: boolean | null
+          id?: string
+          is_outdoor?: boolean | null
+          name?: string
+          operating_days?: string[] | null
+          state?: string | null
+          submission_id?: string | null
+          updated_at?: string
+          vendor_count?: string | null
+          website?: string | null
+          zip_code?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "fk_user1_item"
-            columns: ["user1_item_id"]
+            foreignKeyName: "markets_submission_id_fkey"
+            columns: ["submission_id"]
             isOneToOne: false
-            referencedRelation: "items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_user2_item"
-            columns: ["user2_item_id"]
-            isOneToOne: false
-            referencedRelation: "items"
+            referencedRelation: "submissions"
             referencedColumns: ["id"]
           },
         ]
       }
       notifications: {
         Row: {
+          action_by: string | null
+          action_taken: string
+          book_title: string | null
+          chapter_number: number | null
+          chapter_title: string | null
+          created_at: string | null
+          id: string
+          message: string
+          reference_id: string
+          status: Database["public"]["Enums"]["notification_status"] | null
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          action_by?: string | null
+          action_taken: string
+          book_title?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          reference_id: string
+          status?: Database["public"]["Enums"]["notification_status"] | null
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          action_by?: string | null
+          action_taken?: string
+          book_title?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          reference_id?: string
+          status?: Database["public"]["Enums"]["notification_status"] | null
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      offers: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          is_author: boolean | null
+          message: string | null
+          status: Database["public"]["Enums"]["offer_status"]
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          is_author?: boolean | null
+          message?: string | null
+          status?: Database["public"]["Enums"]["offer_status"]
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          is_author?: boolean | null
+          message?: string | null
+          status?: Database["public"]["Enums"]["offer_status"]
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          offer_id: string
+          processed_at: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          offer_id: string
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          offer_id?: string
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          avatar_url: string | null
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          username: string | null
+        }
+        Insert: {
+          address?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone?: string | null
+          username?: string | null
+        }
+        Update: {
+          address?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      report_attachments: {
+        Row: {
+          created_at: string
+          file_path: string
+          id: string
+          report_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          id?: string
+          report_id: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          id?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_attachments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          action_taken: string | null
+          book_id: string | null
+          chapter_id: string | null
+          created_at: string
+          id: string
+          message: string
+          reporter_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          status_changed_at: string | null
+          status_changed_by: string | null
+          type: Database["public"]["Enums"]["report_type"]
+          updated_at: string
+        }
+        Insert: {
+          action_taken?: string | null
+          book_id?: string | null
+          chapter_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          reporter_id: string
+          status?: Database["public"]["Enums"]["report_status"]
+          status_changed_at?: string | null
+          status_changed_by?: string | null
+          type: Database["public"]["Enums"]["report_type"]
+          updated_at?: string
+        }
+        Update: {
+          action_taken?: string | null
+          book_id?: string | null
+          chapter_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          reporter_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
+          status_changed_at?: string | null
+          status_changed_by?: string | null
+          type?: Database["public"]["Enums"]["report_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          images: string[] | null
+          market_id: string | null
+          rating: number
+          updated_at: string
+          user_id: string
+          vendor_id: string | null
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          market_id?: string | null
+          rating: number
+          updated_at?: string
+          user_id: string
+          vendor_id?: string | null
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          market_id?: string | null
+          rating?: number
+          updated_at?: string
+          user_id?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submission_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          submission_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          submission_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_attachments_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "task_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submission_comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "submission_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submission_comments: {
+        Row: {
           content: string
           created_at: string
           id: string
-          is_read: boolean
-          related_id: string | null
-          title: string
-          type: string
+          parent_id: string | null
+          submission_id: string
+          updated_at: string
           user_id: string
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
-          is_read?: boolean
-          related_id?: string | null
-          title: string
-          type: string
+          parent_id?: string | null
+          submission_id: string
+          updated_at?: string
           user_id: string
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
-          is_read?: boolean
-          related_id?: string | null
-          title?: string
+          parent_id?: string | null
+          submission_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "submission_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submission_comments_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "task_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submission_likes: {
+        Row: {
+          created_at: string
+          id: string
+          submission_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          submission_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          submission_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_likes_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "task_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          accepts_credit_cards: boolean | null
+          additional_info: string | null
+          address: string | null
+          city: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          created_by: string | null
+          description: string
+          has_parking: boolean | null
+          hours: Json | null
+          id: string
+          is_outdoor: boolean | null
+          market_id: string | null
+          name: string
+          operating_days: string[] | null
+          products: Json | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          specialties: string | null
+          state: string | null
+          status: string
+          type: string
+          updated_at: string
+          vendor_count: string | null
+          website: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          accepts_credit_cards?: boolean | null
+          additional_info?: string | null
+          address?: string | null
+          city?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          has_parking?: boolean | null
+          hours?: Json | null
+          id?: string
+          is_outdoor?: boolean | null
+          market_id?: string | null
+          name: string
+          operating_days?: string[] | null
+          products?: Json | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          specialties?: string | null
+          state?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+          vendor_count?: string | null
+          website?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          accepts_credit_cards?: boolean | null
+          additional_info?: string | null
+          address?: string | null
+          city?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          has_parking?: boolean | null
+          hours?: Json | null
+          id?: string
+          is_outdoor?: boolean | null
+          market_id?: string | null
+          name?: string
+          operating_days?: string[] | null
+          products?: Json | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          specialties?: string | null
+          state?: string | null
+          status?: string
           type?: string
+          updated_at?: string
+          vendor_count?: string | null
+          website?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      task_comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "task_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "task_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_likes: {
+        Row: {
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_likes_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_submissions: {
+        Row: {
+          created_at: string
+          creator_id: string
+          description: string | null
+          duration: number | null
+          external_url: string | null
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_final: boolean | null
+          submission_type: Database["public"]["Enums"]["submission_type"]
+          task_id: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          duration?: number | null
+          external_url?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_final?: boolean | null
+          submission_type: Database["public"]["Enums"]["submission_type"]
+          task_id: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          duration?: number | null
+          external_url?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_final?: boolean | null
+          submission_type?: Database["public"]["Enums"]["submission_type"]
+          task_id?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_submissions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          accepted_at: string | null
+          author_id: string
+          category_id: string | null
+          completed_at: string | null
+          created_at: string
+          creator_id: string | null
+          deadline: string | null
+          description: string
+          final_submission_id: string | null
+          id: string
+          requirements: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          total_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          author_id: string
+          category_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          creator_id?: string | null
+          deadline?: string | null
+          description: string
+          final_submission_id?: string | null
+          id?: string
+          requirements?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          author_id?: string
+          category_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          creator_id?: string | null
+          deadline?: string | null
+          description?: string
+          final_submission_id?: string | null
+          id?: string
+          requirements?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_tasks_final_submission"
+            columns: ["final_submission_id"]
+            isOneToOne: false
+            referencedRelation: "task_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_awards: {
+        Row: {
+          award_id: string
+          comment_id: string
+          created_at: string
+          given_by: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          award_id: string
+          comment_id: string
+          created_at?: string
+          given_by: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          award_id?: string
+          comment_id?: string
+          created_at?: string
+          given_by?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_awards_award_id_fkey"
+            columns: ["award_id"]
+            isOneToOne: false
+            referencedRelation: "awards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_earnings: {
+        Row: {
+          created_at: string
+          id: string
+          last_calculated_at: string
+          total_earnings_usd: number
+          total_likes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_calculated_at?: string
+          total_earnings_usd?: number
+          total_likes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_calculated_at?: string
+          total_earnings_usd?: number
+          total_likes?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
       }
-      profiles: {
+      user_roles: {
         Row: {
-          avatar_url: string | null
-          bio: string | null
-          city: string | null
-          created_at: string
-          email: string | null
+          created_at: string | null
+          created_by: string | null
           id: string
-          location: string | null
-          name: string | null
-          state: string | null
-          street: string | null
-          updated_at: string
-          username: string | null
-          zip_code: string | null
+          is_active: boolean
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          city?: string | null
-          created_at?: string
-          email?: string | null
-          id: string
-          location?: string | null
-          name?: string | null
-          state?: string | null
-          street?: string | null
-          updated_at?: string
-          username?: string | null
-          zip_code?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          city?: string | null
-          created_at?: string
-          email?: string | null
+          created_at?: string | null
+          created_by?: string | null
           id?: string
-          location?: string | null
-          name?: string | null
-          state?: string | null
-          street?: string | null
-          updated_at?: string
-          username?: string | null
-          zip_code?: string | null
+          is_active?: boolean
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
-      reviews: {
+      vendors: {
         Row: {
-          comment: string | null
+          additional_info: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
           created_at: string
+          description: string
           id: string
-          rating: number
-          reviewee_id: string
-          reviewer_id: string
-          trade_conversation_id: string
-        }
-        Insert: {
-          comment?: string | null
-          created_at?: string
-          id?: string
-          rating: number
-          reviewee_id: string
-          reviewer_id: string
-          trade_conversation_id: string
-        }
-        Update: {
-          comment?: string | null
-          created_at?: string
-          id?: string
-          rating?: number
-          reviewee_id?: string
-          reviewer_id?: string
-          trade_conversation_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "reviews_trade_conversation_id_fkey"
-            columns: ["trade_conversation_id"]
-            isOneToOne: false
-            referencedRelation: "trade_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      trade_conversations: {
-        Row: {
-          completed_at: string | null
-          created_at: string
-          id: string
-          owner_accepted: boolean | null
-          owner_id: string
-          owner_item_id: string
-          requester_accepted: boolean | null
-          requester_id: string
-          requester_item_id: string
-          status: string
+          market_id: string | null
+          name: string
+          products: Json | null
+          specialties: string | null
+          submission_id: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
-          completed_at?: string | null
+          additional_info?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
           created_at?: string
+          description: string
           id?: string
-          owner_accepted?: boolean | null
-          owner_id: string
-          owner_item_id: string
-          requester_accepted?: boolean | null
-          requester_id: string
-          requester_item_id: string
-          status?: string
+          market_id?: string | null
+          name: string
+          products?: Json | null
+          specialties?: string | null
+          submission_id?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
-          completed_at?: string | null
+          additional_info?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
           created_at?: string
+          description?: string
           id?: string
-          owner_accepted?: boolean | null
-          owner_id?: string
-          owner_item_id?: string
-          requester_accepted?: boolean | null
-          requester_id?: string
-          requester_item_id?: string
-          status?: string
+          market_id?: string | null
+          name?: string
+          products?: Json | null
+          specialties?: string | null
+          submission_id?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "trade_conversations_owner_item_id_fkey"
-            columns: ["owner_item_id"]
+            foreignKeyName: "vendors_submission_id_fkey"
+            columns: ["submission_id"]
             isOneToOne: false
-            referencedRelation: "items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "trade_conversations_requester_item_id_fkey"
-            columns: ["requester_item_id"]
-            isOneToOne: false
-            referencedRelation: "items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      trade_messages: {
-        Row: {
-          created_at: string
-          id: string
-          message: string
-          sender_id: string
-          trade_conversation_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          message: string
-          sender_id: string
-          trade_conversation_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          message?: string
-          sender_id?: string
-          trade_conversation_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "trade_messages_trade_conversation_id_fkey"
-            columns: ["trade_conversation_id"]
-            isOneToOne: false
-            referencedRelation: "trade_conversations"
+            referencedRelation: "submissions"
             referencedColumns: ["id"]
           },
         ]
@@ -385,10 +1721,325 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_first_admin: {
+        Args: { admin_email: string }
+        Returns: undefined
+      }
+      add_moderator_by_email: {
+        Args: { moderator_email: string; admin_user_id: string }
+        Returns: undefined
+      }
+      calculate_user_earnings: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      check_username_availability: {
+        Args: { username_to_check: string }
+        Returns: boolean
+      }
+      cleanup_expired_requests: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      create_notification: {
+        Args: {
+          p_user_id: string
+          p_type: Database["public"]["Enums"]["notification_type"]
+          p_reference_id: string
+          p_message: string
+          p_action_taken: string
+          p_action_by: string
+        }
+        Returns: string
+      }
+      get_book_discussion_counts: {
+        Args: { book_ids: string[] }
+        Returns: {
+          book_id: string
+          discussion_count: number
+        }[]
+      }
+      get_book_requests: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          title: string
+          author: string
+          published_year: number
+          cover_url: string
+          isbn: string
+          created_at: string
+          created_by: string
+          requester_username: string
+          genre: Database["public"]["Enums"]["book_genre"]
+          status: Database["public"]["Enums"]["book_request_status"]
+        }[]
+      }
+      get_chapter_stats: {
+        Args: { chapter_ids: string[] }
+        Returns: {
+          chapter_id: string
+          view_count: number
+          reaction_count: number
+        }[]
+      }
+      get_discussion_like_counts: {
+        Args: { discussion_ids: string[] }
+        Returns: {
+          discussion_id: string
+          like_count: number
+        }[]
+      }
+      get_moderators: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          username: string
+          created_at: string
+          created_by: string
+          is_active: boolean
+        }[]
+      }
+      get_most_engaged_books: {
+        Args: { limit_count: number }
+        Returns: {
+          book_id: string
+          title: string
+          author: string
+          published_year: number
+          cover_url: string
+          genre: Database["public"]["Enums"]["book_genre"]
+          view_count: number
+          reaction_count: number
+          discussion_count: number
+        }[]
+      }
+      get_recent_discussions: {
+        Args: { limit_count: number }
+        Returns: {
+          discussion_id: string
+          content: string
+          created_at: string
+          username: string
+          avatar_url: string
+          book_title: string
+          chapter_id: string
+          chapter_title: string
+          chapter_number: number
+          book_id: string
+        }[]
+      }
+      get_reports: {
+        Args: {
+          p_status?: Database["public"]["Enums"]["report_status"]
+          p_type?: Database["public"]["Enums"]["report_type"]
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          id: string
+          reporter_id: string
+          reporter_username: string
+          type: Database["public"]["Enums"]["report_type"]
+          book_id: string
+          book_title: string
+          chapter_id: string
+          chapter_title: string
+          chapter_number: number
+          message: string
+          status: Database["public"]["Enums"]["report_status"]
+          created_at: string
+          updated_at: string
+          attachment_count: number
+          status_changed_by: string
+          status_changed_by_username: string
+          status_changed_at: string
+          action_taken: string
+        }[]
+      }
+      get_trending_books: {
+        Args: { limit_count: number }
+        Returns: {
+          book_id: string
+          title: string
+          author: string
+          published_year: number
+          cover_url: string
+          genre: Database["public"]["Enums"]["book_genre"]
+          view_count: number
+          reaction_count: number
+          discussion_count: number
+        }[]
+      }
+      get_user_discussions_paginated: {
+        Args: { p_user_id: string; p_limit: number; p_offset: number }
+        Returns: Json[]
+      }
+      get_user_notifications: {
+        Args: { p_user_id: string }
+        Returns: {
+          id: string
+          type: Database["public"]["Enums"]["notification_type"]
+          reference_id: string
+          created_at: string
+          status: Database["public"]["Enums"]["notification_status"]
+          action_by_username: string
+          book_title: string
+          report_type: string
+          resolved_at: string
+          resolved_by: string
+          chapter_title: string
+          chapter_number: number
+          message: string
+        }[]
+      }
+      get_user_notifications_paginated: {
+        Args: { p_user_id: string; p_limit: number; p_offset: number }
+        Returns: {
+          id: string
+          type: Database["public"]["Enums"]["notification_type"]
+          reference_id: string
+          created_at: string
+          status: Database["public"]["Enums"]["notification_status"]
+          action_by_username: string
+          book_title: string
+          report_type: string
+          resolved_at: string
+          resolved_by: string
+          chapter_title: string
+          chapter_number: number
+          message: string
+          total_count: number
+        }[]
+      }
+      get_user_stats: {
+        Args: { user_id_param: string }
+        Returns: {
+          discussion_count: number
+          followed_books_count: number
+          received_likes_count: number
+        }[]
+      }
+      has_role: {
+        Args: { user_id: string; role: Database["public"]["Enums"]["app_role"] }
+        Returns: boolean
+      }
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      is_moderator: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      mark_notification_as_read: {
+        Args: { p_notification_id: string }
+        Returns: undefined
+      }
+      remove_moderator: {
+        Args: { moderator_id: string; admin_user_id: string }
+        Returns: undefined
+      }
+      search_books: {
+        Args: { search_term: string }
+        Returns: {
+          id: string
+          title: string
+          author: string
+          published_year: number
+          cover_url: string
+          chapter_count: number
+          has_prologue: boolean
+          has_epilogue: boolean
+          genre: Database["public"]["Enums"]["book_genre"]
+        }[]
+      }
+      search_books_ai: {
+        Args: { query: string }
+        Returns: Json
+      }
+      toggle_moderator_status: {
+        Args: { moderator_id: string; admin_user_id: string }
+        Returns: undefined
+      }
+      update_report_status: {
+        Args:
+          | {
+              p_report_id: string
+              p_status: Database["public"]["Enums"]["report_status"]
+            }
+          | {
+              p_report_id: string
+              p_status: Database["public"]["Enums"]["report_status"]
+              p_user_id: string
+              p_action_taken?: string
+            }
+        Returns: undefined
+      }
+      update_submission_admin: {
+        Args: {
+          submission_id: string
+          new_status: string
+          rejection_reason_param?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      book_genre:
+        | "Self-Help"
+        | "Business"
+        | "Biography"
+        | "Psychology"
+        | "History"
+        | "Science"
+        | "Personal Development"
+        | "Health & Wellness"
+        | "Fantasy"
+        | "Science Fiction"
+        | "Mystery"
+        | "Romance"
+        | "Thriller"
+        | "Contemporary Fiction"
+        | "Historical Fiction"
+        | "Autobiography"
+        | "Memoir"
+        | "Philosophy"
+        | "Travel"
+        | "True Crime"
+        | "Religion & Spirituality"
+        | "Political Science"
+        | "Horror"
+        | "Adventure"
+        | "Dystopian"
+        | "Literary Fiction"
+        | "Magical Realism"
+        | "Gothic Fiction"
+        | "Psychological Fiction"
+        | "Crime Fiction"
+        | "Children's Literature"
+      book_request_status: "draft" | "submitted" | "approved" | "rejected"
+      notification_status: "unread" | "read"
+      notification_type: "book_request" | "report" | "comment" | "sub_comment"
+      offer_status: "active" | "withdrawn" | "refunded" | "paid_out"
+      payment_status: "pending" | "held" | "released" | "refunded" | "failed"
+      report_status: "open" | "in_progress" | "resolved"
+      report_type: "book" | "chapter" | "general"
+      submission_type:
+        | "video"
+        | "image"
+        | "audio"
+        | "document"
+        | "archive"
+        | "link"
+      task_status:
+        | "open"
+        | "accepted"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -515,6 +2166,63 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      book_genre: [
+        "Self-Help",
+        "Business",
+        "Biography",
+        "Psychology",
+        "History",
+        "Science",
+        "Personal Development",
+        "Health & Wellness",
+        "Fantasy",
+        "Science Fiction",
+        "Mystery",
+        "Romance",
+        "Thriller",
+        "Contemporary Fiction",
+        "Historical Fiction",
+        "Autobiography",
+        "Memoir",
+        "Philosophy",
+        "Travel",
+        "True Crime",
+        "Religion & Spirituality",
+        "Political Science",
+        "Horror",
+        "Adventure",
+        "Dystopian",
+        "Literary Fiction",
+        "Magical Realism",
+        "Gothic Fiction",
+        "Psychological Fiction",
+        "Crime Fiction",
+        "Children's Literature",
+      ],
+      book_request_status: ["draft", "submitted", "approved", "rejected"],
+      notification_status: ["unread", "read"],
+      notification_type: ["book_request", "report", "comment", "sub_comment"],
+      offer_status: ["active", "withdrawn", "refunded", "paid_out"],
+      payment_status: ["pending", "held", "released", "refunded", "failed"],
+      report_status: ["open", "in_progress", "resolved"],
+      report_type: ["book", "chapter", "general"],
+      submission_type: [
+        "video",
+        "image",
+        "audio",
+        "document",
+        "archive",
+        "link",
+      ],
+      task_status: [
+        "open",
+        "accepted",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+    },
   },
 } as const
