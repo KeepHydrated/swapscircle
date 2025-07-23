@@ -214,15 +214,10 @@ const EditItem: React.FC = () => {
           looking_for_description: lookingForText,
         };
         
-        // Handle image updates - use the image_urls array field
-        const allImageUrls = [...existingImageUrls];
-        if (images.length > 0) {
-          // Note: In a real app, you'd upload the new File objects to storage first
-          // and get their URLs, then add them to the array
-          // For now, we'll just keep the existing images
-          console.log('New images selected but upload not implemented yet');
+        // Handle image updates - use existing image_url field for now
+        if (existingImageUrls.length > 0) {
+          updates.image_url = existingImageUrls[0];
         }
-        updates.image_urls = allImageUrls;
         
         // Debug the actual state of selectedPriceRanges
         console.log('Raw selectedPriceRanges state:', JSON.stringify(selectedPriceRanges));
