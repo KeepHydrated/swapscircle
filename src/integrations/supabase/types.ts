@@ -1777,6 +1777,7 @@ export type Database = {
       }
       trade_conversations: {
         Row: {
+          completed_at: string | null
           created_at: string | null
           id: string
           owner_accepted: boolean | null
@@ -1789,6 +1790,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          completed_at?: string | null
           created_at?: string | null
           id?: string
           owner_accepted?: boolean | null
@@ -1801,6 +1803,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          completed_at?: string | null
           created_at?: string | null
           id?: string
           owner_accepted?: boolean | null

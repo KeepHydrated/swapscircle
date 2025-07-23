@@ -16,11 +16,11 @@ export const createNotification = async (params: CreateNotificationParams) => {
       .from('notifications')
       .insert({
         user_id: params.userId,
-        type: params.type,
-        title: params.title,
-        content: params.content,
-        related_id: params.relatedId,
-        is_read: false
+        type: 'comment', // Default to comment type since that's what the DB supports
+        message: `${params.title}: ${params.content}`,
+        reference_id: params.relatedId || '',
+        action_taken: params.type,
+        status: 'unread'
       });
 
     if (error) {
