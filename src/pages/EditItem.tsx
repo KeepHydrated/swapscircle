@@ -11,7 +11,7 @@ import PreferencesForm, { SavedPreference } from '@/components/postItem/Preferen
 import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
 import SavedPreferencesList from '@/components/postItem/SavedPreferencesList';
 import { Item } from '@/types/item';
-import { fetchItemById, updateItem } from '@/services/authService';
+import { fetchItemById, updateItem, uploadItemImage } from '@/services/authService';
 
 const EditItem: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
@@ -214,9 +214,25 @@ const EditItem: React.FC = () => {
           looking_for_description: lookingForText,
         };
         
-        // Handle image updates - use existing image_url field for now
-        if (existingImageUrls.length > 0) {
-          updates.image_url = existingImageUrls[0];
+        // Handle new image uploads first
+        let newImageUrls: string[] = [];
+        if (images.length > 0) {
+          toast.info('Uploading new images...');
+          for (const image of images) {
+            const imageUrl = await uploadItemImage(image);
+            if (imageUrl) {
+              newImageUrls.push(imageUrl);
+            }
+          }
+        }
+        
+        // Combine existing and new image URLs
+        const allImageUrls = [...existingImageUrls, ...newImageUrls];
+        
+        // Update image fields
+        if (allImageUrls.length > 0) {
+          updates.image_url = allImageUrls[0]; // Keep compatibility with single image
+          updates.image_urls = allImageUrls; // Store all images in array
         }
         
         // Debug the actual state of selectedPriceRanges
@@ -262,6 +278,9 @@ const EditItem: React.FC = () => {
         console.log('Update result:', success);
         
         if (success) {
+          // Clear new images and update existing images after successful save
+          setImages([]);
+          setExistingImageUrls(allImageUrls);
           toast.success('Your item has been updated successfully!');
           navigate('/profile');
         } else {
