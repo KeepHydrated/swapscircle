@@ -1247,6 +1247,8 @@ export type Database = {
           images: string[] | null
           market_id: string | null
           rating: number
+          reviewee_id: string | null
+          reviewer_id: string | null
           updated_at: string
           user_id: string
           vendor_id: string | null
@@ -1258,6 +1260,8 @@ export type Database = {
           images?: string[] | null
           market_id?: string | null
           rating: number
+          reviewee_id?: string | null
+          reviewer_id?: string | null
           updated_at?: string
           user_id: string
           vendor_id?: string | null
@@ -1269,6 +1273,8 @@ export type Database = {
           images?: string[] | null
           market_id?: string | null
           rating?: number
+          reviewee_id?: string | null
+          reviewer_id?: string | null
           updated_at?: string
           user_id?: string
           vendor_id?: string | null
@@ -1785,7 +1791,22 @@ export type Database = {
           status?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trade_conversations_owner_item_id_fkey"
+            columns: ["owner_item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_conversations_requester_item_id_fkey"
+            columns: ["requester_item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trades: {
         Row: {
