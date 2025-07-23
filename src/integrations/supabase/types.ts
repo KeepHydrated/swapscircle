@@ -641,6 +641,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          recipient_id: string | null
           requested_id: string
           requester_id: string
           status: string | null
@@ -649,6 +650,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          recipient_id?: string | null
           requested_id: string
           requester_id: string
           status?: string | null
@@ -657,6 +659,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          recipient_id?: string | null
           requested_id?: string
           requester_id?: string
           status?: string | null
@@ -909,6 +912,36 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message_type: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          sender_id?: string
+        }
+        Relationships: []
+      }
       mutual_matches: {
         Row: {
           created_at: string | null
@@ -945,6 +978,7 @@ export type Database = {
           chapter_title: string | null
           created_at: string | null
           id: string
+          is_read: boolean | null
           message: string
           reference_id: string
           status: Database["public"]["Enums"]["notification_status"] | null
@@ -959,6 +993,7 @@ export type Database = {
           chapter_title?: string | null
           created_at?: string | null
           id?: string
+          is_read?: boolean | null
           message: string
           reference_id: string
           status?: Database["public"]["Enums"]["notification_status"] | null
@@ -973,6 +1008,7 @@ export type Database = {
           chapter_title?: string | null
           created_at?: string | null
           id?: string
+          is_read?: boolean | null
           message?: string
           reference_id?: string
           status?: Database["public"]["Enums"]["notification_status"] | null
@@ -1070,11 +1106,13 @@ export type Database = {
         Row: {
           address: string | null
           avatar_url: string | null
+          bio: string | null
           created_at: string
           email: string | null
           first_name: string | null
           id: string
           last_name: string | null
+          location: string | null
           name: string | null
           phone: string | null
           user_id: string | null
@@ -1083,11 +1121,13 @@ export type Database = {
         Insert: {
           address?: string | null
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
           id: string
           last_name?: string | null
+          location?: string | null
           name?: string | null
           phone?: string | null
           user_id?: string | null
@@ -1096,11 +1136,13 @@ export type Database = {
         Update: {
           address?: string | null
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
+          location?: string | null
           name?: string | null
           phone?: string | null
           user_id?: string | null
@@ -1711,6 +1753,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      trade_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          owner_id: string
+          owner_item_id: string
+          requester_id: string
+          requester_item_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          owner_id: string
+          owner_item_id: string
+          requester_id: string
+          requester_item_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          owner_id?: string
+          owner_item_id?: string
+          requester_id?: string
+          requester_item_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       trades: {
         Row: {
