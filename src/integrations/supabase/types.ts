@@ -642,7 +642,6 @@ export type Database = {
           created_at: string | null
           id: string
           recipient_id: string | null
-          requested_id: string
           requester_id: string
           status: string | null
           updated_at: string | null
@@ -651,7 +650,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           recipient_id?: string | null
-          requested_id: string
           requester_id: string
           status?: string | null
           updated_at?: string | null
@@ -660,7 +658,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           recipient_id?: string | null
-          requested_id?: string
           requester_id?: string
           status?: string | null
           updated_at?: string | null
@@ -1107,6 +1104,7 @@ export type Database = {
           address: string | null
           avatar_url: string | null
           bio: string | null
+          city: string | null
           created_at: string
           email: string | null
           first_name: string | null
@@ -1115,13 +1113,18 @@ export type Database = {
           location: string | null
           name: string | null
           phone: string | null
+          state: string | null
+          street: string | null
+          updated_at: string | null
           user_id: string | null
           username: string | null
+          zip_code: string | null
         }
         Insert: {
           address?: string | null
           avatar_url?: string | null
           bio?: string | null
+          city?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -1130,13 +1133,18 @@ export type Database = {
           location?: string | null
           name?: string | null
           phone?: string | null
+          state?: string | null
+          street?: string | null
+          updated_at?: string | null
           user_id?: string | null
           username?: string | null
+          zip_code?: string | null
         }
         Update: {
           address?: string | null
           avatar_url?: string | null
           bio?: string | null
+          city?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -1145,8 +1153,12 @@ export type Database = {
           location?: string | null
           name?: string | null
           phone?: string | null
+          state?: string | null
+          street?: string | null
+          updated_at?: string | null
           user_id?: string | null
           username?: string | null
+          zip_code?: string | null
         }
         Relationships: []
       }
@@ -1249,6 +1261,7 @@ export type Database = {
           rating: number
           reviewee_id: string | null
           reviewer_id: string | null
+          trade_conversation_id: string | null
           updated_at: string
           user_id: string
           vendor_id: string | null
@@ -1262,6 +1275,7 @@ export type Database = {
           rating: number
           reviewee_id?: string | null
           reviewer_id?: string | null
+          trade_conversation_id?: string | null
           updated_at?: string
           user_id: string
           vendor_id?: string | null
@@ -1275,6 +1289,7 @@ export type Database = {
           rating?: number
           reviewee_id?: string | null
           reviewer_id?: string | null
+          trade_conversation_id?: string | null
           updated_at?: string
           user_id?: string
           vendor_id?: string | null
@@ -1764,8 +1779,10 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          owner_accepted: boolean | null
           owner_id: string
           owner_item_id: string
+          requester_accepted: boolean | null
           requester_id: string
           requester_item_id: string
           status: string | null
@@ -1774,8 +1791,10 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          owner_accepted?: boolean | null
           owner_id: string
           owner_item_id: string
+          requester_accepted?: boolean | null
           requester_id: string
           requester_item_id: string
           status?: string | null
@@ -1784,8 +1803,10 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          owner_accepted?: boolean | null
           owner_id?: string
           owner_item_id?: string
+          requester_accepted?: boolean | null
           requester_id?: string
           requester_item_id?: string
           status?: string | null
@@ -2000,7 +2021,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      matches: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          user1_id: string | null
+          user1_item_id: string | null
+          user2_id: string | null
+          user2_item_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string | null
+          user1_id?: string | null
+          user1_item_id?: string | null
+          user2_id?: string | null
+          user2_item_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string | null
+          user1_id?: string | null
+          user1_item_id?: string | null
+          user2_id?: string | null
+          user2_item_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_first_admin: {

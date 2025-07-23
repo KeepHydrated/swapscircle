@@ -140,9 +140,9 @@ export const fetchTradeMessages = async (conversationId: string) => {
   try {
     // First try with profile join, if that fails, fetch without profiles
     let { data: messages, error } = await supabase
-      .from('trade_messages')
+      .from('messages')
       .select('*')
-      .eq('trade_conversation_id', conversationId)
+      .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -166,11 +166,12 @@ export const sendTradeMessage = async (conversationId: string, message: string) 
     }
 
     const { data, error } = await supabase
-      .from('trade_messages')
+      .from('messages')
       .insert({
-        trade_conversation_id: conversationId,
+        conversation_id: conversationId,
         sender_id: session.session.user.id,
-        message
+        content: message,
+        message_type: 'text'
       })
       .select('*')
       .single();

@@ -131,7 +131,7 @@ export const createMatch = async (
   try {
     // Check if match already exists (in either direction)
     const { data: existingMatch } = await supabase
-      .from('matches')
+      .from('mutual_matches')
       .select('*')
       .or(`and(user1_id.eq.${user1Id},user2_id.eq.${user2Id}),and(user1_id.eq.${user2Id},user2_id.eq.${user1Id})`);
 
@@ -141,7 +141,7 @@ export const createMatch = async (
 
     // Create new match
     const { data, error } = await supabase
-      .from('matches')
+      .from('mutual_matches')
       .insert({
         user1_id: user1Id,
         user2_id: user2Id,

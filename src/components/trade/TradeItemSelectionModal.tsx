@@ -129,11 +129,12 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
       // Create initial message
       const { error: messageError } = await supabase
-        .from('trade_messages')
+        .from('messages')
         .insert({
-          trade_conversation_id: tradeConversation.id,
+          conversation_id: tradeConversation.id,
           sender_id: session.session.user.id,
-          message: `Hi! I'm interested in trading my item for your ${targetItem.name}. Let me know if you're interested!`
+          content: `Hi! I'm interested in trading my item for your ${targetItem.name}. Let me know if you're interested!`,
+          message_type: 'text'
         });
 
       if (messageError) {

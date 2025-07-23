@@ -152,7 +152,7 @@ const Trades = () => {
             const yourItem = isCurrentUserRequester ? trade.requester_item : trade.owner_item;
 
             // Get reviews for this trade
-            const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+            const tradeReviews = allReviews.filter(review => review.reviewer_id === currentUser?.id || review.reviewee_id === currentUser?.id);
             const yourReview = tradeReviews.find(review => review.reviewer_id === currentUser?.id);
             const theirReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id);
 

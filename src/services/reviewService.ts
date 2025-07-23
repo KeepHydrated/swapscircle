@@ -25,7 +25,7 @@ export const createReview = async (
     const { data, error } = await supabase
       .from('reviews')
       .insert({
-        trade_conversation_id: tradeConversationId,
+        user_id: session.session.user.id,
         reviewer_id: session.session.user.id,
         reviewee_id: revieweeId,
         rating,
