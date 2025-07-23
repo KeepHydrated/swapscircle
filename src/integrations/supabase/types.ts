@@ -637,6 +637,117 @@ export type Database = {
           },
         ]
       }
+      friend_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          requested_id: string
+          requester_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          requested_id: string
+          requester_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          requested_id?: string
+          requester_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      items: {
+        Row: {
+          category: string | null
+          condition: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          image_urls: string[] | null
+          is_available: boolean | null
+          is_hidden: boolean | null
+          looking_for_categories: string[] | null
+          looking_for_conditions: string[] | null
+          looking_for_description: string | null
+          name: string
+          price_range_max: number | null
+          price_range_min: number | null
+          tags: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          condition?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          image_urls?: string[] | null
+          is_available?: boolean | null
+          is_hidden?: boolean | null
+          looking_for_categories?: string[] | null
+          looking_for_conditions?: string[] | null
+          looking_for_description?: string | null
+          name: string
+          price_range_max?: number | null
+          price_range_min?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          condition?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          image_urls?: string[] | null
+          is_available?: boolean | null
+          is_hidden?: boolean | null
+          looking_for_categories?: string[] | null
+          looking_for_conditions?: string[] | null
+          looking_for_description?: string | null
+          name?: string
+          price_range_max?: number | null
+          price_range_min?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      liked_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       liked_markets: {
         Row: {
           created_at: string
@@ -798,6 +909,33 @@ export type Database = {
           },
         ]
       }
+      mutual_matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          user1_id: string
+          user1_item_id: string
+          user2_id: string
+          user2_item_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user1_id: string
+          user1_item_id: string
+          user2_id: string
+          user2_item_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user1_id?: string
+          user1_item_id?: string
+          user2_id?: string
+          user2_item_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_by: string | null
@@ -933,30 +1071,39 @@ export type Database = {
           address: string | null
           avatar_url: string | null
           created_at: string
+          email: string | null
           first_name: string | null
           id: string
           last_name: string | null
+          name: string | null
           phone: string | null
+          user_id: string | null
           username: string | null
         }
         Insert: {
           address?: string | null
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id: string
           last_name?: string | null
+          name?: string | null
           phone?: string | null
+          user_id?: string | null
           username?: string | null
         }
         Update: {
           address?: string | null
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
+          name?: string | null
           phone?: string | null
+          user_id?: string | null
           username?: string | null
         }
         Relationships: []
@@ -1564,6 +1711,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      trades: {
+        Row: {
+          created_at: string | null
+          id: string
+          owner_accepted: boolean | null
+          owner_id: string
+          owner_item_id: string
+          requester_accepted: boolean | null
+          requester_id: string
+          requester_item_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          owner_accepted?: boolean | null
+          owner_id: string
+          owner_item_id: string
+          requester_accepted?: boolean | null
+          requester_id: string
+          requester_item_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          owner_accepted?: boolean | null
+          owner_id?: string
+          owner_item_id?: string
+          requester_accepted?: boolean | null
+          requester_id?: string
+          requester_item_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       user_awards: {
         Row: {
