@@ -38,6 +38,8 @@ export function useUserItems() {
             id: item.id,
             name: item.name,
             image: item.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
+            image_url: item.image_url,
+            image_urls: item.image_urls || [],
             category: item.category,
             condition: item.condition,
             description: item.description,
