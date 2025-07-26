@@ -67,7 +67,9 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           console.log('MODAL DEBUG: Using preloaded data for own item');
           setFullItem({
             ...item,
-            image: item.image || (item as any)?.image_url
+            image: item.image || (item as any)?.image_url,
+            image_url: item.image || (item as any)?.image_url,
+            image_urls: (item as any)?.image_urls || []
           });
           setUserProfile(preloadedUserProfile);
           setLoading(false);
