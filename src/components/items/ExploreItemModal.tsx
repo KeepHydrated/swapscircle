@@ -147,16 +147,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const mainImage = displayItem?.image || displayItem?.image_url || "";
   const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
   
-  console.log('MODAL DEBUG: Image data:', {
-    imageUrls,
-    mainImage,
-    allImages,
-    allImagesLength: allImages.length,
-    fullItemImageUrls: displayItem?.image_urls,
-    fullItemImage: displayItem?.image,
-    fullItemImageUrl: displayItem?.image_url,
-    rawDisplayItem: displayItem
-  });
+  console.log('MODAL DEBUG: Image data - imageUrls:', imageUrls);
+  console.log('MODAL DEBUG: Image data - mainImage:', mainImage);
+  console.log('MODAL DEBUG: Image data - allImages:', allImages);
+  console.log('MODAL DEBUG: Image data - allImagesLength:', allImages.length);
+  console.log('MODAL DEBUG: Image data - displayItem.image_urls:', displayItem?.image_urls);
+  console.log('MODAL DEBUG: Image data - displayItem.image:', displayItem?.image);
+  console.log('MODAL DEBUG: Image data - displayItem.image_url:', displayItem?.image_url);
 
   const [slide, setSlide] = React.useState(0);
 
