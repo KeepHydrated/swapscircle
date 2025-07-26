@@ -144,6 +144,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const imageUrls = displayItem?.image_urls || [];
   const mainImage = displayItem?.image || displayItem?.image_url || "";
   const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
+  
+  console.log('MODAL DEBUG: Image data:', {
+    imageUrls,
+    mainImage,
+    allImages,
+    allImagesLength: allImages.length
+  });
 
   const [slide, setSlide] = React.useState(0);
 
