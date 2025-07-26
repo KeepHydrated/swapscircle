@@ -37,6 +37,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  const [currentItemIndex, setCurrentItemIndex] = useState(0);
 
   // Update items when initialItems changes
   useEffect(() => {
@@ -49,9 +50,28 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     if (onItemClick) {
       onItemClick(item.id);
     } else {
-      // Open the item modal
+      // Find the index of the clicked item
+      const itemIndex = items.findIndex(i => i.id === item.id);
+      setCurrentItemIndex(itemIndex);
       setSelectedItem(item);
       setIsItemModalOpen(true);
+    }
+  };
+
+  // Navigation functions
+  const handleNavigatePrev = () => {
+    if (currentItemIndex > 0) {
+      const newIndex = currentItemIndex - 1;
+      setCurrentItemIndex(newIndex);
+      setSelectedItem(items[newIndex]);
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (currentItemIndex < items.length - 1) {
+      const newIndex = currentItemIndex + 1;
+      setCurrentItemIndex(newIndex);
+      setSelectedItem(items[newIndex]);
     }
   };
 
@@ -148,6 +168,10 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
             setIsItemModalOpen(false);
             setSelectedItem(null);
           }}
+          onNavigatePrev={currentItemIndex > 0 ? handleNavigatePrev : undefined}
+          onNavigateNext={currentItemIndex < items.length - 1 ? handleNavigateNext : undefined}
+          currentIndex={currentItemIndex}
+          totalItems={items.length}
           disableActions={true} // Show buttons but disable them for own items
           userProfile={userProfile ? {
             name: userProfile.name,
