@@ -151,7 +151,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     imageUrls,
     mainImage,
     allImages,
-    allImagesLength: allImages.length
+    allImagesLength: allImages.length,
+    fullItemImageUrls: displayItem?.image_urls,
+    fullItemImage: displayItem?.image,
+    fullItemImageUrl: displayItem?.image_url,
+    rawDisplayItem: displayItem
   });
 
   const [slide, setSlide] = React.useState(0);
