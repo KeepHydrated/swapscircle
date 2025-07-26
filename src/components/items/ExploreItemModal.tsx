@@ -65,6 +65,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         // If we have pre-loaded user profile (own items), skip API calls
         if (preloadedUserProfile && disableActions) {
           console.log('MODAL DEBUG: Using preloaded data for own item');
+          console.log('MODAL DEBUG: Original item data:', item);
+          console.log('MODAL DEBUG: Item image_urls before processing:', (item as any)?.image_urls);
           setFullItem({
             ...item,
             image: item.image || (item as any)?.image_url,
