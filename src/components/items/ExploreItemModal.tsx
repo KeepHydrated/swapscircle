@@ -267,15 +267,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {/* Bottom center navigation arrows for multiple images */}
             {allImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
-                <button
-                  onClick={() =>
-                    setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
-                  }
-                  className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ArrowLeft className="w-4 h-4 text-gray-700" />
-                </button>
+                 <button
+                   onClick={() =>
+                     setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
+                   }
+                   className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+                   aria-label="Previous image"
+                 >
+                   <ArrowLeft className="w-5 h-5 text-gray-800" />
+                 </button>
                 
                 {/* Dots indicator */}
                 <div className="flex gap-1.5">
@@ -293,15 +293,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   ))}
                 </div>
                 
-                <button
-                  onClick={() =>
-                    setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
-                  }
-                  className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
-                  aria-label="Next image"
-                >
-                  <ArrowRight className="w-4 h-4 text-gray-700" />
-                </button>
+                 <button
+                   onClick={() =>
+                     setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
+                   }
+                   className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+                   aria-label="Next image"
+                 >
+                   <ArrowRight className="w-5 h-5 text-gray-800" />
+                 </button>
               </div>
             )}
             {/* Top-right buttons positioned over the image */}
