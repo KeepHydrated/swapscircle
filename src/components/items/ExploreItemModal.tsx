@@ -139,10 +139,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     fetchItemDetails();
   }, [item?.id, open]);
 
-  // Only show the one image from the uploaded item, no fallbacks.
+  // Handle multiple images properly
   const displayItem = fullItem || item;
+  const imageUrls = displayItem?.image_urls || [];
   const mainImage = displayItem?.image || displayItem?.image_url || "";
-  const allImages = mainImage ? [mainImage] : [];
+  const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
 
   const [slide, setSlide] = React.useState(0);
 
