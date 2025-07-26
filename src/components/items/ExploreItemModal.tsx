@@ -203,9 +203,9 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           
           {/* Navigation arrows positioned on sides of entire modal */}
-          {onNavigatePrev && onNavigateNext && totalItems && totalItems > 1 && (
+          {(onNavigatePrev || onNavigateNext) && totalItems && totalItems > 1 && (
             <>
-              {currentIndex !== undefined && currentIndex > 0 && (
+              {currentIndex !== undefined && currentIndex > 0 && onNavigatePrev && (
                 <button
                   onClick={onNavigatePrev}
                   className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30"
@@ -214,7 +214,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   <ArrowLeft className="w-6 h-6" />
                 </button>
               )}
-              {currentIndex !== undefined && currentIndex < totalItems - 1 && (
+              {currentIndex !== undefined && currentIndex < totalItems - 1 && onNavigateNext && (
                 <button
                   onClick={onNavigateNext}
                   className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30"

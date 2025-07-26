@@ -168,8 +168,8 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
             setIsItemModalOpen(false);
             setSelectedItem(null);
           }}
-          onNavigatePrev={currentItemIndex > 0 ? handleNavigatePrev : undefined}
-          onNavigateNext={currentItemIndex < items.length - 1 ? handleNavigateNext : undefined}
+          onNavigatePrev={handleNavigatePrev}
+          onNavigateNext={handleNavigateNext}
           currentIndex={currentItemIndex}
           totalItems={items.length}
           disableActions={true} // Show buttons but disable them for own items
