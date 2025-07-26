@@ -183,12 +183,69 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
-            <img
-              src={imageSource}
-              alt={displayItem.name}
-              className="object-cover w-full h-full"
-              key={`${item?.id}-${imageSource}`}
-            />
+            {/* Get all available images */}
+            {(() => {
+              const imageUrls = displayItem?.image_urls || [];
+              const mainImage = imageSource;
+              const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
+              const [currentSlide, setCurrentSlide] = React.useState(0);
+              
+              React.useEffect(() => {
+                setCurrentSlide(0);
+              }, [item?.id]);
+              
+              return (
+                <>
+                  <img
+                    src={allImages[currentSlide] || mainImage}
+                    alt={displayItem.name}
+                    className="object-cover w-full h-full"
+                    key={`${item?.id}-${currentSlide}`}
+                  />
+                  
+                  {/* Bottom center navigation arrows for multiple images */}
+                  {allImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+                      <button
+                        onClick={() =>
+                          setCurrentSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
+                        }
+                        className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
+                        aria-label="Previous image"
+                      >
+                        <ArrowLeft className="w-4 h-4 text-gray-700" />
+                      </button>
+                      
+                      {/* Dots indicator */}
+                      <div className="flex gap-1.5">
+                        {allImages.map((_, i) => (
+                          <button
+                            key={i}
+                            className={`w-2 h-2 rounded-full transition-colors ${
+                              currentSlide === i
+                                ? "bg-white"
+                                : "bg-white/60"
+                            }`}
+                            onClick={() => setCurrentSlide(i)}
+                            aria-label={`Go to image ${i + 1}`}
+                          />
+                        ))}
+                      </div>
+                      
+                      <button
+                        onClick={() =>
+                          setCurrentSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
+                        }
+                        className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
+                        aria-label="Next image"
+                      >
+                        <ArrowRight className="w-4 h-4 text-gray-700" />
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
             
             {/* Heart and Close buttons - positioned over the image */}
             <div className="absolute top-4 right-4 flex gap-3 z-20">

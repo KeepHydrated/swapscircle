@@ -250,20 +250,45 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 </button>
               </>
             )}
+            
+            {/* Bottom center navigation arrows for multiple images */}
             {allImages.length > 1 && (
-              <div className="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
-                {allImages.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`w-2.5 h-2.5 rounded-full ${
-                      slide === i
-                        ? "bg-white border-primary border-2"
-                        : "bg-white/60"
-                    }`}
-                    style={{ borderWidth: slide === i ? 2 : 0 }}
-                    onClick={() => setSlide(i)}
-                  />
-                ))}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+                <button
+                  onClick={() =>
+                    setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
+                  }
+                  className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ArrowLeft className="w-4 h-4 text-gray-700" />
+                </button>
+                
+                {/* Dots indicator */}
+                <div className="flex gap-1.5">
+                  {allImages.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        slide === i
+                          ? "bg-white"
+                          : "bg-white/60"
+                      }`}
+                      onClick={() => setSlide(i)}
+                      aria-label={`Go to image ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() =>
+                    setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
+                  }
+                  className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
+                  aria-label="Next image"
+                >
+                  <ArrowRight className="w-4 h-4 text-gray-700" />
+                </button>
               </div>
             )}
             {/* Top-right buttons positioned over the image */}
