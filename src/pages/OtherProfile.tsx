@@ -8,6 +8,7 @@ import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users, ArrowLeft } from 'lucide-react';
 import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
+import { ReportButton } from '@/components/profile/ReportButton';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -176,7 +177,11 @@ const OtherProfile: React.FC = () => {
             <p className="text-muted-foreground mt-1">View their items and trade history</p>
           </div>
         </div>
-        <div>
+        <div className="flex gap-2">
+          <ReportButton 
+            reportedUserId={profile.id}
+            reportedUsername={profile.name}
+          />
           <FriendRequestButton 
             userId={profile.id} 
             initialStatus={profile.friendStatus}
