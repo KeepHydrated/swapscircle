@@ -142,8 +142,14 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   // Use fullItem or fallback to item - but when skipDataFetch is true, always use item
   const displayItem = skipDataFetch ? item : (fullItem || item);
   
+  // Debug logging for image data
+  console.log('MODAL DEBUG: Image data - displayItem:', displayItem);
+  console.log('MODAL DEBUG: Image data - item.image:', item?.image);
+  console.log('MODAL DEBUG: Image data - item.image_url:', item?.image_url);
+  
   // Ensure consistent image source to prevent flashing
-  const imageSource = displayItem?.image || displayItem?.image_url;
+  // Try multiple image property names to handle different data sources
+  const imageSource = displayItem?.image_url || displayItem?.image || (displayItem as any)?.image;
 
   const handleLikeClick = () => {
     onLikeClick(item);
@@ -187,7 +193,12 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
             {(() => {
               const imageUrls = displayItem?.image_urls || [];
               const mainImage = imageSource;
+              console.log('MODAL DEBUG: Image data - imageUrls:', imageUrls);
+              console.log('MODAL DEBUG: Image data - mainImage:', mainImage);
+              console.log('MODAL DEBUG: Image data - allImages before:', imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []));
               const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
+              console.log('MODAL DEBUG: Image data - allImages:', allImages);
+              console.log('MODAL DEBUG: Image data - allImagesLength:', allImages.length);
               const [currentSlide, setCurrentSlide] = React.useState(0);
               
               React.useEffect(() => {
