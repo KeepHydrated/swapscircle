@@ -1099,6 +1099,102 @@ export type Database = {
           },
         ]
       }
+      product_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          product_id: number
+          rating: number | null
+          section: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          product_id: number
+          rating?: number | null
+          section: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          product_id?: number
+          rating?: number | null
+          section?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product_reviews_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_product_reviews_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_submissions: {
+        Row: {
+          admin_notes: string | null
+          affiliate_link: string | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_urls: string[] | null
+          name: string
+          price_range: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          where_to_buy: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          affiliate_link?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_urls?: string[] | null
+          name: string
+          price_range?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          where_to_buy?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          affiliate_link?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_urls?: string[] | null
+          name?: string
+          price_range?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          where_to_buy?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
