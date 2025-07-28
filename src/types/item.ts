@@ -23,6 +23,7 @@ export interface Item {
 
 export interface MatchItem extends Item {
   liked?: boolean;
+  user_id?: string; // Add user_id for profile navigation
   userProfile?: {
     name: string;
     username?: string;

@@ -144,6 +144,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           description: otherItem.description,
           tags: otherItem.tags,
           liked: false, // Will be determined by like status
+          user_id: otherItem.user_id, // Include user_id for profile navigation
           userProfile: userProfile ? {
             name: userProfile.name,
             username: userProfile.username,
