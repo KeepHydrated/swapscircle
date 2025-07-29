@@ -75,7 +75,16 @@ const EditItem: React.FC = () => {
           setCategory(item.category || '');
           setCondition(item.condition || '');
           setPriceRange((item as any).price_range || '');
-          setSubcategory('');
+          
+          // Extract subcategory from tags array (tags[0] contains the subcategory)
+          const tags = (item as any).tags;
+          if (tags && Array.isArray(tags) && tags.length > 0) {
+            console.log('Found tags in item:', tags);
+            setSubcategory(tags[0]);
+          } else {
+            console.log('No tags found in item');
+            setSubcategory('');
+          }
           
           // Load preferences data
           console.log('Looking for description:', (item as any).looking_for_description);
@@ -209,6 +218,7 @@ const EditItem: React.FC = () => {
           description,
           category,
           condition,
+          tags: subcategory ? [subcategory] : [], // Save subcategory as tags array
           looking_for_categories: selectedCategories,
           looking_for_conditions: selectedConditions,
           looking_for_description: lookingForText,
