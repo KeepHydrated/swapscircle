@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -16,6 +17,13 @@ const AddressSettings: React.FC = () => {
     country: 'United States'
   });
   const [loading, setLoading] = useState(false);
+
+  const cities = [
+    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
+    'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
+    'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte',
+    'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston'
+  ];
 
   // Fetch current user's address profile on mount
   useEffect(() => {
@@ -56,6 +64,13 @@ const AddressSettings: React.FC = () => {
     setAddress(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleCityChange = (value: string) => {
+    setAddress(prev => ({
+      ...prev,
+      city: value
     }));
   };
 
@@ -112,14 +127,22 @@ const AddressSettings: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="city">City</Label>
-              <Input 
-                id="city"
-                name="city"
-                value={address.city}
-                onChange={handleChange}
-                placeholder="San Francisco"
+              <Select 
+                value={address.city} 
+                onValueChange={handleCityChange}
                 disabled={loading}
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a city" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {cities.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="state">State</Label>
