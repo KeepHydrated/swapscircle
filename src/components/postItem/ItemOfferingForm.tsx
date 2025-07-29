@@ -249,7 +249,13 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           {category && (
             <div className="flex-1 space-y-2">
               <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-900">Subcategory</Label>
-              <Select value={subcategory} onValueChange={setSubcategory}>
+               <Select 
+                value={subcategory} 
+                onValueChange={(value) => {
+                  console.log('Subcategory selected:', value);
+                  setSubcategory(value);
+                }}
+              >
                 <SelectTrigger id="subcategory" className="h-12 text-base border-gray-300 focus:border-blue-500">
                   <SelectValue placeholder="Select a subcategory" />
                 </SelectTrigger>
