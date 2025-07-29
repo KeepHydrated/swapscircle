@@ -318,24 +318,29 @@ const ProfileSettings: React.FC = () => {
                     <Popover open={locationOpen} onOpenChange={setLocationOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={locationOpen}
-                            className="w-full justify-between"
-                          >
-                            {field.value || "Select a city..."}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
+                          <Input
+                            placeholder="Type to search cities..."
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              if (!locationOpen) setLocationOpen(true);
+                            }}
+                            onFocus={() => setLocationOpen(true)}
+                            className="w-full"
+                          />
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-[400px] p-0">
                         <Command>
-                          <CommandInput placeholder="Search cities..." />
+                          <CommandInput placeholder="Search cities..." value={field.value || ""} onValueChange={field.onChange} />
                           <CommandList>
                             <CommandEmpty>No city found.</CommandEmpty>
                             <CommandGroup>
-                              {cities.map((city) => (
+                              {cities
+                                .filter(city => 
+                                  city.toLowerCase().includes((field.value || "").toLowerCase())
+                                )
+                                .map((city) => (
                                 <CommandItem
                                   key={city}
                                   value={city}
