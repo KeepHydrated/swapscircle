@@ -74,7 +74,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
       </div>
 
       {/* Card stack */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-[400px]">
         {/* Show next card behind current one */}
         {currentIndex + 1 < matches.length && (
           <div className="absolute inset-0 transform scale-95 opacity-50 z-0">
@@ -94,12 +94,12 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           onSwipeRight={handleSwipeRight}
           className="absolute inset-0 z-10"
         >
-          <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden">
-            <div className="relative">
+          <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
+            <div className="relative flex-shrink-0">
               <img
                 src={currentMatch.image}
                 alt={currentMatch.name}
-                className="w-full h-48 object-cover"
+                className="w-full h-64 object-cover block"
                 onClick={() => onOpenModal(currentMatch.id)}
                 onError={(e) => {
                   console.log('Image failed to load:', currentMatch.image);
@@ -108,6 +108,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 onLoad={() => {
                   console.log('Image loaded successfully:', currentMatch.image);
                 }}
+                style={{ display: 'block', width: '100%', height: '256px' }}
               />
             </div>
             
