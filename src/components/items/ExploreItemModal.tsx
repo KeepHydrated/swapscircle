@@ -352,6 +352,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </div>
                   <div className="text-gray-600">
                     <div className="flex flex-col">
+                      <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
+                      <span className="text-sm">{displayItem.condition || "Not specified"}</span>
+                    </div>
+                  </div>
+                  <div className="text-gray-600">
+                    <div className="flex flex-col">
                       <span className="text-xs font-medium text-gray-400 uppercase">Price Range</span>
                       <span className="text-sm">
                         {displayItem.price_range_min && displayItem.price_range_max 
@@ -363,12 +369,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                               : "Not specified"
                         }
                       </span>
-                    </div>
-                  </div>
-                  <div className="text-gray-600">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
-                      <span className="text-sm">{displayItem.condition || "Not specified"}</span>
                     </div>
                   </div>
                 </div>
