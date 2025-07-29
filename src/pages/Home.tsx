@@ -369,13 +369,15 @@ const Home: React.FC = () => {
                     <TabsTrigger value="test">🧪 Test</TabsTrigger>
                   </TabsList>
                   <div className="flex items-center gap-2">
-                    {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
-                      <HeaderLocationSelector 
-                        onLocationChange={setSelectedLocation}
-                        initialValue={selectedLocation}
-                        className="hidden sm:flex"
-                      />
-                    )}
+                    {/* Only show location selector on desktop - completely hidden on mobile */}
+                    <div className="hidden sm:block">
+                      {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
+                        <HeaderLocationSelector 
+                          onLocationChange={setSelectedLocation}
+                          initialValue={selectedLocation}
+                        />
+                      )}
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
