@@ -57,12 +57,6 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
     };
   }, []);
 
-  const cities = [
-    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
-    'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
-    'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte',
-    'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston'
-  ];
 
   const getDisplayText = () => {
     if (selectedLocation === 'nationwide') return 'All of US';
@@ -110,17 +104,6 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
               </>
             )}
             
-            {cities.filter(city => city !== userLocation).map((city) => (
-              <button
-                key={city}
-                onClick={() => handleLocationSelect(city)}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                  selectedLocation === city ? 'bg-muted text-primary font-medium' : 'text-foreground'
-                }`}
-              >
-                {city}
-              </button>
-            ))}
           </div>
         </div>
       )}
