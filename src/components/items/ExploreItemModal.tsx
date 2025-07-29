@@ -331,7 +331,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   {displayItem.description || "No description provided."}
                 </p>
                 
-                {/* Tags in 2x2 grid */}
+                {/* Item details in 2x2 grid */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="text-gray-600">
                     <div className="flex flex-col">
@@ -341,14 +341,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </div>
                   <div className="text-gray-600">
                     <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
-                      <span className="text-sm">{displayItem.condition || "Not specified"}</span>
-                    </div>
-                  </div>
-                  <div className="text-gray-600">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Tags</span>
-                      <span className="text-sm">{displayItem.tags?.length > 0 ? displayItem.tags.join(", ") : "No tags"}</span>
+                      <span className="text-xs font-medium text-gray-400 uppercase">Subcategory</span>
+                      <span className="text-sm">{displayItem.subcategory || "No subcategory"}</span>
                     </div>
                   </div>
                   {(displayItem.price_range_min || displayItem.price_range_max) && (
@@ -366,6 +360,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       </div>
                     </div>
                   )}
+                  <div className="text-gray-600">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
+                      <span className="text-sm">{displayItem.condition || "Not specified"}</span>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* User profile info */}
