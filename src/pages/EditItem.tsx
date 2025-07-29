@@ -74,9 +74,23 @@ const EditItem: React.FC = () => {
           
           setCategory(item.category || '');
           setCondition(item.condition || '');
-          setPriceRange((item as any).price_range || '');
           
-          // Extract subcategory from tags array (tags[0] contains the subcategory)
+          // Reconstruct price range from min/max values
+          const priceMin = (item as any).price_range_min;
+          const priceMax = (item as any).price_range_max;
+          if (priceMin !== null && priceMax !== null) {
+            // Find the matching price range string
+            const ranges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
+            const matchingRange = ranges.find(range => {
+              const [rangeMin, rangeMax] = range.split(" - ").map(Number);
+              return rangeMin === priceMin && rangeMax === priceMax;
+            });
+            setPriceRange(matchingRange || `${priceMin} - ${priceMax}`);
+            console.log('Set price range from min/max:', matchingRange || `${priceMin} - ${priceMax}`);
+          } else {
+            setPriceRange('');
+            console.log('No price range min/max found');
+          }
           const tags = (item as any).tags;
           if (tags && Array.isArray(tags) && tags.length > 0) {
             console.log('Found tags in item:', tags);
@@ -245,39 +259,41 @@ const EditItem: React.FC = () => {
           updates.image_urls = allImageUrls; // Store all images in array
         }
         
-        // Debug the actual state of selectedPriceRanges
-        console.log('Raw selectedPriceRanges state:', JSON.stringify(selectedPriceRanges));
-        console.log('Type of selectedPriceRanges:', typeof selectedPriceRanges);
-        console.log('Is array?', Array.isArray(selectedPriceRanges));
-        
-        // Handle price ranges - convert the multiple selected price ranges
-        // into a single min-max range that encompasses all selections
-        if (selectedPriceRanges && selectedPriceRanges.length > 0) {
-          console.log('Selected price ranges:', selectedPriceRanges);
-          
-          // Find the minimum and maximum values across all selected ranges
-          let minValue = Number.MAX_VALUE;
-          let maxValue = 0;
-          
-          selectedPriceRanges.forEach(range => {
-            console.log('Processing range:', range);
-            const parts = range.split(" - ");
-            console.log('Split parts:', parts);
-            
-            const min = parseFloat(parts[0]);
-            const max = parseFloat(parts[1].replace(/,/g, '')); // Remove commas
-            
-            console.log('Parsed min/max:', min, max);
-            if (min < minValue) minValue = min;
-            if (max > maxValue) maxValue = max;
-          });
-          
-          console.log('Combined price range:', { minValue, maxValue });
-          
-          // Update price_range_min and price_range_max in the database
-          updates.price_range_min = minValue;
-          updates.price_range_max = maxValue;
-        }
+         // Handle price range - prioritize the item form's price range over preferences
+         if (priceRange) {
+           console.log('Using item form price range:', priceRange);
+           const parts = priceRange.split(" - ");
+           const min = parseFloat(parts[0]);
+           const max = parseFloat(parts[1].replace(/,/g, ''));
+           
+           updates.price_range_min = min;
+           updates.price_range_max = max;
+           console.log('Set price range min/max from item form:', min, max);
+         } else if (selectedPriceRanges && selectedPriceRanges.length > 0) {
+           console.log('Using preferences price ranges:', selectedPriceRanges);
+           
+           // Find the minimum and maximum values across all selected ranges
+           let minValue = Number.MAX_VALUE;
+           let maxValue = 0;
+           
+           selectedPriceRanges.forEach(range => {
+             console.log('Processing range:', range);
+             const parts = range.split(" - ");
+             console.log('Split parts:', parts);
+             
+             const min = parseFloat(parts[0]);
+             const max = parseFloat(parts[1].replace(/,/g, '')); // Remove commas
+             
+             console.log('Parsed min/max:', min, max);
+             if (min < minValue) minValue = min;
+             if (max > maxValue) maxValue = max;
+           });
+           
+           console.log('Combined price range:', { minValue, maxValue });
+           
+           updates.price_range_min = minValue;
+           updates.price_range_max = maxValue;
+         }
         
         console.log('Price range string:', priceRange);
         console.log('Updates object:', updates);
