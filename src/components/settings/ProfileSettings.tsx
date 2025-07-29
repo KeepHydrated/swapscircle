@@ -315,54 +315,53 @@ const ProfileSettings: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
-                    <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Input
-                            placeholder="Type to search cities..."
-                            value={field.value || ""}
-                            onChange={(e) => {
-                              field.onChange(e.target.value);
-                              if (!locationOpen) setLocationOpen(true);
-                            }}
-                            onFocus={() => setLocationOpen(true)}
-                            className="w-full"
-                          />
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[400px] p-0">
-                        <Command>
-                          <CommandInput placeholder="Search cities..." value={field.value || ""} onValueChange={field.onChange} />
-                          <CommandList>
-                            <CommandEmpty>No city found.</CommandEmpty>
-                            <CommandGroup>
-                              {cities
-                                .filter(city => 
-                                  city.toLowerCase().includes((field.value || "").toLowerCase())
-                                )
-                                .map((city) => (
-                                <CommandItem
-                                  key={city}
-                                  value={city}
-                                  onSelect={() => {
-                                    field.onChange(city);
-                                    setLocationOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      field.value === city ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {city}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          placeholder="Type your location..."
+                          value={field.value || ""}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            if (e.target.value && !locationOpen) setLocationOpen(true);
+                          }}
+                          onFocus={() => {
+                            if (field.value) setLocationOpen(true);
+                          }}
+                          onBlur={() => {
+                            setTimeout(() => setLocationOpen(false), 200);
+                          }}
+                          className="w-full"
+                        />
+                      </FormControl>
+                      {locationOpen && field.value && (
+                        <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
+                          {cities
+                            .filter(city => 
+                              city.toLowerCase().includes(field.value.toLowerCase())
+                            )
+                            .slice(0, 10)
+                            .map((city) => (
+                              <div
+                                key={city}
+                                className="px-3 py-2 hover:bg-accent cursor-pointer text-sm"
+                                onClick={() => {
+                                  field.onChange(city);
+                                  setLocationOpen(false);
+                                }}
+                              >
+                                {city}
+                              </div>
+                            ))}
+                          {cities.filter(city => 
+                            city.toLowerCase().includes(field.value.toLowerCase())
+                          ).length === 0 && (
+                            <div className="px-3 py-2 text-sm text-muted-foreground">
+                              No matching cities found
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     <FormDescription>
                       City and state where you're located.
                     </FormDescription>
