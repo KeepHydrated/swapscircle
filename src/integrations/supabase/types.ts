@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_links: {
+        Row: {
+          admin_notes: string | null
+          category: string | null
+          commission_rate: string | null
+          created_at: string
+          id: string
+          price: string | null
+          product_id: number | null
+          status: string
+          store: string
+          subcategory: string | null
+          title: string
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          category?: string | null
+          commission_rate?: string | null
+          created_at?: string
+          id?: string
+          price?: string | null
+          product_id?: number | null
+          status?: string
+          store: string
+          subcategory?: string | null
+          title: string
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string | null
+          commission_rate?: string | null
+          created_at?: string
+          id?: string
+          price?: string | null
+          product_id?: number | null
+          status?: string
+          store?: string
+          subcategory?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       awards: {
         Row: {
           cost_usd: number
@@ -1104,6 +1155,7 @@ export type Database = {
           comment: string | null
           created_at: string
           id: string
+          parent_id: string | null
           product_id: number
           rating: number | null
           section: string
@@ -1114,6 +1166,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          parent_id?: string | null
           product_id: number
           rating?: number | null
           section: string
@@ -1124,6 +1177,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          parent_id?: string | null
           product_id?: number
           rating?: number | null
           section?: string
@@ -1143,6 +1197,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "product_reviews"
             referencedColumns: ["id"]
           },
         ]
@@ -1209,11 +1270,13 @@ export type Database = {
           location: string | null
           name: string | null
           phone: string | null
+          show_location: boolean | null
           state: string | null
           street: string | null
           updated_at: string | null
           user_id: string | null
           username: string | null
+          vacation_mode: boolean | null
           zip_code: string | null
         }
         Insert: {
@@ -1229,11 +1292,13 @@ export type Database = {
           location?: string | null
           name?: string | null
           phone?: string | null
+          show_location?: boolean | null
           state?: string | null
           street?: string | null
           updated_at?: string | null
           user_id?: string | null
           username?: string | null
+          vacation_mode?: boolean | null
           zip_code?: string | null
         }
         Update: {
@@ -1249,12 +1314,59 @@ export type Database = {
           location?: string | null
           name?: string | null
           phone?: string | null
+          show_location?: boolean | null
           state?: string | null
           street?: string | null
           updated_at?: string | null
           user_id?: string | null
           username?: string | null
+          vacation_mode?: boolean | null
           zip_code?: string | null
+        }
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          admin_notes: string | null
+          blog_url: string
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          product_id: number | null
+          status: string
+          subcategory: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          blog_url: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          product_id?: number | null
+          status?: string
+          subcategory?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          blog_url?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          product_id?: number | null
+          status?: string
+          subcategory?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
