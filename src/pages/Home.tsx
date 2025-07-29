@@ -373,7 +373,7 @@ const Home: React.FC = () => {
                       <HeaderLocationSelector 
                         onLocationChange={setSelectedLocation}
                         initialValue={selectedLocation}
-                        className="hidden md:flex"
+                        className="hidden lg:flex"
                       />
                     )}
                     <Button
@@ -391,11 +391,10 @@ const Home: React.FC = () => {
                 
                 {/* Mobile location selector - completely separate from tabs header */}
                 {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
-                  <div className="mb-4 block md:hidden w-full">
+                  <div className="mb-4 lg:hidden">
                     <HeaderLocationSelector 
                       onLocationChange={setSelectedLocation}
                       initialValue={selectedLocation}
-                      className="w-full block"
                     />
                   </div>
                 )}
