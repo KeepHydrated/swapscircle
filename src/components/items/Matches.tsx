@@ -77,25 +77,34 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
 
-  // Don't render anything while loading OR if we have no selected item to prevent flashing
-  if (loading || !selectedItemName) {
+  // Show skeleton loading while fetching matches
+  if (loading) {
     return (
       <div className="w-full flex flex-col h-full">
-        <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
-          <div className="text-4xl mb-3">⏳</div>
-          <p className="text-base font-medium mb-1">Loading matches...</p>
+        <div className="flex gap-2 min-w-max p-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-shrink-0 w-64">
+              <div className="bg-card rounded-lg overflow-hidden shadow-sm border animate-pulse">
+                <div className="h-40 bg-muted"></div>
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-3 bg-muted rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
-  // Also don't render if we haven't received matches data yet to prevent stale data
-  if (matches.length === 0 && loading !== false) {
+  // Don't render if we have no selected item
+  if (!selectedItemName) {
     return (
       <div className="w-full flex flex-col h-full">
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
-          <div className="text-4xl mb-3">⏳</div>
-          <p className="text-base font-medium mb-1">Loading matches...</p>
+          <div className="text-4xl mb-3">📱</div>
+          <p className="text-base font-medium mb-1">Select an item to see matches</p>
         </div>
       </div>
     );
