@@ -389,12 +389,13 @@ const Home: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Mobile location selector - shown below tabs */}
+                {/* Mobile location selector - completely separate from tabs header */}
                 {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
-                  <div className="mb-4 block md:hidden">
+                  <div className="mb-4 md:hidden w-full">
                     <HeaderLocationSelector 
                       onLocationChange={setSelectedLocation}
                       initialValue={selectedLocation}
+                      className="w-full"
                     />
                   </div>
                 )}
