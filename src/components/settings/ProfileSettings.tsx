@@ -22,11 +22,6 @@ const profileFormSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  email: z
-    .string()
-    .email("Please enter a valid email address.")
-    .optional()
-    .or(z.literal("")), // <--- allow undefined or empty string
   bio: z.string().max(500, {
     message: "Bio must be at most 500 characters.",
   }),
@@ -65,7 +60,6 @@ const ProfileSettings: React.FC = () => {
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       username: "",
-      email: "",
       bio: "",
       location: "",
     },
@@ -112,7 +106,7 @@ const ProfileSettings: React.FC = () => {
 
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('email, username, bio, location, avatar_url')
+        .select('username, bio, location, avatar_url')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -127,7 +121,6 @@ const ProfileSettings: React.FC = () => {
         console.log("[ProfileSettings] Profile loaded:", profile);
         form.reset({
           username: profile.username ?? "",
-          email: profile.email ?? "",
           bio: profile.bio ?? "",
           location: profile.location ?? "",
         });
@@ -287,23 +280,6 @@ const ProfileSettings: React.FC = () => {
                     <FormControl>
                       <Input placeholder="Your username" {...field} />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="Your email address" {...field} disabled />
-                    </FormControl>
-                    <FormDescription>
-                      Email cannot be changed from this form.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
