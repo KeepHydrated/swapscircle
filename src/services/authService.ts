@@ -219,6 +219,8 @@ export const postItem = async (item: Item & {
       updated_at: new Date().toISOString()
     };
 
+    console.log('DEBUG: Item to insert:', itemToInsert);
+
     const { data, error } = await supabase
       .from('items')
       .insert(itemToInsert)
