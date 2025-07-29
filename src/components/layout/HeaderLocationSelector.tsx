@@ -13,19 +13,13 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   initialValue = 'nationwide',
   className
 }) => {
-  const [selectionType, setSelectionType] = useState(initialValue === 'nationwide' ? 'all' : 'range');
-  const [rangeValue, setRangeValue] = useState(initialValue === 'nationwide' ? 25 : parseInt(initialValue, 10));
+  const [selectedLocation, setSelectedLocation] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSelectionChange = (type: 'all' | 'range', value?: number) => {
-    setSelectionType(type);
-    if (type === 'all') {
-      onLocationChange?.('nationwide');
-    } else if (value) {
-      setRangeValue(value);
-      onLocationChange?.(value.toString());
-    }
+  const handleLocationSelect = (location: string) => {
+    setSelectedLocation(location);
+    onLocationChange?.(location);
     setIsOpen(false);
   };
 
@@ -42,7 +36,17 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
     };
   }, []);
 
-  const ranges = [5, 10, 25, 50];
+  const cities = [
+    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
+    'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
+    'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte',
+    'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston'
+  ];
+
+  const getDisplayText = () => {
+    if (selectedLocation === 'nationwide') return 'All of US';
+    return selectedLocation;
+  };
 
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
@@ -52,18 +56,18 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
       >
         <MapPin className="h-4 w-4 text-muted-foreground" />
         <span className="text-foreground">
-          {selectionType === 'all' ? 'All of US' : `${rangeValue}mi`}
+          {getDisplayText()}
         </span>
         <ChevronDown className="h-4 w-4 text-muted-foreground" />
       </button>
       
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-36 bg-background border border-border rounded-lg shadow-lg z-50">
+        <div className="absolute top-full left-0 mt-1 w-48 bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
           <div className="py-1">
             <button
-              onClick={() => handleSelectionChange('all')}
+              onClick={() => handleLocationSelect('nationwide')}
               className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                selectionType === 'all' ? 'bg-muted text-primary font-medium' : 'text-foreground'
+                selectedLocation === 'nationwide' ? 'bg-muted text-primary font-medium' : 'text-foreground'
               }`}
             >
               All of US
@@ -71,15 +75,15 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
             
             <div className="border-t border-border my-1" />
             
-            {ranges.map((range) => (
+            {cities.map((city) => (
               <button
-                key={range}
-                onClick={() => handleSelectionChange('range', range)}
+                key={city}
+                onClick={() => handleLocationSelect(city)}
                 className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                  selectionType === 'range' && rangeValue === range ? 'bg-muted text-primary font-medium' : 'text-foreground'
+                  selectedLocation === city ? 'bg-muted text-primary font-medium' : 'text-foreground'
                 }`}
               >
-                Within {range} miles
+                {city}
               </button>
             ))}
           </div>
