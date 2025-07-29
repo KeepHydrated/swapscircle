@@ -5,7 +5,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import NotificationSettings from '@/components/settings/NotificationSettings';
 import PrivacySettings from '@/components/settings/PrivacySettings';
-import AddressSettings from '@/components/settings/AddressSettings';
 
 const Settings: React.FC = () => {
   return (
@@ -31,12 +30,6 @@ const Settings: React.FC = () => {
             >
               Privacy
             </TabsTrigger>
-            <TabsTrigger 
-              value="address" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-            >
-              Address
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile" className="p-6">
@@ -49,10 +42,6 @@ const Settings: React.FC = () => {
 
           <TabsContent value="privacy" className="p-6">
             <PrivacySettings />
-          </TabsContent>
-
-          <TabsContent value="address" className="p-6">
-            <AddressSettings />
           </TabsContent>
         </Tabs>
       </div>
