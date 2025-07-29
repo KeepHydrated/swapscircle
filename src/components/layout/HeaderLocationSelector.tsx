@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface HeaderLocationSelectorProps {
   onLocationChange?: (value: string) => void;
@@ -15,7 +16,27 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
 }) => {
   const [selectedLocation, setSelectedLocation] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fetch user's saved location
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('location')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profile?.location) {
+          setUserLocation(profile.location);
+        }
+      }
+    };
+    fetchUserLocation();
+  }, []);
 
   const handleLocationSelect = (location: string) => {
     setSelectedLocation(location);
@@ -75,7 +96,21 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
             
             <div className="border-t border-border my-1" />
             
-            {cities.map((city) => (
+            {userLocation && (
+              <>
+                <button
+                  onClick={() => handleLocationSelect(userLocation)}
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
+                    selectedLocation === userLocation ? 'bg-muted text-primary font-medium' : 'text-foreground'
+                  }`}
+                >
+                  {userLocation}
+                </button>
+                <div className="border-t border-border my-1" />
+              </>
+            )}
+            
+            {cities.filter(city => city !== userLocation).map((city) => (
               <button
                 key={city}
                 onClick={() => handleLocationSelect(city)}
