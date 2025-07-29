@@ -129,6 +129,8 @@ const UserProfile: React.FC = () => {
             condition: item.condition, 
             description: item.description,
             tags: item.tags,
+            price_range_min: item.price_range_min,
+            price_range_max: item.price_range_max,
             liked: false,
             is_hidden: item.is_hidden,
           })).sort((a, b) => {
