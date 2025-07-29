@@ -101,6 +101,13 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 alt={currentMatch.name}
                 className="w-full h-48 object-cover"
                 onClick={() => onOpenModal(currentMatch.id)}
+                onError={(e) => {
+                  console.log('Image failed to load:', currentMatch.image);
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully:', currentMatch.image);
+                }}
               />
             </div>
             
