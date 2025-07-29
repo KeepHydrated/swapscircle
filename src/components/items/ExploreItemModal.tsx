@@ -342,7 +342,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   <div className="text-gray-600">
                     <div className="flex flex-col">
                       <span className="text-xs font-medium text-gray-400 uppercase">Subcategory</span>
-                      <span className="text-sm">{displayItem.subcategory || "No subcategory"}</span>
+                      <span className="text-sm">{displayItem.tags?.[0] || "No subcategory"}</span>
                     </div>
                   </div>
                   <div className="text-gray-600">
