@@ -71,7 +71,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             ...item,
             image: item.image || (item as any)?.image_url,
             image_url: item.image || (item as any)?.image_url,
-            image_urls: (item as any)?.image_urls || []
+            image_urls: (item as any)?.image_urls || [],
+            // Ensure price range fields are available under database field names
+            price_range_min: (item as any)?.price_range_min || (item as any)?.priceRangeMin,
+            price_range_max: (item as any)?.price_range_max || (item as any)?.priceRangeMax
           });
           setUserProfile(preloadedUserProfile);
           setLoading(false);
