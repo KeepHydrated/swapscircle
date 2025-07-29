@@ -21,8 +21,6 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
         return;
       }
 
-      // Clear previous matches immediately to prevent flashing
-      setMatches([]);
       setLoading(true);
       setError(null);
 
@@ -38,6 +36,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
         }));
 
         console.log('Debug - Final matches with liked status:', matchesWithLikedStatus);
+        // Only update matches after all data is ready
         setMatches(matchesWithLikedStatus);
       } catch (e: any) {
         setError(e.message || "Failed to fetch matches.");
