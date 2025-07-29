@@ -159,6 +159,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   console.log('MODAL DEBUG: Image data - displayItem.image_urls:', displayItem?.image_urls);
   console.log('MODAL DEBUG: Image data - displayItem.image:', displayItem?.image);
   console.log('MODAL DEBUG: Image data - displayItem.image_url:', displayItem?.image_url);
+  console.log('MODAL DEBUG: Price range - displayItem.price_range_min:', displayItem?.price_range_min);
+  console.log('MODAL DEBUG: Price range - displayItem.price_range_max:', displayItem?.price_range_max);
 
   const [slide, setSlide] = React.useState(0);
 
