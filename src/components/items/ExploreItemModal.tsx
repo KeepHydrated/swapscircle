@@ -345,21 +345,21 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       <span className="text-sm">{displayItem.subcategory || "No subcategory"}</span>
                     </div>
                   </div>
-                  {(displayItem.price_range_min || displayItem.price_range_max) && (
-                    <div className="text-gray-600">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-medium text-gray-400 uppercase">Price Range</span>
-                        <span className="text-sm">
-                          {displayItem.price_range_min && displayItem.price_range_max 
-                            ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
-                            : displayItem.price_range_min 
-                              ? `From $${displayItem.price_range_min}`
-                              : `Up to $${displayItem.price_range_max}`
-                          }
-                        </span>
-                      </div>
+                  <div className="text-gray-600">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-gray-400 uppercase">Price Range</span>
+                      <span className="text-sm">
+                        {displayItem.price_range_min && displayItem.price_range_max 
+                          ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
+                          : displayItem.price_range_min 
+                            ? `From $${displayItem.price_range_min}`
+                            : displayItem.price_range_max
+                              ? `Up to $${displayItem.price_range_max}`
+                              : "Not specified"
+                        }
+                      </span>
                     </div>
-                  )}
+                  </div>
                   <div className="text-gray-600">
                     <div className="flex flex-col">
                       <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
