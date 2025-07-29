@@ -368,11 +368,12 @@ const Home: React.FC = () => {
                     <TabsTrigger value="friends">Friends' Items</TabsTrigger>
                     <TabsTrigger value="test">🧪 Test</TabsTrigger>
                   </TabsList>
-                  <div className="hidden sm:flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
                       <HeaderLocationSelector 
                         onLocationChange={setSelectedLocation}
                         initialValue={selectedLocation}
+                        className="hidden sm:flex"
                       />
                     )}
                     <Button
@@ -386,30 +387,7 @@ const Home: React.FC = () => {
                       <span className="hidden md:inline">Undo</span>
                     </Button>
                   </div>
-                  
-                  {/* Mobile undo button */}
-                  <div className="sm:hidden">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleUndo}
-                      disabled={!isUndoAvailable()}
-                      className="flex items-center gap-2"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
-                
-                {/* Mobile location selector - completely separate from tabs header */}
-                {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
-                  <div className="sm:hidden mb-4">
-                    <HeaderLocationSelector 
-                      onLocationChange={setSelectedLocation}
-                      initialValue={selectedLocation}
-                    />
-                  </div>
-                )}
                 
                 <TabsContent key={`matches-${activeTab}-${selectedUserItemId}`} value="matches" className="flex-1 mt-0">
                   {(() => {
