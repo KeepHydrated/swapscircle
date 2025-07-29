@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { uploadItemImage } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 // Create form schema
 const profileFormSchema = z.object({
@@ -33,6 +34,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 const ProfileSettings: React.FC = () => {
   // Get user data from auth context
   const { user, updateProfile } = useAuth();
+  const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
   const [locationOpen, setLocationOpen] = useState(false);
@@ -161,6 +163,7 @@ const ProfileSettings: React.FC = () => {
 
       console.log("[ProfileSettings] Profile updated successfully!");
       toast.success('Profile updated successfully');
+      navigate('/profile');
     } catch (error) {
       console.error('[ProfileSettings] Error updating profile:', error);
       toast.error('Failed to update profile');
