@@ -1,19 +1,40 @@
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item, MatchItem } from '@/types/item';
 
-export const findMatchingItems = async (selectedItem: Item, currentUserId: string): Promise<MatchItem[]> => {
+export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide'): Promise<MatchItem[]> => {
   if (!isSupabaseConfigured()) {
     return [];
   }
 
   try {
     // Get all available and visible items from other users
-    const { data: allItems, error: itemsError } = await supabase
+    let itemsQuery = supabase
       .from('items')
       .select('*')
       .neq('user_id', currentUserId)
       .eq('is_available', true) // Only show available items
       .eq('is_hidden', false); // Only show non-hidden items
+
+    // If location is not nationwide, get user profiles with location filter
+    let userIdsToFilter: string[] = [];
+    if (location !== 'nationwide') {
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('location', location);
+      
+      if (profilesError) {
+        console.error('Error fetching profiles by location:', profilesError);
+      } else if (profiles && profiles.length > 0) {
+        userIdsToFilter = profiles.map(p => p.id);
+        itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
+      } else {
+        // No users in this location, return empty
+        return [];
+      }
+    }
+
+    const { data: allItems, error: itemsError } = await itemsQuery;
 
     if (itemsError) {
       console.error('Error fetching items:', itemsError);

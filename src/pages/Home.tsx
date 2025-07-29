@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
+import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import Header from '@/components/layout/Header';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 
@@ -26,6 +27,7 @@ const Home: React.FC = () => {
   
   // Tab state
   const [activeTab, setActiveTab] = useState('matches');
+  const [selectedLocation, setSelectedLocation] = useState('nationwide');
   console.log('DEBUG: Current activeTab:', activeTab);
   
   // Friend items - fetch from friends
@@ -298,7 +300,7 @@ const Home: React.FC = () => {
   console.log('DEBUG: selectedUserItem:', selectedUserItem);
   
   // Get matches for selected item (real matches from DB)
-  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
+  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
 
   // Use only real matches from database
   const matches = selectedUserItem ? dbMatches : [];
@@ -366,16 +368,24 @@ const Home: React.FC = () => {
                     <TabsTrigger value="friends">Friends' Items</TabsTrigger>
                     <TabsTrigger value="test">🧪 Test</TabsTrigger>
                   </TabsList>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleUndo}
-                    disabled={!isUndoAvailable()}
-                    className="flex items-center gap-2"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    <span className="hidden md:inline">Undo</span>
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
+                      <HeaderLocationSelector 
+                        onLocationChange={setSelectedLocation}
+                        initialValue={selectedLocation}
+                      />
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUndo}
+                      disabled={!isUndoAvailable()}
+                      className="flex items-center gap-2"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      <span className="hidden md:inline">Undo</span>
+                    </Button>
+                  </div>
                 </div>
                 
                 <TabsContent key={`matches-${activeTab}-${selectedUserItemId}`} value="matches" className="flex-1 mt-0">

@@ -6,7 +6,7 @@ import { findMatchingItems } from '@/services/matchingService';
 import { isItemLiked } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 
-export function useMatches(selectedItem: Item | null) {
+export function useMatches(selectedItem: Item | null, location: string = 'nationwide') {
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +26,8 @@ export function useMatches(selectedItem: Item | null) {
       setError(null);
 
       try {
-        console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id);
-        const matchingItems = await findMatchingItems(selectedItem, user.id);
+        console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id, 'Location:', location);
+        const matchingItems = await findMatchingItems(selectedItem, user.id, location);
         
         // Since findMatchingItems already filters out liked items,
         // all returned items should have liked: false
@@ -67,7 +67,7 @@ export function useMatches(selectedItem: Item | null) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedItem, user, supabaseConfigured]);
+  }, [selectedItem, user, supabaseConfigured, location]);
 
   return { matches, loading, error };
 }
