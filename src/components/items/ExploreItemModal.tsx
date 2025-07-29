@@ -335,27 +335,39 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="flex items-center gap-3 text-gray-600">
                     <Tag className="w-4 h-4" />
-                    <span className="text-sm">{displayItem.category || "No category"}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <Camera className="w-4 h-4" />
-                    <span className="text-sm">{displayItem.tags?.[0] || "No tags"}</span>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-gray-400 uppercase">Category</span>
+                      <span className="text-sm">{displayItem.category || "No category"}</span>
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <Shield className="w-4 h-4" />
-                    <span className="text-sm">{displayItem.condition || "Not specified"}</span>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
+                      <span className="text-sm">{displayItem.condition || "Not specified"}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <Camera className="w-4 h-4" />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-gray-400 uppercase">Tags</span>
+                      <span className="text-sm">{displayItem.tags?.length > 0 ? displayItem.tags.join(", ") : "No tags"}</span>
+                    </div>
                   </div>
                   {(displayItem.price_range_min || displayItem.price_range_max) && (
                     <div className="flex items-center gap-3 text-gray-600">
                       <DollarSign className="w-4 h-4" />
-                      <span className="text-sm">
-                        {displayItem.price_range_min && displayItem.price_range_max 
-                          ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
-                          : displayItem.price_range_min 
-                            ? `From $${displayItem.price_range_min}`
-                            : `Up to $${displayItem.price_range_max}`
-                        }
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium text-gray-400 uppercase">Price Range</span>
+                        <span className="text-sm">
+                          {displayItem.price_range_min && displayItem.price_range_max 
+                            ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
+                            : displayItem.price_range_min 
+                              ? `From $${displayItem.price_range_min}`
+                              : `Up to $${displayItem.price_range_max}`
+                          }
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
