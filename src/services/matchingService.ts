@@ -18,18 +18,22 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // If location is not nationwide, get user profiles with location filter
     let userIdsToFilter: string[] = [];
     if (location !== 'nationwide') {
+      console.log('Debug - Filtering by location:', location);
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('id')
         .eq('location', location);
       
+      console.log('Debug - Found profiles for location:', profiles);
       if (profilesError) {
         console.error('Error fetching profiles by location:', profilesError);
       } else if (profiles && profiles.length > 0) {
         userIdsToFilter = profiles.map(p => p.id);
+        console.log('Debug - User IDs to filter:', userIdsToFilter);
         itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
       } else {
         // No users in this location, return empty
+        console.log('Debug - No users found in location, returning empty');
         return [];
       }
     }

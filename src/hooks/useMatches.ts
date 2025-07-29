@@ -14,6 +14,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
   useEffect(() => {
     async function fetchMatches() {
+      console.log('Debug - fetchMatches called with:', { selectedItem: selectedItem?.name, user: user?.id, location });
       if (!selectedItem || !user || !supabaseConfigured) {
         setMatches([]);
         setLoading(false);
