@@ -165,9 +165,9 @@ const PostItem: React.FC = () => {
       }
       
       // Create item tags from subcategory if selected
-      console.log('DEBUG: Subcategory value:', subcategory);
       const tags = subcategory ? [subcategory] : [];
-      console.log('DEBUG: Tags array:', tags);
+      
+      console.log('Creating item with subcategory:', subcategory, 'tags:', tags);
       
       // Post the item to Supabase with preferences
       const newItem = await postItem({
