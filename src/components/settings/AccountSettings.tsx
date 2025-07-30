@@ -222,10 +222,7 @@ const AccountSettings: React.FC = () => {
       </Card>
 
       <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="text-destructive">Account Deletion</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
             <Label className="text-destructive font-medium">Delete Account</Label>
             <p className="text-sm text-muted-foreground">
