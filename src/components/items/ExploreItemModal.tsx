@@ -67,8 +67,14 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           console.log('MODAL DEBUG: Using preloaded data for own item');
           console.log('MODAL DEBUG: Original item data:', item);
           console.log('MODAL DEBUG: Item image_urls before processing:', (item as any)?.image_urls);
+          
+          // Get current user ID for own items
+          const { data: { user } } = await supabase.auth.getUser();
+          const currentUserId = user?.id;
+          
           setFullItem({
             ...item,
+            user_id: currentUserId, // Add the user_id for own items
             image: item.image || (item as any)?.image_url,
             image_url: item.image || (item as any)?.image_url,
             image_urls: (item as any)?.image_urls || [],
