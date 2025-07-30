@@ -2292,6 +2292,10 @@ export type Database = {
         }
         Returns: string
       }
+      delete_user_account: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_book_discussion_counts: {
         Args: { book_ids: string[] }
         Returns: {

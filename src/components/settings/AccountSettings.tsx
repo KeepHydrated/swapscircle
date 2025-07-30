@@ -92,28 +92,18 @@ const AccountSettings: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // First, delete user data from profiles table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user.id);
-
-      if (profileError) {
-        console.error('Error deleting profile:', profileError);
-        // Continue with account deletion even if profile deletion fails
-      }
-
-      // Delete the auth user account
-      const { error: authError } = await supabase.auth.admin.deleteUser(user.id);
+      // Call the database function to delete user account data
+      const { error } = await supabase.rpc('delete_user_account');
       
-      if (authError) {
-        toast.error('Failed to delete account: ' + authError.message);
+      if (error) {
+        console.error('Error deleting account:', error);
+        toast.error('Failed to delete account: ' + error.message);
         return;
       }
 
       toast.success('Account deleted successfully');
       
-      // Sign out and redirect
+      // Sign out the user
       await signOut();
     } catch (error) {
       console.error('Error deleting account:', error);
