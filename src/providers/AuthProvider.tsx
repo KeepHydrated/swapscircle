@@ -100,10 +100,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               console.log('[DEBUG] Final user object in auth change:', userObject);
               setUser(userObject);
               
-              // Check if user has incomplete profile and redirect to settings
-              if (event === 'SIGNED_IN' && isNewUser(userObject) && window.location.pathname !== '/settings') {
-                window.location.href = '/settings';
-              }
+              // Only redirect to settings immediately after signup, not on page refresh
+              // if (event === 'SIGNED_IN' && isNewUser(userObject) && window.location.pathname !== '/settings') {
+              //   window.location.href = '/settings';
+              // }
             }, 0);
           }
         }
