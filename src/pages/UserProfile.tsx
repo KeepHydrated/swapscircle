@@ -187,17 +187,31 @@ const UserProfile: React.FC = () => {
     : 0;
 
   // Memoize profileData to prevent unnecessary re-renders
-  const profileData = useMemo(() => ({
-    name: userProfile.name,
-    description: userProfile.bio,
-    rating: averageRating,
-    reviewCount: userReviews.length,
-    location: userProfile.location,
-    memberSince: userProfile.created_at
-      ? new Date(userProfile.created_at).getFullYear().toString()
-      : "",
-    avatar_url: userProfile.avatar_url,
-  }), [userProfile, averageRating, userReviews.length]);
+  const profileData = useMemo(() => {
+    if (!userProfile) return null;
+    
+    return {
+      name: userProfile.name,
+      description: userProfile.bio,
+      rating: averageRating,
+      reviewCount: userReviews.length,
+      location: userProfile.location,
+      memberSince: userProfile.created_at
+        ? new Date(userProfile.created_at).getFullYear().toString()
+        : "",
+      avatar_url: userProfile.avatar_url,
+    };
+  }, [userProfile?.name, userProfile?.bio, userProfile?.location, userProfile?.created_at, userProfile?.avatar_url, averageRating, userReviews.length]);
+
+  if (!profileData) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
