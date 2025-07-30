@@ -388,6 +388,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 </div>
                 
                 {/* User profile info */}
+                {console.log('MODAL DEBUG: Rendering profile section, userProfile:', userProfile)}
                 {userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
                     {userProfile.avatar_url && (
@@ -395,13 +396,19 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         src={userProfile.avatar_url}
                         alt={userProfile.name || userProfile.username}
                         className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={handleProfileClick}
+                        onClick={() => {
+                          console.log('MODAL DEBUG: Avatar clicked!');
+                          handleProfileClick();
+                        }}
                       />
                     )}
                      <div>
                        <span 
                          className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
-                         onClick={handleProfileClick}
+                         onClick={() => {
+                           console.log('MODAL DEBUG: Profile name clicked!');
+                           handleProfileClick();
+                         }}
                        >
                          {userProfile.username || userProfile.name || "Unknown User"}
                        </span>
