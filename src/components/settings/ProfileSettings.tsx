@@ -184,8 +184,9 @@ const ProfileSettings: React.FC = () => {
         throw error;
       }
 
-      // Also update avatar_url in AuthContext user object
+      // Also update name and avatar_url in AuthContext user object
       await updateProfile({
+        name: data.username,
         avatar_url: avatarUrl,
       });
 
