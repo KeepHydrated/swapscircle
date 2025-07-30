@@ -1,6 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Info } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
 import DetailsPanel from '@/components/messages/details/DetailsPanel';
@@ -31,6 +34,110 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
   onSendFirstMessage,
   onTradeCompleted
 }) => {
+  const isMobile = useIsMobile();
+  const [currentView, setCurrentView] = useState<'conversations' | 'chat' | 'details'>('conversations');
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Auto-switch to chat when conversation is selected on mobile
+  React.useEffect(() => {
+    if (isMobile && activeConversation && currentView === 'conversations') {
+      setCurrentView('chat');
+    }
+  }, [activeConversation, isMobile, currentView]);
+
+  const handleBackToConversations = () => {
+    setCurrentView('conversations');
+    setActiveConversation('');
+  };
+
+  const handleShowDetails = () => {
+    if (isMobile) {
+      setCurrentView('details');
+    } else {
+      setShowDetails(!showDetails);
+    }
+  };
+
+  const handleBackToChat = () => {
+    setCurrentView('chat');
+  };
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-64px)]">
+        {/* Mobile Header */}
+        {currentView === 'chat' && activeChat && (
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleBackToConversations}
+                className="p-1"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <span className="font-medium">{activeChat.name}</span>
+            </div>
+            {selectedPair && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleShowDetails}
+                className="p-1"
+              >
+                <Info className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
+        )}
+
+        {currentView === 'details' && (
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleBackToChat}
+                className="p-1"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <span className="font-medium">Trade Details</span>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Content */}
+        <div className="flex-1 overflow-hidden">
+          {currentView === 'conversations' && (
+            <ConversationList 
+              conversations={conversations}
+              activeConversation={activeConversation}
+              setActiveConversation={setActiveConversation}
+              exchangePairs={exchangePairs}
+            />
+          )}
+          
+          {currentView === 'chat' && (
+            <ChatArea 
+              activeChat={activeChat} 
+              onSendFirstMessage={onSendFirstMessage}
+              onTradeCompleted={onTradeCompleted}
+            />
+          )}
+          
+          {currentView === 'details' && (
+            <ScrollArea className="h-full bg-gray-50">
+              <DetailsPanel selectedPair={selectedPair} />
+            </ScrollArea>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop layout
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
       {/* Three columns layout */}
