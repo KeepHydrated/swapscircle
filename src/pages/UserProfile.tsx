@@ -113,6 +113,18 @@ const UserProfile: React.FC = () => {
     fetchProfile();
   }, [fetchProfile]);
 
+  // Refetch profile when returning from settings or other pages
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchProfile();
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => window.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [fetchProfile]);
+
   // Memoize profile data for header
   const profileData = useMemo(() => {
     if (!userProfile) return null;
