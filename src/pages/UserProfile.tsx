@@ -32,6 +32,11 @@ const UserProfile: React.FC = () => {
       const { data: auth } = await supabase.auth.getSession();
       const user_id = auth?.session?.user?.id;
       
+      console.log('UserProfile - Current session:', {
+        user_id,
+        user_email: auth?.session?.user?.email
+      });
+      
       if (!user_id) {
         setError("Please sign in to view your profile");
         return;
