@@ -67,11 +67,12 @@ export const signUp = async (email: string, password: string, name: string) => {
 
     if (data.user) {
       try {
-        // Try to create a profile record with no default values
+        // Try to create a profile record with name as default username
         const profileInsert = await supabase
           .from('profiles')
           .insert({
             id: data.user.id,
+            username: name, // Set username to the provided name
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
