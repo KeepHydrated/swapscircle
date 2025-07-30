@@ -51,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (session) {
           const profileData = await fetchUserProfile(session.user.id);
+          console.log('[DEBUG] Profile data from DB:', profileData);
 
           const userObject = {
             id: session.user.id,
@@ -60,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             avatar_url: profileData?.avatar_url ?? undefined,
           };
           
+          console.log('[DEBUG] Final user object in getSession:', userObject);
           setUser(userObject);
           
           // Check if existing user has incomplete profile and redirect to settings
@@ -83,6 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setTimeout(async () => {
               // Fetch user profile from profiles table
               const profileData = await fetchUserProfile(session.user.id);
+              console.log('[DEBUG] Profile data from DB in auth change:', profileData);
 
               const userObject = {
                 id: session.user.id,
@@ -92,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 avatar_url: profileData?.avatar_url ?? undefined,
               };
               
+              console.log('[DEBUG] Final user object in auth change:', userObject);
               setUser(userObject);
               
               // Check if user has incomplete profile and redirect to settings
