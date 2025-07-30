@@ -37,10 +37,18 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch current user's profile from DB
-  const fetchProfile = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    setUserProfile(null);
+  const fetchProfile = useCallback(async (forceRefresh = false) => {
+    console.log('UserProfile: fetchProfile called, forceRefresh:', forceRefresh);
+    
+    // Only reset profile state on initial load, not on refreshes
+    if (forceRefresh || !userProfile) {
+      setLoading(true);
+      setError(null);
+      if (!userProfile) {
+        setUserProfile(null); // Only reset if we don't have a profile yet
+      }
+    }
+    
     try {
       // Try getting session for user id
       const { data: auth } = await supabase.auth.getSession();
@@ -57,47 +65,59 @@ const UserProfile: React.FC = () => {
         .maybeSingle();
 
       if (profileError) {
+        console.error('UserProfile: Profile fetch error:', profileError);
         setError("Failed to fetch profile from database.");
         setLoading(false);
         return;
       }
       if (!profile) {
+        console.log('UserProfile: No profile found');
         setError("Profile not found in database.");
         setLoading(false);
         return;
       }
 
-      setUserProfile({
+      console.log('UserProfile: Profile fetched:', profile);
+      console.log('UserProfile: Avatar URL from DB:', profile.avatar_url);
+      
+      const newProfile = {
         id: profile.id,
         name: profile.name || profile.username || "User",
         avatar_url: profile.avatar_url || "/placeholder.svg",
         bio: profile.bio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
         location: profile.location || 'Update your location in Settings',
         created_at: profile.created_at,
-      });
+      };
+      
+      console.log('UserProfile: Setting profile state:', newProfile);
+      setUserProfile(newProfile);
       setProfileKey(prev => prev + 1);
     } catch (e) {
+      console.error('UserProfile: Exception during fetch:', e);
       setError("Failed to load profile.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userProfile]);
 
   // Refetch DB profile on mount, tab visibility/focus
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
+  
   useEffect(() => {
-    function handleRefreshOnFocusOrVisibility() {
+    const handleFocus = () => fetchProfile();
+    const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         fetchProfile();
       }
-    }
-    window.addEventListener('focus', fetchProfile);
-    document.addEventListener('visibilitychange', handleRefreshOnFocusOrVisibility);
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
-      window.removeEventListener('focus', fetchProfile);
-      document.removeEventListener('visibilitychange', handleRefreshOnFocusOrVisibility);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [fetchProfile]);
 
