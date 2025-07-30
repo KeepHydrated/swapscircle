@@ -45,7 +45,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0); // Add currentSlide state at component level
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [userRating, setUserRating] = useState<number>(0);
 
   // Reset slide when item changes
   useEffect(() => {
@@ -112,8 +113,22 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           } else {
             setUserProfile(profileData);
           }
+
+          // Fetch user reviews to calculate rating
+          const { data: reviewsData, error: reviewsError } = await supabase
+            .from('reviews')
+            .select('rating')
+            .eq('reviewee_id', itemData.user_id);
+
+          if (!reviewsError && reviewsData && reviewsData.length > 0) {
+            const averageRating = reviewsData.reduce((sum, review) => sum + review.rating, 0) / reviewsData.length;
+            setUserRating(Math.round(averageRating * 10) / 10);
+          } else {
+            setUserRating(0);
+          }
         } else if (preloadedUserProfile) {
           setUserProfile(preloadedUserProfile);
+          setUserRating(0); // Default when using preloaded profile without reviews
         }
       } catch (error) {
         console.error('Error fetching modal data:', error);
@@ -380,7 +395,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                         </span>
                         <div className="flex items-center gap-1">
                           <span className="text-yellow-500">★</span>
-                          <span className="text-sm text-gray-600">4.5</span>
+                          <span className="text-sm text-gray-600">
+                            {userRating > 0 ? userRating.toFixed(1) : "No reviews"}
+                          </span>
                         </div>
                       </div>
                       {memberSince && (
