@@ -85,18 +85,14 @@ const AccountSettings: React.FC = () => {
   };
 
   const handleDeleteAccount = async () => {
-    alert('Delete account function called!'); // Debug alert
-    
     if (!user) {
       toast.error('No user found');
       return;
     }
 
-    console.log('Starting account deletion for user:', user.id);
     setIsLoading(true);
     
     try {
-      console.log('About to call edge function...');
       
       // Call the edge function to delete user account completely
       const { data, error } = await supabase.functions.invoke('delete-account');
