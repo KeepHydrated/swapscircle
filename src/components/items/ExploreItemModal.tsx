@@ -192,7 +192,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
       if (currentUserId === fullItem.user_id) {
         // It's their own profile - navigate to regular profile page
         console.log('MODAL DEBUG: Navigating to /profile');
-        navigate('/profile');
+        // Force navigation even if already on profile page
+        navigate('/profile', { replace: true });
+        // Scroll to top to give navigation feel
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
       } else {
         // It's someone else's profile - navigate to other person profile
         console.log('MODAL DEBUG: Navigating to other-person-profile');
