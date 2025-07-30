@@ -72,8 +72,12 @@ const ConversationList = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
-                    <div>
+                    <div className="flex items-center gap-2">
                       <h3 className="font-medium truncate">{conversation.name}</h3>
+                      <div className="flex items-center gap-1">
+                        <span className="text-yellow-500 text-xs">★</span>
+                        <span className="text-xs text-gray-600">4.5</span>
+                      </div>
                     </div>
                     <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                   </div>

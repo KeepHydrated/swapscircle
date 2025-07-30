@@ -130,6 +130,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                     className="w-6 h-6 rounded-full"
                   />
                   <span className="text-sm text-gray-700">{currentMatch.userProfile.name}</span>
+                  <div className="flex items-center gap-1 ml-2">
+                    <span className="text-yellow-500">★</span>
+                    <span className="text-sm text-gray-600">4.5</span>
+                  </div>
                 </div>
               )}
 

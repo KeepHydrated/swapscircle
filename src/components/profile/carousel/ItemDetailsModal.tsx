@@ -371,12 +371,18 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                       )}
                     </div>
                     <div>
-                      <span 
-                        className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
-                        onClick={handleProfileClick}
-                      >
-                        {userProfile.username || userProfile.name || "Unknown User"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span 
+                          className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                          onClick={handleProfileClick}
+                        >
+                          {userProfile.username || userProfile.name || "Unknown User"}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-500">★</span>
+                          <span className="text-sm text-gray-600">4.5</span>
+                        </div>
+                      </div>
                       {memberSince && (
                         <div className="flex text-xs text-gray-500 mt-1">
                           <span>Since {memberSince}</span>
