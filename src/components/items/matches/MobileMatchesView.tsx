@@ -104,19 +104,15 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               {/* Item details grid */}
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Category</div>
                   <div className="text-sm font-medium text-gray-800">{currentMatch.category || 'N/A'}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Subcategory</div>
                   <div className="text-sm font-medium text-gray-800">N/A</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Condition</div>
                   <div className="text-sm font-medium text-gray-800">{currentMatch.condition || 'N/A'}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Price Range</div>
                   <div className="text-sm font-medium text-gray-800">
                     {currentMatch.priceRangeMin || currentMatch.priceRangeMax 
                       ? `$${currentMatch.priceRangeMin || 0} - $${currentMatch.priceRangeMax || 0}`
