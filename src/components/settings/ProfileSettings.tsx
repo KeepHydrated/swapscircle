@@ -118,9 +118,15 @@ const ProfileSettings: React.FC = () => {
 
       if (profile) {
         console.log("[ProfileSettings] Profile loaded:", profile);
+        console.log("[ProfileSettings] User name:", user?.name);
+        console.log("[ProfileSettings] Profile name:", profile?.name);
+        console.log("[ProfileSettings] Profile username:", profile?.username);
+        
+        const displayName = (user?.name || profile?.name || profile?.username) ?? "";
+        console.log("[ProfileSettings] Final display name:", displayName);
         
         form.reset({
-          username: (user?.name || profile?.name || profile?.username) ?? "",
+          username: displayName,
           bio: profile.bio ?? "",
           location: profile.location ?? "",
         });
