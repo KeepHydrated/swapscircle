@@ -235,7 +235,9 @@ const ProfileSettings: React.FC = () => {
         <div className="flex items-center gap-5 pb-6 mb-6 border-b">
           <Avatar className="h-24 w-24">
             <AvatarImage src={avatarUrl} alt="Profile" />
-            <AvatarFallback>{user?.name?.substring(0, 2) || "US"}</AvatarFallback>
+            <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
+              {user?.name?.substring(0, 2).toUpperCase() || "U"}
+            </AvatarFallback>
           </Avatar>
           <div>
             <Button size="sm" className="relative" variant="outline" disabled={uploading}>
