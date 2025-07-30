@@ -218,11 +218,15 @@ const AccountSettings: React.FC = () => {
               </Button>
             </div>
           </div>
-          
-          <Separator />
-          
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-destructive">Delete Account</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-destructive">Delete Account</Label>
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Permanently delete your account and all associated data. This action cannot be undone.
