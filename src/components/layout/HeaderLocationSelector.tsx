@@ -39,7 +39,9 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   }, []);
 
   const handleLocationSelect = (location: string) => {
+    console.log('Location changed to:', location);
     setSelectedLocation(location);
+    console.log('DEBUG: Calling onLocationChange callback with:', location);
     onLocationChange?.(location);
     setIsOpen(false);
   };
