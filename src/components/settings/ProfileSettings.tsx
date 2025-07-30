@@ -39,6 +39,7 @@ const ProfileSettings: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
   const [locationOpen, setLocationOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [displayName, setDisplayName] = useState("");
 
   // Major US cities for dropdown
   const cities = [
@@ -122,11 +123,12 @@ const ProfileSettings: React.FC = () => {
         console.log("[ProfileSettings] Profile name:", profile?.name);
         console.log("[ProfileSettings] Profile username:", profile?.username);
         
-        const displayName = (user?.name || profile?.name || profile?.username) ?? "";
-        console.log("[ProfileSettings] Final display name:", displayName);
+        const finalDisplayName = (user?.name || profile?.name || profile?.username) ?? "";
+        console.log("[ProfileSettings] Final display name:", finalDisplayName);
+        setDisplayName(finalDisplayName); // Set stable display name
         
         form.reset({
-          username: displayName,
+          username: finalDisplayName,
           bio: profile.bio ?? "",
           location: profile.location ?? "",
         });
@@ -265,10 +267,9 @@ const ProfileSettings: React.FC = () => {
             <AvatarImage src={avatarUrl} alt="Profile" />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
               {(() => {
-                // Get the current username from form, but if it's empty/loading, use user data
-                const formUsername = form.watch("username");
-                const displayName = (formUsername && formUsername.trim()) ? formUsername : (user?.name || "User");
-                return displayName.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
+                // Use stable displayName state, fallback to user name, then "User"
+                const nameToUse = displayName || user?.name || "User";
+                return nameToUse.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
               })()}
             </AvatarFallback>
           </Avatar>
