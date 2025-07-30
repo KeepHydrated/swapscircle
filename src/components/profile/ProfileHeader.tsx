@@ -43,7 +43,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   // Use avatar URL directly without timestamp to prevent flashing
-  const avatarSrc = profile.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop";
+  const avatarSrc = profile.avatar_url || "/placeholder.svg";
 
   return (
     <div className="flex flex-col md:flex-row p-6 bg-white border-b">
