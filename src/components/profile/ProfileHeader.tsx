@@ -25,6 +25,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onFriendsClick,
   friendCount = 0 
 }) => {
+  console.log('[ProfileHeader] Component rendered with profile:', profile);
+  console.log('[ProfileHeader] Profile name:', profile?.name);
   // Render stars based on rating
   const renderStars = (rating: number) => {
     const stars = [];
