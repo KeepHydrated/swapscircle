@@ -305,6 +305,7 @@ const Home: React.FC = () => {
   console.log('DEBUG: selectedUserItem:', selectedUserItem);
   
   // Get matches for selected item (real matches from DB)
+  console.log('DEBUG: About to call useMatches with selectedLocation:', selectedLocation);
   const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
 
   // Use only real matches from database
