@@ -123,7 +123,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               </div>
               
               {currentMatch.userProfile && (
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mt-4">
                   <img
                     src={currentMatch.userProfile.avatar_url || '/placeholder.svg'}
                     alt={currentMatch.userProfile.name}
