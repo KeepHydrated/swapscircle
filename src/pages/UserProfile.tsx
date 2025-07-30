@@ -33,7 +33,6 @@ const UserProfile: React.FC = () => {
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profileKey, setProfileKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch current user's profile from DB
@@ -77,7 +76,6 @@ const UserProfile: React.FC = () => {
       };
       
       setUserProfile(newProfile);
-      setProfileKey(prev => prev + 1);
     } catch (e) {
       setError("Failed to load profile.");
     } finally {
@@ -142,9 +140,6 @@ const UserProfile: React.FC = () => {
       if (userProfile?.id) {
         const reviews = await fetchUserReviews(userProfile.id);
         setUserReviews(reviews);
-        
-        // Update profile key to force ProfileHeader re-render with new review data
-        setProfileKey(prev => prev + 1);
       }
     };
     
@@ -206,7 +201,6 @@ const UserProfile: React.FC = () => {
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         <ProfileHeader 
-          key={profileKey}
           profile={profileData}
           friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
