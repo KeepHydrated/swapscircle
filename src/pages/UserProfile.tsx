@@ -25,6 +25,7 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = useCallback(async () => {
+    console.log('[UserProfile] fetchProfile called - start');
     try {
       setLoading(true);
       setError(null);
@@ -123,7 +124,9 @@ const UserProfile: React.FC = () => {
   // Refetch profile when returning from settings or other pages
   useEffect(() => {
     const handleVisibilityChange = () => {
+      console.log('[UserProfile] visibilitychange event - document.hidden:', document.hidden);
       if (!document.hidden) {
+        console.log('[UserProfile] calling fetchProfile from visibilitychange');
         fetchProfile();
       }
     };
