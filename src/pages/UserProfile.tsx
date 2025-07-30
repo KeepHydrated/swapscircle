@@ -55,9 +55,16 @@ const UserProfile: React.FC = () => {
       }
 
       // Set profile with safe defaults
+      console.log('[UserProfile] Setting userProfile with data:', profile);
+      console.log('[UserProfile] profile.name:', profile.name);
+      console.log('[UserProfile] profile.username:', profile.username);
+      
+      const finalName = profile.name || profile.username || "User";
+      console.log('[UserProfile] Final name for userProfile:', finalName);
+      
       setUserProfile({
         id: profile.id,
-        name: profile.name || profile.username || "User",
+        name: finalName,
         avatar_url: profile.avatar_url || "/placeholder.svg",
         bio: profile.bio || 'Edit your profile in Settings to add a description.',
         location: profile.location || 'Set your location in Settings',
