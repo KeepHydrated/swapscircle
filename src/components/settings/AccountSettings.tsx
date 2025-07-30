@@ -92,8 +92,12 @@ const AccountSettings: React.FC = () => {
 
     setIsLoading(true);
     try {
+      console.log('Starting account deletion for user:', user.id);
+      
       // Call the edge function to delete user account completely
-      const { error } = await supabase.functions.invoke('delete-account');
+      const { data, error } = await supabase.functions.invoke('delete-account');
+      
+      console.log('Edge function response:', { data, error });
       
       if (error) {
         console.error('Error deleting account:', error);
@@ -101,6 +105,7 @@ const AccountSettings: React.FC = () => {
         return;
       }
 
+      console.log('Account deletion successful');
       toast.success('Account deleted successfully');
       
       // Sign out the user
