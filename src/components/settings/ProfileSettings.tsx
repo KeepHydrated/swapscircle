@@ -105,7 +105,7 @@ const ProfileSettings: React.FC = () => {
 
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('username, bio, location, avatar_url')
+        .select('username, name, bio, location, avatar_url')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -120,7 +120,7 @@ const ProfileSettings: React.FC = () => {
         console.log("[ProfileSettings] Profile loaded:", profile);
         
         form.reset({
-          username: profile.username ?? "",
+          username: (user?.name || profile?.name || profile?.username) ?? "",
           bio: profile.bio ?? "",
           location: profile.location ?? "",
         });
@@ -142,6 +142,7 @@ const ProfileSettings: React.FC = () => {
         .from('profiles')
         .update({
           username: data.username,
+          name: data.username, // Save the display name to both fields
           bio: data.bio,
           location: data.location,
           avatar_url: avatarUrl,
