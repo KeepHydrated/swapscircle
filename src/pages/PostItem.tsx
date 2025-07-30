@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { isProfileComplete } from '@/utils/profileUtils';
 
 // Import our new components
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
@@ -45,6 +46,15 @@ const PostItem: React.FC = () => {
   const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("clear");
   const [showPreferenceOptions, setShowPreferenceOptions] = useState(false);
   const [selectedSavedPreferenceId, setSelectedSavedPreferenceId] = useState<string>("");
+
+  // Check if profile is complete before allowing posting
+  useEffect(() => {
+    if (user && !isProfileComplete(user)) {
+      toast.error('Please complete your profile (username and avatar) before posting items.');
+      navigate('/settings');
+      return;
+    }
+  }, [user, navigate]);
 
   // Load saved preferences from localStorage on component mount
   useEffect(() => {
