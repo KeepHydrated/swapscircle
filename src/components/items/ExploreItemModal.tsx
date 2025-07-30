@@ -175,20 +175,31 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
   // Handle navigation to user profile
   const handleProfileClick = async () => {
+    console.log('MODAL DEBUG: handleProfileClick called');
+    console.log('MODAL DEBUG: fullItem?.user_id:', fullItem?.user_id);
+    
     if (fullItem?.user_id) {
       // Get current user ID to check if this is their own profile
       const { data: { user } } = await supabase.auth.getUser();
       const currentUserId = user?.id;
       
+      console.log('MODAL DEBUG: currentUserId:', currentUserId);
+      console.log('MODAL DEBUG: fullItem.user_id:', fullItem.user_id);
+      console.log('MODAL DEBUG: Is own profile?', currentUserId === fullItem.user_id);
+      
       onClose(); // Close the modal first
       
       if (currentUserId === fullItem.user_id) {
         // It's their own profile - navigate to regular profile page
+        console.log('MODAL DEBUG: Navigating to /profile');
         navigate('/profile');
       } else {
         // It's someone else's profile - navigate to other person profile
+        console.log('MODAL DEBUG: Navigating to other-person-profile');
         navigate(`/other-person-profile?userId=${fullItem.user_id}`);
       }
+    } else {
+      console.log('MODAL DEBUG: No user_id found, cannot navigate');
     }
   };
 

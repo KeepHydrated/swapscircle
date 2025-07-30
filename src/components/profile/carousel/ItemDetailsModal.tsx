@@ -136,21 +136,35 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
   // Handle navigation to user profile
   const handleProfileClick = async () => {
+    console.log('ITEM DETAILS MODAL DEBUG: handleProfileClick called');
     const userId = skipDataFetch ? (item as any)?.user_id : fullItem?.user_id;
+    console.log('ITEM DETAILS MODAL DEBUG: userId:', userId);
+    console.log('ITEM DETAILS MODAL DEBUG: skipDataFetch:', skipDataFetch);
+    console.log('ITEM DETAILS MODAL DEBUG: item user_id:', (item as any)?.user_id);
+    console.log('ITEM DETAILS MODAL DEBUG: fullItem user_id:', fullItem?.user_id);
+    
     if (userId) {
       // Get current user ID to check if this is their own profile
       const { data: { user } } = await supabase.auth.getUser();
       const currentUserId = user?.id;
       
+      console.log('ITEM DETAILS MODAL DEBUG: currentUserId:', currentUserId);
+      console.log('ITEM DETAILS MODAL DEBUG: userId:', userId);
+      console.log('ITEM DETAILS MODAL DEBUG: Is own profile?', currentUserId === userId);
+      
       onClose(); // Close the modal first
       
       if (currentUserId === userId) {
         // It's their own profile - navigate to regular profile page
+        console.log('ITEM DETAILS MODAL DEBUG: Navigating to /profile');
         navigate('/profile');
       } else {
         // It's someone else's profile - navigate to other person profile
+        console.log('ITEM DETAILS MODAL DEBUG: Navigating to other-person-profile');
         navigate(`/other-person-profile?userId=${userId}`);
       }
+    } else {
+      console.log('ITEM DETAILS MODAL DEBUG: No userId found, cannot navigate');
     }
   };
 
