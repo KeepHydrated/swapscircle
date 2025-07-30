@@ -70,7 +70,7 @@ const UserProfile: React.FC = () => {
       setUserProfile({
         id: profile.id,
         name: profile.name || profile.username || "User",
-        avatar_url: profile.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop",
+        avatar_url: profile.avatar_url || "/placeholder.svg",
         bio: profile.bio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
         location: profile.location || 'Update your location in Settings',
         created_at: profile.created_at,
