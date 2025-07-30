@@ -19,23 +19,29 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     let userIdsToFilter: string[] = [];
     if (location !== 'nationwide') {
       console.log('Debug - Filtering by location:', location);
+      console.log('Debug - Getting profiles for location:', location);
+      
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, username, location')
         .eq('location', location);
       
       console.log('Debug - Found profiles for location:', profiles);
+      console.log('Debug - Profiles error:', profilesError);
+      
       if (profilesError) {
         console.error('Error fetching profiles by location:', profilesError);
       } else if (profiles && profiles.length > 0) {
         userIdsToFilter = profiles.map(p => p.id);
-        console.log('Debug - User IDs to filter:', userIdsToFilter);
+        console.log('Debug - User IDs to filter by location:', userIdsToFilter);
         itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
       } else {
         // No users in this location, return empty
-        console.log('Debug - No users found in location, returning empty');
+        console.log('Debug - No users found in location, returning empty array');
         return [];
       }
+    } else {
+      console.log('Debug - Location is nationwide, no filtering applied');
     }
 
     const { data: allItems, error: itemsError } = await itemsQuery;
