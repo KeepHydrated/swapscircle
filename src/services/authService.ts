@@ -283,6 +283,47 @@ export const uploadItemImage = async (file: File): Promise<string | null> => {
   }
 };
 
+// New function to handle avatar upload specifically
+export const uploadAvatarImage = async (file: File): Promise<string | null> => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return null;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to upload an avatar.');
+      return null;
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${session.user.id}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+    const filePath = `${session.user.id}/${fileName}`;
+
+    // Upload the file to the avatars bucket
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Error uploading avatar:', uploadError);
+      toast.error('Error uploading avatar');
+      return null;
+    }
+
+    // Get the public URL
+    const { data } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    return data?.publicUrl || null;
+  } catch (error) {
+    console.error('Error uploading avatar:', error);
+    toast.error('Error uploading avatar');
+    return null;
+  }
+};
 // New function to like an item with mutual matching logic
 export const likeItem = async (itemId: string) => {
   console.log('DEBUG: likeItem function called with itemId:', itemId);

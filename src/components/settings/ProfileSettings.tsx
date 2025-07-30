@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { Pencil, Upload, Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
-import { uploadItemImage } from '@/services/authService';
+import { uploadAvatarImage } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -200,7 +200,7 @@ const ProfileSettings: React.FC = () => {
       // Upload to storage, update avatar URL in db
       try {
         console.log("[ProfileSettings] Uploading avatar image...");
-        const imageUrl = await uploadItemImage(file);
+        const imageUrl = await uploadAvatarImage(file);
         if (imageUrl) {
           setAvatarUrl(imageUrl);
 
