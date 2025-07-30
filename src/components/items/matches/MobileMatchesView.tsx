@@ -60,7 +60,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     <div className="flex flex-col h-full p-4">
 
       {/* Card stack */}
-      <div className="flex-1 relative min-h-[400px]">
+      <div className="flex-1 relative min-h-[500px]">
         {/* Show next card behind current one */}
         {currentIndex + 1 < matches.length && (
           <div className="absolute inset-0 transform scale-95 opacity-50 z-0">
