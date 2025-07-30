@@ -53,7 +53,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             src={avatarSrc}
             alt={`${profile.name}'s avatar`}
           />
-          <AvatarFallback>{profile.name?.substring(0, 2) || "AM"}</AvatarFallback>
+          <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
+            {profile.name?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "AM"}
+          </AvatarFallback>
         </Avatar>
       </div>
       <div className="flex-grow">
