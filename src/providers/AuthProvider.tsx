@@ -50,7 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const session = await getCurrentSession();
 
         if (session) {
+          console.log("[AuthProvider] Fetching profile for user:", session.user.id);
           const profileData = await fetchUserProfile(session.user.id);
+          console.log("[AuthProvider] Profile data received:", profileData);
 
           const userObject = {
             id: session.user.id,
@@ -82,7 +84,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Defer database operations to prevent deadlocks
             setTimeout(async () => {
               // Fetch user profile from profiles table
+              console.log("[AuthProvider] Fetching profile in auth state change for user:", session.user.id);
               const profileData = await fetchUserProfile(session.user.id);
+              console.log("[AuthProvider] Profile data received in auth state change:", profileData);
 
               const userObject = {
                 id: session.user.id,
