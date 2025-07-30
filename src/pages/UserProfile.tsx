@@ -52,7 +52,7 @@ const UserProfile: React.FC = () => {
       }
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('id, username, avatar_url, bio, location, created_at')
+        .select('id, username, name, avatar_url, bio, location, created_at')
         .eq('id', user_id)
         .maybeSingle();
 
@@ -69,7 +69,7 @@ const UserProfile: React.FC = () => {
 
       setUserProfile({
         id: profile.id,
-        name: profile.username || "User",
+        name: profile.name || profile.username || "User",
         avatar_url: profile.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop",
         bio: profile.bio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
         location: profile.location || 'Update your location in Settings',
