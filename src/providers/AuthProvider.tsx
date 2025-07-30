@@ -11,6 +11,7 @@ import {
   fetchUserProfile,
   getCurrentSession
 } from '@/services/authService';
+import { isNewUser } from '@/utils/profileUtils';
 
 // Clean up authentication state function to prevent auth limbo
 const cleanupAuthState = () => {
@@ -51,13 +52,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (session) {
           const profileData = await fetchUserProfile(session.user.id);
 
-          setUser({
+          const userObject = {
             id: session.user.id,
             email: session.user.email || '',
             // Handle null profileData with nullish coalescing and optional chaining
             name: profileData?.name ?? undefined,
             avatar_url: profileData?.avatar_url ?? undefined,
-          });
+          };
+          
+          setUser(userObject);
+          
+          // Check if existing user has incomplete profile and redirect to settings
+          if (isNewUser(userObject) && window.location.pathname !== '/settings') {
+            window.location.href = '/settings';
+          }
         }
       } finally {
         setLoading(false);
@@ -76,13 +84,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               // Fetch user profile from profiles table
               const profileData = await fetchUserProfile(session.user.id);
 
-              setUser({
+              const userObject = {
                 id: session.user.id,
                 email: session.user.email || '',
                 // Handle null profileData with nullish coalescing and optional chaining
                 name: profileData?.name ?? undefined,
                 avatar_url: profileData?.avatar_url ?? undefined,
-              });
+              };
+              
+              setUser(userObject);
+              
+              // Check if user has incomplete profile and redirect to settings
+              if (event === 'SIGNED_IN' && isNewUser(userObject) && window.location.pathname !== '/settings') {
+                window.location.href = '/settings';
+              }
             }, 0);
           }
         }
@@ -118,8 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     await authSignUp(email, password, name);
     
-    // Force page reload
-    window.location.href = '/';
+    // Redirect new users to settings to complete their profile
+    window.location.href = '/settings';
   };
 
   const signIn = async (email: string, password: string) => {
