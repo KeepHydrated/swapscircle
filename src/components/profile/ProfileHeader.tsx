@@ -44,6 +44,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   // Use avatar URL directly without timestamp to prevent flashing
   const avatarSrc = profile.avatar_url || "/placeholder.svg";
+  
+  console.log("ProfileHeader render - avatarSrc:", avatarSrc, "profile.avatar_url:", profile.avatar_url);
 
   return (
     <div className="flex flex-col md:flex-row p-6 bg-white border-b">

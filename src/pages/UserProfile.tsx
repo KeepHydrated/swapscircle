@@ -75,6 +75,7 @@ const UserProfile: React.FC = () => {
         created_at: profile.created_at,
       };
       
+      console.log("Setting userProfile:", newProfile);
       setUserProfile(newProfile);
     } catch (e) {
       setError("Failed to load profile.");
