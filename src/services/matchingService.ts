@@ -168,6 +168,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           condition: otherItem.condition,
           description: otherItem.description,
           tags: otherItem.tags,
+          priceRangeMin: otherItem.price_range_min,
+          priceRangeMax: otherItem.price_range_max,
           liked: false, // Will be determined by like status
           user_id: otherItem.user_id, // Include user_id for profile navigation
           userProfile: userProfile ? {
