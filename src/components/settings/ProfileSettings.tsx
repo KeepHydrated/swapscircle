@@ -264,7 +264,10 @@ const ProfileSettings: React.FC = () => {
           <Avatar className="h-24 w-24">
             <AvatarImage src={avatarUrl} alt="Profile" />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
-              {form.watch("username")?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "JS"}
+              {(() => {
+                const displayName = form.watch("username") || user?.name || "User";
+                return displayName.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
+              })()}
             </AvatarFallback>
           </Avatar>
           <div>
