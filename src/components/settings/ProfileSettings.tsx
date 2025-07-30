@@ -201,27 +201,35 @@ const ProfileSettings: React.FC = () => {
       try {
         console.log("[ProfileSettings] Uploading avatar image...");
         const imageUrl = await uploadAvatarImage(file);
+        console.log("[ProfileSettings] Upload result:", imageUrl);
+        
         if (imageUrl) {
           setAvatarUrl(imageUrl);
+          console.log("[ProfileSettings] Setting avatar URL to:", imageUrl);
 
           // Save immediately to DB (optional)
           if (user) {
-            await supabase
+            const updateResult = await supabase
               .from("profiles")
               .update({ avatar_url: imageUrl, updated_at: new Date().toISOString() })
               .eq("id", user.id);
             
+            console.log("[ProfileSettings] Database update result:", updateResult);
+            
             await updateProfile({
               avatar_url: imageUrl,
             });
-          }
 
-          console.log("[ProfileSettings] Profile picture uploaded and saved to db:", imageUrl);
-          toast.success('Profile picture uploaded successfully');
+            console.log("[ProfileSettings] Profile picture uploaded and saved to db:", imageUrl);
+            toast.success('Profile picture uploaded successfully');
+          }
+        } else {
+          console.error("[ProfileSettings] Upload failed - no URL returned");
+          toast.error('Upload failed - please try again');
         }
       } catch (uploadError) {
         console.error('[ProfileSettings] Upload failed, keeping local preview:', uploadError);
-        toast.success('Profile picture updated (preview only)');
+        toast.error('Upload failed - please try again');
       }
     } catch (error) {
       console.error('[ProfileSettings] Error handling avatar:', error);
