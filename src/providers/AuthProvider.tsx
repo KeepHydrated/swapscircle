@@ -66,10 +66,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('[DEBUG] Final user object in getSession:', userObject);
           setUser(userObject);
           
-          // Check if existing user has incomplete profile and redirect to settings
-          if (isNewUser(userObject) && window.location.pathname !== '/settings') {
-            window.location.href = '/settings';
-          }
+          // Only redirect new users on auth events, not on every session check
+          // if (isNewUser(userObject) && window.location.pathname !== '/settings') {
+          //   window.location.href = '/settings';
+          // }
         }
       } finally {
         setLoading(false);
