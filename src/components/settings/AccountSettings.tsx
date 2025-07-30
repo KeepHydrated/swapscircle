@@ -168,95 +168,101 @@ const AccountSettings: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Email Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <div className="flex gap-2">
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter new email address"
-              />
-              <Button 
-                onClick={handleEmailUpdate} 
-                disabled={isLoading || email === user?.email}
-                variant="outline"
-              >
-                {isLoading ? 'Updating...' : 'Update Email'}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Changing your email will require verification of the new address.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Security</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Password</Label>
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Reset your password to maintain account security.
-              </p>
-              <Button 
-                onClick={handlePasswordReset} 
-                disabled={isLoading}
-                variant="outline"
-              >
-                {isLoading ? 'Sending...' : 'Reset Password'}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-destructive">
-        <CardContent className="space-y-4 pt-6">
-          <div className="space-y-2">
-            <Label className="text-destructive font-medium">Delete Account</Label>
-            <p className="text-sm text-muted-foreground">
-              Permanently delete your account and all associated data. This action cannot be undone.
-            </p>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="w-full" disabled={isLoading}>
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Account
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your account,
-                    remove all your data from our servers, and cancel any active subscriptions.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAccount}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter new email address"
+                  />
+                  <Button 
+                    onClick={handleEmailUpdate} 
+                    disabled={isLoading || email === user?.email}
+                    variant="outline"
                   >
-                    {isLoading ? 'Deleting...' : 'Delete Account'}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </CardContent>
-      </Card>
+                    {isLoading ? 'Updating...' : 'Update Email'}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Changing your email will require verification of the new address.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Security</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Password</Label>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Reset your password to maintain account security.
+                  </p>
+                  <Button 
+                    onClick={handlePasswordReset} 
+                    disabled={isLoading}
+                    variant="outline"
+                  >
+                    {isLoading ? 'Sending...' : 'Reset Password'}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="lg:col-span-1">
+          <Card className="border-destructive">
+            <CardContent className="space-y-4 pt-6">
+              <div className="space-y-2">
+                <Label className="text-destructive font-medium">Delete Account</Label>
+                <p className="text-sm text-muted-foreground">
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full" disabled={isLoading}>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Account
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your account,
+                        remove all your data from our servers, and cancel any active subscriptions.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDeleteAccount}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {isLoading ? 'Deleting...' : 'Delete Account'}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
