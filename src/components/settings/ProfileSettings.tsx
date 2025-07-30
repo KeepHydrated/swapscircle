@@ -244,7 +244,7 @@ const ProfileSettings: React.FC = () => {
           <Avatar className="h-24 w-24">
             <AvatarImage src={avatarUrl} alt="Profile" />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
-              {form.getValues("username")?.substring(0, 2).toUpperCase() || "JS"}
+              {form.watch("username")?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "JS"}
             </AvatarFallback>
           </Avatar>
           <div>
