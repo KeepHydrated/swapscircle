@@ -60,6 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             avatar_url: profileData?.avatar_url ?? undefined,
           };
           
+          console.log('[AuthProvider DEBUG] User object created in getSession:', userObject);
           setUser(userObject);
           
           // Check if existing user has incomplete profile and redirect to settings
@@ -92,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 avatar_url: profileData?.avatar_url ?? undefined,
               };
               
+              console.log('[AuthProvider DEBUG] User object created in auth state change:', userObject);
               setUser(userObject);
               
               // Check if user has incomplete profile and redirect to settings
