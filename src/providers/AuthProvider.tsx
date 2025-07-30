@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             id: session.user.id,
             email: session.user.email || '',
             // Handle null profileData with nullish coalescing and optional chaining
-            name: profileData?.username ?? undefined,
+            name: profileData?.name ?? undefined,
             avatar_url: profileData?.avatar_url ?? undefined,
           };
           
@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 id: session.user.id,
                 email: session.user.email || '',
                 // Handle null profileData with nullish coalescing and optional chaining
-                name: profileData?.username ?? undefined,
+                name: profileData?.name ?? undefined,
                 avatar_url: profileData?.avatar_url ?? undefined,
               };
               
