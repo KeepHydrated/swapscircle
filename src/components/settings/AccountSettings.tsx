@@ -223,7 +223,7 @@ const AccountSettings: React.FC = () => {
 
       <Card className="border-destructive">
         <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
+          <CardTitle className="text-destructive">Account Deletion</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
