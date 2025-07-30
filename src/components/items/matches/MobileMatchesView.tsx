@@ -99,7 +99,32 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             
             <div className="p-4 flex-1 flex flex-col">
               <h3 className="font-semibold text-lg mb-1">{currentMatch.name}</h3>
-              <p className="text-gray-600 text-sm mb-2">{currentMatch.description}</p>
+              <p className="text-gray-600 text-sm mb-3">{currentMatch.description}</p>
+              
+              {/* Item details grid */}
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wide">Category</div>
+                  <div className="text-sm font-medium text-gray-800">{currentMatch.category || 'N/A'}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wide">Subcategory</div>
+                  <div className="text-sm font-medium text-gray-800">N/A</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wide">Condition</div>
+                  <div className="text-sm font-medium text-gray-800">{currentMatch.condition || 'N/A'}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wide">Price Range</div>
+                  <div className="text-sm font-medium text-gray-800">
+                    {currentMatch.priceRangeMin || currentMatch.priceRangeMax 
+                      ? `$${currentMatch.priceRangeMin || 0} - $${currentMatch.priceRangeMax || 0}`
+                      : 'Not specified'
+                    }
+                  </div>
+                </div>
+              </div>
               
               {currentMatch.userProfile && (
                 <div className="flex items-center gap-2 mb-3">
@@ -111,10 +136,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   <span className="text-sm text-gray-700">{currentMatch.userProfile.name}</span>
                 </div>
               )}
-
-              <div className="text-sm text-gray-500 mb-4">
-                Condition: {currentMatch.condition} • Category: {currentMatch.category}
-              </div>
 
               <div className="text-center text-gray-500 text-sm">
                 Swipe right to like, left to pass
