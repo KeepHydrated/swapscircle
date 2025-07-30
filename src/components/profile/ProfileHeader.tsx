@@ -59,7 +59,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             loading="eager"
           />
           <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold w-full h-full flex items-center justify-center">
-            {profile.name?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "JS"}
+            {(() => {
+              console.log('[ProfileHeader] Generating initials for name:', profile.name);
+              const initials = profile.name?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "JD";
+              console.log('[ProfileHeader] Generated initials:', initials);
+              return initials;
+            })()}
           </AvatarFallback>
         </Avatar>
       </div>
