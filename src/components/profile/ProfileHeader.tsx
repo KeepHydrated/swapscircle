@@ -31,12 +31,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
+      const isFilled = i < Math.floor(rating);
+      const isPartiallyFilled = i === Math.floor(rating) && rating % 1 !== 0;
+      
       stars.push(
         <Star
           key={i}
           size={20}
-          fill={i < rating ? "#FFD700" : "none"}
-          color={i < rating ? "#FFD700" : "#D3D3D3"}
+          fill={isFilled || isPartiallyFilled ? "#FFD700" : "none"}
+          color={isFilled || isPartiallyFilled ? "#FFD700" : "#D3D3D3"}
           className="inline-block"
         />
       );
