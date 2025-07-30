@@ -238,6 +238,7 @@ const Test: React.FC = () => {
   // Selected items state - auto-select first item
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('matches');
+  const [selectedLocation, setSelectedLocation] = useState('nationwide');
   
   // Matches undo state - will be set by the Matches component
   const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
@@ -254,7 +255,7 @@ const Test: React.FC = () => {
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
   
   // Get matches for selected item (real matches from DB)
-  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem);
+  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
 
   // Use only real matches from database
   const matches = selectedUserItem ? dbMatches : [];
@@ -386,7 +387,11 @@ const Test: React.FC = () => {
                     <div className="flex items-center gap-2">
                       {activeTab === 'matches' && (
                         <HeaderLocationSelector 
-                          onLocationChange={(value) => console.log('Location changed to:', value)}
+                          onLocationChange={(value) => {
+                            console.log('Location changed to:', value);
+                            setSelectedLocation(value);
+                          }}
+                          initialValue={selectedLocation}
                         />
                       )}
                       <Button
