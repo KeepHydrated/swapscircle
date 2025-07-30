@@ -48,10 +48,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       try {
         const session = await getCurrentSession();
+        console.log('[AUTH DEBUG] Current session user ID:', session?.user?.id);
 
         if (session) {
           const profileData = await fetchUserProfile(session.user.id);
-          console.log('[DEBUG] Profile data from DB:', profileData);
+          console.log('[AUTH DEBUG] Profile data from DB:', profileData);
+          console.log('[AUTH DEBUG] Expected user ID:', session.user.id);
 
           const userObject = {
             id: session.user.id,
