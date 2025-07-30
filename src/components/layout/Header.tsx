@@ -121,7 +121,7 @@ const Header = () => {
                       {user?.avatar_url ? (
                         <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                       ) : null}
-                      <AvatarFallback className="bg-purple-100 text-purple-800">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
                         {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
                       </AvatarFallback>
                     </Avatar>
