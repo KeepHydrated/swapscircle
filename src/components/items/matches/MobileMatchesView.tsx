@@ -133,9 +133,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               )}
 
-              <div className="text-center text-gray-500 text-sm">
-                Swipe right to like, left to pass
-              </div>
             </div>
           </div>
         </SwipeCard>
