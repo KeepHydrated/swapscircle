@@ -92,8 +92,8 @@ const AccountSettings: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Call the database function to delete user account data
-      const { error } = await supabase.rpc('delete_user_account');
+      // Call the edge function to delete user account completely
+      const { error } = await supabase.functions.invoke('delete-account');
       
       if (error) {
         console.error('Error deleting account:', error);
