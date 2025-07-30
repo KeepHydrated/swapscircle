@@ -73,6 +73,7 @@ export const signUp = async (email: string, password: string, name: string) => {
           .insert({
             id: data.user.id,
             username: name, // Set username to the provided name
+            name: name, // Also save to name field for consistency
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
