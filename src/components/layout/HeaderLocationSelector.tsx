@@ -18,6 +18,8 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  console.log('DEBUG: HeaderLocationSelector onLocationChange prop:', onLocationChange);
 
   // Fetch user's saved location
   useEffect(() => {
