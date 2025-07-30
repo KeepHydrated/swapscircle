@@ -130,7 +130,19 @@ const ProfileSettings: React.FC = () => {
           bio: profile.bio ?? "",
           location: profile.location ?? "",
         });
-        setAvatarUrl(profile.avatar_url ?? "");
+        
+        // Only set avatar URL from DB if it's in the correct bucket or if we don't have a local one
+        const dbAvatarUrl = profile.avatar_url ?? "";
+        console.log("[ProfileSettings] DB avatar URL:", dbAvatarUrl);
+        console.log("[ProfileSettings] Current local avatar URL:", avatarUrl);
+        
+        // If the DB has an avatar URL that's in the wrong bucket (item-images), don't use it
+        // unless we don't have a current avatar URL
+        if (dbAvatarUrl && !dbAvatarUrl.includes('/item-images/')) {
+          setAvatarUrl(dbAvatarUrl);
+        } else if (!avatarUrl) {
+          setAvatarUrl(dbAvatarUrl);
+        }
       }
       setInitialLoading(false);
     };
