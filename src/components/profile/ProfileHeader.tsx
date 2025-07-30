@@ -57,10 +57,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             alt={`${profile.name}'s avatar`}
             className="object-cover"
             loading="eager"
-            onError={(e) => {
-              // Hide broken image to force fallback
-              e.currentTarget.style.display = 'none';
-            }}
           />
           <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold w-full h-full flex items-center justify-center">
             {profile.name?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "JS"}
