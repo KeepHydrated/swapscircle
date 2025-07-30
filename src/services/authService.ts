@@ -324,6 +324,7 @@ export const uploadAvatarImage = async (file: File): Promise<string | null> => {
     return null;
   }
 };
+
 // New function to like an item with mutual matching logic
 export const likeItem = async (itemId: string) => {
   console.log('DEBUG: likeItem function called with itemId:', itemId);
@@ -563,119 +564,53 @@ export const isItemLiked = async (itemId: string): Promise<boolean> => {
   }
 };
 
-// Fetch item by ID from DB (NEW)
-export const fetchItemById = async (itemId: string) => {
-  if (!isSupabaseConfigured()) return null;
-  try {
-    const { data, error } = await supabase
-      .from('items')
-      .select('*')
-      .eq('id', itemId)
-      .maybeSingle();
-    if (error) {
-      console.error('Error fetching item by id:', error);
-      return null;
-    }
-    return data;
-  } catch (error) {
-    console.error('Error fetching item by id:', error);
-    return null;
-  }
-};
-
-// Update item by ID (NEW)
-export const updateItem = async (itemId: string, updates: any) => {
+// Function to submit a review for a trade/marketplace item
+export const submitReview = async (reviewData: {
+  rating: number;
+  comment: string;
+  reviewee_id: string;
+  trade_conversation_id?: string;
+  market_id?: string;
+  vendor_id?: string;
+}) => {
   if (!isSupabaseConfigured()) {
-    toast.error('Supabase not configured');
+    toast.error('Supabase is not configured. Please add environment variables.');
     return false;
   }
+
   try {
-    // Make a safe copy of updates, excluding potentially problematic fields
-    const safeUpdates = { ...updates };
-    
-    // Remove fields that might not exist in the database
-    if ('looking_for_price_ranges' in safeUpdates) {
-      delete safeUpdates.looking_for_price_ranges;
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to submit a review.');
+      return false;
     }
-    
+
     const { error } = await supabase
-      .from('items')
-      .update({ ...safeUpdates, updated_at: new Date().toISOString() })
-      .eq('id', itemId);
-    if (error) {
-      console.error('Error updating item:', error);
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error('Error updating item:', error);
-    toast.error('Failed to update item');
-    return false;
-  }
-};
-
-// Delete item by ID (NEW)
-export const deleteItem = async (itemId: string) => {
-  if (!isSupabaseConfigured()) {
-    toast.error('Supabase not configured');
-    return false;
-  }
-  try {
-    const { error } = await supabase.from('items').delete().eq('id', itemId);
-    if (error) {
-      toast.error('Error deleting item');
-      console.error('Error deleting item:', error);
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error('Error deleting item:', error);
-    toast.error('Failed to delete item');
-    return false;
-  }
-};
-
-// Hide/unhide item functions
-export const hideItem = async (itemId: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase
-      .from('items')
-      .update({ is_hidden: true, updated_at: new Date().toISOString() })
-      .eq('id', itemId);
+      .from('reviews')
+      .insert({
+        user_id: session.user.id,
+        reviewer_id: session.user.id,
+        reviewee_id: reviewData.reviewee_id,
+        rating: reviewData.rating,
+        comment: reviewData.comment,
+        trade_conversation_id: reviewData.trade_conversation_id,
+        market_id: reviewData.market_id,
+        vendor_id: reviewData.vendor_id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
 
     if (error) {
-      toast.error('Error hiding item');
-      console.error('Error hiding item:', error);
+      console.error('Error submitting review:', error);
+      toast.error('Error submitting review');
       return false;
     }
-    
-    toast.success('Item hidden successfully');
-    return true;
-  } catch (error) {
-    console.error('Error hiding item:', error);
-    toast.error('Failed to hide item');
-    return false;
-  }
-};
 
-export const unhideItem = async (itemId: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase
-      .from('items')
-      .update({ is_hidden: false, updated_at: new Date().toISOString() })
-      .eq('id', itemId);
-
-    if (error) {
-      toast.error('Error unhiding item');
-      console.error('Error unhiding item:', error);
-      return false;
-    }
-    
-    toast.success('Item shown successfully');
+    toast.success('Review submitted successfully!');
     return true;
-  } catch (error) {
-    console.error('Error unhiding item:', error);
-    toast.error('Failed to show item');
+  } catch (error: any) {
+    console.error('Error submitting review:', error);
+    toast.error(error.message || 'Error submitting review');
     return false;
   }
 };
@@ -742,5 +677,208 @@ export const fetchUserReviews = async (userId: string) => {
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return [];
+  }
+};
+
+// Function to fetch a single item by ID
+export const fetchItemById = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .eq('id', itemId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching item:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching item:', error);
+    return null;
+  }
+};
+
+// Function to update an existing item
+export const updateItem = async (itemId: string, item: Partial<Item> & {
+  lookingForCategories?: string[];
+  lookingForConditions?: string[];
+  lookingForDescription?: string;
+  priceRangeMin?: number;
+  priceRangeMax?: number;
+  imageUrls?: string[];
+}) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return null;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to update an item.');
+      return null;
+    }
+
+    const updateData = {
+      name: item.name,
+      description: item.description,
+      image_url: item.image_url,
+      image_urls: item.imageUrls,
+      category: item.category,
+      condition: item.condition,
+      tags: item.tags,
+      looking_for_categories: item.lookingForCategories,
+      looking_for_conditions: item.lookingForConditions,
+      looking_for_description: item.lookingForDescription,
+      price_range_min: item.priceRangeMin,
+      price_range_max: item.priceRangeMax,
+      updated_at: new Date().toISOString()
+    };
+
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key as keyof typeof updateData] === undefined) {
+        delete updateData[key as keyof typeof updateData];
+      }
+    });
+
+    const { data, error } = await supabase
+      .from('items')
+      .update(updateData)
+      .eq('id', itemId)
+      .eq('user_id', session.user.id) // Ensure user can only update their own items
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error updating item:', error);
+      toast.error(error.message || 'Error updating item');
+      return null;
+    }
+
+    toast.success('Item updated successfully!');
+    return data;
+  } catch (error: any) {
+    console.error('Error updating item:', error);
+    toast.error(error.message || 'Error updating item');
+    return null;
+  }
+};
+
+// Function to delete an item
+export const deleteItem = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return false;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to delete an item.');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('items')
+      .delete()
+      .eq('id', itemId)
+      .eq('user_id', session.user.id); // Ensure user can only delete their own items
+
+    if (error) {
+      console.error('Error deleting item:', error);
+      toast.error('Error deleting item');
+      return false;
+    }
+
+    toast.success('Item deleted successfully!');
+    return true;
+  } catch (error: any) {
+    console.error('Error deleting item:', error);
+    toast.error(error.message || 'Error deleting item');
+    return false;
+  }
+};
+
+// Function to hide an item
+export const hideItem = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return false;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to hide an item.');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('items')
+      .update({ 
+        is_hidden: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', itemId)
+      .eq('user_id', session.user.id); // Ensure user can only hide their own items
+
+    if (error) {
+      console.error('Error hiding item:', error);
+      toast.error('Error hiding item');
+      return false;
+    }
+
+    toast.success('Item hidden successfully!');
+    return true;
+  } catch (error: any) {
+    console.error('Error hiding item:', error);
+    toast.error(error.message || 'Error hiding item');
+    return false;
+  }
+};
+
+// Function to unhide an item
+export const unhideItem = async (itemId: string) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return false;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to unhide an item.');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('items')
+      .update({ 
+        is_hidden: false,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', itemId)
+      .eq('user_id', session.user.id); // Ensure user can only unhide their own items
+
+    if (error) {
+      console.error('Error unhiding item:', error);
+      toast.error('Error unhiding item');
+      return false;
+    }
+
+    toast.success('Item is now visible!');
+    return true;
+  } catch (error: any) {
+    console.error('Error unhiding item:', error);
+    toast.error(error.message || 'Error unhiding item');
+    return false;
   }
 };
