@@ -17,7 +17,6 @@ import { MatchItem } from '@/types/item';
 import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
-  console.log("UserProfile component is rendering");
   const [searchParams] = useSearchParams();
   // Get tab from URL or default to 'available'
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'available');
