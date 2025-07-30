@@ -120,7 +120,7 @@ const ProfileSettings: React.FC = () => {
         console.log("[ProfileSettings] Profile loaded:", profile);
         
         form.reset({
-          username: (user?.name || profile.username) ?? "",
+          username: profile.username ?? "",
           bio: profile.bio ?? "",
           location: profile.location ?? "",
         });
