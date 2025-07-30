@@ -29,6 +29,7 @@ const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState('matches');
   const [selectedLocation, setSelectedLocation] = useState('nationwide');
   console.log('DEBUG: Home component selectedLocation state:', selectedLocation);
+  console.log('DEBUG: Current activeTab in Home:', activeTab);
   
   // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
