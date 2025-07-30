@@ -39,7 +39,7 @@ const ProfileSettings: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
   const [locationOpen, setLocationOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState(user?.name || "");
 
   // Major US cities for dropdown
   const cities = [
@@ -125,6 +125,7 @@ const ProfileSettings: React.FC = () => {
         
         const finalDisplayName = (user?.name || profile?.name || profile?.username) ?? "";
         console.log("[ProfileSettings] Final display name:", finalDisplayName);
+        console.log("[ProfileSettings] Setting displayName state to:", finalDisplayName);
         setDisplayName(finalDisplayName); // Set stable display name
         
         form.reset({
@@ -152,6 +153,14 @@ const ProfileSettings: React.FC = () => {
     fetchProfile();
     // eslint-disable-next-line
   }, [user]);
+
+  // Also update displayName when user changes (from AuthContext)
+  useEffect(() => {
+    if (user?.name && !displayName) {
+      console.log("[ProfileSettings] User changed, updating displayName to:", user.name);
+      setDisplayName(user.name);
+    }
+  }, [user?.name, displayName]);
 
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
@@ -269,6 +278,7 @@ const ProfileSettings: React.FC = () => {
               {(() => {
                 // Use stable displayName state, fallback to user name, then "User"
                 const nameToUse = displayName || user?.name || "User";
+                console.log("[ProfileSettings] Avatar initials using name:", nameToUse, "displayName state:", displayName, "user.name:", user?.name);
                 return nameToUse.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
               })()}
             </AvatarFallback>
