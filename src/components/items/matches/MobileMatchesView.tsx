@@ -145,24 +145,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         </SwipeCard>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex justify-center gap-4 mt-4">
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={handleRejectClick}
-          className="w-16 h-16 rounded-full border-red-200 hover:border-red-300 hover:bg-red-50"
-        >
-          <X className="w-6 h-6 text-red-500" />
-        </Button>
-        <Button
-          size="lg"
-          onClick={handleLikeClick}
-          className="w-16 h-16 rounded-full bg-green-500 hover:bg-green-600"
-        >
-          <Heart className="w-6 h-6 text-white" />
-        </Button>
-      </div>
     </div>
   );
 };
