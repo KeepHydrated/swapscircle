@@ -170,18 +170,20 @@ const AccountSettings: React.FC = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
-            <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row gap-2">
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter new email address"
+                className="flex-1"
               />
               <Button 
                 onClick={handleEmailUpdate} 
                 disabled={isLoading || email === user?.email}
                 variant="outline"
+                className="w-full md:w-auto"
               >
                 {isLoading ? 'Updating...' : 'Update Email'}
               </Button>
@@ -200,7 +202,7 @@ const AccountSettings: React.FC = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Password</Label>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <p className="text-sm text-muted-foreground">
                 Reset your password to maintain account security.
               </p>
@@ -208,6 +210,7 @@ const AccountSettings: React.FC = () => {
                 onClick={handlePasswordReset} 
                 disabled={isLoading}
                 variant="outline"
+                className="w-full md:w-auto"
               >
                 {isLoading ? 'Sending...' : 'Reset Password'}
               </Button>
@@ -222,13 +225,13 @@ const AccountSettings: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <p className="text-sm text-muted-foreground">
                 Permanently delete your account and all associated data. This action cannot be undone.
               </p>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" disabled={isLoading}>
+                  <Button variant="destructive" disabled={isLoading} className="w-full md:w-auto">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete Account
                   </Button>
