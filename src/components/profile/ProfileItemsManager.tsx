@@ -5,6 +5,7 @@ import { Item } from '@/types/item';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,7 @@ interface ProfileItemsManagerProps {
 
 const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems, onItemClick, userProfile }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [items, setItems] = useState<Item[]>(initialItems);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -46,6 +48,11 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
 
   // Function to handle clicking on an item - open modal instead of navigation
   const handleItemClick = (item: Item) => {
+    // Disable popup on mobile
+    if (isMobile) {
+      return;
+    }
+    
     // If onItemClick prop is provided, call it with the item id
     if (onItemClick) {
       onItemClick(item.id);
