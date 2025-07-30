@@ -357,14 +357,19 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                 {/* User profile info - only show if showProfileInfo is true */}
                 {showProfileInfo && userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
-                    {userProfile.avatar_url && (
-                      <img
-                        src={userProfile.avatar_url}
-                        alt={userProfile.name || userProfile.username}
-                        className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={handleProfileClick}
-                      />
-                    )}
+                    <div className="w-11 h-11 rounded-full border bg-gray-100 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity overflow-hidden" onClick={handleProfileClick}>
+                      {userProfile.avatar_url ? (
+                        <img
+                          src={userProfile.avatar_url}
+                          alt={userProfile.name || userProfile.username}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-sm font-medium text-gray-600">
+                          {(userProfile.name || userProfile.username || "U").split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                        </span>
+                      )}
+                    </div>
                     <div>
                       <span 
                         className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
