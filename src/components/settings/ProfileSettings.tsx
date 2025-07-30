@@ -265,7 +265,9 @@ const ProfileSettings: React.FC = () => {
             <AvatarImage src={avatarUrl} alt="Profile" />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
               {(() => {
-                const displayName = form.watch("username") || user?.name || "User";
+                // Get the current username from form, but if it's empty/loading, use user data
+                const formUsername = form.watch("username");
+                const displayName = (formUsername && formUsername.trim()) ? formUsername : (user?.name || "User");
                 return displayName.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
               })()}
             </AvatarFallback>
