@@ -118,8 +118,8 @@ const ProfileSettings: React.FC = () => {
 
       if (profile) {
         console.log("[ProfileSettings] Profile loaded:", JSON.stringify(profile, null, 2));
-        console.log("[ProfileSettings] User from auth context:", JSON.stringify(user, null, 2));
-        console.log("[ProfileSettings] User name:", user?.name);
+        console.log("[ProfileSettings] User from auth context after fix:", JSON.stringify(user, null, 2));
+        console.log("[ProfileSettings] User name should now be:", user?.name);
         console.log("[ProfileSettings] Profile username:", profile.username);
         
         form.reset({
