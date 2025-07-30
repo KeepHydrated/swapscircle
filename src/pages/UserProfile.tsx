@@ -37,15 +37,9 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch current user's profile from DB
-  const fetchProfile = useCallback(async (forceRefresh = false) => {
-    // Only reset profile state on initial load, not on refreshes
-    if (forceRefresh || !userProfile) {
-      setLoading(true);
-      setError(null);
-      if (!userProfile) {
-        setUserProfile(null); // Only reset if we don't have a profile yet
-      }
-    }
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     
     try {
       // Try getting session for user id
@@ -89,7 +83,7 @@ const UserProfile: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [userProfile]);
+  }, []); // Remove userProfile dependency to prevent infinite loops
 
   // Refetch DB profile on mount only, remove frequent refetches
   useEffect(() => {
