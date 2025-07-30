@@ -8,25 +8,16 @@ import { Star, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client'; 
 import { fetchUserReviews } from '@/services/authService';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
-
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
 import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
 import { MatchItem } from '@/types/item';
-
 import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'available');
-  const [userProfile, setUserProfile] = useState<null | {
-    id: string;
-    name: string;
-    avatar_url: string;
-    bio: string;
-    location: string;
-    created_at: string;
-  }>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
@@ -34,48 +25,80 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    
     try {
+      setLoading(true);
+      setError(null);
+      
       const { data: auth } = await supabase.auth.getSession();
       const user_id = auth?.session?.user?.id;
+      
       if (!user_id) {
-        setError("No user session found.");
-        setLoading(false);
+        setError("Please sign in to view your profile");
         return;
       }
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('id, username, name, avatar_url, bio, location, created_at')
+        .select('*')
         .eq('id', user_id)
-        .maybeSingle();
+        .single();
 
       if (profileError) {
-        setError("Failed to fetch profile from database.");
-        setLoading(false);
+        console.error('Profile error:', profileError);
+        setError("Could not load profile data");
         return;
       }
-      if (!profile) {
-        setError("Profile not found in database.");
-        setLoading(false);
-        return;
-      }
-      
-      // Handle null values properly
-      const newProfile = {
+
+      // Set profile with safe defaults
+      setUserProfile({
         id: profile.id,
-        name: profile.name || profile.username || "John Smith", // Use a default name
+        name: profile.name || profile.username || "User",
         avatar_url: profile.avatar_url || "/placeholder.svg",
-        bio: profile.bio || 'Your profile description goes here. Edit your profile in Settings to update this information.',
-        location: profile.location || 'Update your location in Settings',
-        created_at: profile.created_at,
-      };
-      
-      setUserProfile(newProfile);
+        bio: profile.bio || 'Edit your profile in Settings to add a description.',
+        location: profile.location || 'Set your location in Settings',
+        created_at: profile.created_at || new Date().toISOString(),
+      });
+
+      // Fetch items
+      const { data: items } = await supabase
+        .from('items')
+        .select('*')
+        .eq('user_id', user_id)
+        .eq('is_available', true);
+
+      if (items) {
+        const formattedItems = items.map(item => ({
+          id: item.id,
+          name: item.name || 'Untitled Item',
+          image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
+          image_url: item.image_url,
+          image_urls: item.image_urls || [],
+          category: item.category,
+          condition: item.condition, 
+          description: item.description,
+          tags: item.tags || [],
+          price_range_min: item.price_range_min,
+          price_range_max: item.price_range_max,
+          liked: false,
+          is_hidden: item.is_hidden || false,
+        }));
+        setUserItems(formattedItems);
+      }
+
+      // Fetch reviews
+      try {
+        const reviews = await fetchUserReviews(user_id);
+        setUserReviews(reviews || []);
+      } catch (reviewError) {
+        console.error('Reviews error:', reviewError);
+        setUserReviews([]);
+      }
+
+      setUserFriends([]);
+
     } catch (e) {
-      setError("Failed to load profile.");
+      console.error('Profile fetch error:', e);
+      setError("Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -85,63 +108,26 @@ const UserProfile: React.FC = () => {
     fetchProfile();
   }, [fetchProfile]);
 
-  // Fetch user's items for trade
-  useEffect(() => {
-    const fetchUserItems = async () => {
-      setUserItems([]);
-      if (!userProfile?.id) return;
-      try {
-        const { data: items, error: itemsError } = await supabase
-          .from('items')
-          .select('*')
-          .eq('user_id', userProfile.id)
-          .eq('is_available', true)
-          .order('updated_at', { ascending: false });
+  // Memoize profile data for header
+  const profileData = useMemo(() => {
+    if (!userProfile) return null;
 
-        if (itemsError) {
-          console.error('Error fetching items:', itemsError);
-          toast.error('Error loading items');
-          setUserItems([]);
-        } else if (items && Array.isArray(items)) {
-          const formattedItems = items.map(item => ({
-            id: item.id,
-            name: item.name,
-            image: item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f',
-            image_url: item.image_url,
-            image_urls: item.image_urls || [],
-            category: item.category,
-            condition: item.condition, 
-            description: item.description,
-            tags: item.tags,
-            price_range_min: item.price_range_min,
-            price_range_max: item.price_range_max,
-            liked: false,
-            is_hidden: item.is_hidden,
-          })).sort((a, b) => {
-            if (a.is_hidden === b.is_hidden) return 0;
-            return a.is_hidden ? 1 : -1;
-          });
-          setUserItems(formattedItems);
-        }
-      } catch (error) {
-        setUserItems([]);
-      }
-    };
-    if (userProfile?.id) fetchUserItems();
-  }, [userProfile]);
-
-  // Fetch user reviews and friends
-  useEffect(() => {
-    const fetchReviews = async () => {
-      if (userProfile?.id) {
-        const reviews = await fetchUserReviews(userProfile.id);
-        setUserReviews(reviews);
-      }
-    };
+    const averageRating = userReviews.length > 0 
+      ? Math.round((userReviews.reduce((sum, review) => sum + review.rating, 0) / userReviews.length) * 10) / 10
+      : 0;
     
-    fetchReviews();
-    setUserFriends([]);
-  }, [userProfile?.id]);
+    return {
+      name: userProfile.name,
+      description: userProfile.bio,
+      rating: averageRating,
+      reviewCount: userReviews.length,
+      location: userProfile.location,
+      memberSince: userProfile.created_at
+        ? new Date(userProfile.created_at).getFullYear().toString()
+        : "",
+      avatar_url: userProfile.avatar_url,
+    };
+  }, [userProfile, userReviews]);
 
   if (loading) {
     return (
@@ -157,52 +143,23 @@ const UserProfile: React.FC = () => {
     return (
       <MainLayout>
         <div className="py-20 flex flex-col items-center">
-          <div className="text-lg font-semibold text-red-500">{error}</div>
-          <button className="mt-6 px-4 py-2 rounded bg-primary text-white" onClick={() => fetchProfile()}>
-            Retry
+          <div className="text-lg font-semibold text-red-500 mb-4">{error}</div>
+          <button 
+            className="px-4 py-2 rounded bg-primary text-white" 
+            onClick={() => fetchProfile()}
+          >
+            Try Again
           </button>
         </div>
       </MainLayout>
     );
   }
 
-  if (!userProfile) {
+  if (!userProfile || !profileData) {
     return (
       <MainLayout>
         <div className="py-20 flex flex-col items-center">
-          <div className="text-lg">No profile found.</div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  // Calculate average rating from reviews
-  const averageRating = userReviews.length > 0 
-    ? Math.round((userReviews.reduce((sum, review) => sum + review.rating, 0) / userReviews.length) * 10) / 10
-    : 0;
-
-  // Memoize profileData to prevent unnecessary re-renders
-  const profileData = useMemo(() => {
-    if (!userProfile) return null;
-    
-    return {
-      name: userProfile.name,
-      description: userProfile.bio,
-      rating: averageRating,
-      reviewCount: userReviews.length,
-      location: userProfile.location,
-      memberSince: userProfile.created_at
-        ? new Date(userProfile.created_at).getFullYear().toString()
-        : "",
-      avatar_url: userProfile.avatar_url,
-    };
-  }, [userProfile?.name, userProfile?.bio, userProfile?.location, userProfile?.created_at, userProfile?.avatar_url, averageRating, userReviews.length]);
-
-  if (!profileData) {
-    return (
-      <MainLayout>
-        <div className="flex justify-center py-20">
-          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full" />
+          <div className="text-lg">Profile not found</div>
         </div>
       </MainLayout>
     );
