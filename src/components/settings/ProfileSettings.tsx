@@ -82,9 +82,6 @@ const ProfileSettings: React.FC = () => {
         .from('profiles')
         .insert({
           id: user.id,
-          name: user.name || user.email?.split('@')[0] || "User",
-          email: user.email || "",
-          avatar_url: user.avatar_url || "",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
@@ -237,7 +234,7 @@ const ProfileSettings: React.FC = () => {
       <CardContent>
         <div className="flex items-center gap-5 pb-6 mb-6 border-b">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={avatarUrl || "https://github.com/shadcn.png"} alt="Profile" />
+            <AvatarImage src={avatarUrl} alt="Profile" />
             <AvatarFallback>{user?.name?.substring(0, 2) || "US"}</AvatarFallback>
           </Avatar>
           <div>
