@@ -49,6 +49,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [userRating, setUserRating] = useState<number>(0);
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
@@ -83,6 +84,20 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             price_range_max: (item as any)?.price_range_max || (item as any)?.priceRangeMax
           });
           setUserProfile(preloadedUserProfile);
+          // For preloaded profiles (own items), fetch reviews to calculate rating
+          if (currentUserId) {
+            const { data: reviewsData, error: reviewsError } = await supabase
+              .from('reviews')
+              .select('rating')
+              .eq('reviewee_id', currentUserId);
+
+            if (!reviewsError && reviewsData && reviewsData.length > 0) {
+              const averageRating = reviewsData.reduce((sum, review) => sum + review.rating, 0) / reviewsData.length;
+              setUserRating(Math.round(averageRating * 10) / 10);
+            } else {
+              setUserRating(0);
+            }
+          }
           setLoading(false);
           return;
         }
@@ -133,12 +148,27 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               avatar_url: "",
               created_at: new Date().toISOString()
             });
+            setUserRating(0);
           } else {
             setUserProfile(profileData);
+          }
+
+          // Fetch user reviews to calculate rating
+          const { data: reviewsData, error: reviewsError } = await supabase
+            .from('reviews')
+            .select('rating')
+            .eq('reviewee_id', userIdToFetch);
+
+          if (!reviewsError && reviewsData && reviewsData.length > 0) {
+            const averageRating = reviewsData.reduce((sum, review) => sum + review.rating, 0) / reviewsData.length;
+            setUserRating(Math.round(averageRating * 10) / 10);
+          } else {
+            setUserRating(0);
           }
         } else {
           console.log('MODAL DEBUG: No user_id found for profile fetch');
           setUserProfile(null);
+          setUserRating(0);
         }
       } catch (error) {
         console.error('Error fetching modal data:', error);
@@ -419,10 +449,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                          >
                            {userProfile.username || userProfile.name || "Unknown User"}
                          </span>
-                         <div className="flex items-center gap-1">
-                           <span className="text-yellow-500">★</span>
-                           <span className="text-sm text-gray-600">4.5</span>
-                         </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-yellow-500">★</span>
+                            <span className="text-sm text-gray-600">
+                              {userRating > 0 ? userRating.toFixed(1) : "No reviews"}
+                            </span>
+                          </div>
                        </div>
                         {memberSince && (
                           <div className="flex text-xs text-gray-500 mt-1">
