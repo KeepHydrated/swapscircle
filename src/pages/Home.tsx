@@ -379,7 +379,10 @@ const Home: React.FC = () => {
                     <div className="hidden sm:block">
                       {(activeTab === 'matches' || activeTab === 'matches2' || activeTab === 'test') && (
                         <HeaderLocationSelector 
-                          onLocationChange={setSelectedLocation}
+                          onLocationChange={(newLocation) => {
+                            console.log('DEBUG: HeaderLocationSelector onChange called with:', newLocation);
+                            setSelectedLocation(newLocation);
+                          }}
                           initialValue={selectedLocation}
                         />
                       )}
