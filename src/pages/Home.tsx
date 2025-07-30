@@ -111,13 +111,18 @@ const Home: React.FC = () => {
           category: item.category,
           condition: item.condition,
           description: item.description,
-          price_range_min: item.price_range_min,
-          price_range_max: item.price_range_max,
+          priceRangeMin: item.price_range_min,
+          priceRangeMax: item.price_range_max,
           tags: item.tags,
           liked: false,
           ownerName: ownerProfile?.name || ownerProfile?.username || 'Unknown',
           ownerAvatar: ownerProfile?.avatar_url,
-          user_id: item.user_id
+          user_id: item.user_id,
+          userProfile: {
+            name: ownerProfile?.name || ownerProfile?.username || 'Unknown',
+            avatar_url: ownerProfile?.avatar_url,
+            username: ownerProfile?.username
+          }
         };
       }) || [];
 

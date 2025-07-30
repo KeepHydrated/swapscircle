@@ -31,6 +31,8 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 
   const handleItemClick = (item: MatchItem) => {
     console.log("[FriendItemsCarousel] Opening modal for item:", item);
+    console.log("[FriendItemsCarousel] Item priceRangeMin:", item.priceRangeMin);
+    console.log("[FriendItemsCarousel] Item priceRangeMax:", item.priceRangeMax);
     console.log("[FriendItemsCarousel] Total items:", items.length);
     const index = items.findIndex(i => i.id === item.id);
     console.log("[FriendItemsCarousel] Setting currentIndex to:", index);

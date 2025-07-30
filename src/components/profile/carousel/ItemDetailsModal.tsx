@@ -313,12 +313,12 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                     <div className="flex flex-col">
                       <span className="text-xs font-medium text-gray-400 uppercase">Price Range</span>
                       <span className="text-sm">
-                        {displayItem.price_range_min && displayItem.price_range_max 
-                          ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
-                          : displayItem.price_range_min 
-                            ? `From $${displayItem.price_range_min}`
-                            : displayItem.price_range_max
-                              ? `Up to $${displayItem.price_range_max}`
+                        {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
+                          ? `$${displayItem.price_range_min || displayItem.priceRangeMin} - $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                          : (displayItem.price_range_min || displayItem.priceRangeMin)
+                            ? `From $${displayItem.price_range_min || displayItem.priceRangeMin}`
+                            : (displayItem.price_range_max || displayItem.priceRangeMax)
+                              ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
                               : "Not specified"
                         }
                       </span>
