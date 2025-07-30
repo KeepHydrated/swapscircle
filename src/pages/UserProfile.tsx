@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -185,7 +185,8 @@ const UserProfile: React.FC = () => {
     ? Math.round((userReviews.reduce((sum, review) => sum + review.rating, 0) / userReviews.length) * 10) / 10
     : 0;
 
-  const profileData = {
+  // Memoize profileData to prevent unnecessary re-renders
+  const profileData = useMemo(() => ({
     name: userProfile.name,
     description: userProfile.bio,
     rating: averageRating,
@@ -195,7 +196,7 @@ const UserProfile: React.FC = () => {
       ? new Date(userProfile.created_at).getFullYear().toString()
       : "",
     avatar_url: userProfile.avatar_url,
-  };
+  }), [userProfile, averageRating, userReviews.length]);
 
   return (
     <MainLayout>
