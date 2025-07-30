@@ -44,11 +44,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     return stars;
   };
 
-  // Memoize avatar src to prevent unnecessary re-renders
-  const avatarSrc = useMemo(() => 
-    profile.avatar_url || "/placeholder.svg", 
-    [profile.avatar_url]
-  );
+  // Only use avatar_url if it exists and is not a placeholder, otherwise show initials
+  const avatarSrc = useMemo(() => {
+    console.log('[ProfileHeader] avatar_url:', profile.avatar_url);
+    // Only use the avatar if it's a real uploaded image (not null/undefined/placeholder)
+    return (profile.avatar_url && profile.avatar_url !== "/placeholder.svg") ? profile.avatar_url : undefined;
+  }, [profile.avatar_url]);
 
   return (
     <div className="flex flex-col md:flex-row p-6 bg-white border-b">
