@@ -305,14 +305,21 @@ const OtherPersonProfile: React.FC = () => {
         </div>
       </div>
 
-      {/* Item Details Popup - no edit controls for other person's items */}
+      {/* Item Details Popup - with profile info for other person's items */}
       {popupItem && (
         <ItemDetailsModal 
           item={popupItem}
           isOpen={!!popupItem}
           onClose={handlePopupClose}
           onLikeClick={handlePopupLikeClick}
-          showProfileInfo={false}
+          showProfileInfo={true}
+          preloadedUserProfile={{
+            name: profileData.name,
+            avatar_url: profileData.avatar_url || '',
+            username: profileData.name,
+            created_at: `${profileData.memberSince}-01-01T00:00:00.000Z`
+          }}
+          skipDataFetch={true}
         />
       )}
     </MainLayout>
