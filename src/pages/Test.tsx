@@ -392,6 +392,7 @@ const Test: React.FC = () => {
                             setSelectedLocation(value);
                           }}
                           initialValue={selectedLocation}
+                          className="hidden md:block"
                         />
                       )}
                       <Button
@@ -406,6 +407,19 @@ const Test: React.FC = () => {
                       </Button>
                     </div>
                   </div>
+                  
+                  {/* Location selector below tabs - only shown on mobile for matches tab */}
+                  {activeTab === 'matches' && (
+                    <div className="mb-4 md:hidden">
+                      <HeaderLocationSelector 
+                        onLocationChange={(value) => {
+                          console.log('Location changed to:', value);
+                          setSelectedLocation(value);
+                        }}
+                        initialValue={selectedLocation}
+                      />
+                    </div>
+                  )}
                   
                   
                    <TabsContent value="matches" className="flex-1 mt-0">
