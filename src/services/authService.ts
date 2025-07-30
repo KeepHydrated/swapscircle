@@ -59,32 +59,22 @@ export const signUp = async (email: string, password: string, name: string) => {
   }
 
   try {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        data: {
+          name: name
+        }
+      }
+    });
 
     if (error) {
       throw error;
     }
 
     if (data.user) {
-      try {
-        // Try to create a profile record with name as default username
-        const profileInsert = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            username: name, // Set username to the provided name
-            name: name, // Also save to name field for consistency
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
-
-        if (profileInsert.error) {
-          console.error('Error creating profile:', profileInsert.error);
-        }
-      } catch (profileError) {
-        console.error('Error creating profile:', profileError);
-      }
-
+      // The database trigger will automatically create the profile with the correct name
       toast.success('Account created successfully! Please check your email for verification.');
     }
   } catch (error: any) {
