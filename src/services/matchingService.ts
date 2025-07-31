@@ -115,6 +115,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       const isMyOwnItem = item.user_id === currentUserId; // Safety check
       
       console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}`);
+      console.log(`Debug - Comparison: item.user_id="${item.user_id}" === currentUserId="${currentUserId}" = ${item.user_id === currentUserId}`);
       
       return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem;
     });
