@@ -140,9 +140,9 @@ const Messages = () => {
                           
                           {exchangePair && (
                             <div className="flex items-center mb-1 text-xs">
-                              <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item1.name}</span>
-                              <span className="mx-1 text-blue-600">↔</span>
                               <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
+                              <span className="mx-1 text-blue-600">↔</span>
+                              <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item1.name}</span>
                             </div>
                           )}
                           
