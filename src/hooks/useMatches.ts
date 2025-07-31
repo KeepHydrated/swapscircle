@@ -19,7 +19,13 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
   useEffect(() => {
     async function fetchMatches() {
-      console.log('DEBUG: fetchMatches called with:', { selectedItem: selectedItem?.name, user: user?.id, location });
+      console.log('🔍 CURRENT USER DEBUG:', {
+        userId: user?.id,
+        userEmail: user?.email,
+        userObject: user,
+        selectedItemName: selectedItem?.name,
+        location
+      });
       
       if (!selectedItem || !user || !supabaseConfigured) {
         console.log('DEBUG: Early return from fetchMatches - missing required data');
