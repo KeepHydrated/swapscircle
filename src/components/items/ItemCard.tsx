@@ -62,13 +62,18 @@ const ItemCard: React.FC<ItemCardProps> = ({
     }
   };
 
+  const handleCardClick = () => {
+    console.log('🔍 ItemCard: Card clicked!', { id, name, onSelect: !!onSelect });
+    onSelect(id);
+  };
+
   return (
     <div className="flex flex-col w-full">
       <Card 
         className={`overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300 ${
           isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
         }`}
-        onClick={() => onSelect(id)}
+        onClick={handleCardClick}
       >
         <div className="relative">
           <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}>
