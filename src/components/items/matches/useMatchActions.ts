@@ -80,9 +80,10 @@ export const useMatchActions = (
     // eslint-disable-next-line
   }, [matches, user, supabaseConfigured]);
 
-  // Handle liking/unliking an item with mutual matching logic
   const handleLike = async (id: string) => {
-    console.log('DEBUG: handleLike called with id:', id);
+    console.log('🚀 handleLike called with id:', id);
+    console.log('🚀 User:', user?.id);
+    console.log('🚀 Supabase configured:', supabaseConfigured);
     
     if (!user) {
       toast.error('Please log in to like items');
