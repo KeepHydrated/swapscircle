@@ -536,6 +536,12 @@ export const isItemLiked = async (itemId: string): Promise<boolean> => {
       return false;
     }
 
+    console.log('🔍 CHECKING LIKED STATUS:', {
+      itemId,
+      currentUserId: session.user.id,
+      currentUserEmail: session.user.email
+    });
+
     const { data, error } = await supabase
       .from('liked_items')
       .select('id')
