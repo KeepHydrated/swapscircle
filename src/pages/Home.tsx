@@ -259,9 +259,12 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (userItems.length > 0 && !selectedUserItemId) {
       const firstItemId = userItems[0].id;
+      console.log('🔍 Home - Auto-selecting first item:', firstItemId);
       setSelectedUserItemId(firstItemId);
       // Store in localStorage so other pages can access it
       localStorage.setItem('selectedUserItemId', firstItemId);
+      // Dispatch custom event to notify other components/pages
+      window.dispatchEvent(new CustomEvent('selectedItemChanged'));
     }
   }, [userItems, selectedUserItemId]);
   
@@ -317,9 +320,12 @@ const Home: React.FC = () => {
 
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
+    console.log('🔍 Home - Setting selectedUserItemId:', itemId);
     setSelectedUserItemId(itemId);
     // Store in localStorage so other pages can access it
     localStorage.setItem('selectedUserItemId', itemId);
+    // Dispatch custom event to notify other components/pages
+    window.dispatchEvent(new CustomEvent('selectedItemChanged'));
   };
 
   // Handle opening item modal

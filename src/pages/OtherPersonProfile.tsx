@@ -175,12 +175,29 @@ const OtherPersonProfile: React.FC = () => {
   // State for selected item from homepage
   const [selectedItemIdFromHomepage, setSelectedItemIdFromHomepage] = useState<string | null>(null);
 
-  // Fetch the selected item from localStorage or sessionStorage
+  // Fetch the selected item from localStorage and keep it updated
   useEffect(() => {
-    const storedSelectedItem = localStorage.getItem('selectedUserItemId');
-    if (storedSelectedItem) {
-      setSelectedItemIdFromHomepage(storedSelectedItem);
-    }
+    const updateSelectedItem = () => {
+      const storedSelectedItem = localStorage.getItem('selectedUserItemId');
+      console.log('🔍 OtherPersonProfile - Retrieved selectedUserItemId from localStorage:', storedSelectedItem);
+      if (storedSelectedItem) {
+        setSelectedItemIdFromHomepage(storedSelectedItem);
+      }
+    };
+
+    // Update initially
+    updateSelectedItem();
+
+    // Listen for storage changes (when user selects different item on homepage)
+    window.addEventListener('storage', updateSelectedItem);
+
+    // Also listen for a custom event in case the change happens in the same tab
+    window.addEventListener('selectedItemChanged', updateSelectedItem);
+
+    return () => {
+      window.removeEventListener('storage', updateSelectedItem);
+      window.removeEventListener('selectedItemChanged', updateSelectedItem);
+    };
   }, []);
 
   // Handle liking an item - now with real backend calls and homepage context
@@ -216,6 +233,11 @@ const OtherPersonProfile: React.FC = () => {
         }
       } else {
         // Like the item with selected item context from homepage
+        console.log('🔍 OtherPersonProfile - Liking item with context:', { 
+          itemId: id, 
+          selectedItemIdFromHomepage,
+          willUseForMatching: selectedItemIdFromHomepage || 'NO CONTEXT - will use all items'
+        });
         const result = await likeItem(id, selectedItemIdFromHomepage || undefined);
         if (!result || !result.success) {
           // Revert on failure
