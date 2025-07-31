@@ -15,6 +15,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .eq('is_available', true) // Only show available items
       .eq('is_hidden', false); // Only show non-hidden items
 
+    console.log('Debug - Current user ID for exclusion:', currentUserId);
+
     // If location is not nationwide, get user profiles with location filter
     let userIdsToFilter: string[] = [];
     if (location !== 'nationwide') {
@@ -106,13 +108,15 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Filter out items that:
     // 1. Current user has rejected
     // 2. Item owners who have rejected the current user's selected item
+    // 3. SAFETY CHECK: Current user's own items (shouldn't happen but just in case)
     const availableItems = allItems.filter(item => {
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
       const ownerRejectedCurrentItem = rejectedByOwnerIds.has(item.user_id);
+      const isMyOwnItem = item.user_id === currentUserId; // Safety check
       
-      console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${ownerRejectedCurrentItem}`);
+      console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}`);
       
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem;
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem;
     });
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);
