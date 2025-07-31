@@ -45,9 +45,13 @@ const ItemCard: React.FC<ItemCardProps> = ({
   userProfile
 }) => {
   const handleHeartClick = (e: React.MouseEvent) => {
+    console.log('💖 ItemCard: Heart button clicked!', { id, onLike: !!onLike });
     e.stopPropagation();
     if (onLike) {
+      console.log('💖 ItemCard: Calling onLike with id:', id);
       onLike(id);
+    } else {
+      console.log('💖 ItemCard: No onLike handler provided!');
     }
   };
 
