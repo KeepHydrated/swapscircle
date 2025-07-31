@@ -89,7 +89,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
     console.log('Debug - Current user:', currentUserId);
     console.log('Debug - Selected item ID:', selectedItem.id);
-    console.log('Debug - All items user IDs:', allItems.map(item => `${item.id}: ${item.user_id}`));
+    console.log('Debug - Current user type:', typeof currentUserId);
+    console.log('Debug - All items user IDs:', allItems.map(item => `${item.id}: ${item.user_id} (type: ${typeof item.user_id})`));
     console.log('Debug - Liked items:', likedItems);
     console.log('Debug - Rejected items by current user:', rejectedItems);
     console.log('Debug - Users who rejected current item:', ownerRejections);
