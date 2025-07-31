@@ -232,13 +232,15 @@ const OtherPersonProfile: React.FC = () => {
           }));
         }
       } else {
-        // Like the item with selected item context from homepage
-        console.log('🔍 OtherPersonProfile - Liking item with context:', { 
+        // Get the most current selectedUserItemId from localStorage at the moment of liking
+        const currentSelectedItemId = localStorage.getItem('selectedUserItemId');
+        console.log('🔍 OtherPersonProfile - Liking item with FRESH context:', { 
           itemId: id, 
-          selectedItemIdFromHomepage,
-          willUseForMatching: selectedItemIdFromHomepage || 'NO CONTEXT - will use all items'
+          currentSelectedItemId,
+          staleSelectedItemIdFromHomepage: selectedItemIdFromHomepage,
+          willUseForMatching: currentSelectedItemId || 'NO CONTEXT - will use all items'
         });
-        const result = await likeItem(id, selectedItemIdFromHomepage || undefined);
+        const result = await likeItem(id, currentSelectedItemId || undefined);
         if (!result || !result.success) {
           // Revert on failure
           setLikedItems(prev => ({
