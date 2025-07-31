@@ -96,7 +96,8 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
       console.log('DEBUG: Found mutual match!', {
         otherUserId,
         otherUserItemId: likedItemId,
-        myItemId
+        myItemId,
+        totalMutualLikes: mutualLikes.length
       });
       
       return {
