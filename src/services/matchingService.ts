@@ -48,6 +48,17 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
     const { data: allItems, error: itemsError } = await itemsQuery;
 
+    console.log('Debug - Items query result:', {
+      totalItems: allItems?.length || 0,
+      itemsError,
+      sampleItems: allItems?.slice(0, 3).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        currentUserId,
+        isOwn: item.user_id === currentUserId
+      }))
+    });
+
     if (itemsError) {
       console.error('Error fetching items:', itemsError);
       return [];
