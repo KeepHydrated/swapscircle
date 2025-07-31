@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { updateTradeAcceptance, rejectTrade, fetchUserTradeConversations } from '@/services/tradeService';
+import { updateTradeAcceptance, rejectTrade, fetchUserTradeConversations, updateTradeStatus } from '@/services/tradeService';
 import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -106,10 +106,19 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 
   const acceptTradeMutation = useMutation({
     mutationFn: () => updateTradeAcceptance(selectedPair.partnerId, userRole, true),
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+      
+      // If other user already accepted, mark trade as completed
       if (otherUserAccepted) {
-        toast.success('Trade completed! Both parties have accepted.');
+        try {
+          await updateTradeStatus(selectedPair.partnerId, 'completed');
+          queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+          toast.success('Trade completed! Both parties have accepted.');
+        } catch (error) {
+          console.error('Error completing trade:', error);
+          toast.error('Trade accepted but failed to mark as completed.');
+        }
       } else {
         toast.success('Trade accepted! Waiting for the other party to accept.');
       }

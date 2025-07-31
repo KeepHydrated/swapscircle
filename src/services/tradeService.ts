@@ -10,6 +10,9 @@ export interface TradeConversation {
   status: string;
   created_at: string;
   updated_at: string;
+  requester_accepted?: boolean;
+  owner_accepted?: boolean;
+  completed_at?: string;
   requester_item?: {
     id: string;
     name: string;
@@ -222,12 +225,19 @@ export const updateTradeAcceptance = async (conversationId: string, userRole: 'r
 
 export const updateTradeStatus = async (conversationId: string, status: 'accepted' | 'rejected' | 'completed') => {
   try {
+    const updateData: any = { 
+      status,
+      updated_at: new Date().toISOString()
+    };
+
+    // Add completed_at timestamp if status is completed
+    if (status === 'completed') {
+      updateData.completed_at = new Date().toISOString();
+    }
+
     const { data, error } = await supabase
       .from('trade_conversations')
-      .update({ 
-        status,
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('id', conversationId)
       .select('*')
       .single();
