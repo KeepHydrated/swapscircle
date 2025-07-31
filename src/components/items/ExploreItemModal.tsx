@@ -188,15 +188,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const mainImage = displayItem?.image || displayItem?.image_url || "";
   const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
   
-  console.log('MODAL DEBUG: Image data - imageUrls:', imageUrls);
-  console.log('MODAL DEBUG: Image data - mainImage:', mainImage);
-  console.log('MODAL DEBUG: Image data - allImages:', allImages);
-  console.log('MODAL DEBUG: Image data - allImagesLength:', allImages.length);
-  console.log('MODAL DEBUG: Image data - displayItem.image_urls:', displayItem?.image_urls);
-  console.log('MODAL DEBUG: Image data - displayItem.image:', displayItem?.image);
-  console.log('MODAL DEBUG: Image data - displayItem.image_url:', displayItem?.image_url);
-  console.log('MODAL DEBUG: Price range - displayItem.price_range_min:', displayItem?.price_range_min);
-  console.log('MODAL DEBUG: Price range - displayItem.price_range_max:', displayItem?.price_range_max);
 
   const [slide, setSlide] = React.useState(0);
 

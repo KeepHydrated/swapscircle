@@ -19,7 +19,7 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   const [userLocation, setUserLocation] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
-  console.log('DEBUG: HeaderLocationSelector onLocationChange prop:', onLocationChange);
+  
 
   // Fetch user's saved location
   useEffect(() => {
@@ -41,16 +41,9 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   }, []);
 
   const handleLocationSelect = (location: string) => {
-    console.log('Location changed to:', location);
     setSelectedLocation(location);
-    console.log('DEBUG: onLocationChange exists?', !!onLocationChange);
-    console.log('DEBUG: onLocationChange type:', typeof onLocationChange);
     if (onLocationChange) {
-      console.log('DEBUG: About to call onLocationChange with:', location);
       onLocationChange(location);
-      console.log('DEBUG: Called onLocationChange successfully');
-    } else {
-      console.log('DEBUG: onLocationChange is null/undefined');
     }
     setIsOpen(false);
   };
