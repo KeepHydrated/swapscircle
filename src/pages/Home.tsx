@@ -307,7 +307,7 @@ const Home: React.FC = () => {
   
   // Get matches for selected item (real matches from DB)
   console.log('DEBUG: About to call useMatches with selectedLocation:', selectedLocation);
-  const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
+  const { matches: dbMatches, loading: matchesLoading, error: matchesError, refreshMatches } = useMatches(selectedUserItem, selectedLocation);
 
   // Use only real matches from database
   const matches = selectedUserItem ? dbMatches : [];
@@ -412,6 +412,7 @@ const Home: React.FC = () => {
                         selectedItemName={selectedUserItem.name}
                         onUndoAvailable={handleMatchesUndoAvailable}
                         loading={matchesLoading}
+                        onRefreshMatches={refreshMatches}
                       />
                     ) : (
                       <div className="h-full flex flex-col">

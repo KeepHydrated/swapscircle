@@ -13,13 +13,15 @@ interface MatchesProps {
   selectedItemName: string;
   onUndoAvailable?: (available: boolean, undoFn: (() => void) | null) => void;
   loading?: boolean; // Add loading prop to prevent flashing
+  onRefreshMatches?: () => void;
 }
 
 const Matches: React.FC<MatchesProps> = ({
   matches,
   selectedItemName,
   onUndoAvailable,
-  loading = false
+  loading = false,
+  onRefreshMatches
 }) => {
   // Get match actions from our custom hook
   const {
@@ -34,7 +36,7 @@ const Matches: React.FC<MatchesProps> = ({
     handlePopupLikeClick,
     handleClosePopup,
     setSelectedMatch
-  } = useMatchActions(matches);
+  } = useMatchActions(matches, onRefreshMatches);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {

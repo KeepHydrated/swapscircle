@@ -27,7 +27,8 @@ export interface UseMatchActionsResult {
 }
 
 export const useMatchActions = (
-  matches: MatchItem[]
+  matches: MatchItem[],
+  onRefreshMatches?: () => void
 ): UseMatchActionsResult => {
   const { user, supabaseConfigured } = useAuth();
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
@@ -154,6 +155,11 @@ export const useMatchActions = (
         
         if (result) {
           toast.success('Item removed from matches');
+          // Refresh matches to apply bidirectional filtering
+          if (onRefreshMatches) {
+            console.log('DEBUG: Calling onRefreshMatches after successful rejection');
+            setTimeout(() => onRefreshMatches(), 500); // Small delay to ensure DB is updated
+          }
         } else {
           // Revert optimistic update on error
           setRemovedItems(prev => prev.filter(itemId => itemId !== id));

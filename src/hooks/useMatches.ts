@@ -10,7 +10,13 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { user, supabaseConfigured } = useAuth();
+
+  const refreshMatches = () => {
+    console.log('DEBUG: Manual refresh triggered');
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     async function fetchMatches() {
@@ -49,45 +55,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
     }
 
     fetchMatches();
-    
-    // Set up real-time subscription to refresh when any items or rejections change
-    const itemsChannel = supabase
-      .channel('matches-changes-items')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'items'
-        },
-        (payload) => {
-          console.log('Items table changed, refetching matches...', payload);
-          fetchMatches();
-        }
-      )
-      .subscribe();
+  }, [selectedItem, user, supabaseConfigured, location, refreshTrigger]);
 
-    const rejectionsChannel = supabase
-      .channel('matches-changes-rejections')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'rejections'
-        },
-        (payload) => {
-          console.log('Rejections table changed, refetching matches...', payload);
-          fetchMatches();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(itemsChannel);
-      supabase.removeChannel(rejectionsChannel);
-    };
-  }, [selectedItem, user, supabaseConfigured, location]);
-
-  return { matches, loading, error };
+  return { matches, loading, error, refreshMatches };
 }
