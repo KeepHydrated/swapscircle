@@ -179,7 +179,7 @@ export const getMatches = async (userId?: string): Promise<MutualMatch[]> => {
     }
 
     const { data, error } = await supabase
-      .from('matches')
+      .from('mutual_matches')
       .select('*')
       .or(`user1_id.eq.${currentUserId},user2_id.eq.${currentUserId}`)
       .order('created_at', { ascending: false });
@@ -204,7 +204,7 @@ export const hasConfirmedMatch = async (userId1: string, userId2: string): Promi
 
   try {
     const { data, error } = await supabase
-      .from('matches')
+      .from('mutual_matches')
       .select('id')
       .or(`and(user1_id.eq.${userId1},user2_id.eq.${userId2}),and(user1_id.eq.${userId2},user2_id.eq.${userId1})`)
       .maybeSingle();
