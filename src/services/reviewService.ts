@@ -28,6 +28,7 @@ export const createReview = async (
         user_id: session.session.user.id,
         reviewer_id: session.session.user.id,
         reviewee_id: revieweeId,
+        trade_conversation_id: tradeConversationId,
         rating,
         comment
       })
