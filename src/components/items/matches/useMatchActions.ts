@@ -4,6 +4,7 @@ import { MatchItem } from '@/types/item';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { likeItem, unlikeItem, isItemLiked } from '@/services/authService';
+import { rejectItem, undoRejectItem } from '@/services/rejectionService';
 import { useAuth } from '@/context/AuthContext';
 
 // Helper to determine if a string is a valid UUID (for DB-backed items)
@@ -127,19 +128,39 @@ export const useMatchActions = (
   };
 
   // Handle rejecting an item (removing it from matches)
-  const handleReject = (id: string) => {
+  const handleReject = async (id: string) => {
+    if (!user) {
+      toast.error('Please log in to reject items');
+      return;
+    }
+
     // Track the action for undo (keep only last 3 actions)
     setLastActions(prev => {
       const newAction = { type: 'reject' as const, itemId: id };
       const updated = [newAction, ...prev];
       return updated.slice(0, 3); // Keep only last 3 actions
     });
+
+    // Optimistically update local state
     setRemovedItems(prev => [...prev, id]);
-    toast.success('Item removed from matches');
+
+    if (supabaseConfigured && isValidUUID(id)) {
+      try {
+        await rejectItem(id);
+        toast.success('Item removed from matches');
+      } catch (error) {
+        console.error('DB reject error:', error);
+        // Revert optimistic update on error
+        setRemovedItems(prev => prev.filter(itemId => itemId !== id));
+        toast.error('Failed to reject item');
+      }
+    } else {
+      toast.success('Item removed from matches');
+    }
   };
 
   // Handle undo last action
-  const handleUndo = () => {
+  const handleUndo = async () => {
     if (lastActions.length === 0) return;
 
     const actionToUndo = lastActions[0]; // Get most recent action
@@ -154,6 +175,16 @@ export const useMatchActions = (
     } else if (actionToUndo.type === 'reject') {
       // Undo reject action - restore item to matches
       setRemovedItems(prev => prev.filter(id => id !== actionToUndo.itemId));
+      
+      // Also undo in database if it was persisted
+      if (supabaseConfigured && isValidUUID(actionToUndo.itemId)) {
+        try {
+          await undoRejectItem(actionToUndo.itemId);
+        } catch (error) {
+          console.error('Error undoing rejection in database:', error);
+        }
+      }
+      
       toast.success('Reject action undone');
     }
 

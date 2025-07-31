@@ -65,6 +65,26 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error('Error fetching liked items:', likedError);
     }
 
+    // Get items that the current user has rejected
+    const { data: rejectedItems, error: rejectedError } = await supabase
+      .from('rejections')
+      .select('item_id')
+      .eq('user_id', currentUserId);
+
+    if (rejectedError) {
+      console.error('Error fetching rejected items:', rejectedError);
+    }
+
+    // Get items where the owner has rejected the current user's selected item
+    const { data: ownerRejections, error: ownerRejectionsError } = await supabase
+      .from('rejections')
+      .select('user_id')
+      .eq('item_id', selectedItem.id);
+
+    if (ownerRejectionsError) {
+      console.error('Error fetching owner rejections:', ownerRejectionsError);
+    }
+
     console.log('Debug - Current user:', currentUserId);
     console.log('Debug - Liked items:', likedItems);
     console.log('Debug - Total items before filtering:', allItems.length);
@@ -72,9 +92,22 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
     console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
 
-    // Don't filter out liked items - allow re-liking the same item
-    const availableItems = allItems; // Show all items from other users
-    console.log('Debug - Available items after filtering:', availableItems.length);
+    // Filter out rejected items from both sides
+    const rejectedItemIds = new Set(rejectedItems?.map(item => item.item_id) || []);
+    const rejectedByOwnerIds = new Set(ownerRejections?.map(item => item.user_id) || []);
+    
+    console.log('Debug - Rejected item IDs:', Array.from(rejectedItemIds));
+    console.log('Debug - Users who rejected current item:', Array.from(rejectedByOwnerIds));
+
+    // Filter out items that:
+    // 1. Current user has rejected
+    // 2. Item owners who have rejected the current user's selected item
+    const availableItems = allItems.filter(item => 
+      !rejectedItemIds.has(item.id) && // Not rejected by current user
+      !rejectedByOwnerIds.has(item.user_id) // Owner hasn't rejected current user's item
+    );
+    
+    console.log('Debug - Available items after filtering rejections:', availableItems.length);
 
     const matches: Array<MatchItem & { matchScore: number }> = [];
 
