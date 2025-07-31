@@ -144,18 +144,22 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       let matchScore = 0;
       let isMatch = false;
 
-      // Check if this other item matches what the current user is looking for
+      // BIDIRECTIONAL MATCHING: Check both directions for interest
+      
+      // Direction 1: Does the other item match what the current user is looking for?
+      let currentUserInterested = false;
+      
       if (selectedItem.lookingForCategories && selectedItem.lookingForCategories.length > 0) {
         if (selectedItem.lookingForCategories.includes(otherItem.category)) {
-          matchScore += 3; // High score for category match
-          isMatch = true;
+          matchScore += 3;
+          currentUserInterested = true;
         }
       }
 
       if (selectedItem.lookingForConditions && selectedItem.lookingForConditions.length > 0) {
         if (selectedItem.lookingForConditions.includes(otherItem.condition)) {
-          matchScore += 2; // Medium score for condition match
-          isMatch = true;
+          matchScore += 2;
+          currentUserInterested = true;
         }
       }
 
@@ -167,25 +171,27 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         
         for (const keyword of lookingForKeywords) {
           if (keyword.length > 2 && (itemName.includes(keyword) || itemDescription.includes(keyword))) {
-            matchScore += 1; // Lower score for keyword matches
-            isMatch = true;
+            matchScore += 1;
+            currentUserInterested = true;
             break;
           }
         }
       }
 
-      // For mutual matching: Check if the other user is looking for what we're offering
+      // Direction 2: Does the current user's item match what the other user is looking for?
+      let otherUserInterested = false;
+      
       if (otherItem.looking_for_categories && otherItem.looking_for_categories.length > 0) {
         if (otherItem.looking_for_categories.includes(selectedItem.category)) {
-          matchScore += 5; // Very high score for mutual interest
-          isMatch = true;
+          matchScore += 5;
+          otherUserInterested = true;
         }
       }
 
       if (otherItem.looking_for_conditions && otherItem.looking_for_conditions.length > 0) {
         if (otherItem.looking_for_conditions.includes(selectedItem.condition)) {
-          matchScore += 3; // High score for mutual condition interest
-          isMatch = true;
+          matchScore += 3;
+          otherUserInterested = true;
         }
       }
 
@@ -197,12 +203,23 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         
         for (const keyword of otherLookingForKeywords) {
           if (keyword.length > 2 && (ourItemName.includes(keyword) || ourItemDescription.includes(keyword))) {
-            matchScore += 2; // Medium score for mutual keyword interest
-            isMatch = true;
+            matchScore += 2;
+            otherUserInterested = true;
             break;
           }
         }
       }
+
+      // BIDIRECTIONAL LOGIC: Show match if EITHER user is interested in the other's item
+      // This ensures both users see each other's items when there's mutual potential
+      isMatch = currentUserInterested || otherUserInterested;
+
+      // Add bonus score for mutual interest
+      if (currentUserInterested && otherUserInterested) {
+        matchScore += 10; // Huge bonus for mutual interest
+      }
+
+      console.log(`Debug - Item ${otherItem.id}: currentUserInterested=${currentUserInterested}, otherUserInterested=${otherUserInterested}, isMatch=${isMatch}, score=${matchScore}`);
 
       // If there's any match, add to results
       if (isMatch) {
