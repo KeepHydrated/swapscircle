@@ -3,6 +3,7 @@ import React from 'react';
 import { Heart, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import MatchActionSelector from './matches/MatchActionSelector';
 
 // ADD prop showLikeButton to show heart in explore
 interface ItemCardProps {
@@ -13,8 +14,8 @@ interface ItemCardProps {
   isMatch?: boolean;
   liked?: boolean;
   onSelect: (id: string) => void;
-  onLike?: (id: string) => void;
-  onReject?: (id: string) => void;
+  onLike?: (id: string, global?: boolean) => void;
+  onReject?: (id: string, global?: boolean) => void;
   showLikeButton?: boolean;
   compact?: boolean;
   disableLike?: boolean;
@@ -44,21 +45,34 @@ const ItemCard: React.FC<ItemCardProps> = ({
   tags,
   userProfile
 }) => {
-  const handleHeartClick = (e: React.MouseEvent) => {
-    console.log('💖 ItemCard: Heart button clicked!', { id, onLike: !!onLike });
+  const handleHeartClick = (e: React.MouseEvent, global?: boolean) => {
+    console.log('💖 ItemCard: Heart button clicked!', { id, onLike: !!onLike, global });
     e.stopPropagation();
     if (onLike) {
-      console.log('💖 ItemCard: Calling onLike with id:', id);
-      onLike(id);
+      console.log('💖 ItemCard: Calling onLike with id:', id, 'global:', global);
+      onLike(id, global);
     } else {
       console.log('💖 ItemCard: No onLike handler provided!');
     }
   };
 
-  const handleRejectClick = (e: React.MouseEvent) => {
+  const handleRejectClick = (e: React.MouseEvent, global?: boolean) => {
     e.stopPropagation();
     if (onReject) {
-      onReject(id);
+      onReject(id, global);
+    }
+  };
+
+  // Wrapper functions for MatchActionSelector
+  const handleSelectorLike = (itemId: string, global?: boolean) => {
+    if (onLike) {
+      onLike(itemId, global);
+    }
+  };
+
+  const handleSelectorReject = (itemId: string, global?: boolean) => {
+    if (onReject) {
+      onReject(itemId, global);
     }
   };
 
@@ -98,29 +112,43 @@ const ItemCard: React.FC<ItemCardProps> = ({
               </AvatarFallback>
             </Avatar>
             {(showLikeButton || isMatch) && !disableLike && (
-              <div className="absolute top-1.5 right-1.5 z-10 flex gap-1">
-                {/* Reject button (X) - show for matches or when onReject is provided */}
-                {(isMatch || (showLikeButton && onReject)) && onReject && (
-                  <button
-                    className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                    aria-label="Reject item"
-                    onClick={handleRejectClick}
-                  >
-                    <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
-                  </button>
-                )}
-                
-                {/* Like button (Heart) */}
-                <button
-                  className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                  aria-label="Like item"
-                  onClick={handleHeartClick}
-                >
-                  <Heart 
-                    className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
-                    fill={liked ? "red" : "none"}
+              <div className="absolute top-1.5 right-1.5 z-10">
+                {/* Use MatchActionSelector for match items */}
+                {isMatch && onLike && onReject ? (
+                  <MatchActionSelector
+                    itemId={id}
+                    liked={liked}
+                    onLike={handleSelectorLike}
+                    onReject={handleSelectorReject}
+                    compact={compact}
                   />
-                </button>
+                ) : (
+                  /* Fallback to simple buttons for non-match items */
+                  <div className="flex gap-1">
+                    {/* Reject button (X) - show for matches or when onReject is provided */}
+                    {(isMatch || (showLikeButton && onReject)) && onReject && (
+                      <button
+                        className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                        aria-label="Reject item"
+                        onClick={(e) => handleRejectClick(e)}
+                      >
+                        <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
+                      </button>
+                    )}
+                    
+                    {/* Like button (Heart) */}
+                    <button
+                      className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                      aria-label="Like item"
+                      onClick={(e) => handleHeartClick(e)}
+                    >
+                      <Heart 
+                        className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
+                        fill={liked ? "red" : "none"}
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

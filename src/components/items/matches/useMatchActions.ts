@@ -17,8 +17,8 @@ export interface UseMatchActionsResult {
   removedItems: string[];
   selectedMatch: MatchItem | null;
   lastActions: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[];
-  handleLike: (id: string) => void;
-  handleReject: (id: string) => void;
+  handleLike: (id: string, global?: boolean) => void;
+  handleReject: (id: string, global?: boolean) => void;
   handleUndo: () => void;
   handleOpenModal: (id: string) => void;
   handlePopupLikeClick: (item: MatchItem) => void;
@@ -99,7 +99,7 @@ export const useMatchActions = (
     // eslint-disable-next-line
   }, [matches, user, supabaseConfigured, selectedItemId, stateKey]);
 
-  const handleLike = async (id: string) => {
+  const handleLike = async (id: string, global?: boolean) => {
     console.log('🚀 handleLike called with id:', id);
     console.log('🚀 User:', user?.id);
     console.log('🚀 Supabase configured:', supabaseConfigured);
@@ -125,14 +125,20 @@ export const useMatchActions = (
       try {
         let result;
         if (isCurrentlyLiked) {
-          result = await unlikeItem(id, selectedItemId);
+          result = await unlikeItem(id, global ? undefined : selectedItemId);
           console.log('🔄 Unlike result:', result);
         } else {
-          result = await likeItem(id, selectedItemId);
+          result = await likeItem(id, global ? undefined : selectedItemId);
           console.log('🔄 Like result:', result);
         }
 
         // Keep the optimistic update - no need to reload from DB
+        
+        // Show appropriate success message
+        if (!isCurrentlyLiked) {
+          const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
+          // Don't show like message if we're about to show match message
+        }
 
         // Handle mutual match result - check if result is an object with match data
         console.log('🔍 Checking mutual match result:', { result, isCurrentlyLiked });
@@ -153,6 +159,9 @@ export const useMatchActions = (
             }, 2000); // Give user time to see the success message
           } else {
             console.log('❌ No mutual match detected');
+            // Show like message since no match occurred
+            const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
+            toast.success(likeMessage);
           }
         } else {
           console.log('❌ Result check failed:', { 
@@ -162,6 +171,12 @@ export const useMatchActions = (
             successValue: result && 'success' in result ? result.success : 'N/A',
             isCurrentlyLiked 
           });
+          
+          // Show like message if no match occurred
+          if (!isCurrentlyLiked) {
+            const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
+            toast.success(likeMessage);
+          }
         }
       } catch (error) {
         console.error('DB like/unlike error:', error);
@@ -181,7 +196,7 @@ export const useMatchActions = (
   };
 
   // Handle rejecting an item (removing it from matches)
-  const handleReject = async (id: string) => {
+  const handleReject = async (id: string, global?: boolean) => {
     console.log('DEBUG: handleReject called with id:', id);
     
     if (!user) {
@@ -201,12 +216,13 @@ export const useMatchActions = (
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
-        console.log('DEBUG: About to call rejectItem for:', id, 'myItemId:', selectedItemId);
-        const result = await rejectItem(id, selectedItemId);
+        console.log('DEBUG: About to call rejectItem for:', id, 'myItemId:', global ? undefined : selectedItemId);
+        const result = await rejectItem(id, global ? undefined : selectedItemId);
         console.log('DEBUG: rejectItem result:', result);
         
         if (result) {
-          toast.success('Item removed from matches');
+          const message = global ? 'Item rejected for all your items' : 'Item removed from matches';
+          toast.success(message);
           // Refresh matches to apply bidirectional filtering
           if (onRefreshMatches) {
             setTimeout(() => onRefreshMatches(), 500); // Small delay to ensure DB is updated

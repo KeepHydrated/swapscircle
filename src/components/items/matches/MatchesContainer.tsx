@@ -10,8 +10,8 @@ interface MatchesContainerProps {
   displayedMatches: MatchItem[];
   likedItems: Record<string, boolean>;
   onOpenModal: (id: string) => void;
-  onLike: (id: string) => void;
-  onReject: (id: string) => void;
+  onLike: (id: string, global?: boolean) => void;
+  onReject: (id: string, global?: boolean) => void;
 }
 
 const MatchesContainer: React.FC<MatchesContainerProps> = ({

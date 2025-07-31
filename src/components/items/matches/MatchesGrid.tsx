@@ -7,8 +7,8 @@ import { MatchItem } from '@/types/item';
 interface MatchesGridProps {
   displayedMatches: MatchItem[];
   onOpenModal: (id: string) => void;
-  onLike: (id: string) => void;
-  onReject: (id: string) => void;
+  onLike: (id: string, global?: boolean) => void;
+  onReject: (id: string, global?: boolean) => void;
   likedItems: Record<string, boolean>;
   detailsRef: React.RefObject<HTMLDivElement>;
 }
@@ -37,8 +37,8 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
               isMatch={true}
               liked={likedItems[match.id] || match.liked}
               onSelect={onOpenModal}
-              onLike={onLike}
-              onReject={onReject}
+              onLike={(id, global) => onLike(id, global)}
+              onReject={(id, global) => onReject(id, global)}
               category={match.category}
               tags={match.tags}
               userProfile={match.userProfile}

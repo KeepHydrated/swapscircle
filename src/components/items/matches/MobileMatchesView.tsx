@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { MatchItem } from '@/types/item';
 import { SwipeCard } from '@/components/ui/swipe-card';
-import { Heart, X } from 'lucide-react';
+import { Heart, X, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface MobileMatchesViewProps {
   matches: MatchItem[];
   likedItems: Record<string, boolean>;
-  onLike: (id: string) => void;
-  onReject: (id: string) => void;
+  onLike: (id: string, global?: boolean) => void;
+  onReject: (id: string, global?: boolean) => void;
   onOpenModal: (id: string) => void;
 }
 
@@ -143,6 +144,49 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             </div>
           </div>
         </SwipeCard>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex gap-4 justify-center mt-4">
+        {/* Reject dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="lg" className="flex-1 max-w-32">
+              <X className="h-5 w-5 mr-2" />
+              Pass
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center" className="w-56">
+            <DropdownMenuItem onClick={() => { onReject(currentMatch.id, false); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
+              <User className="h-4 w-4 mr-2" />
+              Pass for selected item only
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { onReject(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
+              <Users className="h-4 w-4 mr-2" />
+              Pass for all my items
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Like dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="default" size="lg" className="flex-1 max-w-32">
+              <Heart className="h-5 w-5 mr-2" />
+              Like
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center" className="w-56">
+            <DropdownMenuItem onClick={() => { onLike(currentMatch.id, false); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
+              <User className="h-4 w-4 mr-2" />
+              Like for selected item only
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { onLike(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
+              <Users className="h-4 w-4 mr-2" />
+              Like for all my items
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
     </div>
