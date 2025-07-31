@@ -23,7 +23,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSwipeRight = () => {
+    console.log('📱 MOBILE: handleSwipeRight called, currentIndex:', currentIndex);
+    console.log('📱 MOBILE: current match:', matches[currentIndex]?.id);
     if (currentIndex < matches.length) {
+      console.log('📱 MOBILE: calling onLike with id:', matches[currentIndex].id);
       onLike(matches[currentIndex].id);
       setCurrentIndex(prev => prev + 1);
     }
