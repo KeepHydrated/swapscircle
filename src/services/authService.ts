@@ -363,10 +363,23 @@ export const likeItem = async (itemId: string) => {
     }
 
     // Check for mutual match
-    console.log('DEBUG: About to check mutual match for item:', itemId, 'current user:', currentUserId);
+    console.log('🔍 MUTUAL MATCH CHECK:', { currentUserId, itemId, itemOwner: 'will be determined' });
     const matchResult = await checkForMutualMatch(currentUserId, itemId);
     
+    console.log('🔍 MUTUAL MATCH RESULT:', {
+      isMatch: matchResult.isMatch,
+      matchData: matchResult.matchData,
+      willCreateConversation: matchResult.isMatch && matchResult.matchData ? 'YES' : 'NO'
+    });
+    
     if (matchResult.isMatch && matchResult.matchData) {
+      console.log('🚀 CREATING MUTUAL MATCH & CONVERSATION!', {
+        currentUserId,
+        otherUserId: matchResult.matchData.otherUserId,
+        myItemId: matchResult.matchData.myItemId,
+        otherUserItemId: matchResult.matchData.otherUserItemId
+      });
+      
       // Create the confirmed match
       const match = await createMatch(
         currentUserId,
@@ -376,12 +389,7 @@ export const likeItem = async (itemId: string) => {
       );
 
       if (match) {
-        console.log('DEBUG: Creating trade conversation for mutual match:', {
-          currentUserId,
-          otherUserId: matchResult.matchData.otherUserId,
-          myItemId: matchResult.matchData.myItemId,
-          otherUserItemId: matchResult.matchData.otherUserItemId
-        });
+        console.log('✅ MUTUAL MATCH CREATED:', match);
         
         // Create trade conversation for the mutual match
         const tradeConversation = await createTradeConversation(
@@ -391,7 +399,7 @@ export const likeItem = async (itemId: string) => {
           matchResult.matchData.otherUserItemId
         );
         
-        console.log('DEBUG: Trade conversation created:', tradeConversation);
+        console.log('✅ TRADE CONVERSATION CREATED:', tradeConversation);
 
         // Get item names for the notification
         const { data: myItem } = await supabase
