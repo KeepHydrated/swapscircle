@@ -67,6 +67,16 @@ const ItemCard: React.FC<ItemCardProps> = ({
     onSelect(id);
   };
 
+  const handleMouseDown = () => {
+    console.log('🔍 ItemCard: Mouse down detected!', { id, name });
+  };
+
+  const handleMouseUp = () => {
+    console.log('🔍 ItemCard: Mouse up detected!', { id, name });
+  };
+
+  console.log('🔍 ItemCard: Rendering card', { id, name, isSelected });
+
   return (
     <div className="flex flex-col w-full">
       <Card 
@@ -74,6 +84,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
           isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
         }`}
         onClick={handleCardClick}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        style={{ pointerEvents: 'auto', zIndex: 1 }}
       >
         <div className="relative">
           <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}>
