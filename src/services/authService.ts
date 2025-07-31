@@ -341,12 +341,13 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
     console.log('DEBUG: Current user ID:', currentUserId);
 
     // Skip the existing like check since we allow re-liking items for different matches
-    console.log('DEBUG: Inserting new like (allowing duplicates for different matches)...');
+    console.log('DEBUG: Inserting new like with selectedItemId:', selectedItemId);
     const { error } = await supabase
       .from('liked_items')
       .insert({
         user_id: currentUserId,
-        item_id: itemId
+        item_id: itemId,
+        my_item_id: selectedItemId || null // Include the specific item this like is from
       });
 
     console.log('DEBUG: Insert like result:', { error });
@@ -454,8 +455,8 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
   }
 };
 
-// New function to unlike an item
-export const unlikeItem = async (itemId: string) => {
+// New function to unlike an item for a specific item pair
+export const unlikeItem = async (itemId: string, selectedItemId?: string) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
     return false;
@@ -468,11 +469,19 @@ export const unlikeItem = async (itemId: string) => {
       return false;
     }
 
-    const { error } = await supabase
+    let query = supabase
       .from('liked_items')
       .delete()
       .eq('user_id', session.user.id)
       .eq('item_id', itemId);
+
+    if (selectedItemId) {
+      query = query.eq('my_item_id', selectedItemId);
+    } else {
+      query = query.is('my_item_id', null);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error('Error unliking item:', error);
@@ -532,8 +541,8 @@ export const fetchLikedItems = async () => {
   }
 };
 
-// New function to check if an item is liked by the current user
-export const isItemLiked = async (itemId: string): Promise<boolean> => {
+// New function to check if an item is liked by the current user for a specific item pair
+export const isItemLiked = async (itemId: string, selectedItemId?: string): Promise<boolean> => {
   if (!isSupabaseConfigured()) {
     return false;
   }
@@ -546,16 +555,26 @@ export const isItemLiked = async (itemId: string): Promise<boolean> => {
 
     console.log('🔍 CHECKING LIKED STATUS:', {
       itemId,
+      selectedItemId,
       currentUserId: session.user.id,
       currentUserEmail: session.user.email
     });
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('liked_items')
       .select('id')
       .eq('user_id', session.user.id)
-      .eq('item_id', itemId)
-      .maybeSingle();
+      .eq('item_id', itemId);
+
+    if (selectedItemId) {
+      // Check for likes specific to this item pair OR global likes (where my_item_id is null)
+      query = query.or(`my_item_id.eq.${selectedItemId},my_item_id.is.null`);
+    } else {
+      // If no specific item, only check global likes
+      query = query.is('my_item_id', null);
+    }
+
+    const { data, error } = await query.maybeSingle();
 
     if (error) {
       console.error('Error checking if item is liked:', error);

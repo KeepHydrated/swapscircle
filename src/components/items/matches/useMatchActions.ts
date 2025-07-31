@@ -58,9 +58,9 @@ export const useMatchActions = (
     for (const match of matches) {
       if (isValidUUID(match.id)) {
         try {
-          const liked = await isItemLiked(match.id);
+          const liked = await isItemLiked(match.id, selectedItemId);
           likedStatus[match.id] = liked;
-          console.log(`DEBUG: Item ${match.id} liked status: ${liked}`);
+          console.log(`DEBUG: Item ${match.id} liked status: ${liked} for selectedItem: ${selectedItemId}`);
         } catch (e) {
           likedStatus[match.id] = false;
           console.log(`DEBUG: Error checking liked status for ${match.id}:`, e);
@@ -78,7 +78,7 @@ export const useMatchActions = (
   useEffect(() => {
     loadLikedStatus();
     // eslint-disable-next-line
-  }, [matches, user, supabaseConfigured]);
+  }, [matches, user, supabaseConfigured, selectedItemId]);
 
   const handleLike = async (id: string) => {
     console.log('🚀 handleLike called with id:', id);
@@ -106,7 +106,7 @@ export const useMatchActions = (
       try {
         let result;
         if (isCurrentlyLiked) {
-          result = await unlikeItem(id);
+          result = await unlikeItem(id, selectedItemId);
           console.log('🔄 Unlike result:', result);
         } else {
           result = await likeItem(id, selectedItemId);
