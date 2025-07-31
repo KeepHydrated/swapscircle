@@ -50,7 +50,7 @@ const Matches: React.FC<MatchesProps> = ({
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
-  console.log('DEBUG: Matches filter results:', {
+  console.log('DEBUG: Matches filter results:', JSON.stringify({
     totalMatches: matches.length,
     removedItems,
     likedItems,
@@ -58,7 +58,7 @@ const Matches: React.FC<MatchesProps> = ({
     matchIds: matches.map(m => m.id),
     filteredOutByLikes: matches.filter(m => likedItems[m.id]).map(m => m.id),
     filteredOutByRemoved: matches.filter(m => removedItems.includes(m.id)).map(m => m.id)
-  });
+  }, null, 2));
 
   // Find current index in displayed matches
   const currentMatchIndex = selectedMatch 

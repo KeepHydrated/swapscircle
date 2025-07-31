@@ -70,7 +70,7 @@ export const useMatchActions = (
       }
     }
     
-    console.log('DEBUG: Final liked status:', likedStatus);
+    console.log('DEBUG: Final liked status:', JSON.stringify(likedStatus, null, 2));
     setLikedItems(likedStatus);
   };
 
