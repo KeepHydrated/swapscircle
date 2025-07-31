@@ -47,9 +47,9 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Filter out only removed items (keep liked items visible)
+  // Filter out both removed and liked items
   const displayedMatches = matches.filter(match => 
-    !removedItems.includes(match.id)
+    !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
   console.log('DEBUG: Matches filter results:', JSON.stringify({
