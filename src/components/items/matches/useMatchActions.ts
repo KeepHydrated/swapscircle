@@ -32,11 +32,30 @@ export const useMatchActions = (
   selectedItemId?: string
 ): UseMatchActionsResult => {
   const { user, supabaseConfigured } = useAuth();
-  const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
-  const [removedItems, setRemovedItems] = useState<string[]>([]);
+  // Key the state to selectedItemId to ensure isolation between different items
+  const stateKey = selectedItemId || 'default';
+  const [stateByItem, setStateByItem] = useState<Record<string, {
+    likedItems: Record<string, boolean>;
+    removedItems: string[];
+    lastActions: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[];
+  }>>({});
+  
+  const currentState = stateByItem[stateKey] || {
+    likedItems: {},
+    removedItems: [],
+    lastActions: []
+  };
+
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
-  const [lastActions, setLastActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
   const navigate = useNavigate();
+
+  // Helper function to update state for current item
+  const updateCurrentState = (updates: Partial<typeof currentState>) => {
+    setStateByItem(prev => ({
+      ...prev,
+      [stateKey]: { ...currentState, ...updates }
+    }));
+  };
 
   // Load actual liked status from database for this specific matching session
   const loadLikedStatus = async () => {
@@ -48,7 +67,7 @@ export const useMatchActions = (
       matches.forEach(match => {
         initialLikedStatus[match.id] = false;
       });
-      setLikedItems(initialLikedStatus);
+      updateCurrentState({ likedItems: initialLikedStatus });
       return;
     }
     
@@ -72,13 +91,13 @@ export const useMatchActions = (
     }
     
     console.log('DEBUG: Final liked status:', JSON.stringify(likedStatus, null, 2));
-    setLikedItems(likedStatus);
+    updateCurrentState({ likedItems: likedStatus });
   };
 
   useEffect(() => {
     loadLikedStatus();
     // eslint-disable-next-line
-  }, [matches, user, supabaseConfigured, selectedItemId]);
+  }, [matches, user, supabaseConfigured, selectedItemId, stateKey]);
 
   const handleLike = async (id: string) => {
     console.log('🚀 handleLike called with id:', id);
@@ -90,18 +109,18 @@ export const useMatchActions = (
       return;
     }
 
-    const isCurrentlyLiked = likedItems[id];
+    const isCurrentlyLiked = currentState.likedItems[id];
 
     // Track the action for undo (keep only last 3 actions)
-    setLastActions(prev => {
-      const newAction = { type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked };
-      const updated = [newAction, ...prev];
-      return updated.slice(0, 3); // Keep only last 3 actions
-    });
+    const newAction = { type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked };
+    const updatedActions = [newAction, ...currentState.lastActions].slice(0, 3);
+    updateCurrentState({ lastActions: updatedActions });
 
     if (supabaseConfigured && isValidUUID(id)) {
       // Optimistically update
-      setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
+      updateCurrentState({ 
+        likedItems: { ...currentState.likedItems, [id]: !isCurrentlyLiked } 
+      });
 
       try {
         let result;
@@ -147,13 +166,17 @@ export const useMatchActions = (
       } catch (error) {
         console.error('DB like/unlike error:', error);
         // Revert optimistic update on error
-        setLikedItems(prev => ({ ...prev, [id]: isCurrentlyLiked }));
+        updateCurrentState({ 
+          likedItems: { ...currentState.likedItems, [id]: isCurrentlyLiked } 
+        });
       }
       return;
     }
 
     // For mock/demo items (non-UUID): do only local toggle
-    setLikedItems(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
+    updateCurrentState({ 
+      likedItems: { ...currentState.likedItems, [id]: !isCurrentlyLiked } 
+    });
     toast.info('Like/unlike works only for real items (not demo items)!');
   };
 
@@ -167,14 +190,14 @@ export const useMatchActions = (
     }
 
     // Track the action for undo (keep only last 3 actions)
-    setLastActions(prev => {
-      const newAction = { type: 'reject' as const, itemId: id };
-      const updated = [newAction, ...prev];
-      return updated.slice(0, 3); // Keep only last 3 actions
-    });
+    const newAction = { type: 'reject' as const, itemId: id };
+    const updatedActions = [newAction, ...currentState.lastActions].slice(0, 3);
+    updateCurrentState({ lastActions: updatedActions });
 
     // Optimistically update local state
-    setRemovedItems(prev => [...prev, id]);
+    updateCurrentState({ 
+      removedItems: [...currentState.removedItems, id] 
+    });
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
@@ -190,13 +213,17 @@ export const useMatchActions = (
           }
         } else {
           // Revert optimistic update on error
-          setRemovedItems(prev => prev.filter(itemId => itemId !== id));
+          updateCurrentState({ 
+            removedItems: currentState.removedItems.filter(itemId => itemId !== id) 
+          });
           toast.error('Failed to reject item');
         }
       } catch (error) {
         console.error('DB reject error:', error);
         // Revert optimistic update on error
-        setRemovedItems(prev => prev.filter(itemId => itemId !== id));
+        updateCurrentState({ 
+          removedItems: currentState.removedItems.filter(itemId => itemId !== id) 
+        });
         toast.error('Failed to reject item');
       }
     } else {
@@ -206,20 +233,21 @@ export const useMatchActions = (
 
   // Handle undo last action
   const handleUndo = async () => {
-    if (lastActions.length === 0) return;
+    if (currentState.lastActions.length === 0) return;
 
-    const actionToUndo = lastActions[0]; // Get most recent action
+    const actionToUndo = currentState.lastActions[0]; // Get most recent action
 
     if (actionToUndo.type === 'like') {
       // Undo like action - revert to previous liked state
-      setLikedItems(prev => ({ 
-        ...prev, 
-        [actionToUndo.itemId]: actionToUndo.wasLiked || false 
-      }));
+      updateCurrentState({ 
+        likedItems: { ...currentState.likedItems, [actionToUndo.itemId]: actionToUndo.wasLiked || false } 
+      });
       toast.success('Like action undone');
     } else if (actionToUndo.type === 'reject') {
       // Undo reject action - restore item to matches
-      setRemovedItems(prev => prev.filter(id => id !== actionToUndo.itemId));
+      updateCurrentState({ 
+        removedItems: currentState.removedItems.filter(id => id !== actionToUndo.itemId) 
+      });
       
       // Also undo in database if it was persisted
       if (supabaseConfigured && isValidUUID(actionToUndo.itemId)) {
@@ -234,7 +262,9 @@ export const useMatchActions = (
     }
 
     // Remove the undone action from the list
-    setLastActions(prev => prev.slice(1));
+    updateCurrentState({ 
+      lastActions: currentState.lastActions.slice(1) 
+    });
   };
 
   const handleOpenModal = (id: string) => {
@@ -254,10 +284,10 @@ export const useMatchActions = (
   };
 
   return {
-    likedItems,
-    removedItems,
+    likedItems: currentState.likedItems,
+    removedItems: currentState.removedItems,
     selectedMatch,
-    lastActions,
+    lastActions: currentState.lastActions,
     handleLike,
     handleReject,
     handleUndo,
