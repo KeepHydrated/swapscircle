@@ -28,7 +28,8 @@ export interface UseMatchActionsResult {
 
 export const useMatchActions = (
   matches: MatchItem[],
-  onRefreshMatches?: () => void
+  onRefreshMatches?: () => void,
+  selectedItemId?: string
 ): UseMatchActionsResult => {
   const { user, supabaseConfigured } = useAuth();
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
@@ -159,8 +160,8 @@ export const useMatchActions = (
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
-        console.log('DEBUG: About to call rejectItem for:', id);
-        const result = await rejectItem(id);
+        console.log('DEBUG: About to call rejectItem for:', id, 'myItemId:', selectedItemId);
+        const result = await rejectItem(id, selectedItemId);
         console.log('DEBUG: rejectItem result:', result);
         
         if (result) {
@@ -205,7 +206,7 @@ export const useMatchActions = (
       // Also undo in database if it was persisted
       if (supabaseConfigured && isValidUUID(actionToUndo.itemId)) {
         try {
-          await undoRejectItem(actionToUndo.itemId);
+          await undoRejectItem(actionToUndo.itemId, selectedItemId);
         } catch (error) {
           console.error('Error undoing rejection in database:', error);
         }

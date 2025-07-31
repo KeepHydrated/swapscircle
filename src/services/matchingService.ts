@@ -7,6 +7,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
   }
 
   try {
+    // Get current user for authentication
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      console.error('Error getting user:', userError);
+      return [];
+    }
+
     // Get all available and visible items from other users - EXPLICIT EXCLUSION
     console.log('Debug - Building query to exclude current user:', currentUserId);
     
@@ -71,10 +78,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
-    if (!allItems || allItems.length === 0) {
-      return [];
-    }
-
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
       .from('liked_items')
@@ -85,76 +88,83 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error('Error fetching liked items:', likedError);
     }
 
-    // Get items that the current user has rejected
+    // Get items rejected by the current user for this specific item
     const { data: rejectedItems, error: rejectedError } = await supabase
       .from('rejections')
       .select('item_id')
-      .eq('user_id', currentUserId);
+      .eq('user_id', user.id)
+      .or(`my_item_id.eq.${selectedItem.id},my_item_id.is.null`); // Include both item-specific and global rejections
 
     if (rejectedError) {
       console.error('Error fetching rejected items:', rejectedError);
     }
 
-    // Get items where users have rejected the current user's selected item
-    const { data: ownerRejections, error: ownerRejectionsError } = await supabase
+    // Get items where users have rejected the current user's selected item for their items
+    const { data: ownerRejections, error: ownerRejectedError } = await supabase
       .from('rejections')
-      .select('user_id')
+      .select('user_id, my_item_id')
       .eq('item_id', selectedItem.id);
 
-    if (ownerRejectionsError) {
-      console.error('Error fetching owner rejections:', ownerRejectionsError);
+    if (ownerRejectedError) {
+      console.error('Error fetching owner rejections:', ownerRejectedError);
     }
 
-    console.log('Debug - Current user:', currentUserId);
-    console.log('Debug - Selected item ID:', selectedItem.id);
-    console.log('Debug - Current user type:', typeof currentUserId);
-    console.log('Debug - All items user IDs:', allItems.map(item => `${item.id}: ${item.user_id} (type: ${typeof item.user_id})`));
-    console.log('Debug - Liked items:', likedItems);
-    console.log('Debug - Rejected items by current user:', rejectedItems);
+    console.log('Debug - Rejected items by current user for selected item:', rejectedItems);
     console.log('Debug - Users who rejected current item:', ownerRejections);
-    console.log('Debug - Total items before filtering:', allItems.length);
 
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
     console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
 
     // Filter out rejected items from both sides
     const rejectedItemIds = new Set(rejectedItems?.map(item => item.item_id) || []);
-    const rejectedByOwnerIds = new Set(ownerRejections?.map(item => item.user_id) || []);
     
+    // Create a map of rejections: user_id -> Set of item_ids they rejected us for
+    const rejectedByOwnerMap = new Map<string, Set<string>>();
+    ownerRejections?.forEach(rejection => {
+      if (!rejectedByOwnerMap.has(rejection.user_id)) {
+        rejectedByOwnerMap.set(rejection.user_id, new Set());
+      }
+      if (rejection.my_item_id) {
+        rejectedByOwnerMap.get(rejection.user_id)!.add(rejection.my_item_id);
+      } else {
+        // Global rejection - mark with special key
+        rejectedByOwnerMap.get(rejection.user_id)!.add('__GLOBAL__');
+      }
+    });
+
     console.log('Debug - Rejected item IDs (by current user):', Array.from(rejectedItemIds));
-    console.log('Debug - Users who rejected current item:', Array.from(rejectedByOwnerIds));
+    console.log('Debug - Rejection map (by owners):', rejectedByOwnerMap);
 
     // Filter out items that:
-    // 1. Current user has rejected  
-    // 2. Item owners who have rejected the current user's selected item
+    // 1. Current user has rejected for this specific item
+    // 2. Item owners who have rejected the current user's selected item for their specific items
     const availableItems = allItems.filter(item => {
+      // 1. Items rejected by the current user for this specific item or globally
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
-      const ownerRejectedCurrentItem = rejectedByOwnerIds.has(item.user_id);
-      const isMyOwnItem = item.user_id === currentUserId; // Safety check
       
-      if (item.user_id === currentUserId || (item.user_id && currentUserId && item.user_id.toString().trim() === currentUserId.toString().trim())) {
-        console.log(`🚨 DEBUG - FOUND MY OWN ITEM that should be excluded:`, {
-          itemId: item.id,
-          itemUserId: item.user_id,
-          currentUserId: currentUserId,
-          strictEqual: item.user_id === currentUserId,
-          stringEqual: item.user_id.toString() === currentUserId.toString(),
-          trimmedEqual: item.user_id.toString().trim() === currentUserId.toString().trim()
-        });
-      }
+      // 2. Item owners who have rejected the current user's selected item for this specific item or globally
+      const ownerRejections = rejectedByOwnerMap.get(item.user_id);
+      const ownerRejectedCurrentItem = ownerRejections && 
+        (ownerRejections.has(item.id) || ownerRejections.has('__GLOBAL__'));
       
-      console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}`);
-      console.log(`Debug - DETAILED comparison for item ${item.id}:`);
-      console.log(`  item.user_id: "${item.user_id}" (type: ${typeof item.user_id}, length: ${item.user_id?.length})`);
-      console.log(`  currentUserId: "${currentUserId}" (type: ${typeof currentUserId}, length: ${currentUserId?.length})`);
-      console.log(`  Strict equality: ${item.user_id === currentUserId}`);
-      console.log(`  Loose equality: ${item.user_id == currentUserId}`);
+      // 3. Don't show user's own items
+      const isMyOwnItem = item.user_id === user.id;
       
+      // 4. Don't show items from the same user as selected item (but this should be rare)
+      const isSameUser = item.user_id === selectedItem.user_id;
+
+      console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}`);
+
       // Enhanced safety check with multiple comparison methods
-      const isSameUser = item.user_id === currentUserId || 
-                        (item.user_id && currentUserId && item.user_id.toString().trim() === currentUserId.toString().trim());
-      
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isSameUser;
+      const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
+                        (item.user_id && selectedItem.user_id && item.user_id.toString().trim() === selectedItem.user_id.toString().trim());
+
+      // Include items that are:
+      // - NOT rejected by current user for this specific item
+      // - NOT from owners who rejected current user's item for this specific item  
+      // - NOT the user's own items
+      // - NOT from the same user as the selected item
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected;
     });
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);

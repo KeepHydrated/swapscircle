@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export const rejectItem = async (itemId: string): Promise<boolean> => {
-  console.log('DEBUG: rejectItem called with itemId:', itemId);
+export const rejectItem = async (itemId: string, myItemId?: string): Promise<boolean> => {
+  console.log('DEBUG: rejectItem called with itemId:', itemId, 'myItemId:', myItemId);
   
   try {
     const user = await supabase.auth.getUser();
@@ -16,7 +16,8 @@ export const rejectItem = async (itemId: string): Promise<boolean> => {
       .from('rejections')
       .insert({
         item_id: itemId,
-        user_id: user.data.user.id
+        user_id: user.data.user.id,
+        my_item_id: myItemId || null // If no myItemId provided, it's a global rejection
       });
 
     if (error) {
@@ -24,7 +25,7 @@ export const rejectItem = async (itemId: string): Promise<boolean> => {
       return false;
     }
 
-    console.log('DEBUG: Successfully rejected item:', itemId);
+    console.log('DEBUG: Successfully rejected item:', itemId, 'for my item:', myItemId);
     return true;
   } catch (error) {
     console.error('DEBUG: Exception in rejectItem:', error);
@@ -32,12 +33,25 @@ export const rejectItem = async (itemId: string): Promise<boolean> => {
   }
 };
 
-export const getUserRejectedItems = async (): Promise<string[]> => {
+export const getUserRejectedItems = async (myItemId?: string): Promise<string[]> => {
   try {
-    const { data, error } = await supabase
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) return [];
+
+    let query = supabase
       .from('rejections')
       .select('item_id')
-      .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+      .eq('user_id', user.data.user.id);
+
+    if (myItemId) {
+      // Get rejections specific to this item pair OR global rejections (where my_item_id is null)
+      query = query.or(`my_item_id.eq.${myItemId},my_item_id.is.null`);
+    } else {
+      // If no specific item, only get global rejections
+      query = query.is('my_item_id', null);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching rejected items:', error);
@@ -51,13 +65,24 @@ export const getUserRejectedItems = async (): Promise<string[]> => {
   }
 };
 
-export const undoRejectItem = async (itemId: string): Promise<boolean> => {
+export const undoRejectItem = async (itemId: string, myItemId?: string): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) return false;
+
+    let query = supabase
       .from('rejections')
       .delete()
       .eq('item_id', itemId)
-      .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+      .eq('user_id', user.data.user.id);
+
+    if (myItemId) {
+      query = query.eq('my_item_id', myItemId);
+    } else {
+      query = query.is('my_item_id', null);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error('Error undoing rejection:', error);

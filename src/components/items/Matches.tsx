@@ -11,6 +11,7 @@ import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 interface MatchesProps {
   matches: MatchItem[];
   selectedItemName: string;
+  selectedItemId?: string;
   onUndoAvailable?: (available: boolean, undoFn: (() => void) | null) => void;
   loading?: boolean; // Add loading prop to prevent flashing
   onRefreshMatches?: () => void;
@@ -19,6 +20,7 @@ interface MatchesProps {
 const Matches: React.FC<MatchesProps> = ({
   matches,
   selectedItemName,
+  selectedItemId,
   onUndoAvailable,
   loading = false,
   onRefreshMatches
@@ -36,7 +38,7 @@ const Matches: React.FC<MatchesProps> = ({
     handlePopupLikeClick,
     handleClosePopup,
     setSelectedMatch
-  } = useMatchActions(matches, onRefreshMatches);
+  } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {

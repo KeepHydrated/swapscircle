@@ -427,6 +427,7 @@ const Test: React.FC = () => {
                        <Matches
                          matches={matches}
                          selectedItemName={selectedUserItem.name}
+                         selectedItemId={selectedUserItem.id}
                          onUndoAvailable={handleMatchesUndoAvailable}
                        />
                      ) : (
