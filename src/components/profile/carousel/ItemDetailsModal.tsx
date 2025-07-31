@@ -143,6 +143,31 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
       fetchItemDetails();
     }
   }, [item?.id, isOpen, skipDataFetch]);
+  
+  // Add refresh functionality for when reviews are updated
+  const refreshUserRating = async () => {
+    const userId = skipDataFetch ? (item as any)?.user_id : fullItem?.user_id;
+    if (userId) {
+      const { data: reviewsData, error: reviewsError } = await supabase
+        .from('reviews')
+        .select('rating')
+        .eq('reviewee_id', userId);
+
+      if (!reviewsError && reviewsData && reviewsData.length > 0) {
+        const averageRating = reviewsData.reduce((sum, review) => sum + review.rating, 0) / reviewsData.length;
+        setUserRating(Math.round(averageRating * 10) / 10);
+      } else {
+        setUserRating(0);
+      }
+    }
+  };
+  
+  // Listen for when modal opens to refresh rating
+  useEffect(() => {
+    if (isOpen && (fullItem || item)) {
+      refreshUserRating();
+    }
+  }, [isOpen]);
 
   // Calculate user stats - only show if we have actual data
   const memberSince = userProfile?.created_at 
