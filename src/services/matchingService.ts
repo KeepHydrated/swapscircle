@@ -145,7 +145,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 2. Item owners who have rejected the current user's selected item for this specific item or globally
       const ownerRejections = rejectedByOwnerMap.get(item.user_id);
       const ownerRejectedCurrentItem = ownerRejections && 
-        (ownerRejections.has(item.id) || ownerRejections.has('__GLOBAL__'));
+        (ownerRejections.has(selectedItem.id) || ownerRejections.has('__GLOBAL__'));
       
       // 3. Don't show user's own items
       const isMyOwnItem = item.user_id === user.id;
