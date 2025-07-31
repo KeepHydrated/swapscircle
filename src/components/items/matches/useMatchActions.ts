@@ -107,17 +107,24 @@ export const useMatchActions = (
         let result;
         if (isCurrentlyLiked) {
           result = await unlikeItem(id);
+          console.log('🔄 Unlike result:', result);
         } else {
           result = await likeItem(id);
+          console.log('🔄 Like result:', result);
         }
 
         // Keep the optimistic update - no need to reload from DB
 
         // Handle mutual match result - check if result is an object with match data
+        console.log('🔍 Checking mutual match result:', { result, isCurrentlyLiked });
         if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
+          console.log('✅ Result has success=true, checking for match data...');
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            console.log('🎉 MUTUAL MATCH DETECTED!', result.matchData);
+            toast.success('It\'s a match! Redirecting to messages...');
             // Only navigate to messages if there's a confirmed mutual match
             setTimeout(() => {
+              console.log('🚀 Navigating to messages with match data');
               navigate('/messages', {
                 state: {
                   newMatch: true,
@@ -125,7 +132,17 @@ export const useMatchActions = (
                 },
               });
             }, 2000); // Give user time to see the success message
+          } else {
+            console.log('❌ No mutual match detected');
           }
+        } else {
+          console.log('❌ Result check failed:', { 
+            hasResult: !!result, 
+            isObject: typeof result === 'object',
+            hasSuccess: result && 'success' in result,
+            successValue: result && 'success' in result ? result.success : 'N/A',
+            isCurrentlyLiked 
+          });
         }
       } catch (error) {
         console.error('DB like/unlike error:', error);
