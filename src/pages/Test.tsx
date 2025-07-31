@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -306,10 +306,10 @@ const Test: React.FC = () => {
   };
 
   // Handle matches undo availability callback
-  const handleMatchesUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
+  const handleMatchesUndoAvailable = useCallback((available: boolean, undoFn: (() => void) | null) => {
     setMatchesUndoAvailable(available);
     setMatchesUndoFn(() => undoFn);
-  };
+  }, []);
 
   // Unified undo handler that works based on active tab
   const handleUndo = () => {
