@@ -321,11 +321,15 @@ const Home: React.FC = () => {
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
     console.log('🔍 Home - Setting selectedUserItemId:', itemId);
+    console.log('🔍 Home - Previous selectedUserItemId:', selectedUserItemId);
+    console.log('🔍 Home - Item details:', userItems.find(item => item.id === itemId));
     setSelectedUserItemId(itemId);
     // Store in localStorage so other pages can access it
     localStorage.setItem('selectedUserItemId', itemId);
+    console.log('🔍 Home - Stored in localStorage:', localStorage.getItem('selectedUserItemId'));
     // Dispatch custom event to notify other components/pages
     window.dispatchEvent(new CustomEvent('selectedItemChanged'));
+    console.log('🔍 Home - Dispatched selectedItemChanged event');
   };
 
   // Handle opening item modal
