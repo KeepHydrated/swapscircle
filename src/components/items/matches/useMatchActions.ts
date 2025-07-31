@@ -157,7 +157,6 @@ export const useMatchActions = (
           toast.success('Item removed from matches');
           // Refresh matches to apply bidirectional filtering
           if (onRefreshMatches) {
-            console.log('DEBUG: Calling onRefreshMatches after successful rejection');
             setTimeout(() => onRefreshMatches(), 500); // Small delay to ensure DB is updated
           }
         } else {

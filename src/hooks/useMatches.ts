@@ -14,7 +14,6 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
   const { user, supabaseConfigured } = useAuth();
 
   const refreshMatches = () => {
-    console.log('DEBUG: Manual refresh triggered');
     setRefreshTrigger(prev => prev + 1);
   };
 
