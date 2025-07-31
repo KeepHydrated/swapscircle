@@ -36,16 +36,9 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
         console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id, 'Location:', location);
         const matchingItems = await findMatchingItems(selectedItem, user.id, location);
         
-        // Since findMatchingItems already filters out liked items,
-        // all returned items should have liked: false
-        const matchesWithLikedStatus = matchingItems.map(match => ({
-          ...match,
-          liked: false
-        }));
-
-        console.log('Debug - Final matches with liked status:', matchesWithLikedStatus);
-        // Only update matches after all data is ready
-        setMatches(matchesWithLikedStatus);
+        // Return matches as-is, let useMatchActions handle the liked status
+        console.log('Debug - Final matches:', matchingItems);
+        setMatches(matchingItems);
       } catch (e: any) {
         setError(e.message || "Failed to fetch matches.");
         setMatches([]);
