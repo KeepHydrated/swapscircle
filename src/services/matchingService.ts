@@ -8,6 +8,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
   try {
     // Get all available and visible items from other users
+    console.log('Debug - Building query to exclude current user:', currentUserId);
+    
     let itemsQuery = supabase
       .from('items')
       .select('*')
@@ -16,6 +18,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .eq('is_hidden', false); // Only show non-hidden items
 
     console.log('Debug - Current user ID for exclusion:', currentUserId);
+    console.log('Debug - Current user ID type:', typeof currentUserId);
 
     // If location is not nationwide, get user profiles with location filter
     let userIdsToFilter: string[] = [];
