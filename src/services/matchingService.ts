@@ -7,13 +7,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
   }
 
   try {
-    // Get all available and visible items from other users
+    // Get all available and visible items from other users - EXPLICIT EXCLUSION
     console.log('Debug - Building query to exclude current user:', currentUserId);
     
     let itemsQuery = supabase
       .from('items')
       .select('*')
-      .neq('user_id', currentUserId)
+      .not('user_id', 'eq', currentUserId) // More explicit exclusion
       .eq('is_available', true) // Only show available items
       .eq('is_hidden', false); // Only show non-hidden items
 
@@ -71,25 +71,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
-    // IMMEDIATE FILTER: Remove any of current user's own items that slipped through
-    const itemsExcludingMine = allItems.filter(item => {
-      const isMyItem = item.user_id === currentUserId || 
-                      (item.user_id && currentUserId && item.user_id.toString().trim() === currentUserId.toString().trim());
-      
-      if (isMyItem) {
-        console.log('🚨 FILTERING OUT MY OWN ITEM:', {
-          itemId: item.id,
-          itemUserId: item.user_id,
-          currentUserId: currentUserId
-        });
-      }
-      
-      return !isMyItem;
-    });
-
-    console.log(`Debug - After filtering my own items: ${itemsExcludingMine.length} (was ${allItems.length})`);
-
-    if (itemsExcludingMine.length === 0) {
+    if (!allItems || allItems.length === 0) {
       return [];
     }
 
@@ -145,7 +127,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Filter out items that:
     // 1. Current user has rejected  
     // 2. Item owners who have rejected the current user's selected item
-    const availableItems = itemsExcludingMine.filter(item => {
+    const availableItems = allItems.filter(item => {
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
       const ownerRejectedCurrentItem = rejectedByOwnerIds.has(item.user_id);
       const isMyOwnItem = item.user_id === currentUserId; // Safety check
