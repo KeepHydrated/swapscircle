@@ -166,6 +166,27 @@ export const useTradeConversations = () => {
           displayConversations.push(conversation);
         });
 
+        // Sort conversations to ensure newest conversations appear at the top
+        // Sort by created_at first (newest first), then by updated_at (newest first) as secondary sort
+        displayConversations.sort((a, b) => {
+          const aConversation = tradeConversations.find(tc => tc.id === a.id);
+          const bConversation = tradeConversations.find(tc => tc.id === b.id);
+          
+          if (!aConversation || !bConversation) return 0;
+          
+          // Primary sort: created_at (newest first)
+          const aCreated = new Date(aConversation.created_at).getTime();
+          const bCreated = new Date(bConversation.created_at).getTime();
+          if (aCreated !== bCreated) {
+            return bCreated - aCreated;
+          }
+          
+          // Secondary sort: updated_at (newest first)
+          const aUpdated = new Date(aConversation.updated_at).getTime();
+          const bUpdated = new Date(bConversation.updated_at).getTime();
+          return bUpdated - aUpdated;
+        });
+
         console.log('Display conversations:', displayConversations);
         console.log('Display exchange pairs:', displayExchangePairs);
 
@@ -190,6 +211,21 @@ export const useTradeConversations = () => {
             title: "Trade conversation started!",
             description: "You can now chat with the item owner.",
           });
+        } else if (location.state?.newMatch && location.state?.matchData) {
+          // Handle new match - find the most recent conversation (should be the new match)
+          // The new match conversation should be at the top due to our sorting
+          if (displayConversations.length > 0) {
+            const newMatchConversation = displayConversations[0]; // Should be the newest
+            setActiveConversation(newMatchConversation.id);
+            
+            // Find the corresponding pair
+            const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === newMatchConversation.id);
+            if (pairIndex !== -1) {
+              setSelectedPairId(displayExchangePairs[pairIndex].id);
+            }
+            
+            console.log('New match conversation set as active:', newMatchConversation.id);
+          }
         } else if (conversationParam && displayConversations.find(conv => conv.id === conversationParam)) {
           // Handle URL parameter ?conversation=xyz
           console.log('Setting active conversation from URL parameter:', conversationParam);
