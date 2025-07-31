@@ -29,7 +29,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
       <ScrollArea className="h-[calc(100vh-300px)]">
         <div className="grid grid-cols-3 gap-2 pr-2" ref={myItemsRef}>
           {items.map((item) => (
-            <div key={item.id} className="transform transition-all duration-200 hover:scale-105">
+            <div key={item.id} className="transition-all duration-200">
               <ItemCard 
                 id={item.id}
                 name={item.name}
