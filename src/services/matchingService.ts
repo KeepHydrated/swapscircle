@@ -129,6 +129,17 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       const ownerRejectedCurrentItem = rejectedByOwnerIds.has(item.user_id);
       const isMyOwnItem = item.user_id === currentUserId; // Safety check
       
+      if (item.user_id === currentUserId || (item.user_id && currentUserId && item.user_id.toString().trim() === currentUserId.toString().trim())) {
+        console.log(`🚨 DEBUG - FOUND MY OWN ITEM that should be excluded:`, {
+          itemId: item.id,
+          itemUserId: item.user_id,
+          currentUserId: currentUserId,
+          strictEqual: item.user_id === currentUserId,
+          stringEqual: item.user_id.toString() === currentUserId.toString(),
+          trimmedEqual: item.user_id.toString().trim() === currentUserId.toString().trim()
+        });
+      }
+      
       console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}`);
       console.log(`Debug - DETAILED comparison for item ${item.id}:`);
       console.log(`  item.user_id: "${item.user_id}" (type: ${typeof item.user_id}, length: ${item.user_id?.length})`);
@@ -136,7 +147,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.log(`  Strict equality: ${item.user_id === currentUserId}`);
       console.log(`  Loose equality: ${item.user_id == currentUserId}`);
       
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem;
+      // Enhanced safety check with multiple comparison methods
+      const isSameUser = item.user_id === currentUserId || 
+                        (item.user_id && currentUserId && item.user_id.toString().trim() === currentUserId.toString().trim());
+      
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isSameUser;
     });
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);
