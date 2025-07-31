@@ -50,6 +50,16 @@ const Matches: React.FC<MatchesProps> = ({
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
+  console.log('DEBUG: Matches filter results:', {
+    totalMatches: matches.length,
+    removedItems,
+    likedItems,
+    displayedMatches: displayedMatches.length,
+    matchIds: matches.map(m => m.id),
+    filteredOutByLikes: matches.filter(m => likedItems[m.id]).map(m => m.id),
+    filteredOutByRemoved: matches.filter(m => removedItems.includes(m.id)).map(m => m.id)
+  });
+
   // Find current index in displayed matches
   const currentMatchIndex = selectedMatch 
     ? displayedMatches.findIndex(match => match.id === selectedMatch.id)

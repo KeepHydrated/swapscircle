@@ -39,7 +39,10 @@ export const useMatchActions = (
 
   // Load actual liked status from database for this specific matching session
   const loadLikedStatus = async () => {
+    console.log('DEBUG: loadLikedStatus called with matches:', matches.length);
+    
     if (!user || !supabaseConfigured || matches.length === 0) {
+      console.log('DEBUG: Early return - no user, supabase, or matches');
       const initialLikedStatus: Record<string, boolean> = {};
       matches.forEach(match => {
         initialLikedStatus[match.id] = false;
@@ -48,19 +51,26 @@ export const useMatchActions = (
       return;
     }
     
+    console.log('DEBUG: Loading liked status for matches:', matches.map(m => m.id));
+    
     const likedStatus: Record<string, boolean> = {};
     for (const match of matches) {
       if (isValidUUID(match.id)) {
         try {
           const liked = await isItemLiked(match.id);
           likedStatus[match.id] = liked;
+          console.log(`DEBUG: Item ${match.id} liked status: ${liked}`);
         } catch (e) {
           likedStatus[match.id] = false;
+          console.log(`DEBUG: Error checking liked status for ${match.id}:`, e);
         }
       } else {
         likedStatus[match.id] = false;
+        console.log(`DEBUG: Invalid UUID for ${match.id}`);
       }
     }
+    
+    console.log('DEBUG: Final liked status:', likedStatus);
     setLikedItems(likedStatus);
   };
 
