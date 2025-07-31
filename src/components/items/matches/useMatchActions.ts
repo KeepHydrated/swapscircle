@@ -129,6 +129,8 @@ export const useMatchActions = (
 
   // Handle rejecting an item (removing it from matches)
   const handleReject = async (id: string) => {
+    console.log('DEBUG: handleReject called with id:', id);
+    
     if (!user) {
       toast.error('Please log in to reject items');
       return;
@@ -146,8 +148,17 @@ export const useMatchActions = (
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
-        await rejectItem(id);
-        toast.success('Item removed from matches');
+        console.log('DEBUG: About to call rejectItem for:', id);
+        const result = await rejectItem(id);
+        console.log('DEBUG: rejectItem result:', result);
+        
+        if (result) {
+          toast.success('Item removed from matches');
+        } else {
+          // Revert optimistic update on error
+          setRemovedItems(prev => prev.filter(itemId => itemId !== id));
+          toast.error('Failed to reject item');
+        }
       } catch (error) {
         console.error('DB reject error:', error);
         // Revert optimistic update on error

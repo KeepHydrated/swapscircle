@@ -14,13 +14,16 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
   useEffect(() => {
     async function fetchMatches() {
-      console.log('Debug - fetchMatches called with:', { selectedItem: selectedItem?.name, user: user?.id, location });
+      console.log('DEBUG: fetchMatches called with:', { selectedItem: selectedItem?.name, user: user?.id, location });
+      
       if (!selectedItem || !user || !supabaseConfigured) {
+        console.log('DEBUG: Early return from fetchMatches - missing required data');
         setMatches([]);
         setLoading(false);
         return;
       }
 
+      console.log('DEBUG: Starting fetchMatches...');
       setLoading(true);
       setError(null);
 

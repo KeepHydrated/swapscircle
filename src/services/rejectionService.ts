@@ -1,22 +1,33 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export const rejectItem = async (itemId: string): Promise<boolean> => {
+  console.log('DEBUG: rejectItem called with itemId:', itemId);
+  
   try {
+    const user = await supabase.auth.getUser();
+    console.log('DEBUG: Current user:', user.data.user?.id);
+    
+    if (!user.data.user?.id) {
+      console.error('DEBUG: No user found');
+      return false;
+    }
+
     const { error } = await supabase
       .from('rejections')
       .insert({
         item_id: itemId,
-        user_id: (await supabase.auth.getUser()).data.user?.id
+        user_id: user.data.user.id
       });
 
     if (error) {
-      console.error('Error rejecting item:', error);
+      console.error('DEBUG: Error rejecting item:', error);
       return false;
     }
 
+    console.log('DEBUG: Successfully rejected item:', itemId);
     return true;
   } catch (error) {
-    console.error('Error rejecting item:', error);
+    console.error('DEBUG: Exception in rejectItem:', error);
     return false;
   }
 };
