@@ -71,6 +71,28 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
+    // IMMEDIATE FILTER: Remove any of current user's own items that slipped through
+    const itemsExcludingMine = allItems.filter(item => {
+      const isMyItem = item.user_id === currentUserId || 
+                      (item.user_id && currentUserId && item.user_id.toString().trim() === currentUserId.toString().trim());
+      
+      if (isMyItem) {
+        console.log('🚨 FILTERING OUT MY OWN ITEM:', {
+          itemId: item.id,
+          itemUserId: item.user_id,
+          currentUserId: currentUserId
+        });
+      }
+      
+      return !isMyItem;
+    });
+
+    console.log(`Debug - After filtering my own items: ${itemsExcludingMine.length} (was ${allItems.length})`);
+
+    if (itemsExcludingMine.length === 0) {
+      return [];
+    }
+
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
       .from('liked_items')
@@ -121,10 +143,9 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     console.log('Debug - Users who rejected current item:', Array.from(rejectedByOwnerIds));
 
     // Filter out items that:
-    // 1. Current user has rejected
+    // 1. Current user has rejected  
     // 2. Item owners who have rejected the current user's selected item
-    // 3. SAFETY CHECK: Current user's own items (shouldn't happen but just in case)
-    const availableItems = allItems.filter(item => {
+    const availableItems = itemsExcludingMine.filter(item => {
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
       const ownerRejectedCurrentItem = rejectedByOwnerIds.has(item.user_id);
       const isMyOwnItem = item.user_id === currentUserId; // Safety check
