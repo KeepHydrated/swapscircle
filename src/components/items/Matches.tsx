@@ -45,9 +45,10 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Filter out removed/liked items
+  // Filter out removed items, but keep previously liked items visible
+  // Only hide items that were liked in the current session (tracked by removedItems)
   const displayedMatches = matches.filter(match => 
-    !removedItems.includes(match.id) && !likedItems[match.id]
+    !removedItems.includes(match.id)
   );
 
   // Find current index in displayed matches
