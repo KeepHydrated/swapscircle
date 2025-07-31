@@ -43,6 +43,8 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
 
     const otherUserId = likedItem.user_id;
     console.log('DEBUG: Other user ID:', otherUserId);
+    console.log('DEBUG: Current user ID:', currentUserId);
+    console.log('DEBUG: Liked item ID:', likedItemId);
 
     // Check if the other user has liked any of the current user's items
     console.log('DEBUG: Query details - Looking for likes by user:', otherUserId, 'on items owned by:', currentUserId);
