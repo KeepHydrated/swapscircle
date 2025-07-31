@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -15,6 +16,7 @@ import { toast } from 'sonner';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const userId = searchParams.get('userId');
   
   // State for profile data and loading
@@ -221,6 +223,22 @@ const OtherPersonProfile: React.FC = () => {
             ...prev,
             [id]: currentLikedStatus
           }));
+        } else {
+          // Check for mutual match result and navigate to messages
+          if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            toast.success("It's a match! 🎉 Starting conversation...");
+            // Navigate to messages after a delay
+            setTimeout(() => {
+              navigate('/messages', {
+                state: {
+                  newMatch: true,
+                  matchData: result.matchData,
+                },
+              });
+            }, 2000);
+          } else {
+            toast.success("Added to favorites");
+          }
         }
       }
     } catch (error) {
