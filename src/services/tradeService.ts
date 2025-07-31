@@ -323,3 +323,35 @@ export const createTradeConversation = async (
     return null;
   }
 };
+
+// Check for and complete trades where both parties have accepted but status is still pending
+export const checkAndCompleteAcceptedTrades = async () => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return;
+
+    // Find trades where both parties accepted but status is still pending
+    const { data: pendingTrades, error } = await supabase
+      .from('trade_conversations')
+      .select('*')
+      .eq('status', 'pending')
+      .eq('requester_accepted', true)
+      .eq('owner_accepted', true);
+
+    if (error) {
+      console.error('Error checking accepted trades:', error);
+      return;
+    }
+
+    // Complete each trade that should be completed
+    for (const trade of pendingTrades || []) {
+      await updateTradeStatus(trade.id, 'completed');
+      console.log(`Completed trade ${trade.id}`);
+    }
+    
+    return pendingTrades?.length || 0;
+  } catch (error) {
+    console.error('Error in checkAndCompleteAcceptedTrades:', error);
+    return 0;
+  }
+};

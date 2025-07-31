@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { fetchUserTradeConversations, TradeConversation } from '@/services/tradeService';
+import { fetchUserTradeConversations, TradeConversation, checkAndCompleteAcceptedTrades } from '@/services/tradeService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 
@@ -71,6 +71,9 @@ export const useTradeConversations = () => {
     const loadTradeConversations = async () => {
       setLoading(true);
       try {
+        // First check and complete any accepted trades
+        await checkAndCompleteAcceptedTrades();
+        // Then fetch all conversations
         const tradeConversations = await fetchUserTradeConversations();
         console.log('Processing trade conversations:', tradeConversations);
         

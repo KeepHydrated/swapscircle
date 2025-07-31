@@ -106,11 +106,19 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 
   const acceptTradeMutation = useMutation({
     mutationFn: () => updateTradeAcceptance(selectedPair.partnerId, userRole, true),
-    onSuccess: async (data) => {
+    onSuccess: async (updatedTrade) => {
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
       
-      // If other user already accepted, mark trade as completed
-      if (otherUserAccepted) {
+      // Check if both parties have now accepted by getting fresh data
+      const updatedTradeData = await queryClient.fetchQuery({
+        queryKey: ['trade-conversations'],
+        queryFn: fetchUserTradeConversations,
+      });
+      
+      const freshTrade = updatedTradeData.find((tc: any) => tc.id === selectedPair.partnerId);
+      const bothNowAccepted = freshTrade?.requester_accepted && freshTrade?.owner_accepted;
+      
+      if (bothNowAccepted && freshTrade?.status !== 'completed') {
         try {
           await updateTradeStatus(selectedPair.partnerId, 'completed');
           queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
