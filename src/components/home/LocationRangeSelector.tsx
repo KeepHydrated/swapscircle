@@ -40,11 +40,15 @@ const LocationRangeSelector: React.FC<LocationRangeSelectorProps> = ({
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isOpen]);
   return <div className="mb-6 bg-card border border-border rounded-xl p-4 shadow-lg backdrop-blur-sm px-[16px] my-[8px]">
       <div className="flex items-center flex-wrap gap-3">
         <div className="flex items-center">
