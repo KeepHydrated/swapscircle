@@ -109,7 +109,7 @@ export const useMatchActions = (
           result = await unlikeItem(id);
           console.log('🔄 Unlike result:', result);
         } else {
-          result = await likeItem(id);
+          result = await likeItem(id, selectedItemId);
           console.log('🔄 Like result:', result);
         }
 
