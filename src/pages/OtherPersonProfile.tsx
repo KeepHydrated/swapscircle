@@ -170,7 +170,18 @@ const OtherPersonProfile: React.FC = () => {
     setPopupItem(null);
   };
 
-  // Handle liking an item - now with real backend calls
+  // State for selected item from homepage
+  const [selectedItemIdFromHomepage, setSelectedItemIdFromHomepage] = useState<string | null>(null);
+
+  // Fetch the selected item from localStorage or sessionStorage
+  useEffect(() => {
+    const storedSelectedItem = localStorage.getItem('selectedUserItemId');
+    if (storedSelectedItem) {
+      setSelectedItemIdFromHomepage(storedSelectedItem);
+    }
+  }, []);
+
+  // Handle liking an item - now with real backend calls and homepage context
   const handleLikeItem = async (id: string) => {
     if (!currentUserId) {
       toast.error('Please log in to like items');
@@ -202,8 +213,8 @@ const OtherPersonProfile: React.FC = () => {
           }));
         }
       } else {
-        // Like the item
-        const result = await likeItem(id);
+        // Like the item with selected item context from homepage
+        const result = await likeItem(id, selectedItemIdFromHomepage || undefined);
         if (!result || !result.success) {
           // Revert on failure
           setLikedItems(prev => ({

@@ -21,14 +21,14 @@ export interface MatchResult {
 }
 
 // Check if there's a mutual match when current user likes an item
-export const checkForMutualMatch = async (currentUserId: string, likedItemId: string): Promise<MatchResult> => {
+export const checkForMutualMatch = async (currentUserId: string, likedItemId: string, selectedItemId?: string): Promise<MatchResult> => {
   if (!isSupabaseConfigured()) {
     return { isMatch: false };
   }
 
   try {
     console.log('🔍 MUTUAL MATCH CHECK STARTING');
-    console.log('DEBUG: Checking for mutual match', { currentUserId, likedItemId });
+    console.log('DEBUG: Checking for mutual match', { currentUserId, likedItemId, selectedItemId });
     
     // First, get the owner of the liked item
     const { data: likedItem, error: itemError } = await supabase
@@ -50,28 +50,27 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
     // Check if the other user has liked any of the current user's items
     console.log('DEBUG: Query details - Looking for likes by user:', otherUserId, 'on items owned by:', currentUserId);
     
-    // First, let's see what items the current user owns
-    const { data: myItems, error: myItemsError } = await supabase
-      .from('items')
-      .select('id, name')
-      .eq('user_id', currentUserId);
+    // Get items to check for mutual likes
+    let myItemIds: string[] = [];
     
-    console.log('DEBUG: My items (owned by current user):', myItems);
+    if (selectedItemId) {
+      // If a specific item is selected (e.g., from homepage), only check that item
+      console.log('DEBUG: Using selected item ID for matching:', selectedItemId);
+      myItemIds = [selectedItemId];
+    } else {
+      // Otherwise, check all current user's items
+      const { data: myItems, error: myItemsError } = await supabase
+        .from('items')
+        .select('id, name')
+        .eq('user_id', currentUserId);
+      
+      console.log('DEBUG: My items (owned by current user):', myItems);
+      myItemIds = myItems?.map(item => item.id) || [];
+    }
     
-    // Let's also check what the other user has liked
-    const { data: otherUserLikes, error: otherLikesError } = await supabase
-      .from('liked_items')
-      .select('item_id')
-      .eq('user_id', otherUserId);
+    console.log('DEBUG: Item IDs to check for mutual likes:', myItemIds);
     
-    console.log('DEBUG: Other user likes (all items liked by other user):', otherUserLikes);
-    console.log('DEBUG: Other likes error:', otherLikesError);
-    
-    // Check if other user has liked any of my items using a simpler approach
-    const myItemIds = myItems?.map(item => item.id) || [];
-    console.log('DEBUG: My item IDs that other user could have liked:', myItemIds);
-    
-    // Try a different approach - get all liked_items for the other user first
+    // Get all items liked by the other user
     const { data: allOtherUserLikes, error: allLikesError } = await supabase
       .from('liked_items')
       .select('item_id')

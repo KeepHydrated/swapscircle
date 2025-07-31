@@ -317,8 +317,8 @@ export const uploadAvatarImage = async (file: File): Promise<string | null> => {
 };
 
 // New function to like an item with mutual matching logic
-export const likeItem = async (itemId: string) => {
-  console.log('DEBUG: likeItem function called with itemId:', itemId);
+export const likeItem = async (itemId: string, selectedItemId?: string) => {
+  console.log('DEBUG: likeItem function called with itemId:', itemId, 'selectedItemId:', selectedItemId);
   
   if (!isSupabaseConfigured()) {
     console.log('DEBUG: Supabase not configured');
@@ -363,8 +363,8 @@ export const likeItem = async (itemId: string) => {
     }
 
     // Check for mutual match
-    console.log('🔍 MUTUAL MATCH CHECK:', { currentUserId, itemId, itemOwner: 'will be determined' });
-    const matchResult = await checkForMutualMatch(currentUserId, itemId);
+    console.log('🔍 MUTUAL MATCH CHECK:', { currentUserId, itemId, selectedItemId, itemOwner: 'will be determined' });
+    const matchResult = await checkForMutualMatch(currentUserId, itemId, selectedItemId);
     
     console.log('🔍 MUTUAL MATCH RESULT:', {
       isMatch: matchResult.isMatch,
