@@ -64,6 +64,7 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
       .eq('user_id', otherUserId);
     
     console.log('DEBUG: Other user likes (all items liked by other user):', otherUserLikes);
+    console.log('DEBUG: Other likes error:', otherLikesError);
     
     // Check if other user has liked any of my items using a simpler approach
     const myItemIds = myItems?.map(item => item.id) || [];
@@ -76,10 +77,17 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
       .eq('user_id', otherUserId);
       
     console.log('DEBUG: All items liked by other user:', allOtherUserLikes);
+    console.log('DEBUG: All likes error:', allLikesError);
     
     // Now find the intersection manually
     const mutualLikes = allOtherUserLikes?.filter(like => myItemIds.includes(like.item_id)) || [];
     const likesError = allLikesError;
+      
+    console.log('DEBUG: Mutual likes found (manual intersection):', mutualLikes);
+    console.log('DEBUG: Detailed comparison:');
+    console.log('  - Other user liked items:', allOtherUserLikes?.map(l => l.item_id));
+    console.log('  - My items available for liking:', myItemIds);
+    console.log('  - Intersection result:', mutualLikes.map(l => l.item_id));
       
     console.log('DEBUG: Mutual likes found (manual intersection):', mutualLikes);
     console.log('DEBUG: Query - Looking for user', otherUserId, 'liking any of my items:', myItemIds);
