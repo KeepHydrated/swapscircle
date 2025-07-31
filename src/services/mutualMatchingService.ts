@@ -27,6 +27,7 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
   }
 
   try {
+    console.log('🔍 MUTUAL MATCH CHECK STARTING');
     console.log('DEBUG: Checking for mutual match', { currentUserId, likedItemId });
     
     // First, get the owner of the liked item
