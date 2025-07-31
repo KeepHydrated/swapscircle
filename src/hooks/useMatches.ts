@@ -47,9 +47,9 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
     fetchMatches();
     
-    // Set up real-time subscription to refresh when any items change
-    const channel = supabase
-      .channel('matches-changes')
+    // Set up real-time subscription to refresh when any items or rejections change
+    const itemsChannel = supabase
+      .channel('matches-changes-items')
       .on(
         'postgres_changes',
         {
@@ -64,8 +64,25 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
       )
       .subscribe();
 
+    const rejectionsChannel = supabase
+      .channel('matches-changes-rejections')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'rejections'
+        },
+        (payload) => {
+          console.log('Rejections table changed, refetching matches...', payload);
+          fetchMatches();
+        }
+      )
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(itemsChannel);
+      supabase.removeChannel(rejectionsChannel);
     };
   }, [selectedItem, user, supabaseConfigured, location]);
 
