@@ -393,10 +393,10 @@ const Home: React.FC = () => {
               }}>
                 <div className="flex justify-between items-center mb-4">
                   <TabsList className="grid grid-cols-4">
-                    <TabsTrigger value="matches">Matches</TabsTrigger>
-                    <TabsTrigger value="matches2">Matches 2</TabsTrigger>
-                    <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    <TabsTrigger value="test">🧪 Test</TabsTrigger>
+                    <TabsTrigger value="matches" onClick={() => console.log('🔍 CLICKED: Matches tab')}>Matches</TabsTrigger>
+                    <TabsTrigger value="matches2" onClick={() => console.log('🔍 CLICKED: Matches2 tab')}>Matches 2</TabsTrigger>
+                    <TabsTrigger value="friends" onClick={() => console.log('🔍 CLICKED: Friends tab')}>Friends' Items</TabsTrigger>
+                    <TabsTrigger value="test" onClick={() => console.log('🔍 CLICKED: Test tab')}>🧪 Test</TabsTrigger>
                   </TabsList>
                   <div className="flex items-center gap-2">
                     {/* Only show location selector on desktop - completely hidden on mobile */}
