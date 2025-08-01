@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -50,6 +50,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [userRating, setUserRating] = useState<number>(0);
+  const [tradesCompleted, setTradesCompleted] = useState<number>(0);
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
@@ -96,6 +97,19 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               setUserRating(Math.round(averageRating * 10) / 10);
             } else {
               setUserRating(0);
+            }
+
+            // Fetch completed trades count for current user
+            const { data: tradesData, error: tradesError } = await supabase
+              .from('trade_conversations')
+              .select('id')
+              .eq('status', 'completed')
+              .or(`requester_id.eq.${currentUserId},owner_id.eq.${currentUserId}`);
+
+            if (!tradesError && tradesData) {
+              setTradesCompleted(tradesData.length);
+            } else {
+              setTradesCompleted(0);
             }
           }
           setLoading(false);
@@ -164,6 +178,19 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             setUserRating(Math.round(averageRating * 10) / 10);
           } else {
             setUserRating(0);
+          }
+
+          // Fetch completed trades count
+          const { data: tradesData, error: tradesError } = await supabase
+            .from('trade_conversations')
+            .select('id')
+            .eq('status', 'completed')
+            .or(`requester_id.eq.${userIdToFetch},owner_id.eq.${userIdToFetch}`);
+
+          if (!tradesError && tradesData) {
+            setTradesCompleted(tradesData.length);
+          } else {
+            setTradesCompleted(0);
           }
         } else {
           console.log('MODAL DEBUG: No user_id found for profile fetch');
@@ -447,11 +474,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                             </span>
                           </div>
                        </div>
-                        {memberSince && (
-                          <div className="flex text-xs text-gray-500 mt-1">
-                            <span>Since {memberSince}</span>
-                          </div>
-                        )}
+                         {memberSince && (
+                           <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                             <span>Since {memberSince}</span>
+                             <div className="flex items-center gap-1">
+                               <Repeat className="h-3 w-3" />
+                               <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
+                             </div>
+                           </div>
+                         )}
                      </div>
                   </div>
                 )}
