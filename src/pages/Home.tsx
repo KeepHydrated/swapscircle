@@ -292,7 +292,7 @@ const Home: React.FC = () => {
     if (activeTab === 'friends') {
       console.log('DEBUG: Calling handleUndoFriendAction');
       handleUndoFriendAction();
-    } else if ((activeTab === 'matches' || activeTab === 'test') && matchesUndoFn) {
+    } else if (activeTab === 'matches' && matchesUndoFn) {
       console.log('DEBUG: Calling matchesUndoFn');
       matchesUndoFn();
     } else {
@@ -306,7 +306,7 @@ const Home: React.FC = () => {
     if (activeTab === 'friends') {
       console.log('DEBUG: Friends tab - lastFriendActions.length:', lastFriendActions.length);
       return lastFriendActions.length > 0;
-    } else if (activeTab === 'matches' || activeTab === 'test') {
+    } else if (activeTab === 'matches') {
       console.log('DEBUG: Matches tab - matchesUndoAvailable:', matchesUndoAvailable);
       return matchesUndoAvailable;
     }
@@ -392,15 +392,14 @@ const Home: React.FC = () => {
                 console.log('🔍 TAB SYSTEM: activeTab set to:', value);
               }}>
                 <div className="flex justify-between items-center mb-4">
-                  <TabsList className="grid grid-cols-3">
+                  <TabsList className="grid grid-cols-2">
                     <TabsTrigger value="matches" onClick={() => console.log('🔍 CLICKED: Matches tab')}>Matches</TabsTrigger>
                     <TabsTrigger value="friends" onClick={() => console.log('🔍 CLICKED: Friends tab')}>Friends' Items</TabsTrigger>
-                    <TabsTrigger value="test" onClick={() => console.log('🔍 CLICKED: Test tab')}>🧪 Test</TabsTrigger>
                   </TabsList>
                   <div className="flex items-center gap-2">
                     {/* Only show location selector on desktop - completely hidden on mobile */}
                     <div className="hidden sm:block">
-                      {(activeTab === 'matches' || activeTab === 'test') && (
+                      {activeTab === 'matches' && (
                         <HeaderLocationSelector 
                           onLocationChange={(newLocation) => {
                             console.log('DEBUG: HeaderLocationSelector onChange called with:', newLocation);
@@ -480,24 +479,6 @@ const Home: React.FC = () => {
                   })()}
                 </TabsContent>
                 
-                <TabsContent value="test" className="flex-1 mt-0">
-                   {selectedUserItem ? (
-                     <Matches
-                       matches={matches}
-                       selectedItemName={`Test - ${selectedUserItem.name}`}
-                       onUndoAvailable={handleMatchesUndoAvailable}
-                       loading={matchesLoading}
-                     />
-                  ) : (
-                    <div className="h-full flex flex-col">
-                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                        <div className="text-4xl mb-3">🧪</div>
-                        <p className="text-base font-medium mb-1">No item selected</p>
-                        <p className="text-sm">Select an item to see test matches</p>
-                      </div>
-                    </div>
-                  )}
-                </TabsContent>
               </Tabs>
             </div>
           ) : (
