@@ -358,7 +358,6 @@ const Home: React.FC = () => {
         {/* Your Items Section - Full Width */}
         <div className="mb-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Your Items</h2>
             {userItemsLoading ? (
               <div className="flex justify-center items-center min-h-[300px]">
                 <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
