@@ -19,19 +19,25 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragX, setDragX] = useState(0);
   const [startX, setStartX] = useState(0);
-  const [hasSwiped, setHasSwiped] = useState(false);
+  const [hasMovedSinceStart, setHasMovedSinceStart] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleStart = (clientX: number) => {
     if (disabled) return;
     setIsDragging(true);
     setStartX(clientX);
+    setHasMovedSinceStart(false);
   };
 
   const handleMove = (clientX: number) => {
     if (!isDragging || disabled) return;
     const deltaX = clientX - startX;
     setDragX(deltaX);
+    
+    // Mark that we've moved if there's any significant movement
+    if (Math.abs(deltaX) > 3) {
+      setHasMovedSinceStart(true);
+    }
   };
 
   const handleEnd = () => {
@@ -39,25 +45,19 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
     setIsDragging(false);
 
     const threshold = 100;
-    const smallMovementThreshold = 10; // Consider it a swipe if moved more than 10px
     
     if (Math.abs(dragX) > threshold) {
-      setHasSwiped(true);
       if (dragX > 0 && onSwipeRight) {
         onSwipeRight();
       } else if (dragX < 0 && onSwipeLeft) {
         onSwipeLeft();
       }
-    } else if (Math.abs(dragX) > smallMovementThreshold) {
-      // User moved the card but not enough to trigger a swipe
-      // Still consider this a swipe attempt to prevent accidental clicks
-      setHasSwiped(true);
     }
     
     setDragX(0);
     
-    // Reset hasSwiped flag after a short delay to allow for legitimate clicks
-    setTimeout(() => setHasSwiped(false), 100);
+    // Reset movement flag after a short delay to allow for legitimate clicks
+    setTimeout(() => setHasMovedSinceStart(false), 150);
   };
 
   // Mouse events
@@ -86,9 +86,9 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
     handleEnd();
   };
 
-  // Prevent click events when user has swiped
+  // Prevent click events when user is dragging or has moved the card
   const handleClick = (e: React.MouseEvent) => {
-    if (hasSwiped || Math.abs(dragX) > 10) {
+    if (isDragging || hasMovedSinceStart || Math.abs(dragX) > 0) {
       e.preventDefault();
       e.stopPropagation();
     }
