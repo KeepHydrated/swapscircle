@@ -21,7 +21,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 
 const Home: React.FC = () => {
-  console.log('🚨 HOME COMPONENT LOADED - BASIC TEST');
   // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
@@ -470,12 +469,7 @@ const Home: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="friends" className="flex-1 mt-0">
-                  <div className="bg-blue-500 text-white text-center p-2 font-bold">
-                    🔍 FRIENDS TAB RENDER ATTEMPT - activeTab: {activeTab}
-                  </div>
                   {(() => {
-                    console.log('🔍 BASIC TEST: Friends tab TabsContent executed');
-                    console.log('🔍 FRIENDS TAB: activeTab state:', activeTab);
                     console.log('🔍 FRIENDS TAB: Rendering friends tab');
                     console.log('🔍 FRIENDS TAB: friendItems length:', friendItems.length);
                     console.log('🔍 FRIENDS TAB: rejectedFriendItems:', rejectedFriendItems);
@@ -484,9 +478,6 @@ const Home: React.FC = () => {
                      if (friendItems.length === 0) {
                        return (
                          <div className="h-full flex flex-col">
-                           <div className="bg-red-500 text-white text-center p-2 font-bold">
-                             ✅ FRIENDS TAB IS WORKING - NO ITEMS FOUND
-                           </div>
                            <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
                              <div className="text-4xl mb-3">👥</div>
                              <p className="text-base font-medium mb-1">No friends' items</p>
@@ -494,13 +485,9 @@ const Home: React.FC = () => {
                            </div>
                          </div>
                        );
-                     } else {
-                       console.log('🔍 FRIENDS TAB: Rendering Matches component for friends');
-                       return (
-                         <div>
-                           <div className="bg-green-500 text-white text-center p-2 font-bold">
-                             ✅ FRIENDS TAB IS WORKING - USING MATCHES COMPONENT
-                           </div>
+                       } else {
+                         console.log('🔍 FRIENDS TAB: Rendering Matches component for friends');
+                         return (
                            <Matches
                              matches={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
                              selectedItemName="Friends' Items"
@@ -508,8 +495,7 @@ const Home: React.FC = () => {
                              loading={friendItemsLoading}
                              onRefreshMatches={() => {}} // Friends don't need refresh like matches
                            />
-                         </div>
-                       );
+                         );
                     }
                   })()}
                 </TabsContent>
