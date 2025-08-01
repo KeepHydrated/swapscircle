@@ -27,17 +27,18 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
   return (
     <div className="h-full">
       <ScrollArea className="h-[calc(100vh-300px)]">
-        <div className="grid grid-cols-3 gap-2 pr-2" ref={myItemsRef}>
+        <div className="flex gap-2 min-w-max p-2" ref={myItemsRef}>
           {items.map((item) => (
-            <div key={item.id} className="transition-all duration-200">
-              <ItemCard 
-                id={item.id}
-                name={item.name}
-                image={item.image}
-                isSelected={selectedItemId === item.id}
-                onSelect={onSelectItem}
-                compact={true}
-              />
+            <div key={item.id} className="flex-shrink-0 w-64">
+              <div className="transition-all duration-200 hover:scale-105">
+                <ItemCard 
+                  id={item.id}
+                  name={item.name}
+                  image={item.image}
+                  isSelected={selectedItemId === item.id}
+                  onSelect={onSelectItem}
+                />
+              </div>
             </div>
           ))}
         </div>
