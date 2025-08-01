@@ -97,11 +97,15 @@ const ItemCard: React.FC<ItemCardProps> = ({
   };
 
   const handleMouseDown = () => {
-    console.log('🔍 ItemCard: Mouse down detected!', { id, name });
+    if (!isMatch) {
+      console.log('🔍 ItemCard: Mouse down detected!', { id, name });
+    }
   };
 
   const handleMouseUp = () => {
-    console.log('🔍 ItemCard: Mouse up detected!', { id, name });
+    if (!isMatch) {
+      console.log('🔍 ItemCard: Mouse up detected!', { id, name });
+    }
   };
 
   console.log('🔍 ItemCard: Rendering card', { id, name, isSelected });
@@ -113,9 +117,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
           isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
         }`}
         onClick={handleCardClick}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        style={{ pointerEvents: 'auto', zIndex: 1, touchAction: 'none' }}
+        onMouseDown={isMatch ? undefined : handleMouseDown}
+        onMouseUp={isMatch ? undefined : handleMouseUp}
+        style={{ pointerEvents: 'auto', zIndex: 1, touchAction: isMatch ? 'none' : 'auto' }}
       >
         <div className="relative">
           <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`} style={{ touchAction: 'none' }}>
@@ -134,7 +138,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <>
                 {/* Three-dots menu on the left side for match items */}
                 {isMatch && (
-                  <div className="absolute top-1.5 left-1.5 z-10">
+                  <div className="absolute top-1.5 left-1.5 z-20">
                     <MoreActionsMenu
                       itemId={id}
                       onLikeAll={handleLikeAll}
@@ -146,7 +150,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 )}
                 
                 {/* Action buttons on the right side */}
-                <div className="absolute top-1.5 right-1.5 z-10">
+                <div className="absolute top-1.5 right-1.5 z-20">
                   {isMatch ? (
                     <div className="flex gap-1">
                       {/* Simple reject button for current item */}
@@ -154,6 +158,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                         className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
                         aria-label="Reject item"
                         onClick={(e) => handleRejectClick(e)}
+                        style={{ touchAction: 'auto' }}
                       >
                         <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
                       </button>
@@ -163,6 +168,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                         className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
                         aria-label="Like item"
                         onClick={(e) => handleHeartClick(e)}
+                        style={{ touchAction: 'auto' }}
                       >
                         <Heart 
                           className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
