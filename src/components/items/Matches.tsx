@@ -37,6 +37,7 @@ const Matches: React.FC<MatchesProps> = ({
     handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
+    handleReport,
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
@@ -136,6 +137,7 @@ const Matches: React.FC<MatchesProps> = ({
             onOpenModal={handleOpenModal}
             onLike={handleLike}
             onReject={handleReject}
+            onReport={handleReport}
           />
         </div>
       )}

@@ -20,6 +20,7 @@ export interface UseMatchActionsResult {
   handleLike: (id: string, global?: boolean) => void;
   handleReject: (id: string, global?: boolean) => void;
   handleUndo: () => void;
+  handleReport: (id: string) => void;
   handleOpenModal: (id: string) => void;
   handlePopupLikeClick: (item: MatchItem) => void;
   handleClosePopup: () => void;
@@ -299,6 +300,11 @@ export const useMatchActions = (
     setSelectedMatch(null);
   };
 
+  const handleReport = (id: string) => {
+    // For now, just show a toast - this can be connected to a proper reporting system later
+    toast.info('Item reported. Thank you for helping keep our community safe.');
+  };
+
   return {
     likedItems: currentState.likedItems,
     removedItems: currentState.removedItems,
@@ -310,6 +316,7 @@ export const useMatchActions = (
     handleOpenModal,
     handlePopupLikeClick,
     handleClosePopup,
+    handleReport,
     setSelectedMatch
   };
 };

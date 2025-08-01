@@ -3,7 +3,7 @@ import React from 'react';
 import { Heart, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import MatchActionSelector from './matches/MatchActionSelector';
+import MoreActionsMenu from './matches/MatchActionSelector';
 
 // ADD prop showLikeButton to show heart in explore
 interface ItemCardProps {
@@ -16,6 +16,7 @@ interface ItemCardProps {
   onSelect: (id: string) => void;
   onLike?: (id: string, global?: boolean) => void;
   onReject?: (id: string, global?: boolean) => void;
+  onReport?: (id: string) => void;
   showLikeButton?: boolean;
   compact?: boolean;
   disableLike?: boolean;
@@ -38,6 +39,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   onSelect,
   onLike,
   onReject,
+  onReport,
   showLikeButton,
   compact = false,
   disableLike = false,
@@ -63,16 +65,22 @@ const ItemCard: React.FC<ItemCardProps> = ({
     }
   };
 
-  // Wrapper functions for MatchActionSelector
-  const handleSelectorLike = (itemId: string, global?: boolean) => {
+  // Wrapper functions for MoreActionsMenu
+  const handleLikeAll = (itemId: string) => {
     if (onLike) {
-      onLike(itemId, global);
+      onLike(itemId, true);
     }
   };
 
-  const handleSelectorReject = (itemId: string, global?: boolean) => {
+  const handleRejectAll = (itemId: string) => {
     if (onReject) {
-      onReject(itemId, global);
+      onReject(itemId, true);
+    }
+  };
+
+  const handleReport = (itemId: string) => {
+    if (onReport) {
+      onReport(itemId);
     }
   };
 
@@ -113,15 +121,39 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </Avatar>
             {(showLikeButton || isMatch) && !disableLike && (
               <div className="absolute top-1.5 right-1.5 z-10">
-                {/* Use MatchActionSelector for match items */}
-                {isMatch && onLike && onReject ? (
-                  <MatchActionSelector
-                    itemId={id}
-                    liked={liked}
-                    onLike={handleSelectorLike}
-                    onReject={handleSelectorReject}
-                    compact={compact}
-                  />
+                {/* Use three-dots menu for match items */}
+                {isMatch ? (
+                  <div className="flex gap-1">
+                    {/* More options menu */}
+                    <MoreActionsMenu
+                      itemId={id}
+                      onLikeAll={handleLikeAll}
+                      onRejectAll={handleRejectAll}
+                      onReport={handleReport}
+                      compact={compact}
+                    />
+                    
+                    {/* Simple reject button for current item */}
+                    <button
+                      className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                      aria-label="Reject item"
+                      onClick={(e) => handleRejectClick(e)}
+                    >
+                      <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
+                    </button>
+                    
+                    {/* Simple like button for current item */}
+                    <button
+                      className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                      aria-label="Like item"
+                      onClick={(e) => handleHeartClick(e)}
+                    >
+                      <Heart 
+                        className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
+                        fill={liked ? "red" : "none"}
+                      />
+                    </button>
+                  </div>
                 ) : (
                   /* Fallback to simple buttons for non-match items */
                   <div className="flex gap-1">

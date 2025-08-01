@@ -1,92 +1,69 @@
-import React, { useState } from 'react';
-import { Heart, X, ChevronDown, User, Users } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import React from 'react';
+import { MoreVertical, Users, Flag } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-interface MatchActionSelectorProps {
+interface MoreActionsMenuProps {
   itemId: string;
-  liked?: boolean;
-  onLike: (id: string, global?: boolean) => void;
-  onReject: (id: string, global?: boolean) => void;
+  onLikeAll: (id: string) => void;
+  onRejectAll: (id: string) => void;
+  onReport: (id: string) => void;
   compact?: boolean;
   className?: string;
 }
 
-const MatchActionSelector: React.FC<MatchActionSelectorProps> = ({
+const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
   itemId,
-  liked,
-  onLike,
-  onReject,
+  onLikeAll,
+  onRejectAll,
+  onReport,
   compact = false,
   className = ""
 }) => {
-  const [showActions, setShowActions] = useState(false);
   const buttonSize = compact ? 'w-6 h-6' : 'w-8 h-8';
   const iconSize = compact ? 'h-3 w-3' : 'h-4 w-4';
 
-  const handleLikeClick = (e: React.MouseEvent, global: boolean = false) => {
+  const handleLikeAllClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onLike(itemId, global);
-    setShowActions(false);
+    onLikeAll(itemId);
   };
 
-  const handleRejectClick = (e: React.MouseEvent, global: boolean = false) => {
+  const handleRejectAllClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onReject(itemId, global);
-    setShowActions(false);
+    onRejectAll(itemId);
+  };
+
+  const handleReportClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onReport(itemId);
   };
 
   return (
-    <div className={`flex gap-1 ${className}`}>
-      {/* Reject Action */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className={`flex items-center justify-center ${buttonSize} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 group`}
-            aria-label="Reject options"
-          >
-            <X className={`${iconSize} text-gray-400 group-hover:text-red-500 transition-colors`} />
-            <ChevronDown className="h-2 w-2 text-gray-400 ml-0.5" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={(e) => handleRejectClick(e, false)} className="cursor-pointer">
-            <User className="h-4 w-4 mr-2" />
-            Reject for selected item only
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={(e) => handleRejectClick(e, true)} className="cursor-pointer">
-            <Users className="h-4 w-4 mr-2" />
-            Reject for all my items
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* Like Action */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className={`flex items-center justify-center ${buttonSize} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 group`}
-            aria-label="Like options"
-          >
-            <Heart 
-              className={`${iconSize} transition-colors ${liked ? "text-red-500" : "text-gray-400 group-hover:text-red-500"}`}
-              fill={liked ? "red" : "none"}
-            />
-            <ChevronDown className="h-2 w-2 text-gray-400 ml-0.5" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={(e) => handleLikeClick(e, false)} className="cursor-pointer">
-            <User className="h-4 w-4 mr-2" />
-            Like for selected item only
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={(e) => handleLikeClick(e, true)} className="cursor-pointer">
-            <Users className="h-4 w-4 mr-2" />
-            Like for all my items
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={`flex items-center justify-center ${buttonSize} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 group ${className}`}
+          aria-label="More options"
+        >
+          <MoreVertical className={`${iconSize} text-gray-400 group-hover:text-gray-600 transition-colors`} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg z-50">
+        <DropdownMenuItem onClick={handleLikeAllClick} className="cursor-pointer">
+          <Users className="h-4 w-4 mr-2 text-green-600" />
+          Accept for all items
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleRejectAllClick} className="cursor-pointer">
+          <Users className="h-4 w-4 mr-2 text-red-600" />
+          Reject for all items
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleReportClick} className="cursor-pointer text-red-600">
+          <Flag className="h-4 w-4 mr-2" />
+          Report item
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
-export default MatchActionSelector;
+export default MoreActionsMenu;
