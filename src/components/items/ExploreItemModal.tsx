@@ -100,15 +100,21 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             }
 
             // Fetch completed trades count for current user
+            console.log('MODAL DEBUG: Fetching trades for current user:', currentUserId);
             const { data: tradesData, error: tradesError } = await supabase
               .from('trade_conversations')
               .select('id')
               .eq('status', 'completed')
               .or(`requester_id.eq.${currentUserId},owner_id.eq.${currentUserId}`);
 
+            console.log('MODAL DEBUG: Own trades data:', tradesData);
+            console.log('MODAL DEBUG: Own trades error:', tradesError);
+
             if (!tradesError && tradesData) {
+              console.log('MODAL DEBUG: Setting own trades completed to:', tradesData.length);
               setTradesCompleted(tradesData.length);
             } else {
+              console.log('MODAL DEBUG: Setting own trades completed to 0');
               setTradesCompleted(0);
             }
           }
@@ -181,15 +187,21 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           }
 
           // Fetch completed trades count
+          console.log('MODAL DEBUG: Fetching trades for user:', userIdToFetch);
           const { data: tradesData, error: tradesError } = await supabase
             .from('trade_conversations')
             .select('id')
             .eq('status', 'completed')
             .or(`requester_id.eq.${userIdToFetch},owner_id.eq.${userIdToFetch}`);
 
+          console.log('MODAL DEBUG: Trades data:', tradesData);
+          console.log('MODAL DEBUG: Trades error:', tradesError);
+          
           if (!tradesError && tradesData) {
+            console.log('MODAL DEBUG: Setting trades completed to:', tradesData.length);
             setTradesCompleted(tradesData.length);
           } else {
+            console.log('MODAL DEBUG: Setting trades completed to 0');
             setTradesCompleted(0);
           }
         } else {
@@ -474,15 +486,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                             </span>
                           </div>
                        </div>
-                         {memberSince && (
-                           <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                             <span>Since {memberSince}</span>
-                             <div className="flex items-center gap-1">
-                               <Repeat className="h-3 w-3" />
-                               <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
+                          {memberSince && (
+                             <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                               <span>Since {memberSince}</span>
+                               <div className="flex items-center gap-1">
+                                 <Repeat className="h-3 w-3" />
+                                 <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
+                               </div>
                              </div>
-                           </div>
-                         )}
+                          )}
                      </div>
                   </div>
                 )}
