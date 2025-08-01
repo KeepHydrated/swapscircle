@@ -115,13 +115,18 @@ const ItemCard: React.FC<ItemCardProps> = ({
         onClick={handleCardClick}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        style={{ pointerEvents: 'auto', zIndex: 1 }}
+        style={{ pointerEvents: 'auto', zIndex: 1, touchAction: 'none' }}
       >
         <div className="relative">
-          <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}>
-            <Avatar className="h-full w-full rounded-none">
-              <AvatarImage src={image} alt={name} className="object-cover transition-transform duration-300 group-hover:scale-105" />
-              <AvatarFallback className="rounded-none text-gray-400 text-xs font-medium bg-gradient-to-br from-gray-100 to-gray-200">
+          <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`} style={{ touchAction: 'none' }}>
+            <Avatar className="h-full w-full rounded-none" style={{ touchAction: 'none' }}>
+              <AvatarImage 
+                src={image} 
+                alt={name} 
+                className="object-cover transition-transform duration-300 group-hover:scale-105" 
+                style={{ touchAction: 'none', pointerEvents: 'auto' }}
+              />
+              <AvatarFallback className="rounded-none text-gray-400 text-xs font-medium bg-gradient-to-br from-gray-100 to-gray-200" style={{ touchAction: 'none' }}>
                 {name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
