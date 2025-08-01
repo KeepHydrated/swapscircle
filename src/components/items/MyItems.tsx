@@ -26,7 +26,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
 
   return (
     <div className="h-full">
-      <ScrollArea className="h-[calc(100vh-300px)]">
+      <div className="overflow-x-auto overflow-y-hidden">
         <div className="flex gap-2 min-w-max p-2" ref={myItemsRef}>
           {items.map((item) => (
             <div key={item.id} className="flex-shrink-0 w-64">
@@ -42,7 +42,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
