@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import Header from '@/components/layout/Header';
-import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
+// import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel'; // Removed - using Matches component now
 
 import { useDbItems } from '@/hooks/useDbItems';
 import { useUserItems } from '@/hooks/useUserItems';
@@ -474,27 +474,35 @@ const Home: React.FC = () => {
                     console.log('🔍 FRIENDS TAB: rejectedFriendItems:', rejectedFriendItems);
                     console.log('🔍 FRIENDS TAB: filtered friends items:', friendItems.filter(item => !rejectedFriendItems.includes(item.id)));
                     
-                    if (friendItems.length === 0) {
-                      return (
-                        <div className="h-full flex flex-col">
-                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                            <div className="text-4xl mb-3">👥</div>
-                            <p className="text-base font-medium mb-1">No friends' items</p>
-                            <p className="text-sm">Add friends to see their items here</p>
-                          </div>
-                        </div>
-                      );
-                    } else {
-                      console.log('🔍 FRIENDS TAB: Rendering Matches component for friends');
-                      return (
-                        <Matches
-                          matches={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
-                          selectedItemName="Friends' Items"
-                          onUndoAvailable={handleFriendsUndoAvailable}
-                          loading={friendItemsLoading}
-                          onRefreshMatches={() => {}} // Friends don't need refresh like matches
-                        />
-                      );
+                     if (friendItems.length === 0) {
+                       return (
+                         <div className="h-full flex flex-col">
+                           <div className="bg-red-500 text-white text-center p-2 font-bold">
+                             ✅ FRIENDS TAB IS WORKING - NO ITEMS FOUND
+                           </div>
+                           <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                             <div className="text-4xl mb-3">👥</div>
+                             <p className="text-base font-medium mb-1">No friends' items</p>
+                             <p className="text-sm">Add friends to see their items here</p>
+                           </div>
+                         </div>
+                       );
+                     } else {
+                       console.log('🔍 FRIENDS TAB: Rendering Matches component for friends');
+                       return (
+                         <div>
+                           <div className="bg-green-500 text-white text-center p-2 font-bold">
+                             ✅ FRIENDS TAB IS WORKING - USING MATCHES COMPONENT
+                           </div>
+                           <Matches
+                             matches={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
+                             selectedItemName="Friends' Items"
+                             onUndoAvailable={handleFriendsUndoAvailable}
+                             loading={friendItemsLoading}
+                             onRefreshMatches={() => {}} // Friends don't need refresh like matches
+                           />
+                         </div>
+                       );
                     }
                   })()}
                 </TabsContent>
