@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { mockNotifications } from '@/data/mockDemoData';
 
 interface Notification {
   id: string;
@@ -32,35 +33,8 @@ const Notifications: React.FC = () => {
       setLoading(true);
       try {
         if (!supabaseConfigured) {
-          // Use placeholder notifications for demo mode
-          setNotifications([
-            {
-              id: '1',
-              type: 'message',
-              title: 'New message',
-              content: 'You have received a new message from Marcus Thompson.',
-              isRead: false,
-              timestamp: new Date().toISOString(),
-              relatedId: 'user2'
-            },
-            {
-              id: '2',
-              type: 'trade',
-              title: 'Trade request',
-              content: 'Jessica Parker wants to trade her Vintage Leather Jacket for your item.',
-              isRead: true,
-              timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-              relatedId: 'user1'
-            },
-            {
-              id: '3',
-              type: 'system',
-              title: 'Welcome to TradeMate',
-              content: 'Thank you for joining TradeMate. Start adding items to trade!',
-              isRead: true,
-              timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-            },
-          ]);
+          // Demo mode - use mock notifications
+          setNotifications(mockNotifications);
           setLoading(false);
           return;
         }

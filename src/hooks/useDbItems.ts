@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item } from '@/types/item';
+import { mockItems } from '@/data/mockDemoData';
 
 export function useDbItems() {
   const [items, setItems] = useState<Item[]>([]);
@@ -13,8 +14,8 @@ export function useDbItems() {
       setLoading(true);
       setError(null);
       if (!isSupabaseConfigured()) {
-        setError("Supabase is not configured.");
-        setItems([]);
+        // Demo mode - use mock data
+        setItems(mockItems);
         setLoading(false);
         return;
       }

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Item } from '@/types/item';
+import { mockUserItems } from '@/data/mockDemoData';
 
 export function useUserItems() {
   const [items, setItems] = useState<Item[]>([]);
@@ -15,7 +16,14 @@ export function useUserItems() {
       setLoading(true);
       setError(null);
       
-      if (!isSupabaseConfigured() || !user) {
+      if (!isSupabaseConfigured()) {
+        // Demo mode - use mock data if user exists
+        setItems(user ? mockUserItems : []);
+        setLoading(false);
+        return;
+      }
+      
+      if (!user) {
         setItems([]);
         setLoading(false);
         return;
@@ -60,7 +68,11 @@ export function useUserItems() {
 
     fetchUserItems();
     
-    // Set up real-time subscription to refresh when items change
+    // Set up real-time subscription only if Supabase is configured
+    if (!supabaseConfigured) {
+      return;
+    }
+
     const channel = supabase
       .channel('user-items-changes')
       .on(

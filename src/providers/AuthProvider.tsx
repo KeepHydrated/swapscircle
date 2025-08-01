@@ -12,6 +12,7 @@ import {
   getCurrentSession
 } from '@/services/authService';
 import { isNewUser } from '@/utils/profileUtils';
+import { mockDemoUser } from '@/data/mockDemoData';
 
 // Clean up authentication state function to prevent auth limbo
 const cleanupAuthState = () => {
@@ -42,6 +43,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       
       if (!supabaseConfigured) {
+        // Demo mode - set mock user
+        setUser(mockDemoUser);
         setLoading(false);
         return;
       }
@@ -127,6 +130,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [supabaseConfigured]);
 
   const signUp = async (email: string, password: string, name: string) => {
+    if (!supabaseConfigured) {
+      // Demo mode - just set the mock user
+      setUser({ ...mockDemoUser, name, email });
+      return;
+    }
+
     // Clean up existing auth state before sign up
     cleanupAuthState();
     
@@ -144,6 +153,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signIn = async (email: string, password: string) => {
+    if (!supabaseConfigured) {
+      // Demo mode - just set the mock user
+      setUser({ ...mockDemoUser, email });
+      return;
+    }
+
     // Clean up existing auth state before sign in
     cleanupAuthState();
     
@@ -161,6 +176,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    if (!supabaseConfigured) {
+      // Demo mode - just clear the user
+      setUser(null);
+      return;
+    }
+
     // Clean up auth state
     cleanupAuthState();
     
