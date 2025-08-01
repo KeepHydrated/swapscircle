@@ -28,7 +28,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
         console.log('🔍 MatchesGrid: Rendering match', { id: match.id, name: match.name, isMatch: true });
         return (
         <div key={match.id} className="flex-shrink-0 w-64">
-          <div className="transform transition-all duration-200 hover:scale-105">
+          <div className="transform transition-all duration-200">
             <ItemCard
               id={match.id}
               name={match.name}

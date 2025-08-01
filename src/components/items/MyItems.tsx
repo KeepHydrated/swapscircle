@@ -30,7 +30,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
         <div className="flex gap-2 min-w-max p-2" ref={myItemsRef}>
           {items.map((item) => (
             <div key={item.id} className="flex-shrink-0 w-64">
-              <div className="transition-all duration-200 hover:scale-105">
+              <div className="transition-all duration-200">
                 <ItemCard 
                   id={item.id}
                   name={item.name}
