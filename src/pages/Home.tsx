@@ -386,8 +386,10 @@ const Home: React.FC = () => {
           {user && supabaseConfigured ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
               <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={(value) => {
-                console.log('DEBUG: Tab changed to:', value);
+                console.log('🔍 TAB SYSTEM: Tab changed to:', value);
+                console.log('🔍 TAB SYSTEM: Previous activeTab was:', activeTab);
                 setActiveTab(value);
+                console.log('🔍 TAB SYSTEM: activeTab set to:', value);
               }}>
                 <div className="flex justify-between items-center mb-4">
                   <TabsList className="grid grid-cols-4">
@@ -467,8 +469,12 @@ const Home: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="friends" className="flex-1 mt-0">
+                  <div className="bg-blue-500 text-white text-center p-2 font-bold">
+                    🔍 FRIENDS TAB RENDER ATTEMPT - activeTab: {activeTab}
+                  </div>
                   {(() => {
                     console.log('🔍 BASIC TEST: Friends tab TabsContent executed');
+                    console.log('🔍 FRIENDS TAB: activeTab state:', activeTab);
                     console.log('🔍 FRIENDS TAB: Rendering friends tab');
                     console.log('🔍 FRIENDS TAB: friendItems length:', friendItems.length);
                     console.log('🔍 FRIENDS TAB: rejectedFriendItems:', rejectedFriendItems);
