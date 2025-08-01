@@ -21,6 +21,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 
 const Home: React.FC = () => {
+  console.log('🚨 HOME COMPONENT LOADED - BASIC TEST');
   // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
