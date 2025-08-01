@@ -19,6 +19,7 @@ interface ItemCardProps {
   onReport?: (id: string) => void;
   showLikeButton?: boolean;
   compact?: boolean;
+  disableClick?: boolean;
   disableLike?: boolean;
   category?: string;
   tags?: string[];
@@ -43,6 +44,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   showLikeButton,
   compact = false,
   disableLike = false,
+  disableClick = false,
   category,
   tags,
   userProfile
@@ -85,6 +87,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
   };
 
   const handleCardClick = () => {
+    if (disableClick) {
+      console.log('🔍 ItemCard: Click disabled during interaction');
+      return;
+    }
     console.log('🔍 ItemCard: Card clicked!', { id, name, onSelect: !!onSelect });
     console.log('🔍 ItemCard: Current isSelected state:', isSelected);
     onSelect(id);

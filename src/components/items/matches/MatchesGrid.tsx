@@ -32,20 +32,23 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
             onSwipeRight={() => onLike(match.id)}
             className="transform transition-all duration-200 hover:scale-105"
           >
-            <ItemCard
-              id={match.id}
-              name={match.name}
-              image={match.image}
-              isMatch={true}
-              liked={likedItems[match.id] || match.liked}
-              onSelect={onOpenModal}
-              onLike={(id, global) => onLike(id, global)}
-              onReject={(id, global) => onReject(id, global)}
-              onReport={onReport}
-              category={match.category}
-              tags={match.tags}
-              userProfile={match.userProfile}
-            />
+            {({ isInteracting }) => (
+              <ItemCard
+                id={match.id}
+                name={match.name}
+                image={match.image}
+                isMatch={true}
+                liked={likedItems[match.id] || match.liked}
+                onSelect={isInteracting ? () => {} : onOpenModal}
+                onLike={(id, global) => onLike(id, global)}
+                onReject={(id, global) => onReject(id, global)}
+                onReport={onReport}
+                category={match.category}
+                tags={match.tags}
+                userProfile={match.userProfile}
+                disableClick={isInteracting}
+              />
+            )}
           </SwipeCard>
         </div>
       ))}

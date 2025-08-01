@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SwipeCardProps {
-  children: React.ReactNode;
+  children: React.ReactNode | ((props: { isInteracting: boolean }) => React.ReactNode);
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
   className?: string;
@@ -117,6 +117,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
 
   const rotation = dragX * 0.1;
   const opacity = Math.max(0.7, 1 - Math.abs(dragX) / 200);
+  const isInteracting = isDragging || hasMovedSinceStart || Math.abs(dragX) > 0;
 
   return (
     <div
@@ -137,7 +138,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
       onTouchEnd={handleTouchEnd}
       onClick={handleClick}
     >
-      {children}
+      {typeof children === 'function' ? children({ isInteracting }) : children}
       
       {/* Swipe indicators */}
       {isDragging && (
