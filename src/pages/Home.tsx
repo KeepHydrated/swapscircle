@@ -276,6 +276,12 @@ const Home: React.FC = () => {
     setMatchesUndoFn(() => undoFn);
   };
 
+  // Handle friends undo availability callback
+  const handleFriendsUndoAvailable = (available: boolean, undoFn: (() => void) | null) => {
+    // For friends tab, undo is managed by local state, not the Matches component
+    // This callback is required by the Matches component but not used for friends
+  };
+
   // Unified undo handler that works based on active tab
   const handleUndo = () => {
     console.log('DEBUG: handleUndo called, activeTab:', activeTab);
@@ -461,27 +467,23 @@ const Home: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="friends" className="flex-1 mt-0">
-                  <div className="h-full flex flex-col">
-                    {friendItemsLoading ? (
-                      <div className="flex-1 flex justify-center items-center">
-                        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-                      </div>
-                    ) : friendItems.length === 0 ? (
+                  {friendItems.length === 0 ? (
+                    <div className="h-full flex flex-col">
                       <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
                         <div className="text-4xl mb-3">👥</div>
                         <p className="text-base font-medium mb-1">No friends' items</p>
                         <p className="text-sm">Add friends to see their items here</p>
                       </div>
-                    ) : (
-                      <div className="flex-1 overflow-hidden">
-                        <FriendItemsCarousel
-                          items={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
-                          onLikeItem={handleLikeFriendItem}
-                          title=""
-                        />
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <Matches
+                      matches={friendItems.filter(item => !rejectedFriendItems.includes(item.id))}
+                      selectedItemName="Friends' Items"
+                      onUndoAvailable={handleFriendsUndoAvailable}
+                      loading={friendItemsLoading}
+                      onRefreshMatches={() => {}} // Friends don't need refresh like matches
+                    />
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="test" className="flex-1 mt-0">
