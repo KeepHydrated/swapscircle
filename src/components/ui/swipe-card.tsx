@@ -52,9 +52,11 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
       } else if (dragX < 0 && onSwipeLeft) {
         onSwipeLeft();
       }
+      // Only reset position after a successful swipe
+      setDragX(0);
     }
-    
-    setDragX(0);
+    // If swipe threshold not met, keep the card at its current position
+    // Don't reset dragX here - let it stay where the user left it
     
     // Reset movement flag after a short delay to allow for legitimate clicks
     setTimeout(() => setHasMovedSinceStart(false), 150);
@@ -91,6 +93,11 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
     if (isDragging || hasMovedSinceStart || Math.abs(dragX) > 0) {
       e.preventDefault();
       e.stopPropagation();
+      // Reset card position on click if it's been moved
+      if (Math.abs(dragX) > 0) {
+        setDragX(0);
+        setHasMovedSinceStart(false);
+      }
     }
   };
 
@@ -130,7 +137,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
       style={{
         transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
         opacity,
-        transition: isDragging ? 'none' : 'transform 0.3s ease-out, opacity 0.3s ease-out'
+        transition: isDragging ? 'none' : 'none' // Disable all transitions to stop on finger lift
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
