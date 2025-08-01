@@ -43,6 +43,7 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
         <button
           className={`flex items-center justify-center ${buttonSize} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 group ${className}`}
           aria-label="More options"
+          onClick={(e) => e.stopPropagation()}
         >
           <MoreVertical className={`${iconSize} text-gray-400 group-hover:text-gray-600 transition-colors`} />
         </button>
