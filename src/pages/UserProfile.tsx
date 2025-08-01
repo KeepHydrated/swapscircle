@@ -21,6 +21,7 @@ const UserProfile: React.FC = () => {
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
+  const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,6 +99,16 @@ const UserProfile: React.FC = () => {
         setUserItems(formattedItems);
       }
 
+      // Fetch completed trades count
+      const { data: tradesData } = await supabase
+        .from('trade_conversations')
+        .select('id')
+        .eq('status', 'completed')
+        .or(`requester_id.eq.${user_id},owner_id.eq.${user_id}`);
+
+      const tradesCompletedCount = tradesData?.length || 0;
+      setTradesCompleted(tradesCompletedCount);
+
       // Fetch reviews
       try {
         const reviews = await fetchUserReviews(user_id);
@@ -153,8 +164,9 @@ const UserProfile: React.FC = () => {
         ? new Date(userProfile.created_at).getFullYear().toString()
         : "",
       avatar_url: userProfile.avatar_url,
+      tradesCompleted: tradesCompleted,
     };
-  }, [userProfile, userReviews]);
+  }, [userProfile, userReviews, tradesCompleted]);
 
   if (loading) {
     return (
