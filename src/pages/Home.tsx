@@ -468,6 +468,7 @@ const Home: React.FC = () => {
                 
                 <TabsContent value="friends" className="flex-1 mt-0">
                   {(() => {
+                    console.log('🔍 BASIC TEST: Friends tab TabsContent executed');
                     console.log('🔍 FRIENDS TAB: Rendering friends tab');
                     console.log('🔍 FRIENDS TAB: friendItems length:', friendItems.length);
                     console.log('🔍 FRIENDS TAB: rejectedFriendItems:', rejectedFriendItems);
