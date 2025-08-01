@@ -29,7 +29,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
       <div className="overflow-x-auto overflow-y-hidden">
         <div className="flex gap-2 min-w-max p-2" ref={myItemsRef}>
           {items.map((item) => (
-            <div key={item.id} className="flex-shrink-0 w-64">
+            <div key={item.id} className="flex-shrink-0 w-48">
               <div className="transition-all duration-200">
                 <ItemCard 
                   id={item.id}
@@ -37,6 +37,7 @@ const MyItems: React.FC<MyItemsProps> = ({ items, selectedItemId, onSelectItem }
                   image={item.image}
                   isSelected={selectedItemId === item.id}
                   onSelect={onSelectItem}
+                  compact={true}
                 />
               </div>
             </div>
