@@ -104,7 +104,13 @@ const ItemCard: React.FC<ItemCardProps> = ({
     console.log('🔍 ItemCard: Mouse up detected!', { id, name });
   };
 
-  console.log('🔍 ItemCard: Rendering card', { id, name, isSelected });
+  console.log('🔍 ItemCard: Rendering card', { 
+    id, 
+    name, 
+    isMatch, 
+    showLikeButton,
+    isSelected: typeof isSelected !== 'undefined' ? isSelected : 'undefined'
+  });
 
   return (
     <div className="flex flex-col w-full">
