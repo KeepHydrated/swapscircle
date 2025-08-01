@@ -78,15 +78,43 @@ const Notifications: React.FC = () => {
           }
 
           // Map the database fields to our interface
-          const formattedNotifications = (data || []).map((notification: any) => ({
-            id: notification.id,
-            type: notification.type as 'system' | 'message' | 'trade' | 'friend',
-            title: notification.title,
-            content: notification.content,
-            isRead: notification.is_read,
-            timestamp: notification.created_at,
-            relatedId: notification.related_id
-          }));
+          const formattedNotifications = (data || []).map((notification: any) => {
+            const getTitle = () => {
+              switch (notification.action_taken) {
+                case 'match':
+                  return 'New Match!';
+                case 'friend':
+                  return 'Friend Request';
+                case 'message':
+                  return 'New Message';
+                default:
+                  return 'Notification';
+              }
+            };
+
+            const getType = (): 'system' | 'message' | 'trade' | 'friend' => {
+              switch (notification.action_taken) {
+                case 'match':
+                  return 'trade';
+                case 'friend':
+                  return 'friend';
+                case 'message':
+                  return 'message';
+                default:
+                  return 'system';
+              }
+            };
+
+            return {
+              id: notification.id,
+              type: getType(),
+              title: getTitle(),
+              content: notification.message || 'No message content',
+              isRead: notification.is_read,
+              timestamp: notification.created_at,
+              relatedId: notification.reference_id
+            };
+          });
 
           setNotifications(formattedNotifications);
         } catch (error) {
