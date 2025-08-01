@@ -120,11 +120,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
               </AvatarFallback>
             </Avatar>
             {(showLikeButton || isMatch) && !disableLike && (
-              <div className="absolute top-1.5 right-1.5 z-10">
-                {/* Use three-dots menu for match items */}
-                {isMatch ? (
-                  <div className="flex gap-1">
-                    {/* More options menu */}
+              <>
+                {/* Three-dots menu on the left side for match items */}
+                {isMatch && (
+                  <div className="absolute top-1.5 left-1.5 z-10">
                     <MoreActionsMenu
                       itemId={id}
                       onLikeAll={handleLikeAll}
@@ -132,28 +131,34 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       onReport={handleReport}
                       compact={compact}
                     />
-                    
-                    {/* Simple reject button for current item */}
-                    <button
-                      className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                      aria-label="Reject item"
-                      onClick={(e) => handleRejectClick(e)}
-                    >
-                      <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
-                    </button>
-                    
-                    {/* Simple like button for current item */}
-                    <button
-                      className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                      aria-label="Like item"
-                      onClick={(e) => handleHeartClick(e)}
-                    >
-                      <Heart 
-                        className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
-                        fill={liked ? "red" : "none"}
-                      />
-                    </button>
                   </div>
+                )}
+                
+                {/* Action buttons on the right side */}
+                <div className="absolute top-1.5 right-1.5 z-10">
+                  {isMatch ? (
+                    <div className="flex gap-1">
+                      {/* Simple reject button for current item */}
+                      <button
+                        className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                        aria-label="Reject item"
+                        onClick={(e) => handleRejectClick(e)}
+                      >
+                        <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
+                      </button>
+                      
+                      {/* Simple like button for current item */}
+                      <button
+                        className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                        aria-label="Like item"
+                        onClick={(e) => handleHeartClick(e)}
+                      >
+                        <Heart 
+                          className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
+                          fill={liked ? "red" : "none"}
+                        />
+                      </button>
+                    </div>
                 ) : (
                   /* Fallback to simple buttons for non-match items */
                   <div className="flex gap-1">
@@ -180,8 +185,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       />
                     </button>
                   </div>
-                )}
-              </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
           {isSelected && !isMatch && (
