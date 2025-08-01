@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { Star, MapPin, Calendar, Users } from 'lucide-react';
+import { Star, MapPin, Calendar, Users, Repeat } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
@@ -13,6 +13,7 @@ interface ProfileHeaderProps {
     location: string;
     memberSince: string;
     avatar_url?: string;
+    tradesCompleted?: number;
   };
   onReviewsClick?: () => void;
   onFriendsClick?: () => void;
@@ -95,6 +96,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <Calendar className="h-4 w-4 mr-1" />
             <span>Member since {profile.memberSince}</span>
           </div>
+          {(profile.tradesCompleted || profile.tradesCompleted === 0) && (
+            <div className="flex items-center">
+              <Repeat className="h-4 w-4 mr-1" />
+              <span>{profile.tradesCompleted} trade{profile.tradesCompleted !== 1 ? 's' : ''} completed</span>
+            </div>
+          )}
           {friendCount > 0 && (
             <Button
               variant="link"
