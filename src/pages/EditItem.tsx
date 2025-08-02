@@ -301,13 +301,12 @@ const EditItem: React.FC = () => {
         
         const success = await updateItem(itemId, updates);
         
-        console.log('🚨 UPDATE RESULT DETAILED:', {
-          success,
-          type: typeof success,
-          truthyValue: !!success,
-          isNull: success === null,
-          isUndefined: success === undefined
-        });
+        console.log('🚨 UPDATE RESULT DETAILED:');
+        console.log('- success:', success);
+        console.log('- type:', typeof success);
+        console.log('- truthyValue:', !!success);
+        console.log('- isNull:', success === null);
+        console.log('- isUndefined:', success === undefined);
         
         if (success) {
           // Clear new images and update existing images after successful save
