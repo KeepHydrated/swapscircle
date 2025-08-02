@@ -259,9 +259,34 @@ const EditItem: React.FC = () => {
           updates.image_urls = allImageUrls; // Store all images in array
         }
         
-         // Handle price range - prioritize the item form's price range over preferences
-         if (priceRange) {
-           console.log('Using item form price range:', priceRange);
+         // Handle price range - prioritize multiple selections if they exist
+         if (selectedPriceRanges && selectedPriceRanges.length > 0) {
+           console.log('Using preferences price ranges:', selectedPriceRanges);
+           
+           // Find the minimum and maximum values across all selected ranges
+           let minValue = Number.MAX_VALUE;
+           let maxValue = 0;
+           
+           selectedPriceRanges.forEach(range => {
+             console.log('Processing range:', range);
+             const parts = range.split(" - ");
+             console.log('Split parts:', parts);
+             
+             const min = parseFloat(parts[0]);
+             const max = parseFloat(parts[1].replace(/,/g, '')); // Remove commas
+             
+             console.log('Parsed min/max:', min, max);
+             if (min < minValue) minValue = min;
+             if (max > maxValue) maxValue = max;
+           });
+           
+           console.log('Combined price range from preferences:', { minValue, maxValue });
+           
+           updates.price_range_min = minValue;
+           updates.price_range_max = maxValue;
+           updates.looking_for_price_ranges = selectedPriceRanges; // Store the original selections
+         } else if (priceRange) {
+           console.log('Using item form price range as fallback:', priceRange);
            const parts = priceRange.split(" - ");
            const min = parseFloat(parts[0]);
            const max = parseFloat(parts[1].replace(/,/g, ''));
@@ -269,7 +294,7 @@ const EditItem: React.FC = () => {
            updates.price_range_min = min;
            updates.price_range_max = max;
            console.log('Set price range min/max from item form:', min, max);
-         } else if (selectedPriceRanges && selectedPriceRanges.length > 0) {
+         } else {
            console.log('Using preferences price ranges:', selectedPriceRanges);
            
            // Find the minimum and maximum values across all selected ranges
