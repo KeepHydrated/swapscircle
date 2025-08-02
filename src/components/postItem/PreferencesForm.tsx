@@ -232,7 +232,11 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
                 <Checkbox 
                   id={`price-range-${range}`}
                   checked={selectedPriceRanges.includes(range)}
-                  onCheckedChange={() => togglePriceRange(range)}
+                  onCheckedChange={() => {
+                    console.log('Checkbox clicked for range:', range);
+                    console.log('Current checked state:', selectedPriceRanges.includes(range));
+                    togglePriceRange(range);
+                  }}
                 />
                 <Label 
                   htmlFor={`price-range-${range}`}
