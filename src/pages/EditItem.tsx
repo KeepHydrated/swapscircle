@@ -299,16 +299,17 @@ const EditItem: React.FC = () => {
         console.log('Updates object:', updates);
         console.log('Calling updateItem service...');
         
-        const success = await updateItem(itemId, updates);
+        const result = await updateItem(itemId, updates);
         
         console.log('🚨 UPDATE RESULT DETAILED:');
-        console.log('- success:', success);
-        console.log('- type:', typeof success);
-        console.log('- truthyValue:', !!success);
-        console.log('- isNull:', success === null);
-        console.log('- isUndefined:', success === undefined);
+        console.log('- result:', result);
+        console.log('- type:', typeof result);
+        console.log('- truthyValue:', !!result);
+        console.log('- isNull:', result === null);
+        console.log('- isUndefined:', result === undefined);
+        console.log('- hasData:', result && typeof result === 'object' && 'id' in result);
         
-        if (success) {
+        if (result) {
           // Clear new images and update existing images after successful save
           setImages([]);
           setExistingImageUrls(allImageUrls);
