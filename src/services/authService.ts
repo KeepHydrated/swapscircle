@@ -806,6 +806,12 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       return null;
     }
 
+    console.log('🔧 UPDATE ITEM DEBUG:', {
+      itemId,
+      currentUserId: session.user.id,
+      itemData: item
+    });
+
     const updateData = {
       name: item.name,
       description: item.description,
@@ -829,6 +835,8 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       }
     });
 
+    console.log('🔧 UPDATE DATA:', updateData);
+
     const { data, error } = await supabase
       .from('items')
       .update(updateData)
@@ -836,6 +844,8 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       .eq('user_id', session.user.id) // Ensure user can only update their own items
       .select('*')
       .single();
+
+    console.log('🔧 UPDATE RESULT:', { data, error });
 
     if (error) {
       console.error('Error updating item:', error);
