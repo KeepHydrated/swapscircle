@@ -309,6 +309,15 @@ const EditItem: React.FC = () => {
         console.log('- isUndefined:', result === undefined);
         console.log('- hasData:', result && typeof result === 'object' && 'id' in result);
         
+        // Check if the price range was actually updated in the returned data
+        if (result && typeof result === 'object' && 'price_range_min' in result) {
+          console.log('🚨 PRICE RANGE CHECK:');
+          console.log('- Sent updates.price_range_min:', updates.price_range_min);
+          console.log('- Sent updates.price_range_max:', updates.price_range_max); 
+          console.log('- Returned price_range_min:', result.price_range_min);
+          console.log('- Returned price_range_max:', result.price_range_max);
+        }
+        
         if (result) {
           // Clear new images and update existing images after successful save
           setImages([]);
