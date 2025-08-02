@@ -88,16 +88,47 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   };
 
   // Function to handle copy icon click
-  const handleCopyClick = (item: Item) => {
-    const newItem = {
-      ...item,
-      id: `copy-${Date.now()}-${item.id}`,
-      name: `${item.name} (Copy)`
-    };
-    
-    setItems(prevItems => [newItem, ...prevItems]);
-    
-    toast.success(`${item.name} has been duplicated`);
+  const handleCopyClick = async (item: Item) => {
+    try {
+      // Create the duplicated item data
+      const duplicatedItemData = {
+        name: `${item.name} (Copy)`,
+        description: item.description || '',
+        image_url: item.image || item.image_url,
+        image_urls: item.image_urls || (item.image ? [item.image] : []),
+        category: item.category || '',
+        condition: item.condition || '',
+        tags: (item as any).tags || [],
+        looking_for_categories: item.lookingForCategories || item.looking_for_categories || [],
+        looking_for_conditions: item.lookingForConditions || item.looking_for_conditions || [],
+        looking_for_description: item.lookingForDescription || item.looking_for_description || '',
+        price_range_min: item.priceRangeMin || (item as any).price_range_min,
+        price_range_max: item.priceRangeMax || (item as any).price_range_max,
+      };
+
+      // Import createItem function dynamically
+      const { createItem } = await import('@/services/authService');
+      
+      // Save the duplicated item to the database
+      const newItemId = await createItem(duplicatedItemData);
+      
+      if (newItemId) {
+        // Create the local item object for immediate UI update
+        const newItem = {
+          ...item,
+          id: newItemId,
+          name: `${item.name} (Copy)`
+        };
+        
+        setItems(prevItems => [newItem, ...prevItems]);
+        toast.success(`${item.name} has been duplicated`);
+      } else {
+        toast.error('Failed to duplicate item');
+      }
+    } catch (error) {
+      console.error('Error duplicating item:', error);
+      toast.error('Failed to duplicate item');
+    }
   };
 
   // Function to handle delete icon click

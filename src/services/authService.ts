@@ -172,6 +172,62 @@ export const getCurrentSession = async () => {
   }
 };
 
+// New function to create an item (used for duplication and posting)
+export const createItem = async (item: {
+  name: string;
+  description?: string;
+  image_url?: string;
+  image_urls?: string[];
+  category?: string;
+  condition?: string;
+  tags?: string[];
+  looking_for_categories?: string[];
+  looking_for_conditions?: string[];
+  looking_for_description?: string;
+  price_range_min?: number;
+  price_range_max?: number;
+}) => {
+  if (!isSupabaseConfigured()) {
+    toast.error('Supabase is not configured. Please add environment variables.');
+    return null;
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      toast.error('You must be logged in to create an item.');
+      return null;
+    }
+
+    const itemToInsert = {
+      ...item,
+      user_id: session.user.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    console.log('Inserting item to database:', itemToInsert);
+
+    const { data, error } = await supabase
+      .from('items')
+      .insert(itemToInsert)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error creating item:', error);
+      toast.error(error.message || 'Error creating item');
+      return null;
+    }
+
+    return data.id;
+  } catch (error: any) {
+    console.error('Error creating item:', error);
+    toast.error(error.message || 'Error creating item');
+    return null;
+  }
+};
+
 // New function to post an item with preferences
 export const postItem = async (item: Item & {
   lookingForCategories?: string[];
