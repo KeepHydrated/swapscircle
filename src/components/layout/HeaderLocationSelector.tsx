@@ -135,19 +135,6 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
               50 miles
             </button>
 
-            {userLocation && (
-              <>
-                <div className="border-t border-border my-1" />
-                <button
-                  onClick={() => handleLocationSelect(userLocation)}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                    selectedLocation === userLocation ? 'bg-muted text-primary font-medium' : 'text-foreground'
-                  }`}
-                >
-                  {userLocation}
-                </button>
-              </>
-            )}
             
           </div>
         </div>
