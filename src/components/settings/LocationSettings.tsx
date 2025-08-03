@@ -93,9 +93,6 @@ export default function LocationSettings() {
               <RefreshCw className="h-6 w-6" />
               <h2 className="text-xl font-semibold">Update GPS Location</h2>
             </div>
-            <p className="text-muted-foreground mb-6">
-              Get your precise location automatically using GPS
-            </p>
             
             <Button 
               onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
