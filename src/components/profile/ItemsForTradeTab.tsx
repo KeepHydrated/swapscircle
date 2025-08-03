@@ -34,7 +34,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
           <Card 
             key={item.id} 
             className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer group relative ${
-              isHidden ? 'opacity-60' : ''
+              isHidden || isDraft ? 'opacity-60' : ''
             }`}
             onClick={() => onItemClick && onItemClick(item)}
           >
@@ -141,7 +141,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
               )}
             </div>
             <div className="p-4">
-              <h3 className={`font-medium ${isHidden ? 'text-gray-500' : 'text-gray-800'}`}>
+              <h3 className={`font-medium ${isHidden || isDraft ? 'text-gray-500' : 'text-gray-800'}`}>
                 {item.name}
               </h3>
             </div>
