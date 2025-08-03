@@ -11,12 +11,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Pencil, Upload, Check, ChevronsUpDown } from 'lucide-react';
+import { Pencil, Upload, Check, ChevronsUpDown, RefreshCw, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { uploadAvatarImage } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from '@/hooks/useLocation';
 
 // Create form schema
 const profileFormSchema = z.object({
@@ -40,6 +41,9 @@ const ProfileSettings: React.FC = () => {
   const [locationOpen, setLocationOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [displayName, setDisplayName] = useState(user?.name || "");
+  const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
+  const [hasUnsavedLocation, setHasUnsavedLocation] = useState(false);
+  const location = useLocation();
 
   // Major US cities for dropdown
   const cities = [
@@ -161,6 +165,30 @@ const ProfileSettings: React.FC = () => {
       setDisplayName(user.name);
     }
   }, [user?.name, displayName]);
+
+  const handleUseGPS = () => {
+    setIsUpdatingLocation(true);
+    location.getCurrentLocation();
+  };
+
+  const handleSaveLocation = async () => {
+    if (location.hasLocation) {
+      // Update the form field with the coordinates
+      form.setValue('location', `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}`);
+      setHasUnsavedLocation(false);
+      toast.success('Location coordinates added to your profile');
+    }
+  };
+
+  // Track when GPS location is obtained to show save button
+  useEffect(() => {
+    if (isUpdatingLocation && location.hasLocation) {
+      setHasUnsavedLocation(true);
+      setIsUpdatingLocation(false);
+    } else if (isUpdatingLocation && location.error) {
+      setIsUpdatingLocation(false);
+    }
+  }, [location.hasLocation, location.error, isUpdatingLocation]);
 
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
@@ -338,55 +366,98 @@ const ProfileSettings: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
-                    <div className="relative">
-                      <FormControl>
-                        <Input
-                          placeholder="Type your location..."
-                          value={field.value || ""}
-                          onChange={(e) => {
-                            field.onChange(e.target.value);
-                            if (e.target.value && !locationOpen) setLocationOpen(true);
-                          }}
-                          onFocus={() => {
-                            if (field.value) setLocationOpen(true);
-                          }}
-                          onBlur={() => {
-                            setTimeout(() => setLocationOpen(false), 200);
-                          }}
-                          className="w-full"
-                        />
-                      </FormControl>
-                      {locationOpen && field.value && (
-                        <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
-                          {cities
-                            .filter(city => 
+                    <div className="space-y-3">
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            placeholder="Type your location..."
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              if (e.target.value && !locationOpen) setLocationOpen(true);
+                            }}
+                            onFocus={() => {
+                              if (field.value) setLocationOpen(true);
+                            }}
+                            onBlur={() => {
+                              setTimeout(() => setLocationOpen(false), 200);
+                            }}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        {locationOpen && field.value && (
+                          <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
+                            {cities
+                              .filter(city => 
+                                city.toLowerCase().includes(field.value.toLowerCase())
+                              )
+                              .slice(0, 10)
+                              .map((city) => (
+                                <div
+                                  key={city}
+                                  className="px-3 py-2 hover:bg-accent cursor-pointer text-sm"
+                                  onClick={() => {
+                                    field.onChange(city);
+                                    setLocationOpen(false);
+                                  }}
+                                >
+                                  {city}
+                                </div>
+                              ))}
+                            {cities.filter(city => 
                               city.toLowerCase().includes(field.value.toLowerCase())
-                            )
-                            .slice(0, 10)
-                            .map((city) => (
-                              <div
-                                key={city}
-                                className="px-3 py-2 hover:bg-accent cursor-pointer text-sm"
-                                onClick={() => {
-                                  field.onChange(city);
-                                  setLocationOpen(false);
-                                }}
-                              >
-                                {city}
+                            ).length === 0 && (
+                              <div className="px-3 py-2 text-sm text-muted-foreground">
+                                No matching cities found
                               </div>
-                            ))}
-                          {cities.filter(city => 
-                            city.toLowerCase().includes(field.value.toLowerCase())
-                          ).length === 0 && (
-                            <div className="px-3 py-2 text-sm text-muted-foreground">
-                              No matching cities found
-                            </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* GPS Location Section */}
+                      <div className="flex items-center gap-4">
+                        <div className="text-sm text-muted-foreground min-w-fit">
+                          {location.hasLocation 
+                            ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
+                            : 'No location detected'}
+                        </div>
+
+                        <Button 
+                          type="button"
+                          onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
+                          variant="default"
+                          size="sm"
+                          disabled={location.loading}
+                        >
+                          {location.loading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Getting Location...
+                            </>
+                          ) : hasUnsavedLocation ? (
+                            <>
+                              <RefreshCw className="h-4 w-4" />
+                              Save Location
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="h-4 w-4" />
+                              Update Location
+                            </>
                           )}
+                        </Button>
+                      </div>
+
+                      {location.error && (
+                        <div className="text-center text-sm text-destructive">
+                          {location.error}
                         </div>
                       )}
                     </div>
+                    
                     <FormDescription>
-                      City and state where you're located.
+                      City and state where you're located, or use GPS coordinates.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
