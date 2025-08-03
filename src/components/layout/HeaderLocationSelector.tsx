@@ -68,6 +68,7 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
 
   const getDisplayText = () => {
     if (selectedLocation === 'nationwide') return 'All of US';
+    if (['5', '10', '20', '50'].includes(selectedLocation)) return `${selectedLocation} miles`;
     return selectedLocation;
   };
 
@@ -98,8 +99,45 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
             
             <div className="border-t border-border my-1" />
             
+            <button
+              onClick={() => handleLocationSelect('5')}
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
+                selectedLocation === '5' ? 'bg-muted text-primary font-medium' : 'text-foreground'
+              }`}
+            >
+              5 miles
+            </button>
+            
+            <button
+              onClick={() => handleLocationSelect('10')}
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
+                selectedLocation === '10' ? 'bg-muted text-primary font-medium' : 'text-foreground'
+              }`}
+            >
+              10 miles
+            </button>
+            
+            <button
+              onClick={() => handleLocationSelect('20')}
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
+                selectedLocation === '20' ? 'bg-muted text-primary font-medium' : 'text-foreground'
+              }`}
+            >
+              20 miles
+            </button>
+            
+            <button
+              onClick={() => handleLocationSelect('50')}
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
+                selectedLocation === '50' ? 'bg-muted text-primary font-medium' : 'text-foreground'
+              }`}
+            >
+              50 miles
+            </button>
+
             {userLocation && (
               <>
+                <div className="border-t border-border my-1" />
                 <button
                   onClick={() => handleLocationSelect(userLocation)}
                   className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
@@ -108,7 +146,6 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
                 >
                   {userLocation}
                 </button>
-                <div className="border-t border-border my-1" />
               </>
             )}
             
