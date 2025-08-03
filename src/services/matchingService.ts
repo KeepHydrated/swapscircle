@@ -22,7 +22,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .select('*')
       .not('user_id', 'eq', currentUserId) // More explicit exclusion
       .eq('is_available', true) // Only show available items
-      .eq('is_hidden', false); // Only show non-hidden items
+      .eq('is_hidden', false) // Only show non-hidden items
+      .eq('status', 'published'); // Only show published items (not drafts)
 
     console.log('Debug - Current user ID for exclusion:', currentUserId);
     console.log('Debug - Current user ID type:', typeof currentUserId);
