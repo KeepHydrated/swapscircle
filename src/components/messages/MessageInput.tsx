@@ -52,35 +52,6 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
   return (
     <div className="p-3 bg-white border-t border-gray-200 w-full">
       <div className="flex items-center gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant={pendingCompletion ? "secondary" : "ghost"} 
-              size="icon" 
-              className={`shrink-0 ${tradeCompleted ? "bg-green-100 text-green-700" : ""}`}
-              disabled={tradeCompleted || pendingCompletion}
-            >
-              <Check className="h-5 w-5" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-4">
-            <div className="space-y-2">
-              <h4 className="font-medium">Complete this Trade?</h4>
-              <p className="text-sm text-muted-foreground">
-                Mark this trade as completed. The other party will need to confirm.
-              </p>
-              <div className="flex justify-end gap-2">
-                <Button 
-                  onClick={handleMarkAsCompleted} 
-                  disabled={tradeCompleted || pendingCompletion}
-                >
-                  {tradeCompleted ? "Completed" : "Mark as Complete"}
-                </Button>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-        
         <Button variant="ghost" size="icon" className="shrink-0">
           <Paperclip className="h-5 w-5" />
         </Button>
@@ -100,20 +71,6 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
           <Send className="h-5 w-5" />
         </Button>
       </div>
-      
-      {tradeCompleted && (
-        <div className="mt-2 bg-green-50 text-green-700 p-2 rounded-md text-xs flex items-center">
-          <Check className="h-4 w-4 mr-1" />
-          This trade has been completed! You can leave a review in your profile.
-        </div>
-      )}
-      
-      {pendingCompletion && (
-        <div className="mt-2 bg-yellow-50 text-yellow-700 p-2 rounded-md text-xs flex items-center">
-          <Check className="h-4 w-4 mr-1" />
-          Waiting for the other party to confirm trade completion...
-        </div>
-      )}
     </div>
   );
 };
