@@ -233,9 +233,9 @@ const EditItem: React.FC = () => {
           category,
           condition,
           tags: subcategory ? [subcategory] : [], // Save subcategory as tags array
-          looking_for_categories: selectedCategories,
-          looking_for_conditions: selectedConditions,
-          looking_for_description: lookingForText,
+          lookingForCategories: selectedCategories,
+          lookingForConditions: selectedConditions,
+          lookingForDescription: lookingForText,
         };
         
         // Handle new image uploads first
@@ -256,7 +256,7 @@ const EditItem: React.FC = () => {
         // Update image fields
         if (allImageUrls.length > 0) {
           updates.image_url = allImageUrls[0]; // Keep compatibility with single image
-          updates.image_urls = allImageUrls; // Store all images in array
+          updates.imageUrls = allImageUrls; // Store all images in array
         }
         
          // Handle price range - prioritize multiple selections if they exist
@@ -282,17 +282,17 @@ const EditItem: React.FC = () => {
            
            console.log('Combined price range from preferences:', { minValue, maxValue });
            
-           updates.price_range_min = minValue;
-           updates.price_range_max = maxValue;
-           updates.looking_for_price_ranges = selectedPriceRanges; // Store the original selections
+            updates.priceRangeMin = minValue;
+            updates.priceRangeMax = maxValue;
+            updates.looking_for_price_ranges = selectedPriceRanges; // Store the original selections
          } else if (priceRange) {
            console.log('Using item form price range as fallback:', priceRange);
            const parts = priceRange.split(" - ");
            const min = parseFloat(parts[0]);
            const max = parseFloat(parts[1].replace(/,/g, ''));
            
-           updates.price_range_min = min;
-           updates.price_range_max = max;
+            updates.priceRangeMin = min;
+            updates.priceRangeMax = max;
            console.log('Set price range min/max from item form:', min, max);
          } else {
            console.log('Using preferences price ranges:', selectedPriceRanges);
@@ -316,8 +316,8 @@ const EditItem: React.FC = () => {
            
            console.log('Combined price range:', { minValue, maxValue });
            
-           updates.price_range_min = minValue;
-           updates.price_range_max = maxValue;
+            updates.priceRangeMin = minValue;
+            updates.priceRangeMax = maxValue;
          }
         
         console.log('Price range string:', priceRange);
