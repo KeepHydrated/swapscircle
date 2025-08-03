@@ -186,11 +186,11 @@ const EditItem: React.FC = () => {
     load();
   }, [itemId, navigate]);
 
-  // Function to check if any meaningful changes have been made
-  const checkForChanges = () => {
-    if (!originalItemData) return;
+  // Function to check if current values are different from original
+  const hasActualChanges = () => {
+    if (!originalItemData) return true; // If no original data, allow publishing
     
-    const hasChanges = (
+    return (
       title !== originalItemData.name ||
       description !== originalItemData.description ||
       category !== originalItemData.category ||
@@ -203,16 +203,17 @@ const EditItem: React.FC = () => {
       JSON.stringify(selectedPriceRanges) !== JSON.stringify(originalItemData.selectedPriceRanges) ||
       images.length > 0 // New images uploaded
     );
-    
-    if (hasChanges && !hasBeenEdited) {
-      setHasBeenEdited(true);
-    }
   };
 
-  // Check for changes whenever form values change
+  // Check for changes whenever form values change - but only update if we have actual changes
   useEffect(() => {
-    checkForChanges();
-  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, images, originalItemData]);
+    if (originalItemData && !hasBeenEdited) {
+      const actualChanges = hasActualChanges();
+      if (actualChanges) {
+        setHasBeenEdited(true);
+      }
+    }
+  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, images, originalItemData, hasBeenEdited]);
 
   // Load saved preferences from localStorage on component mount
 
@@ -269,8 +270,8 @@ const EditItem: React.FC = () => {
     console.log('Update button clicked! Starting validation...');
     console.log('Current values:', { title, category, condition, priceRange });
     
-    // Check if this is a draft item that hasn't been edited and is being published
-    if (itemStatus === 'draft' && !hasBeenEdited) {
+    // Check if this is a draft item that hasn't been edited AND current values are same as original
+    if (itemStatus === 'draft' && !hasBeenEdited && !hasActualChanges()) {
       toast.error('You must make changes to this item before publishing it.');
       return;
     }
