@@ -732,6 +732,7 @@ export type Database = {
           name: string
           price_range_max: number | null
           price_range_min: number | null
+          status: string
           tags: string[] | null
           updated_at: string | null
           user_id: string
@@ -752,6 +753,7 @@ export type Database = {
           name: string
           price_range_max?: number | null
           price_range_min?: number | null
+          status?: string
           tags?: string[] | null
           updated_at?: string | null
           user_id: string
@@ -772,6 +774,7 @@ export type Database = {
           name?: string
           price_range_max?: number | null
           price_range_min?: number | null
+          status?: string
           tags?: string[] | null
           updated_at?: string | null
           user_id?: string

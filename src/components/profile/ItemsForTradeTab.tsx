@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Edit, Copy, Trash2, EyeOff, Eye } from 'lucide-react';
+import { Edit, Copy, Trash2, EyeOff, Eye, Send } from 'lucide-react';
 import { Item } from '@/types/item';
 
 interface ItemsForTradeTabProps {
@@ -12,6 +12,7 @@ interface ItemsForTradeTabProps {
   onCopyClick?: (item: Item) => void;
   onDeleteClick?: (item: Item) => void;
   onHideClick?: (item: Item) => void;
+  onPublishClick?: (item: Item) => void;
 }
 
 const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({ 
@@ -20,12 +21,14 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
   onEditClick,
   onCopyClick,
   onDeleteClick,
-  onHideClick
+  onHideClick,
+  onPublishClick
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {items.map(item => {
         const isHidden = (item as any).is_hidden;
+        const isDraft = item.status === 'draft';
         return (
           <Card 
             key={item.id} 
@@ -98,10 +101,35 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 </Button>
               </div>
 
-              {/* Hidden badge for hidden items */}
-              {isHidden && (
-                <div className="absolute bottom-2 right-2 bg-red-800/75 text-white text-xs px-2 py-1 rounded">
-                  Hidden
+              {/* Status badges */}
+              <div className="absolute bottom-2 right-2 flex space-x-1">
+                {isHidden && (
+                  <div className="bg-red-800/75 text-white text-xs px-2 py-1 rounded">
+                    Hidden
+                  </div>
+                )}
+                {isDraft && (
+                  <div className="bg-yellow-600/75 text-white text-xs px-2 py-1 rounded">
+                    Draft
+                  </div>
+                )}
+              </div>
+
+              {/* Publish button for draft items */}
+              {isDraft && onPublishClick && (
+                <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button 
+                    size="sm" 
+                    variant="default" 
+                    className="h-7 text-xs bg-green-600 hover:bg-green-700" 
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      onPublishClick(item);
+                    }}
+                  >
+                    <Send className="h-3 w-3 mr-1" />
+                    Publish
+                  </Button>
                 </div>
               )}
             </div>

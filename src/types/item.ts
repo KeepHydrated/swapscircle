@@ -14,6 +14,7 @@ export interface Item {
   tags?: string[];
   priceRange?: string;
   user_id?: string; // Add user_id to base Item type
+  status?: 'draft' | 'published'; // Add status field
   // New preference fields for "What You're Looking For"
   lookingForCategories?: string[];
   lookingForConditions?: string[];

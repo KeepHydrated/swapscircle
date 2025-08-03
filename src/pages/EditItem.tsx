@@ -233,9 +233,10 @@ const EditItem: React.FC = () => {
           category,
           condition,
           tags: subcategory ? [subcategory] : [], // Save subcategory as tags array
-          lookingForCategories: selectedCategories,
-          lookingForConditions: selectedConditions,
-          lookingForDescription: lookingForText,
+          looking_for_categories: selectedCategories,
+          looking_for_conditions: selectedConditions,
+          looking_for_description: lookingForText,
+          status: 'published', // Publish the item when updated
         };
         
         // Handle new image uploads first
@@ -347,7 +348,7 @@ const EditItem: React.FC = () => {
           // Clear new images and update existing images after successful save
           setImages([]);
           setExistingImageUrls(allImageUrls);
-          toast.success('Your item has been updated successfully!');
+          toast.success('Your item has been updated and published successfully!');
           navigate('/profile');
         } else {
           toast.error('Update failed - please try again');

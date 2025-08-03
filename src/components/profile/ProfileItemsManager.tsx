@@ -109,25 +109,53 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
       // Import createItem function dynamically
       const { createItem } = await import('@/services/authService');
       
-      // Save the duplicated item to the database
-      const newItemId = await createItem(duplicatedItemData);
+      // Save the duplicated item to the database as a draft
+      const newItemId = await createItem(duplicatedItemData, true); // true = isDraft
       
       if (newItemId) {
         // Create the local item object for immediate UI update
         const newItem = {
           ...item,
           id: newItemId,
-          name: `${item.name} (Copy)`
+          name: `${item.name} (Copy)`,
+          status: 'draft' as const
         };
         
         setItems(prevItems => [newItem, ...prevItems]);
-        toast.success(`${item.name} has been duplicated`);
+        toast.success(`${item.name} has been duplicated as a draft. Edit it to publish.`);
       } else {
         toast.error('Failed to duplicate item');
       }
     } catch (error) {
       console.error('Error duplicating item:', error);
       toast.error('Failed to duplicate item');
+    }
+  };
+
+  // Function to handle publishing a draft item
+  const handlePublishClick = async (item: Item) => {
+    try {
+      // Import updateItem function dynamically
+      const { updateItem } = await import('@/services/authService');
+      
+      const result = await updateItem(item.id, { status: 'published' });
+      
+      if (result) {
+        // Update the local state
+        setItems(prevItems => 
+          prevItems.map(i => 
+            i.id === item.id 
+              ? { ...i, status: 'published' as const }
+              : i
+          )
+        );
+        toast.success(`${item.name} has been published!`);
+      } else {
+        toast.error('Failed to publish item');
+      }
+    } catch (error) {
+      console.error('Error publishing item:', error);
+      toast.error('Failed to publish item');
     }
   };
 
@@ -166,14 +194,15 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
 
   return (
     <>
-      <ItemsForTradeTab 
-        items={items} 
-        onItemClick={handleItemClick} 
-        onEditClick={handleEditClick}
-        onCopyClick={handleCopyClick}
-        onDeleteClick={handleDeleteClick}
-        onHideClick={handleHideClick}
-      />
+        <ItemsForTradeTab 
+          items={items}
+          onItemClick={handleItemClick}
+          onEditClick={handleEditClick}
+          onCopyClick={handleCopyClick}
+          onDeleteClick={handleDeleteClick}
+          onHideClick={handleHideClick}
+          onPublishClick={handlePublishClick}
+        />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

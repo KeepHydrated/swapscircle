@@ -186,7 +186,8 @@ export const createItem = async (item: {
   looking_for_description?: string;
   price_range_min?: number;
   price_range_max?: number;
-}) => {
+  status?: 'draft' | 'published';
+}, isDraft: boolean = false) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
     return null;
@@ -202,6 +203,7 @@ export const createItem = async (item: {
     const itemToInsert = {
       ...item,
       user_id: session.user.id,
+      status: isDraft ? 'draft' : (item.status || 'published'),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -793,6 +795,7 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
   priceRangeMin?: number;
   priceRangeMax?: number;
   imageUrls?: string[];
+  status?: 'draft' | 'published';
 }) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
@@ -825,6 +828,7 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       looking_for_description: item.lookingForDescription,
       price_range_min: item.priceRangeMin,
       price_range_max: item.priceRangeMax,
+      status: item.status,
       updated_at: new Date().toISOString()
     };
 
