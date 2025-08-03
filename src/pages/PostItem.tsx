@@ -359,23 +359,33 @@ const PostItem: React.FC = () => {
                 Draft auto-saved
               </div>
             )}
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Creating Your Listing...
-                </>
-              ) : (
-                <>
-                  <Check className="mr-2 h-5 w-5" />
-                  Create Trade Listing
-                </>
-              )}
-            </Button>
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={saveDraftToDatabase}
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-lg font-medium"
+              >
+                <Save className="mr-2 h-5 w-5" />
+                Save Draft
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Creating Your Listing...
+                  </>
+                ) : (
+                  <>
+                    <Check className="mr-2 h-5 w-5" />
+                    Create Trade Listing
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
