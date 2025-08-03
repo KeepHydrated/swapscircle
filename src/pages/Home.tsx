@@ -248,7 +248,7 @@ const Home: React.FC = () => {
   };
 
   // User's items and matching functionality
-  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems();
+  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems(false); // Don't include drafts on home page
   
   // Selected items state - auto-select first item
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');

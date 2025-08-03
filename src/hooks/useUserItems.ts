@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Item } from '@/types/item';
 import { mockUserItems } from '@/data/mockDemoData';
 
-export function useUserItems() {
+export function useUserItems(includeDrafts: boolean = false) {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +36,7 @@ export function useUserItems() {
           .eq('user_id', user.id)
           .eq('is_available', true) // Only show available items
           .eq('is_hidden', false) // Only show non-hidden items
-          .in('status', ['published', 'draft']) // Show both published and draft items
+          .in('status', includeDrafts ? ['published', 'draft'] : ['published']) // Conditionally include drafts
           .order('created_at', { ascending: false });
 
         if (error) throw error;
