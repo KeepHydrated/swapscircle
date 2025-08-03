@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Edit, Copy, Trash2, EyeOff, Eye, Send } from 'lucide-react';
+import { Edit, Copy, Trash2, EyeOff, Eye, Send, ImageIcon } from 'lucide-react';
 import { Item } from '@/types/item';
 
 interface ItemsForTradeTabProps {
@@ -38,12 +38,16 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
             }`}
             onClick={() => onItemClick && onItemClick(item)}
           >
-            <div className="aspect-[4/3] relative overflow-hidden">
-              <img 
-                src={item.image} 
-                alt={item.name} 
-                className="w-full h-full object-cover"
-              />
+            <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 flex items-center justify-center">
+              {item.image ? (
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <ImageIcon className="h-12 w-12 text-gray-400" />
+              )}
               {/* Action Icons - Top Left */}
               <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button 
