@@ -66,31 +66,26 @@ const PostItem: React.FC = () => {
     }
   }, []);
 
-  // Auto-save draft functionality  
+  // Auto-save draft functionality when leaving the page
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    // Only save if there's any form data to save
-    const hasFormData = title || description || category || subcategory || condition || 
-                       priceRange || lookingForText || selectedCategories.length > 0 || 
-                       selectedPriceRanges.length > 0 || selectedConditions.length > 0 ||
-                       Object.keys(selectedSubcategories).length > 0;
-
-    if (hasFormData) {
-      // Debounce the draft saving to avoid too many database calls
-      timeoutId = setTimeout(async () => {
+    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+      // Only save if there's meaningful content and user is logged in
+      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+      if (hasContent && user) {
+        // Save the draft before leaving
         await saveDraftToDatabase();
-      }, 2000); // Save after 2 seconds of inactivity
-    }
+      }
+    };
+
+    // Save draft when navigating away from the page
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [title, description, category, subcategory, condition, priceRange, 
       lookingForText, selectedCategories, selectedSubcategories, 
-      selectedPriceRanges, selectedConditions]);
+      selectedPriceRanges, selectedConditions, user]);
 
   // Save draft to database
   const saveDraftToDatabase = async () => {
@@ -118,19 +113,15 @@ const PostItem: React.FC = () => {
       };
 
       if (draftId) {
-        // Update existing draft
+        // Update existing draft silently
         const { updateItem } = await import('@/services/authService');
-        const success = await updateItem(draftId, draftData);
-        if (success) {
-          toast.success('Draft updated automatically', { duration: 2000 });
-        }
+        await updateItem(draftId, draftData);
       } else {
-        // Create new draft
+        // Create new draft silently
         const newDraftId = await createItem(draftData, true);
         if (newDraftId) {
           setDraftId(newDraftId);
           setHasDraft(true);
-          toast.success('Draft saved automatically', { duration: 2000 });
         }
       }
     } catch (error) {
