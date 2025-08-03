@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Item } from '@/types/item';
+import { ImageIcon } from 'lucide-react';
 
 interface ProfileItemCardProps {
   item: Item;
@@ -22,12 +23,16 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
         }`}
         onClick={() => onItemClick(item)}
       >
-        <div className="aspect-[4/3] relative overflow-hidden">
-          <img 
-            src={item.image || (item as any).image_url || '/placeholder.svg'} 
-            alt={item.name} 
-            className="w-full h-full object-cover"
-          />
+        <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 flex items-center justify-center">
+          {(item.image || (item as any).image_url) ? (
+            <img 
+              src={item.image || (item as any).image_url} 
+              alt={item.name} 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ImageIcon className="h-12 w-12 text-gray-400" />
+          )}
         </div>
         <div className="p-4">
           <h3 className="font-medium text-gray-800">{item.name}</h3>
