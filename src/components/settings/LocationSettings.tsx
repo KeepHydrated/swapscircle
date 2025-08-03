@@ -1,91 +1,141 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Slider } from '@/components/ui/slider';
+import { useToast } from '@/hooks/use-toast';
+import { useLocation as useGeoLocation } from '@/hooks/useLocation';
+import { supabase } from '@/integrations/supabase/client';
+import { RefreshCw, MapPin, Loader2, ArrowLeft, Save } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import LocationInput from '@/components/LocationInput';
 
-const LocationSettings: React.FC = () => {
-  const [selectionType, setSelectionType] = useState('range');
-  const [distanceValue, setDistanceValue] = useState(25);
+export default function LocationSettings() {
+  const [profile, setProfile] = useState<any>(null);
+  const [showLocationInput, setShowLocationInput] = useState(false);
+  const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
+  const [hasUnsavedLocation, setHasUnsavedLocation] = useState(false);
+  const location = useGeoLocation();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleDistanceChange = (value: number[]) => {
-    setDistanceValue(value[0]);
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+      setProfile(data);
+    }
   };
 
-  const handleSelectionTypeChange = (type: string) => {
-    setSelectionType(type);
+  const updateLocationInDatabase = async (lat: number, lng: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        location: `${lat},${lng}`,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update location",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Location Updated",
+        description: "Your location has been saved successfully",
+      });
+      fetchProfile();
+    }
   };
+
+  const handleUseGPS = () => {
+    setIsUpdatingLocation(true);
+    location.getCurrentLocation();
+  };
+
+  const handleSaveLocation = async () => {
+    if (location.hasLocation) {
+      await updateLocationInDatabase(location.latitude!, location.longitude!);
+      setHasUnsavedLocation(false);
+    }
+  };
+
+  // Track when GPS location is obtained to show save button
+  useEffect(() => {
+    if (isUpdatingLocation && location.hasLocation) {
+      setHasUnsavedLocation(true);
+      setIsUpdatingLocation(false);
+    } else if (isUpdatingLocation && location.error) {
+      setIsUpdatingLocation(false);
+    }
+  }, [location.hasLocation, location.error, isUpdatingLocation]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Location Settings</CardTitle>
-        <CardDescription>
-          Control your location preferences for trading.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <Label className="text-base">Maximum Trading Distance</Label>
-          
-          <div className="flex gap-4 items-center">
-            <div className="flex items-center space-x-2">
-              <input
-                type="radio"
-                id="nationwide"
-                name="location-type"
-                checked={selectionType === 'all'}
-                onChange={() => handleSelectionTypeChange('all')}
-                className="h-4 w-4 text-primary"
-              />
-              <Label htmlFor="nationwide" className="text-sm font-normal cursor-pointer">
-                All of US
-              </Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <input
-                type="radio"
-                id="specific-range"
-                name="location-type"
-                checked={selectionType === 'range'}
-                onChange={() => handleSelectionTypeChange('range')}
-                className="h-4 w-4 text-primary"
-              />
-              <Label htmlFor="specific-range" className="text-sm font-normal cursor-pointer">
-                Specific range
-              </Label>
-            </div>
-          </div>
-          
-          {selectionType === 'range' && (
-            <div className="pt-2">
-              <div className="w-full max-w-md">
-                <Slider
-                  defaultValue={[distanceValue]}
-                  min={1}
-                  max={50}
-                  step={1}
-                  onValueChange={handleDistanceChange}
-                />
-                <div className="flex justify-between text-xs text-gray-500 mt-1 px-1">
-                  <span>1 mile</span>
-                  <span>{distanceValue} miles</span>
-                  <span>50 miles</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        <Button onClick={() => toast.success('Location settings saved')}>
-          Save Changes
-        </Button>
-      </CardContent>
-    </Card>
-  );
-};
+    <div className="min-h-screen bg-gradient-background p-4">
+      <div className="max-w-2xl mx-auto space-y-6">
 
-export default LocationSettings;
+        {/* Use Current Location */}
+        <Card className="shadow-primary">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3 mb-4">
+              <RefreshCw className="h-6 w-6" />
+              <h2 className="text-xl font-semibold">Update GPS Location</h2>
+            </div>
+            <p className="text-muted-foreground mb-6">
+              Get your precise location automatically using GPS
+            </p>
+            
+            <Button 
+              onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
+              variant="default"
+              className="w-full mb-4"
+              disabled={location.loading}
+            >
+              {location.loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Getting Location...
+                </>
+              ) : hasUnsavedLocation ? (
+                <>
+                  <Save className="h-4 w-4" />
+                  Save New Location
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4" />
+                  Update GPS Location
+                </>
+              )}
+            </Button>
+
+            <div className="text-center text-sm text-muted-foreground">
+              {location.hasLocation 
+                ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
+                : 'No location detected'}
+            </div>
+
+            {location.error && (
+              <div className="text-center text-sm text-destructive">
+                {location.error}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+      </div>
+    </div>
+  );
+}

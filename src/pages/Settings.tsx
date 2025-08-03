@@ -6,6 +6,7 @@ import ProfileSettings from '@/components/settings/ProfileSettings';
 import NotificationSettings from '@/components/settings/NotificationSettings';
 import PrivacySettings from '@/components/settings/PrivacySettings';
 import AccountSettings from '@/components/settings/AccountSettings';
+import LocationSettings from '@/components/settings/LocationSettings';
 
 const Settings: React.FC = () => {
   return (
@@ -32,6 +33,12 @@ const Settings: React.FC = () => {
               Privacy
             </TabsTrigger>
             <TabsTrigger 
+              value="location" 
+              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+            >
+              Location
+            </TabsTrigger>
+            <TabsTrigger 
               value="account" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
@@ -49,6 +56,10 @@ const Settings: React.FC = () => {
 
           <TabsContent value="privacy" className="p-6">
             <PrivacySettings />
+          </TabsContent>
+
+          <TabsContent value="location" className="p-6">
+            <LocationSettings />
           </TabsContent>
 
           <TabsContent value="account" className="p-6">
