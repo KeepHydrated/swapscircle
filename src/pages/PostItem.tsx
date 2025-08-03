@@ -25,6 +25,8 @@ import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
 import SavedPreferencesList from '@/components/postItem/SavedPreferencesList';
 import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 
+// PostItem component with navigation confirmation
+
 
 const PostItem: React.FC = () => {
   const { user } = useAuth();
