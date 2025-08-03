@@ -94,34 +94,36 @@ export default function LocationSettings() {
               <h2 className="text-xl font-semibold">Update GPS Location</h2>
             </div>
             
-            <Button 
-              onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
-              variant="default"
-              className="w-full mb-4"
-              disabled={location.loading}
-            >
-              {location.loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Getting Location...
-                </>
-              ) : hasUnsavedLocation ? (
-                <>
-                  <Save className="h-4 w-4" />
-                  Save New Location
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="h-4 w-4" />
-                  Update GPS Location
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
+                variant="default"
+                className="flex-1"
+                disabled={location.loading}
+              >
+                {location.loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Getting Location...
+                  </>
+                ) : hasUnsavedLocation ? (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save New Location
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4" />
+                    Update GPS Location
+                  </>
+                )}
+              </Button>
 
-            <div className="text-center text-sm text-muted-foreground">
-              {location.hasLocation 
-                ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
-                : 'No location detected'}
+              <div className="text-sm text-muted-foreground min-w-fit">
+                {location.hasLocation 
+                  ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
+                  : 'No location detected'}
+              </div>
             </div>
 
             {location.error && (
