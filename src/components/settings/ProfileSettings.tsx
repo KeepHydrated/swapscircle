@@ -370,11 +370,11 @@ const ProfileSettings: React.FC = () => {
                       <div className="relative">
                         <FormControl>
                           <div className="flex">
-                            <div className="text-sm text-muted-foreground min-w-fit px-3 py-2 border border-r-0 rounded-l-md bg-muted flex items-center">
-                              {location.hasLocation 
-                                ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
-                                : 'No location detected'}
-                            </div>
+                             <div className="text-sm text-muted-foreground min-w-fit px-3 py-2 border border-r-0 rounded-l-md bg-muted flex items-center">
+                               {location.hasLocation 
+                                 ? `${location.latitude?.toFixed(2)}, ${location.longitude?.toFixed(2)}` 
+                                 : 'No location detected'}
+                             </div>
                             <Input
                               placeholder="Type your location..."
                               value={field.value || ""}
