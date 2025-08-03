@@ -31,6 +31,7 @@ const EditItem: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [itemStatus, setItemStatus] = useState<string>('published');
   const [hasBeenEdited, setHasBeenEdited] = useState<boolean>(true);
+  const [originalItemData, setOriginalItemData] = useState<any>(null);
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -64,6 +65,21 @@ const EditItem: React.FC = () => {
           
           setItemStatus((item as any).status || 'published');
           setHasBeenEdited((item as any).has_been_edited !== false); // Default to true if undefined
+          
+          // Store original data to compare against for changes
+          setOriginalItemData({
+            name: item.name || '',
+            description: item.description || '',
+            category: item.category || '',
+            condition: item.condition || '',
+            subcategory: (item as any).tags?.[0] || '',
+            priceRange: '', // Will be set below
+            lookingForText: (item as any).looking_for_description || '',
+            selectedCategories: (item as any).looking_for_categories || [],
+            selectedConditions: (item as any).looking_for_conditions || [],
+            selectedPriceRanges: []
+          });
+          
           setTitle(item.name || '');
           setDescription(item.description || '');
           
@@ -127,6 +143,13 @@ const EditItem: React.FC = () => {
               // For the item form, use the first price range or a formatted min-max
               const storedRanges = (item as any).looking_for_price_ranges;
               setPriceRange(storedRanges[0] || `${min} - ${max}`);
+              
+              // Update original data with stored ranges
+              setOriginalItemData(prev => ({
+                ...prev,
+                priceRange: storedRanges[0] || `${min} - ${max}`,
+                selectedPriceRanges: storedRanges
+              }));
             } else {
               // Fallback to the old min-max logic
               // Find all matching price ranges that fall within the min-max range
@@ -144,6 +167,13 @@ const EditItem: React.FC = () => {
               
               // For the preferences form, use all matching ranges
               setSelectedPriceRanges(matchingRanges.length > 0 ? matchingRanges : ["0 - 50"]);
+              
+              // Update original data with the price range
+              setOriginalItemData(prev => ({
+                ...prev,
+                priceRange: matchingRanges[0] || "0 - 50",
+                selectedPriceRanges: matchingRanges.length > 0 ? matchingRanges : ["0 - 50"]
+              }));
             }
           }
         } else {
@@ -155,6 +185,36 @@ const EditItem: React.FC = () => {
     }
     load();
   }, [itemId, navigate]);
+
+  // Function to check if any meaningful changes have been made
+  const checkForChanges = () => {
+    if (!originalItemData) return;
+    
+    const hasChanges = (
+      title !== originalItemData.name ||
+      description !== originalItemData.description ||
+      category !== originalItemData.category ||
+      condition !== originalItemData.condition ||
+      subcategory !== originalItemData.subcategory ||
+      priceRange !== originalItemData.priceRange ||
+      lookingForText !== originalItemData.lookingForText ||
+      JSON.stringify(selectedCategories) !== JSON.stringify(originalItemData.selectedCategories) ||
+      JSON.stringify(selectedConditions) !== JSON.stringify(originalItemData.selectedConditions) ||
+      JSON.stringify(selectedPriceRanges) !== JSON.stringify(originalItemData.selectedPriceRanges) ||
+      images.length > 0 // New images uploaded
+    );
+    
+    if (hasChanges && !hasBeenEdited) {
+      setHasBeenEdited(true);
+    }
+  };
+
+  // Check for changes whenever form values change
+  useEffect(() => {
+    checkForChanges();
+  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, images, originalItemData]);
+
+  // Load saved preferences from localStorage on component mount
 
   // Save current preferences
   const savePreferences = () => {
