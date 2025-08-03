@@ -1,6 +1,33 @@
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item, MatchItem } from '@/types/item';
 
+// Helper function to calculate distance between two coordinates using Haversine formula
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in miles
+};
+
+// Helper function to parse location string into coordinates
+const parseLocation = (locationString: string): { lat: number; lng: number } | null => {
+  if (!locationString || typeof locationString !== 'string') return null;
+  
+  const parts = locationString.split(',');
+  if (parts.length !== 2) return null;
+  
+  const lat = parseFloat(parts[0].trim());
+  const lng = parseFloat(parts[1].trim());
+  
+  if (isNaN(lat) || isNaN(lng)) return null;
+  
+  return { lat, lng };
+};
+
 export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide'): Promise<MatchItem[]> => {
   if (!isSupabaseConfigured()) {
     return [];
@@ -28,33 +55,75 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     console.log('Debug - Current user ID for exclusion:', currentUserId);
     console.log('Debug - Current user ID type:', typeof currentUserId);
 
-    // If location is not nationwide, get user profiles with location filter
+    // If location is not nationwide, filter by GPS radius
     let userIdsToFilter: string[] = [];
-    if (location !== 'nationwide') {
-      console.log('Debug - Filtering by location:', location);
-      console.log('Debug - Getting profiles for location:', location);
+    if (location !== 'nationwide' && ['5', '10', '20', '50'].includes(location)) {
+      const radiusInMiles = parseInt(location);
+      console.log('Debug - Filtering by radius:', radiusInMiles, 'miles');
       
-      const { data: profiles, error: profilesError } = await supabase
+      // Get current user's location
+      const { data: currentUserProfile, error: currentUserError } = await supabase
         .from('profiles')
-        .select('id, username, location')
-        .eq('location', location);
+        .select('location')
+        .eq('user_id', currentUserId)
+        .single();
       
-      console.log('Debug - Found profiles for location:', profiles);
-      console.log('Debug - Profiles error:', profilesError);
-      
-      if (profilesError) {
-        console.error('Error fetching profiles by location:', profilesError);
-      } else if (profiles && profiles.length > 0) {
-        userIdsToFilter = profiles.map(p => p.id);
-        console.log('Debug - User IDs to filter by location:', userIdsToFilter);
-        itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
-      } else {
-        // No users in this location, return empty
-        console.log('Debug - No users found in location, returning empty array');
+      if (currentUserError || !currentUserProfile?.location) {
+        console.log('Debug - Current user has no location set, showing no results');
         return [];
       }
+      
+      const currentUserCoords = parseLocation(currentUserProfile.location);
+      if (!currentUserCoords) {
+        console.log('Debug - Current user location could not be parsed, showing no results');
+        return [];
+      }
+      
+      console.log('Debug - Current user coordinates:', currentUserCoords);
+      
+      // Get all profiles with locations to calculate distances
+      const { data: allProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('user_id, location')
+        .not('location', 'is', null)
+        .not('user_id', 'eq', currentUserId); // Exclude current user
+      
+      if (profilesError) {
+        console.error('Error fetching profiles for distance calculation:', profilesError);
+        return [];
+      }
+      
+      if (!allProfiles || allProfiles.length === 0) {
+        console.log('Debug - No users with locations found');
+        return [];
+      }
+      
+      // Filter profiles by distance
+      const profilesWithinRadius = allProfiles.filter(profile => {
+        const profileCoords = parseLocation(profile.location);
+        if (!profileCoords) return false;
+        
+        const distance = calculateDistance(
+          currentUserCoords.lat, currentUserCoords.lng,
+          profileCoords.lat, profileCoords.lng
+        );
+        
+        const withinRadius = distance <= radiusInMiles;
+        console.log(`Debug - Profile ${profile.user_id}: distance=${distance.toFixed(2)} miles, withinRadius=${withinRadius}`);
+        return withinRadius;
+      });
+      
+      userIdsToFilter = profilesWithinRadius.map(p => p.user_id);
+      console.log('Debug - User IDs within radius:', userIdsToFilter.length);
+      
+      if (userIdsToFilter.length === 0) {
+        console.log('Debug - No users found within radius, returning empty array');
+        return [];
+      }
+      
+      itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
     } else {
-      console.log('Debug - Location is nationwide, no filtering applied');
+      console.log('Debug - Location is nationwide or unrecognized, no filtering applied');
     }
 
     const { data: allItems, error: itemsError } = await itemsQuery;
@@ -178,8 +247,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Fetch all user profiles in one query
     const { data: userProfiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, name, username, avatar_url')
-      .in('id', userIds);
+      .select('user_id, name, username, avatar_url')
+      .in('user_id', userIds);
 
     if (profilesError) {
       console.error('Error fetching user profiles:', profilesError);
@@ -189,7 +258,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const profileMap = new Map();
     if (userProfiles) {
       userProfiles.forEach(profile => {
-        profileMap.set(profile.id, profile);
+        profileMap.set(profile.user_id, profile);
       });
     }
 
