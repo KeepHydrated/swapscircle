@@ -74,11 +74,13 @@ const UserProfile: React.FC = () => {
       });
 
       // Fetch items ordered by updated_at so recently published items appear first
+      // Include both published and draft items for the user's own profile
       const { data: items } = await supabase
         .from('items')
         .select('*')
         .eq('user_id', user_id)
         .eq('is_available', true)
+        .in('status', ['published', 'draft']) // Include both published and draft items
         .order('updated_at', { ascending: false });
 
       if (items) {
