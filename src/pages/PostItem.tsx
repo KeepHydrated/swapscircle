@@ -249,8 +249,8 @@ const PostItem: React.FC = () => {
       if (newItem) {
         clearDraft(); // Clear the saved draft on successful submission
         toast.success('Your item has been posted successfully!');
-        // Navigate to profile page's Items For Trade tab after successful submission
-        navigate('/profile?tab=available');
+        // Navigate to home page after successful submission
+        navigate('/');
       }
     } catch (error) {
       console.error('Error posting item:', error);
@@ -361,7 +361,10 @@ const PostItem: React.FC = () => {
             )}
             <div className="flex items-center space-x-4">
               <Button
-                onClick={saveDraftToDatabase}
+                onClick={async () => {
+                  await saveDraftToDatabase();
+                  navigate('/');
+                }}
                 variant="outline"
                 className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-lg font-medium"
               >
