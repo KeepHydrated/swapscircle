@@ -273,6 +273,11 @@ const PostItemFixed: React.FC = () => {
     try {
       await saveDraftToDatabase();
       toast.success('Draft saved successfully!');
+      // Remove beforeunload listener to prevent browser popup
+      if (beforeUnloadHandlerRef.current) {
+        window.removeEventListener('beforeunload', beforeUnloadHandlerRef.current);
+        beforeUnloadHandlerRef.current = null;
+      }
       if (pendingNavigation) {
         pendingNavigation();
         setPendingNavigation(null);
