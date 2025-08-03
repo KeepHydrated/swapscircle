@@ -251,7 +251,7 @@ const EditItem: React.FC = () => {
         lookingForCategories: selectedCategories,
         lookingForConditions: selectedConditions,
         lookingForDescription: lookingForText,
-        // Don't change status - keep as draft
+        status: 'draft', // Explicitly keep as draft
       };
 
       // Handle price range logic (simplified version of main handleSubmit)
