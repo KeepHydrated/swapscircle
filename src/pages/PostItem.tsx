@@ -29,7 +29,7 @@ import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 
 
 const PostItem: React.FC = () => {
-  console.log('PostItem component starting - version 1.1 - NO useBlocker anywhere');
+  console.log('🔥🔥🔥 PostItem CACHE BUSTER v3.0 - NO useBlocker - BUILD TIME:', new Date().toISOString());
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
