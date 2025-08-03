@@ -79,6 +79,17 @@ const PostItem: React.FC = () => {
     };
   }, []);
 
+  // Save draft when navigating away (component unmount)
+  useEffect(() => {
+    return () => {
+      // Save draft silently when navigating away (no toast to avoid issues)
+      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+      if (hasContent && user) {
+        saveDraftToDatabase();
+      }
+    };
+  }, [title, description, category, lookingForText, user]);
+
 
   // Save draft to database
   const saveDraftToDatabase = async () => {
