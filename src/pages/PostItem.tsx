@@ -32,6 +32,7 @@ const PostItem: React.FC = () => {
   const [hasDraft, setHasDraft] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
   const isUnmountingRef = useRef(false);
+  const formDataRef = useRef({ title: '', description: '', category: '', lookingForText: '', user: null });
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -79,12 +80,18 @@ const PostItem: React.FC = () => {
     };
   }, []);
 
-  // Save draft when navigating away (component unmount)
+  // Update form data ref whenever values change
+  useEffect(() => {
+    formDataRef.current = { title, description, category, lookingForText, user };
+  }, [title, description, category, lookingForText, user]);
+
+  // Save draft when navigating away (component unmount) - no dependencies!
   useEffect(() => {
     return () => {
-      // Save draft and show toast when navigating away
-      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
-      if (hasContent && user) {
+      // Use ref values to avoid stale closure
+      const { title: currentTitle, description: currentDescription, category: currentCategory, lookingForText: currentLookingForText, user: currentUser } = formDataRef.current;
+      const hasContent = currentTitle.trim() || currentDescription.trim() || currentCategory || currentLookingForText.trim();
+      if (hasContent && currentUser) {
         saveDraftToDatabase();
         // Use setTimeout to ensure the toast shows on the destination page
         setTimeout(() => {
@@ -92,7 +99,7 @@ const PostItem: React.FC = () => {
         }, 100);
       }
     };
-  }, [title, description, category, lookingForText, user]);
+  }, []); // No dependencies - only runs on actual unmount
 
 
   // Save draft to database
