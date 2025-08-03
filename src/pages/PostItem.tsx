@@ -30,6 +30,7 @@ const PostItem: React.FC = () => {
   const [priceRange, setPriceRange] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
+  const [draftId, setDraftId] = useState<string | null>(null);
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -116,10 +117,21 @@ const PostItem: React.FC = () => {
         status: 'draft' as const
       };
 
-      const draftId = await createItem(draftData, true);
       if (draftId) {
-        setHasDraft(true);
-        toast.success('Draft saved automatically', { duration: 2000 });
+        // Update existing draft
+        const { updateItem } = await import('@/services/authService');
+        const success = await updateItem(draftId, draftData);
+        if (success) {
+          toast.success('Draft updated automatically', { duration: 2000 });
+        }
+      } else {
+        // Create new draft
+        const newDraftId = await createItem(draftData, true);
+        if (newDraftId) {
+          setDraftId(newDraftId);
+          setHasDraft(true);
+          toast.success('Draft saved automatically', { duration: 2000 });
+        }
       }
     } catch (error) {
       console.error('Error saving draft:', error);
@@ -129,6 +141,7 @@ const PostItem: React.FC = () => {
   // Clear draft when item is successfully posted
   const clearDraft = () => {
     setHasDraft(false);
+    setDraftId(null);
   };
 
   const resetForm = () => {
