@@ -64,6 +64,71 @@ const PostItem: React.FC = () => {
     }
   }, []);
 
+  // Auto-save draft functionality
+  useEffect(() => {
+    // Load draft on mount
+    const loadDraft = () => {
+      const savedDraft = localStorage.getItem('tradeMateItemDraft');
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft);
+          setTitle(draft.title || '');
+          setDescription(draft.description || '');
+          setCategory(draft.category || '');
+          setSubcategory(draft.subcategory || '');
+          setCondition(draft.condition || '');
+          setPriceRange(draft.priceRange || '');
+          setLookingForText(draft.lookingForText || '');
+          setSelectedCategories(draft.selectedCategories || []);
+          setSelectedSubcategories(draft.selectedSubcategories || {});
+          setSelectedPriceRanges(draft.selectedPriceRanges || []);
+          setSelectedConditions(draft.selectedConditions || []);
+          
+          toast.info('Draft restored from your previous session');
+        } catch (error) {
+          console.error('Error loading draft:', error);
+        }
+      }
+    };
+
+    loadDraft();
+  }, []);
+
+  // Save draft automatically when form data changes
+  useEffect(() => {
+    // Only save if there's any form data to save
+    const hasFormData = title || description || category || subcategory || condition || 
+                       priceRange || lookingForText || selectedCategories.length > 0 || 
+                       selectedPriceRanges.length > 0 || selectedConditions.length > 0 ||
+                       Object.keys(selectedSubcategories).length > 0;
+
+    if (hasFormData) {
+      const draft = {
+        title,
+        description,
+        category,
+        subcategory,
+        condition,
+        priceRange,
+        lookingForText,
+        selectedCategories,
+        selectedSubcategories,
+        selectedPriceRanges,
+        selectedConditions,
+        timestamp: Date.now()
+      };
+      
+      localStorage.setItem('tradeMateItemDraft', JSON.stringify(draft));
+    }
+  }, [title, description, category, subcategory, condition, priceRange, 
+      lookingForText, selectedCategories, selectedSubcategories, 
+      selectedPriceRanges, selectedConditions]);
+
+  // Clear draft when item is successfully posted
+  const clearDraft = () => {
+    localStorage.removeItem('tradeMateItemDraft');
+  };
+
   const resetForm = () => {
     setTitle('');
     setDescription('');
@@ -72,6 +137,7 @@ const PostItem: React.FC = () => {
     setSubcategory("");
     setCondition("");
     setPriceRange("");
+    clearDraft(); // Clear the saved draft when resetting
     // We're not resetting the "What You're Looking For" section by default
   };
 
@@ -195,6 +261,7 @@ const PostItem: React.FC = () => {
       });
       
       if (newItem) {
+        clearDraft(); // Clear the saved draft on successful submission
         toast.success('Your item has been posted successfully!');
         // Navigate directly to homepage
         navigate('/');
