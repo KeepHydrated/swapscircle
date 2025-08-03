@@ -234,10 +234,19 @@ const EditItem: React.FC = () => {
 
   // Auto-save function for draft changes
   const autoSaveDraft = async () => {
+    console.log('🔄 AUTO-SAVE CHECK:', { 
+      itemId, 
+      itemStatus, 
+      hasChanges: hasActualChanges(), 
+      autoSaving,
+      shouldAutoSave: itemId && itemStatus === 'draft' && hasActualChanges() && !autoSaving
+    });
+    
     if (!itemId || itemStatus !== 'draft' || !hasActualChanges() || autoSaving) {
       return;
     }
 
+    console.log('🔄 STARTING AUTO-SAVE as DRAFT');
     setAutoSaving(true);
     try {
       const { updateItem } = await import('@/services/authService');
@@ -253,6 +262,8 @@ const EditItem: React.FC = () => {
         lookingForDescription: lookingForText,
         status: 'draft', // Explicitly keep as draft
       };
+
+      console.log('🔄 AUTO-SAVE UPDATES:', updates);
 
       // Handle price range logic (simplified version of main handleSubmit)
       if (selectedPriceRanges && selectedPriceRanges.length > 0) {
@@ -273,9 +284,9 @@ const EditItem: React.FC = () => {
       }
 
       await updateItem(itemId, updates);
-      console.log('✅ Auto-saved draft changes');
+      console.log('✅ AUTO-SAVED as DRAFT - Status should remain "draft"');
     } catch (error) {
-      console.error('Error auto-saving draft:', error);
+      console.error('❌ Error auto-saving draft:', error);
     } finally {
       setAutoSaving(false);
     }
@@ -284,11 +295,16 @@ const EditItem: React.FC = () => {
   // Auto-save draft changes when form values change (debounced)
   useEffect(() => {
     if (originalItemData && itemStatus === 'draft' && hasActualChanges()) {
+      console.log('⏰ SETTING AUTO-SAVE TIMER (2 seconds)');
       const timeoutId = setTimeout(() => {
+        console.log('⏰ AUTO-SAVE TIMER TRIGGERED');
         autoSaveDraft();
       }, 2000); // Auto-save after 2 seconds of inactivity
 
-      return () => clearTimeout(timeoutId);
+      return () => {
+        console.log('⏰ AUTO-SAVE TIMER CLEARED');
+        clearTimeout(timeoutId);
+      };
     }
   }, [title, description, category, condition, subcategory, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, originalItemData, itemStatus]);
 
