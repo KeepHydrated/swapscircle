@@ -82,10 +82,14 @@ const PostItem: React.FC = () => {
   // Save draft when navigating away (component unmount)
   useEffect(() => {
     return () => {
-      // Save draft silently when navigating away (no toast to avoid issues)
+      // Save draft and show toast when navigating away
       const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
       if (hasContent && user) {
         saveDraftToDatabase();
+        // Use setTimeout to ensure the toast shows on the destination page
+        setTimeout(() => {
+          toast.success('Draft saved successfully!');
+        }, 100);
       }
     };
   }, [title, description, category, lookingForText, user]);
