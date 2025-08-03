@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Home from "./pages/Home";
-import PostItem from "./pages/PostItem";
+import PostItemFixed from "./pages/PostItemFixed";
 import EditItem from "./pages/EditItem";
 import ItemDetails from "./pages/ItemDetails";
 import Messages from "./pages/Messages";
@@ -47,7 +47,7 @@ const App = () => (
               <Route path="/item/:itemId" element={<ItemDetails />} />
               <Route path="/post-item" element={
                 <RequireAuth>
-                  <PostItem />
+                  <PostItemFixed />
                 </RequireAuth>
               } />
               <Route path="/edit-item/:itemId" element={
