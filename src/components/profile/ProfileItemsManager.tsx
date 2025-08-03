@@ -109,8 +109,10 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
       // Import createItem function dynamically
       const { createItem } = await import('@/services/authService');
       
+      console.log('🔄 DUPLICATING ITEM:', { duplicatedItemData, isDraft: true });
       // Save the duplicated item to the database as a draft
       const newItemId = await createItem(duplicatedItemData, true); // true = isDraft
+      console.log('🔄 DUPLICATION RESULT:', { newItemId });
       
       if (newItemId) {
         // Create the local item object for immediate UI update
@@ -118,9 +120,11 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
           ...item,
           id: newItemId,
           name: `${item.name} (Copy)`,
-          status: 'draft' as const
+          status: 'draft' as const,
+          has_been_edited: false
         };
         
+        console.log('🔄 ADDING DUPLICATED ITEM TO LOCAL STATE:', newItem);
         setItems(prevItems => [newItem, ...prevItems]);
         toast.success(`${item.name} has been duplicated as a draft. Edit it to publish.`);
       } else {

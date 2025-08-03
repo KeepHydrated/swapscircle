@@ -209,7 +209,7 @@ export const createItem = async (item: {
       updated_at: new Date().toISOString()
     };
 
-    console.log('Inserting item to database:', itemToInsert);
+    console.log('🔄 CREATING ITEM - Inserting item to database:', itemToInsert);
 
     const { data, error } = await supabase
       .from('items')
