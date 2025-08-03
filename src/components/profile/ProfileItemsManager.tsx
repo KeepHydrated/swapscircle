@@ -134,6 +134,12 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
 
   // Function to handle publishing a draft item
   const handlePublishClick = async (item: Item) => {
+    // Check if this is a draft item that hasn't been edited
+    if (item.status === 'draft' && !(item as any).has_been_edited) {
+      toast.error('You must edit this item before publishing it.');
+      return;
+    }
+
     try {
       // Import updateItem function dynamically
       const { updateItem } = await import('@/services/authService');

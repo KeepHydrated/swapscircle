@@ -204,6 +204,7 @@ export const createItem = async (item: {
       ...item,
       user_id: session.user.id,
       status: isDraft ? 'draft' : (item.status || 'published'),
+      has_been_edited: false, // Set to false for new duplicated items
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -829,6 +830,7 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       price_range_min: item.priceRangeMin,
       price_range_max: item.priceRangeMax,
       status: item.status,
+      has_been_edited: true, // Mark as edited when updated
       updated_at: new Date().toISOString()
     };
 

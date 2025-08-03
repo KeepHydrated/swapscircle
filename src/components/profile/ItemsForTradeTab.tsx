@@ -29,6 +29,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
       {items.map(item => {
         const isHidden = (item as any).is_hidden;
         const isDraft = item.status === 'draft';
+        const hasBeenEdited = (item as any).has_been_edited;
         return (
           <Card 
             key={item.id} 
@@ -121,11 +122,17 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                   <Button 
                     size="sm" 
                     variant="default" 
-                    className="h-7 text-xs bg-green-600 hover:bg-green-700" 
+                    className={`h-7 text-xs ${
+                      hasBeenEdited 
+                        ? "bg-green-600 hover:bg-green-700" 
+                        : "bg-gray-400 hover:bg-gray-500 cursor-not-allowed"
+                    }`}
+                    disabled={!hasBeenEdited}
                     onClick={(e) => { 
                       e.stopPropagation(); 
                       onPublishClick(item);
                     }}
+                    title={hasBeenEdited ? "Publish item" : "Edit the item first before publishing"}
                   >
                     <Send className="h-3 w-3 mr-1" />
                     Publish
