@@ -363,6 +363,7 @@ const PostItem: React.FC = () => {
               <Button
                 onClick={async () => {
                   await saveDraftToDatabase();
+                  toast.success('Draft saved successfully!');
                   navigate('/');
                 }}
                 variant="outline"
