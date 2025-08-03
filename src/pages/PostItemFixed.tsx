@@ -62,6 +62,7 @@ const PostItemFixed: React.FC = () => {
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
   const [showExitConfirmation, setShowExitConfirmation] = useState<boolean>(false);
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+  const beforeUnloadHandlerRef = useRef<((event: BeforeUnloadEvent) => any) | null>(null);
 
   // Check if profile is complete before allowing posting
   useEffect(() => {
@@ -175,10 +176,12 @@ const PostItemFixed: React.FC = () => {
       }
     };
 
+    beforeUnloadHandlerRef.current = handleBeforeUnload;
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      beforeUnloadHandlerRef.current = null;
     };
   }, [hasUnsavedContent, user]);
 
@@ -254,6 +257,11 @@ const PostItemFixed: React.FC = () => {
   // Handle exit confirmation dialog
   const handleExitWithoutSaving = () => {
     setShowExitConfirmation(false);
+    // Remove beforeunload listener to prevent browser popup
+    if (beforeUnloadHandlerRef.current) {
+      window.removeEventListener('beforeunload', beforeUnloadHandlerRef.current);
+      beforeUnloadHandlerRef.current = null;
+    }
     if (pendingNavigation) {
       pendingNavigation();
       setPendingNavigation(null);
