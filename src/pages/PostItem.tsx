@@ -64,16 +64,6 @@ const PostItem: React.FC = () => {
 
   // Auto-save draft functionality when leaving the page
   useEffect(() => {
-    const handleNavigation = async () => {
-      // Only save if there's meaningful content and user is logged in
-      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
-      if (hasContent && user) {
-        // Save the draft before leaving and show success message
-        await saveDraftToDatabase();
-        toast.success('Draft saved successfully!');
-      }
-    };
-
     // Handle browser navigation (back/forward, refresh, tab close)
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
@@ -83,23 +73,18 @@ const PostItem: React.FC = () => {
       }
     };
 
-    // Handle in-app navigation (clicking links within the app)
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'hidden') {
-        const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
-        if (hasContent && user) {
-          await saveDraftToDatabase();
-          toast.success('Draft saved successfully!');
-        }
-      }
-    };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    // Cleanup function runs when component unmounts (React Router navigation)
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      
+      // Save draft with toast when navigating away via React Router
+      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+      if (hasContent && user) {
+        saveDraftToDatabase();
+        toast.success('Draft saved successfully!');
+      }
     };
   }, [title, description, category, subcategory, condition, priceRange, 
       lookingForText, selectedCategories, selectedSubcategories, 
