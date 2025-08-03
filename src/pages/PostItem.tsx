@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage, createItem } from '@/services/authService';
-import { useNavigate, useLocation, useBlocker } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isProfileComplete } from '@/utils/profileUtils';
 import { 
@@ -29,6 +29,7 @@ import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 const PostItem: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Item offering form state
   const [title, setTitle] = useState('');
@@ -83,21 +84,49 @@ const PostItem: React.FC = () => {
            Object.keys(selectedSubcategories).length > 0 || selectedPriceRanges.length > 0;
   }, [title, description, category, lookingForText, selectedCategories, selectedConditions, selectedSubcategories, selectedPriceRanges]);
 
-  // Block navigation when there's unsaved content
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      hasUnsavedContent() && currentLocation.pathname !== nextLocation.pathname
-  );
-
-  // Handle blocked navigation
+  // Custom navigation interception for Link clicks and programmatic navigation
   useEffect(() => {
-    if (blocker.state === "blocked") {
-      setShowExitConfirmation(true);
-      setPendingNavigation(() => () => {
-        blocker.proceed();
-      });
-    }
-  }, [blocker]);
+    const handleLinkClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const link = target.closest('a');
+      
+      if (link && hasUnsavedContent()) {
+        // Check if it's an internal navigation link (not external)
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('/') && !href.startsWith('//')) {
+          event.preventDefault();
+          setShowExitConfirmation(true);
+          setPendingNavigation(() => () => {
+            navigate(href);
+          });
+        }
+      }
+    };
+
+    // Also handle back button navigation
+    const handlePopState = (event: PopStateEvent) => {
+      if (hasUnsavedContent()) {
+        event.preventDefault();
+        setShowExitConfirmation(true);
+        setPendingNavigation(() => () => {
+          window.history.back();
+        });
+        // Push current state back to prevent navigation
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    window.addEventListener('popstate', handlePopState);
+    
+    // Push state to catch back button
+    window.history.pushState(null, '', window.location.href);
+
+    return () => {
+      document.removeEventListener('click', handleLinkClick);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [hasUnsavedContent, navigate]);
 
   // Auto-save draft functionality when leaving the page (browser close/refresh)
   useEffect(() => {
@@ -214,9 +243,6 @@ const PostItem: React.FC = () => {
   const handleCancelExit = () => {
     setShowExitConfirmation(false);
     setPendingNavigation(null);
-    if (blocker.state === "blocked") {
-      blocker.reset();
-    }
   };
 
   const resetForm = () => {
