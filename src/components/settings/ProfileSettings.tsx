@@ -369,27 +369,22 @@ const ProfileSettings: React.FC = () => {
                     <div className="space-y-2">
                       <div className="relative">
                         <FormControl>
-                          <div className="flex">
-                             <div className="text-sm text-muted-foreground min-w-fit px-3 py-2 border border-r-0 rounded-l-md bg-muted flex items-center">
-                               {location.hasLocation 
-                                 ? `${location.latitude?.toFixed(2)}, ${location.longitude?.toFixed(2)}` 
-                                 : 'No location detected'}
-                             </div>
-                            <Input
-                              placeholder="Type your location..."
-                              value={field.value || ""}
-                              onChange={(e) => {
-                                field.onChange(e.target.value);
-                                if (e.target.value && !locationOpen) setLocationOpen(true);
-                              }}
-                              onFocus={() => {
-                                if (field.value) setLocationOpen(true);
-                              }}
-                              onBlur={() => {
-                                setTimeout(() => setLocationOpen(false), 200);
-                              }}
-                              className="rounded-l-none border-l-0 flex-1"
-                            />
+                           <div className="flex">
+                             <Input
+                               placeholder="Type your location..."
+                               value={field.value || ""}
+                               onChange={(e) => {
+                                 field.onChange(e.target.value);
+                                 if (e.target.value && !locationOpen) setLocationOpen(true);
+                               }}
+                               onFocus={() => {
+                                 if (field.value) setLocationOpen(true);
+                               }}
+                               onBlur={() => {
+                                 setTimeout(() => setLocationOpen(false), 200);
+                               }}
+                               className="flex-1"
+                             />
                             <Button 
                               type="button"
                               onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
