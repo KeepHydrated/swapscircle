@@ -863,7 +863,7 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       return null;
     }
 
-    toast.success('Item updated successfully!');
+    
     return data;
   } catch (error: any) {
     console.error('Error updating item:', error);
