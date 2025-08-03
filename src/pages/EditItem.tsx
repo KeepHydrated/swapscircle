@@ -29,6 +29,7 @@ const EditItem: React.FC = () => {
   const [priceRange, setPriceRange] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [itemStatus, setItemStatus] = useState<string>('published');
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -60,6 +61,7 @@ const EditItem: React.FC = () => {
         if (item) {
           console.log('Loaded item from database:', item);
           
+          setItemStatus((item as any).status || 'published');
           setTitle(item.name || '');
           setDescription(item.description || '');
           
@@ -481,12 +483,12 @@ const EditItem: React.FC = () => {
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Updating...
+                {itemStatus === 'draft' ? 'Publishing...' : 'Updating...'}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-5 w-5" />
-                Update Item
+                {itemStatus === 'draft' ? 'Publish Item' : 'Update Item'}
               </>
             )}
           </Button>
