@@ -370,8 +370,41 @@ const PostItem: React.FC = () => {
             <div className="flex items-center space-x-4">
               <Button
                 onClick={async () => {
-                  await saveDraftToDatabase();
-                  toast.success('Draft saved successfully!');
+                  if (draftId) {
+                    // Update existing draft without showing "Item updated successfully" toast
+                    const { supabase } = await import('@/integrations/supabase/client');
+                    
+                    const draftData = {
+                      name: title || 'Untitled Draft',
+                      description,
+                      category,
+                      condition,
+                      tags: subcategory ? [subcategory] : [],
+                      looking_for_categories: selectedCategories,
+                      looking_for_conditions: selectedConditions,
+                      looking_for_description: lookingForText,
+                      price_range_min: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
+                      price_range_max: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
+                      status: 'draft' as const,
+                      updated_at: new Date().toISOString()
+                    };
+                    
+                    const { error } = await supabase
+                      .from('items')
+                      .update(draftData)
+                      .eq('id', draftId)
+                      .eq('user_id', user?.id);
+                    
+                    if (error) {
+                      toast.error('Error saving draft');
+                    } else {
+                      toast.success('Draft saved successfully!');
+                    }
+                  } else {
+                    // Create new draft
+                    await saveDraftToDatabase();
+                    toast.success('Draft saved successfully!');
+                  }
                   navigate('/');
                 }}
                 variant="outline"
