@@ -29,6 +29,7 @@ import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 
 
 const PostItem: React.FC = () => {
+  console.log('PostItem component starting - version 1.1 - NO useBlocker anywhere');
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
