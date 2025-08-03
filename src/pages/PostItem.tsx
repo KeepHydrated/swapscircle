@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Save, Check, Loader2, Package, Heart, Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage, createItem } from '@/services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isProfileComplete } from '@/utils/profileUtils';
 
@@ -31,6 +31,7 @@ const PostItem: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
+  const isUnmountingRef = useRef(false);
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -64,31 +65,20 @@ const PostItem: React.FC = () => {
 
   // Auto-save draft functionality when leaving the page
   useEffect(() => {
-    // Handle browser navigation (back/forward, refresh, tab close)
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
       if (hasContent && user) {
-        // Save draft silently for beforeunload (can't show toast here)
         saveDraftToDatabase();
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
 
-    // Cleanup function runs when component unmounts (React Router navigation)
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      
-      // Save draft with toast when navigating away via React Router
-      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
-      if (hasContent && user) {
-        saveDraftToDatabase();
-        toast.success('Draft saved successfully!');
-      }
     };
-  }, [title, description, category, subcategory, condition, priceRange, 
-      lookingForText, selectedCategories, selectedSubcategories, 
-      selectedPriceRanges, selectedConditions, user]);
+  }, []);
+
 
   // Save draft to database
   const saveDraftToDatabase = async () => {
