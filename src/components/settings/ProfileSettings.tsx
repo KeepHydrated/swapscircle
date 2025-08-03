@@ -366,24 +366,47 @@ const ProfileSettings: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <div className="relative">
                         <FormControl>
-                          <Input
-                            placeholder="Type your location..."
-                            value={field.value || ""}
-                            onChange={(e) => {
-                              field.onChange(e.target.value);
-                              if (e.target.value && !locationOpen) setLocationOpen(true);
-                            }}
-                            onFocus={() => {
-                              if (field.value) setLocationOpen(true);
-                            }}
-                            onBlur={() => {
-                              setTimeout(() => setLocationOpen(false), 200);
-                            }}
-                            className="w-full"
-                          />
+                          <div className="flex">
+                            <div className="text-sm text-muted-foreground min-w-fit px-3 py-2 border border-r-0 rounded-l-md bg-muted flex items-center">
+                              {location.hasLocation 
+                                ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
+                                : 'No location detected'}
+                            </div>
+                            <Input
+                              placeholder="Type your location..."
+                              value={field.value || ""}
+                              onChange={(e) => {
+                                field.onChange(e.target.value);
+                                if (e.target.value && !locationOpen) setLocationOpen(true);
+                              }}
+                              onFocus={() => {
+                                if (field.value) setLocationOpen(true);
+                              }}
+                              onBlur={() => {
+                                setTimeout(() => setLocationOpen(false), 200);
+                              }}
+                              className="rounded-l-none border-l-0 flex-1"
+                            />
+                            <Button 
+                              type="button"
+                              onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
+                              variant="default"
+                              size="sm"
+                              disabled={location.loading}
+                              className="rounded-l-none border-l-0"
+                            >
+                              {location.loading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : hasUnsavedLocation ? (
+                                <RefreshCw className="h-4 w-4" />
+                              ) : (
+                                <RefreshCw className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
                         </FormControl>
                         {locationOpen && field.value && (
                           <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
@@ -413,40 +436,6 @@ const ProfileSettings: React.FC = () => {
                             )}
                           </div>
                         )}
-                      </div>
-                      
-                      {/* GPS Location Section */}
-                      <div className="flex items-center gap-4">
-                        <div className="text-sm text-muted-foreground min-w-fit">
-                          {location.hasLocation 
-                            ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
-                            : 'No location detected'}
-                        </div>
-
-                        <Button 
-                          type="button"
-                          onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
-                          variant="default"
-                          size="sm"
-                          disabled={location.loading}
-                        >
-                          {location.loading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Getting Location...
-                            </>
-                          ) : hasUnsavedLocation ? (
-                            <>
-                              <RefreshCw className="h-4 w-4" />
-                              Save Location
-                            </>
-                          ) : (
-                            <>
-                              <RefreshCw className="h-4 w-4" />
-                              Update Location
-                            </>
-                          )}
-                        </Button>
                       </div>
 
                       {location.error && (
