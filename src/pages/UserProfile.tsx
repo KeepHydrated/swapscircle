@@ -73,12 +73,13 @@ const UserProfile: React.FC = () => {
         created_at: profile.created_at || new Date().toISOString(),
       });
 
-      // Fetch items
+      // Fetch items ordered by updated_at so recently published items appear first
       const { data: items } = await supabase
         .from('items')
         .select('*')
         .eq('user_id', user_id)
-        .eq('is_available', true);
+        .eq('is_available', true)
+        .order('updated_at', { ascending: false });
 
       if (items) {
         const formattedItems = items.map(item => ({
