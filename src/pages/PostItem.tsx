@@ -3,7 +3,7 @@ import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Save, Check, Loader2, Package, Heart, Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { postItem, uploadItemImage } from '@/services/authService';
+import { postItem, uploadItemImage, createItem } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isProfileComplete } from '@/utils/profileUtils';
@@ -65,39 +65,10 @@ const PostItem: React.FC = () => {
     }
   }, []);
 
-  // Auto-save draft functionality
+  // Auto-save draft functionality  
   useEffect(() => {
-    // Load draft on mount
-    const loadDraft = () => {
-      const savedDraft = localStorage.getItem('tradeMateItemDraft');
-      if (savedDraft) {
-        try {
-          const draft = JSON.parse(savedDraft);
-          setTitle(draft.title || '');
-          setDescription(draft.description || '');
-          setCategory(draft.category || '');
-          setSubcategory(draft.subcategory || '');
-          setCondition(draft.condition || '');
-          setPriceRange(draft.priceRange || '');
-          setLookingForText(draft.lookingForText || '');
-          setSelectedCategories(draft.selectedCategories || []);
-          setSelectedSubcategories(draft.selectedSubcategories || {});
-          setSelectedPriceRanges(draft.selectedPriceRanges || []);
-          setSelectedConditions(draft.selectedConditions || []);
-          
-          setHasDraft(true);
-          toast.info('Draft restored from your previous session');
-        } catch (error) {
-          console.error('Error loading draft:', error);
-        }
-      }
-    };
+    let timeoutId: NodeJS.Timeout;
 
-    loadDraft();
-  }, []);
-
-  // Save draft automatically when form data changes
-  useEffect(() => {
     // Only save if there's any form data to save
     const hasFormData = title || description || category || subcategory || condition || 
                        priceRange || lookingForText || selectedCategories.length > 0 || 
@@ -105,35 +76,58 @@ const PostItem: React.FC = () => {
                        Object.keys(selectedSubcategories).length > 0;
 
     if (hasFormData) {
-      const draft = {
-        title,
-        description,
-        category,
-        subcategory,
-        condition,
-        priceRange,
-        lookingForText,
-        selectedCategories,
-        selectedSubcategories,
-        selectedPriceRanges,
-        selectedConditions,
-        timestamp: Date.now()
-      };
-      
-      localStorage.setItem('tradeMateItemDraft', JSON.stringify(draft));
-      setHasDraft(true);
-    } else {
-      // Clear draft if no form data
-      localStorage.removeItem('tradeMateItemDraft');
-      setHasDraft(false);
+      // Debounce the draft saving to avoid too many database calls
+      timeoutId = setTimeout(async () => {
+        await saveDraftToDatabase();
+      }, 2000); // Save after 2 seconds of inactivity
     }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [title, description, category, subcategory, condition, priceRange, 
       lookingForText, selectedCategories, selectedSubcategories, 
       selectedPriceRanges, selectedConditions]);
 
+  // Save draft to database
+  const saveDraftToDatabase = async () => {
+    if (!user) return;
+
+    // Only save if there's meaningful content
+    const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+    if (!hasContent) return;
+
+    try {
+      const tags = subcategory ? [subcategory] : [];
+      
+      const draftData = {
+        name: title || 'Untitled Draft',
+        description,
+        category,
+        condition,
+        tags,
+        looking_for_categories: selectedCategories,
+        looking_for_conditions: selectedConditions,
+        looking_for_description: lookingForText,
+        price_range_min: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
+        price_range_max: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
+        status: 'draft' as const
+      };
+
+      const draftId = await createItem(draftData, true);
+      if (draftId) {
+        setHasDraft(true);
+        toast.success('Draft saved automatically', { duration: 2000 });
+      }
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    }
+  };
+
   // Clear draft when item is successfully posted
   const clearDraft = () => {
-    localStorage.removeItem('tradeMateItemDraft');
     setHasDraft(false);
   };
 
@@ -271,8 +265,7 @@ const PostItem: React.FC = () => {
       if (newItem) {
         clearDraft(); // Clear the saved draft on successful submission
         toast.success('Your item has been posted successfully!');
-        // Navigate directly to homepage
-        navigate('/');
+        setShowSuccessDialog(true);
       }
     } catch (error) {
       console.error('Error posting item:', error);
