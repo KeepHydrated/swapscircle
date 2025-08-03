@@ -32,6 +32,7 @@ const EditItem: React.FC = () => {
   const [itemStatus, setItemStatus] = useState<string>('published');
   const [hasBeenEdited, setHasBeenEdited] = useState<boolean>(true);
   const [originalItemData, setOriginalItemData] = useState<any>(null);
+  const [autoSaving, setAutoSaving] = useState(false);
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -230,6 +231,66 @@ const EditItem: React.FC = () => {
     
     return hasChanges;
   };
+
+  // Auto-save function for draft changes
+  const autoSaveDraft = async () => {
+    if (!itemId || itemStatus !== 'draft' || !hasActualChanges() || autoSaving) {
+      return;
+    }
+
+    setAutoSaving(true);
+    try {
+      const { updateItem } = await import('@/services/authService');
+      
+      const updates: any = {
+        name: title,
+        description,
+        category,
+        condition,
+        tags: subcategory ? [subcategory] : [],
+        lookingForCategories: selectedCategories,
+        lookingForConditions: selectedConditions,
+        lookingForDescription: lookingForText,
+        // Don't change status - keep as draft
+      };
+
+      // Handle price range logic (simplified version of main handleSubmit)
+      if (selectedPriceRanges && selectedPriceRanges.length > 0) {
+        let minValue = Number.MAX_VALUE;
+        let maxValue = 0;
+        
+        selectedPriceRanges.forEach(range => {
+          const parts = range.split(" - ");
+          const min = parseFloat(parts[0]);
+          const max = parseFloat(parts[1].replace(/,/g, ''));
+          
+          if (min < minValue) minValue = min;
+          if (max > maxValue) maxValue = max;
+        });
+        
+        updates.priceRangeMin = minValue;
+        updates.priceRangeMax = maxValue;
+      }
+
+      await updateItem(itemId, updates);
+      console.log('✅ Auto-saved draft changes');
+    } catch (error) {
+      console.error('Error auto-saving draft:', error);
+    } finally {
+      setAutoSaving(false);
+    }
+  };
+
+  // Auto-save draft changes when form values change (debounced)
+  useEffect(() => {
+    if (originalItemData && itemStatus === 'draft' && hasActualChanges()) {
+      const timeoutId = setTimeout(() => {
+        autoSaveDraft();
+      }, 2000); // Auto-save after 2 seconds of inactivity
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [title, description, category, condition, subcategory, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, originalItemData, itemStatus]);
 
   // Check for changes whenever form values change - update hasBeenEdited based on actual changes
   useEffect(() => {
@@ -574,8 +635,13 @@ const EditItem: React.FC = () => {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 relative"
           >
+            {autoSaving && !isSubmitting && (
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 whitespace-nowrap">
+                Auto-saving...
+              </div>
+            )}
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
