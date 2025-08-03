@@ -87,49 +87,80 @@ const PostItemFixed: React.FC = () => {
            Object.keys(selectedSubcategories).length > 0 || selectedPriceRanges.length > 0;
   }, [title, description, category, lookingForText, selectedCategories, selectedConditions, selectedSubcategories, selectedPriceRanges]);
 
-  // Custom navigation interception for Link clicks and programmatic navigation
+  // Intercept all navigation attempts
   useEffect(() => {
+    let isNavigationConfirmed = false;
+
+    // Override the navigate function to show confirmation
+    const originalNavigate = navigate;
+    const interceptedNavigate = (to: any, options?: any) => {
+      if (hasUnsavedContent() && !isNavigationConfirmed) {
+        setShowExitConfirmation(true);
+        setPendingNavigation(() => () => {
+          isNavigationConfirmed = true;
+          originalNavigate(to, options);
+        });
+        return;
+      }
+      originalNavigate(to, options);
+    };
+
+    // Handle link clicks
     const handleLinkClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const link = target.closest('a');
       
-      if (link && hasUnsavedContent()) {
-        // Check if it's an internal navigation link (not external)
+      if (link && hasUnsavedContent() && !isNavigationConfirmed) {
         const href = link.getAttribute('href');
         if (href && href.startsWith('/') && !href.startsWith('//')) {
           event.preventDefault();
           setShowExitConfirmation(true);
           setPendingNavigation(() => () => {
-            navigate(href);
+            isNavigationConfirmed = true;
+            window.location.href = href;
           });
         }
       }
     };
 
-    // Also handle back button navigation
+    // Handle back button
     const handlePopState = (event: PopStateEvent) => {
-      if (hasUnsavedContent()) {
+      if (hasUnsavedContent() && !isNavigationConfirmed) {
         event.preventDefault();
         setShowExitConfirmation(true);
         setPendingNavigation(() => () => {
+          isNavigationConfirmed = true;
           window.history.back();
         });
-        // Push current state back to prevent navigation
         window.history.pushState(null, '', window.location.href);
       }
     };
 
-    document.addEventListener('click', handleLinkClick);
+    // Handle browser navigation buttons and header navigation
+    const handleNavigation = (event: Event) => {
+      if (hasUnsavedContent() && !isNavigationConfirmed) {
+        event.preventDefault();
+        event.stopPropagation();
+        setShowExitConfirmation(true);
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick, true);
     window.addEventListener('popstate', handlePopState);
     
-    // Push state to catch back button
-    if (hasUnsavedContent()) {
-      window.history.pushState(null, '', window.location.href);
-    }
+    // Add to window so header components can use it
+    (window as any).checkUnsavedChanges = () => {
+      if (hasUnsavedContent()) {
+        setShowExitConfirmation(true);
+        return false;
+      }
+      return true;
+    };
 
     return () => {
-      document.removeEventListener('click', handleLinkClick);
+      document.removeEventListener('click', handleLinkClick, true);
       window.removeEventListener('popstate', handlePopState);
+      delete (window as any).checkUnsavedChanges;
     };
   }, [hasUnsavedContent, navigate]);
 
