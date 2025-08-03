@@ -63,20 +63,467 @@ const PostItemFixed: React.FC = () => {
   const [showExitConfirmation, setShowExitConfirmation] = useState<boolean>(false);
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
 
-  // Basic test render
+  // Check if profile is complete before allowing posting
+  useEffect(() => {
+    if (user && !isProfileComplete(user)) {
+      toast.error('Please complete your profile (username and avatar) before posting items.');
+      navigate('/settings');
+      return;
+    }
+  }, [user, navigate]);
+
+  // Load saved preferences from localStorage on component mount
+  useEffect(() => {
+    const savedPrefs = localStorage.getItem('tradeMatePreferences');
+    if (savedPrefs) {
+      setSavedPreferences(JSON.parse(savedPrefs));
+    }
+  }, []);
+
+  // Check if user has unsaved content
+  const hasUnsavedContent = useCallback(() => {
+    return title.trim() || description.trim() || category || lookingForText.trim() || 
+           selectedCategories.length > 0 || selectedConditions.length > 0 || 
+           Object.keys(selectedSubcategories).length > 0 || selectedPriceRanges.length > 0;
+  }, [title, description, category, lookingForText, selectedCategories, selectedConditions, selectedSubcategories, selectedPriceRanges]);
+
+  // Custom navigation interception for Link clicks and programmatic navigation
+  useEffect(() => {
+    const handleLinkClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const link = target.closest('a');
+      
+      if (link && hasUnsavedContent()) {
+        // Check if it's an internal navigation link (not external)
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('/') && !href.startsWith('//')) {
+          event.preventDefault();
+          setShowExitConfirmation(true);
+          setPendingNavigation(() => () => {
+            navigate(href);
+          });
+        }
+      }
+    };
+
+    // Also handle back button navigation
+    const handlePopState = (event: PopStateEvent) => {
+      if (hasUnsavedContent()) {
+        event.preventDefault();
+        setShowExitConfirmation(true);
+        setPendingNavigation(() => () => {
+          window.history.back();
+        });
+        // Push current state back to prevent navigation
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    window.addEventListener('popstate', handlePopState);
+    
+    // Push state to catch back button
+    if (hasUnsavedContent()) {
+      window.history.pushState(null, '', window.location.href);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleLinkClick);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [hasUnsavedContent, navigate]);
+
+  // Auto-save draft functionality when leaving the page (browser close/refresh)
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (hasUnsavedContent() && user) {
+        event.preventDefault();
+        event.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+        saveDraftToDatabase();
+        return event.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasUnsavedContent, user]);
+
+  // Update form data ref whenever values change
+  useEffect(() => {
+    formDataRef.current = { title, description, category, lookingForText, user };
+  }, [title, description, category, lookingForText, user]);
+
+  // Save draft when navigating away (component unmount) - no dependencies!
+  useEffect(() => {
+    return () => {
+      // Use ref values to avoid stale closure
+      const { title: currentTitle, description: currentDescription, category: currentCategory, lookingForText: currentLookingForText, user: currentUser } = formDataRef.current;
+      const hasContent = currentTitle.trim() || currentDescription.trim() || currentCategory || currentLookingForText.trim();
+      if (hasContent && currentUser) {
+        saveDraftToDatabase();
+        // Use setTimeout to ensure the toast shows on the destination page
+        setTimeout(() => {
+          toast.success('Draft saved successfully!');
+        }, 100);
+      }
+    };
+  }, []); // No dependencies - only runs on actual unmount
+
+  // Save draft to database
+  const saveDraftToDatabase = async () => {
+    if (!user) return;
+
+    // Only save if there's meaningful content
+    const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+    if (!hasContent) return;
+
+    try {
+      const tags = subcategory ? [subcategory] : [];
+      
+      const draftData = {
+        name: title || 'Untitled Draft',
+        description,
+        category,
+        condition,
+        tags,
+        looking_for_categories: selectedCategories,
+        looking_for_conditions: selectedConditions,
+        looking_for_description: lookingForText,
+        price_range_min: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
+        price_range_max: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
+        status: 'draft' as const
+      };
+
+      if (draftId) {
+        // Update existing draft silently
+        const { updateItem } = await import('@/services/authService');
+        await updateItem(draftId, draftData);
+      } else {
+        // Create new draft silently
+        const newDraftId = await createItem(draftData, true);
+        if (newDraftId) {
+          setDraftId(newDraftId);
+          setHasDraft(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    }
+  };
+
+  // Clear draft when item is successfully posted
+  const clearDraft = () => {
+    setHasDraft(false);
+    setDraftId(null);
+  };
+
+  // Handle exit confirmation dialog
+  const handleExitWithoutSaving = () => {
+    setShowExitConfirmation(false);
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    }
+  };
+
+  const handleSaveAndExit = async () => {
+    setShowExitConfirmation(false);
+    try {
+      await saveDraftToDatabase();
+      toast.success('Draft saved successfully!');
+      if (pendingNavigation) {
+        pendingNavigation();
+        setPendingNavigation(null);
+      }
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      toast.error('Error saving draft');
+    }
+  };
+
+  const handleCancelExit = () => {
+    setShowExitConfirmation(false);
+    setPendingNavigation(null);
+  };
+  
+  // Handle item submission (posting)
+  const handleSubmit = async () => {
+    if (!user) {
+      toast.error('You must be logged in to post an item.');
+      return;
+    }
+
+    if (!title.trim()) {
+      toast.error('Please enter a title for your item.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      let imageUrl = '';
+      
+      // Upload image if provided
+      if (images.length > 0) {
+        const uploadedUrl = await uploadItemImage(images[0]);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        }
+      }
+
+      const item = {
+        name: title,
+        description,
+        image_url: imageUrl,
+        category,
+        condition,
+        tags: subcategory ? [subcategory] : [],
+        lookingForCategories: selectedCategories,
+        lookingForConditions: selectedConditions,
+        lookingForDescription: lookingForText,
+        priceRangeMin: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
+        priceRangeMax: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
+      };
+
+      console.log('Posting item:', item);
+      
+      const result = await postItem(item);
+      if (result) {
+        clearDraft();
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error posting item:', error);
+      toast.error('Error posting item. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Full PostItem UI
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Post Item (Fixed Version)</h1>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <p className="text-green-600 font-semibold">✅ Component loaded successfully without useBlocker!</p>
-          <p className="text-sm text-gray-600 mt-2">
-            This is a clean version of PostItem that should work without any useBlocker errors.
-            Check the console for the success message.
-          </p>
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">
+          What Are You Trading?
+        </h1>
+        
+        {/* Two-column layout */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+          {/* Item You're Offering Column */}
+          <div className="space-y-6">
+            <div className="flex items-center mb-6">
+              <div className="bg-blue-50 p-3 rounded-full mr-4">
+                <Package className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">What You're Offering</h2>
+                <p className="text-gray-600">Tell us about the item you want to trade</p>
+              </div>
+            </div>
+            
+            <ItemOfferingForm
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              images={images}
+              setImages={setImages}
+              category={category}
+              setCategory={setCategory}
+              subcategory={subcategory}
+              setSubcategory={setSubcategory}
+              condition={condition}
+              setCondition={setCondition}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+            />
+          </div>
+          
+          {/* What You're Looking For Column */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="bg-purple-50 p-3 rounded-full mr-4">
+                  <Heart className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
+                  <p className="text-gray-600">Describe what you'd like to receive in return</p>
+                </div>
+              </div>
+              
+              {/* Load Saved Preferences Button */}
+              {savedPreferences.length > 0 && (
+                <Button 
+                  onClick={() => setLoadDialogOpen(true)}
+                  variant="outline"
+                  className="bg-white shadow-sm hover:shadow-md border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition-all duration-200"
+                >
+                  Load Saved Preferences
+                </Button>
+              )}
+            </div>
+            
+            {/* Preferences form */}
+            <PreferencesForm 
+              lookingForText={lookingForText}
+              setLookingForText={setLookingForText}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+              selectedSubcategories={selectedSubcategories}
+              setSelectedSubcategories={setSelectedSubcategories}
+              selectedPriceRanges={selectedPriceRanges}
+              setSelectedPriceRanges={setSelectedPriceRanges}
+              selectedConditions={selectedConditions}
+              setSelectedConditions={setSelectedConditions}
+            />
+            
+            {/* Save Preferences Button */}
+            <div className="pt-6">
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-3 text-lg font-medium shadow-sm hover:shadow-md transition-all duration-200"
+                onClick={() => setSaveDialogOpen(true)}
+              >
+                <Save className="mr-2 h-5 w-5" />
+                Save Preferences
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex justify-center mt-12 max-w-7xl mx-auto">
+          <div className="flex flex-col items-center space-y-3">
+            {hasDraft && (
+              <div className="flex items-center text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                <Save className="mr-1 h-4 w-4" />
+                Draft auto-saved
+              </div>
+            )}
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={async () => {
+                  await saveDraftToDatabase();
+                  toast.success('Draft saved successfully!');
+                  navigate('/');
+                }}
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-lg font-medium"
+              >
+                <Save className="mr-2 h-5 w-5" />
+                Save Draft
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || !title.trim()}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 relative overflow-hidden"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Posting...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Post Item
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <SavePreferenceDialog
+        open={saveDialogOpen}
+        onOpenChange={setSaveDialogOpen}
+        preferenceName={preferenceName}
+        setPreferenceName={setPreferenceName}
+        onSave={() => {
+          // Save logic here
+          const newPreference: SavedPreference = {
+            id: Date.now().toString(),
+            name: preferenceName,
+            selectedCategories: selectedCategories,
+            selectedSubcategories: selectedSubcategories,
+            selectedPriceRanges: selectedPriceRanges,
+            selectedConditions: selectedConditions,
+            lookingFor: lookingForText
+          };
+          
+          const updatedPreferences = [...savedPreferences, newPreference];
+          setSavedPreferences(updatedPreferences);
+          localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
+          
+          setPreferenceName('');
+          setSaveDialogOpen(false);
+          toast.success('Preferences saved successfully!');
+        }}
+      />
+
+      <LoadPreferencesDialog
+        open={loadDialogOpen}
+        onOpenChange={setLoadDialogOpen}
+        preferences={savedPreferences}
+        onApply={(preference: SavedPreference) => {
+          setSelectedCategories(preference.selectedCategories || []);
+          setSelectedSubcategories(preference.selectedSubcategories || {});
+          setSelectedPriceRanges(preference.selectedPriceRanges || []);
+          setSelectedConditions(preference.selectedConditions || []);
+          setLookingForText(preference.lookingFor || '');
+          setLoadDialogOpen(false);
+          toast.success('Preferences loaded successfully!');
+        }}
+        onDelete={(id: string) => {
+          const updatedPreferences = savedPreferences.filter(pref => pref.id !== id);
+          setSavedPreferences(updatedPreferences);
+          localStorage.setItem('tradeMatePreferences', JSON.stringify(updatedPreferences));
+          toast.success('Preference deleted successfully!');
+        }}
+      />
+
+      {/* Exit Confirmation Dialog */}
+      <AlertDialog open={showExitConfirmation} onOpenChange={setShowExitConfirmation}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center">
+              <AlertTriangle className="mr-2 h-5 w-5 text-amber-500" />
+              Unsaved Changes
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes to your item listing. What would you like to do?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel onClick={handleCancelExit} className="w-full sm:w-auto">
+              Stay Here
+            </AlertDialogCancel>
+            <Button 
+              onClick={handleExitWithoutSaving}
+              variant="outline"
+              className="w-full sm:w-auto border-red-300 text-red-600 hover:bg-red-50"
+            >
+              Leave Without Saving
+            </Button>
+            <AlertDialogAction 
+              onClick={handleSaveAndExit}
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Save & Leave
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </div>
   );
 };
