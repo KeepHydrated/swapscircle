@@ -38,29 +38,13 @@ const ProfileSettings: React.FC = () => {
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
-  const [locationOpen, setLocationOpen] = useState(false);
+  
   const [initialLoading, setInitialLoading] = useState(true);
   const [displayName, setDisplayName] = useState(user?.name || "");
   const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
   const [hasUnsavedLocation, setHasUnsavedLocation] = useState(false);
   const location = useLocation();
 
-  // Major US cities for dropdown
-  const cities = [
-    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego',
-    'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco',
-    'Indianapolis', 'Seattle', 'Denver', 'Boston', 'El Paso', 'Detroit', 'Nashville', 'Memphis', 'Portland',
-    'Oklahoma City', 'Las Vegas', 'Louisville', 'Baltimore', 'Milwaukee', 'Albuquerque', 'Tucson', 'Fresno',
-    'Mesa', 'Sacramento', 'Atlanta', 'Kansas City', 'Colorado Springs', 'Miami', 'Raleigh', 'Omaha',
-    'Long Beach', 'Virginia Beach', 'Oakland', 'Minneapolis', 'Tulsa', 'Arlington', 'Tampa', 'New Orleans',
-    'Wichita', 'Cleveland', 'Bakersfield', 'Aurora', 'Anaheim', 'Honolulu', 'Santa Ana', 'Riverside',
-    'Corpus Christi', 'Lexington', 'Stockton', 'Henderson', 'Saint Paul', 'St. Louis', 'Cincinnati',
-    'Pittsburgh', 'Greensboro', 'Anchorage', 'Plano', 'Lincoln', 'Orlando', 'Irvine', 'Newark', 'Durham',
-    'Chula Vista', 'Toledo', 'Fort Wayne', 'St. Petersburg', 'Laredo', 'Jersey City', 'Chandler',
-    'Madison', 'Lubbock', 'Scottsdale', 'Reno', 'Buffalo', 'Gilbert', 'Glendale', 'North Las Vegas',
-    'Winston-Salem', 'Chesapeake', 'Norfolk', 'Fremont', 'Garland', 'Irving', 'Hialeah', 'Richmond',
-    'Boise', 'Spokane', 'Baton Rouge'
-  ].sort();
 
   // Initialize form with empty values at first, update once Supabase data loads
   const form = useForm<ProfileFormValues>({
@@ -366,83 +350,47 @@ const ProfileSettings: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <FormControl>
+                     <div className="space-y-2">
+                       <div className="relative">
+                         <FormControl>
                            <div className="flex">
                              <Input
-                               placeholder="Type your location..."
+                               placeholder="GPS coordinates will appear here..."
                                value={field.value || ""}
-                               onChange={(e) => {
-                                 field.onChange(e.target.value);
-                                 if (e.target.value && !locationOpen) setLocationOpen(true);
-                               }}
-                               onFocus={() => {
-                                 if (field.value) setLocationOpen(true);
-                               }}
-                               onBlur={() => {
-                                 setTimeout(() => setLocationOpen(false), 200);
-                               }}
+                               onChange={field.onChange}
                                className="flex-1"
+                               readOnly
                              />
-                            <Button 
-                              type="button"
-                              onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
-                              variant="default"
-                              size="sm"
-                              disabled={location.loading}
-                              className="rounded-l-none border-l-0"
-                            >
-                              {location.loading ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : hasUnsavedLocation ? (
-                                <RefreshCw className="h-4 w-4" />
-                              ) : (
-                                <RefreshCw className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </FormControl>
-                        {locationOpen && field.value && (
-                          <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
-                            {cities
-                              .filter(city => 
-                                city.toLowerCase().includes(field.value.toLowerCase())
-                              )
-                              .slice(0, 10)
-                              .map((city) => (
-                                <div
-                                  key={city}
-                                  className="px-3 py-2 hover:bg-accent cursor-pointer text-sm"
-                                  onClick={() => {
-                                    field.onChange(city);
-                                    setLocationOpen(false);
-                                  }}
-                                >
-                                  {city}
-                                </div>
-                              ))}
-                            {cities.filter(city => 
-                              city.toLowerCase().includes(field.value.toLowerCase())
-                            ).length === 0 && (
-                              <div className="px-3 py-2 text-sm text-muted-foreground">
-                                No matching cities found
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                             <Button 
+                               type="button"
+                               onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
+                               variant="default"
+                               size="sm"
+                               disabled={location.loading}
+                               className="rounded-l-none border-l-0"
+                             >
+                               {location.loading ? (
+                                 <Loader2 className="h-4 w-4 animate-spin" />
+                               ) : hasUnsavedLocation ? (
+                                 <RefreshCw className="h-4 w-4" />
+                               ) : (
+                                 <RefreshCw className="h-4 w-4" />
+                               )}
+                             </Button>
+                           </div>
+                         </FormControl>
 
-                      {location.error && (
-                        <div className="text-center text-sm text-destructive">
-                          {location.error}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <FormDescription>
-                      City and state where you're located, or use GPS coordinates.
-                    </FormDescription>
+                         {location.error && (
+                           <div className="text-center text-sm text-destructive">
+                             {location.error}
+                           </div>
+                         )}
+                       </div>
+                       
+                       <FormDescription>
+                         Click the button to get your current GPS coordinates.
+                       </FormDescription>
+                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
