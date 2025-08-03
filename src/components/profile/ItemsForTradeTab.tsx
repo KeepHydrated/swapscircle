@@ -81,26 +81,28 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 </Button>
               </div>
 
-              {/* Hide/Unhide Icon - Top Right - Always visible for hidden items */}
-              <div className={`absolute top-2 right-2 transition-opacity ${
-                isHidden ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-              }`}>
-                <Button 
-                  size="icon" 
-                  variant="secondary" 
-                  className="h-8 w-8 bg-white/90 hover:bg-white" 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    if (onHideClick) onHideClick(item);
-                  }}
-                >
-                  {isHidden ? (
-                    <EyeOff className="h-4 w-4 text-red-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-blue-500" />
-                  )}
-                </Button>
-              </div>
+              {/* Hide/Unhide Icon - Top Right - Only show for published items */}
+              {!isDraft && (
+                <div className={`absolute top-2 right-2 transition-opacity ${
+                  isHidden ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}>
+                  <Button 
+                    size="icon" 
+                    variant="secondary" 
+                    className="h-8 w-8 bg-white/90 hover:bg-white" 
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      if (onHideClick) onHideClick(item);
+                    }}
+                  >
+                    {isHidden ? (
+                      <EyeOff className="h-4 w-4 text-red-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-blue-500" />
+                    )}
+                  </Button>
+                </div>
+              )}
 
               {/* Status badges */}
               <div className="absolute bottom-2 right-2 flex space-x-1">
