@@ -30,6 +30,7 @@ const EditItem: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [itemStatus, setItemStatus] = useState<string>('published');
+  const [hasBeenEdited, setHasBeenEdited] = useState<boolean>(true);
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -62,6 +63,7 @@ const EditItem: React.FC = () => {
           console.log('Loaded item from database:', item);
           
           setItemStatus((item as any).status || 'published');
+          setHasBeenEdited((item as any).has_been_edited !== false); // Default to true if undefined
           setTitle(item.name || '');
           setDescription(item.description || '');
           
@@ -206,6 +208,12 @@ const EditItem: React.FC = () => {
   const handleSubmit = async () => {
     console.log('Update button clicked! Starting validation...');
     console.log('Current values:', { title, category, condition, priceRange });
+    
+    // Check if this is a draft item that hasn't been edited and is being published
+    if (itemStatus === 'draft' && !hasBeenEdited) {
+      toast.error('You must make changes to this item before publishing it.');
+      return;
+    }
     
     if (!title.trim()) {
       console.log('Validation failed: title is empty');
