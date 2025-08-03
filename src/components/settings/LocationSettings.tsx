@@ -95,6 +95,12 @@ export default function LocationSettings() {
             </div>
             
             <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground min-w-fit">
+                {location.hasLocation 
+                  ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
+                  : 'No location detected'}
+              </div>
+
               <Button 
                 onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
                 variant="default"
@@ -118,12 +124,6 @@ export default function LocationSettings() {
                   </>
                 )}
               </Button>
-
-              <div className="text-sm text-muted-foreground min-w-fit">
-                {location.hasLocation 
-                  ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
-                  : 'No location detected'}
-              </div>
             </div>
 
             {location.error && (
