@@ -36,6 +36,7 @@ export function useUserItems() {
           .eq('user_id', user.id)
           .eq('is_available', true) // Only show available items
           .eq('is_hidden', false) // Only show non-hidden items
+          .eq('status', 'published') // Only show published items (not drafts)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
