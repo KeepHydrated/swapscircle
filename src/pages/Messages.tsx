@@ -223,11 +223,6 @@ const Messages = () => {
                         </div>
                         
                         <div className="flex items-center">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          <span>{activeChat.otherUserProfile?.location || "2.3 mi away"}</span>
-                        </div>
-                        
-                        <div className="flex items-center">
                           <Clock className="h-3 w-3 mr-1" />
                           <span>~1 hour</span>
                         </div>
