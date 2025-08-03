@@ -144,6 +144,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
       // Import updateItem function dynamically
       const { updateItem } = await import('@/services/authService');
       
+      // Only update the status, don't mark as edited since this is just a publish action
       const result = await updateItem(item.id, { status: 'published' });
       
       if (result) {

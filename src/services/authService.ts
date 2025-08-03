@@ -816,6 +816,9 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       itemData: item
     });
 
+    // Check if this is just a status change (publishing) vs actual content changes
+    const isOnlyStatusChange = Object.keys(item).length === 1 && item.status !== undefined;
+    
     const updateData = {
       name: item.name,
       description: item.description,
@@ -830,7 +833,8 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       price_range_min: item.priceRangeMin,
       price_range_max: item.priceRangeMax,
       status: item.status,
-      has_been_edited: true, // Mark as edited when updated
+      // Only mark as edited if actual content changes were made, not just status changes
+      ...(isOnlyStatusChange ? {} : { has_been_edited: true }),
       updated_at: new Date().toISOString()
     };
 
