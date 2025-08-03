@@ -104,7 +104,6 @@ export default function LocationSettings() {
               <Button 
                 onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
                 variant="default"
-                className="flex-1"
                 disabled={location.loading}
               >
                 {location.loading ? (
