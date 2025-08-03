@@ -198,7 +198,6 @@ const OtherProfile: React.FC = () => {
             description: profile.description,
             rating: profile.rating,
             reviewCount: profile.reviewCount,
-            location: profile.location,
             memberSince: profile.memberSince,
             avatar_url: profile.avatar_url,
           }}

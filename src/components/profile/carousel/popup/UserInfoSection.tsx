@@ -44,10 +44,6 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
             <span>Since {profileData?.created_at ? new Date(profileData.created_at).getFullYear() : '2023'}</span>
           </div>
           <div className="flex items-center">
-            <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-            <span>{profileData?.location || '2.3 mi away'}</span>
-          </div>
-          <div className="flex items-center">
             <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
             <span>~1 hour</span>
           </div>

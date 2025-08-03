@@ -164,7 +164,7 @@ const UserProfile: React.FC = () => {
       description: userProfile.bio,
       rating: averageRating,
       reviewCount: userReviews.length,
-      location: userProfile.location,
+      
       memberSince: userProfile.created_at
         ? new Date(userProfile.created_at).getFullYear().toString()
         : "",

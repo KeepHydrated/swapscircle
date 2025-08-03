@@ -10,7 +10,6 @@ interface ProfileHeaderProps {
     description: string;
     rating: number;
     reviewCount: number;
-    location: string;
     memberSince: string;
     avatar_url?: string;
     tradesCompleted?: number;
@@ -88,10 +87,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </Button>
         </div>
         <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
-          <div className="flex items-center">
-            <MapPin className="h-4 w-4 mr-1" />
-            <span>{profile.location}</span>
-          </div>
           <div className="flex items-center">
             <Calendar className="h-4 w-4 mr-1" />
             <span>Member since {profile.memberSince}</span>
