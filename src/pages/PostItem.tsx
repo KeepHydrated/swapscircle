@@ -64,20 +64,42 @@ const PostItem: React.FC = () => {
 
   // Auto-save draft functionality when leaving the page
   useEffect(() => {
-    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+    const handleNavigation = async () => {
       // Only save if there's meaningful content and user is logged in
       const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
       if (hasContent && user) {
-        // Save the draft before leaving
+        // Save the draft before leaving and show success message
         await saveDraftToDatabase();
+        toast.success('Draft saved successfully!');
       }
     };
 
-    // Save draft when navigating away from the page
+    // Handle browser navigation (back/forward, refresh, tab close)
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+      if (hasContent && user) {
+        // Save draft silently for beforeunload (can't show toast here)
+        saveDraftToDatabase();
+      }
+    };
+
+    // Handle in-app navigation (clicking links within the app)
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden') {
+        const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
+        if (hasContent && user) {
+          await saveDraftToDatabase();
+          toast.success('Draft saved successfully!');
+        }
+      }
+    };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [title, description, category, subcategory, condition, priceRange, 
       lookingForText, selectedCategories, selectedSubcategories, 
