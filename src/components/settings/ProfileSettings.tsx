@@ -33,6 +33,8 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const ProfileSettings: React.FC = () => {
+  console.log('[ProfileSettings] Component rendering...');
+  
   // Get user data from auth context
   const { user, updateProfile } = useAuth();
   const navigate = useNavigate();
@@ -44,6 +46,8 @@ const ProfileSettings: React.FC = () => {
   const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
   const [hasUnsavedLocation, setHasUnsavedLocation] = useState(false);
   const location = useLocation();
+
+  console.log('[ProfileSettings] State initialized successfully');
 
 
   // Initialize form with empty values at first, update once Supabase data loads
