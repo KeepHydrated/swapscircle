@@ -29,6 +29,7 @@ const PostItem: React.FC = () => {
   const [condition, setCondition] = useState<string>("");
   const [priceRange, setPriceRange] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
   
   // Preferences form state
   const [lookingForText, setLookingForText] = useState<string>("");
@@ -84,6 +85,7 @@ const PostItem: React.FC = () => {
           setSelectedPriceRanges(draft.selectedPriceRanges || []);
           setSelectedConditions(draft.selectedConditions || []);
           
+          setHasDraft(true);
           toast.info('Draft restored from your previous session');
         } catch (error) {
           console.error('Error loading draft:', error);
@@ -119,6 +121,11 @@ const PostItem: React.FC = () => {
       };
       
       localStorage.setItem('tradeMateItemDraft', JSON.stringify(draft));
+      setHasDraft(true);
+    } else {
+      // Clear draft if no form data
+      localStorage.removeItem('tradeMateItemDraft');
+      setHasDraft(false);
     }
   }, [title, description, category, subcategory, condition, priceRange, 
       lookingForText, selectedCategories, selectedSubcategories, 
@@ -127,6 +134,7 @@ const PostItem: React.FC = () => {
   // Clear draft when item is successfully posted
   const clearDraft = () => {
     localStorage.removeItem('tradeMateItemDraft');
+    setHasDraft(false);
   };
 
   const resetForm = () => {
@@ -366,23 +374,31 @@ const PostItem: React.FC = () => {
         
         {/* Action Buttons */}
         <div className="flex justify-center mt-12 max-w-7xl mx-auto">
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Creating Your Listing...
-              </>
-            ) : (
-              <>
-                <Check className="mr-2 h-5 w-5" />
-                Create Trade Listing
-              </>
+          <div className="flex flex-col items-center space-y-3">
+            {hasDraft && (
+              <div className="flex items-center text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                <Save className="mr-1 h-4 w-4" />
+                Draft auto-saved
+              </div>
             )}
-          </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Creating Your Listing...
+                </>
+              ) : (
+                <>
+                  <Check className="mr-2 h-5 w-5" />
+                  Create Trade Listing
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
