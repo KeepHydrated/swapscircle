@@ -306,7 +306,7 @@ const EditItem: React.FC = () => {
         clearTimeout(timeoutId);
       };
     }
-  }, [title, description, category, condition, subcategory, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, originalItemData, itemStatus]);
+  }, [title, description, category, condition, subcategory, lookingForText, selectedCategories, selectedSubcategories, selectedConditions, selectedPriceRanges, originalItemData, itemStatus]);
 
   // Check for changes whenever form values change - update hasBeenEdited based on actual changes
   useEffect(() => {
@@ -316,7 +316,7 @@ const EditItem: React.FC = () => {
       // For draft items, only mark as edited if there are actual changes from original
       setHasBeenEdited(actualChanges);
     }
-  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, images, originalItemData, itemStatus]);
+  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedSubcategories, selectedConditions, selectedPriceRanges, images, originalItemData, itemStatus]);
 
   // Load saved preferences from localStorage on component mount
 
