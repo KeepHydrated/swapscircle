@@ -91,7 +91,7 @@ export default function LocationSettings() {
           <CardContent className="pt-6">
             <div className="flex items-center gap-3 mb-4">
               <RefreshCw className="h-6 w-6" />
-              <h2 className="text-xl font-semibold">Update GPS Location</h2>
+              <h2 className="text-xl font-semibold">Update Location</h2>
             </div>
             
             <div className="flex items-center gap-4">
@@ -119,7 +119,7 @@ export default function LocationSettings() {
                 ) : (
                   <>
                     <RefreshCw className="h-4 w-4" />
-                    Update GPS Location
+                    Update Location
                   </>
                 )}
               </Button>
