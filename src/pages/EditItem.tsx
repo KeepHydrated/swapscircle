@@ -205,15 +205,14 @@ const EditItem: React.FC = () => {
     );
   };
 
-  // Check for changes whenever form values change - but only update if we have actual changes
+  // Check for changes whenever form values change - update hasBeenEdited based on actual changes
   useEffect(() => {
-    if (originalItemData && !hasBeenEdited) {
+    if (originalItemData && itemStatus === 'draft') {
       const actualChanges = hasActualChanges();
-      if (actualChanges) {
-        setHasBeenEdited(true);
-      }
+      // For draft items, only mark as edited if there are actual changes from original
+      setHasBeenEdited(actualChanges);
     }
-  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, images, originalItemData, hasBeenEdited]);
+  }, [title, description, category, condition, subcategory, priceRange, lookingForText, selectedCategories, selectedConditions, selectedPriceRanges, images, originalItemData, itemStatus]);
 
   // Load saved preferences from localStorage on component mount
 
@@ -270,8 +269,8 @@ const EditItem: React.FC = () => {
     console.log('Update button clicked! Starting validation...');
     console.log('Current values:', { title, category, condition, priceRange });
     
-    // Check if this is a draft item that hasn't been edited AND current values are same as original
-    if (itemStatus === 'draft' && !hasBeenEdited && !hasActualChanges()) {
+    // Check if this is a draft item that hasn't been edited
+    if (itemStatus === 'draft' && !hasBeenEdited) {
       toast.error('You must make changes to this item before publishing it.');
       return;
     }
