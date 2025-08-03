@@ -14,7 +14,7 @@ import PreferencesForm, { SavedPreference } from '@/components/postItem/Preferen
 import SavePreferenceDialog from '@/components/postItem/SavePreferenceDialog';
 import SavedPreferencesList from '@/components/postItem/SavedPreferencesList';
 import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
-import SuccessDialog from '@/components/postItem/SuccessDialog';
+
 
 const PostItem: React.FC = () => {
   const { user } = useAuth();
@@ -44,10 +44,6 @@ const PostItem: React.FC = () => {
   const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
   const [loadDialogOpen, setLoadDialogOpen] = useState<boolean>(false);
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [selectedPreferenceOption, setSelectedPreferenceOption] = useState<string>("clear");
-  const [showPreferenceOptions, setShowPreferenceOptions] = useState(false);
-  const [selectedSavedPreferenceId, setSelectedSavedPreferenceId] = useState<string>("");
 
   // Check if profile is complete before allowing posting
   useEffect(() => {
@@ -202,22 +198,6 @@ const PostItem: React.FC = () => {
     toast.success("Preference has been removed");
   };
 
-  const addNewItem = () => {
-    resetForm();
-    
-    if (selectedPreferenceOption === "clear") {
-      clearPreferences();
-    } else if (selectedPreferenceOption === "load" && selectedSavedPreferenceId) {
-      const pref = savedPreferences.find(p => p.id === selectedSavedPreferenceId);
-      if (pref) {
-        applyPreference(pref);
-      }
-    }
-    
-    setShowSuccessDialog(false);
-    setShowPreferenceOptions(false); // Reset for next time
-    setSelectedSavedPreferenceId(""); // Reset selected preference
-  };
 
   const handleSubmit = async () => {
     // Validation
@@ -269,7 +249,8 @@ const PostItem: React.FC = () => {
       if (newItem) {
         clearDraft(); // Clear the saved draft on successful submission
         toast.success('Your item has been posted successfully!');
-        setShowSuccessDialog(true);
+        // Navigate to profile page's Items For Trade tab after successful submission
+        navigate('/profile?tab=available');
       }
     } catch (error) {
       console.error('Error posting item:', error);
@@ -416,23 +397,6 @@ const PostItem: React.FC = () => {
         onDelete={deletePreference}
       />
 
-      <SuccessDialog 
-        open={showSuccessDialog}
-        onOpenChange={(open) => {
-          setShowSuccessDialog(open);
-          if (!open) {
-            // Navigate to profile page's Items For Trade tab when dialog is closed (Done button)
-            navigate('/profile?tab=available');
-          }
-        }}
-        selectedPreferenceOption={selectedPreferenceOption}
-        setSelectedPreferenceOption={setSelectedPreferenceOption}
-        showPreferenceOptions={showPreferenceOptions}
-        savedPreferences={savedPreferences}
-        selectedSavedPreferenceId={selectedSavedPreferenceId}
-        setSelectedSavedPreferenceId={setSelectedSavedPreferenceId}
-        onAddNewItem={addNewItem}
-      />
 
     </div>
   );
