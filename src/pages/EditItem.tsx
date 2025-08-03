@@ -190,25 +190,52 @@ const EditItem: React.FC = () => {
   const hasActualChanges = () => {
     if (!originalItemData) return true; // If no original data, allow publishing
     
-    return (
-      title !== originalItemData.name ||
-      description !== originalItemData.description ||
-      category !== originalItemData.category ||
-      condition !== originalItemData.condition ||
-      subcategory !== originalItemData.subcategory ||
-      priceRange !== originalItemData.priceRange ||
-      lookingForText !== originalItemData.lookingForText ||
-      JSON.stringify(selectedCategories) !== JSON.stringify(originalItemData.selectedCategories) ||
-      JSON.stringify(selectedConditions) !== JSON.stringify(originalItemData.selectedConditions) ||
-      JSON.stringify(selectedPriceRanges) !== JSON.stringify(originalItemData.selectedPriceRanges) ||
-      images.length > 0 // New images uploaded
-    );
+    const currentValues = {
+      title,
+      description,
+      category,
+      condition,
+      subcategory,
+      priceRange,
+      lookingForText,
+      selectedCategories: JSON.stringify(selectedCategories),
+      selectedConditions: JSON.stringify(selectedConditions),
+      selectedPriceRanges: JSON.stringify(selectedPriceRanges),
+      hasNewImages: images.length > 0
+    };
+    
+    const originalValues = {
+      title: originalItemData.name,
+      description: originalItemData.description,
+      category: originalItemData.category,
+      condition: originalItemData.condition,
+      subcategory: originalItemData.subcategory,
+      priceRange: originalItemData.priceRange,
+      lookingForText: originalItemData.lookingForText,
+      selectedCategories: JSON.stringify(originalItemData.selectedCategories),
+      selectedConditions: JSON.stringify(originalItemData.selectedConditions),
+      selectedPriceRanges: JSON.stringify(originalItemData.selectedPriceRanges),
+      hasNewImages: false
+    };
+    
+    const hasChanges = JSON.stringify(currentValues) !== JSON.stringify(originalValues);
+    
+    console.log('🔍 CHECKING FOR CHANGES:', {
+      hasChanges,
+      currentValues,
+      originalValues,
+      itemStatus,
+      hasBeenEdited
+    });
+    
+    return hasChanges;
   };
 
   // Check for changes whenever form values change - update hasBeenEdited based on actual changes
   useEffect(() => {
     if (originalItemData && itemStatus === 'draft') {
       const actualChanges = hasActualChanges();
+      console.log('📝 UPDATING hasBeenEdited:', { actualChanges, currentHasBeenEdited: hasBeenEdited });
       // For draft items, only mark as edited if there are actual changes from original
       setHasBeenEdited(actualChanges);
     }
@@ -270,6 +297,7 @@ const EditItem: React.FC = () => {
     console.log('Current values:', { title, category, condition, priceRange });
     
     // Check if this is a draft item that hasn't been edited
+    console.log('🚀 PUBLISH CHECK:', { itemStatus, hasBeenEdited, actualChanges: hasActualChanges() });
     if (itemStatus === 'draft' && !hasBeenEdited) {
       toast.error('You must make changes to this item before publishing it.');
       return;
