@@ -96,6 +96,8 @@ const UserProfile: React.FC = () => {
           price_range_max: item.price_range_max,
           liked: false,
           is_hidden: item.is_hidden || false,
+          status: (item.status || 'published') as 'draft' | 'published', // Include status field
+          has_been_edited: item.has_been_edited !== false, // Include has_been_edited field
         }));
         setUserItems(formattedItems);
       }
