@@ -174,7 +174,7 @@ const ProfileSettings: React.FC = () => {
   const handleSaveLocation = async () => {
     if (location.hasLocation) {
       // Update the form field with the coordinates
-      form.setValue('location', `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}`);
+      form.setValue('location', `${location.latitude?.toFixed(2)}, ${location.longitude?.toFixed(2)}`);
       setHasUnsavedLocation(false);
       toast.success('Location coordinates added to your profile');
     }
