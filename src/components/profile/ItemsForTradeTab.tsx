@@ -122,29 +122,6 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 )}
               </div>
 
-              {/* Publish button for draft items */}
-              {isDraft && onPublishClick && (
-                <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button 
-                    size="sm" 
-                    variant="default" 
-                    className={`h-7 text-xs ${
-                      hasBeenEdited 
-                        ? "bg-green-600 hover:bg-green-700" 
-                        : "bg-gray-400 hover:bg-gray-500 cursor-not-allowed"
-                    }`}
-                    disabled={!hasBeenEdited}
-                    onClick={(e) => { 
-                      e.stopPropagation(); 
-                      onPublishClick(item);
-                    }}
-                    title={hasBeenEdited ? "Publish item" : "Edit the item first before publishing"}
-                  >
-                    <Send className="h-3 w-3 mr-1" />
-                    Publish
-                  </Button>
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className={`font-medium ${isHidden || isDraft ? 'text-gray-500' : 'text-gray-800'}`}>
