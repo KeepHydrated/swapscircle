@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2, Package, Heart, Sparkles } from 'lucide-react';
+import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage, createItem } from '@/services/authService';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useBlocker } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isProfileComplete } from '@/utils/profileUtils';
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from '@/components/ui/alert-dialog';
 
 // Import our new components
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
@@ -46,6 +56,8 @@ const PostItem: React.FC = () => {
   const [saveDialogOpen, setSaveDialogOpen] = useState<boolean>(false);
   const [loadDialogOpen, setLoadDialogOpen] = useState<boolean>(false);
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
+  const [showExitConfirmation, setShowExitConfirmation] = useState<boolean>(false);
+  const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
 
   // Check if profile is complete before allowing posting
   useEffect(() => {
@@ -64,12 +76,37 @@ const PostItem: React.FC = () => {
     }
   }, []);
 
-  // Auto-save draft functionality when leaving the page
+  // Check if user has unsaved content
+  const hasUnsavedContent = useCallback(() => {
+    return title.trim() || description.trim() || category || lookingForText.trim() || 
+           selectedCategories.length > 0 || selectedConditions.length > 0 || 
+           Object.keys(selectedSubcategories).length > 0 || selectedPriceRanges.length > 0;
+  }, [title, description, category, lookingForText, selectedCategories, selectedConditions, selectedSubcategories, selectedPriceRanges]);
+
+  // Block navigation when there's unsaved content
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasUnsavedContent() && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  // Handle blocked navigation
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      setShowExitConfirmation(true);
+      setPendingNavigation(() => () => {
+        blocker.proceed();
+      });
+    }
+  }, [blocker]);
+
+  // Auto-save draft functionality when leaving the page (browser close/refresh)
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      const hasContent = title.trim() || description.trim() || category || lookingForText.trim();
-      if (hasContent && user) {
+      if (hasUnsavedContent() && user) {
+        event.preventDefault();
+        event.returnValue = "You have unsaved changes. Are you sure you want to leave?";
         saveDraftToDatabase();
+        return event.returnValue;
       }
     };
 
@@ -78,7 +115,7 @@ const PostItem: React.FC = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [hasUnsavedContent, user]);
 
   // Update form data ref whenever values change
   useEffect(() => {
@@ -148,6 +185,38 @@ const PostItem: React.FC = () => {
   const clearDraft = () => {
     setHasDraft(false);
     setDraftId(null);
+  };
+
+  // Handle exit confirmation dialog
+  const handleExitWithoutSaving = () => {
+    setShowExitConfirmation(false);
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    }
+  };
+
+  const handleSaveAndExit = async () => {
+    setShowExitConfirmation(false);
+    try {
+      await saveDraftToDatabase();
+      toast.success('Draft saved successfully!');
+      if (pendingNavigation) {
+        pendingNavigation();
+        setPendingNavigation(null);
+      }
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      toast.error('Error saving draft');
+    }
+  };
+
+  const handleCancelExit = () => {
+    setShowExitConfirmation(false);
+    setPendingNavigation(null);
+    if (blocker.state === "blocked") {
+      blocker.reset();
+    }
   };
 
   const resetForm = () => {
@@ -463,6 +532,39 @@ const PostItem: React.FC = () => {
         onDelete={deletePreference}
       />
 
+      {/* Exit Confirmation Dialog */}
+      <AlertDialog open={showExitConfirmation} onOpenChange={setShowExitConfirmation}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center">
+              <AlertTriangle className="mr-2 h-5 w-5 text-amber-500" />
+              Unsaved Changes
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes to your item listing. What would you like to do?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel onClick={handleCancelExit} className="w-full sm:w-auto">
+              Stay Here
+            </AlertDialogCancel>
+            <Button 
+              onClick={handleExitWithoutSaving}
+              variant="outline"
+              className="w-full sm:w-auto border-red-300 text-red-600 hover:bg-red-50"
+            >
+              Leave Without Saving
+            </Button>
+            <AlertDialogAction 
+              onClick={handleSaveAndExit}
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Save & Leave
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );
