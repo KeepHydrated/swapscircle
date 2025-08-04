@@ -15,7 +15,7 @@ import Messages3 from "./pages/Messages3";
 import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
-import ProfileDuplicate from "./pages/ProfileDuplicate";
+
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
@@ -79,11 +79,6 @@ const App = () => (
               <Route path="/profile" element={
                 <RequireAuth>
                   <UserProfile />
-                </RequireAuth>
-              } />
-              <Route path="/profile-duplicate" element={
-                <RequireAuth>
-                  <ProfileDuplicate />
                 </RequireAuth>
               } />
               <Route path="/settings" element={
