@@ -13,10 +13,12 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem, isItemLiked, fetchUserReviews } from '@/services/authService';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const userId = searchParams.get('userId');
   
   // State for profile data and loading
@@ -43,11 +45,16 @@ const OtherPersonProfile: React.FC = () => {
         return;
       }
       
+      // Wait for auth to finish loading before proceeding
+      if (authLoading) {
+        return;
+      }
+      
       setIsLoading(true);
       console.log('Fetching profile for userId:', userId);
       try {
-        // Get current user for friend status checking
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        // Use auth context instead of direct supabase call
+        const currentUser = user;
         setCurrentUserId(currentUser?.id || null);
 
         // Check friend status if user is logged in
@@ -139,7 +146,7 @@ const OtherPersonProfile: React.FC = () => {
     };
     
     fetchProfile();
-  }, [userId]);
+  }, [userId, authLoading, user]);
 
   // State for active tab
   const [activeTab, setActiveTab] = useState('available');

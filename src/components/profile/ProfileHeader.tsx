@@ -64,6 +64,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       const profileUrl = userId 
         ? `${window.location.origin}/other-person-profile?userId=${userId}`
         : `${window.location.origin}/profile`;
+      
+      // Open in same tab to preserve auth state
       await navigator.clipboard.writeText(profileUrl);
       toast.success('Profile link copied to clipboard!');
     } catch (error) {
