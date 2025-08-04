@@ -270,12 +270,15 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                        </AlertDialogHeader>
                        <AlertDialogFooter>
                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                         <AlertDialogAction 
-                           onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
-                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                         >
-                           Unfriend
-                         </AlertDialogAction>
+                          <AlertDialogAction 
+                            onClick={() => {
+                              console.log('🔍 UNFRIEND: AlertDialogAction clicked!', friend.id);
+                              handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user');
+                            }}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Unfriend
+                          </AlertDialogAction>
                        </AlertDialogFooter>
                      </AlertDialogContent>
                    </AlertDialog>
