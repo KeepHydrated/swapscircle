@@ -94,7 +94,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
           <span className="sr-only">Notifications</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 p-0">
+      <DropdownMenuContent align="end" className="w-80 p-0 bg-white border border-gray-200 shadow-lg z-50">{/* Added proper styling */}
         <div className="p-4 border-b">
           <h3 className="font-semibold text-sm">Notifications</h3>
           {unreadCount > 0 && (
@@ -104,9 +104,10 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
           )}
         </div>
 
-        <ScrollArea className="max-h-80">
-          {notifications.length > 0 ? (
-            <div className="p-2">
+        <ScrollArea className="max-h-80 overflow-auto">{/* Made sure overflow-auto is explicit */}
+          <div className="max-h-80 overflow-y-auto">{/* Added explicit container for scroll */}
+            {notifications.length > 0 ? (
+              <div className="p-2">
               {notifications.map((notification) => (
                 <Card 
                   key={notification.id} 
@@ -132,13 +133,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
                   </CardContent>
                 </Card>
               ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 px-4">
-              <Bell className="mx-auto h-8 w-8 text-muted-foreground opacity-50 mb-2" />
-              <p className="text-sm text-muted-foreground">No notifications</p>
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="text-center py-8 px-4">
+                <Bell className="mx-auto h-8 w-8 text-muted-foreground opacity-50 mb-2" />
+                <p className="text-sm text-muted-foreground">No notifications</p>
+              </div>
+            )}
+          </div>
         </ScrollArea>
 
         <div className="p-3 border-t">
