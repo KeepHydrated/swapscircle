@@ -59,7 +59,7 @@ const App = () => (
                   <Messages />
                 </RequireAuth>
               } />
-              <Route path="/your-match-opportunities" element={
+              <Route path="/your-likes" element={
                 <RequireAuth>
                   <Messages3 />
                 </RequireAuth>
