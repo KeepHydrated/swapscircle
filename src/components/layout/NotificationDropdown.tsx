@@ -16,28 +16,28 @@ interface NotificationDropdownProps {
   notifications: Notification[];
   unreadCount: number;
   onNotificationRead: (notificationId: string) => Promise<void>;
+  onDropdownViewed: () => void;
 }
 
-const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notifications, unreadCount, onNotificationRead }) => {
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notifications, unreadCount, onNotificationRead, onDropdownViewed }) => {
   const navigate = useNavigate();
 
   const handleNotificationClick = async (notification: Notification) => {
-    // Navigate based on action URL or type (no need to mark as read here since it's done on open)
+    // Mark individual notification as read when clicked
+    if (!notification.is_read) {
+      await onNotificationRead(notification.id);
+    }
+    
+    // Navigate based on action URL or type
     if (notification.action_url) {
       navigate(notification.action_url);
     }
   };
 
-  const handleDropdownOpen = async () => {
-    // Mark all unread notifications as read when dropdown opens
-    const unreadNotifications = notifications.filter(n => !n.is_read);
-    if (unreadNotifications.length > 0) {
-      console.log('Marking notifications as read on dropdown open:', unreadNotifications.length);
-      // Mark each unread notification as read
-      for (const notification of unreadNotifications) {
-        await onNotificationRead(notification.id);
-      }
-    }
+  const handleDropdownOpen = () => {
+    // Just mark the dropdown as viewed (clears the red badge)
+    // Don't mark individual notifications as read
+    onDropdownViewed();
   };
 
   const handleViewAllClick = () => {
@@ -118,7 +118,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
               {notifications.map((notification) => (
                 <Card 
                   key={notification.id} 
-                  className={`mb-2 cursor-pointer hover:bg-accent/5 border-0 shadow-none ${notification.is_read ? 'opacity-75' : ''}`}
+                  className={`mb-2 cursor-pointer hover:bg-accent/5 border-0 shadow-none ${notification.is_read ? 'opacity-75' : 'bg-blue-50/30'}`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <CardContent className="p-3 flex items-start gap-3">

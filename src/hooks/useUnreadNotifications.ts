@@ -18,6 +18,7 @@ export function useNotifications() {
   const { toast } = useToast();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasViewedDropdown, setHasViewedDropdown] = useState(false); // Track if user has viewed the dropdown
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -166,6 +167,8 @@ export function useNotifications() {
         },
         (payload) => {
           console.log('New notification received:', payload);
+          // Reset the viewed state when new notifications arrive
+          setHasViewedDropdown(false);
           // Only fetch new notifications on INSERT, not on UPDATE
           fetchNotifications();
         }
@@ -177,7 +180,13 @@ export function useNotifications() {
     };
   }, [user]);
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  // Calculate unread count - if dropdown has been viewed, count should be 0
+  const unreadCount = hasViewedDropdown ? 0 : notifications.filter(n => !n.is_read).length;
+
+  // Function to mark dropdown as viewed (clears the badge)
+  const markDropdownAsViewed = () => {
+    setHasViewedDropdown(true);
+  };
 
   return {
     notifications,
@@ -185,6 +194,7 @@ export function useNotifications() {
     loading,
     markAsRead,
     markAllAsRead,
-    fetchNotifications
+    fetchNotifications,
+    markDropdownAsViewed
   };
 }
