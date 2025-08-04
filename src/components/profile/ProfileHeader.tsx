@@ -19,6 +19,7 @@ interface ProfileHeaderProps {
   onFriendsClick?: () => void;
   friendCount?: number;
   userId?: string; // Add userId prop for shareable profile links
+  isOwnProfile?: boolean; // Add prop to determine if this is the user's own profile
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ 
@@ -26,7 +27,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onReviewsClick, 
   onFriendsClick,
   friendCount = 0,
-  userId
+  userId,
+  isOwnProfile = false
 }) => {
   console.log('[ProfileHeader] Component rendered with profile:', profile);
   console.log('[ProfileHeader] Profile name:', profile?.name);
@@ -129,17 +131,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <p className="mt-4 text-gray-700 leading-relaxed text-center md:text-left">{profile.description}</p>
           </div>
         </div>
-        <div className="flex-shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyProfileLink}
-            className="flex items-center gap-2"
-          >
-            <Link className="h-4 w-4" />
-            Copy Profile Link
-          </Button>
-        </div>
+        {isOwnProfile && (
+          <div className="flex-shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyProfileLink}
+              className="flex items-center gap-2"
+            >
+              <Link className="h-4 w-4" />
+              Copy Profile Link
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

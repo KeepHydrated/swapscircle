@@ -218,6 +218,7 @@ const UserProfile: React.FC = () => {
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
           userId={userProfile?.id}
+          isOwnProfile={true}
         />
         <Tabs 
           value={activeTab} 
