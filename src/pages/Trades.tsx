@@ -208,8 +208,7 @@ const Trades = () => {
                       {/* Open Chat Button */}
                       <Button 
                         variant="outline" 
-                        className="w-full"
-                        size="lg"
+                        className="w-full h-10"
                         onClick={() => handleOpenChat(trade.id)}
                       >
                         <MessageCircle className="w-4 h-4 mr-2" />
@@ -300,11 +299,10 @@ const Trades = () => {
                             <p className="text-gray-400 text-sm italic">No review yet</p>
                             <Button 
                               variant="outline" 
-                              size="sm"
                               onClick={() => handleLeaveReview(trade)}
-                              className="w-full"
+                              className="w-full h-10"
                             >
-                              <Star className="w-4 h-4 mr-1" />
+                              <Star className="w-4 h-4 mr-2" />
                               Leave Review
                             </Button>
                           </div>
