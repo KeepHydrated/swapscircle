@@ -251,6 +251,16 @@ const Messages = () => {
                           <div className="flex-1">
                             <div className="bg-white rounded-lg p-3 shadow-sm">
                               <p className="text-sm">{message.message}</p>
+                              {message.image_url && (
+                                <div className="mt-2">
+                                  <img 
+                                    src={message.image_url} 
+                                    alt="Attachment" 
+                                    className="max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                                    onClick={() => window.open(message.image_url, '_blank')}
+                                  />
+                                </div>
+                              )}
                             </div>
                             <p className="text-xs text-gray-500 mt-1">
                               {new Date(message.created_at).toLocaleTimeString()}

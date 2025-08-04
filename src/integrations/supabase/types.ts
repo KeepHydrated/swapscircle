@@ -2081,6 +2081,44 @@ export type Database = {
           },
         ]
       }
+      trade_messages: {
+        Row: {
+          conversation_id: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          message: string
+          sender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          message: string
+          sender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          message?: string
+          sender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "trade_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trades: {
         Row: {
           created_at: string | null
