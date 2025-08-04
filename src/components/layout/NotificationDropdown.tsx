@@ -25,9 +25,10 @@ interface Notification {
 
 interface NotificationDropdownProps {
   unreadCount: number;
+  onNotificationRead?: () => void;
 }
 
-const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ unreadCount }) => {
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ unreadCount, onNotificationRead }) => {
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -112,6 +113,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ unreadCount
           .from('notifications')
           .update({ status: 'read' })
           .eq('id', notification.id);
+          
+        // Refresh the unread count
+        onNotificationRead?.();
       }
       
       // Navigate based on notification type

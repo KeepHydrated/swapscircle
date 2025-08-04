@@ -21,7 +21,7 @@ import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
-  const unreadCount = useUnreadNotifications();
+  const { unreadCount, refreshUnreadCount } = useUnreadNotifications();
 
   const handleLogout = async () => {
     await signOut();
@@ -93,7 +93,7 @@ const Header = () => {
                 </Link>
               </Button>
               
-              <NotificationDropdown unreadCount={unreadCount} />
+              <NotificationDropdown unreadCount={unreadCount} onNotificationRead={refreshUnreadCount} />
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
