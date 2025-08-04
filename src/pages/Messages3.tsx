@@ -1,165 +1,394 @@
-import React, { useState } from 'react';
-import MainLayout from '@/components/layout/MainLayout';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { RotateCcw } from 'lucide-react';
+import Header from '@/components/layout/Header';
+import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
+
+import { useUserItems } from '@/hooks/useUserItems';
+import ItemCard from '@/components/items/ItemCard';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { likeItem, unlikeItem } from '@/services/authService';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem,
-  type CarouselApi
-} from '@/components/ui/carousel';
 
-// Sample match items
-const matchItems = [
-  { id: '1', name: 'Vintage Camera', image: '/placeholder.svg', description: 'A classic film camera from the 1970s' },
-  { id: '2', name: 'Bicycle', image: '/placeholder.svg', description: 'Mountain bike in excellent condition' },
-  { id: '3', name: 'Leather Jacket', image: '/placeholder.svg', description: 'Genuine leather jacket, barely worn' },
-  { id: '4', name: 'Acoustic Guitar', image: '/placeholder.svg', description: 'Handcrafted acoustic guitar with case' },
-  { id: '5', name: 'Vintage Watch', image: '/placeholder.svg', description: 'Collectible timepiece from 1960s' },
-  { id: '6', name: 'Antique Book', image: '/placeholder.svg', description: 'Rare first edition in mint condition' },
-  { id: '7', name: 'Synthesizer', image: '/placeholder.svg', description: 'Electronic music synthesizer in perfect condition' },
-  { id: '8', name: 'Camera Lens', image: '/placeholder.svg', description: 'Professional camera lens, barely used' },
-];
-
-const Messages3 = () => {
-  const [selectedMatch, setSelectedMatch] = useState<typeof matchItems[0] | null>(null);
-  const [api, setApi] = React.useState<CarouselApi>();
+const Messages3: React.FC = () => {
+  // User's authentication and navigation
+  const { user, supabaseConfigured } = useAuth();
+  const navigate = useNavigate();
   
-  // Handle item selection
-  const handleSelectItem = (match: typeof matchItems[0]) => {
-    setSelectedMatch(match);
+  // Items that liked the user's items
+  const [likedItems, setLikedItems] = useState([]);
+  const [likedItemsLoading, setLikedItemsLoading] = useState(false);
+  const [rejectedLikedItems, setRejectedLikedItems] = useState<string[]>([]);
+  const [lastLikedActions, setLastLikedActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
+
+  // Modal state
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // Fetch items that have liked the user's items (using sample data for now)
+  const fetchLikedItems = async () => {
+    if (!user) return;
+    
+    setLikedItemsLoading(true);
+    try {
+      // For now, using sample data since likes table structure needs to be clarified
+      const sampleLikedItems = [
+        {
+          id: '1',
+          name: 'Vintage Camera',
+          image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd',
+          category: 'Electronics',
+          condition: 'Good',
+          description: 'A classic film camera from the 1970s',
+          price_range_min: 50,
+          price_range_max: 100,
+          tags: ['vintage', 'camera'],
+          liked: false,
+          ownerName: 'John Doe',
+          ownerAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
+          user_id: 'user1'
+        },
+        {
+          id: '2',
+          name: 'Bicycle',
+          image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64',
+          category: 'Sports',
+          condition: 'Excellent',
+          description: 'Mountain bike in excellent condition',
+          price_range_min: 200,
+          price_range_max: 300,
+          tags: ['bike', 'mountain'],
+          liked: false,
+          ownerName: 'Jane Smith',
+          ownerAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612c4d', 
+          user_id: 'user2'
+        },
+        {
+          id: '3',
+          name: 'Leather Jacket',
+          image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5',
+          category: 'Clothing',
+          condition: 'Good',
+          description: 'Genuine leather jacket, barely worn',
+          price_range_min: 80,
+          price_range_max: 120,
+          tags: ['leather', 'jacket'],
+          liked: false,
+          ownerName: 'Mike Johnson',
+          ownerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+          user_id: 'user3'
+        }
+      ];
+
+      setLikedItems(sampleLikedItems);
+    } catch (error) {
+      console.error('Error fetching liked items:', error);
+    } finally {
+      setLikedItemsLoading(false);
+    }
   };
 
-  // Handle like action
-  const handleLike = (id: string) => {
-    console.log('Liked item:', id);
+  // Fetch liked items when user changes or component mounts
+  useEffect(() => {
+    if (user && supabaseConfigured) {
+      fetchLikedItems();
+    } else {
+      setLikedItems([]);
+    }
+  }, [user, supabaseConfigured]);
+
+  // Define handler for liking items with mutual matching
+  const handleLikeItem = async (itemId: string) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    const currentItem = likedItems.find(item => item.id === itemId);
+    if (!currentItem) return;
+
+    // Track the action for undo (keep only last 3 actions)
+    setLastLikedActions(prev => {
+      const newAction = { type: 'like' as const, itemId, wasLiked: currentItem.liked };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
+
+    // Optimistically update UI
+    setLikedItems(prev =>
+      prev.map(item =>
+        item.id === itemId ? { ...item, liked: !item.liked } : item
+      )
+    );
+
+    try {
+      const isCurrentlyLiked = currentItem.liked;
+      let result;
+      
+      if (isCurrentlyLiked) {
+        result = await unlikeItem(itemId);
+        toast.success("Removed from favorites");
+      } else {
+        result = await likeItem(itemId);
+        
+        // Check for mutual match result
+        if (result && typeof result === 'object' && 'success' in result && result.success) {
+          if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            toast.success("It's a match! 🎉 Starting conversation...");
+            // Navigate to messages after a delay
+            setTimeout(() => {
+              navigate('/messages', {
+                state: {
+                  newMatch: true,
+                  matchData: result.matchData,
+                },
+              });
+            }, 2000);
+          } else {
+            toast.success("Added to favorites");
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error liking item:', error);
+      // Revert optimistic update on error
+      setLikedItems(prev =>
+        prev.map(item =>
+          item.id === itemId ? { ...item, liked: currentItem.liked } : item
+        )
+      );
+      toast.error('Failed to update like status');
+    }
   };
 
-  // Close the popup
-  const handleClosePopup = () => {
-    setSelectedMatch(null);
+  // Handle rejecting items
+  const handleRejectItem = (itemId: string) => {
+    // Track the action for undo (keep only last 3 actions)
+    setLastLikedActions(prev => {
+      const newAction = { type: 'reject' as const, itemId };
+      const updated = [newAction, ...prev];
+      return updated.slice(0, 3); // Keep only last 3 actions
+    });
+    setRejectedLikedItems(prev => [...prev, itemId]);
+    toast.success('Item removed');
   };
 
-  // Navigate to previous item
-  const navigateToPrev = () => {
-    if (!selectedMatch) return;
-    const currentIndex = matchItems.findIndex(item => item.id === selectedMatch.id);
-    const prevIndex = (currentIndex - 1 + matchItems.length) % matchItems.length;
-    setSelectedMatch(matchItems[prevIndex]);
+  // Handle undo for items
+  const handleUndoAction = () => {
+    if (lastLikedActions.length === 0) return;
+
+    const actionToUndo = lastLikedActions[0]; // Get most recent action
+
+    if (actionToUndo.type === 'like') {
+      // Undo like action - revert to previous liked state
+      setLikedItems(prev =>
+        prev.map(item =>
+          item.id === actionToUndo.itemId 
+            ? { ...item, liked: actionToUndo.wasLiked || false }
+            : item
+        )
+      );
+      toast.success('Like action undone');
+    } else if (actionToUndo.type === 'reject') {
+      // Undo reject action - restore item
+      setRejectedLikedItems(prev => prev.filter(id => id !== actionToUndo.itemId));
+      toast.success('Reject action undone');
+    }
+
+    // Remove the undone action from the list
+    setLastLikedActions(prev => prev.slice(1));
   };
 
-  // Navigate to next item
-  const navigateToNext = () => {
-    if (!selectedMatch) return;
-    const currentIndex = matchItems.findIndex(item => item.id === selectedMatch.id);
-    const nextIndex = (currentIndex + 1) % matchItems.length;
-    setSelectedMatch(matchItems[nextIndex]);
+  // User's items
+  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems(false);
+  
+  // Selected items state - auto-select first item
+  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  
+  // Auto-select first item when userItems are loaded
+  useEffect(() => {
+    if (userItems.length > 0 && !selectedUserItemId) {
+      setSelectedUserItemId(userItems[0].id);
+    }
+  }, [userItems, selectedUserItemId]);
+
+  // Handle selecting a user item
+  const handleSelectUserItem = (itemId: string) => {
+    setSelectedUserItemId(itemId);
+  };
+
+  // Handle opening item modal
+  const handleOpenItemModal = (item: any) => {
+    console.log('OPENING MODAL with item:', item);
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
+
+  // Handle closing item modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  // Get displayed items (excluding rejected ones)
+  const displayedItems = likedItems.filter(item => !rejectedLikedItems.includes(item.id));
+  
+  // Find current index in displayed items
+  const currentItemIndex = selectedItem 
+    ? displayedItems.findIndex(item => item.id === selectedItem.id)
+    : -1;
+
+  // Navigation functions for items
+  const navigateToPrevItem = () => {
+    if (currentItemIndex > 0) {
+      const prevItem = displayedItems[currentItemIndex - 1];
+      if (prevItem) {
+        setSelectedItem(prevItem);
+      }
+    }
+  };
+
+  const navigateToNextItem = () => {
+    if (currentItemIndex < displayedItems.length - 1) {
+      const nextItem = displayedItems[currentItemIndex + 1];
+      if (nextItem) {
+        setSelectedItem(nextItem);
+      }
+    }
+  };
+
+  // Check if undo is available
+  const isUndoAvailable = () => {
+    return lastLikedActions.length > 0;
   };
 
   return (
-    <MainLayout>
-      <div className="container mx-auto py-6">
-        <div className="mb-10">
-          <h2 className="text-xl font-medium mb-6 text-gray-600">See Who's Liked You</h2>
-          
-          {/* Item matches carousel */}
-          <div className="relative px-12">
-            <Carousel
-              setApi={setApi}
-              className="w-full"
-              opts={{
-                align: 'start',
-              }}
-            >
-              <CarouselContent>
-                {matchItems.map((item) => (
-                  <CarouselItem key={item.id} className="basis-1/4 md:basis-1/5 lg:basis-1/6">
-                    <div 
-                      className="cursor-pointer" 
-                      onClick={() => handleSelectItem(item)}
-                    >
-                      <div className="relative aspect-square overflow-hidden rounded-lg mb-2 bg-gray-100">
-                        <img 
-                          src={item.image} 
-                          alt={item.name} 
-                          className="object-cover w-full h-full"
-                        />
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Header />
+      <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
+
+        {/* Main Content */}
+        <div className="flex-1 min-h-0">
+          {user && supabaseConfigured ? (
+            <div className="grid grid-cols-1 gap-6 h-full">
+              {/* Your Items Section */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                
+                {userItemsLoading ? (
+                  <div className="flex justify-center items-center min-h-[300px]">
+                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                  </div>
+                ) : userItemsError ? (
+                  <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
+                ) : userItems.length === 0 ? (
+                  <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
+                    <div className="text-4xl mb-3">📦</div>
+                    <p className="text-base font-medium mb-1">No items yet</p>
+                    <p className="text-sm">Post an item to see who likes it!</p>
+                  </div>
+                ) : (
+                  <div className="h-auto">
+                    <div className="overflow-x-auto overflow-y-hidden p-2">
+                      <div className="flex gap-2 min-w-max">
+                        {userItems.map((item) => (
+                          <div key={item.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
+                            <ItemCard 
+                              id={item.id}
+                              name={item.name}
+                              image={item.image}
+                              isSelected={selectedUserItemId === item.id}
+                              onSelect={handleSelectUserItem}
+                              compact={true}
+                            />
+                          </div>
+                        ))}
                       </div>
-                      <h3 className="text-sm font-medium text-center truncate">{item.name}</h3>
-                      <p className="text-xs text-center text-gray-500">Matched Item</p>
                     </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              
-              {/* Navigation arrows inside the container */}
-              <Button
-                variant="default" 
-                size="icon" 
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white shadow-lg h-10 w-10 border border-gray-200"
-                onClick={() => api?.scrollPrev()}
-              >
-                <ArrowLeft className="h-5 w-5 text-gray-800" />
-                <span className="sr-only">Previous matches</span>
-              </Button>
-              
-              <Button
-                variant="default" 
-                size="icon" 
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white shadow-lg h-10 w-10 border border-gray-200"
-                onClick={() => api?.scrollNext()}
-              >
-                <ArrowRight className="h-5 w-5 text-gray-800" />
-                <span className="sr-only">Next matches</span>
-              </Button>
-            </Carousel>
-          </div>
-        </div>
-
-        {/* Match item popup with navigation */}
-        {selectedMatch && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
-            <div className="relative max-w-3xl w-full mx-4">
-              {/* External navigation buttons */}
-              <Button
-                variant="default"
-                size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
-                onClick={navigateToPrev}
-              >
-                <ArrowLeft className="h-6 w-6 text-gray-800" />
-                <span className="sr-only">Previous match</span>
-              </Button>
-              
-              <div className="bg-white rounded-lg overflow-hidden">
-                <ItemDetailsModal
-                  item={selectedMatch}
-                  isOpen={true}
-                  onClose={handleClosePopup}
-                  onLikeClick={() => handleLike(selectedMatch.id)}
-                />
+                  </div>
+                )}
               </div>
-              
-              <Button
-                variant="default"
-                size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/90 shadow-lg hover:bg-gray-100 border border-gray-200"
-                onClick={navigateToNext}
-              >
-                <ArrowRight className="h-6 w-6 text-gray-800" />
-                <span className="sr-only">Next match</span>
-              </Button>
 
-              {/* Visual indicator showing current position */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full px-3 py-1 text-sm font-medium shadow-md z-20">
-                {matchItems.findIndex(item => item.id === selectedMatch.id) + 1} / {matchItems.length}
+              {/* Who Liked You Section */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <div className="h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-medium text-gray-600">See Who's Liked You</h2>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUndoAction}
+                      disabled={!isUndoAvailable()}
+                      className="flex items-center gap-2"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      <span className="hidden md:inline">Undo</span>
+                    </Button>
+                  </div>
+                  
+                  <div className="flex-1 min-h-0">
+                    {likedItemsLoading ? (
+                      <div className="flex-1 flex justify-center items-center">
+                        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                      </div>
+                    ) : likedItems.length === 0 ? (
+                      <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                        <div className="text-4xl mb-3">💝</div>
+                        <p className="text-base font-medium mb-1">No one has liked your items yet</p>
+                        <p className="text-sm">Post more items to get more likes!</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto overflow-y-hidden p-2">
+                        <div className="flex gap-2 min-w-max">
+                          {likedItems
+                            .filter(item => !rejectedLikedItems.includes(item.id))
+                            .map((item) => (
+                            <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200 hover:scale-105">
+                              <ItemCard
+                                id={item.id}
+                                name={item.name}
+                                image={item.image}
+                                liked={item.liked}
+                                onSelect={() => handleOpenItemModal(item)}
+                                onLike={() => handleLikeItem(item.id)}
+                                onReject={() => handleRejectItem(item.id)}
+                                showLikeButton={true}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="text-4xl mb-3">🔐</div>
+              <p className="text-base font-medium mb-1">Please log in</p>
+              <p className="text-sm">Sign in to see who's liked your items</p>
+            </div>
+          )}
+        </div>
       </div>
-    </MainLayout>
+
+      {/* Explore Item Modal */}
+      <ExploreItemModal
+        open={modalOpen}
+        item={selectedItem}
+        onClose={handleCloseModal}
+        liked={selectedItem?.liked}
+        onLike={() => selectedItem && handleLikeItem(selectedItem.id)}
+        onNavigatePrev={navigateToPrevItem}
+        onNavigateNext={navigateToNextItem}
+        currentIndex={currentItemIndex}
+        totalItems={displayedItems.length}
+      />
+    </div>
   );
 };
 
