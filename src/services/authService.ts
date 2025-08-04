@@ -238,6 +238,7 @@ export const postItem = async (item: Item & {
   lookingForDescription?: string;
   priceRangeMin?: number;
   priceRangeMax?: number;
+  lookingForPriceRanges?: string[];
 }) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
@@ -263,6 +264,7 @@ export const postItem = async (item: Item & {
       looking_for_description: item.lookingForDescription,
       price_range_min: item.priceRangeMin,
       price_range_max: item.priceRangeMax,
+      looking_for_price_ranges: item.lookingForPriceRanges,
       user_id: session.user.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()

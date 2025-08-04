@@ -405,6 +405,7 @@ const PostItem: React.FC = () => {
         lookingForDescription: lookingForText,
         priceRangeMin: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
         priceRangeMax: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
+        lookingForPriceRanges: selectedPriceRanges,
       });
       
       if (newItem) {
