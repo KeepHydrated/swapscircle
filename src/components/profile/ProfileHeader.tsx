@@ -1,8 +1,9 @@
 
 import React, { useMemo } from 'react';
-import { Star, MapPin, Calendar, Users, Repeat } from 'lucide-react';
+import { Star, MapPin, Calendar, Users, Repeat, Link } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface ProfileHeaderProps {
   profile: {
@@ -53,6 +54,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     // Only use the avatar if it's a real uploaded image (not null/undefined/placeholder)
     return (profile.avatar_url && profile.avatar_url !== "/placeholder.svg") ? profile.avatar_url : undefined;
   }, [profile.avatar_url]);
+
+  const handleCopyProfileLink = async () => {
+    try {
+      const profileUrl = `${window.location.origin}/profile`;
+      await navigator.clipboard.writeText(profileUrl);
+      toast.success('Profile link copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy profile link:', error);
+      toast.error('Failed to copy profile link');
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row p-6 bg-white border-b">
@@ -109,6 +121,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           )}
         </div>
         <p className="mt-4 text-gray-700 leading-relaxed text-center md:text-left">{profile.description}</p>
+        <div className="mt-4 flex justify-center md:justify-start">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyProfileLink}
+            className="flex items-center gap-2"
+          >
+            <Link className="h-4 w-4" />
+            Copy Profile Link
+          </Button>
+        </div>
       </div>
     </div>
   );
