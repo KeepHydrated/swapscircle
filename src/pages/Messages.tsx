@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 import MessageInput from '@/components/messages/MessageInput';
+import TradeMessageBubble from '@/components/messages/TradeMessageBubble';
 
 const Messages = () => {
   const {
@@ -241,42 +242,11 @@ const Messages = () => {
                 ) : messages.length > 0 ? (
                   <div className="space-y-4">
                     {messages.map((message: any) => (
-                      <div key={message.id} className="flex flex-col">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-blue-800 font-medium text-xs">
-                              {message.sender_profile?.name?.substring(0, 2) || 'U'}
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <div className="bg-white rounded-lg p-3 shadow-sm">
-                              <p className="text-sm">{message.message}</p>
-                              {message.image_urls && message.image_urls.length > 0 && (
-                                <div className="mt-2">
-                                  <div className="grid grid-cols-2 gap-2 max-w-md">
-                                    {message.image_urls.map((imageUrl: string, index: number) => (
-                                      <img 
-                                        key={index}
-                                        src={imageUrl} 
-                                        alt={`Attachment ${index + 1}`} 
-                                        className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity object-cover"
-                                        style={{
-                                          aspectRatio: '1',
-                                          maxHeight: message.image_urls.length === 1 ? '200px' : '100px'
-                                        }}
-                                        onClick={() => window.open(imageUrl, '_blank')}
-                                      />
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {new Date(message.created_at).toLocaleTimeString()}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      <TradeMessageBubble 
+                        key={message.id}
+                        message={message}
+                        senderName={message.sender_profile?.username || activeChat?.name || 'User'}
+                      />
                     ))}
                   </div>
                 ) : (
