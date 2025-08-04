@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
-import Home from "./pages/Home";
+
 import PostItemFixed from "./pages/PostItemFixed";
 import EditItem from "./pages/EditItem";
 import ItemDetails from "./pages/ItemDetails";
@@ -35,8 +35,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/home" replace />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Navigate to="/test" replace />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/test" element={<Test />} />
               <Route path="/trades" element={
