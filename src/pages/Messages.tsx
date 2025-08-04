@@ -5,7 +5,7 @@ import { useTradeConversations } from '@/hooks/useTradeConversations';
 import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { fetchUserReviews } from '@/services/authService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
@@ -32,6 +32,8 @@ const Messages = () => {
   const [messageText, setMessageText] = useState('');
   const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
   const queryClient = useQueryClient();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Fetch messages for active conversation
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
@@ -80,6 +82,24 @@ const Messages = () => {
   const handleSelectItem = (item: 'item1' | 'item2') => {
     setSelectedItem(item);
   };
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  // Ensure the entire content is visible on initial render
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+    
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "auto" });
+    }
+  }, [activeConversation]);
 
   if (loading) {
     return (
@@ -234,7 +254,7 @@ const Messages = () => {
               </div>
               
               {/* Messages area */}
-              <div className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
+              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
                 {messagesLoading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -248,6 +268,8 @@ const Messages = () => {
                         senderName={message.sender_profile?.username || activeChat?.name || 'User'}
                       />
                     ))}
+                    {/* Anchor for auto-scrolling */}
+                    <div ref={scrollRef} />
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -255,6 +277,8 @@ const Messages = () => {
                     <p className="text-sm text-gray-400 mt-2">
                       Send a message to start the conversation.
                     </p>
+                    {/* Anchor for auto-scrolling */}
+                    <div ref={scrollRef} />
                   </div>
                 )}
               </div>
