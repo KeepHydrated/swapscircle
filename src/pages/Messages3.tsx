@@ -61,7 +61,7 @@ const Messages3 = () => {
     <MainLayout>
       <div className="container mx-auto py-6">
         <div className="mb-10">
-          <h2 className="text-xl font-medium mb-6 text-gray-600">Your Match Opportunities</h2>
+          <h2 className="text-xl font-medium mb-6 text-gray-600">See Who's Liked You</h2>
           
           {/* Item matches carousel */}
           <div className="relative px-12">
