@@ -1,4 +1,5 @@
 
+console.log('🚨 TEST COMPONENT LOADING - YOU SHOULD SEE THIS LOG!');
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
