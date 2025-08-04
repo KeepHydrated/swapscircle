@@ -16,12 +16,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
-import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
+import { useNotifications } from '@/hooks/useUnreadNotifications';
 
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
-  const { unreadCount, refreshUnreadCount } = useUnreadNotifications();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
 
   const handleLogout = async () => {
     await signOut();
@@ -93,7 +93,7 @@ const Header = () => {
                 </Link>
               </Button>
               
-              <NotificationDropdown unreadCount={unreadCount} onNotificationRead={refreshUnreadCount} />
+              <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} />
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

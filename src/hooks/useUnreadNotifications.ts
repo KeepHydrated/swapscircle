@@ -1,46 +1,158 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
-export function useUnreadNotifications() {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const { user, supabaseConfigured } = useAuth();
+export interface Notification {
+  id: string;
+  type: 'message' | 'like' | 'discount' | 'feedback' | 'follower' | 'newItem' | 'rental_request';
+  title: string;
+  content: string;
+  is_read: boolean;
+  action_url?: string;
+  created_at: string;
+}
 
-  const fetchUnreadCount = async () => {
-    if (!user || !supabaseConfigured) {
-      setUnreadCount(0);
-      return;
-    }
+export function useNotifications() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    if (!user) return;
+
+    setLoading(true);
     try {
-      const { count, error } = await supabase
+      const { data, error } = await supabase
         .from('notifications')
-        .select('*', { count: 'exact', head: true })
+        .select('*')
         .eq('user_id', user.id)
-        .eq('status', 'unread');
+        .order('created_at', { ascending: false })
+        .limit(10);
 
-      if (error) {
-        console.error('Error fetching unread notifications:', error);
-        return;
-      }
+      if (error) throw error;
 
-      console.log('DEBUG: Unread notifications count:', count);
-      setUnreadCount(count || 0);
+      // Map database fields to our interface
+      const mappedNotifications = (data || []).map((notification: any) => ({
+        id: notification.id,
+        type: notification.action_taken || 'message',
+        title: getNotificationTitle(notification.action_taken),
+        content: notification.message || 'No message content',
+        is_read: notification.status === 'read',
+        action_url: getActionUrl(notification.action_taken, notification.reference_id),
+        created_at: notification.created_at
+      }));
+
+      setNotifications(mappedNotifications);
     } catch (error) {
-      console.error('Error in fetchUnreadCount:', error);
+      console.error('Error fetching notifications:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load notifications",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchUnreadCount();
-
-    if (!user || !supabaseConfigured) {
-      return;
+  // Helper function to get notification title
+  const getNotificationTitle = (actionTaken: string) => {
+    switch (actionTaken) {
+      case 'match':
+        return 'New Match!';
+      case 'friend':
+        return 'Friend Request';
+      case 'message':
+        return 'New Message';
+      default:
+        return 'Notification';
     }
+  };
 
-    // Set up real-time subscription for notifications
+  // Helper function to get action URL
+  const getActionUrl = (actionTaken: string, referenceId: string) => {
+    switch (actionTaken) {
+      case 'message':
+        return '/messages';
+      case 'match':
+      case 'friend':
+        return '/other-person-profile';
+      default:
+        return undefined;
+    }
+  };
+
+  // Mark notification as read
+  const markAsRead = async (notificationId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ status: 'read' })
+        .eq('id', notificationId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setNotifications(prev =>
+        prev.map(notification =>
+          notification.id === notificationId
+            ? { ...notification, is_read: true }
+            : notification
+        )
+      );
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Mark all as read
+  const markAllAsRead = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ status: 'read' })
+        .eq('user_id', user.id)
+        .eq('status', 'unread');
+
+      if (error) throw error;
+
+      // Update local state
+      setNotifications(prev =>
+        prev.map(notification => ({ ...notification, is_read: true }))
+      );
+
+      toast({
+        title: "All notifications marked as read",
+        description: "You've cleared all unread notifications"
+      });
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+      toast({
+        title: "Error",
+        description: "Failed to mark notifications as read",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Set up real-time subscription
+  useEffect(() => {
+    if (!user) return;
+
+    fetchNotifications();
+
+    // Subscribe to real-time changes with unique channel name
+    const channelName = `notifications-${user.id}-${Date.now()}`;
     const channel = supabase
-      .channel('notifications')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -49,9 +161,9 @@ export function useUnreadNotifications() {
           table: 'notifications',
           filter: `user_id=eq.${user.id}`
         },
-        () => {
-          // Refetch count when notifications change
-          fetchUnreadCount();
+        (payload) => {
+          console.log('Notification change:', payload);
+          fetchNotifications(); // Refetch notifications on any change
         }
       )
       .subscribe();
@@ -59,11 +171,16 @@ export function useUnreadNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, supabaseConfigured]);
+  }, [user]);
 
-  const refreshUnreadCount = () => {
-    fetchUnreadCount();
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+
+  return {
+    notifications,
+    unreadCount,
+    loading,
+    markAsRead,
+    markAllAsRead,
+    fetchNotifications
   };
-
-  return { unreadCount, refreshUnreadCount };
 }
