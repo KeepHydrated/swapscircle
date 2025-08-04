@@ -250,6 +250,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .select('user_id, name, username, avatar_url')
       .in('user_id', userIds);
 
+    console.log('🔍 PROFILE FETCH DEBUG:', {
+      userIds,
+      userProfiles,
+      profilesError,
+      profileCount: userProfiles?.length
+    });
+
     if (profilesError) {
       console.error('Error fetching user profiles:', profilesError);
     }
