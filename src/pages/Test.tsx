@@ -235,6 +235,14 @@ const Test: React.FC = () => {
   // User's items and matching functionality
   const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems(false); // Don't include drafts on test page
   
+  console.log('🔍 USER ITEMS: Hook results', {
+    userItemsLength: userItems.length,
+    userItemsLoading,
+    userItemsError,
+    firstItemId: userItems[0]?.id,
+    firstItemName: userItems[0]?.name
+  });
+  
   // Selected items state - auto-select first item
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('matches');
