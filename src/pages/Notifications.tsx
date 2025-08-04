@@ -84,7 +84,7 @@ const Notifications: React.FC = () => {
               type: getType(),
               title: getTitle(),
               content: notification.message || 'No message content',
-              isRead: notification.is_read,
+              isRead: notification.status === 'read',
               timestamp: notification.created_at,
               relatedId: notification.reference_id
             };
@@ -150,7 +150,7 @@ const Notifications: React.FC = () => {
         if (supabaseConfigured) {
           await supabase
             .from('notifications')
-            .update({ is_read: true })
+            .update({ status: 'read' })
             .eq('id', notification.id);
         }
       }

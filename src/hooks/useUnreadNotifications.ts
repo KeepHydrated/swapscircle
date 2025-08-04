@@ -15,18 +15,19 @@ export function useUnreadNotifications() {
     // Fetch initial unread count
     const fetchUnreadCount = async () => {
       try {
-        const { data, error } = await supabase
+        const { count, error } = await supabase
           .from('notifications')
-          .select('id', { count: 'exact' })
+          .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .eq('is_read', false);
+          .eq('status', 'unread');
 
         if (error) {
           console.error('Error fetching unread notifications:', error);
           return;
         }
 
-        setUnreadCount(data?.length || 0);
+        console.log('DEBUG: Unread notifications count:', count);
+        setUnreadCount(count || 0);
       } catch (error) {
         console.error('Error in fetchUnreadCount:', error);
       }
