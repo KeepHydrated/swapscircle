@@ -285,9 +285,14 @@ export const useMatchActions = (
   };
 
   const handleOpenModal = (id: string) => {
+    console.log('🔍 MODAL DEBUG: handleOpenModal called with id:', id);
     const match = matches.find(m => m.id === id);
+    console.log('🔍 MODAL DEBUG: Found match:', match);
     if (match) {
+      console.log('🔍 MODAL DEBUG: Setting selected match:', match);
       setSelectedMatch(match);
+    } else {
+      console.log('🔍 MODAL DEBUG: No match found for id:', id);
     }
   };
 
