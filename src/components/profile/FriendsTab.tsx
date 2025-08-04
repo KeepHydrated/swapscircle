@@ -249,18 +249,19 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                  <CardContent className="p-0">
                    {/* Unfriend button positioned absolutely outside the clickable area */}
                    <AlertDialog>
-                     <AlertDialogTrigger asChild>
-                       <Button 
-                         variant="destructive"
-                         size="sm"
-                         className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
-                         onClick={(e) => {
-                           e.stopPropagation();
-                         }}
-                       >
-                         <UserX className="h-4 w-4" />
-                       </Button>
-                     </AlertDialogTrigger>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
+                          onClick={(e) => {
+                            console.log('🔍 UNFRIEND: AlertDialogTrigger button clicked!');
+                            e.stopPropagation();
+                          }}
+                        >
+                          <UserX className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
                      <AlertDialogContent>
                        <AlertDialogHeader>
                          <AlertDialogTitle>Unfriend {friend.profiles?.name || friend.profiles?.username}</AlertDialogTitle>
