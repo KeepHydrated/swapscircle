@@ -411,6 +411,7 @@ const EditItem: React.FC = () => {
           looking_for_categories: selectedCategories,
           looking_for_conditions: selectedConditions,
           looking_for_description: lookingForText,
+          looking_for_price_ranges: selectedPriceRanges,
           status: 'published', // Publish the item when updated
         };
         
