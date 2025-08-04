@@ -90,6 +90,7 @@ export function useNotifications() {
     if (!user) return;
 
     try {
+      // First update the database
       const { error } = await supabase
         .from('notifications')
         .update({ status: 'read' })
@@ -98,7 +99,7 @@ export function useNotifications() {
 
       if (error) throw error;
 
-      // Update local state
+      // Then update local state immediately (don't wait for real-time update)
       setNotifications(prev =>
         prev.map(notification =>
           notification.id === notificationId
@@ -106,6 +107,8 @@ export function useNotifications() {
             : notification
         )
       );
+
+      console.log('Notification marked as read:', notificationId);
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -149,21 +152,22 @@ export function useNotifications() {
 
     fetchNotifications();
 
-    // Subscribe to real-time changes with unique channel name
+    // Subscribe to real-time changes with unique channel name  
     const channelName = `notifications-${user.id}-${Date.now()}`;
     const channel = supabase
       .channel(channelName)
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT', // Only listen for new notifications, not updates
           schema: 'public',
           table: 'notifications',
           filter: `user_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Notification change:', payload);
-          fetchNotifications(); // Refetch notifications on any change
+          console.log('New notification received:', payload);
+          // Only fetch new notifications on INSERT, not on UPDATE
+          fetchNotifications();
         }
       )
       .subscribe();
