@@ -270,6 +270,13 @@ const Test: React.FC = () => {
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
   
+  console.log('🔍 SELECTION DEBUG:', {
+    selectedUserItemId,
+    selectedUserItem: selectedUserItem ? { id: selectedUserItem.id, name: selectedUserItem.name } : null,
+    userItemsCount: userItems.length,
+    firstUserItem: userItems[0] ? { id: userItems[0].id, name: userItems[0].name } : null
+  });
+  
   // Get matches for selected item (real matches from DB)
   const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
 
