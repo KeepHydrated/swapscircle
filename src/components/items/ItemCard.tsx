@@ -93,6 +93,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
     }
     console.log('🔍 ItemCard: Card clicked!', { id, name, onSelect: !!onSelect });
     console.log('🔍 ItemCard: Current isSelected state:', isSelected);
+    console.log('🔍 ItemCard: Is match card:', isMatch);
     onSelect(id);
   };
 
