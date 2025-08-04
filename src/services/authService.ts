@@ -795,6 +795,7 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
   lookingForDescription?: string;
   priceRangeMin?: number;
   priceRangeMax?: number;
+  looking_for_price_ranges?: string[];
   imageUrls?: string[];
   status?: 'draft' | 'published';
 }) => {
@@ -832,6 +833,7 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       looking_for_description: item.lookingForDescription,
       price_range_min: item.priceRangeMin,
       price_range_max: item.priceRangeMax,
+      looking_for_price_ranges: item.looking_for_price_ranges,
       status: item.status,
       // Only mark as edited if actual content changes were made, not just status changes
       ...(isOnlyStatusChange ? {} : { has_been_edited: true }),
