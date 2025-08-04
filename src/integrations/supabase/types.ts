@@ -730,6 +730,7 @@ export type Database = {
           looking_for_categories: string[] | null
           looking_for_conditions: string[] | null
           looking_for_description: string | null
+          looking_for_price_ranges: string[] | null
           name: string
           price_range_max: number | null
           price_range_min: number | null
@@ -752,6 +753,7 @@ export type Database = {
           looking_for_categories?: string[] | null
           looking_for_conditions?: string[] | null
           looking_for_description?: string | null
+          looking_for_price_ranges?: string[] | null
           name: string
           price_range_max?: number | null
           price_range_min?: number | null
@@ -774,6 +776,7 @@ export type Database = {
           looking_for_categories?: string[] | null
           looking_for_conditions?: string[] | null
           looking_for_description?: string | null
+          looking_for_price_ranges?: string[] | null
           name?: string
           price_range_max?: number | null
           price_range_min?: number | null
