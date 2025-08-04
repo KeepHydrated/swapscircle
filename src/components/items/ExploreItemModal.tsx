@@ -159,9 +159,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
           console.log('MODAL DEBUG: Profile data received:', profileData);
           console.log('MODAL DEBUG: Profile error:', profileError);
+          console.log('MODAL DEBUG: userIdToFetch was:', userIdToFetch);
 
-          if (profileError) {
+          if (profileError || !profileData) {
             console.error('Error fetching user profile:', profileError);
+            console.log('MODAL DEBUG: No profile data, setting fallback');
             // Use minimal fallback without hardcoded data
             setUserProfile({
               name: "Unknown User",
@@ -170,6 +172,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             });
             setUserRating(0);
           } else {
+            console.log('MODAL DEBUG: Setting profile data:', profileData);
             setUserProfile(profileData);
           }
 
@@ -454,7 +457,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 </div>
                 
                 {/* User profile info */}
-                {userProfile && (
+                {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
+                {userProfile && !loading && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
                     {userProfile.avatar_url && (
                       <img
