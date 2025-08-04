@@ -83,7 +83,7 @@ export function useNotifications() {
         return '/messages';
       case 'match':
       case 'friend':
-        return '/other-profile';
+        return '/other-person-profile';
       default:
         return undefined;
     }

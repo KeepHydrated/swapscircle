@@ -241,7 +241,7 @@ const Messages = () => {
               {/* Partner information header */}
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-center">
-                  <Link to={`/other-profile/${activeChat.otherUserProfile?.id}`} onClick={() => console.log('Messages.tsx Avatar Link - userId:', activeChat.otherUserProfile?.id)}>
+                  <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} onClick={() => console.log('Messages.tsx Avatar Link - userId:', activeChat.otherUserProfile?.id)}>
                     <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
                       <AvatarImage src={activeChat.otherUserProfile?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"} />
                       <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 2)}</AvatarFallback>
@@ -251,7 +251,7 @@ const Messages = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <Link 
-                          to={`/other-profile/${activeChat.otherUserProfile?.id}`}
+                          to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}
                           className="text-sm font-semibold hover:text-blue-600 transition-colors"
                           onClick={() => console.log('Messages.tsx Name Link - userId:', activeChat.otherUserProfile?.id)}
                         >

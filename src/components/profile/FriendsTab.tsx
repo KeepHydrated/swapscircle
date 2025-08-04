@@ -108,7 +108,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
   }, []);
 
   const handleViewProfile = (userId: string) => {
-    navigate(`/other-profile/${userId}`);
+    navigate(`/other-person-profile?userId=${userId}`);
   };
 
   const handleAcceptRequest = async (requestId: string) => {
