@@ -128,7 +128,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           .from('items')
           .select('*')
           .eq('id', item.id)
-          .single();
+          .maybeSingle();
 
         console.log('MODAL DEBUG: Item data received:', itemData);
         console.log('MODAL DEBUG: Item error:', itemError);
@@ -155,7 +155,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             .from('profiles')
             .select('name, avatar_url, username, created_at')
             .eq('id', userIdToFetch)
-            .single();
+            .maybeSingle();
 
           console.log('MODAL DEBUG: Profile data received:', profileData);
           console.log('MODAL DEBUG: Profile error:', profileError);
@@ -454,7 +454,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 </div>
                 
                 {/* User profile info */}
-                {console.log('MODAL DEBUG: Rendering profile section, userProfile:', userProfile)}
                 {userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
                     {userProfile.avatar_url && (
