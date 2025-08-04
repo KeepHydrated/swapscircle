@@ -160,7 +160,10 @@ const PostItem: React.FC = () => {
       // Use ref values to avoid stale closure
       const { title: currentTitle, description: currentDescription, category: currentCategory, lookingForText: currentLookingForText, user: currentUser } = formDataRef.current;
       const hasContent = currentTitle.trim() || currentDescription.trim() || currentCategory || currentLookingForText.trim();
-      if (hasContent && currentUser) {
+      
+      // Only save draft if there's content, user exists, AND we're not in the middle of submitting
+      // This prevents the draft message from appearing after successful item publication
+      if (hasContent && currentUser && !isSubmitting) {
         saveDraftToDatabase();
         // Use setTimeout to ensure the toast shows on the destination page
         setTimeout(() => {
@@ -168,7 +171,7 @@ const PostItem: React.FC = () => {
         }, 100);
       }
     };
-  }, []); // No dependencies - only runs on actual unmount
+  }, [isSubmitting]); // Add isSubmitting as dependency since we reference it
 
 
   // Save draft to database
