@@ -353,6 +353,27 @@ const PostItem: React.FC = () => {
       return;
     }
 
+    // Validation for preferences (right column) - all fields are now mandatory
+    if (!lookingForText.trim()) {
+      toast.error('Please describe what you\'re looking for');
+      return;
+    }
+
+    if (selectedCategories.length === 0) {
+      toast.error('Please select at least one category you\'re looking for');
+      return;
+    }
+
+    if (selectedConditions.length === 0) {
+      toast.error('Please select at least one condition you\'re looking for');
+      return;
+    }
+
+    if (selectedPriceRanges.length === 0) {
+      toast.error('Please select at least one price range you\'re looking for');
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {

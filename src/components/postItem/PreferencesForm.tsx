@@ -143,19 +143,20 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
       
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="lookingFor">I'm looking for...</Label>
+          <Label htmlFor="lookingFor">I'm looking for... <span className="text-red-500">*</span></Label>
           <Textarea 
             id="lookingFor" 
             placeholder="Describe what you would like to trade for..." 
             rows={4}
             value={lookingForText}
             onChange={(e) => setLookingForText(e.target.value)}
+            required
           />
         </div>
         
         {/* Categories Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Categories <span className="text-red-500">*</span></h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.keys(categories).map((categoryName) => (
               <div key={categoryName} className="flex items-center space-x-2">
@@ -203,7 +204,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         
         {/* Condition Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Condition</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Condition <span className="text-red-500">*</span></h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {conditions.map((condition) => (
               <div key={condition} className="flex items-center space-x-2">
@@ -225,7 +226,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         
         {/* Price Range Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Price Range</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Price Range <span className="text-red-500">*</span></h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {priceRanges.map((range) => (
               <div key={range} className="flex items-center space-x-2">
