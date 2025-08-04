@@ -141,21 +141,34 @@ export const fetchUserTradeConversations = async () => {
 
 export const fetchTradeMessages = async (conversationId: string) => {
   try {
-    // Fetch messages from trade_messages table with profile data
+    // Fetch messages from trade_messages table
     let { data: messages, error } = await supabase
       .from('trade_messages')
-      .select(`
-        *,
-        sender_profile:profiles!trade_messages_sender_id_fkey(
-          id, username, name, avatar_url
-        )
-      `)
+      .select('*')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
 
     if (error) {
       console.error('Error fetching trade messages:', error);
       return [];
+    }
+
+    // If we have messages, fetch sender profiles separately
+    if (messages && messages.length > 0) {
+      const senderIds = [...new Set(messages.map(m => m.sender_id))];
+      
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, username, name, avatar_url')
+        .in('id', senderIds);
+
+      if (!profileError && profiles) {
+        // Add profile data to messages
+        messages = messages.map(message => ({
+          ...message,
+          sender_profile: profiles.find(p => p.id === message.sender_id)
+        }));
+      }
     }
 
     console.log('Fetched messages:', messages);
