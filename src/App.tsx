@@ -35,9 +35,9 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/test" replace />} />
+              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route path="/home" element={<Test />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/test" element={<Test />} />
               <Route path="/trades" element={
                 <RequireAuth>
                   <Trades />
