@@ -90,6 +90,13 @@ const Messages = () => {
     }
   }, [messages]);
 
+  // Function to trigger scroll (for image loading)
+  const handleScrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   // Ensure the entire content is visible on initial render
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -266,6 +273,7 @@ const Messages = () => {
                         key={message.id}
                         message={message}
                         senderName={message.sender_profile?.username || activeChat?.name || 'User'}
+                        onImageLoad={handleScrollToBottom}
                       />
                     ))}
                     {/* Anchor for auto-scrolling */}

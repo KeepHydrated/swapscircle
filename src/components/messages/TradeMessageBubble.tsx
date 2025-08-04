@@ -17,9 +17,10 @@ interface TradeMessageBubbleProps {
     };
   };
   senderName: string;
+  onImageLoad?: () => void;
 }
 
-const TradeMessageBubble = ({ message, senderName }: TradeMessageBubbleProps) => {
+const TradeMessageBubble = ({ message, senderName, onImageLoad }: TradeMessageBubbleProps) => {
   const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -65,6 +66,7 @@ const TradeMessageBubble = ({ message, senderName }: TradeMessageBubbleProps) =>
                     maxHeight: message.image_urls!.length === 1 ? '200px' : '120px',
                     objectFit: 'cover'
                   }}
+                  onLoad={onImageLoad}
                 />
               ))}
             </div>
