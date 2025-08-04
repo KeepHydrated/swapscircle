@@ -103,10 +103,6 @@ const Messages = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trade-messages', activeConversation] });
       setMessageText('');
-      toast({
-        title: "Message sent!",
-        description: "Your message has been sent successfully.",
-      });
     },
   });
 
