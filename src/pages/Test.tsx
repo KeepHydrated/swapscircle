@@ -246,7 +246,14 @@ const Test: React.FC = () => {
   
   // Auto-select first item when userItems are loaded
   useEffect(() => {
+    console.log('🔍 AUTO-SELECT: useEffect triggered', {
+      userItemsLength: userItems.length,
+      selectedUserItemId,
+      firstItemId: userItems[0]?.id,
+      firstItemName: userItems[0]?.name
+    });
     if (userItems.length > 0 && !selectedUserItemId) {
+      console.log('🔍 AUTO-SELECT: Setting selected item to:', userItems[0].id, userItems[0].name);
       setSelectedUserItemId(userItems[0].id);
     }
   }, [userItems, selectedUserItemId]);
