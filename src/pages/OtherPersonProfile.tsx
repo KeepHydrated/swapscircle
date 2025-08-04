@@ -203,7 +203,7 @@ const OtherPersonProfile: React.FC = () => {
   // Handle liking an item - now with real backend calls and homepage context
   const handleLikeItem = async (id: string) => {
     if (!currentUserId) {
-      toast.error('Please log in to like items');
+      navigate('/auth');
       return;
     }
 

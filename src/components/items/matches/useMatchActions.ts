@@ -106,7 +106,7 @@ export const useMatchActions = (
     console.log('🚀 Supabase configured:', supabaseConfigured);
     
     if (!user) {
-      toast.error('Please log in to like items');
+      navigate('/auth');
       return;
     }
 
@@ -201,7 +201,7 @@ export const useMatchActions = (
     console.log('DEBUG: handleReject called with id:', id);
     
     if (!user) {
-      toast.error('Please log in to reject items');
+      navigate('/auth');
       return;
     }
 

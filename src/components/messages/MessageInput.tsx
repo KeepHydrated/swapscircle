@@ -1,5 +1,6 @@
 
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Paperclip, Send, X, Image } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ interface MessageInputProps {
 }
 
 const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {}) => {
+  const navigate = useNavigate();
   const [messageInput, setMessageInput] = useState("");
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -41,7 +43,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
       if (selectedImages.length > 0) {
         const { data: userData } = await supabase.auth.getUser();
         if (!userData.user) {
-          toast.error("You must be logged in to send images");
+          navigate('/auth');
           return;
         }
 

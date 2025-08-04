@@ -148,7 +148,7 @@ const Home: React.FC = () => {
   // Define handler for liking friend items with mutual matching
   const handleLikeFriendItem = async (itemId: string) => {
     if (!user) {
-      toast.error('Please log in to like items');
+      navigate('/auth');
       return;
     }
 

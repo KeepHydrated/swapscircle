@@ -149,7 +149,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("You must be logged in to unfriend someone");
+        navigate('/auth');
         return;
       }
 

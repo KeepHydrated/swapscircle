@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserPlus, UserCheck, UserX } from 'lucide-react';
@@ -20,6 +21,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   initialStatus = 'none',
   onStatusChange
 }) => {
+  const navigate = useNavigate();
   const [status, setStatus] = useState<FriendRequestStatus>(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
   const [friendRequestId, setFriendRequestId] = useState<string | null>(null);
@@ -79,7 +81,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("You must be logged in to send friend requests");
+        navigate('/auth');
         return;
       }
 
@@ -151,7 +153,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("You must be logged in");
+        navigate('/auth');
         return;
       }
 
@@ -199,7 +201,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("You must be logged in");
+        navigate('/auth');
         return;
       }
 
@@ -231,7 +233,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("You must be logged in");
+        navigate('/auth');
         return;
       }
 

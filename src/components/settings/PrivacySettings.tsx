@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -7,6 +8,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 const PrivacySettings: React.FC = () => {
+  const navigate = useNavigate();
   const [showLocation, setShowLocation] = useState(true);
   const [vacationMode, setVacationMode] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,7 +55,7 @@ const PrivacySettings: React.FC = () => {
         toast.success('Privacy settings saved successfully');
       }
     } else {
-      toast.error('You must be logged in');
+      navigate('/auth');
     }
     setLoading(false);
   };

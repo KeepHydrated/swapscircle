@@ -35,10 +35,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       try {
         const { data: session } = await supabase.auth.getSession();
         if (!session?.session?.user) {
-          toast({
-            title: "Authentication required",
-            description: "Please log in to view your items.",
-          });
+          navigate('/auth');
+          onClose();
           return;
         }
 
@@ -98,10 +96,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
     try {
       const { data: session } = await supabase.auth.getSession();
       if (!session?.session?.user) {
-        toast({
-          title: "Authentication required",
-          description: "Please log in to create a trade request.",
-        });
+        navigate('/auth');
+        onClose();
         return;
       }
 

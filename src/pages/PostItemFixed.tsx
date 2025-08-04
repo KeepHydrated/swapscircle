@@ -296,7 +296,7 @@ const PostItemFixed: React.FC = () => {
   // Handle item submission (posting)
   const handleSubmit = async () => {
     if (!user) {
-      toast.error('You must be logged in to post an item.');
+      navigate('/auth');
       return;
     }
 
