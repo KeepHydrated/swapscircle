@@ -77,7 +77,7 @@ const Trades = () => {
   };
 
   const handleProfileClick = (userId: string) => {
-    navigate(`/other-person-profile?userId=${userId}`);
+    navigate(`/other-profile/${userId}`);
   };
 
   const handleMyProfileClick = () => {

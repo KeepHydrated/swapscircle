@@ -22,7 +22,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
   const navigate = useNavigate();
 
   const handleProfileClick = (reviewerId: string) => {
-    navigate(`/other-person-profile?userId=${reviewerId}`);
+    navigate(`/other-profile/${reviewerId}`);
   };
 
   if (reviews.length === 0) {

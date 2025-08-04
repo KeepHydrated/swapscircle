@@ -117,7 +117,7 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
       {/* Owner Profile Information - Only show if showProfileInfo is true */}
       {showProfileInfo && (
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <Link to="/other-person-profile" className="block">
+          <Link to="/other-profile" className="block">
             <div className="flex flex-col">
               {/* Avatar and name/rating in the same row */}
               <div className="flex items-center mb-2">

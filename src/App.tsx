@@ -12,7 +12,7 @@ import EditItem from "./pages/EditItem";
 import ItemDetails from "./pages/ItemDetails";
 import Messages from "./pages/Messages";
 import Messages3 from "./pages/Messages3";
-import OtherPersonProfile from "./pages/OtherPersonProfile";
+
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
@@ -62,11 +62,6 @@ const App = () => (
               <Route path="/your-likes" element={
                 <RequireAuth>
                   <Messages3 />
-                </RequireAuth>
-              } />
-              <Route path="/other-person-profile" element={
-                <RequireAuth>
-                  <OtherPersonProfile />
                 </RequireAuth>
               } />
               <Route path="/other-profile/:userId" element={<OtherProfile />} />

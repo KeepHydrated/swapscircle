@@ -264,8 +264,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
       } else {
         // It's someone else's profile - navigate to other person profile
-        console.log('MODAL DEBUG: Navigating to other-person-profile');
-        navigate(`/other-person-profile?userId=${fullItem.user_id}`);
+        console.log('MODAL DEBUG: Navigating to other-profile');
+        navigate(`/other-profile/${fullItem.user_id}`);
       }
     } else {
       console.log('MODAL DEBUG: No user_id found, cannot navigate');

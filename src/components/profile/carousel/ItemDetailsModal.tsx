@@ -203,8 +203,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
       } else {
         // It's someone else's profile - navigate to other person profile
-        console.log('ITEM DETAILS MODAL DEBUG: Navigating to other-person-profile');
-        navigate(`/other-person-profile?userId=${userId}`);
+        console.log('ITEM DETAILS MODAL DEBUG: Navigating to other-profile');
+        navigate(`/other-profile/${userId}`);
       }
     } else {
       console.log('ITEM DETAILS MODAL DEBUG: No userId found, cannot navigate');

@@ -159,7 +159,7 @@ const Notifications: React.FC = () => {
       if (notification.type === 'message' && notification.relatedId) {
         navigate('/messages');
       } else if (notification.type === 'trade' && notification.relatedId) {
-        navigate(`/other-person-profile`);
+        navigate(`/other-profile`);
       }
     } catch (error) {
       console.error('Error updating notification:', error);
