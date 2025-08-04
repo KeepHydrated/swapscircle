@@ -253,10 +253,8 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                         <Button 
                           variant="destructive"
                           size="sm"
-                          className="absolute top-2 right-2 h-8 w-8 p-0 z-10 border-2 border-yellow-400"
+                          className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
                           onClick={(e) => {
-                            console.log('🔍 UNFRIEND: AlertDialogTrigger button clicked!');
-                            alert('UNFRIEND BUTTON CLICKED!'); // Very obvious indicator
                             e.stopPropagation();
                           }}
                         >
@@ -273,10 +271,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                        <AlertDialogFooter>
                          <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction 
-                            onClick={() => {
-                              console.log('🔍 UNFRIEND: AlertDialogAction clicked!', friend.id);
-                              handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user');
-                            }}
+                            onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
                             Unfriend
