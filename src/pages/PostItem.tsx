@@ -317,9 +317,19 @@ const PostItem: React.FC = () => {
 
 
   const handleSubmit = async () => {
-    // Validation
+    // Validation - all fields are now mandatory
     if (!title.trim()) {
       toast.error('Please enter a title for your item');
+      return;
+    }
+
+    if (!description.trim()) {
+      toast.error('Please enter a description for your item');
+      return;
+    }
+
+    if (images.length === 0) {
+      toast.error('Please add at least one image of your item');
       return;
     }
 
@@ -328,8 +338,18 @@ const PostItem: React.FC = () => {
       return;
     }
 
+    if (!subcategory) {
+      toast.error('Please select a subcategory for your item');
+      return;
+    }
+
     if (!condition) {
       toast.error('Please select the condition of your item');
+      return;
+    }
+
+    if (!priceRange) {
+      toast.error('Please select a price range for your item');
       return;
     }
 

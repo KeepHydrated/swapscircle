@@ -122,7 +122,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
       <div className="space-y-6">
         {/* Image Upload */}
         <div>
-          <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Add Images</Label>
+          <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Add Images <span className="text-red-500">*</span></Label>
           <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
             <Upload className="h-10 w-10 text-gray-400 mb-3" />
             <p className="text-base font-medium text-gray-700 mb-1">Upload your item photos</p>
@@ -200,19 +200,20 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         
         {/* Title */}
         <div className="space-y-2">
-          <Label htmlFor="title" className="text-lg font-semibold text-gray-900">Item Title</Label>
+          <Label htmlFor="title" className="text-lg font-semibold text-gray-900">Item Title <span className="text-red-500">*</span></Label>
           <Input 
             id="title" 
             placeholder="Give your item a catchy title..." 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            required
           />
         </div>
         
         {/* Description */}
         <div className="space-y-2">
-          <Label htmlFor="description" className="text-lg font-semibold text-gray-900">Description</Label>
+          <Label htmlFor="description" className="text-lg font-semibold text-gray-900">Description <span className="text-red-500">*</span></Label>
           <Textarea 
             id="description" 
             placeholder="Tell potential traders about your item's condition, history, and any special features..." 
@@ -220,13 +221,14 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            required
           />
         </div>
         
         {/* Category and Subcategory in same row */}
         <div className="flex gap-4">
           <div className="flex-1 space-y-2">
-            <Label htmlFor="category" className="text-lg font-semibold text-gray-900">Category</Label>
+            <Label htmlFor="category" className="text-lg font-semibold text-gray-900">Category <span className="text-red-500">*</span></Label>
             <Select 
               value={category} 
               onValueChange={(value) => {
@@ -248,14 +250,14 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           {/* Subcategory - only show if category is selected */}
           {category && (
             <div className="flex-1 space-y-2">
-              <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-900">Subcategory</Label>
+              <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-900">Subcategory <span className="text-red-500">*</span></Label>
                <Select 
                 value={subcategory} 
                 onValueChange={(value) => {
                   console.log('Subcategory selected:', value);
                   setSubcategory(value);
                 }}
-              >
+               >
                 <SelectTrigger id="subcategory" className="h-12 text-base border-gray-300 focus:border-blue-500">
                   <SelectValue placeholder="Select a subcategory" />
                 </SelectTrigger>
@@ -271,7 +273,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         
         {/* Condition */}
         <div className="space-y-2">
-          <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition</Label>
+          <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition <span className="text-red-500">*</span></Label>
           <Select value={condition} onValueChange={setCondition}>
             <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
               <SelectValue placeholder="Select condition" />
@@ -286,7 +288,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         
         {/* Estimated Value */}
         <div className="space-y-2">
-          <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Price Range</Label>
+          <Label htmlFor="price-range" className="text-lg font-semibold text-gray-900">Price Range <span className="text-red-500">*</span></Label>
           <Select 
             value={priceRange} 
             onValueChange={(value) => {
