@@ -975,6 +975,7 @@ export type Database = {
           conversation_id: string
           created_at: string | null
           id: string
+          image_urls: string[] | null
           is_read: boolean | null
           message_type: string | null
           sender_id: string
@@ -984,6 +985,7 @@ export type Database = {
           conversation_id: string
           created_at?: string | null
           id?: string
+          image_urls?: string[] | null
           is_read?: boolean | null
           message_type?: string | null
           sender_id: string
@@ -993,6 +995,7 @@ export type Database = {
           conversation_id?: string
           created_at?: string | null
           id?: string
+          image_urls?: string[] | null
           is_read?: boolean | null
           message_type?: string | null
           sender_id?: string
@@ -2086,7 +2089,7 @@ export type Database = {
           conversation_id: string
           created_at: string | null
           id: string
-          image_url: string | null
+          image_urls: string[] | null
           message: string
           sender_id: string
           updated_at: string | null
@@ -2095,7 +2098,7 @@ export type Database = {
           conversation_id: string
           created_at?: string | null
           id?: string
-          image_url?: string | null
+          image_urls?: string[] | null
           message: string
           sender_id: string
           updated_at?: string | null
@@ -2104,7 +2107,7 @@ export type Database = {
           conversation_id?: string
           created_at?: string | null
           id?: string
-          image_url?: string | null
+          image_urls?: string[] | null
           message?: string
           sender_id?: string
           updated_at?: string | null

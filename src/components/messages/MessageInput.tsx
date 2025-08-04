@@ -13,45 +13,54 @@ interface MessageInputProps {
 
 const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {}) => {
   const [messageInput, setMessageInput] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = async () => {
-    if (!messageInput.trim() && !selectedImage) return;
+    if (!messageInput.trim() && selectedImages.length === 0) return;
     if (!conversationId) return;
 
     setIsUploading(true);
     try {
-      let imageUrl = "";
+      let imageUrls: string[] = [];
 
-      // Upload image if selected
-      if (selectedImage) {
+      // Upload images if selected
+      if (selectedImages.length > 0) {
         const { data: userData } = await supabase.auth.getUser();
         if (!userData.user) {
           toast.error("You must be logged in to send images");
           return;
         }
 
-        const fileExt = selectedImage.name.split('.').pop();
-        const fileName = `${userData.user.id}/${Date.now()}.${fileExt}`;
-        
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('message-attachments')
-          .upload(fileName, selectedImage);
+        // Upload all images
+        const uploadPromises = selectedImages.map(async (image, index) => {
+          const fileExt = image.name.split('.').pop();
+          const fileName = `${userData.user.id}/${Date.now()}-${index}.${fileExt}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('message-attachments')
+            .upload(fileName, image);
 
-        if (uploadError) {
-          console.error('Upload error:', uploadError);
-          toast.error("Failed to upload image");
+          if (uploadError) {
+            console.error('Upload error:', uploadError);
+            throw new Error(`Failed to upload image ${index + 1}`);
+          }
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('message-attachments')
+            .getPublicUrl(uploadData.path);
+
+          return publicUrl;
+        });
+
+        try {
+          imageUrls = await Promise.all(uploadPromises);
+        } catch (error) {
+          toast.error("Failed to upload one or more images");
           return;
         }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('message-attachments')
-          .getPublicUrl(uploadData.path);
-
-        imageUrl = publicUrl;
       }
 
       // Send message to database
@@ -66,8 +75,8 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
         .insert({
           conversation_id: conversationId,
           sender_id: userData.user.id,
-          message: messageInput.trim() || "Image",
-          image_url: imageUrl || null
+          message: messageInput.trim() || (selectedImages.length > 0 ? `Sent ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}` : ""),
+          image_urls: imageUrls
         });
 
       if (messageError) {
@@ -78,8 +87,8 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
 
       // Clear inputs
       setMessageInput("");
-      setSelectedImage(null);
-      setImagePreview("");
+      setSelectedImages([]);
+      setImagePreviews([]);
       toast.success("Message sent!");
 
     } catch (error) {
@@ -102,34 +111,66 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Check if file is an image
-      if (!file.type.startsWith('image/')) {
-        toast.error("Please select an image file");
-        return;
-      }
+    const files = Array.from(e.target.files || []);
+    
+    if (files.length === 0) return;
 
-      // Check file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image must be less than 5MB");
-        return;
-      }
+    // Filter only image files
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length !== files.length) {
+      toast.error("Only image files are allowed");
+    }
 
-      setSelectedImage(file);
-      
-      // Create preview
+    if (imageFiles.length === 0) return;
+
+    // Check total file count (max 5 images)
+    const totalImages = selectedImages.length + imageFiles.length;
+    if (totalImages > 5) {
+      toast.error("Maximum 5 images allowed per message");
+      return;
+    }
+
+    // Check file sizes (max 5MB each)
+    const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024);
+    if (oversizedFiles.length > 0) {
+      toast.error("Each image must be less than 5MB");
+      return;
+    }
+
+    // Add new images to existing selection
+    const newImages = [...selectedImages, ...imageFiles];
+    setSelectedImages(newImages);
+    
+    // Create previews for new images
+    const newPreviews: string[] = [];
+    imageFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
+        newPreviews.push(e.target?.result as string);
+        if (newPreviews.length === imageFiles.length) {
+          setImagePreviews(prev => [...prev, ...newPreviews]);
+        }
       };
       reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = selectedImages.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    
+    setSelectedImages(newImages);
+    setImagePreviews(newPreviews);
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
-  const clearSelectedImage = () => {
-    setSelectedImage(null);
-    setImagePreview("");
+  const clearAllImages = () => {
+    setSelectedImages([]);
+    setImagePreviews([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -137,22 +178,41 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
 
   return (
     <div className="p-3 bg-white border-t border-gray-200 w-full">
-      {/* Image preview */}
-      {imagePreview && (
-        <div className="mb-2 relative inline-block">
-          <img 
-            src={imagePreview} 
-            alt="Preview" 
-            className="max-w-32 max-h-32 rounded-lg object-cover"
-          />
-          <Button
-            variant="destructive"
-            size="icon"
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-            onClick={clearSelectedImage}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+      {/* Image previews */}
+      {imagePreviews.length > 0 && (
+        <div className="mb-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-600">
+              {selectedImages.length} image{selectedImages.length > 1 ? 's' : ''} selected
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAllImages}
+              className="h-6 text-xs"
+            >
+              Clear all
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {imagePreviews.map((preview, index) => (
+              <div key={index} className="relative">
+                <img 
+                  src={preview} 
+                  alt={`Preview ${index + 1}`} 
+                  className="w-16 h-16 rounded-lg object-cover"
+                />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full"
+                  onClick={() => removeImage(index)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -161,6 +221,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
           ref={fileInputRef}
           type="file"
           accept="image/*"
+          multiple
           onChange={handleFileChange}
           className="hidden"
         />
@@ -170,7 +231,8 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
           size="icon" 
           className="shrink-0"
           onClick={handleFileSelect}
-          disabled={isUploading}
+          disabled={isUploading || selectedImages.length >= 5}
+          title={selectedImages.length >= 5 ? "Maximum 5 images allowed" : "Attach images"}
         >
           <Paperclip className="h-5 w-5" />
         </Button>
@@ -186,7 +248,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
         
         <Button 
           onClick={handleSendMessage}
-          disabled={(!messageInput.trim() && !selectedImage) || isUploading}
+          disabled={(!messageInput.trim() && selectedImages.length === 0) || isUploading}
           size="icon"
           className="shrink-0"
         >

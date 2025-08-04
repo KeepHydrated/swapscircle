@@ -251,14 +251,23 @@ const Messages = () => {
                           <div className="flex-1">
                             <div className="bg-white rounded-lg p-3 shadow-sm">
                               <p className="text-sm">{message.message}</p>
-                              {message.image_url && (
+                              {message.image_urls && message.image_urls.length > 0 && (
                                 <div className="mt-2">
-                                  <img 
-                                    src={message.image_url} 
-                                    alt="Attachment" 
-                                    className="max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                                    onClick={() => window.open(message.image_url, '_blank')}
-                                  />
+                                  <div className="grid grid-cols-2 gap-2 max-w-md">
+                                    {message.image_urls.map((imageUrl: string, index: number) => (
+                                      <img 
+                                        key={index}
+                                        src={imageUrl} 
+                                        alt={`Attachment ${index + 1}`} 
+                                        className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity object-cover"
+                                        style={{
+                                          aspectRatio: '1',
+                                          maxHeight: message.image_urls.length === 1 ? '200px' : '100px'
+                                        }}
+                                        onClick={() => window.open(imageUrl, '_blank')}
+                                      />
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                             </div>
