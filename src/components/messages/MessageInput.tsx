@@ -86,7 +86,6 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
       setMessageInput("");
       setSelectedImages([]);
       setImagePreviews([]);
-      toast.success("Message sent!");
 
     } catch (error) {
       console.error('Error sending message:', error);
