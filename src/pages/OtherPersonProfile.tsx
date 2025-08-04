@@ -312,6 +312,7 @@ const OtherPersonProfile: React.FC = () => {
             profile={profileData} 
             friendCount={profileData.friendCount}
             onReviewsClick={() => navigateToTab('reviews')}
+            userId={userId || undefined}
           />
           <div className="absolute top-6 right-6">
             <FriendRequestButton 
