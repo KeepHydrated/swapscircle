@@ -217,6 +217,7 @@ const UserProfile: React.FC = () => {
           friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
+          userId={userProfile?.id}
         />
         <Tabs 
           value={activeTab} 

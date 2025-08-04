@@ -18,13 +18,15 @@ interface ProfileHeaderProps {
   onReviewsClick?: () => void;
   onFriendsClick?: () => void;
   friendCount?: number;
+  userId?: string; // Add userId prop for shareable profile links
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ 
   profile, 
   onReviewsClick, 
   onFriendsClick,
-  friendCount = 0 
+  friendCount = 0,
+  userId
 }) => {
   console.log('[ProfileHeader] Component rendered with profile:', profile);
   console.log('[ProfileHeader] Profile name:', profile?.name);
@@ -57,7 +59,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const handleCopyProfileLink = async () => {
     try {
-      const profileUrl = `${window.location.origin}/profile`;
+      const profileUrl = userId 
+        ? `${window.location.origin}/other-profile?userId=${userId}`
+        : `${window.location.origin}/profile`;
       await navigator.clipboard.writeText(profileUrl);
       toast.success('Profile link copied to clipboard!');
     } catch (error) {
