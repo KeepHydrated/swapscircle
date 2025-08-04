@@ -26,7 +26,9 @@ import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  console.log('🚨 APP COMPONENT LOADING!');
+  return (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ThemeProvider>
@@ -92,6 +94,7 @@ const App = () => (
       </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
