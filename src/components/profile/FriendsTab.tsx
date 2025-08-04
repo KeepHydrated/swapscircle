@@ -253,9 +253,10 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                         <Button 
                           variant="destructive"
                           size="sm"
-                          className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
+                          className="absolute top-2 right-2 h-8 w-8 p-0 z-10 border-2 border-yellow-400"
                           onClick={(e) => {
                             console.log('🔍 UNFRIEND: AlertDialogTrigger button clicked!');
+                            alert('UNFRIEND BUTTON CLICKED!'); // Very obvious indicator
                             e.stopPropagation();
                           }}
                         >
