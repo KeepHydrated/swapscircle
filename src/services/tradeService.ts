@@ -141,10 +141,15 @@ export const fetchUserTradeConversations = async () => {
 
 export const fetchTradeMessages = async (conversationId: string) => {
   try {
-    // First try with profile join, if that fails, fetch without profiles
+    // Fetch messages from trade_messages table with profile data
     let { data: messages, error } = await supabase
-      .from('messages')
-      .select('*')
+      .from('trade_messages')
+      .select(`
+        *,
+        sender_profile:profiles!trade_messages_sender_id_fkey(
+          id, username, name, avatar_url
+        )
+      `)
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
 
@@ -161,20 +166,25 @@ export const fetchTradeMessages = async (conversationId: string) => {
   }
 };
 
-export const sendTradeMessage = async (conversationId: string, message: string) => {
+export const sendTradeMessage = async (conversationId: string, message: string, imageUrls: string[] = []) => {
   try {
+    console.log('sendTradeMessage called', { conversationId, message, imageUrls });
+    
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session?.user) {
+      console.error('User not authenticated');
       throw new Error('Not authenticated');
     }
 
+    console.log('User authenticated:', session.session.user.id);
+
     const { data, error } = await supabase
-      .from('messages')
+      .from('trade_messages')
       .insert({
         conversation_id: conversationId,
         sender_id: session.session.user.id,
-        content: message,
-        message_type: 'text'
+        message: message,
+        image_urls: imageUrls
       })
       .select('*')
       .single();
@@ -183,6 +193,8 @@ export const sendTradeMessage = async (conversationId: string, message: string) 
       console.error('Error sending message:', error);
       throw error;
     }
+
+    console.log('Message sent successfully:', data);
 
     // Update conversation timestamp
     await supabase

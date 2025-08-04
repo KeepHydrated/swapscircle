@@ -4,6 +4,8 @@ import { Paperclip, Send, X, Image } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { sendTradeMessage } from '@/services/tradeService';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 interface MessageInputProps {
@@ -17,10 +19,19 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const handleSendMessage = async () => {
-    if (!messageInput.trim() && selectedImages.length === 0) return;
-    if (!conversationId) return;
+    console.log('handleSendMessage called', { messageInput: messageInput.trim(), selectedImages: selectedImages.length, conversationId });
+    
+    if (!messageInput.trim() && selectedImages.length === 0) {
+      console.log('No message or images to send');
+      return;
+    }
+    if (!conversationId) {
+      console.log('No conversation ID provided');
+      return;
+    }
 
     setIsUploading(true);
     try {
@@ -63,27 +74,13 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
         }
       }
 
-      // Send message to database
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        toast.error("You must be logged in to send messages");
-        return;
-      }
+      // Send message using the service
+      const messageText = messageInput.trim() || (selectedImages.length > 0 ? `Sent ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}` : "");
+      
+      await sendTradeMessage(conversationId, messageText, imageUrls);
 
-      const { error: messageError } = await supabase
-        .from('trade_messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: userData.user.id,
-          message: messageInput.trim() || (selectedImages.length > 0 ? `Sent ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}` : ""),
-          image_urls: imageUrls
-        });
-
-      if (messageError) {
-        console.error('Message error:', messageError);
-        toast.error("Failed to send message");
-        return;
-      }
+      // Invalidate queries to refresh the message list
+      await queryClient.invalidateQueries({ queryKey: ['trade-messages', conversationId] });
 
       // Clear inputs
       setMessageInput("");
