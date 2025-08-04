@@ -352,25 +352,24 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50">
       <Header />
-      <div className="flex-1 overflow-auto">
-        <div className="p-4 md:p-6 h-full">{/* Removed flex flex-col from here */}
+      <div className="flex-1 p-4 md:p-6 flex flex-col overflow-hidden">
 
-        {/* Your Items Section - Full Width */}
-        <div className="mb-6">
+        {/* Your Items Section - Compact */}
+        <div className="mb-4 flex-shrink-0">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             {userItemsLoading ? (
-              <div className="flex justify-center items-center min-h-[300px]">
-                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+              <div className="flex justify-center items-center h-24">
+                <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
               </div>
             ) : userItemsError ? (
-              <div className="text-red-600 text-center bg-red-50 p-4 rounded-lg text-sm">{userItemsError}</div>
+              <div className="text-red-600 text-center bg-red-50 p-3 rounded-lg text-sm">{userItemsError}</div>
             ) : userItems.length === 0 ? (
-              <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
-                <div className="text-4xl mb-3">📦</div>
-                <p className="text-base font-medium mb-1">No items yet</p>
-                <p className="text-sm">Post an item to see matches!</p>
+              <div className="text-center text-gray-500 py-6 bg-gray-50 rounded-lg">
+                <div className="text-3xl mb-2">📦</div>
+                <p className="text-sm font-medium mb-1">No items yet</p>
+                <p className="text-xs">Post an item to see matches!</p>
               </div>
             ) : (
               <MyItems
@@ -382,8 +381,8 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* Tabs Section - Full Width with proper height */}
-        <div className="h-[600px] mb-6"> {/* Fixed height for scrollable area */}
+        {/* Tabs Section - Takes remaining space */}
+        <div className="flex-1 min-h-0">
           {user && supabaseConfigured ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full flex flex-col">{/* Added flex flex-col here */}
               <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={(value) => {
@@ -491,7 +490,6 @@ const Home: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
 
       {/* Explore Item Modal */}
       <ExploreItemModal
