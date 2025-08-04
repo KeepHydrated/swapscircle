@@ -22,14 +22,21 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   const navigate = useNavigate();
 
   const handleNotificationClick = async (notification: Notification) => {
-    // Mark as read if not already read
-    if (!notification.is_read) {
-      await onNotificationRead(notification.id);
-    }
-    
-    // Navigate based on action URL or type
+    // Navigate based on action URL or type (no need to mark as read here since it's done on open)
     if (notification.action_url) {
       navigate(notification.action_url);
+    }
+  };
+
+  const handleDropdownOpen = async () => {
+    // Mark all unread notifications as read when dropdown opens
+    const unreadNotifications = notifications.filter(n => !n.is_read);
+    if (unreadNotifications.length > 0) {
+      console.log('Marking notifications as read on dropdown open:', unreadNotifications.length);
+      // Mark each unread notification as read
+      for (const notification of unreadNotifications) {
+        await onNotificationRead(notification.id);
+      }
     }
   };
 
@@ -75,7 +82,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={(open) => { if (open) handleDropdownOpen(); }}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
