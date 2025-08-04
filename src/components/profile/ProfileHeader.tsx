@@ -60,7 +60,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const handleCopyProfileLink = async () => {
     try {
       const profileUrl = userId 
-        ? `${window.location.origin}/other-profile?userId=${userId}`
+        ? `${window.location.origin}/other-profile/${userId}`
         : `${window.location.origin}/profile`;
       await navigator.clipboard.writeText(profileUrl);
       toast.success('Profile link copied to clipboard!');
