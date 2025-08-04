@@ -151,10 +151,10 @@ const Trades = () => {
             const theirItem = isCurrentUserRequester ? trade.owner_item : trade.requester_item;
             const yourItem = isCurrentUserRequester ? trade.requester_item : trade.owner_item;
 
-            // Get reviews for this trade
-            const tradeReviews = allReviews.filter(review => review.reviewer_id === currentUser?.id || review.reviewee_id === currentUser?.id);
-            const yourReview = tradeReviews.find(review => review.reviewer_id === currentUser?.id);
-            const theirReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id);
+            // Get reviews for this trade - find reviews where each person was reviewed
+            const tradeReviews = allReviews.filter(review => review.trade_conversation_id === trade.id);
+            const theirReview = tradeReviews.find(review => review.reviewee_id === otherUser?.id); // Review left ABOUT the other person
+            const yourReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id); // Review left ABOUT you
 
             return (
               <div key={trade.id} className="flex gap-6">
