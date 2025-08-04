@@ -65,7 +65,11 @@ const App = () => (
                   <Messages3 />
                 </RequireAuth>
               } />
-              <Route path="/other-person-profile" element={<OtherPersonProfile />} />
+              <Route path="/other-person-profile" element={
+                <RequireAuth>
+                  <OtherPersonProfile />
+                </RequireAuth>
+              } />
               <Route path="/other-profile/:userId" element={<OtherProfile />} />
               <Route path="/notifications" element={
                 <RequireAuth>
