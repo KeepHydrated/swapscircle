@@ -41,8 +41,8 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   }
 
   return (
-    <div className="relative">
-      <div className="overflow-x-auto overflow-y-hidden h-auto">
+    <div className="relative h-full overflow-auto"> {/* Changed to allow both directions and full height */}
+      <div className="min-h-full">
         <MatchesGrid
           displayedMatches={displayedMatches}
           onOpenModal={onOpenModal}

@@ -354,7 +354,8 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
+      <div className="flex-1 overflow-auto">
+        <div className="p-4 md:p-6 h-full">{/* Removed flex flex-col from here */}
 
         {/* Your Items Section - Full Width */}
         <div className="mb-6">
@@ -381,10 +382,10 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* Tabs Section - Full Width */}
-        <div className="flex-1 min-h-0">
+        {/* Tabs Section - Full Width with proper height */}
+        <div className="h-[600px] mb-6"> {/* Fixed height for scrollable area */}
           {user && supabaseConfigured ? (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full flex flex-col">{/* Added flex flex-col here */}
               <Tabs defaultValue="matches" className="h-full flex flex-col" onValueChange={(value) => {
                 console.log('🔍 TAB SYSTEM: Tab changed to:', value);
                 console.log('🔍 TAB SYSTEM: Previous activeTab was:', activeTab);
@@ -490,6 +491,7 @@ const Home: React.FC = () => {
           )}
         </div>
       </div>
+    </div>
 
       {/* Explore Item Modal */}
       <ExploreItemModal
