@@ -28,7 +28,13 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
       });
       
       if (!selectedItem || !user || !supabaseConfigured) {
-        console.log('DEBUG: Early return from fetchMatches - missing required data');
+        console.log('DEBUG: Early return from fetchMatches - missing required data', {
+          hasSelectedItem: !!selectedItem,
+          selectedItemName: selectedItem?.name,
+          hasUser: !!user,
+          userId: user?.id,
+          supabaseConfigured
+        });
         setMatches([]);
         setLoading(false);
         return;
