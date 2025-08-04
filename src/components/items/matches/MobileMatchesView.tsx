@@ -86,7 +86,13 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           onSwipeRight={handleSwipeRight}
           className="absolute inset-0 z-10"
         >
-          <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
+          <div 
+            className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col cursor-pointer"
+            onClick={() => {
+              console.log('🔍 MOBILE CARD: Card clicked!', currentMatch.id);
+              onOpenModal(currentMatch.id);
+            }}
+          >
             <div className="relative flex-shrink-0">
               <img
                 src={currentMatch.image}
