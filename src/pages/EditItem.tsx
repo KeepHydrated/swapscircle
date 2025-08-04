@@ -260,6 +260,7 @@ const EditItem: React.FC = () => {
         lookingForCategories: selectedCategories,
         lookingForConditions: selectedConditions,
         lookingForDescription: lookingForText,
+        looking_for_price_ranges: selectedPriceRanges,
         status: 'draft', // Explicitly keep as draft
       };
 
