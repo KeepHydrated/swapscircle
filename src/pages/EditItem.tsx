@@ -403,6 +403,7 @@ const EditItem: React.FC = () => {
     try {
       if (itemId) {
         console.log('Preparing updates for item:', itemId);
+        console.log('🔍 PREFERENCES DEBUG - selectedPriceRanges:', selectedPriceRanges);
         const updates: any = {
           name: title,
           description,
@@ -415,6 +416,7 @@ const EditItem: React.FC = () => {
           looking_for_price_ranges: selectedPriceRanges,
           status: 'published', // Publish the item when updated
         };
+        console.log('🔍 FULL UPDATES OBJECT:', updates);
         
         // Handle new image uploads first
         let newImageUrls: string[] = [];
