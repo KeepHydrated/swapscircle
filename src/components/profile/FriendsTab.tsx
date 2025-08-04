@@ -147,12 +147,23 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
 
   const handleUnfriend = async (requestId: string, friendName: string) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in to unfriend someone");
+        return;
+      }
+
+      console.log('Attempting to unfriend:', { requestId, friendName, userId: user.id });
+
       const { error } = await supabase
         .from('friend_requests')
         .delete()
         .eq('id', requestId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error during unfriend:', error);
+        throw error;
+      }
       
       toast.success(`Unfriended ${friendName}`);
       fetchFriendRequests(); // Refresh the data
