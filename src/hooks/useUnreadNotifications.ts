@@ -18,7 +18,10 @@ export function useNotifications() {
   const { toast } = useToast();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
-  const [hasViewedDropdown, setHasViewedDropdown] = useState(false); // Track if user has viewed the dropdown
+  const [hasViewedDropdown, setHasViewedDropdown] = useState(() => {
+    // Initialize from localStorage
+    return localStorage.getItem('notifications-viewed') === 'true';
+  });
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -169,6 +172,7 @@ export function useNotifications() {
           console.log('New notification received:', payload);
           // Reset the viewed state when new notifications arrive
           setHasViewedDropdown(false);
+          localStorage.setItem('notifications-viewed', 'false');
           // Only fetch new notifications on INSERT, not on UPDATE
           fetchNotifications();
         }
@@ -186,6 +190,7 @@ export function useNotifications() {
   // Function to mark dropdown as viewed (clears the badge)
   const markDropdownAsViewed = () => {
     setHasViewedDropdown(true);
+    localStorage.setItem('notifications-viewed', 'true');
   };
 
   return {
