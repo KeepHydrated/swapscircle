@@ -6,6 +6,7 @@ import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { fetchUserReviews } from '@/services/authService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
@@ -34,6 +35,16 @@ const Messages = () => {
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // Get current user ID
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
 
   // Fetch messages for active conversation
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
@@ -53,19 +64,48 @@ const Messages = () => {
   const sendMessageMutation = useMutation({
     mutationFn: ({ conversationId, message }: { conversationId: string; message: string }) =>
       sendTradeMessage(conversationId, message),
+    onMutate: async ({ conversationId, message }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['trade-messages', conversationId] });
+      
+      // Snapshot the previous value
+      const previousMessages = queryClient.getQueryData(['trade-messages', conversationId]);
+      
+      // Optimistically update to the new value
+      const optimisticMessage = {
+        id: `temp-${Date.now()}`,
+        message,
+        sender_id: currentUserId,
+        created_at: new Date().toISOString(),
+        sender_profile: {
+          id: currentUserId,
+          username: 'You'
+        }
+      };
+      
+      queryClient.setQueryData(['trade-messages', conversationId], (old: any[]) => 
+        old ? [...old, optimisticMessage] : [optimisticMessage]
+      );
+      
+      return { previousMessages };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousMessages) {
+        queryClient.setQueryData(['trade-messages', variables.conversationId], context.previousMessages);
+      }
+      console.error('Error sending message:', err);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trade-messages', activeConversation] });
       setMessageText('');
       toast({
         title: "Message sent!",
         description: "Your message has been sent successfully.",
-      });
-    },
-    onError: (error) => {
-      console.error('Error sending message:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
       });
     },
   });
