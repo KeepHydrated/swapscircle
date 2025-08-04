@@ -310,6 +310,7 @@ const Messages = () => {
                         message={message}
                         senderName={message.sender_profile?.username || activeChat?.name || 'User'}
                         onImageLoad={handleScrollToBottom}
+                        currentUserId={currentUserId}
                       />
                     ))}
                     {/* Anchor for auto-scrolling */}

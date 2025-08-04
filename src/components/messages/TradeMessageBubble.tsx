@@ -18,19 +18,10 @@ interface TradeMessageBubbleProps {
   };
   senderName: string;
   onImageLoad?: () => void;
+  currentUserId?: string | null;
 }
 
-const TradeMessageBubble = ({ message, senderName, onImageLoad }: TradeMessageBubbleProps) => {
-  const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
-    };
-    getCurrentUser();
-  }, []);
-
+const TradeMessageBubble = ({ message, senderName, onImageLoad, currentUserId }: TradeMessageBubbleProps) => {
   const isUserMessage = currentUserId === message.sender_id;
 
   return (
