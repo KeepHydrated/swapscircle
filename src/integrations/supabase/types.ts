@@ -2362,8 +2362,16 @@ export type Database = {
         Args: { username_to_check: string }
         Returns: boolean
       }
+      cleanup_all_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_requests: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_user_data: {
+        Args: { target_user_id?: string }
         Returns: undefined
       }
       create_notification: {
