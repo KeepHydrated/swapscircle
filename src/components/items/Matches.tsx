@@ -47,24 +47,35 @@ const Matches: React.FC<MatchesProps> = ({
   
   // Track when selectedItemId changes to detect transitions
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionStartTime, setTransitionStartTime] = useState<number>(0);
   
   // Update tracking when selectedItemId changes
   useEffect(() => {
     if (selectedItemId !== lastSelectedItemId) {
+      console.log('🚨 TRANSITION START:', {
+        from: lastSelectedItemId,
+        to: selectedItemId,
+        timestamp: Date.now()
+      });
       setIsTransitioning(true);
+      setTransitionStartTime(Date.now());
       setLastSelectedItemId(selectedItemId);
-      // Clear transition state after matches have had time to update
-      const timer = setTimeout(() => setIsTransitioning(false), 50);
-      return () => clearTimeout(timer);
     }
   }, [selectedItemId, lastSelectedItemId]);
   
-  // Also clear transition when matches update
+  // Clear transition when matches update for the new item
   useEffect(() => {
-    if (!isTransitioning) return;
-    const timer = setTimeout(() => setIsTransitioning(false), 10);
-    return () => clearTimeout(timer);
-  }, [matches, isTransitioning]);
+    if (isTransitioning && transitionStartTime > 0) {
+      console.log('🚨 MATCHES EFFECT:', {
+        selectedItemId,
+        matchesLength: matches.length,
+        timeSinceTransition: Date.now() - transitionStartTime,
+        isTransitioning
+      });
+      // Clear transition immediately when matches update
+      setIsTransitioning(false);
+    }
+  }, [matches, selectedItemId, isTransitioning, transitionStartTime]);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
