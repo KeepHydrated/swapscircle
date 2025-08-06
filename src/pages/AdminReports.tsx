@@ -27,6 +27,12 @@ interface Report {
   created_at: string;
   updated_at: string;
   action_taken: string | null;
+  // Item owner info
+  item_owner_id?: string;
+  item_owner_username?: string;
+  item_owner_avatar_url?: string;
+  item_owner_name?: string;
+  item_name?: string;
 }
 
 const AdminReports: React.FC = () => {
@@ -97,10 +103,35 @@ const AdminReports: React.FC = () => {
 
         // Get reporter usernames separately
         const reporterIds = [...new Set(data?.map(r => r.reporter_id) || [])];
-         const { data: profiles } = await supabase
-           .from('profiles')
-           .select('id, username, avatar_url, name')
-           .in('id', reporterIds);
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, username, avatar_url, name')
+          .in('id', reporterIds);
+
+        // Get item IDs and fetch item details with owner info
+        const itemIds = data?.map(r => extractItemId(r.action_taken)).filter(Boolean) || [];
+        let itemsData: any[] = [];
+        let itemOwnerProfiles: any[] = [];
+        
+        if (itemIds.length > 0) {
+          const { data: items } = await supabase
+            .from('items')
+            .select('id, name, user_id')
+            .in('id', itemIds);
+          
+          itemsData = items || [];
+          
+          // Get item owner profiles
+          const ownerIds = [...new Set(itemsData.map(item => item.user_id))];
+          if (ownerIds.length > 0) {
+            const { data: ownerProfiles } = await supabase
+              .from('profiles')
+              .select('id, username, avatar_url, name')
+              .in('id', ownerIds);
+            
+            itemOwnerProfiles = ownerProfiles || [];
+          }
+        }
 
         const formattedReports = data?.map(report => {
           const profile = profiles?.find(p => p.id === report.reporter_id);
@@ -116,6 +147,11 @@ const AdminReports: React.FC = () => {
             displayMessage = messageMatch[2];
           }
           
+          // Get item and owner info
+          const itemId = extractItemId(report.action_taken);
+          const item = itemsData.find(i => i.id === itemId);
+          const itemOwner = item ? itemOwnerProfiles.find(p => p.id === item.user_id) : null;
+          
           return {
             ...report,
             // Keep original type for database operations, add display fields
@@ -123,7 +159,13 @@ const AdminReports: React.FC = () => {
             displayMessage,
             reporter_username: profile?.username || 'Unknown User',
             reporter_avatar_url: profile?.avatar_url,
-            reporter_name: profile?.name
+            reporter_name: profile?.name,
+            // Item owner info
+            item_owner_id: itemOwner?.id,
+            item_owner_username: itemOwner?.username,
+            item_owner_avatar_url: itemOwner?.avatar_url,
+            item_owner_name: itemOwner?.name,
+            item_name: item?.name
           };
         }) || [];
 
@@ -331,8 +373,9 @@ const AdminReports: React.FC = () => {
             ) : (
               filteredReports.map((report) => (
                 <Card key={report.id}>
-                  <CardHeader>
+                   <CardHeader>
                      <div className="flex items-start justify-between">
+                       {/* Reporter Profile */}
                        <div className="flex items-start gap-3">
                          <div 
                            className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200"
@@ -362,13 +405,53 @@ const AdminReports: React.FC = () => {
                                </div>
                              </div>
                               <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                                <span>Since 2024</span>
+                                <span>Reporter • Since 2024</span>
                               </div>
                            </div>
                          </div>
                        </div>
-                       <div className="text-xs text-muted-foreground">
-                         {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
+
+                       {/* Date and Item Owner Profile */}
+                       <div className="flex flex-col items-end gap-3">
+                         <div className="text-xs text-muted-foreground">
+                           {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
+                         </div>
+                         
+                         {/* Item Owner Profile */}
+                         {report.item_owner_id && (
+                           <div 
+                             className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200"
+                             onClick={() => handleProfileClick(report.item_owner_id!)}
+                           >
+                             <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm">
+                               {report.item_owner_avatar_url ? (
+                                 <img
+                                   src={report.item_owner_avatar_url}
+                                   alt={report.item_owner_name || report.item_owner_username}
+                                   className="w-full h-full rounded-full object-cover"
+                                 />
+                               ) : (
+                                 <span>
+                                   {(report.item_owner_username || "U").substring(0, 2).toUpperCase()}
+                                 </span>
+                               )}
+                             </div>
+                             <div>
+                               <div className="flex items-center gap-2">
+                                 <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
+                                   {report.item_owner_name || report.item_owner_username || "Unknown User"}
+                                 </span>
+                                 <div className="flex items-center gap-1">
+                                   <span className="text-yellow-500">★</span>
+                                   <span className="text-sm text-gray-600">No reviews</span>
+                                 </div>
+                               </div>
+                                <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                                  <span>Item Owner • Since 2024</span>
+                                </div>
+                             </div>
+                           </div>
+                         )}
                        </div>
                      </div>
                   </CardHeader>
