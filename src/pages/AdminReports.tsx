@@ -355,128 +355,125 @@ const AdminReports: React.FC = () => {
                            </div>
                          </div>
                        </div>
-                       
-                       {/* Right column with profiles and item display */}
-                       <div className="flex flex-col gap-6">
-                         {/* Profiles stacked */}
-                         <div className="flex flex-col items-center gap-4">
-                           {/* Reporter Profile */}
-                           <div 
-                             className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-80"
-                             onClick={() => handleProfileClick(report.reporter_id)}
-                           >
-                             <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
-                               {report.reporter_avatar_url ? (
-                                 <img
-                                   src={report.reporter_avatar_url}
-                                   alt={report.reporter_name || report.reporter_username}
-                                   className="w-full h-full rounded-full object-cover"
-                                 />
-                               ) : (
-                                 <span>
-                                   {(report.reporter_username || "U").substring(0, 2).toUpperCase()}
-                                 </span>
-                               )}
-                             </div>
-                             <div className="min-w-0 flex-1">
-                               <div className="flex items-center gap-2">
-                                 <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
-                                   {report.reporter_name || report.reporter_username || "Unknown User"}
-                                 </span>
-                                 <div className="flex items-center gap-1 flex-shrink-0">
-                                   <span className="text-yellow-500">★</span>
-                                   <span className="text-sm text-gray-600">No reviews</span>
-                                 </div>
-                               </div>
-                                <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                                  <span>Reporter • Since 2024</span>
+                        
+                        {/* Profiles column in the middle */}
+                        <div className="flex flex-col items-center gap-4">
+                          {/* Reporter Profile */}
+                          <div 
+                            className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-80"
+                            onClick={() => handleProfileClick(report.reporter_id)}
+                          >
+                            <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
+                              {report.reporter_avatar_url ? (
+                                <img
+                                  src={report.reporter_avatar_url}
+                                  alt={report.reporter_name || report.reporter_username}
+                                  className="w-full h-full rounded-full object-cover"
+                                />
+                              ) : (
+                                <span>
+                                  {(report.reporter_username || "U").substring(0, 2).toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
+                                  {report.reporter_name || report.reporter_username || "Unknown User"}
+                                </span>
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  <span className="text-yellow-500">★</span>
+                                  <span className="text-sm text-gray-600">No reviews</span>
                                 </div>
-                             </div>
-                           </div>
-
-                           {/* Item Owner Profile */}
-                           {report.item_owner_id && (
-                             <div 
-                               className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
-                               onClick={() => handleProfileClick(report.item_owner_id!)}
-                             >
-                               <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
-                                 {report.item_owner_avatar_url ? (
-                                   <img
-                                     src={report.item_owner_avatar_url}
-                                     alt={report.item_owner_name || report.item_owner_username}
-                                     className="w-full h-full rounded-full object-cover"
-                                   />
-                                 ) : (
-                                   <span>
-                                     {(report.item_owner_username || "U").substring(0, 2).toUpperCase()}
-                                   </span>
-                                 )}
+                              </div>
+                               <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                                 <span>Reporter • Since 2024</span>
                                </div>
-                               <div className="min-w-0 flex-1">
-                                 <div className="flex items-center gap-2">
-                                   <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
-                                     {report.item_owner_name || report.item_owner_username || "Unknown User"}
-                                   </span>
-                                   <div className="flex items-center gap-1 flex-shrink-0">
-                                     <span className="text-yellow-500">★</span>
-                                     <span className="text-sm text-gray-600">No reviews</span>
-                                   </div>
-                                 </div>
-                                  <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                                    <span>Item Owner • Since 2024</span>
+                            </div>
+                          </div>
+
+                          {/* Item Owner Profile */}
+                          {report.item_owner_id && (
+                            <div 
+                              className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
+                              onClick={() => handleProfileClick(report.item_owner_id!)}
+                            >
+                              <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
+                                {report.item_owner_avatar_url ? (
+                                  <img
+                                    src={report.item_owner_avatar_url}
+                                    alt={report.item_owner_name || report.item_owner_username}
+                                    className="w-full h-full rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <span>
+                                    {(report.item_owner_username || "U").substring(0, 2).toUpperCase()}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
+                                    {report.item_owner_name || report.item_owner_username || "Unknown User"}
+                                  </span>
+                                  <div className="flex items-center gap-1 flex-shrink-0">
+                                    <span className="text-yellow-500">★</span>
+                                    <span className="text-sm text-gray-600">No reviews</span>
                                   </div>
-                               </div>
-                             </div>
-                           )}
-                         </div>
+                                </div>
+                                 <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                                   <span>Item Owner • Since 2024</span>
+                                 </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
 
-                         {/* Reported Item Display */}
-                         {extractItemId(report.action_taken) && (
-                           <div className="bg-white border border-gray-200 rounded-lg p-4 w-80">
-                             <div className="text-sm font-medium text-gray-600 mb-3">REPORTED ITEM</div>
-                             <div className="space-y-3">
-                               {/* Item Name */}
-                               {report.item_name && (
-                                 <div>
-                                   <div className="text-lg font-semibold text-gray-900 truncate">
-                                     {report.item_name}
-                                   </div>
-                                 </div>
-                               )}
-                               
-                               {/* Item Details Grid */}
-                               <div className="grid grid-cols-2 gap-4 text-sm">
-                                 <div>
-                                   <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
-                                   <div className="font-medium text-gray-900">Electronics</div>
-                                 </div>
-                                 <div>
-                                   <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
-                                   <div className="font-medium text-gray-900">Cameras</div>
-                                 </div>
-                                 <div>
-                                   <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
-                                   <div className="font-medium text-gray-900">Brand New</div>
-                                 </div>
-                                 <div>
-                                   <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
-                                   <div className="font-medium text-gray-900">Up to $50</div>
-                                 </div>
-                               </div>
-                               
-                               {/* View Item Button */}
-                               <button
-                                 onClick={() => handleViewItem(report)}
-                                 className="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-                               >
-                                 <Eye className="w-4 h-4" />
-                                 View Full Item Details
-                               </button>
-                             </div>
-                           </div>
-                         )}
-                       </div>
+                        {/* Item display column on the right */}
+                        {extractItemId(report.action_taken) && (
+                          <div className="bg-white border border-gray-200 rounded-lg p-4 w-80">
+                            <div className="text-sm font-medium text-gray-600 mb-3">REPORTED ITEM</div>
+                            <div className="space-y-3">
+                              {/* Item Name */}
+                              {report.item_name && (
+                                <div>
+                                  <div className="text-lg font-semibold text-gray-900 truncate">
+                                    {report.item_name}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Item Details Grid */}
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
+                                  <div className="font-medium text-gray-900">Electronics</div>
+                                </div>
+                                <div>
+                                  <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
+                                  <div className="font-medium text-gray-900">Cameras</div>
+                                </div>
+                                <div>
+                                  <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
+                                  <div className="font-medium text-gray-900">Brand New</div>
+                                </div>
+                                <div>
+                                  <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
+                                  <div className="font-medium text-gray-900">Up to $50</div>
+                                </div>
+                              </div>
+                              
+                              {/* View Item Button */}
+                              <button
+                                onClick={() => handleViewItem(report)}
+                                className="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                              >
+                                <Eye className="w-4 h-4" />
+                                View Full Item Details
+                              </button>
+                            </div>
+                          </div>
+                        )}
                      </div>
                   </CardHeader>
                    <CardContent className="space-y-4">
