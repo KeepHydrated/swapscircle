@@ -26,9 +26,6 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
-  // Track which item we're loading matches for
-  const [loadingForItemId, setLoadingForItemId] = useState<string | undefined>(selectedItemId);
-  
   // Get match actions from our custom hook - fixed flashing issue
   const {
     likedItems,
@@ -47,24 +44,6 @@ const Matches: React.FC<MatchesProps> = ({
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
   
-  // Track item changes and hide content during transitions
-  useEffect(() => {
-    if (selectedItemId !== loadingForItemId) {
-      setLoadingForItemId(selectedItemId);
-    }
-  }, [selectedItemId, loadingForItemId]);
-
-  // Clear loading when matches are fully loaded for current item
-  useEffect(() => {
-    if (!isLoadingLikedStatus && !loading && loadingForItemId === selectedItemId) {
-      // Delay slightly to ensure all state is settled
-      const timer = setTimeout(() => {
-        setLoadingForItemId(undefined);
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoadingLikedStatus, loading, loadingForItemId, selectedItemId]);
-  
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
     if (onUndoAvailable) {
@@ -72,10 +51,8 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Hide everything if we're in transition or loading
-  const isTransitioning = loadingForItemId !== undefined;
-  const isAnyLoading = loading || isLoadingLikedStatus || isTransitioning;
-  const displayedMatches = isAnyLoading ? [] : matches.filter(match => 
+  // Simple approach: only show when liked status is loaded
+  const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
@@ -118,7 +95,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isAnyLoading) ? (
+      {(displayedMatches.length === 0 && !isLoadingLikedStatus) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
