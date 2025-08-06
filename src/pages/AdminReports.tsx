@@ -311,20 +311,7 @@ const AdminReports: React.FC = () => {
     const violationReason = report.displayMessage || report.message || 'Inappropriate content';
 
     try {
-      // 1. Remove item from marketplace (hide it)
-      const { error: itemError } = await supabase
-        .from('items')
-        .update({ 
-          is_available: false, 
-          is_hidden: true,
-          status: 'hidden',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', itemId);
-
-      if (itemError) throw itemError;
-
-      // 2. Get item details and owner info
+      // 1. Get item details and owner info before deletion
       const { data: itemData, error: itemFetchError } = await supabase
         .from('items')
         .select('name, user_id')
@@ -332,6 +319,14 @@ const AdminReports: React.FC = () => {
         .single();
 
       if (itemFetchError) throw itemFetchError;
+
+      // 2. Delete item completely from database
+      const { error: itemError } = await supabase
+        .from('items')
+        .delete()
+        .eq('id', itemId);
+
+      if (itemError) throw itemError;
 
       // 3. Increment user strikes
       const { data: strikeCount, error: strikeError } = await supabase
@@ -672,7 +667,7 @@ const AdminReports: React.FC = () => {
               <AlertDialogTitle>Accept Report</AlertDialogTitle>
               <AlertDialogDescription>
                 Are you sure you want to accept this report? This will:
-                <br />• Remove the item from the marketplace
+                <br />• <strong>Permanently delete</strong> the item from the user's profile
                 <br />• Add a strike to the user's account
                 <br />• Send a violation notification to the user
                 <br />• This action cannot be undone
