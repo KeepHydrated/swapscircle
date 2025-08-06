@@ -306,8 +306,11 @@ export const useMatchActions = (
   };
 
   const handleReport = (id: string) => {
-    // For now, just show a toast - this can be connected to a proper reporting system later
-    toast.info('Item reported. Thank you for helping keep our community safe.');
+    const match = matches.find(m => m.id === id);
+    if (match) {
+      // Set a special state to trigger the report modal
+      setSelectedMatch({ ...match, isReportModal: true } as any);
+    }
   };
 
   return {

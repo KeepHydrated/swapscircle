@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import MatchesContainer from './matches/MatchesContainer';
 import { useMatchActions } from './matches/useMatchActions';
+import { ReportItemModal } from './ReportItemModal';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 
 interface MatchesProps {
@@ -143,7 +144,7 @@ const Matches: React.FC<MatchesProps> = ({
       )}
       
       {/* Modal for displaying match details */}
-      {selectedMatch && (
+      {selectedMatch && !(selectedMatch as any).isReportModal && (
         <ItemDetailsModal
           key={`${selectedMatch.id}-${selectedMatch.image}`} // Prevent flashing with stable key
           item={selectedMatch}
@@ -161,6 +162,16 @@ const Matches: React.FC<MatchesProps> = ({
             avatar_url: selectedMatch.userProfile.avatar_url || '',
             created_at: '2025-01-01T00:00:00Z' // Default since we don't have this in match data
           } : undefined}
+        />
+      )}
+
+      {/* Report Item Modal */}
+      {selectedMatch && (selectedMatch as any).isReportModal && (
+        <ReportItemModal
+          isOpen={true}
+          onClose={handleClosePopup}
+          itemId={selectedMatch.id}
+          itemName={selectedMatch.name}
         />
       )}
     </div>
