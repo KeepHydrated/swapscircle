@@ -34,6 +34,8 @@ interface Report {
   item_owner_name?: string;
   item_name?: string;
   item_description?: string;
+  item_image_url?: string;
+  item_image_urls?: string[];
 }
 
 const AdminReports: React.FC = () => {
@@ -117,7 +119,7 @@ const AdminReports: React.FC = () => {
         if (itemIds.length > 0) {
           const { data: items } = await supabase
             .from('items')
-            .select('id, name, description, user_id')
+            .select('id, name, description, user_id, image_url, image_urls')
             .in('id', itemIds);
           
           itemsData = items || [];
@@ -167,7 +169,9 @@ const AdminReports: React.FC = () => {
              item_owner_avatar_url: itemOwner?.avatar_url,
              item_owner_name: itemOwner?.name,
              item_name: item?.name,
-             item_description: item?.description
+             item_description: item?.description,
+             item_image_url: item?.image_url,
+             item_image_urls: item?.image_urls
           };
         }) || [];
 
@@ -448,26 +452,54 @@ const AdminReports: React.FC = () => {
                                    )}
                                  </div>
                                )}
-                              
-                              {/* Item Details Grid */}
-                              <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div>
-                                  <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
-                                  <div className="font-medium text-gray-900">Electronics</div>
-                                </div>
-                                <div>
-                                  <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
-                                  <div className="font-medium text-gray-900">Cameras</div>
-                                </div>
-                                <div>
-                                  <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
-                                  <div className="font-medium text-gray-900">Brand New</div>
-                                </div>
-                                <div>
-                                  <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
-                                  <div className="font-medium text-gray-900">Up to $50</div>
-                                </div>
-                              </div>
+                               
+                               {/* Item Image and Details Grid */}
+                               <div className="flex gap-4">
+                                 {/* Item Image(s) on the left */}
+                                 <div className="flex-shrink-0">
+                                   {(report.item_image_url || (report.item_image_urls && report.item_image_urls.length > 0)) ? (
+                                     <div className="w-24 h-24 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+                                       <img
+                                         src={report.item_image_url || report.item_image_urls?.[0]}
+                                         alt={report.item_name || "Item"}
+                                         className="w-full h-full object-cover"
+                                         onError={(e) => {
+                                           const target = e.target as HTMLImageElement;
+                                           target.style.display = 'none';
+                                           const parent = target.parentElement;
+                                           if (parent) {
+                                             parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>';
+                                           }
+                                         }}
+                                       />
+                                     </div>
+                                   ) : (
+                                     <div className="w-24 h-24 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                                       <span className="text-gray-400 text-xs text-center">No Image</span>
+                                     </div>
+                                   )}
+                                 </div>
+                                 
+                                 {/* Item Details Grid on the right */}
+                                 <div className="flex-1 grid grid-cols-2 gap-4 text-sm">
+                                   <div>
+                                     <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
+                                     <div className="font-medium text-gray-900">Electronics</div>
+                                   </div>
+                                   <div>
+                                     <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
+                                     <div className="font-medium text-gray-900">Cameras</div>
+                                   </div>
+                                   <div>
+                                     <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
+                                     <div className="font-medium text-gray-900">Brand New</div>
+                                   </div>
+                                   <div>
+                                     <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
+                                     <div className="font-medium text-gray-900">Up to $50</div>
+                                   </div>
+                                 </div>
+                               </div>
                               
                             </div>
                           </div>
