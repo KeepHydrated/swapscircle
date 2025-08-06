@@ -356,10 +356,15 @@ const AdminReports: React.FC = () => {
                      </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold mb-2">Report Details:</h4>
-                      <p className="text-muted-foreground bg-muted p-3 rounded">{report.message}</p>
-                    </div>
+                     <div>
+                       <h4 className="font-semibold mb-2">Report Details:</h4>
+                       <div className="space-y-2">
+                         <div className="font-medium text-sm text-gray-700 capitalize">
+                           {report.type.replace(/_/g, ' ')}
+                         </div>
+                         <p className="text-muted-foreground bg-muted p-3 rounded">{report.message}</p>
+                       </div>
+                     </div>
                     
                     {report.action_taken && (
                       <div>
