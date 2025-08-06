@@ -284,6 +284,82 @@ const AdminReports: React.FC = () => {
     }
   };
 
+  // Handle accepting a report (remove item and send violation notice)
+  const handleAcceptReport = async (report: Report) => {
+    const itemId = extractItemId(report.action_taken);
+    if (!itemId) {
+      toast.error('Cannot find item ID in report');
+      return;
+    }
+
+    // Prompt admin for violation reason
+    const violationReason = prompt('Please specify the violation reason that will be sent to the user:');
+    if (!violationReason || violationReason.trim() === '') {
+      toast.error('Violation reason is required');
+      return;
+    }
+
+    try {
+      // 1. Remove item from marketplace (hide it)
+      const { error: itemError } = await supabase
+        .from('items')
+        .update({ 
+          is_available: false, 
+          is_hidden: true,
+          status: 'hidden',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', itemId);
+
+      if (itemError) throw itemError;
+
+      // 2. Get item details and owner info
+      const { data: itemData, error: itemFetchError } = await supabase
+        .from('items')
+        .select('name, user_id')
+        .eq('id', itemId)
+        .single();
+
+      if (itemFetchError) throw itemFetchError;
+
+      // 3. Increment user strikes
+      const { data: strikeCount, error: strikeError } = await supabase
+        .rpc('increment_user_strikes', { target_user_id: itemData.user_id });
+
+      if (strikeError) throw strikeError;
+
+      // 4. Send violation notification to user
+      const { error: notificationError } = await supabase
+        .rpc('send_violation_notification', {
+          target_user_id: itemData.user_id,
+          item_name: itemData.name,
+          violation_reason: violationReason,
+          strike_count: strikeCount
+        });
+
+      if (notificationError) throw notificationError;
+
+      // 5. Update report status
+      await updateReportStatus(
+        report.id, 
+        'resolved', 
+        `Report accepted - Item "${itemData.name}" removed from marketplace. User notified of violation: ${violationReason}. Strike count: ${strikeCount}/3.`
+      );
+
+      // Show success message with strike warning
+      let successMessage = `Report accepted. Item removed from marketplace and user notified (Strike ${strikeCount}/3).`;
+      if (strikeCount >= 3) {
+        successMessage += ' WARNING: User has reached 3 strikes and is at risk of suspension.';
+      }
+      
+      toast.success(successMessage);
+
+    } catch (error) {
+      console.error('Error accepting report:', error);
+      toast.error('Failed to process report acceptance');
+    }
+  };
+
   const filteredReports = reports.filter(report => report.status === activeTab);
 
   if (!user) {
@@ -519,7 +595,7 @@ const AdminReports: React.FC = () => {
                                <Button
                                  variant="default"
                                  size="sm"
-                                 onClick={() => updateReportStatus(report.id, 'resolved', 'Report accepted and resolved by admin')}
+                                 onClick={() => handleAcceptReport(report)}
                                  className="whitespace-nowrap"
                                >
                                  Accept
