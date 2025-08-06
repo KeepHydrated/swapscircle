@@ -93,27 +93,6 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
 
-  // Show skeleton loading while fetching matches, but not when just switching between items
-  if (loading || (isLoadingLikedStatus && matches.length > 0)) {
-    return (
-      <div className="w-full flex flex-col h-full">
-        <div className="flex gap-2 min-w-max p-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex-shrink-0 w-64">
-              <div className="bg-card rounded-lg overflow-hidden shadow-sm border animate-pulse">
-                <div className="h-40 bg-muted"></div>
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                  <div className="h-3 bg-muted rounded w-1/2"></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   // Don't render if we have no selected item
   if (!selectedItemName) {
     return (
