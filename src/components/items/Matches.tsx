@@ -45,15 +45,26 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
+  // Track when selectedItemId changes to detect transitions
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
   // Update tracking when selectedItemId changes
   useEffect(() => {
     if (selectedItemId !== lastSelectedItemId) {
+      setIsTransitioning(true);
       setLastSelectedItemId(selectedItemId);
+      // Clear transition state after matches have had time to update
+      const timer = setTimeout(() => setIsTransitioning(false), 50);
+      return () => clearTimeout(timer);
     }
   }, [selectedItemId, lastSelectedItemId]);
   
-  // Only show matches if they belong to the current selected item
-  const matchesBelongToCurrentItem = lastSelectedItemId === selectedItemId;
+  // Also clear transition when matches update
+  useEffect(() => {
+    if (!isTransitioning) return;
+    const timer = setTimeout(() => setIsTransitioning(false), 10);
+    return () => clearTimeout(timer);
+  }, [matches, isTransitioning]);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
@@ -62,8 +73,8 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Only show matches after liked status is loaded AND they belong to current item
-  const displayedMatches = (isLoadingLikedStatus || !matchesBelongToCurrentItem) ? [] : matches.filter(match => 
+  // Hide matches during transitions, while loading, or if they don't belong to current item
+  const displayedMatches = (isTransitioning || isLoadingLikedStatus) ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
@@ -71,7 +82,7 @@ const Matches: React.FC<MatchesProps> = ({
     selectedItemName,
     selectedItemId,
     lastSelectedItemId,
-    matchesBelongToCurrentItem,
+    isTransitioning,
     totalMatches: matches.length,
     isLoadingLikedStatus,
     isGeneralLoading: loading,
@@ -122,7 +133,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isLoadingLikedStatus) ? (
+      {(displayedMatches.length === 0 && !isLoadingLikedStatus && !isTransitioning) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
