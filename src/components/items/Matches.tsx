@@ -26,6 +26,9 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
+  // Track which item we're loading matches for
+  const [loadingForItemId, setLoadingForItemId] = useState<string | undefined>(selectedItemId);
+  
   // Get match actions from our custom hook - fixed flashing issue
   const {
     likedItems,
@@ -44,6 +47,24 @@ const Matches: React.FC<MatchesProps> = ({
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
   
+  // Track item changes and hide content during transitions
+  useEffect(() => {
+    if (selectedItemId !== loadingForItemId) {
+      setLoadingForItemId(selectedItemId);
+    }
+  }, [selectedItemId, loadingForItemId]);
+
+  // Clear loading when matches are fully loaded for current item
+  useEffect(() => {
+    if (!isLoadingLikedStatus && !loading && loadingForItemId === selectedItemId) {
+      // Delay slightly to ensure all state is settled
+      const timer = setTimeout(() => {
+        setLoadingForItemId(undefined);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoadingLikedStatus, loading, loadingForItemId, selectedItemId]);
+  
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
     if (onUndoAvailable) {
@@ -51,8 +72,9 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Only show matches when fully loaded (no loading states at all)
-  const isAnyLoading = loading || isLoadingLikedStatus;
+  // Hide everything if we're in transition or loading
+  const isTransitioning = loadingForItemId !== undefined;
+  const isAnyLoading = loading || isLoadingLikedStatus || isTransitioning;
   const displayedMatches = isAnyLoading ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
