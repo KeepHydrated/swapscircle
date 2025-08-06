@@ -344,9 +344,9 @@ const AdminReports: React.FC = () => {
                                  <span className="text-sm text-gray-600">No reviews</span>
                                </div>
                              </div>
-                             <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                               <span>{format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}</span>
-                             </div>
+                              <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                                <span>Since 2024</span>
+                              </div>
                            </div>
                          </div>
                        </div>
