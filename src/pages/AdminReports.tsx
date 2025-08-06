@@ -33,6 +33,7 @@ interface Report {
   item_owner_avatar_url?: string;
   item_owner_name?: string;
   item_name?: string;
+  item_description?: string;
 }
 
 const AdminReports: React.FC = () => {
@@ -116,7 +117,7 @@ const AdminReports: React.FC = () => {
         if (itemIds.length > 0) {
           const { data: items } = await supabase
             .from('items')
-            .select('id, name, user_id')
+            .select('id, name, description, user_id')
             .in('id', itemIds);
           
           itemsData = items || [];
@@ -163,9 +164,10 @@ const AdminReports: React.FC = () => {
             // Item owner info
             item_owner_id: itemOwner?.id,
             item_owner_username: itemOwner?.username,
-            item_owner_avatar_url: itemOwner?.avatar_url,
-            item_owner_name: itemOwner?.name,
-            item_name: item?.name
+             item_owner_avatar_url: itemOwner?.avatar_url,
+             item_owner_name: itemOwner?.name,
+             item_name: item?.name,
+             item_description: item?.description
           };
         }) || [];
 
@@ -433,14 +435,19 @@ const AdminReports: React.FC = () => {
                         {extractItemId(report.action_taken) && (
                           <div className="bg-white border border-gray-200 rounded-lg p-4 w-80">
                             <div className="space-y-3">
-                              {/* Item Name */}
-                              {report.item_name && (
-                                <div>
-                                  <div className="text-lg font-semibold text-gray-900 truncate">
-                                    {report.item_name}
-                                  </div>
-                                </div>
-                              )}
+                               {/* Item Name and Description */}
+                               {report.item_name && (
+                                 <div>
+                                   <div className="text-lg font-semibold text-gray-900 truncate">
+                                     {report.item_name}
+                                   </div>
+                                   {report.item_description && (
+                                     <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                       {report.item_description}
+                                     </div>
+                                   )}
+                                 </div>
+                               )}
                               
                               {/* Item Details Grid */}
                               <div className="grid grid-cols-2 gap-4 text-sm">
