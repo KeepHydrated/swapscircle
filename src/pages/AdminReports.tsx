@@ -21,6 +21,8 @@ interface Report {
   reporter_name?: string;
   type: string;
   message: string;
+  displayType?: string; // Parsed report type for display
+  displayMessage?: string; // Parsed message for display
   status: 'open' | 'in_progress' | 'resolved';
   created_at: string;
   updated_at: string;
@@ -102,8 +104,23 @@ const AdminReports: React.FC = () => {
 
         const formattedReports = data?.map(report => {
           const profile = profiles?.find(p => p.id === report.reporter_id);
+          
+          // Parse the message to extract actual report type and description
+          let displayType: string = report.type;
+          let displayMessage: string = report.message;
+          
+          // Check if message follows format "Item Report - [type]: [description]"
+          const messageMatch = report.message.match(/^Item Report - ([^:]+): (.+)$/);
+          if (messageMatch) {
+            displayType = messageMatch[1];
+            displayMessage = messageMatch[2];
+          }
+          
           return {
             ...report,
+            // Keep original type for database operations, add display fields
+            displayType,
+            displayMessage,
             reporter_username: profile?.username || 'Unknown User',
             reporter_avatar_url: profile?.avatar_url,
             reporter_name: profile?.name
@@ -359,10 +376,10 @@ const AdminReports: React.FC = () => {
                      <div>
                        <h4 className="font-semibold mb-2">Report Details:</h4>
                        <div className="space-y-2">
-                         <div className="font-medium text-sm text-gray-700 capitalize">
-                           {report.type.replace(/_/g, ' ')}
-                         </div>
-                         <p className="text-muted-foreground bg-muted p-3 rounded">{report.message}</p>
+                          <div className="font-medium text-sm text-gray-700 capitalize">
+                            {(report.displayType || report.type).replace(/_/g, ' ')}
+                          </div>
+                          <p className="text-muted-foreground bg-muted p-3 rounded">{report.displayMessage || report.message}</p>
                        </div>
                      </div>
                     
