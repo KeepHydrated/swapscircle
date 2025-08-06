@@ -24,6 +24,7 @@ interface ItemCardProps {
   disableLike?: boolean;
   category?: string;
   tags?: string[];
+  status?: 'draft' | 'published' | 'removed'; // Add status prop
   userProfile?: {
     name: string;
     username?: string;
@@ -48,8 +49,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
   disableClick = false,
   category,
   tags,
-  userProfile
+  status,
+  userProfile,
 }) => {
+  const isRemoved = status === 'removed';
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const handleHeartClick = (e: React.MouseEvent, global?: boolean) => {
@@ -140,7 +143,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <AvatarImage 
                 src={image} 
                 alt={name} 
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                className={`object-cover transition-transform duration-300 group-hover:scale-105 ${isRemoved ? 'grayscale' : ''}`}
                 onLoad={() => setImageLoaded(true)}
                 onError={() => {
                   setImageError(true);
@@ -151,10 +154,19 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 {name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            {(showLikeButton || isMatch) && !disableLike && (
+            
+            {/* Red overlay for removed items */}
+            {isRemoved && (
+              <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                <div className="bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg">
+                  REMOVED
+                </div>
+              </div>
+            )}
+            {(showLikeButton || isMatch) && !disableLike && !isRemoved && (
               <>
                 {/* Three-dots menu on the left side for match items */}
-                {isMatch && (
+                {isMatch && !isRemoved && (
                   <div className="absolute top-1.5 left-1.5 z-10">
                     <MoreActionsMenu
                       itemId={id}

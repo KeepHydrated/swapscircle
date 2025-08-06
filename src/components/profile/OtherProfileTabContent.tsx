@@ -55,6 +55,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                   onSelect={handleItemClick}
                   onLike={onLikeItem}
                   disableLike={!isFriend}
+                  status={item.status}
                 />
               ))}
             </div>
