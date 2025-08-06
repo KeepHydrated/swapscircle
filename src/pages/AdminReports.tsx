@@ -8,6 +8,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { AlertCircle, Clock, CheckCircle, X, Flag, Eye, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -47,6 +57,11 @@ const AdminReports: React.FC = () => {
   const [activeTab, setActiveTab] = useState('open');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  
+  // Confirmation dialog states
+  const [showDismissDialog, setShowDismissDialog] = useState(false);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [selectedReportForAction, setSelectedReportForAction] = useState<Report | null>(null);
 
   // Handle navigation to user profile
   const handleProfileClick = async (reporterId: string) => {
@@ -579,25 +594,31 @@ const AdminReports: React.FC = () => {
                                </div>
                              </div>
                              
-                             {/* Action buttons */}
-                             <div className="flex flex-col gap-2">
-                               <Button
-                                 variant="outline"
-                                 size="sm"
-                                 onClick={() => handleDismissReport(report.id)}
-                                 className="whitespace-nowrap"
-                               >
-                                 Dismiss
-                               </Button>
-                               <Button
-                                 variant="default"
-                                 size="sm"
-                                 onClick={() => handleAcceptReport(report)}
-                                 className="whitespace-nowrap"
-                               >
-                                 Accept
-                               </Button>
-                             </div>
+                              {/* Action buttons */}
+                              <div className="flex flex-col gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedReportForAction(report);
+                                    setShowDismissDialog(true);
+                                  }}
+                                  className="whitespace-nowrap"
+                                >
+                                  Dismiss
+                                </Button>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedReportForAction(report);
+                                    setShowAcceptDialog(true);
+                                  }}
+                                  className="whitespace-nowrap"
+                                >
+                                  Accept
+                                </Button>
+                              </div>
                            </div>
                          )}
                      </div>
@@ -617,6 +638,63 @@ const AdminReports: React.FC = () => {
           }}
           itemId={selectedItemId}
         />
+
+        {/* Dismiss Confirmation Dialog */}
+        <AlertDialog open={showDismissDialog} onOpenChange={setShowDismissDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Dismiss Report</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to dismiss this report? The reported item will remain active on the marketplace and no action will be taken against the user.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (selectedReportForAction) {
+                    handleDismissReport(selectedReportForAction.id);
+                  }
+                  setShowDismissDialog(false);
+                  setSelectedReportForAction(null);
+                }}
+              >
+                Dismiss Report
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Accept Confirmation Dialog */}
+        <AlertDialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Accept Report</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to accept this report? This will:
+                <br />• Remove the item from the marketplace
+                <br />• Add a strike to the user's account
+                <br />• Send a violation notification to the user
+                <br />• This action cannot be undone
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (selectedReportForAction) {
+                    handleAcceptReport(selectedReportForAction);
+                  }
+                  setShowAcceptDialog(false);
+                  setSelectedReportForAction(null);
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Accept Report
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </MainLayout>
   );
