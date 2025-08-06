@@ -351,7 +351,7 @@ const AdminReports: React.FC = () => {
                          </div>
                        </div>
                        <div className="text-xs text-muted-foreground">
-                         Type: {report.type}
+                         {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
                        </div>
                      </div>
                   </CardHeader>
