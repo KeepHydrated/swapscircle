@@ -444,7 +444,7 @@ const AdminReports: React.FC = () => {
                                  {/* Item Image(s) on the left */}
                                  <div className="flex-shrink-0">
                                    {(report.item_image_url || (report.item_image_urls && report.item_image_urls.length > 0)) ? (
-                                     <div className="w-24 h-24 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+                                     <div className="w-32 h-32 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
                                        <img
                                          src={report.item_image_url || report.item_image_urls?.[0]}
                                          alt={report.item_name || "Item"}
@@ -460,7 +460,7 @@ const AdminReports: React.FC = () => {
                                        />
                                      </div>
                                    ) : (
-                                     <div className="w-24 h-24 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                                     <div className="w-32 h-32 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
                                        <span className="text-gray-400 text-xs text-center">No Image</span>
                                      </div>
                                    )}
