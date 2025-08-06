@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Clock, CheckCircle, X, Flag } from 'lucide-react';
+import { AlertCircle, Clock, CheckCircle, X, Flag, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { ReportedItemModal } from '@/components/admin/ReportedItemModal';
 
 interface Report {
   id: string;
@@ -28,6 +29,8 @@ const AdminReports: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('open');
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [isItemModalOpen, setIsItemModalOpen] = useState(false);
 
   // Check if user is admin
   useEffect(() => {
@@ -135,6 +138,26 @@ const AdminReports: React.FC = () => {
       case 'in_progress': return 'default';
       case 'resolved': return 'secondary';
       default: return 'default';
+    }
+  };
+
+  // Extract item ID from action_taken field
+  const extractItemId = (actionTaken: string | null): string | null => {
+    if (!actionTaken) return null;
+    
+    // Look for pattern "ID: [uuid]"
+    const idMatch = actionTaken.match(/ID:\s*([a-f0-9-]{36})/i);
+    return idMatch ? idMatch[1] : null;
+  };
+
+  // Handle viewing reported item
+  const handleViewItem = (report: Report) => {
+    const itemId = extractItemId(report.action_taken);
+    if (itemId) {
+      setSelectedItemId(itemId);
+      setIsItemModalOpen(true);
+    } else {
+      toast.error('Item ID not found in report');
     }
   };
 
@@ -275,6 +298,21 @@ const AdminReports: React.FC = () => {
                       </div>
                     )}
 
+                    {/* View Item Button - show if report contains item information */}
+                    {extractItemId(report.action_taken) && (
+                      <div className="flex justify-end">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleViewItem(report)}
+                          className="flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View Reported Item
+                        </Button>
+                      </div>
+                    )}
+
                     {report.status === 'open' && (
                       <div className="flex gap-2">
                         <Button 
@@ -314,6 +352,16 @@ const AdminReports: React.FC = () => {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Reported Item Modal */}
+        <ReportedItemModal
+          isOpen={isItemModalOpen}
+          onClose={() => {
+            setIsItemModalOpen(false);
+            setSelectedItemId(null);
+          }}
+          itemId={selectedItemId}
+        />
       </div>
     </MainLayout>
   );
