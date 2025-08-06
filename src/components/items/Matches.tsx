@@ -26,10 +26,6 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
-  // Track the last item that matches were loaded for
-  const [lastMatchesItemId, setLastMatchesItemId] = useState<string | undefined>(selectedItemId);
-  const [lastSelectedItemId, setLastSelectedItemId] = useState<string | undefined>(selectedItemId);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   // Get match actions from our custom hook
   const {
     likedItems,
@@ -47,30 +43,6 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
-  // Detect when we get new matches and update the tracking
-  useEffect(() => {
-    if (matches.length > 0 || (matches.length === 0 && selectedItemId)) {
-      setLastMatchesItemId(selectedItemId);
-    }
-  }, [matches, selectedItemId]);
-  
-  // Track selectedItemId changes and transitions
-  useEffect(() => {
-    if (selectedItemId !== lastSelectedItemId) {
-      setIsTransitioning(true);
-      setLastSelectedItemId(selectedItemId);
-    }
-  }, [selectedItemId, lastSelectedItemId]);
-  
-  // Clear transition when matches are updated for current item
-  useEffect(() => {
-    if (isTransitioning && lastMatchesItemId === selectedItemId) {
-      setIsTransitioning(false);
-    }
-  }, [isTransitioning, lastMatchesItemId, selectedItemId]);
-  
-  // Only show matches if they're for the current selected item
-  const matchesAreForCurrentItem = lastMatchesItemId === selectedItemId;
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
@@ -79,27 +51,10 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Only show matches if they belong to current item and liked status is loaded
-  const displayedMatches = (!matchesAreForCurrentItem || isLoadingLikedStatus) ? [] : matches.filter(match => 
+  // Only show matches when fully loaded (no loading states)
+  const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
-
-  console.log('🚨 FLASH DEBUG: Matches component state:', JSON.stringify({
-    selectedItemName,
-    selectedItemId,
-    lastSelectedItemId,
-    lastMatchesItemId,
-    matchesAreForCurrentItem,
-    totalMatches: matches.length,
-    isLoadingLikedStatus,
-    isGeneralLoading: loading,
-    removedItems,
-    likedItems,
-    displayedMatches: displayedMatches.length,
-    matchIds: matches.map(m => m.id),
-    filteredOutByLikes: matches.filter(m => likedItems[m.id]).map(m => m.id),
-    filteredOutByRemoved: matches.filter(m => removedItems.includes(m.id)).map(m => m.id)
-  }, null, 2));
 
   // Find current index in displayed matches
   const currentMatchIndex = selectedMatch 
@@ -140,7 +95,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isLoadingLikedStatus && matchesAreForCurrentItem && !isTransitioning) ? (
+      {(displayedMatches.length === 0 && !isLoadingLikedStatus) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
