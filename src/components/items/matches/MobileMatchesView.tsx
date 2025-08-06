@@ -168,11 +168,11 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           <DropdownMenuContent align="center" className="w-56 bg-white border border-gray-200 shadow-lg z-50">
             <DropdownMenuItem onClick={() => { onLike(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
               <Users className="h-4 w-4 mr-2 text-green-600" />
-              Accept for all items
+              Accept for all of my items
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => { onReject(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
               <Users className="h-4 w-4 mr-2 text-red-600" />
-              Reject for all items
+              Reject for all of my items
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onReport(currentMatch.id)} className="cursor-pointer text-red-600">
               <Flag className="h-4 w-4 mr-2" />

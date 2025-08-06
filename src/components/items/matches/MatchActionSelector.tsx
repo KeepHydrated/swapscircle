@@ -51,11 +51,11 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
       <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg z-50">
         <DropdownMenuItem onClick={handleLikeAllClick} className="cursor-pointer">
           <Users className="h-4 w-4 mr-2 text-green-600" />
-          Accept for all items
+          Accept for all of my items
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleRejectAllClick} className="cursor-pointer">
           <Users className="h-4 w-4 mr-2 text-red-600" />
-          Reject for all items
+          Reject for all of my items
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleReportClick} className="cursor-pointer text-red-600">
