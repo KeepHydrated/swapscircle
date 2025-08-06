@@ -328,6 +328,8 @@ const AdminReports: React.FC = () => {
 
       if (itemError) throw itemError;
 
+      console.log('✅ Item successfully deleted:', itemId);
+
       // 3. Increment user strikes
       const { data: strikeCount, error: strikeError } = await supabase
         .rpc('increment_user_strikes', { target_user_id: itemData.user_id });
