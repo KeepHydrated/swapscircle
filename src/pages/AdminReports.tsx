@@ -518,55 +518,6 @@ const AdminReports: React.FC = () => {
                          )}
                      </div>
                   </CardHeader>
-                   <CardContent className="space-y-4">
-                     {/* Action Buttons */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        {report.status === 'open' && (
-                          <>
-                            <Button 
-                              variant="outline" 
-                              onClick={() => updateReportStatus(report.id, 'in_progress')}
-                            >
-                              Mark In Progress
-                            </Button>
-                            <Button 
-                              variant="default" 
-                              onClick={() => {
-                                const action = prompt('What action was taken?');
-                                if (action) updateReportStatus(report.id, 'resolved', action);
-                              }}
-                            >
-                              Mark Resolved
-                            </Button>
-                          </>
-                        )}
-
-                        {report.status === 'in_progress' && (
-                          <Button 
-                            variant="default" 
-                            onClick={() => {
-                              const action = prompt('What action was taken?');
-                              if (action) updateReportStatus(report.id, 'resolved', action);
-                            }}
-                          >
-                            Mark Resolved
-                          </Button>
-                        )}
-                      </div>
-
-                      {/* Delete Button */}
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteReport(report.id)}
-                        className="flex items-center gap-2"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete Report
-                      </Button>
-                    </div>
-                  </CardContent>
                 </Card>
               ))
             )}
