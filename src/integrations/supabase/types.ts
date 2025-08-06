@@ -2385,6 +2385,10 @@ export type Database = {
         }
         Returns: string
       }
+      deactivate_user_account: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       delete_user_account: {
         Args: Record<PropertyKey, never>
         Returns: undefined
