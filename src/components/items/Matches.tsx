@@ -51,7 +51,7 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Simple approach: only show when liked status is loaded
+  // Only show matches when liked status is fully loaded
   const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
