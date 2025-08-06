@@ -483,7 +483,7 @@ const AdminReports: React.FC = () => {
                                     )}
                                     
                                     {/* Item Details */}
-                                    <div className="grid grid-cols-4 gap-4 text-sm">
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
                                       <div className="font-medium text-gray-900">Electronics</div>
                                       <div className="font-medium text-gray-900">Cameras</div>
                                       <div className="font-medium text-gray-900">Brand New</div>
