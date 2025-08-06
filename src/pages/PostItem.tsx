@@ -165,10 +165,6 @@ const PostItem: React.FC = () => {
       // This prevents the draft message from appearing after successful item publication
       if (hasContent && currentUser && !isSubmitting) {
         saveDraftToDatabase();
-        // Use setTimeout to ensure the toast shows on the destination page
-        setTimeout(() => {
-          toast.success('Draft saved successfully!');
-        }, 100);
       }
     };
   }, [isSubmitting]); // Add isSubmitting as dependency since we reference it
@@ -235,7 +231,6 @@ const PostItem: React.FC = () => {
     setShowExitConfirmation(false);
     try {
       await saveDraftToDatabase();
-      toast.success('Draft saved successfully!');
       if (pendingNavigation) {
         pendingNavigation();
         setPendingNavigation(null);
@@ -568,13 +563,10 @@ const PostItem: React.FC = () => {
                     
                     if (error) {
                       toast.error('Error saving draft');
-                    } else {
-                      toast.success('Draft saved successfully!');
                     }
                   } else {
                     // Create new draft
                     await saveDraftToDatabase();
-                    toast.success('Draft saved successfully!');
                   }
                   navigate('/');
                 }}

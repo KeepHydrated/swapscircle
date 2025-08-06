@@ -198,10 +198,6 @@ const PostItemFixed: React.FC = () => {
       const hasContent = currentTitle.trim() || currentDescription.trim() || currentCategory || currentLookingForText.trim();
       if (hasContent && currentUser) {
         saveDraftToDatabase();
-        // Use setTimeout to ensure the toast shows on the destination page
-        setTimeout(() => {
-          toast.success('Draft saved successfully!');
-        }, 100);
       }
     };
   }, []); // No dependencies - only runs on actual unmount
@@ -272,7 +268,6 @@ const PostItemFixed: React.FC = () => {
     setShowExitConfirmation(false);
     try {
       await saveDraftToDatabase();
-      toast.success('Draft saved successfully!');
       // Remove beforeunload listener to prevent browser popup
       if (beforeUnloadHandlerRef.current) {
         window.removeEventListener('beforeunload', beforeUnloadHandlerRef.current);
@@ -524,7 +519,6 @@ const PostItemFixed: React.FC = () => {
               <Button
                 onClick={async () => {
                   await saveDraftToDatabase();
-                  toast.success('Draft saved successfully!');
                   navigate('/');
                 }}
                 variant="outline"
