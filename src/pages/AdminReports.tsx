@@ -360,10 +360,10 @@ const AdminReports: React.FC = () => {
                        <div className="flex flex-col items-center gap-4">
                          {/* Reporter Profile */}
                          <div 
-                           className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-fit"
+                           className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-80"
                            onClick={() => handleProfileClick(report.reporter_id)}
                          >
-                           <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+                           <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
                              {report.reporter_avatar_url ? (
                                <img
                                  src={report.reporter_avatar_url}
@@ -376,12 +376,12 @@ const AdminReports: React.FC = () => {
                                </span>
                              )}
                            </div>
-                           <div>
+                           <div className="min-w-0 flex-1">
                              <div className="flex items-center gap-2">
-                               <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
+                               <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
                                  {report.reporter_name || report.reporter_username || "Unknown User"}
                                </span>
-                               <div className="flex items-center gap-1">
+                               <div className="flex items-center gap-1 flex-shrink-0">
                                  <span className="text-yellow-500">★</span>
                                  <span className="text-sm text-gray-600">No reviews</span>
                                </div>
@@ -395,10 +395,10 @@ const AdminReports: React.FC = () => {
                          {/* Item Owner Profile */}
                          {report.item_owner_id && (
                            <div 
-                             className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-fit"
+                             className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
                              onClick={() => handleProfileClick(report.item_owner_id!)}
                            >
-                             <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm">
+                             <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
                                {report.item_owner_avatar_url ? (
                                  <img
                                    src={report.item_owner_avatar_url}
@@ -411,12 +411,12 @@ const AdminReports: React.FC = () => {
                                  </span>
                                )}
                              </div>
-                             <div>
+                             <div className="min-w-0 flex-1">
                                <div className="flex items-center gap-2">
-                                 <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
+                                 <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
                                    {report.item_owner_name || report.item_owner_username || "Unknown User"}
                                  </span>
-                                 <div className="flex items-center gap-1">
+                                 <div className="flex items-center gap-1 flex-shrink-0">
                                    <span className="text-yellow-500">★</span>
                                    <span className="text-sm text-gray-600">No reviews</span>
                                  </div>
