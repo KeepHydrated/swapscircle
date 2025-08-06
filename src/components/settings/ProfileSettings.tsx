@@ -154,29 +154,24 @@ const ProfileSettings: React.FC = () => {
     }
   }, [user?.name, displayName]);
 
-  const handleUseGPS = () => {
+  const handleGPSClick = async () => {
+    // Get GPS coordinates (they will be automatically saved by the useEffect)
     setIsUpdatingLocation(true);
     location.getCurrentLocation();
   };
 
-  const handleSaveLocation = async () => {
-    if (location.hasLocation) {
-      // Update the form field with the coordinates
-      form.setValue('location', `${location.latitude}, ${location.longitude}`);
-      setHasUnsavedLocation(false);
-      toast.success('Location coordinates added to your profile');
-    }
-  };
-
-  // Track when GPS location is obtained to show save button
+  // Track when GPS location is obtained and automatically save it
   useEffect(() => {
     if (isUpdatingLocation && location.hasLocation) {
-      setHasUnsavedLocation(true);
+      // Automatically save the coordinates when obtained
+      form.setValue('location', `${location.latitude}, ${location.longitude}`);
+      setHasUnsavedLocation(false);
       setIsUpdatingLocation(false);
+      toast.success('Location coordinates added to your profile');
     } else if (isUpdatingLocation && location.error) {
       setIsUpdatingLocation(false);
     }
-  }, [location.hasLocation, location.error, isUpdatingLocation]);
+  }, [location.hasLocation, location.error, isUpdatingLocation, location.latitude, location.longitude, form]);
 
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
@@ -365,14 +360,14 @@ const ProfileSettings: React.FC = () => {
                                className="flex-1"
                                readOnly
                              />
-                             <Button 
-                               type="button"
-                               onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
-                               variant="default"
-                               size="sm"
-                               disabled={location.loading}
-                               className="rounded-l-none border-l-0"
-                             >
+                              <Button 
+                                type="button"
+                                onClick={handleGPSClick}
+                                variant="default"
+                                size="sm"
+                                disabled={location.loading}
+                                className="rounded-l-none border-l-0"
+                              >
                                {location.loading ? (
                                  <Loader2 className="h-4 w-4 animate-spin" />
                                ) : hasUnsavedLocation ? (
