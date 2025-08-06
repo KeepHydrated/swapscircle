@@ -338,7 +338,7 @@ const AdminReports: React.FC = () => {
               filteredReports.map((report) => (
                 <Card key={report.id}>
                    <CardHeader>
-                     <div className="flex justify-between items-start">
+                     <div className="flex items-start gap-8">
                        {/* Date and Report Details on the left */}
                        <div>
                          <div className="text-xs text-muted-foreground mb-3">
