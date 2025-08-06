@@ -22,6 +22,7 @@ import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
 import OtherProfile from "./pages/OtherProfile";
+import AdminReports from "./pages/AdminReports";
 import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
@@ -86,8 +87,13 @@ const App = () => {
                 <RequireAuth>
                   <Settings />
                 </RequireAuth>
-              } />
-              <Route path="*" element={<NotFound />} />
+               } />
+               <Route path="/admin/reports" element={
+                 <RequireAuth>
+                   <AdminReports />
+                 </RequireAuth>
+               } />
+               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
