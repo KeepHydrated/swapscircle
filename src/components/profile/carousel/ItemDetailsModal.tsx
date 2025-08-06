@@ -369,26 +369,26 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                     <h2 className="text-2xl font-bold text-gray-900 mb-2 mt-4">
                       {displayItem.name}
                     </h2>
-                    <p className="text-gray-700 text-base leading-relaxed">
+                    <p className="text-gray-700 text-base leading-relaxed mb-4">
                       {displayItem.description || "No description provided."}
                     </p>
-                  </div>
-                </div>
-                
-                {/* Item Details */}
-                <div className="grid grid-cols-2 gap-4 text-sm mb-8">
-                  <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
-                  <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
-                  <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
-                  <div className="font-medium text-gray-900">
-                    {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
-                      ? `$${displayItem.price_range_min || displayItem.priceRangeMin} - $${displayItem.price_range_max || displayItem.priceRangeMax}`
-                      : (displayItem.price_range_min || displayItem.priceRangeMin)
-                        ? `From $${displayItem.price_range_min || displayItem.priceRangeMin}`
-                        : (displayItem.price_range_max || displayItem.priceRangeMax)
-                          ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
-                          : "Up to $50"
-                    }
+                    
+                    {/* Item Details */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
+                      <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
+                      <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
+                      <div className="font-medium text-gray-900">
+                        {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
+                          ? `$${displayItem.price_range_min || displayItem.priceRangeMin} - $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                          : (displayItem.price_range_min || displayItem.priceRangeMin)
+                            ? `From $${displayItem.price_range_min || displayItem.priceRangeMin}`
+                            : (displayItem.price_range_max || displayItem.priceRangeMax)
+                              ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                              : "Up to $50"
+                        }
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
