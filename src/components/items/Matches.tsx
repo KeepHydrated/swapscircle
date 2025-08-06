@@ -26,13 +26,13 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
-  // Track the current item we're showing matches for to prevent flashing
-  const [currentItemId, setCurrentItemId] = useState<string | undefined>(selectedItemId);
+  // Track the last selectedItemId to detect changes
+  const [lastSelectedItemId, setLastSelectedItemId] = useState<string | undefined>(selectedItemId);
   
   // Debug logging
   console.log('🔍 Matches component render:', {
     selectedItemId,
-    currentItemId,
+    lastSelectedItemId,
     matchesLength: matches.length,
     loading,
     selectedItemName
@@ -64,19 +64,16 @@ const Matches: React.FC<MatchesProps> = ({
     });
   }, [matches, selectedItemId]);
   
-  // Update current item ID only when not loading
+  // Update lastSelectedItemId when selectedItemId changes
   useEffect(() => {
-    console.log('🔍 Considering currentItemId update:', {
-      loading,
-      isLoadingLikedStatus,
-      selectedItemId,
-      currentItemId,
-      willUpdate: !loading && !isLoadingLikedStatus && selectedItemId
-    });
-    if (!loading && !isLoadingLikedStatus && selectedItemId) {
-      setCurrentItemId(selectedItemId);
+    if (selectedItemId !== lastSelectedItemId) {
+      console.log('🔍 selectedItemId changed, updating lastSelectedItemId:', {
+        from: lastSelectedItemId,
+        to: selectedItemId
+      });
+      setLastSelectedItemId(selectedItemId);
     }
-  }, [loading, isLoadingLikedStatus, selectedItemId]);
+  }, [selectedItemId, lastSelectedItemId]);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
@@ -85,13 +82,16 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Hide everything if loading or if item has changed
-  const isTransitioning = loading || isLoadingLikedStatus || (selectedItemId !== currentItemId);
+  // Hide everything if loading, loading liked status, or if item ID changed but matches haven't synced yet
+  const itemIdChanged = selectedItemId !== lastSelectedItemId;
+  const isTransitioning = loading || isLoadingLikedStatus || itemIdChanged;
+  
   console.log('🔍 Display logic:', {
     loading,
     isLoadingLikedStatus,
     selectedItemId,
-    currentItemId,
+    lastSelectedItemId,
+    itemIdChanged,
     isTransitioning,
     displayedMatchesLength: isTransitioning ? 0 : matches.filter(match => 
       !removedItems.includes(match.id) && !likedItems[match.id]
