@@ -338,70 +338,36 @@ const AdminReports: React.FC = () => {
               filteredReports.map((report) => (
                 <Card key={report.id}>
                    <CardHeader>
-                     {/* Date at the top left */}
-                     <div className="text-xs text-muted-foreground mb-3">
-                       {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
-                     </div>
-                     
-                     {/* Profiles stacked in the middle */}
-                     <div className="flex flex-col items-center gap-4">
-                       {/* Reporter Profile */}
-                       <div 
-                         className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-fit"
-                         onClick={() => handleProfileClick(report.reporter_id)}
-                       >
-                         <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
-                           {report.reporter_avatar_url ? (
-                             <img
-                               src={report.reporter_avatar_url}
-                               alt={report.reporter_name || report.reporter_username}
-                               className="w-full h-full rounded-full object-cover"
-                             />
-                           ) : (
-                             <span>
-                               {(report.reporter_username || "U").substring(0, 2).toUpperCase()}
-                             </span>
-                           )}
-                         </div>
-                         <div>
-                           <div className="flex items-center gap-2">
-                             <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
-                               {report.reporter_name || report.reporter_username || "Unknown User"}
-                             </span>
-                             <div className="flex items-center gap-1">
-                               <span className="text-yellow-500">★</span>
-                               <span className="text-sm text-gray-600">No reviews</span>
-                             </div>
-                           </div>
-                            <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                              <span>Reporter • Since 2024</span>
-                            </div>
-                         </div>
+                     <div className="flex justify-between items-start">
+                       {/* Date at the top left */}
+                       <div className="text-xs text-muted-foreground">
+                         {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
                        </div>
-
-                       {/* Item Owner Profile */}
-                       {report.item_owner_id && (
+                       
+                       {/* Profiles stacked in the middle-right */}
+                       <div className="flex flex-col items-center gap-4">
+                         {/* Reporter Profile */}
                          <div 
-                           className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-fit"
-                           onClick={() => handleProfileClick(report.item_owner_id!)}
+                           className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-fit"
+                           onClick={() => handleProfileClick(report.reporter_id)}
                          >
-                           <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm">
-                             {report.item_owner_avatar_url ? (
+                           <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+                             {report.reporter_avatar_url ? (
                                <img
-                                 src={report.item_owner_avatar_url}
-                                 alt={report.item_owner_name || report.item_owner_username}
+                                 src={report.reporter_avatar_url}
+                                 alt={report.reporter_name || report.reporter_username}
                                  className="w-full h-full rounded-full object-cover"
                                />
                              ) : (
                                <span>
-                                 {(report.item_owner_username || "U").substring(0, 2).toUpperCase()}
+                                 {(report.reporter_username || "U").substring(0, 2).toUpperCase()}
                                </span>
                              )}
                            </div>
                            <div>
                              <div className="flex items-center gap-2">
                                <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
-                                 {report.item_owner_name || report.item_owner_username || "Unknown User"}
+                                 {report.reporter_name || report.reporter_username || "Unknown User"}
                                </span>
                                <div className="flex items-center gap-1">
                                  <span className="text-yellow-500">★</span>
@@ -409,11 +375,47 @@ const AdminReports: React.FC = () => {
                                </div>
                              </div>
                               <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                                <span>Item Owner • Since 2024</span>
+                                <span>Reporter • Since 2024</span>
                               </div>
                            </div>
                          </div>
-                       )}
+
+                         {/* Item Owner Profile */}
+                         {report.item_owner_id && (
+                           <div 
+                             className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-fit"
+                             onClick={() => handleProfileClick(report.item_owner_id!)}
+                           >
+                             <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm">
+                               {report.item_owner_avatar_url ? (
+                                 <img
+                                   src={report.item_owner_avatar_url}
+                                   alt={report.item_owner_name || report.item_owner_username}
+                                   className="w-full h-full rounded-full object-cover"
+                                 />
+                               ) : (
+                                 <span>
+                                   {(report.item_owner_username || "U").substring(0, 2).toUpperCase()}
+                                 </span>
+                               )}
+                             </div>
+                             <div>
+                               <div className="flex items-center gap-2">
+                                 <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
+                                   {report.item_owner_name || report.item_owner_username || "Unknown User"}
+                                 </span>
+                                 <div className="flex items-center gap-1">
+                                   <span className="text-yellow-500">★</span>
+                                   <span className="text-sm text-gray-600">No reviews</span>
+                                 </div>
+                               </div>
+                                <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                                  <span>Item Owner • Since 2024</span>
+                                </div>
+                             </div>
+                           </div>
+                         )}
+                       </div>
                      </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
