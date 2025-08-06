@@ -410,50 +410,31 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               </div>
             ) : (
               <>
-                {/* Title */}
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  {displayItem.name}
-                </h2>
-                
-                {/* Description */}
-                <p className="text-gray-700 text-base mb-6 leading-relaxed">
-                  {displayItem.description || "No description provided."}
-                </p>
-                
-                {/* Item details in 2x2 grid */}
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <div className="text-gray-600">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Category</span>
-                      <span className="text-sm">{displayItem.category || "No category"}</span>
-                    </div>
+                {/* Item layout: Image left, details right */}
+                <div className="flex gap-6 mb-8">
+                  {/* Item Image */}
+                  <div className="w-20 h-20 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
+                    {allImages.length > 0 ? (
+                      <img
+                        src={allImages[0]}
+                        alt={displayItem.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <span className="text-xs">No image</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-gray-600">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Subcategory</span>
-                      <span className="text-sm">{displayItem.tags?.[0] || "No subcategory"}</span>
-                    </div>
-                  </div>
-                  <div className="text-gray-600">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Condition</span>
-                      <span className="text-sm">{displayItem.condition || "Not specified"}</span>
-                    </div>
-                  </div>
-                  <div className="text-gray-600">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-gray-400 uppercase">Price Range</span>
-                      <span className="text-sm">
-                        {displayItem.price_range_min && displayItem.price_range_max 
-                          ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
-                          : displayItem.price_range_min 
-                            ? `From $${displayItem.price_range_min}`
-                            : displayItem.price_range_max
-                              ? `Up to $${displayItem.price_range_max}`
-                              : "Not specified"
-                        }
-                      </span>
-                    </div>
+
+                  {/* Title and Description on the right */}
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      {displayItem.name}
+                    </h2>
+                    <p className="text-gray-700 text-base leading-relaxed">
+                      {displayItem.description || "No description provided."}
+                    </p>
                   </div>
                 </div>
                 

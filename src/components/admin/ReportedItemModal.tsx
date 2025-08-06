@@ -145,40 +145,26 @@ export const ReportedItemModal: React.FC<ReportedItemModalProps> = ({
           </div>
         ) : item ? (
           <div className="space-y-6">
-            {/* Item Images */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {item.image_url && (
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Main Image</h4>
+            {/* Item layout: Image left, details right */}
+            <div className="flex gap-6">
+              {/* Item Image */}
+              <div className="w-24 h-24 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
+                {item.image_url ? (
                   <img 
                     src={item.image_url} 
                     alt={item.name}
-                    className="w-full h-48 object-cover rounded-lg border"
+                    className="w-full h-full object-cover"
                   />
-                </div>
-              )}
-              
-              {item.image_urls && item.image_urls.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Additional Images</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {item.image_urls.slice(0, 4).map((url, index) => (
-                      <img 
-                        key={index}
-                        src={url} 
-                        alt={`${item.name} ${index + 1}`}
-                        className="w-full h-24 object-cover rounded border"
-                      />
-                    ))}
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <span className="text-xs">No image</span>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            {/* Item Details */}
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-start justify-between">
+              {/* Title and Description on the right */}
+              <div className="flex-1">
+                <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-bold">{item.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
@@ -196,46 +182,13 @@ export const ReportedItemModal: React.FC<ReportedItemModalProps> = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Category & Condition</h4>
-                    <div className="space-y-1">
-                      <p><span className="font-medium">Category:</span> {item.category || 'Not specified'}</p>
-                      <p><span className="font-medium">Condition:</span> {item.condition || 'Not specified'}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Dates</h4>
-                    <div className="space-y-1">
-                      <p className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        <span className="font-medium">Posted:</span> 
-                        {format(new Date(item.created_at), 'MMM d, yyyy HH:mm')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
                 {item.description && (
                   <div>
-                    <h4 className="font-semibold mb-2">Description</h4>
-                    <p className="text-muted-foreground bg-muted p-3 rounded">{item.description}</p>
+                    <p className="text-gray-700 leading-relaxed">{item.description}</p>
                   </div>
                 )}
-
-                {item.tags && item.tags.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-2">Tags</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {item.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline">{tag}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* User Information */}
             {userProfile && (

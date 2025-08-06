@@ -481,26 +481,6 @@ const AdminReports: React.FC = () => {
                                         )}
                                       </div>
                                     )}
-                                    
-                                    {/* Item Details Grid */}
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                      <div>
-                                        <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
-                                        <div className="font-medium text-gray-900">Electronics</div>
-                                      </div>
-                                      <div>
-                                        <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
-                                        <div className="font-medium text-gray-900">Cameras</div>
-                                      </div>
-                                      <div>
-                                        <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
-                                        <div className="font-medium text-gray-900">Brand New</div>
-                                      </div>
-                                      <div>
-                                        <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
-                                        <div className="font-medium text-gray-900">Up to $50</div>
-                                      </div>
-                                    </div>
                                   </div>
                                </div>
                               

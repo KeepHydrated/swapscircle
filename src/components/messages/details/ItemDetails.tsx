@@ -71,14 +71,24 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
   
   return (
     <div className="p-3">
-      <h2 className="text-lg font-bold text-gray-900 mb-2 truncate">
-        {name || "Selected Item"}
-      </h2>
-      
-      <div className="mb-3">
-        <p className="text-gray-700 text-xs mt-1 bg-gray-50 p-2 rounded-md">
-          Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
-        </p>
+      {/* Item layout: Image left, details right */}
+      <div className="flex gap-4 mb-3">
+        {/* Item Image placeholder */}
+        <div className="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
+          <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <span className="text-xs">No image</span>
+          </div>
+        </div>
+
+        {/* Title and Description on the right */}
+        <div className="flex-1">
+          <h2 className="text-lg font-bold text-gray-900 mb-1 truncate">
+            {name || "Selected Item"}
+          </h2>
+          <p className="text-gray-700 text-xs leading-relaxed">
+            Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
+          </p>
+        </div>
       </div>
       
       <hr className="mb-2" />
