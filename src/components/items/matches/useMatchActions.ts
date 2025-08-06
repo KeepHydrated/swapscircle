@@ -102,6 +102,13 @@ export const useMatchActions = (
   };
 
   useEffect(() => {
+    console.log('🚨 FLASH DEBUG: useMatchActions effect triggered:', {
+      matchesLength: matches.length,
+      userId: user?.id,
+      supabaseConfigured,
+      selectedItemId,
+      stateKey
+    });
     loadLikedStatus();
     // eslint-disable-next-line
   }, [matches, user, supabaseConfigured, selectedItemId, stateKey]);

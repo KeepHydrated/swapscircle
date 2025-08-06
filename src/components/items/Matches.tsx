@@ -55,9 +55,12 @@ const Matches: React.FC<MatchesProps> = ({
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
-  console.log('DEBUG: Matches filter results:', JSON.stringify({
+  console.log('🚨 FLASH DEBUG: Matches component state:', JSON.stringify({
+    selectedItemName,
+    selectedItemId,
     totalMatches: matches.length,
     isLoadingLikedStatus,
+    isGeneralLoading: loading,
     removedItems,
     likedItems,
     displayedMatches: displayedMatches.length,
