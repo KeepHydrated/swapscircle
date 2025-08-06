@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -126,8 +126,16 @@ const Header = () => {
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
+                   </DropdownMenuItem>
+                   {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
+                     <DropdownMenuItem asChild>
+                       <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
+                         <Flag className="mr-2 h-4 w-4" />
+                         <span>Admin Reports</span>
+                       </Link>
+                     </DropdownMenuItem>
+                   )}
+                   <DropdownMenuSeparator />
                   {supabaseConfigured && (
                     <DropdownMenuItem 
                       className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
