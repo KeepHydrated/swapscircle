@@ -26,6 +26,9 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
+  // Track the current item we're showing matches for to prevent flashing
+  const [currentItemId, setCurrentItemId] = useState<string | undefined>(selectedItemId);
+  
   // Get match actions from our custom hook - fixed flashing issue
   const {
     likedItems,
@@ -43,6 +46,12 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
+  // Update current item ID only when not loading
+  useEffect(() => {
+    if (!loading && !isLoadingLikedStatus && selectedItemId) {
+      setCurrentItemId(selectedItemId);
+    }
+  }, [loading, isLoadingLikedStatus, selectedItemId]);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
@@ -51,8 +60,9 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Only show matches when liked status is fully loaded
-  const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
+  // Hide everything if loading or if item has changed
+  const isTransitioning = loading || isLoadingLikedStatus || (selectedItemId !== currentItemId);
+  const displayedMatches = isTransitioning ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
@@ -95,7 +105,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isLoadingLikedStatus) ? (
+      {(displayedMatches.length === 0 && !isTransitioning) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
