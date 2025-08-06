@@ -26,7 +26,8 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
-  // Track if matches have been updated for current selected item
+  // Track the last item that matches were loaded for
+  const [lastMatchesItemId, setLastMatchesItemId] = useState<string | undefined>(selectedItemId);
   const [lastSelectedItemId, setLastSelectedItemId] = useState<string | undefined>(selectedItemId);
   // Get match actions from our custom hook
   const {
@@ -45,37 +46,22 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
-  // Track when selectedItemId changes to detect transitions
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [transitionStartTime, setTransitionStartTime] = useState<number>(0);
+  // Detect when we get new matches and update the tracking
+  useEffect(() => {
+    if (matches.length > 0 || (matches.length === 0 && selectedItemId)) {
+      setLastMatchesItemId(selectedItemId);
+    }
+  }, [matches, selectedItemId]);
   
-  // Update tracking when selectedItemId changes
+  // Track selectedItemId changes
   useEffect(() => {
     if (selectedItemId !== lastSelectedItemId) {
-      console.log('🚨 TRANSITION START:', {
-        from: lastSelectedItemId,
-        to: selectedItemId,
-        timestamp: Date.now()
-      });
-      setIsTransitioning(true);
-      setTransitionStartTime(Date.now());
       setLastSelectedItemId(selectedItemId);
     }
   }, [selectedItemId, lastSelectedItemId]);
   
-  // Clear transition when matches update for the new item
-  useEffect(() => {
-    if (isTransitioning && transitionStartTime > 0) {
-      console.log('🚨 MATCHES EFFECT:', {
-        selectedItemId,
-        matchesLength: matches.length,
-        timeSinceTransition: Date.now() - transitionStartTime,
-        isTransitioning
-      });
-      // Clear transition immediately when matches update
-      setIsTransitioning(false);
-    }
-  }, [matches, selectedItemId, isTransitioning, transitionStartTime]);
+  // Only show matches if they're for the current selected item
+  const matchesAreForCurrentItem = lastMatchesItemId === selectedItemId;
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
@@ -84,8 +70,8 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Hide matches during transitions, while loading, or if they don't belong to current item
-  const displayedMatches = (isTransitioning || isLoadingLikedStatus) ? [] : matches.filter(match => 
+  // Only show matches if they belong to current item and liked status is loaded
+  const displayedMatches = (!matchesAreForCurrentItem || isLoadingLikedStatus) ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
@@ -93,7 +79,8 @@ const Matches: React.FC<MatchesProps> = ({
     selectedItemName,
     selectedItemId,
     lastSelectedItemId,
-    isTransitioning,
+    lastMatchesItemId,
+    matchesAreForCurrentItem,
     totalMatches: matches.length,
     isLoadingLikedStatus,
     isGeneralLoading: loading,
@@ -144,7 +131,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isLoadingLikedStatus && !isTransitioning) ? (
+      {(displayedMatches.length === 0 && !isLoadingLikedStatus && matchesAreForCurrentItem) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
