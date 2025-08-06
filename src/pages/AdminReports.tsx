@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Clock, CheckCircle, X, Flag, Eye } from 'lucide-react';
+import { AlertCircle, Clock, CheckCircle, X, Flag, Eye, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ReportedItemModal } from '@/components/admin/ReportedItemModal';
@@ -161,6 +161,28 @@ const AdminReports: React.FC = () => {
     }
   };
 
+  // Handle deleting a report
+  const handleDeleteReport = async (reportId: string) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this report? This action cannot be undone.');
+    
+    if (!confirmDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      setReports(prev => prev.filter(report => report.id !== reportId));
+      toast.success('Report deleted successfully');
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      toast.error('Failed to delete report');
+    }
+  };
+
   const filteredReports = reports.filter(report => report.status === activeTab);
 
   if (!user) {
@@ -311,41 +333,55 @@ const AdminReports: React.FC = () => {
                           View Reported Item
                         </Button>
                       </div>
-                    )}
+                     )}
 
-                    {report.status === 'open' && (
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-between">
                       <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          onClick={() => updateReportStatus(report.id, 'in_progress')}
-                        >
-                          Mark In Progress
-                        </Button>
-                        <Button 
-                          variant="default" 
-                          onClick={() => {
-                            const action = prompt('What action was taken?');
-                            if (action) updateReportStatus(report.id, 'resolved', action);
-                          }}
-                        >
-                          Mark Resolved
-                        </Button>
-                      </div>
-                    )}
+                        {report.status === 'open' && (
+                          <>
+                            <Button 
+                              variant="outline" 
+                              onClick={() => updateReportStatus(report.id, 'in_progress')}
+                            >
+                              Mark In Progress
+                            </Button>
+                            <Button 
+                              variant="default" 
+                              onClick={() => {
+                                const action = prompt('What action was taken?');
+                                if (action) updateReportStatus(report.id, 'resolved', action);
+                              }}
+                            >
+                              Mark Resolved
+                            </Button>
+                          </>
+                        )}
 
-                    {report.status === 'in_progress' && (
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="default" 
-                          onClick={() => {
-                            const action = prompt('What action was taken?');
-                            if (action) updateReportStatus(report.id, 'resolved', action);
-                          }}
-                        >
-                          Mark Resolved
-                        </Button>
+                        {report.status === 'in_progress' && (
+                          <Button 
+                            variant="default" 
+                            onClick={() => {
+                              const action = prompt('What action was taken?');
+                              if (action) updateReportStatus(report.id, 'resolved', action);
+                            }}
+                          >
+                            Mark Resolved
+                          </Button>
+                        )}
                       </div>
-                    )}
+
+                      {/* Delete Button */}
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteReport(report.id)}
+                        className="flex items-center gap-2"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete Report
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))
