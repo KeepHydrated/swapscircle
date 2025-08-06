@@ -26,7 +26,7 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
-  // Get match actions from our custom hook
+  // Get match actions from our custom hook - fixed flashing issue
   const {
     likedItems,
     removedItems,
