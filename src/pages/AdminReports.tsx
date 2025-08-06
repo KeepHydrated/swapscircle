@@ -439,20 +439,6 @@ const AdminReports: React.FC = () => {
                         {extractItemId(report.action_taken) && (
                           <div className="bg-white border border-gray-200 rounded-lg p-4 w-80">
                             <div className="space-y-3">
-                               {/* Item Name and Description */}
-                               {report.item_name && (
-                                 <div>
-                                   <div className="text-lg font-semibold text-gray-900 truncate">
-                                     {report.item_name}
-                                   </div>
-                                   {report.item_description && (
-                                     <div className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                       {report.item_description}
-                                     </div>
-                                   )}
-                                 </div>
-                               )}
-                               
                                {/* Item Image and Details Grid */}
                                <div className="flex gap-4">
                                  {/* Item Image(s) on the left */}
@@ -480,25 +466,42 @@ const AdminReports: React.FC = () => {
                                    )}
                                  </div>
                                  
-                                 {/* Item Details Grid on the right */}
-                                 <div className="flex-1 grid grid-cols-2 gap-4 text-sm">
-                                   <div>
-                                     <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
-                                     <div className="font-medium text-gray-900">Electronics</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
-                                     <div className="font-medium text-gray-900">Cameras</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
-                                     <div className="font-medium text-gray-900">Brand New</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
-                                     <div className="font-medium text-gray-900">Up to $50</div>
-                                   </div>
-                                 </div>
+                                  {/* Item Details on the right */}
+                                  <div className="flex-1 space-y-3">
+                                    {/* Item Name and Description */}
+                                    {report.item_name && (
+                                      <div>
+                                        <div className="text-lg font-semibold text-gray-900 truncate">
+                                          {report.item_name}
+                                        </div>
+                                        {report.item_description && (
+                                          <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                            {report.item_description}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                    
+                                    {/* Item Details Grid */}
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                      <div>
+                                        <div className="text-gray-500 uppercase text-xs mb-1">CATEGORY</div>
+                                        <div className="font-medium text-gray-900">Electronics</div>
+                                      </div>
+                                      <div>
+                                        <div className="text-gray-500 uppercase text-xs mb-1">SUBCATEGORY</div>
+                                        <div className="font-medium text-gray-900">Cameras</div>
+                                      </div>
+                                      <div>
+                                        <div className="text-gray-500 uppercase text-xs mb-1">CONDITION</div>
+                                        <div className="font-medium text-gray-900">Brand New</div>
+                                      </div>
+                                      <div>
+                                        <div className="text-gray-500 uppercase text-xs mb-1">PRICE RANGE</div>
+                                        <div className="font-medium text-gray-900">Up to $50</div>
+                                      </div>
+                                    </div>
+                                  </div>
                                </div>
                               
                             </div>
