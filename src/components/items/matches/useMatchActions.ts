@@ -47,7 +47,7 @@ export const useMatchActions = (
     likedItems: {},
     removedItems: [],
     lastActions: [],
-    isLoadingLikedStatus: true
+    isLoadingLikedStatus: matches.length > 0 // Only set loading to true if there are actually matches to load
   };
 
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);

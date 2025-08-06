@@ -93,8 +93,8 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
 
-  // Show skeleton loading while fetching matches or liked status
-  if (loading || isLoadingLikedStatus) {
+  // Show skeleton loading while fetching matches, but not when just switching between items
+  if (loading || (isLoadingLikedStatus && matches.length > 0)) {
     return (
       <div className="w-full flex flex-col h-full">
         <div className="flex gap-2 min-w-max p-2">
