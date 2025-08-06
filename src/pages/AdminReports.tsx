@@ -437,60 +437,82 @@ const AdminReports: React.FC = () => {
 
                         {/* Item display column on the right */}
                         {extractItemId(report.action_taken) && (
-                          <div className="bg-white border border-gray-200 rounded-lg p-4 w-96">
-                            <div className="space-y-3">
-                               {/* Item Image and Details Grid */}
-                               <div className="flex gap-4">
-                                 {/* Item Image(s) on the left */}
-                                 <div className="flex-shrink-0">
-                                   {(report.item_image_url || (report.item_image_urls && report.item_image_urls.length > 0)) ? (
-                                     <div className="w-32 h-32 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
-                                       <img
-                                         src={report.item_image_url || report.item_image_urls?.[0]}
-                                         alt={report.item_name || "Item"}
-                                         className="w-full h-full object-cover"
-                                         onError={(e) => {
-                                           const target = e.target as HTMLImageElement;
-                                           target.style.display = 'none';
-                                           const parent = target.parentElement;
-                                           if (parent) {
-                                             parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>';
-                                           }
-                                         }}
-                                       />
-                                     </div>
-                                   ) : (
-                                     <div className="w-32 h-32 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
-                                       <span className="text-gray-400 text-xs text-center">No Image</span>
-                                     </div>
-                                   )}
-                                 </div>
-                                 
-                                  {/* Item Details on the right */}
-                                  <div className="flex-1 space-y-3">
-                                    {/* Item Name and Description */}
-                                    {report.item_name && (
-                                      <div>
-                                        <div className="text-lg font-semibold text-gray-900 truncate">
-                                          {report.item_name}
-                                        </div>
-                                        {report.item_description && (
-                                          <div className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                            {report.item_description}
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-                                    
-                                    {/* Item Details */}
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                      <div className="font-medium text-gray-900">Electronics</div>
-                                      <div className="font-medium text-gray-900">Cameras</div>
-                                      <div className="font-medium text-gray-900">Brand New</div>
-                                      <div className="font-medium text-gray-900">Up to $50</div>
-                                    </div>
+                          <div className="flex gap-4">
+                            <div className="bg-white border border-gray-200 rounded-lg p-4 w-96">
+                              <div className="space-y-3">
+                                 {/* Item Image and Details Grid */}
+                                 <div className="flex gap-4">
+                                   {/* Item Image(s) on the left */}
+                                   <div className="flex-shrink-0">
+                                     {(report.item_image_url || (report.item_image_urls && report.item_image_urls.length > 0)) ? (
+                                       <div className="w-32 h-32 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+                                         <img
+                                           src={report.item_image_url || report.item_image_urls?.[0]}
+                                           alt={report.item_name || "Item"}
+                                           className="w-full h-full object-cover"
+                                           onError={(e) => {
+                                             const target = e.target as HTMLImageElement;
+                                             target.style.display = 'none';
+                                             const parent = target.parentElement;
+                                             if (parent) {
+                                               parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>';
+                                             }
+                                           }}
+                                         />
+                                       </div>
+                                     ) : (
+                                       <div className="w-32 h-32 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                                         <span className="text-gray-400 text-xs text-center">No Image</span>
+                                       </div>
+                                     )}
                                    </div>
+                                   
+                                    {/* Item Details on the right */}
+                                    <div className="flex-1 space-y-3">
+                                      {/* Item Name and Description */}
+                                      {report.item_name && (
+                                        <div>
+                                          <div className="text-lg font-semibold text-gray-900 truncate">
+                                            {report.item_name}
+                                          </div>
+                                          {report.item_description && (
+                                            <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                              {report.item_description}
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+                                      
+                                      {/* Item Details */}
+                                      <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div className="font-medium text-gray-900">Electronics</div>
+                                        <div className="font-medium text-gray-900">Cameras</div>
+                                        <div className="font-medium text-gray-900">Brand New</div>
+                                        <div className="font-medium text-gray-900">Up to $50</div>
+                                      </div>
+                                    </div>
                                  </div>
+                               </div>
+                             </div>
+                             
+                             {/* Action buttons */}
+                             <div className="flex flex-col gap-2">
+                               <Button
+                                 variant="outline"
+                                 size="sm"
+                                 onClick={() => updateReportStatus(report.id, 'resolved', 'Report dismissed by admin')}
+                                 className="whitespace-nowrap"
+                               >
+                                 Dismiss
+                               </Button>
+                               <Button
+                                 variant="default"
+                                 size="sm"
+                                 onClick={() => updateReportStatus(report.id, 'resolved', 'Report accepted and resolved by admin')}
+                                 className="whitespace-nowrap"
+                               >
+                                 Accept
+                               </Button>
                              </div>
                            </div>
                          )}
