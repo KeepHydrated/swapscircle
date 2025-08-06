@@ -347,7 +347,6 @@ const AdminReports: React.FC = () => {
                          
                          {/* Report Details */}
                          <div>
-                           <h4 className="font-semibold mb-2">Report Details:</h4>
                            <div className="space-y-2">
                               <div className="font-medium text-sm text-gray-700 capitalize">
                                 {(report.displayType || report.type).replace(/_/g, ' ')}
