@@ -51,8 +51,9 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Only show matches when fully loaded (no loading states)
-  const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
+  // Only show matches when fully loaded (no loading states at all)
+  const isAnyLoading = loading || isLoadingLikedStatus;
+  const displayedMatches = isAnyLoading ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
@@ -95,7 +96,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isLoadingLikedStatus) ? (
+      {(displayedMatches.length === 0 && !isAnyLoading) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
