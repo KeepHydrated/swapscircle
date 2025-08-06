@@ -449,12 +449,13 @@ const Test: React.FC = () => {
                   
                    <TabsContent value="matches" className="flex-1 mt-0">
                      {selectedUserItem ? (
-                       <Matches
-                         matches={matches}
-                         selectedItemName={selectedUserItem.name}
-                         selectedItemId={selectedUserItem.id}
-                         onUndoAvailable={handleMatchesUndoAvailable}
-                       />
+                        <Matches
+                          matches={matches}
+                          selectedItemName={selectedUserItem.name}
+                          selectedItemId={selectedUserItem.id}
+                          onUndoAvailable={handleMatchesUndoAvailable}
+                          loading={matchesLoading}
+                        />
                      ) : (
                        <div className="h-full flex flex-col">
                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
