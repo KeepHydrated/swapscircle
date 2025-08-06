@@ -17,6 +17,7 @@ export interface UseMatchActionsResult {
   removedItems: string[];
   selectedMatch: MatchItem | null;
   lastActions: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[];
+  isLoadingLikedStatus: boolean;
   handleLike: (id: string, global?: boolean) => void;
   handleReject: (id: string, global?: boolean) => void;
   handleUndo: () => void;
@@ -39,12 +40,14 @@ export const useMatchActions = (
     likedItems: Record<string, boolean>;
     removedItems: string[];
     lastActions: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[];
+    isLoadingLikedStatus: boolean;
   }>>({});
   
   const currentState = stateByItem[stateKey] || {
     likedItems: {},
     removedItems: [],
-    lastActions: []
+    lastActions: [],
+    isLoadingLikedStatus: true
   };
 
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
@@ -62,13 +65,16 @@ export const useMatchActions = (
   const loadLikedStatus = async () => {
     console.log('DEBUG: loadLikedStatus called with matches:', matches.length);
     
+    // Set loading state
+    updateCurrentState({ isLoadingLikedStatus: true });
+    
     if (!user || !supabaseConfigured || matches.length === 0) {
       console.log('DEBUG: Early return - no user, supabase, or matches');
       const initialLikedStatus: Record<string, boolean> = {};
       matches.forEach(match => {
         initialLikedStatus[match.id] = false;
       });
-      updateCurrentState({ likedItems: initialLikedStatus });
+      updateCurrentState({ likedItems: initialLikedStatus, isLoadingLikedStatus: false });
       return;
     }
     
@@ -92,7 +98,7 @@ export const useMatchActions = (
     }
     
     console.log('DEBUG: Final liked status:', JSON.stringify(likedStatus, null, 2));
-    updateCurrentState({ likedItems: likedStatus });
+    updateCurrentState({ likedItems: likedStatus, isLoadingLikedStatus: false });
   };
 
   useEffect(() => {
@@ -318,6 +324,7 @@ export const useMatchActions = (
     removedItems: currentState.removedItems,
     selectedMatch,
     lastActions: currentState.lastActions,
+    isLoadingLikedStatus: currentState.isLoadingLikedStatus,
     handleLike,
     handleReject,
     handleUndo,

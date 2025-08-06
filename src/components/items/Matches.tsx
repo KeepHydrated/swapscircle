@@ -32,6 +32,7 @@ const Matches: React.FC<MatchesProps> = ({
     removedItems,
     selectedMatch,
     lastActions,
+    isLoadingLikedStatus,
     handleLike,
     handleReject,
     handleUndo,
@@ -88,8 +89,8 @@ const Matches: React.FC<MatchesProps> = ({
     }
   };
 
-  // Show skeleton loading while fetching matches
-  if (loading) {
+  // Show skeleton loading while fetching matches or liked status
+  if (loading || isLoadingLikedStatus) {
     return (
       <div className="w-full flex flex-col h-full">
         <div className="flex gap-2 min-w-max p-2">
