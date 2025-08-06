@@ -1288,6 +1288,7 @@ export type Database = {
           show_location: boolean | null
           state: string | null
           street: string | null
+          strikes_count: number | null
           updated_at: string | null
           user_id: string | null
           username: string | null
@@ -1310,6 +1311,7 @@ export type Database = {
           show_location?: boolean | null
           state?: string | null
           street?: string | null
+          strikes_count?: number | null
           updated_at?: string | null
           user_id?: string | null
           username?: string | null
@@ -1332,6 +1334,7 @@ export type Database = {
           show_location?: boolean | null
           state?: string | null
           street?: string | null
+          strikes_count?: number | null
           updated_at?: string | null
           user_id?: string | null
           username?: string | null
@@ -2566,6 +2569,10 @@ export type Database = {
         Args: { user_id: string; role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
+      increment_user_strikes: {
+        Args: { target_user_id: string }
+        Returns: number
+      }
       is_admin: {
         Args: { user_id: string }
         Returns: boolean
@@ -2599,6 +2606,15 @@ export type Database = {
       search_books_ai: {
         Args: { query: string }
         Returns: Json
+      }
+      send_violation_notification: {
+        Args: {
+          target_user_id: string
+          item_name: string
+          violation_reason: string
+          strike_count: number
+        }
+        Returns: string
       }
       toggle_moderator_status: {
         Args: { moderator_id: string; admin_user_id: string }
