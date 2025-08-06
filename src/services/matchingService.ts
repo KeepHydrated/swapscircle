@@ -339,13 +339,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         }
       }
 
-      // BIDIRECTIONAL LOGIC: Show match if EITHER user is interested in the other's item
-      // This ensures both users see each other's items when there's mutual potential
-      isMatch = currentUserInterested || otherUserInterested;
+      // BIDIRECTIONAL LOGIC: Show match ONLY if BOTH users are interested in each other's items
+      // This ensures true mutual matching based on criteria
+      isMatch = currentUserInterested && otherUserInterested;
 
-      // Add bonus score for mutual interest
-      if (currentUserInterested && otherUserInterested) {
-        matchScore += 10; // Huge bonus for mutual interest
+      // Add bonus score for mutual interest (which is now required)
+      if (isMatch) {
+        matchScore += 10; // Bonus for confirmed mutual match
       }
 
       console.log(`Debug - Item ${otherItem.id}: currentUserInterested=${currentUserInterested}, otherUserInterested=${otherUserInterested}, isMatch=${isMatch}, score=${matchScore}`);
