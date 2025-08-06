@@ -163,10 +163,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
           if (profileError || !profileData) {
             console.error('Error fetching user profile:', profileError);
-            console.log('MODAL DEBUG: No profile data, setting fallback');
-            // Use minimal fallback without hardcoded data
+            console.log('MODAL DEBUG: No profile data, creating fallback for user:', userIdToFetch);
+            // Create a better fallback profile using the user_id
             setUserProfile({
-              name: "Unknown User",
+              name: "User", // Generic fallback name
+              username: userIdToFetch.substring(0, 8), // Use first 8 chars of user ID as username
               avatar_url: "",
               created_at: new Date().toISOString()
             });
