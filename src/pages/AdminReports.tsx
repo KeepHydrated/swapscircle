@@ -432,7 +432,6 @@ const AdminReports: React.FC = () => {
                         {/* Item display column on the right */}
                         {extractItemId(report.action_taken) && (
                           <div className="bg-white border border-gray-200 rounded-lg p-4 w-80">
-                            <div className="text-sm font-medium text-gray-600 mb-3">REPORTED ITEM</div>
                             <div className="space-y-3">
                               {/* Item Name */}
                               {report.item_name && (
