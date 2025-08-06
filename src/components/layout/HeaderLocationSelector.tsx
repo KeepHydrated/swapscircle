@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface HeaderLocationSelectorProps {
   onLocationChange?: (value: string) => void;
@@ -17,7 +19,9 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   const [selectedLocation, setSelectedLocation] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<string | null>(null);
+  const [hasUserLocation, setHasUserLocation] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   
   
 
@@ -34,6 +38,9 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
         
         if (profile?.location) {
           setUserLocation(profile.location);
+          setHasUserLocation(true);
+        } else {
+          setHasUserLocation(false);
         }
       }
     };
@@ -41,6 +48,14 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   }, []);
 
   const handleLocationSelect = (location: string) => {
+    // Check if user is selecting a mile-based option and doesn't have location set
+    if (['5', '10', '20', '50'].includes(location) && !hasUserLocation) {
+      toast.error('Please set your location in settings to use mile-based search');
+      navigate('/settings');
+      setIsOpen(false);
+      return;
+    }
+    
     setSelectedLocation(location);
     if (onLocationChange) {
       onLocationChange(location);
