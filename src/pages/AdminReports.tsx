@@ -320,15 +320,18 @@ const AdminReports: React.FC = () => {
 
       if (itemFetchError) throw itemFetchError;
 
-      // 2. Delete item completely from database
+      // 2. Mark the reported item as removed instead of deleting
       const { error: itemError } = await supabase
         .from('items')
-        .delete()
+        .update({ 
+          status: 'removed',
+          is_available: false 
+        })
         .eq('id', itemId);
 
       if (itemError) throw itemError;
 
-      console.log('✅ Item successfully deleted:', itemId);
+      console.log('✅ Item successfully marked as removed:', itemId);
 
       // 3. Increment user strikes
       const { data: strikeCount, error: strikeError } = await supabase

@@ -14,7 +14,7 @@ export interface Item {
   tags?: string[];
   priceRange?: string;
   user_id?: string; // Add user_id to base Item type
-  status?: 'draft' | 'published'; // Add status field
+  status?: 'draft' | 'published' | 'removed'; // Add status field
   has_been_edited?: boolean; // Track if item has been edited since duplication
   // New preference fields for "What You're Looking For"
   lookingForCategories?: string[];

@@ -29,12 +29,13 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
       {items.map(item => {
         const isHidden = (item as any).is_hidden;
         const isDraft = item.status === 'draft';
+        const isRemoved = item.status === 'removed';
         const hasBeenEdited = (item as any).has_been_edited;
         return (
           <Card 
             key={item.id} 
             className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer group relative ${
-              isHidden || isDraft ? 'opacity-60' : ''
+              isHidden || isDraft || isRemoved ? 'opacity-60' : ''
             }`}
             onClick={() => onItemClick && onItemClick(item)}
           >
@@ -43,13 +44,23 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 <img 
                   src={item.image} 
                   alt={item.name} 
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full object-cover ${isRemoved ? 'grayscale' : ''}`}
                 />
               ) : (
                 <ImageIcon className="h-12 w-12 text-gray-400" />
               )}
-              {/* Action Icons - Top Left */}
-              <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              
+              {/* Red overlay for removed items */}
+              {isRemoved && (
+                <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                  <div className="bg-red-600 text-white text-sm font-semibold px-3 py-1 rounded-lg shadow-lg">
+                    REMOVED
+                  </div>
+                </div>
+              )}
+              {/* Action Icons - Top Left - Hide for removed items */}
+              {!isRemoved && (
+                <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button 
                   size="icon" 
                   variant="secondary" 
@@ -83,10 +94,11 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 >
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>
-              </div>
+                </div>
+              )}
 
-              {/* Hide/Unhide Icon - Top Right - Only show for published items */}
-              {!isDraft && (
+              {/* Hide/Unhide Icon - Top Right - Only show for published items, not removed */}
+              {!isDraft && !isRemoved && (
                 <div className={`absolute top-2 right-2 transition-opacity ${
                   isHidden ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                 }`}>
@@ -120,11 +132,16 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                     Draft
                   </div>
                 )}
+                {isRemoved && (
+                  <div className="bg-red-800/75 text-white text-xs px-2 py-1 rounded">
+                    Removed
+                  </div>
+                )}
               </div>
 
             </div>
             <div className="p-4">
-              <h3 className={`font-medium ${isHidden || isDraft ? 'text-gray-500' : 'text-gray-800'}`}>
+              <h3 className={`font-medium ${isHidden || isDraft || isRemoved ? 'text-gray-500' : 'text-gray-800'}`}>
                 {item.name}
               </h3>
             </div>
