@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import MainLayout from '@/components/layout/MainLayout';
@@ -28,12 +29,28 @@ interface Report {
 
 const AdminReports: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('open');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+
+  // Handle navigation to user profile
+  const handleProfileClick = async (reporterId: string) => {
+    // Get current user ID to check if this is their own profile
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    const currentUserId = currentUser?.id;
+    
+    if (currentUserId === reporterId) {
+      // It's their own profile - navigate to regular profile page
+      navigate('/profile');
+    } else {
+      // It's someone else's profile - navigate to other person profile
+      navigate(`/other-profile/${reporterId}`);
+    }
+  };
 
   // Check if user is admin
   useEffect(() => {
@@ -300,19 +317,35 @@ const AdminReports: React.FC = () => {
                   <CardHeader>
                      <div className="flex items-start justify-between">
                        <div className="flex items-start gap-3">
-                         <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10">
-                              {report.reporter_avatar_url ? (
-                                <AvatarImage src={report.reporter_avatar_url} alt={report.reporter_username} />
-                              ) : null}
-                              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                                {report.reporter_username?.slice(0, 2).toUpperCase() || 'U'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="space-y-1">
-                              <div className="font-medium text-sm">{report.reporter_name || report.reporter_username}</div>
-                             <div className="text-xs text-muted-foreground">
-                               {format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}
+                         <div 
+                           className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200"
+                           onClick={() => handleProfileClick(report.reporter_id)}
+                         >
+                           <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+                             {report.reporter_avatar_url ? (
+                               <img
+                                 src={report.reporter_avatar_url}
+                                 alt={report.reporter_name || report.reporter_username}
+                                 className="w-full h-full rounded-full object-cover"
+                               />
+                             ) : (
+                               <span>
+                                 {(report.reporter_username || "U").substring(0, 2).toUpperCase()}
+                               </span>
+                             )}
+                           </div>
+                           <div>
+                             <div className="flex items-center gap-2">
+                               <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
+                                 {report.reporter_name || report.reporter_username || "Unknown User"}
+                               </span>
+                               <div className="flex items-center gap-1">
+                                 <span className="text-yellow-500">★</span>
+                                 <span className="text-sm text-gray-600">No reviews</span>
+                               </div>
+                             </div>
+                             <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                               <span>{format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}</span>
                              </div>
                            </div>
                          </div>
