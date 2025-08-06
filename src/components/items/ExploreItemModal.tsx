@@ -458,8 +458,9 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 
                 {/* User profile info */}
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
-                {userProfile && !loading && (
-                  <div className="flex gap-3 items-center mt-auto pt-6">
+                {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}
+                {userProfile && !loading ? (
+                  <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-6 -mb-6">
                     <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm"
                          onClick={() => {
                            console.log('MODAL DEBUG: Avatar clicked!');
@@ -507,7 +508,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                           )}
                      </div>
                   </div>
-                )}
+                ) : null}
               </>
             )}
           </div>
