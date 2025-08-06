@@ -481,20 +481,19 @@ const AdminReports: React.FC = () => {
                                         )}
                                       </div>
                                     )}
-                                  </div>
-                               </div>
-                              
                                     
                                     {/* Item Details */}
-                                    <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
                                       <div className="font-medium text-gray-900">Electronics</div>
                                       <div className="font-medium text-gray-900">Cameras</div>
                                       <div className="font-medium text-gray-900">Brand New</div>
                                       <div className="font-medium text-gray-900">Up to $50</div>
                                     </div>
-                                  </div>
-                          </div>
-                        )}
+                                   </div>
+                                 </div>
+                             </div>
+                           </div>
+                         )}
                      </div>
                   </CardHeader>
                    <CardContent className="space-y-4">
