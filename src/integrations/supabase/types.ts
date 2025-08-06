@@ -2608,12 +2608,20 @@ export type Database = {
         Returns: Json
       }
       send_violation_notification: {
-        Args: {
-          target_user_id: string
-          item_name: string
-          violation_reason: string
-          strike_count: number
-        }
+        Args:
+          | {
+              target_user_id: string
+              item_id: string
+              item_name: string
+              violation_reason: string
+              strike_count: number
+            }
+          | {
+              target_user_id: string
+              item_name: string
+              violation_reason: string
+              strike_count: number
+            }
         Returns: string
       }
       toggle_moderator_status: {

@@ -328,6 +328,7 @@ const AdminReports: React.FC = () => {
       const { error: notificationError } = await supabase
         .rpc('send_violation_notification', {
           target_user_id: itemData.user_id,
+          item_id: itemId,
           item_name: itemData.name,
           violation_reason: violationReason,
           strike_count: strikeCount
