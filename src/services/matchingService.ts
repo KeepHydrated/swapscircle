@@ -247,8 +247,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Fetch all user profiles in one query
     const { data: userProfiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('user_id, name, username, avatar_url')
-      .in('user_id', userIds);
+      .select('id, name, username, avatar_url')
+      .in('id', userIds);
 
     console.log('🔍 PROFILE FETCH DEBUG:', {
       userIds,
@@ -265,7 +265,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const profileMap = new Map();
     if (userProfiles) {
       userProfiles.forEach(profile => {
-        profileMap.set(profile.user_id, profile);
+        profileMap.set(profile.id, profile);
       });
     }
 
