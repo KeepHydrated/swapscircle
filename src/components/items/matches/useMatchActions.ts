@@ -65,11 +65,18 @@ export const useMatchActions = (
   const loadLikedStatus = async () => {
     console.log('DEBUG: loadLikedStatus called with matches:', matches.length);
     
-    // Set loading state
+    // If no matches, don't set loading state - just set empty state immediately
+    if (matches.length === 0) {
+      console.log('DEBUG: No matches to load, setting empty state immediately');
+      updateCurrentState({ likedItems: {}, isLoadingLikedStatus: false });
+      return;
+    }
+    
+    // Set loading state only when we have matches to process
     updateCurrentState({ isLoadingLikedStatus: true });
     
-    if (!user || !supabaseConfigured || matches.length === 0) {
-      console.log('DEBUG: Early return - no user, supabase, or matches');
+    if (!user || !supabaseConfigured) {
+      console.log('DEBUG: Early return - no user or supabase');
       const initialLikedStatus: Record<string, boolean> = {};
       matches.forEach(match => {
         initialLikedStatus[match.id] = false;
