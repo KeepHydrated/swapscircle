@@ -437,7 +437,7 @@ const AdminReports: React.FC = () => {
 
                         {/* Item display column on the right */}
                         {extractItemId(report.action_taken) && (
-                          <div className="bg-white border border-gray-200 rounded-lg p-4 w-80">
+                          <div className="bg-white border border-gray-200 rounded-lg p-4 w-96">
                             <div className="space-y-3">
                                {/* Item Image and Details Grid */}
                                <div className="flex gap-4">
@@ -483,7 +483,7 @@ const AdminReports: React.FC = () => {
                                     )}
                                     
                                     {/* Item Details */}
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="grid grid-cols-4 gap-4 text-sm">
                                       <div className="font-medium text-gray-900">Electronics</div>
                                       <div className="font-medium text-gray-900">Cameras</div>
                                       <div className="font-medium text-gray-900">Brand New</div>
