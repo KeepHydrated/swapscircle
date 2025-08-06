@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AlertCircle, Clock, CheckCircle, X, Flag, Eye, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -291,14 +292,23 @@ const AdminReports: React.FC = () => {
                 <Card key={report.id}>
                   <CardHeader>
                      <div className="flex items-start justify-between">
-                       <div className="space-y-2">
-                         <div className="text-sm text-muted-foreground">
-                           {format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}
+                       <div className="flex items-start gap-3">
+                         <div className="flex items-center gap-3">
+                           <Avatar className="h-10 w-10">
+                             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                               {report.reporter_username?.slice(0, 2).toUpperCase() || 'U'}
+                             </AvatarFallback>
+                           </Avatar>
+                           <div className="space-y-1">
+                             <div className="font-medium text-sm">{report.reporter_username}</div>
+                             <div className="text-xs text-muted-foreground">
+                               {format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}
+                             </div>
+                           </div>
                          </div>
-                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                           <span>Reporter: {report.reporter_username}</span>
-                           <span>Type: {report.type}</span>
-                         </div>
+                       </div>
+                       <div className="text-xs text-muted-foreground">
+                         Type: {report.type}
                        </div>
                      </div>
                   </CardHeader>
