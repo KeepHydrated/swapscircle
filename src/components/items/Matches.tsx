@@ -29,6 +29,15 @@ const Matches: React.FC<MatchesProps> = ({
   // Track the current item we're showing matches for to prevent flashing
   const [currentItemId, setCurrentItemId] = useState<string | undefined>(selectedItemId);
   
+  // Debug logging
+  console.log('🔍 Matches component render:', {
+    selectedItemId,
+    currentItemId,
+    matchesLength: matches.length,
+    loading,
+    selectedItemName
+  });
+  
   // Get match actions from our custom hook - fixed flashing issue
   const {
     likedItems,
@@ -46,8 +55,24 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
+  // Debug when matches prop changes
+  useEffect(() => {
+    console.log('🔍 Matches prop changed:', {
+      selectedItemId,
+      matchesLength: matches.length,
+      matches: matches.map(m => ({ id: m.id, name: m.name }))
+    });
+  }, [matches, selectedItemId]);
+  
   // Update current item ID only when not loading
   useEffect(() => {
+    console.log('🔍 Considering currentItemId update:', {
+      loading,
+      isLoadingLikedStatus,
+      selectedItemId,
+      currentItemId,
+      willUpdate: !loading && !isLoadingLikedStatus && selectedItemId
+    });
     if (!loading && !isLoadingLikedStatus && selectedItemId) {
       setCurrentItemId(selectedItemId);
     }
@@ -62,6 +87,17 @@ const Matches: React.FC<MatchesProps> = ({
   
   // Hide everything if loading or if item has changed
   const isTransitioning = loading || isLoadingLikedStatus || (selectedItemId !== currentItemId);
+  console.log('🔍 Display logic:', {
+    loading,
+    isLoadingLikedStatus,
+    selectedItemId,
+    currentItemId,
+    isTransitioning,
+    displayedMatchesLength: isTransitioning ? 0 : matches.filter(match => 
+      !removedItems.includes(match.id) && !likedItems[match.id]
+    ).length
+  });
+  
   const displayedMatches = isTransitioning ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
