@@ -460,17 +460,24 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
                 {userProfile && !loading && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
-                    {userProfile.avatar_url && (
-                      <img
-                        src={userProfile.avatar_url}
-                        alt={userProfile.name || userProfile.username}
-                        className="w-11 h-11 rounded-full border object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => {
-                          console.log('MODAL DEBUG: Avatar clicked!');
-                          handleProfileClick();
-                        }}
-                      />
-                    )}
+                    <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm"
+                         onClick={() => {
+                           console.log('MODAL DEBUG: Avatar clicked!');
+                           handleProfileClick();
+                         }}>
+                      {userProfile.avatar_url ? (
+                        <img
+                          src={userProfile.avatar_url}
+                          alt={userProfile.name || userProfile.username}
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      ) : (
+                        // Show initials if no avatar
+                        <span>
+                          {(userProfile.username || userProfile.name || "U").substring(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
                      <div>
                        <div className="flex items-center gap-2">
                          <span 
