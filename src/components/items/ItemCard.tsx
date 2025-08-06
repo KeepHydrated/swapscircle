@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 import MoreActionsMenu from './matches/MatchActionSelector';
 
 // ADD prop showLikeButton to show heart in explore
@@ -49,6 +50,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   tags,
   userProfile
 }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const handleHeartClick = (e: React.MouseEvent, global?: boolean) => {
     console.log('💖 ItemCard: Heart button clicked!', { id, onLike: !!onLike, global });
     e.stopPropagation();
@@ -126,8 +129,24 @@ const ItemCard: React.FC<ItemCardProps> = ({
       >
         <div className="relative">
           <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}>
-            <Avatar className="h-full w-full rounded-none">
-              <AvatarImage src={image} alt={name} className="object-cover transition-transform duration-300 group-hover:scale-105" />
+            {!imageLoaded && !imageError && (
+              <Skeleton className="w-full h-full rounded-none" />
+            )}
+            <Avatar 
+              className={`h-full w-full rounded-none transition-opacity duration-300 ${
+                imageLoaded || imageError ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <AvatarImage 
+                src={image} 
+                alt={name} 
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => {
+                  setImageError(true);
+                  setImageLoaded(true);
+                }}
+              />
               <AvatarFallback className="rounded-none text-gray-400 text-xs font-medium bg-gradient-to-br from-gray-100 to-gray-200">
                 {name.charAt(0).toUpperCase()}
               </AvatarFallback>
