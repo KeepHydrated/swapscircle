@@ -438,6 +438,23 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </div>
                 </div>
                 
+                {/* Item Details */}
+                <div className="grid grid-cols-2 gap-4 text-sm mb-8">
+                  <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
+                  <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
+                  <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
+                  <div className="font-medium text-gray-900">
+                    {displayItem.price_range_min && displayItem.price_range_max
+                      ? `$${displayItem.price_range_min} - $${displayItem.price_range_max}`
+                      : displayItem.price_range_min
+                        ? `From $${displayItem.price_range_min}`
+                        : displayItem.price_range_max
+                          ? `Up to $${displayItem.price_range_max}`
+                          : "Up to $50"
+                    }
+                  </div>
+                </div>
+                
                 {/* User profile info */}
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
                 {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}

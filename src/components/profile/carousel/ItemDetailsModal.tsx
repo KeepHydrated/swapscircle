@@ -375,6 +375,23 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   </div>
                 </div>
                 
+                {/* Item Details */}
+                <div className="grid grid-cols-2 gap-4 text-sm mb-8">
+                  <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
+                  <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
+                  <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
+                  <div className="font-medium text-gray-900">
+                    {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
+                      ? `$${displayItem.price_range_min || displayItem.priceRangeMin} - $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                      : (displayItem.price_range_min || displayItem.priceRangeMin)
+                        ? `From $${displayItem.price_range_min || displayItem.priceRangeMin}`
+                        : (displayItem.price_range_max || displayItem.priceRangeMax)
+                          ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                          : "Up to $50"
+                    }
+                  </div>
+                </div>
+                
                 {/* User profile info - only show if showProfileInfo is true */}
                 {showProfileInfo && userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6">
