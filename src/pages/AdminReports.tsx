@@ -346,18 +346,18 @@ const AdminReports: React.FC = () => {
                    <CardHeader>
                      <div className="flex items-start gap-8">
                        {/* Date and Report Details on the left */}
-                       <div>
-                         <div className="text-xs text-muted-foreground mb-3">
+                       <div className="w-80">
+                         <div className="text-sm text-muted-foreground mb-4">
                            {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
                          </div>
                          
                          {/* Report Details */}
                          <div>
-                           <div className="space-y-2">
-                              <div className="font-medium text-sm text-gray-700 capitalize">
+                           <div className="space-y-3">
+                              <div className="font-semibold text-lg text-gray-900 capitalize">
                                 {(report.displayType || report.type).replace(/_/g, ' ')}
                               </div>
-                              <p className="text-sm text-muted-foreground">{report.displayMessage || report.message}</p>
+                              <p className="text-base text-muted-foreground leading-relaxed">{report.displayMessage || report.message}</p>
                            </div>
                          </div>
                        </div>
