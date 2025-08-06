@@ -2679,7 +2679,12 @@ export type Database = {
         | "Children's Literature"
       book_request_status: "draft" | "submitted" | "approved" | "rejected"
       notification_status: "unread" | "read"
-      notification_type: "book_request" | "report" | "comment" | "sub_comment"
+      notification_type:
+        | "book_request"
+        | "report"
+        | "comment"
+        | "sub_comment"
+        | "violation"
       offer_status: "active" | "withdrawn" | "refunded" | "paid_out"
       payment_status: "pending" | "held" | "released" | "refunded" | "failed"
       report_status: "open" | "in_progress" | "resolved"
@@ -2860,7 +2865,13 @@ export const Constants = {
       ],
       book_request_status: ["draft", "submitted", "approved", "rejected"],
       notification_status: ["unread", "read"],
-      notification_type: ["book_request", "report", "comment", "sub_comment"],
+      notification_type: [
+        "book_request",
+        "report",
+        "comment",
+        "sub_comment",
+        "violation",
+      ],
       offer_status: ["active", "withdrawn", "refunded", "paid_out"],
       payment_status: ["pending", "held", "released", "refunded", "failed"],
       report_status: ["open", "in_progress", "resolved"],
