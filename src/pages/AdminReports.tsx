@@ -469,14 +469,6 @@ const AdminReports: React.FC = () => {
                                 </div>
                               </div>
                               
-                              {/* View Item Button */}
-                              <button
-                                onClick={() => handleViewItem(report)}
-                                className="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-                              >
-                                <Eye className="w-4 h-4" />
-                                View Full Item Details
-                              </button>
                             </div>
                           </div>
                         )}
