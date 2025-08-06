@@ -50,8 +50,8 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Filter out both removed and liked items - but only if liked status is loaded
-  const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
+  // Filter out both removed and liked items - but hide all matches if we're loading liked status OR if matches don't belong to current item
+  const displayedMatches = (isLoadingLikedStatus || matches.length === 0) ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
