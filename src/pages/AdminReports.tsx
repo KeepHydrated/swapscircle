@@ -273,6 +273,17 @@ const AdminReports: React.FC = () => {
     }
   };
 
+  // Handle dismissing a report (no action taken on item)
+  const handleDismissReport = async (reportId: string) => {
+    try {
+      await updateReportStatus(reportId, 'resolved', 'Report dismissed by admin - No action required. Item remains active on marketplace.');
+      toast.success('Report dismissed successfully. Item remains active on marketplace.');
+    } catch (error) {
+      console.error('Error dismissing report:', error);
+      toast.error('Failed to dismiss report');
+    }
+  };
+
   const filteredReports = reports.filter(report => report.status === activeTab);
 
   if (!user) {
@@ -500,7 +511,7 @@ const AdminReports: React.FC = () => {
                                <Button
                                  variant="outline"
                                  size="sm"
-                                 onClick={() => updateReportStatus(report.id, 'resolved', 'Report dismissed by admin')}
+                                 onClick={() => handleDismissReport(report.id)}
                                  className="whitespace-nowrap"
                                >
                                  Dismiss
