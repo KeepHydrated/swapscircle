@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AlertCircle, Clock, CheckCircle, X, Flag, Eye, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -16,6 +16,8 @@ interface Report {
   id: string;
   reporter_id: string;
   reporter_username: string;
+  reporter_avatar_url?: string;
+  reporter_name?: string;
   type: string;
   message: string;
   status: 'open' | 'in_progress' | 'resolved';
@@ -76,15 +78,20 @@ const AdminReports: React.FC = () => {
 
         // Get reporter usernames separately
         const reporterIds = [...new Set(data?.map(r => r.reporter_id) || [])];
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, username')
-          .in('id', reporterIds);
+         const { data: profiles } = await supabase
+           .from('profiles')
+           .select('id, username, avatar_url, name')
+           .in('id', reporterIds);
 
-        const formattedReports = data?.map(report => ({
-          ...report,
-          reporter_username: profiles?.find(p => p.id === report.reporter_id)?.username || 'Unknown User'
-        })) || [];
+        const formattedReports = data?.map(report => {
+          const profile = profiles?.find(p => p.id === report.reporter_id);
+          return {
+            ...report,
+            reporter_username: profile?.username || 'Unknown User',
+            reporter_avatar_url: profile?.avatar_url,
+            reporter_name: profile?.name
+          };
+        }) || [];
 
         setReports(formattedReports);
       } catch (error) {
@@ -294,13 +301,16 @@ const AdminReports: React.FC = () => {
                      <div className="flex items-start justify-between">
                        <div className="flex items-start gap-3">
                          <div className="flex items-center gap-3">
-                           <Avatar className="h-10 w-10">
-                             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                               {report.reporter_username?.slice(0, 2).toUpperCase() || 'U'}
-                             </AvatarFallback>
-                           </Avatar>
-                           <div className="space-y-1">
-                             <div className="font-medium text-sm">{report.reporter_username}</div>
+                            <Avatar className="h-10 w-10">
+                              {report.reporter_avatar_url ? (
+                                <AvatarImage src={report.reporter_avatar_url} alt={report.reporter_username} />
+                              ) : null}
+                              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                                {report.reporter_username?.slice(0, 2).toUpperCase() || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="space-y-1">
+                              <div className="font-medium text-sm">{report.reporter_name || report.reporter_username}</div>
                              <div className="text-xs text-muted-foreground">
                                {format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}
                              </div>
