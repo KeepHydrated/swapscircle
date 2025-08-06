@@ -21,9 +21,16 @@ import { useLocation } from '@/hooks/useLocation';
 
 // Create form schema
 const profileFormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  username: z.string()
+    .min(2, {
+      message: "Username must be at least 2 characters.",
+    })
+    .max(20, {
+      message: "Username must be at most 20 characters.",
+    })
+    .regex(/^[a-zA-Z0-9_]+$/, {
+      message: "Username can only contain letters, numbers, and underscores (no spaces).",
+    }),
   bio: z.string().max(500, {
     message: "Bio must be at most 500 characters.",
   }),
