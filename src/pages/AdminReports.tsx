@@ -292,12 +292,8 @@ const AdminReports: React.FC = () => {
       return;
     }
 
-    // Prompt admin for violation reason
-    const violationReason = prompt('Please specify the violation reason that will be sent to the user:');
-    if (!violationReason || violationReason.trim() === '') {
-      toast.error('Violation reason is required');
-      return;
-    }
+    // Use the report message as the violation reason
+    const violationReason = report.displayMessage || report.message || 'Inappropriate content';
 
     try {
       // 1. Remove item from marketplace (hide it)
@@ -347,7 +343,7 @@ const AdminReports: React.FC = () => {
       );
 
       // Show success message with strike warning
-      let successMessage = `Report accepted. Item removed from marketplace and user notified (Strike ${strikeCount}/3).`;
+      let successMessage = `Report accepted. Item removed for: ${violationReason}. User notified (Strike ${strikeCount}/3).`;
       if (strikeCount >= 3) {
         successMessage += ' WARNING: User has reached 3 strikes and is at risk of suspension.';
       }
