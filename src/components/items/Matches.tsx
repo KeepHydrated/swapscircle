@@ -26,6 +26,8 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
+  // Track if matches have been updated for current selected item
+  const [lastSelectedItemId, setLastSelectedItemId] = useState<string | undefined>(selectedItemId);
   // Get match actions from our custom hook
   const {
     likedItems,
@@ -43,6 +45,16 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
+  // Update tracking when selectedItemId changes
+  useEffect(() => {
+    if (selectedItemId !== lastSelectedItemId) {
+      setLastSelectedItemId(selectedItemId);
+    }
+  }, [selectedItemId, lastSelectedItemId]);
+  
+  // Only show matches if they belong to the current selected item
+  const matchesBelongToCurrentItem = lastSelectedItemId === selectedItemId;
+  
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
     if (onUndoAvailable) {
@@ -51,7 +63,7 @@ const Matches: React.FC<MatchesProps> = ({
   }, [lastActions, onUndoAvailable, handleUndo]);
   
   // Filter out both removed and liked items - but hide all matches if we're loading liked status OR if matches don't belong to current item
-  const displayedMatches = (isLoadingLikedStatus || matches.length === 0) ? [] : matches.filter(match => 
+  const displayedMatches = (isLoadingLikedStatus || !matchesBelongToCurrentItem || matches.length === 0) ? [] : matches.filter(match =>
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
