@@ -341,7 +341,24 @@ const PostItem: React.FC = () => {
       return;
     }
 
-    if (!subcategory) {
+    // Check if subcategory is required for the selected category
+    const categories = {
+      "Electronics": ["Cameras", "Computers", "Audio Equipment", "TVs", "Gaming Consoles", "Other Electronics"],
+      "Home & Garden": ["Power Tools", "Furniture", "Party Supplies", "Kitchen Appliances", "Gardening Equipment", "Other Home Items"],
+      "Sports & Outdoors": ["Camping Gear", "Bikes", "Winter Sports", "Water Sports", "Fitness Equipment", "Other Sports Gear"],
+      "Clothing": ["Formal Wear", "Costumes", "Accessories", "Designer Items", "Special Occasion", "Other Clothing"],
+      "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Other Business Items"],
+      "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Other Entertainment Items"],
+      "Collectibles": ["Trading Cards", "Toys", "Vintage Items", "Memorabilia", "Comics", "Stamps", "Coins", "Vinyl Records", "Antiques", "Other Collectibles"],
+      "Books & Media": ["Books", "Movies", "Music", "Magazines", "Other Media"],
+      "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Other Tools"],
+      "Vehicles": ["Cars", "Motorcycles", "Bicycles", "Scooters", "Other Vehicles"],
+      "Furniture": ["Living Room", "Bedroom", "Dining Room", "Office", "Outdoor", "Other Furniture"],
+      "Other": ["Miscellaneous"]
+    };
+    
+    const hasSubcategories = categories[category as keyof typeof categories]?.length > 0;
+    if (hasSubcategories && !subcategory) {
       toast.error('Please select a subcategory for your item');
       return;
     }
