@@ -29,6 +29,7 @@ const Matches: React.FC<MatchesProps> = ({
   // Track the last item that matches were loaded for
   const [lastMatchesItemId, setLastMatchesItemId] = useState<string | undefined>(selectedItemId);
   const [lastSelectedItemId, setLastSelectedItemId] = useState<string | undefined>(selectedItemId);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   // Get match actions from our custom hook
   const {
     likedItems,
@@ -53,12 +54,20 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [matches, selectedItemId]);
   
-  // Track selectedItemId changes
+  // Track selectedItemId changes and transitions
   useEffect(() => {
     if (selectedItemId !== lastSelectedItemId) {
+      setIsTransitioning(true);
       setLastSelectedItemId(selectedItemId);
     }
   }, [selectedItemId, lastSelectedItemId]);
+  
+  // Clear transition when matches are updated for current item
+  useEffect(() => {
+    if (isTransitioning && lastMatchesItemId === selectedItemId) {
+      setIsTransitioning(false);
+    }
+  }, [isTransitioning, lastMatchesItemId, selectedItemId]);
   
   // Only show matches if they're for the current selected item
   const matchesAreForCurrentItem = lastMatchesItemId === selectedItemId;
@@ -131,7 +140,7 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isLoadingLikedStatus && matchesAreForCurrentItem) ? (
+      {(displayedMatches.length === 0 && !isLoadingLikedStatus && matchesAreForCurrentItem && !isTransitioning) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
