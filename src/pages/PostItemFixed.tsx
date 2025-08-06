@@ -300,8 +300,77 @@ const PostItemFixed: React.FC = () => {
       return;
     }
 
+    // Validation - all fields are now mandatory
     if (!title.trim()) {
-      toast.error('Please enter a title for your item.');
+      toast.error('Please enter a title for your item');
+      return;
+    }
+
+    if (!description.trim()) {
+      toast.error('Please enter a description for your item');
+      return;
+    }
+
+    if (images.length === 0) {
+      toast.error('Please add at least one image of your item');
+      return;
+    }
+
+    if (!category) {
+      toast.error('Please select a category for your item');
+      return;
+    }
+
+    // Check if subcategory is required for the selected category
+    const categories = {
+      "Electronics": ["Cameras", "Computers", "Audio Equipment", "TVs", "Gaming Consoles", "Other Electronics"],
+      "Home & Garden": ["Power Tools", "Furniture", "Party Supplies", "Kitchen Appliances", "Gardening Equipment", "Other Home Items"],
+      "Sports & Outdoors": ["Camping Gear", "Bikes", "Winter Sports", "Water Sports", "Fitness Equipment", "Other Sports Gear"],
+      "Clothing": ["Formal Wear", "Costumes", "Accessories", "Designer Items", "Special Occasion", "Other Clothing"],
+      "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Other Business Items"],
+      "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Other Entertainment Items"],
+      "Collectibles": ["Trading Cards", "Toys", "Vintage Items", "Memorabilia", "Comics", "Stamps", "Coins", "Vinyl Records", "Antiques", "Other Collectibles"],
+      "Books & Media": ["Books", "Movies", "Music", "Magazines", "Other Media"],
+      "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Other Tools"],
+      "Vehicles": ["Cars", "Motorcycles", "Bicycles", "Scooters", "Other Vehicles"],
+      "Furniture": ["Living Room", "Bedroom", "Dining Room", "Office", "Outdoor", "Other Furniture"],
+      "Other": ["Miscellaneous"]
+    };
+    
+    const hasSubcategories = categories[category as keyof typeof categories]?.length > 0;
+    if (hasSubcategories && !subcategory) {
+      toast.error('Please select a subcategory for your item');
+      return;
+    }
+
+    if (!condition) {
+      toast.error('Please select the condition of your item');
+      return;
+    }
+
+    if (!priceRange) {
+      toast.error('Please select a price range for your item');
+      return;
+    }
+
+    // Validation for preferences (right column) - all fields are now mandatory
+    if (!lookingForText.trim()) {
+      toast.error('Please describe what you\'re looking for');
+      return;
+    }
+
+    if (selectedCategories.length === 0) {
+      toast.error('Please select at least one category you\'re looking for');
+      return;
+    }
+
+    if (selectedConditions.length === 0) {
+      toast.error('Please select at least one condition you\'re looking for');
+      return;
+    }
+
+    if (selectedPriceRanges.length === 0) {
+      toast.error('Please select at least one price range you\'re looking for');
       return;
     }
 
@@ -330,6 +399,7 @@ const PostItemFixed: React.FC = () => {
         lookingForDescription: lookingForText,
         priceRangeMin: priceRange ? parseFloat(priceRange.split('-')[0]) : undefined,
         priceRangeMax: priceRange ? parseFloat(priceRange.split('-')[1]) : undefined,
+        lookingForPriceRanges: selectedPriceRanges,
       };
 
       console.log('Posting item:', item);
