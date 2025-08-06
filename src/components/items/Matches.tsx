@@ -26,16 +26,31 @@ const Matches: React.FC<MatchesProps> = ({
   loading = false,
   onRefreshMatches
 }) => {
-  // Track the last selectedItemId to detect changes
-  const [lastSelectedItemId, setLastSelectedItemId] = useState<string | undefined>(selectedItemId);
+  // Force loading state on any selectedItemId change until data syncs
+  const [isItemChanging, setIsItemChanging] = useState(false);
+  const [syncedItemId, setSyncedItemId] = useState<string | undefined>(selectedItemId);
+  
+  // Immediately detect item changes at render time (before useEffect)
+  if (selectedItemId !== syncedItemId) {
+    console.log('🚨 ITEM CHANGE DETECTED AT RENDER:', {
+      from: syncedItemId,
+      to: selectedItemId,
+      matchesLength: matches.length
+    });
+    // Force loading state immediately
+    if (!isItemChanging) {
+      setIsItemChanging(true);
+    }
+  }
   
   // Debug logging
   console.log('🔍 Matches component render:', {
     selectedItemId,
-    lastSelectedItemId,
+    syncedItemId,
     matchesLength: matches.length,
     loading,
-    selectedItemName
+    selectedItemName,
+    isItemChanging
   });
   
   // Get match actions from our custom hook - fixed flashing issue
@@ -64,16 +79,18 @@ const Matches: React.FC<MatchesProps> = ({
     });
   }, [matches, selectedItemId]);
   
-  // Update lastSelectedItemId when selectedItemId changes
+  // Update syncedItemId and clear isItemChanging when data is ready
   useEffect(() => {
-    if (selectedItemId !== lastSelectedItemId) {
-      console.log('🔍 selectedItemId changed, updating lastSelectedItemId:', {
-        from: lastSelectedItemId,
-        to: selectedItemId
+    if (selectedItemId && !isLoadingLikedStatus && !loading) {
+      console.log('🔍 Data is ready, syncing itemId:', {
+        selectedItemId,
+        syncedItemId,
+        wasChanging: isItemChanging
       });
-      setLastSelectedItemId(selectedItemId);
+      setSyncedItemId(selectedItemId);
+      setIsItemChanging(false);
     }
-  }, [selectedItemId, lastSelectedItemId]);
+  }, [selectedItemId, isLoadingLikedStatus, loading, syncedItemId, isItemChanging]);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
@@ -82,16 +99,15 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Simple approach: hide content immediately if selectedItemId changed but state hasn't caught up
-  const itemIdJustChanged = selectedItemId !== lastSelectedItemId;
-  const isTransitioning = loading || isLoadingLikedStatus || itemIdJustChanged;
+  // Hide content during transitions
+  const isTransitioning = loading || isLoadingLikedStatus || isItemChanging;
   
   console.log('🔍 Display logic:', {
     loading,
     isLoadingLikedStatus,
     selectedItemId,
-    lastSelectedItemId,
-    itemIdJustChanged,
+    syncedItemId,
+    isItemChanging,
     isTransitioning,
     matchesLength: matches.length,
     displayedMatchesLength: isTransitioning ? 0 : matches.filter(match => 
