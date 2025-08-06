@@ -292,12 +292,11 @@ const AdminReports: React.FC = () => {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(report.status)}
-                          <CardTitle className="text-lg">Report Details</CardTitle>
-                          <Badge variant={getStatusColor(report.status) as any}>
-                            {report.status.replace('_', ' ').toUpperCase()}
-                          </Badge>
+                         <div className="flex items-center gap-2">
+                           {getStatusIcon(report.status)}
+                           <Badge variant={getStatusColor(report.status) as any}>
+                             {report.status.replace('_', ' ').toUpperCase()}
+                           </Badge>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>Reporter: {report.reporter_username}</span>
