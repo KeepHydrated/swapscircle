@@ -66,7 +66,7 @@ const PostItem: React.FC = () => {
   // Check if profile is complete before allowing posting
   useEffect(() => {
     if (user && !isProfileComplete(user)) {
-      toast.error('Please complete your profile (username and avatar) before posting items.');
+      toast.error('Please complete your profile (username required) before posting items.');
       navigate('/settings');
       return;
     }

@@ -3,9 +3,8 @@ import { User } from '@/services/authService';
 export const isProfileComplete = (user: User | null): boolean => {
   if (!user) return false;
   
-  // Profile is complete if user has both username and avatar
-  // Location and bio are optional
-  return !!(user.name && user.avatar_url);
+  // Profile is complete if user has a username (avatar is optional - initials avatar is fine)
+  return !!(user.name);
 };
 
 export const isNewUser = (user: User | null): boolean => {
