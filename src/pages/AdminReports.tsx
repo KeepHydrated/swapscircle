@@ -379,7 +379,7 @@ const AdminReports: React.FC = () => {
                           <div className="font-medium text-sm text-gray-700 capitalize">
                             {(report.displayType || report.type).replace(/_/g, ' ')}
                           </div>
-                          <p className="text-muted-foreground bg-muted p-3 rounded">{report.displayMessage || report.message}</p>
+                          <p className="text-sm text-muted-foreground">{report.displayMessage || report.message}</p>
                        </div>
                      </div>
                      
