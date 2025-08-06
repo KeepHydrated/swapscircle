@@ -290,17 +290,17 @@ const AdminReports: React.FC = () => {
               filteredReports.map((report) => (
                 <Card key={report.id}>
                   <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                           <div className="flex items-center gap-2">
-                          </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>Reporter: {report.reporter_username}</span>
-                          <span>Type: {report.type}</span>
-                          <span>Created: {format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}</span>
-                        </div>
-                      </div>
-                    </div>
+                     <div className="flex items-start justify-between">
+                       <div className="space-y-2">
+                         <div className="text-sm text-muted-foreground">
+                           {format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}
+                         </div>
+                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                           <span>Reporter: {report.reporter_username}</span>
+                           <span>Type: {report.type}</span>
+                         </div>
+                       </div>
+                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
