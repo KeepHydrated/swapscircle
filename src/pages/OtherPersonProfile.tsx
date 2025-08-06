@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
+import { ReportButton } from '@/components/profile/ReportButton';
 import { Star } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
@@ -322,7 +323,11 @@ const OtherPersonProfile: React.FC = () => {
             userId={userId || undefined}
             isOwnProfile={false}
           />
-          <div className="absolute top-6 right-6">
+          <div className="absolute top-6 right-6 flex gap-2">
+            <ReportButton 
+              reportedUserId={userId || ""} 
+              reportedUsername={profileData.name}
+            />
             <FriendRequestButton 
               userId={userId || "profile1"} 
               initialStatus="none" 
