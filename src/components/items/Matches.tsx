@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import { Button } from '@/components/ui/button';
@@ -82,17 +82,18 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Hide everything if loading, loading liked status, or if item ID changed but matches haven't synced yet
-  const itemIdChanged = selectedItemId !== lastSelectedItemId;
-  const isTransitioning = loading || isLoadingLikedStatus || itemIdChanged;
+  // Simple approach: hide content immediately if selectedItemId changed but state hasn't caught up
+  const itemIdJustChanged = selectedItemId !== lastSelectedItemId;
+  const isTransitioning = loading || isLoadingLikedStatus || itemIdJustChanged;
   
   console.log('🔍 Display logic:', {
     loading,
     isLoadingLikedStatus,
     selectedItemId,
     lastSelectedItemId,
-    itemIdChanged,
+    itemIdJustChanged,
     isTransitioning,
+    matchesLength: matches.length,
     displayedMatchesLength: isTransitioning ? 0 : matches.filter(match => 
       !removedItems.includes(match.id) && !likedItems[match.id]
     ).length
