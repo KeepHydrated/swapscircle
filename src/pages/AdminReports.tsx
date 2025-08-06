@@ -294,7 +294,7 @@ const AdminReports: React.FC = () => {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getStatusIcon(report.status)}
-                          <CardTitle className="text-lg">Report #{report.id.slice(0, 8)}</CardTitle>
+                          <CardTitle className="text-lg">Report Details</CardTitle>
                           <Badge variant={getStatusColor(report.status) as any}>
                             {report.status.replace('_', ' ').toUpperCase()}
                           </Badge>
