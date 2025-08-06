@@ -50,18 +50,19 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Filter out both removed and liked items
-  const displayedMatches = matches.filter(match => 
+  // Filter out both removed and liked items - but only if liked status is loaded
+  const displayedMatches = isLoadingLikedStatus ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
   console.log('DEBUG: Matches filter results:', JSON.stringify({
     totalMatches: matches.length,
+    isLoadingLikedStatus,
     removedItems,
     likedItems,
     displayedMatches: displayedMatches.length,
     matchIds: matches.map(m => m.id),
-    filteredOutByLikes: matches.filter(m => likedItems[m.id]).map(m => m.id),
+    filteredOutByLikes: isLoadingLikedStatus ? [] : matches.filter(m => likedItems[m.id]).map(m => m.id),
     filteredOutByRemoved: matches.filter(m => removedItems.includes(m.id)).map(m => m.id)
   }, null, 2));
 
