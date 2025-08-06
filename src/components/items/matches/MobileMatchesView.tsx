@@ -165,7 +165,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               </svg>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="w-56 bg-white border border-gray-200 shadow-lg z-50">
+          <DropdownMenuContent align="center" className="w-64 bg-white border border-gray-200 shadow-lg z-50">
             <DropdownMenuItem onClick={() => { onLike(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
               <Users className="h-4 w-4 mr-2 text-green-600" />
               Accept for all of my items

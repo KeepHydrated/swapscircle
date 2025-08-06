@@ -48,7 +48,7 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
           <MoreVertical className={`${iconSize} text-gray-400 group-hover:text-gray-600 transition-colors`} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg z-50">
+      <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg z-50">
         <DropdownMenuItem onClick={handleLikeAllClick} className="cursor-pointer">
           <Users className="h-4 w-4 mr-2 text-green-600" />
           Accept for all of my items
