@@ -62,14 +62,16 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }, [lastActions, onUndoAvailable, handleUndo]);
   
-  // Filter out both removed and liked items - but hide all matches if we're loading liked status OR if matches don't belong to current item
-  const displayedMatches = (isLoadingLikedStatus || !matchesBelongToCurrentItem || matches.length === 0) ? [] : matches.filter(match =>
+  // Only show matches after liked status is loaded AND they belong to current item
+  const displayedMatches = (isLoadingLikedStatus || !matchesBelongToCurrentItem) ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
   console.log('🚨 FLASH DEBUG: Matches component state:', JSON.stringify({
     selectedItemName,
     selectedItemId,
+    lastSelectedItemId,
+    matchesBelongToCurrentItem,
     totalMatches: matches.length,
     isLoadingLikedStatus,
     isGeneralLoading: loading,
@@ -77,7 +79,7 @@ const Matches: React.FC<MatchesProps> = ({
     likedItems,
     displayedMatches: displayedMatches.length,
     matchIds: matches.map(m => m.id),
-    filteredOutByLikes: isLoadingLikedStatus ? [] : matches.filter(m => likedItems[m.id]).map(m => m.id),
+    filteredOutByLikes: matches.filter(m => likedItems[m.id]).map(m => m.id),
     filteredOutByRemoved: matches.filter(m => removedItems.includes(m.id)).map(m => m.id)
   }, null, 2));
 
@@ -120,13 +122,13 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {displayedMatches.length === 0 ? (
+      {(displayedMatches.length === 0 && !isLoadingLikedStatus) ? (
         <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
           <div className="text-4xl mb-3">🔍</div>
           <p className="text-base font-medium mb-1">No matches found</p>
           <p className="text-sm">Try updating your preferences or check back later</p>
         </div>
-      ) : (
+      ) : displayedMatches.length > 0 ? (
         <div className="flex-grow">
           <MatchesContainer
             displayedMatches={displayedMatches}
@@ -137,7 +139,7 @@ const Matches: React.FC<MatchesProps> = ({
             onReport={handleReport}
           />
         </div>
-      )}
+      ) : null}
       
       {/* Modal for displaying match details */}
       {selectedMatch && !(selectedMatch as any).isReportModal && (
