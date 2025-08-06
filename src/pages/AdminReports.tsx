@@ -339,12 +339,25 @@ const AdminReports: React.FC = () => {
                 <Card key={report.id}>
                    <CardHeader>
                      <div className="flex justify-between items-start">
-                       {/* Date at the top left */}
-                       <div className="text-xs text-muted-foreground">
-                         {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
+                       {/* Date and Report Details on the left */}
+                       <div>
+                         <div className="text-xs text-muted-foreground mb-3">
+                           {format(new Date(report.created_at), "MMM d, yyyy HH:mm")}
+                         </div>
+                         
+                         {/* Report Details */}
+                         <div>
+                           <h4 className="font-semibold mb-2">Report Details:</h4>
+                           <div className="space-y-2">
+                              <div className="font-medium text-sm text-gray-700 capitalize">
+                                {(report.displayType || report.type).replace(/_/g, ' ')}
+                              </div>
+                              <p className="text-sm text-muted-foreground">{report.displayMessage || report.message}</p>
+                           </div>
+                         </div>
                        </div>
                        
-                       {/* Profiles stacked in the middle-right */}
+                       {/* Profiles stacked on the right */}
                        <div className="flex flex-col items-center gap-4">
                          {/* Reporter Profile */}
                          <div 
@@ -418,19 +431,7 @@ const AdminReports: React.FC = () => {
                        </div>
                      </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                     <div>
-                       <h4 className="font-semibold mb-2">Report Details:</h4>
-                       <div className="space-y-2">
-                          <div className="font-medium text-sm text-gray-700 capitalize">
-                            {(report.displayType || report.type).replace(/_/g, ' ')}
-                          </div>
-                          <p className="text-sm text-muted-foreground">{report.displayMessage || report.message}</p>
-                       </div>
-                     </div>
-                     
-
-                    {/* View Item Button - show if report contains item information */}
+                   <CardContent className="space-y-4">{/* View Item Button - show if report contains item information */}
                     {extractItemId(report.action_taken) && (
                       <div className="flex justify-end">
                         <Button
