@@ -382,13 +382,7 @@ const AdminReports: React.FC = () => {
                           <p className="text-muted-foreground bg-muted p-3 rounded">{report.displayMessage || report.message}</p>
                        </div>
                      </div>
-                    
-                    {report.action_taken && (
-                      <div>
-                        <h4 className="font-semibold mb-2">Action Taken:</h4>
-                        <p className="text-muted-foreground bg-green-50 p-3 rounded border border-green-200">{report.action_taken}</p>
-                      </div>
-                    )}
+                     
 
                     {/* View Item Button - show if report contains item information */}
                     {extractItemId(report.action_taken) && (
