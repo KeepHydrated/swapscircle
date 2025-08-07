@@ -10,6 +10,12 @@ const Notifications: React.FC = () => {
   const navigate = useNavigate();
   const { notifications, loading, markAsRead } = useNotifications();
 
+  console.log('🔔 NOTIFICATIONS PAGE: Render state:', { 
+    notificationsLength: notifications.length, 
+    loading, 
+    notifications: notifications.slice(0, 3) // Show first 3 for debugging
+  });
+
   const handleNotificationClick = async (notification: any) => {
     console.log('🔔 Notification clicked:', notification);
     

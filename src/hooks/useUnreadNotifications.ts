@@ -25,10 +25,15 @@ export function useNotifications() {
 
   // Fetch notifications
   const fetchNotifications = async () => {
-    if (!user) return;
+    console.log('🔔 HOOK: Fetching notifications for user:', user?.id);
+    if (!user) {
+      console.log('🔔 HOOK: No user found, skipping fetch');
+      return;
+    }
 
     setLoading(true);
     try {
+      console.log('🔔 HOOK: Querying notifications table...');
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -36,6 +41,7 @@ export function useNotifications() {
         .order('created_at', { ascending: false })
         .limit(10);
 
+      console.log('🔔 HOOK: Query result:', { data, error, dataLength: data?.length });
       if (error) throw error;
 
       // Map database fields to our interface
