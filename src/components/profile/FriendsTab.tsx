@@ -373,20 +373,23 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
             {acceptedFriends.map(friend => (
                <Card key={friend.id} className="overflow-hidden relative">
                  <CardContent className="p-0">
-                   {/* Unfriend button positioned absolutely outside the clickable area */}
                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <UserX className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
+                     <AlertDialogTrigger asChild>
+                       <div 
+                         className="p-5 flex flex-col items-center cursor-pointer hover:bg-muted/50 transition-colors" 
+                       >
+                         <Avatar className="h-20 w-20 mb-4">
+                           <AvatarImage src={friend.profiles?.avatar_url} alt={friend.profiles?.name || friend.profiles?.username} />
+                           <AvatarFallback>
+                             {(friend.profiles?.name || friend.profiles?.username || 'U').substring(0, 2)}
+                           </AvatarFallback>
+                         </Avatar>
+                         <h3 className="font-medium text-lg mb-1 text-center">
+                           {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
+                         </h3>
+                         <p className="text-sm text-muted-foreground">Click to unfriend</p>
+                       </div>
+                     </AlertDialogTrigger>
                      <AlertDialogContent>
                        <AlertDialogHeader>
                          <AlertDialogTitle>Unfriend {friend.profiles?.name || friend.profiles?.username}</AlertDialogTitle>
@@ -396,31 +399,15 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                        </AlertDialogHeader>
                        <AlertDialogFooter>
                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Unfriend
-                          </AlertDialogAction>
+                         <AlertDialogAction 
+                           onClick={() => handleUnfriend(friend.id, friend.profiles?.name || friend.profiles?.username || 'this user')}
+                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                         >
+                           Unfriend
+                         </AlertDialogAction>
                        </AlertDialogFooter>
                      </AlertDialogContent>
                    </AlertDialog>
-                   
-                   {/* Clickable area for viewing profile */}
-                   <div 
-                     className="p-5 flex flex-col items-center cursor-pointer" 
-                     onClick={() => handleViewProfile(friend.profiles?.id)}
-                   >
-                     <Avatar className="h-20 w-20 mb-4">
-                       <AvatarImage src={friend.profiles?.avatar_url} alt={friend.profiles?.name || friend.profiles?.username} />
-                       <AvatarFallback>
-                         {(friend.profiles?.name || friend.profiles?.username || 'U').substring(0, 2)}
-                       </AvatarFallback>
-                     </Avatar>
-                     <h3 className="font-medium text-lg mb-1 text-center">
-                       {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
-                     </h3>
-                   </div>
                  </CardContent>
                </Card>
             ))}
