@@ -7,8 +7,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useNavigate } from 'react-router-dom';
 import { Friend } from '@/types/profile';
 import { supabase } from '@/integrations/supabase/client';
-import { UserCheck, UserX, Users, UserPlus } from 'lucide-react';
+import { UserCheck, UserX, Users, UserPlus, Heart } from 'lucide-react';
 import { toast } from 'sonner';
+import { MatchItem } from '@/types/item';
+import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 
 interface FriendsTabProps {
   friends: Friend[];
@@ -32,7 +34,9 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
   const navigate = useNavigate();
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
   const [acceptedFriends, setAcceptedFriends] = useState<FriendRequest[]>([]);
+  const [friendsItems, setFriendsItems] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [itemsLoading, setItemsLoading] = useState(false);
 
   const fetchFriendRequests = async () => {
     try {
@@ -95,11 +99,96 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
         );
         
         setAcceptedFriends(friendsWithProfiles.filter(f => f.profiles));
+        
+        // Fetch friends' items
+        await fetchFriendsItems(friendsWithProfiles.filter(f => f.profiles));
       }
     } catch (error) {
       console.error('Error fetching friend requests:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFriendsItems = async (friendsList: FriendRequest[]) => {
+    setItemsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || friendsList.length === 0) {
+        setFriendsItems([]);
+        return;
+      }
+
+      // Get all friend user IDs
+      const friendIds = friendsList.map(friend => friend.profiles?.id).filter(Boolean);
+
+      // Fetch all items from friends
+      const { data: items, error } = await supabase
+        .from('items')
+        .select(`
+          id,
+          name,
+          description,
+          image_url,
+          image_urls,
+          category,
+          condition,
+          price_range_min,
+          price_range_max,
+          is_available,
+          user_id
+        `)
+        .in('user_id', friendIds)
+        .eq('status', 'published')
+        .eq('is_available', true)
+        .eq('is_hidden', false)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching friends items:', error);
+        return;
+      }
+
+      // Get profile information for each item owner
+      const itemsWithProfiles = await Promise.all(
+        (items || []).map(async (item) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name, username, avatar_url')
+            .eq('id', item.user_id)
+            .single();
+
+          return {
+            ...item,
+            ownerProfile: profile
+          };
+        })
+      );
+
+      // Transform to MatchItem format
+      const formattedItems: MatchItem[] = itemsWithProfiles.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        image: item.image_url || '',
+        image_url: item.image_url,
+        image_urls: item.image_urls || [],
+        category: item.category,
+        condition: item.condition,
+        priceRangeMin: item.price_range_min,
+        priceRangeMax: item.price_range_max,
+        isAvailable: item.is_available,
+        userId: item.user_id,
+        liked: false, // We can add logic to check if user liked this item
+        ownerName: item.ownerProfile?.name || item.ownerProfile?.username || 'Unknown',
+        ownerAvatar: item.ownerProfile?.avatar_url
+      }));
+
+      setFriendsItems(formattedItems);
+    } catch (error) {
+      console.error('Error fetching friends items:', error);
+    } finally {
+      setItemsLoading(false);
     }
   };
 
@@ -173,6 +262,12 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
     }
   };
 
+  const handleLikeItem = async (itemId: string) => {
+    // Here you can implement like functionality if needed
+    // For now, just show a message that liking is available for friends
+    toast.success("Item liked!");
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-10">
@@ -183,6 +278,32 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
 
   return (
     <div className="space-y-8">
+      {/* Friends' Items Section */}
+      {acceptedFriends.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4 flex items-center">
+            <Heart className="mr-2 h-5 w-5" />
+            Friends' Items ({friendsItems.length})
+          </h3>
+          {itemsLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+            </div>
+          ) : friendsItems.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Heart className="mx-auto h-12 w-12 mb-4 opacity-50" />
+              <p>Your friends haven't posted any items yet.</p>
+            </div>
+          ) : (
+            <FriendItemsCarousel 
+              items={friendsItems}
+              onLikeItem={handleLikeItem}
+              title="Friends' Items"
+            />
+          )}
+        </div>
+      )}
+
       {/* Pending Friend Requests */}
       {pendingRequests.length > 0 && (
         <div>
