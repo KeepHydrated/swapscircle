@@ -23,6 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { blockingService } from '@/services/blockingService';
 
 const Test: React.FC = () => {
   // User's authentication and navigation
@@ -45,6 +46,11 @@ const Test: React.FC = () => {
     
     setFriendItemsLoading(true);
     try {
+      // Get blocked users to filter them out
+      const blockedUsers = await blockingService.getBlockedUsers();
+      const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
+      const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
+
       // Get all accepted friend requests where current user is involved
       const { data: friendRequests, error: friendsError } = await supabase
         .from('friend_requests')
@@ -62,10 +68,16 @@ const Test: React.FC = () => {
         return;
       }
 
-      // Get friend user IDs (excluding current user)
-      const friendIds = friendRequests.map(req => 
-        req.requester_id === user.id ? req.recipient_id : req.requester_id
-      );
+      // Get friend user IDs (excluding current user and blocked users)
+      const friendIds = friendRequests
+        .map(req => req.requester_id === user.id ? req.recipient_id : req.requester_id)
+        .filter(friendId => !allBlockedUserIds.includes(friendId));
+
+      // If no non-blocked friends, return empty array
+      if (friendIds.length === 0) {
+        setFriendItems([]);
+        return;
+      }
 
       // Fetch available and visible items from all friends and their profiles separately
       const { data: friendItemsData, error: itemsError } = await supabase
