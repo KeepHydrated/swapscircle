@@ -42,7 +42,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
-    // Get blocked users to filter them out
+    // Get blocked users to filter them out (bidirectional blocking)
     const blockedUsers = await blockingService.getBlockedUsers();
     const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
