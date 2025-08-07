@@ -286,6 +286,11 @@ export const postItem = async (item: Item & {
       .select('*')
       .single();
 
+    console.log('📝 POST ITEM - Database response data:', data);
+    console.log('📝 POST ITEM - Database response error:', error);
+    console.log('📝 POST ITEM - Saved looking_for_categories:', data?.looking_for_categories);
+    console.log('📝 POST ITEM - Saved looking_for_conditions:', data?.looking_for_conditions);
+
     if (error) {
       console.error('Error posting item:', error);
       toast.error(error.message || 'Error posting item');
