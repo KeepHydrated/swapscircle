@@ -210,6 +210,8 @@ export const createItem = async (item: {
     };
 
     console.log('🔄 CREATING ITEM - Inserting item to database:', itemToInsert);
+    console.log('🔄 CREATING ITEM - looking_for_categories:', itemToInsert.looking_for_categories);
+    console.log('🔄 CREATING ITEM - looking_for_conditions:', itemToInsert.looking_for_conditions);
 
     const { data, error } = await supabase
       .from('items')
