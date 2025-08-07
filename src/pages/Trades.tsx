@@ -222,7 +222,7 @@ const Trades = () => {
                 <div className="w-[28rem]">
                   <Card className="h-full">
                     <CardContent className="p-6 space-y-6 h-full flex flex-col">
-                      {/* Their Review */}
+                      {/* Their Profile - Review they left about you */}
                       <div>
                         <div className="flex items-center space-x-3 mb-3">
                           <Avatar 
@@ -235,25 +235,26 @@ const Trades = () => {
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <span 
-                                className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                                onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
-                              >
-                                {otherUser?.username || 'Unknown User'}
-                              </span>
-                              {theirReview && (
-                                <div className="flex">
-                                  {renderStars(theirReview.rating)}
-                                </div>
-                              )}
-                            </div>
+                            <span 
+                              className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                              onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                            >
+                              {otherUser?.username || 'Unknown User'}
+                            </span>
                           </div>
                         </div>
-                        {theirReview ? (
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {theirReview.comment || 'No comment provided'}
-                          </p>
+                        {yourReview ? (
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-600">Their review of you:</p>
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className="flex">
+                                {renderStars(yourReview.rating)}
+                              </div>
+                            </div>
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                              {yourReview.comment || 'No comment provided'}
+                            </p>
+                          </div>
                         ) : (
                           <p className="text-gray-400 text-sm italic">No review yet</p>
                         )}
@@ -262,7 +263,7 @@ const Trades = () => {
                       {/* Divider */}
                       <div className="border-t border-gray-200"></div>
 
-                      {/* Your Review */}
+                      {/* Your Profile - Leave Review for Other User */}
                       <div>
                         <div className="flex items-center space-x-3 mb-3">
                           <Avatar 
@@ -275,28 +276,31 @@ const Trades = () => {
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <span 
-                                className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                                onClick={handleMyProfileClick}
-                              >
-                                {currentUser?.profile?.username || 'You'}
-                              </span>
-                              {yourReview && (
-                                <div className="flex">
-                                  {renderStars(yourReview.rating)}
-                                </div>
-                              )}
-                            </div>
+                            <span 
+                              className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                              onClick={handleMyProfileClick}
+                            >
+                              {currentUser?.profile?.username || 'You'}
+                            </span>
                           </div>
                         </div>
-                        {yourReview ? (
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {yourReview.comment || 'No comment provided'}
-                          </p>
+                        
+                        {/* Show review button or status based on if you've left a review for them */}
+                        {theirReview ? (
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-600">Your review:</p>
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className="flex">
+                                {renderStars(theirReview.rating)}
+                              </div>
+                            </div>
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                              {theirReview.comment || 'No comment provided'}
+                            </p>
+                          </div>
                         ) : (
                           <div className="space-y-2">
-                            <p className="text-gray-400 text-sm italic">No review yet</p>
+                            <p className="text-gray-400 text-sm italic">Leave a review for {otherUser?.username}</p>
                             <Button 
                               variant="outline" 
                               onClick={() => handleLeaveReview(trade)}
