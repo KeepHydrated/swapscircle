@@ -21,7 +21,7 @@ import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
-import OtherProfile from "./pages/OtherProfile";
+
 import AdminReports from "./pages/AdminReports";
 import RequireAuth from "./components/auth/RequireAuth";
 
@@ -72,7 +72,7 @@ const App = () => {
                   <OtherPersonProfile />
                 </RequireAuth>
               } />
-              <Route path="/other-profile/:userId" element={<OtherProfile />} />
+              
               <Route path="/notifications" element={
                 <RequireAuth>
                   <Notifications />

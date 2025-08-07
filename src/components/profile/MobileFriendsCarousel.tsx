@@ -47,7 +47,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   };
 
   const handleViewProfile = (userId: string) => {
-    navigate(`/profile/${userId}`);
+    navigate(`/other-person-profile?userId=${userId}`);
   };
 
   if (currentIndex >= items.length) {
