@@ -35,6 +35,9 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
   const [category, setCategory] = useState(item?.category || '');
   const [condition, setCondition] = useState(item?.condition || '');
   const [priceRange, setPriceRange] = useState(item?.priceRange || '');
+  const [lookingForCategories, setLookingForCategories] = useState<string[]>(item?.looking_for_categories || []);
+  const [lookingForConditions, setLookingForConditions] = useState<string[]>(item?.looking_for_conditions || []);
+  const [lookingForDescription, setLookingForDescription] = useState(item?.looking_for_description || '');
 
   // Reset form when item changes
   React.useEffect(() => {
@@ -45,6 +48,9 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
       setCategory(item.category || '');
       setCondition(item.condition || '');
       setPriceRange(item.priceRange || '');
+      setLookingForCategories(item.looking_for_categories || []);
+      setLookingForConditions(item.looking_for_conditions || []);
+      setLookingForDescription(item.looking_for_description || '');
     }
   }, [item]);
 
@@ -70,6 +76,9 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
       category,
       condition,
       priceRange,
+      looking_for_categories: lookingForCategories,
+      looking_for_conditions: lookingForConditions,
+      looking_for_description: lookingForDescription,
     };
     
     onSave(updatedItem);
@@ -108,6 +117,12 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
             setCondition={setCondition}
             priceRange={priceRange}
             setPriceRange={setPriceRange}
+            lookingForCategories={lookingForCategories}
+            setLookingForCategories={setLookingForCategories}
+            lookingForConditions={lookingForConditions}
+            setLookingForConditions={setLookingForConditions}
+            lookingForDescription={lookingForDescription}
+            setLookingForDescription={setLookingForDescription}
             handleImageSelect={handleImageSelect}
             categoryOptions={categoryOptions}
             conditionOptions={conditionOptions}

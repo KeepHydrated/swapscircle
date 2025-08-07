@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import SelectField from '@/components/ui/select-field';
 import ItemEditImage from './ItemEditImage';
 
@@ -18,6 +19,12 @@ interface ItemEditFormProps {
   setCondition: (condition: string) => void;
   priceRange: string;
   setPriceRange: (priceRange: string) => void;
+  lookingForCategories: string[];
+  setLookingForCategories: (categories: string[]) => void;
+  lookingForConditions: string[];
+  setLookingForConditions: (conditions: string[]) => void;
+  lookingForDescription: string;
+  setLookingForDescription: (description: string) => void;
   handleImageSelect: () => void;
   categoryOptions: string[];
   conditionOptions: string[];
@@ -36,6 +43,12 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
   setCondition,
   priceRange,
   setPriceRange,
+  lookingForCategories,
+  setLookingForCategories,
+  lookingForConditions,
+  setLookingForConditions,
+  lookingForDescription,
+  setLookingForDescription,
   handleImageSelect,
   categoryOptions,
   conditionOptions,
@@ -106,6 +119,79 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
         options={priceRangeOptions}
         placeholder="Select price range"
       />
+
+      {/* What You're Looking For Section */}
+      <div className="border-t pt-6 mt-6">
+        <h3 className="text-lg font-semibold mb-4">What You're Looking For</h3>
+        
+        {/* Looking For Description */}
+        <div className="space-y-2 mb-4">
+          <Label htmlFor="lookingForDescription" className="text-sm font-medium">
+            I'm looking for... <span className="text-red-500">*</span>
+          </Label>
+          <Textarea 
+            id="lookingForDescription" 
+            value={lookingForDescription} 
+            onChange={(e) => setLookingForDescription(e.target.value)}
+            placeholder="Describe what you would like to trade for..." 
+            className="min-h-[80px]"
+          />
+        </div>
+
+        {/* Looking For Categories */}
+        <div className="space-y-3 mb-4">
+          <Label className="text-sm font-medium">
+            Categories <span className="text-red-500">*</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            {categoryOptions.map((cat) => (
+              <div key={cat} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`looking-category-${cat}`}
+                  checked={lookingForCategories.includes(cat)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setLookingForCategories([...lookingForCategories, cat]);
+                    } else {
+                      setLookingForCategories(lookingForCategories.filter(c => c !== cat));
+                    }
+                  }}
+                />
+                <Label htmlFor={`looking-category-${cat}`} className="text-sm">
+                  {cat}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Looking For Conditions */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">
+            Condition <span className="text-red-500">*</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            {conditionOptions.map((cond) => (
+              <div key={cond} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`looking-condition-${cond}`}
+                  checked={lookingForConditions.includes(cond)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setLookingForConditions([...lookingForConditions, cond]);
+                    } else {
+                      setLookingForConditions(lookingForConditions.filter(c => c !== cond));
+                    }
+                  }}
+                />
+                <Label htmlFor={`looking-condition-${cond}`} className="text-sm">
+                  {cond}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
