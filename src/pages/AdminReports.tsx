@@ -614,32 +614,54 @@ const AdminReports: React.FC = () => {
                                  </div>
                                </div>
                              </div>
-                             
-                              {/* Action buttons */}
-                              <div className="flex flex-col gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedReportForAction(report);
-                                    setShowDismissDialog(true);
-                                  }}
-                                  className="whitespace-nowrap"
-                                >
-                                  Dismiss
-                                </Button>
-                                <Button
-                                  variant="default"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedReportForAction(report);
-                                    setShowAcceptDialog(true);
-                                  }}
-                                  className="whitespace-nowrap"
-                                >
-                                  Accept
-                                </Button>
-                              </div>
+                              {/* Action buttons for open reports, or action taken indicator for resolved reports */}
+                              {report.status === 'resolved' ? (
+                                <div className="flex flex-col gap-2 min-w-[120px]">
+                                  <div className="text-center">
+                                    <div className="text-sm font-medium text-muted-foreground mb-2">Action Taken</div>
+                                    {report.action_taken?.includes('dismissed') ? (
+                                      <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Dismissed
+                                      </div>
+                                    ) : (
+                                      <div className="inline-flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Accepted
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedReportForAction(report);
+                                      setShowDismissDialog(true);
+                                    }}
+                                    className="whitespace-nowrap"
+                                  >
+                                    Dismiss
+                                  </Button>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedReportForAction(report);
+                                      setShowAcceptDialog(true);
+                                    }}
+                                    className="whitespace-nowrap"
+                                  >
+                                    Accept
+                                  </Button>
+                                </div>
+                              )}
                            </div>
                          )}
                      </div>
