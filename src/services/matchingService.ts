@@ -30,7 +30,13 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
 };
 
 export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide', perspectiveUserId?: string): Promise<MatchItem[]> => {
+  console.log('🔥 MATCHING SERVICE CALLED - START');
+  console.log('🔥 Selected item:', selectedItem.id, 'owned by:', selectedItem.user_id);
+  console.log('🔥 Current user ID:', currentUserId);
+  console.log('🔥 Perspective user ID:', perspectiveUserId);
+  
   if (!isSupabaseConfigured()) {
+    console.log('🔥 Supabase not configured, returning empty');
     return [];
   }
 
@@ -38,14 +44,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Get current user for authentication
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      console.error('Error getting user:', userError);
+      console.error('🔥 Error getting user:', userError);
       return [];
     }
 
-    console.log('🚨 MATCHING DEBUG - Auth user:', user.id);
-    console.log('🚨 MATCHING DEBUG - Current user param:', currentUserId);
-    console.log('🚨 MATCHING DEBUG - Perspective user param:', perspectiveUserId);
-    console.log('🚨 MATCHING DEBUG - Selected item owner:', selectedItem.user_id);
+    console.log('🔥 MATCHING DEBUG - Auth user:', user.id);
+    console.log('🔥 MATCHING DEBUG - Current user param:', currentUserId);
+    console.log('🔥 MATCHING DEBUG - Perspective user param:', perspectiveUserId);
+    console.log('🔥 MATCHING DEBUG - Selected item owner:', selectedItem.user_id);
 
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
     const effectiveUserId = perspectiveUserId || currentUserId;
