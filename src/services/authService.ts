@@ -505,7 +505,7 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         return { success: true, isMatch: true, matchData: match, conversationId: tradeConversation?.id };
       }
     } else {
-      toast.success('Item liked!');
+      // Don't show toast here - let the calling component handle UI feedback
     }
 
     return { success: true, isMatch: false };
