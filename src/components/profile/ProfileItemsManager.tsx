@@ -95,6 +95,11 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
       console.log('🔄 ORIGINAL looking_for_conditions:', item.looking_for_conditions);
       console.log('🔄 ORIGINAL looking_for_description:', item.looking_for_description);
       // Create the duplicated item data
+      console.log('🔄 CREATING DUPLICATE WITH DATA:', {
+        looking_for_categories: item.looking_for_categories,
+        looking_for_conditions: item.looking_for_conditions,
+        looking_for_description: item.looking_for_description
+      });
       const duplicatedItemData = {
         name: `${item.name} (Copy)`,
         description: item.description || '',
