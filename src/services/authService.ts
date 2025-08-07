@@ -247,9 +247,18 @@ export const postItem = async (item: Item & {
     return null;
   }
 
+  console.log('🚨🚨🚨 POST ITEM CALLED 🚨🚨🚨');
+  console.log('📝 POST ITEM - Input data:', item);
+  console.log('📝 POST ITEM - Function execution started');
+  
   try {
+    console.log('📝 POST ITEM - Inside try block');
+    console.log('📝 POST ITEM - Getting current session...');
     const session = await getCurrentSession();
+    console.log('📝 POST ITEM - Session retrieved:', session?.user?.id);
+    
     if (!session?.user) {
+      console.log('📝 POST ITEM - No user session found');
       toast.error('You must be logged in to post an item.');
       return null;
     }
@@ -272,13 +281,12 @@ export const postItem = async (item: Item & {
       updated_at: new Date().toISOString()
     };
 
-    console.log('🚨🚨🚨 POST ITEM CALLED 🚨🚨🚨');
-    console.log('📝 POST ITEM - Input data:', item);
     console.log('📝 POST ITEM - lookingForCategories:', item.lookingForCategories);
     console.log('📝 POST ITEM - lookingForConditions:', item.lookingForConditions);
     console.log('📝 POST ITEM - Database object to insert:', itemToInsert);
     console.log('📝 POST ITEM - Database looking_for_categories:', itemToInsert.looking_for_categories);
     console.log('📝 POST ITEM - Database looking_for_conditions:', itemToInsert.looking_for_conditions);
+    console.log('📝 POST ITEM - About to call supabase.from(items).insert()...');
 
     const { data, error } = await supabase
       .from('items')
