@@ -333,23 +333,23 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // Direction 1: Does the other item match what the current user is looking for?
       let currentUserInterested = false;
       
-      if (selectedItem.lookingForCategories && selectedItem.lookingForCategories.length > 0) {
-        if (selectedItem.lookingForCategories.includes(otherItem.category)) {
+      if (selectedItem.looking_for_categories && selectedItem.looking_for_categories.length > 0) {
+        if (selectedItem.looking_for_categories.includes(otherItem.category)) {
           matchScore += 3;
           currentUserInterested = true;
         }
       }
 
-      if (selectedItem.lookingForConditions && selectedItem.lookingForConditions.length > 0) {
-        if (selectedItem.lookingForConditions.includes(otherItem.condition)) {
+      if (selectedItem.looking_for_conditions && selectedItem.looking_for_conditions.length > 0) {
+        if (selectedItem.looking_for_conditions.includes(otherItem.condition)) {
           matchScore += 2;
           currentUserInterested = true;
         }
       }
 
       // Check keyword matching in description
-      if (selectedItem.lookingForDescription && otherItem.name) {
-        const lookingForKeywords = selectedItem.lookingForDescription.toLowerCase().split(' ');
+      if (selectedItem.looking_for_description && otherItem.name) {
+        const lookingForKeywords = selectedItem.looking_for_description.toLowerCase().split(' ');
         const itemName = otherItem.name.toLowerCase();
         const itemDescription = (otherItem.description || '').toLowerCase();
         
