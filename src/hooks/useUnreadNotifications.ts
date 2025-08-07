@@ -88,8 +88,9 @@ export function useNotifications() {
       case 'message':
         return '/messages';
       case 'match':
+        return '/';
       case 'friend':
-        return '/other-person-profile';
+        return `/other-person-profile?userId=${referenceId}`;
       case 'item_removed':
         return '/profile'; // Direct to profile to see items
       case 'trade':
