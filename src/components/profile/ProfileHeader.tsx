@@ -61,11 +61,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const handleCopyProfileLink = async () => {
     try {
-      const profileUrl = userId 
-        ? `${window.location.origin}/other-person-profile?userId=${userId}`
+      // For own profile, use the direct /profile route which will redirect to proper user profile
+      // For other users, use the /other-profile/:userId route
+      const profileUrl = userId && !isOwnProfile
+        ? `${window.location.origin}/other-profile/${userId}`
         : `${window.location.origin}/profile`;
       
-      // Open in same tab to preserve auth state
       await navigator.clipboard.writeText(profileUrl);
       toast.success('Profile link copied to clipboard!');
     } catch (error) {
