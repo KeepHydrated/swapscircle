@@ -79,8 +79,8 @@ const UserProfile: React.FC = () => {
         .from('items')
         .select('*')
         .eq('user_id', user_id)
-        .eq('is_available', true)
-        .in('status', ['published', 'draft']) // Include both published and draft items
+         .eq('is_hidden', false) // Only show non-hidden items
+         .in('status', ['published', 'draft', 'removed']) // Include removed items for display
         .order('updated_at', { ascending: false });
 
       if (items) {
@@ -98,8 +98,9 @@ const UserProfile: React.FC = () => {
           price_range_max: item.price_range_max,
           liked: false,
           is_hidden: item.is_hidden || false,
-          status: (item.status || 'published') as 'draft' | 'published', // Include status field
+          status: (item.status || 'published') as 'draft' | 'published' | 'removed', // Include status field with removed
           has_been_edited: item.has_been_edited !== false, // Include has_been_edited field
+          removal_reason: item.removal_reason, // Include removal reason for removed items
         }));
         setUserItems(formattedItems);
       }
