@@ -795,6 +795,9 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
   lookingForCategories?: string[];
   lookingForConditions?: string[];
   lookingForDescription?: string;
+  looking_for_categories?: string[];
+  looking_for_conditions?: string[];
+  looking_for_description?: string;
   priceRangeMin?: number;
   priceRangeMax?: number;
   looking_for_price_ranges?: string[];
@@ -830,9 +833,9 @@ export const updateItem = async (itemId: string, item: Partial<Item> & {
       category: item.category,
       condition: item.condition,
       tags: item.tags,
-      looking_for_categories: item.lookingForCategories,
-      looking_for_conditions: item.lookingForConditions,
-      looking_for_description: item.lookingForDescription,
+      looking_for_categories: item.lookingForCategories || item.looking_for_categories,
+      looking_for_conditions: item.lookingForConditions || item.looking_for_conditions,
+      looking_for_description: item.lookingForDescription || item.looking_for_description,
       price_range_min: item.priceRangeMin,
       price_range_max: item.priceRangeMax,
       looking_for_price_ranges: item.looking_for_price_ranges,
