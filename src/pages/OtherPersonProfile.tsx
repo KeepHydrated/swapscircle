@@ -6,7 +6,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { ReportButton } from '@/components/profile/ReportButton';
 import BlockUserButton from '@/components/profile/BlockUserButton';
-import { UserX, Star } from 'lucide-react';
+import { Star, UserX } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
