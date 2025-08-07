@@ -17,10 +17,10 @@ export const ReportButton = ({ reportedUserId, reportedUsername }: ReportButtonP
         variant="outline"
         size="sm"
         onClick={() => setShowModal(true)}
-        className="text-muted-foreground hover:text-destructive"
+        className="text-muted-foreground hover:text-destructive w-10 h-10 p-0"
+        title="Report User"
       >
-        <Flag className="w-4 h-4 mr-1" />
-        Report
+        <Flag className="w-4 h-4" />
       </Button>
       
       <ReportModal

@@ -42,10 +42,10 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
         variant="outline" 
         size="sm"
         disabled
-        className="text-red-600 border-red-200"
+        className="text-red-600 border-red-200 w-10 h-10 p-0"
+        title="Blocked"
       >
-        <UserX className="w-4 h-4 mr-2" />
-        Blocked
+        <UserX className="w-4 h-4" />
       </Button>
     );
   }
@@ -56,10 +56,10 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
         <Button 
           variant="outline" 
           size="sm"
-          className="text-red-600 border-red-200 hover:bg-red-50"
+          className="text-red-600 border-red-200 hover:bg-red-50 w-10 h-10 p-0"
+          title="Block User"
         >
-          <UserX className="w-4 h-4 mr-2" />
-          Block
+          <UserX className="w-4 h-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
