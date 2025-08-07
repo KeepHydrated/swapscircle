@@ -316,15 +316,20 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
               <Card key={request.id} className="overflow-hidden">
                 <CardContent className="p-0">
                   <div className="p-4 flex flex-col items-center">
-                    <Avatar className="h-16 w-16 mb-3">
-                      <AvatarImage src={request.profiles?.avatar_url} alt={request.profiles?.name || request.profiles?.username} />
-                      <AvatarFallback>
-                        {(request.profiles?.name || request.profiles?.username || 'U').substring(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <h4 className="font-medium text-center mb-2">
-                      {request.profiles?.name || request.profiles?.username || 'Unknown User'}
-                    </h4>
+                    <div 
+                      className="cursor-pointer flex flex-col items-center mb-3"
+                      onClick={() => handleViewProfile(request.requester_id)}
+                    >
+                      <Avatar className="h-16 w-16 mb-3">
+                        <AvatarImage src={request.profiles?.avatar_url} alt={request.profiles?.name || request.profiles?.username} />
+                        <AvatarFallback>
+                          {(request.profiles?.name || request.profiles?.username || 'U').substring(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <h4 className="font-medium text-center hover:text-primary transition-colors">
+                        {request.profiles?.name || request.profiles?.username || 'Unknown User'}
+                      </h4>
+                    </div>
                     <div className="flex space-x-2 w-full">
                       <Button 
                         onClick={() => handleAcceptRequest(request.id)}
