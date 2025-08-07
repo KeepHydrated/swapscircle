@@ -223,6 +223,8 @@ const OtherProfile: React.FC = () => {
           friendCount={userFriends.length}
           onReviewsClick={() => setActiveTab('reviews')}
           onFriendsClick={() => setActiveTab('friends')}
+          userId={userId}
+          isOwnProfile={false}
         />
 
         {/* Tabs */}
