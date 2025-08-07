@@ -395,44 +395,34 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   // Button group for accepted friend request (friends with unfriend option)
   if (status === 'accepted') {
     return (
-      <div className="flex space-x-2">
-        <Button 
-          variant="secondary"
-          disabled
-        >
-          <UserCheck className="mr-2 h-4 w-4" />
-          Friends
-        </Button>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button 
-              variant="outline"
-              size="sm"
-              className="px-3"
-              disabled={isLoading}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button 
+            variant="secondary"
+            disabled={isLoading}
+          >
+            <UserCheck className="mr-2 h-4 w-4" />
+            Friends
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unfriend {otherUserName}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to unfriend {otherUserName}? This action cannot be undone and you'll need to send a new friend request to connect again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleUnfriend}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              <UserX className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Unfriend {otherUserName}</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to unfriend {otherUserName}? This action cannot be undone and you'll need to send a new friend request to connect again.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={handleUnfriend}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Unfriend
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+              Unfriend
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
   
