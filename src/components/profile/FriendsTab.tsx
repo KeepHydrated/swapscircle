@@ -252,22 +252,34 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
             {acceptedFriends.map(friend => (
                <Card key={friend.id} className="overflow-hidden relative">
                  <CardContent className="p-0">
+                   <div 
+                     className="p-5 flex flex-col items-center cursor-pointer hover:bg-muted/50 transition-colors" 
+                     onClick={() => handleViewProfile(friend.profiles?.id)}
+                   >
+                     <Avatar className="h-20 w-20 mb-4">
+                       <AvatarImage src={friend.profiles?.avatar_url} alt={friend.profiles?.name || friend.profiles?.username} />
+                       <AvatarFallback>
+                         {(friend.profiles?.name || friend.profiles?.username || 'U').substring(0, 2)}
+                       </AvatarFallback>
+                     </Avatar>
+                     <h3 className="font-medium text-lg mb-1 text-center">
+                       {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
+                     </h3>
+                   </div>
+                   
+                   {/* Unfriend button positioned absolutely */}
                    <AlertDialog>
                      <AlertDialogTrigger asChild>
-                       <div 
-                         className="p-5 flex flex-col items-center cursor-pointer hover:bg-muted/50 transition-colors" 
+                       <Button 
+                         variant="destructive"
+                         size="sm"
+                         className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                         }}
                        >
-                         <Avatar className="h-20 w-20 mb-4">
-                           <AvatarImage src={friend.profiles?.avatar_url} alt={friend.profiles?.name || friend.profiles?.username} />
-                           <AvatarFallback>
-                             {(friend.profiles?.name || friend.profiles?.username || 'U').substring(0, 2)}
-                           </AvatarFallback>
-                         </Avatar>
-                         <h3 className="font-medium text-lg mb-1 text-center">
-                           {friend.profiles?.name || friend.profiles?.username || 'Unknown User'}
-                         </h3>
-                         <p className="text-sm text-muted-foreground">Click to unfriend</p>
-                       </div>
+                         <UserX className="h-4 w-4" />
+                       </Button>
                      </AlertDialogTrigger>
                      <AlertDialogContent>
                        <AlertDialogHeader>
