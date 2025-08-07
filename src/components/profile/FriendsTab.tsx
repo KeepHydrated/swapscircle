@@ -278,9 +278,9 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                            e.stopPropagation();
                          }}
                        >
-                         <div className="relative">
+                         <div className="flex items-center space-x-1">
                            <User className="h-4 w-4 text-muted-foreground" />
-                           <Check className="h-2 w-2 absolute -top-0.5 -right-0.5 text-muted-foreground" />
+                           <Check className="h-2 w-2 text-muted-foreground" />
                          </div>
                        </Button>
                      </AlertDialogTrigger>
