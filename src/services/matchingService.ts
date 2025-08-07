@@ -71,13 +71,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     console.log('🚨 BLOCKING DEBUG - Users who blocked perspective user:', usersWhoBlockedMe);
     console.log('🚨 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
 
-    // Get all available and visible items from other users - exclude the perspective user's items
-    console.log('Debug - Building query to exclude effective user:', effectiveUserId);
+    // Get all available and visible items from other users - exclude the current user's items
+    console.log('Debug - Building query to exclude current user:', currentUserId);
+    console.log('Debug - Effective user (perspective):', effectiveUserId);
     
     let itemsQuery = supabase
       .from('items')
       .select('*')
-      .not('user_id', 'eq', effectiveUserId) // Exclude the perspective user's items
+      .not('user_id', 'eq', currentUserId) // ALWAYS exclude the viewing user's items
       .eq('is_available', true) // Only show available items
       .eq('is_hidden', false) // Only show non-hidden items
       .eq('status', 'published'); // Only show published items (not drafts)
