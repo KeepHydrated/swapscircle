@@ -324,7 +324,10 @@ const AdminReports: React.FC = () => {
       console.log('🔍 Attempting to mark item as removed:', { itemId, itemName: itemData.name });
       
       const { data: updateResult, error: itemError } = await supabase
-        .rpc('admin_remove_item', { item_id_param: itemId });
+        .rpc('admin_remove_item', { 
+          item_id_param: itemId, 
+          reason_param: `Reported for: ${report.message || 'community guidelines violation'}`
+        });
 
       console.log('🔍 Update result:', { updateResult, itemError });
 

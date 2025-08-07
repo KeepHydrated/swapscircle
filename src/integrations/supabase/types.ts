@@ -734,6 +734,9 @@ export type Database = {
           name: string
           price_range_max: number | null
           price_range_min: number | null
+          removal_reason: string | null
+          removed_at: string | null
+          removed_by: string | null
           status: string
           tags: string[] | null
           updated_at: string | null
@@ -757,6 +760,9 @@ export type Database = {
           name: string
           price_range_max?: number | null
           price_range_min?: number | null
+          removal_reason?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
           status?: string
           tags?: string[] | null
           updated_at?: string | null
@@ -780,6 +786,9 @@ export type Database = {
           name?: string
           price_range_max?: number | null
           price_range_min?: number | null
+          removal_reason?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
           status?: string
           tags?: string[] | null
           updated_at?: string | null
@@ -2358,7 +2367,9 @@ export type Database = {
         Returns: undefined
       }
       admin_remove_item: {
-        Args: { item_id_param: string }
+        Args:
+          | { item_id_param: string }
+          | { item_id_param: string; reason_param?: string }
         Returns: Json
       }
       calculate_user_earnings: {
