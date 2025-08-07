@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useNavigate } from 'react-router-dom';
 import { Friend } from '@/types/profile';
 import { supabase } from '@/integrations/supabase/client';
-import { UserCheck, UserX, Users, UserPlus, User } from 'lucide-react';
+import { UserCheck, UserX, Users, UserPlus, User, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface FriendsTabProps {
@@ -278,7 +278,10 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                            e.stopPropagation();
                          }}
                        >
-                         <User className="h-4 w-4 text-muted-foreground" />
+                         <div className="relative">
+                           <User className="h-4 w-4 text-muted-foreground" />
+                           <Check className="h-2 w-2 absolute -top-0.5 -right-0.5 text-muted-foreground" />
+                         </div>
                        </Button>
                      </AlertDialogTrigger>
                      <AlertDialogContent>
