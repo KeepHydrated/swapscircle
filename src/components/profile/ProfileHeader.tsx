@@ -61,9 +61,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const handleCopyProfileLink = async () => {
     try {
-      // For own profile, use the direct /profile route which will redirect to proper user profile
-      // For other users, use the /other-profile/:userId route
-      const profileUrl = userId && !isOwnProfile
+      // Always use /other-profile/${userId} for shareable links when userId is available
+      // This ensures others can view the specific profile when they click the link
+      const profileUrl = userId 
         ? `${window.location.origin}/other-profile/${userId}`
         : `${window.location.origin}/profile`;
       
