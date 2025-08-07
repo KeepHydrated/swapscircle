@@ -17,11 +17,13 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
   onBlockSuccess 
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isBlocked, setIsBlocked] = useState(false);
 
   // Check if user is already blocked on component mount
   useEffect(() => {
     const checkBlockStatus = async () => {
+      setIsInitialLoading(true);
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
@@ -38,6 +40,8 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
         }
       } catch (error) {
         console.error('Error checking block status:', error);
+      } finally {
+        setIsInitialLoading(false);
       }
     };
 
@@ -106,6 +110,20 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
       setIsLoading(false);
     }
   };
+
+  // Show loading state during initial load
+  if (isInitialLoading) {
+    return (
+      <Button 
+        variant="outline" 
+        size="sm"
+        disabled
+        className="w-10 h-10 p-0"
+      >
+        <UserX className="w-4 h-4" />
+      </Button>
+    );
+  }
 
   if (isBlocked) {
     return (

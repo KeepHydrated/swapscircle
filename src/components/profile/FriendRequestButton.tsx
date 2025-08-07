@@ -25,6 +25,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   const navigate = useNavigate();
   const [status, setStatus] = useState<FriendRequestStatus>(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [friendRequestId, setFriendRequestId] = useState<string | null>(null);
   const [otherUserName, setOtherUserName] = useState<string>('');
   const [isBlocked, setIsBlocked] = useState(false);
@@ -33,6 +34,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   // Check existing friend request status on mount
   useEffect(() => {
     const checkFriendRequestStatus = async () => {
+      setIsInitialLoading(true);
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
@@ -85,6 +87,8 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         }
       } catch (error) {
         console.error('Error checking friend request status:', error);
+      } finally {
+        setIsInitialLoading(false);
       }
     };
 
@@ -322,6 +326,15 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
     }
   };
   
+  // Show loading state during initial load
+  if (isInitialLoading) {
+    return (
+      <Button disabled variant="outline">
+        Loading...
+      </Button>
+    );
+  }
+
   // Don't show friend request button if user is blocked or blocking
   if (isBlocked || isBlockedBy) {
     return null;
