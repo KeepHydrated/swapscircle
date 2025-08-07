@@ -25,7 +25,7 @@ export function useDbItems() {
           .select('id, name, image_url, category, condition, description, tags')
           .eq('is_available', true) // Only show available items
           .eq('is_hidden', false) // Only show non-hidden items
-          .eq('status', 'published'); // Only show published items (not drafts)
+          .eq('status', 'published'); // Only show published items (exclude drafts and removed items)
 
         if (error) throw error;
 
