@@ -225,9 +225,9 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           />
         </div>
         
-        {/* Category and Subcategory in same row */}
-        <div className="flex gap-4">
-          <div className="flex-1 space-y-2">
+        {/* Category and Subcategory stacked vertically */}
+        <div className="space-y-4">
+          <div className="space-y-2">
             <Label htmlFor="category" className="text-lg font-semibold text-gray-900">Category <span className="text-red-500">*</span></Label>
             <Select 
               value={category} 
@@ -249,7 +249,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           
           {/* Subcategory - only show if category is selected */}
           {category && (
-            <div className="flex-1 space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="subcategory" className="text-lg font-semibold text-gray-900">Subcategory <span className="text-red-500">*</span></Label>
                <Select 
                 value={subcategory} 
@@ -266,7 +266,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
                     <SelectItem key={subcat} value={subcat} className="text-base py-2">{subcat}</SelectItem>
                   ))}
                 </SelectContent>
-              </Select>
+                </Select>
             </div>
           )}
         </div>
