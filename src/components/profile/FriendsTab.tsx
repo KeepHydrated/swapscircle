@@ -33,6 +33,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
   const [acceptedFriends, setAcceptedFriends] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openDialogs, setOpenDialogs] = useState<{[key: string]: boolean}>({});
 
   const fetchFriendRequests = async () => {
     try {
@@ -163,10 +164,16 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
       
       toast.success(`Unfriended ${friendName}`);
       fetchFriendRequests(); // Refresh the data
+      // Close the dialog
+      setOpenDialogs(prev => ({ ...prev, [requestId]: false }));
     } catch (error) {
       console.error('Error unfriending:', error);
       toast.error("Failed to unfriend");
     }
+  };
+
+  const handleDialogChange = (requestId: string, open: boolean) => {
+    setOpenDialogs(prev => ({ ...prev, [requestId]: open }));
   };
 
   useEffect(() => {
@@ -268,7 +275,10 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                    </div>
                    
                    {/* Unfriend button positioned absolutely */}
-                   <AlertDialog>
+                   <AlertDialog 
+                     open={openDialogs[friend.id] || false}
+                     onOpenChange={(open) => handleDialogChange(friend.id, open)}
+                   >
                      <AlertDialogTrigger asChild>
                        <Button 
                          variant="ghost"
