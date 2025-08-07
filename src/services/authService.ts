@@ -275,7 +275,9 @@ export const postItem = async (item: Item & {
     console.log('📝 POST ITEM - Input data:', item);
     console.log('📝 POST ITEM - lookingForCategories:', item.lookingForCategories);
     console.log('📝 POST ITEM - lookingForConditions:', item.lookingForConditions);
-    console.log('Inserting item to database:', itemToInsert);
+    console.log('📝 POST ITEM - Database object to insert:', itemToInsert);
+    console.log('📝 POST ITEM - Database looking_for_categories:', itemToInsert.looking_for_categories);
+    console.log('📝 POST ITEM - Database looking_for_conditions:', itemToInsert.looking_for_conditions);
 
     const { data, error } = await supabase
       .from('items')
