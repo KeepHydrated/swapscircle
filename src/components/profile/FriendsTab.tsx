@@ -271,14 +271,14 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                    <AlertDialog>
                      <AlertDialogTrigger asChild>
                        <Button 
-                         variant="destructive"
+                         variant="ghost"
                          size="sm"
-                         className="absolute top-2 right-2 h-8 w-8 p-0 z-10"
+                         className="absolute top-2 right-2 h-8 w-8 p-0 z-10 bg-muted hover:bg-muted-foreground/20"
                          onClick={(e) => {
                            e.stopPropagation();
                          }}
                        >
-                         <UserX className="h-4 w-4" />
+                         <UserX className="h-4 w-4 text-muted-foreground" />
                        </Button>
                      </AlertDialogTrigger>
                      <AlertDialogContent>
