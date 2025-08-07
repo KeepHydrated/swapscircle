@@ -53,12 +53,11 @@ const OtherPersonProfile: React.FC = () => {
       }
 
       try {
-        // Check if the user has blocked us or we have blocked them
+        // Check if the user has blocked us (but allow viewing users we've blocked)
         const isBlockedByUser = await blockingService.isCurrentUserBlockedBy(userId);
-        const haveBlockedUser = await blockingService.isUserBlocked(userId);
         
-        if (isBlockedByUser || haveBlockedUser) {
-          // Redirect back if blocked in either direction
+        if (isBlockedByUser) {
+          // Redirect back if they blocked us
           toast.error("This profile is not accessible");
           navigate(-1);
           return;
