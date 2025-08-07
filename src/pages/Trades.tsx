@@ -157,9 +157,9 @@ const Trades = () => {
             const yourReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id); // Review left ABOUT you
 
             return (
-              <div key={trade.id} className="flex gap-6">
+              <div key={trade.id} className="flex gap-4">
                 {/* Left side - Trade Details */}
-                <div className="w-1/2">
+                <div className="w-1/3">
                   <Card>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
@@ -218,100 +218,98 @@ const Trades = () => {
                   </Card>
                 </div>
 
-                {/* Right side - Reviews */}
-                <div className="w-[28rem]">
+                {/* Middle - Their Review of You */}
+                <div className="w-1/3">
                   <Card className="h-full">
-                    <CardContent className="p-6 space-y-6 h-full flex flex-col">
-                      {/* Their Profile - Review they left about you */}
-                      <div>
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Avatar 
-                            className="h-8 w-8 cursor-pointer hover:opacity-80"
+                    <CardContent className="p-6">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <Avatar 
+                          className="h-8 w-8 cursor-pointer hover:opacity-80"
+                          onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                        >
+                          <AvatarImage src={otherUser?.avatar_url} />
+                          <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">
+                            {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <span 
+                            className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
                             onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
                           >
-                            <AvatarImage src={otherUser?.avatar_url} />
-                            <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">
-                              {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <span 
-                              className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                              onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
-                            >
-                              {otherUser?.username || 'Unknown User'}
-                            </span>
-                          </div>
+                            {otherUser?.username || 'Unknown User'}
+                          </span>
                         </div>
-                        {yourReview ? (
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600">Their review of you:</p>
-                            <div className="flex items-center space-x-2 mb-2">
-                              <div className="flex">
-                                {renderStars(yourReview.rating)}
-                              </div>
-                            </div>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                              {yourReview.comment || 'No comment provided'}
-                            </p>
-                          </div>
-                        ) : (
-                          <p className="text-gray-400 text-sm italic">No review yet</p>
-                        )}
                       </div>
+                      {yourReview ? (
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-600">Their review of you:</p>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className="flex">
+                              {renderStars(yourReview.rating)}
+                            </div>
+                          </div>
+                          <p className="text-gray-600 text-sm leading-relaxed">
+                            {yourReview.comment || 'No comment provided'}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-gray-400 text-sm italic">No review yet</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
 
-                      {/* Divider */}
-                      <div className="border-t border-gray-200"></div>
-
-                      {/* Your Profile - Leave Review for Other User */}
-                      <div>
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Avatar 
-                            className="h-8 w-8 cursor-pointer hover:opacity-80"
+                {/* Right - Your Review Section */}
+                <div className="w-1/3">
+                  <Card className="h-full">
+                    <CardContent className="p-6">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <Avatar 
+                          className="h-8 w-8 cursor-pointer hover:opacity-80"
+                          onClick={handleMyProfileClick}
+                        >
+                          <AvatarImage src={currentUser?.profile?.avatar_url} />
+                          <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">
+                            {currentUser?.profile?.username?.charAt(0).toUpperCase() || 'Y'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <span 
+                            className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
                             onClick={handleMyProfileClick}
                           >
-                            <AvatarImage src={currentUser?.profile?.avatar_url} />
-                            <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">
-                              {currentUser?.profile?.username?.charAt(0).toUpperCase() || 'Y'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <span 
-                              className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                              onClick={handleMyProfileClick}
-                            >
-                              {currentUser?.profile?.username || 'You'}
-                            </span>
-                          </div>
+                            {currentUser?.profile?.username || 'You'}
+                          </span>
                         </div>
-                        
-                        {/* Show review button or status based on if you've left a review for them */}
-                        {theirReview ? (
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600">Your review:</p>
-                            <div className="flex items-center space-x-2 mb-2">
-                              <div className="flex">
-                                {renderStars(theirReview.rating)}
-                              </div>
-                            </div>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                              {theirReview.comment || 'No comment provided'}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <p className="text-gray-400 text-sm italic">Leave a review for {otherUser?.username}</p>
-                            <Button 
-                              variant="outline" 
-                              onClick={() => handleLeaveReview(trade)}
-                              className="w-full h-10"
-                            >
-                              <Star className="w-4 h-4 mr-2" />
-                              Leave Review
-                            </Button>
-                          </div>
-                        )}
                       </div>
+                      
+                      {/* Show review button or status based on if you've left a review for them */}
+                      {theirReview ? (
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-600">Your review:</p>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className="flex">
+                              {renderStars(theirReview.rating)}
+                            </div>
+                          </div>
+                          <p className="text-gray-600 text-sm leading-relaxed">
+                            {theirReview.comment || 'No comment provided'}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <p className="text-gray-400 text-sm italic">Leave a review for {otherUser?.username}</p>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => handleLeaveReview(trade)}
+                            className="w-full h-10"
+                          >
+                            <Star className="w-4 h-4 mr-2" />
+                            Leave Review
+                          </Button>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
