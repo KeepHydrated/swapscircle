@@ -347,26 +347,11 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               </div>
             ) : (
               <>
-                {/* Item layout: Image left, details right */}
-                <div className="flex gap-6 mb-8">
-                  {/* Item Image */}
-                  <div className="w-20 h-20 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
-                    {imageSource ? (
-                      <img
-                        src={imageSource}
-                        alt={displayItem.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <span className="text-xs">No image</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Title and Description on the right */}
-                  <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2 mt-4">
+                {/* Item details without thumbnail */}
+                <div className="mb-8">
+                  {/* Title and Description */}
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       {displayItem.name}
                     </h2>
                     <p className="text-gray-700 text-base leading-relaxed mb-4">
