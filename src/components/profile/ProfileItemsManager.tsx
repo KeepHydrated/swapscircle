@@ -90,6 +90,10 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   // Function to handle copy icon click
   const handleCopyClick = async (item: Item) => {
     try {
+      console.log('🔄 ORIGINAL ITEM DATA FOR DUPLICATION:', item);
+      console.log('🔄 ORIGINAL looking_for_categories:', item.looking_for_categories);
+      console.log('🔄 ORIGINAL looking_for_conditions:', item.looking_for_conditions);
+      console.log('🔄 ORIGINAL looking_for_description:', item.looking_for_description);
       // Create the duplicated item data
       const duplicatedItemData = {
         name: `${item.name} (Copy)`,
