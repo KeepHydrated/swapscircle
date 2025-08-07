@@ -275,15 +275,15 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   
                   {/* Bottom center navigation arrows for multiple images */}
                   {allImages.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
                       <button
                         onClick={() =>
                           setCurrentSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
                         }
-                        className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
+                        className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all duration-200 hover:scale-105"
                         aria-label="Previous image"
                       >
-                        <ArrowLeft className="w-4 h-4 text-gray-700" />
+                        <ArrowLeft className="w-5 h-5 text-gray-800" />
                       </button>
                       
                       {/* Dots indicator */}
@@ -291,10 +291,10 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                         {allImages.map((_, i) => (
                           <button
                             key={i}
-                            className={`w-2 h-2 rounded-full transition-colors ${
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
                               currentSlide === i
-                                ? "bg-white"
-                                : "bg-white/60"
+                                ? "bg-white shadow-sm scale-110"
+                                : "bg-white/70 hover:bg-white/90"
                             }`}
                             onClick={() => setCurrentSlide(i)}
                             aria-label={`Go to image ${i + 1}`}
@@ -306,10 +306,10 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                         onClick={() =>
                           setCurrentSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
                         }
-                        className="w-8 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors"
+                        className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all duration-200 hover:scale-105"
                         aria-label="Next image"
                       >
-                        <ArrowRight className="w-4 h-4 text-gray-700" />
+                        <ArrowRight className="w-5 h-5 text-gray-800" />
                       </button>
                     </div>
                   )}
