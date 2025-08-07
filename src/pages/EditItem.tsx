@@ -122,6 +122,7 @@ const EditItem: React.FC = () => {
           }
           
           // Load preferences data
+          console.log('🔍 LOADING PREFERENCES DATA:');
           console.log('Looking for description:', (item as any).looking_for_description);
           console.log('Looking for categories:', (item as any).looking_for_categories);
           console.log('Looking for conditions:', (item as any).looking_for_conditions);
@@ -130,6 +131,11 @@ const EditItem: React.FC = () => {
           setLookingForText((item as any).looking_for_description || '');
           setSelectedCategories((item as any).looking_for_categories || []);
           setSelectedConditions((item as any).looking_for_conditions || []);
+          
+          console.log('🔍 SET STATE VALUES:');
+          console.log('lookingForText:', (item as any).looking_for_description || '');
+          console.log('selectedCategories:', (item as any).looking_for_categories || []);
+          console.log('selectedConditions:', (item as any).looking_for_conditions || []);
           
           // Convert price range for both item form and preferences
           if ((item as any).price_range_min !== null && (item as any).price_range_max !== null) {
@@ -404,6 +410,9 @@ const EditItem: React.FC = () => {
       if (itemId) {
         console.log('Preparing updates for item:', itemId);
         console.log('🔍 PREFERENCES DEBUG - selectedPriceRanges:', selectedPriceRanges);
+        console.log('🔍 PREFERENCES DEBUG - selectedCategories:', selectedCategories);
+        console.log('🔍 PREFERENCES DEBUG - selectedConditions:', selectedConditions);
+        console.log('🔍 PREFERENCES DEBUG - lookingForText:', lookingForText);
         const updates: any = {
           name: title,
           description,
