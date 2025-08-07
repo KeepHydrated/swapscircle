@@ -136,7 +136,11 @@ const Notifications: React.FC = () => {
   };
 
   const handleNotificationClick = async (notification: Notification) => {
-    if (!user) return;
+    console.log('🔔 Notification clicked:', notification);
+    if (!user) {
+      console.log('🔔 No user, returning early');
+      return;
+    }
     
     // Mark as read
     try {
