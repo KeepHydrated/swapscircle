@@ -47,7 +47,10 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
 
-    console.log('Debug - Blocked users:', { blockedUsers, usersWhoBlockedMe, allBlockedUserIds });
+    console.log('🚨 BLOCKING DEBUG - Current user:', currentUserId);
+    console.log('🚨 BLOCKING DEBUG - Users I blocked:', blockedUsers);
+    console.log('🚨 BLOCKING DEBUG - Users who blocked me:', usersWhoBlockedMe);
+    console.log('🚨 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
 
     // Get all available and visible items from other users - EXPLICIT EXCLUSION
     console.log('Debug - Building query to exclude current user:', currentUserId);
