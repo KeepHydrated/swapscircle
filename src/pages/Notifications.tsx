@@ -155,11 +155,33 @@ const Notifications: React.FC = () => {
         }
       }
       
-      // Navigate based on notification type
-      if (notification.type === 'message' && notification.relatedId) {
-        navigate('/messages');
-      } else if (notification.type === 'trade' && notification.relatedId) {
-        navigate(`/other-person-profile`);
+      // Navigate based on notification type and content
+      if (notification.type === 'message') {
+        if (notification.relatedId) {
+          navigate(`/messages?conversation=${notification.relatedId}`);
+        } else {
+          navigate('/messages');
+        }
+      } else if (notification.type === 'trade') {
+        if (notification.title.includes('Match') || notification.content.includes('match')) {
+          navigate('/');
+        } else if (notification.content.includes('trade') || notification.content.includes('Trade')) {
+          navigate('/trades');
+        } else if (notification.relatedId) {
+          navigate(`/other-person-profile?userId=${notification.relatedId}`);
+        }
+      } else if (notification.type === 'friend') {
+        if (notification.relatedId) {
+          navigate(`/other-person-profile?userId=${notification.relatedId}`);
+        } else {
+          navigate('/profile');
+        }
+      } else if (notification.type === 'system') {
+        if (notification.content.includes('item') || notification.content.includes('trade')) {
+          navigate('/');
+        } else {
+          navigate('/profile');
+        }
       }
     } catch (error) {
       console.error('Error updating notification:', error);
