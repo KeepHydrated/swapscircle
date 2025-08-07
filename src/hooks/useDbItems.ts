@@ -21,10 +21,18 @@ export function useDbItems() {
         return;
       }
       try {
+        console.log('🔍 BLOCKING DEBUG: Starting items fetch with blocking checks');
+        
         // Get blocked users first
         const blockedUsers = await blockingService.getBlockedUsers();
         const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
         const allBlockedUsers = [...blockedUsers, ...usersWhoBlockedMe];
+
+        console.log('🔍 BLOCKING DEBUG: Blocked users:', {
+          blockedUsers,
+          usersWhoBlockedMe,
+          allBlockedUsers
+        });
 
         // Build the query
         let query = supabase
@@ -36,10 +44,18 @@ export function useDbItems() {
 
         // If there are blocked users, exclude their items
         if (allBlockedUsers.length > 0) {
-          query = query.not('user_id', 'in', `(${allBlockedUsers.join(',')})`);
+          console.log('🔍 BLOCKING DEBUG: Applying blocked users filter:', allBlockedUsers);
+          // Use the correct Supabase syntax for NOT IN
+          query = query.not('user_id', 'in', `(${allBlockedUsers.map(id => `"${id}"`).join(',')})`);
         }
 
         const { data, error } = await query;
+
+        console.log('🔍 BLOCKING DEBUG: Items query result:', {
+          itemCount: data?.length || 0,
+          error: error?.message || null,
+          sampleUserIds: data?.slice(0, 3).map(item => item.user_id) || []
+        });
 
         if (error) throw error;
 

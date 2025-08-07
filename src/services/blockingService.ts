@@ -51,16 +51,29 @@ export const blockingService = {
   // Get list of users blocked by current user
   async getBlockedUsers(): Promise<string[]> {
     try {
+      console.log('🔍 BLOCKING SERVICE: Getting blocked users');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
+      if (!user) {
+        console.log('🔍 BLOCKING SERVICE: No authenticated user');
+        return [];
+      }
+
+      console.log('🔍 BLOCKING SERVICE: Current user ID:', user.id);
 
       const { data, error } = await supabase
         .from('blocked_users')
         .select('blocked_id')
         .eq('blocker_id', user.id);
 
+      console.log('🔍 BLOCKING SERVICE: Blocked users query result:', {
+        data,
+        error: error?.message || null
+      });
+
       if (error) throw error;
-      return data?.map(item => item.blocked_id) || [];
+      const blockedIds = data?.map(item => item.blocked_id) || [];
+      console.log('🔍 BLOCKING SERVICE: Final blocked user IDs:', blockedIds);
+      return blockedIds;
     } catch (error) {
       console.error('Error getting blocked users:', error);
       return [];
@@ -70,16 +83,27 @@ export const blockingService = {
   // Get list of users who have blocked the current user
   async getUsersWhoBlockedMe(): Promise<string[]> {
     try {
+      console.log('🔍 BLOCKING SERVICE: Getting users who blocked me');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
+      if (!user) {
+        console.log('🔍 BLOCKING SERVICE: No authenticated user');
+        return [];
+      }
 
       const { data, error } = await supabase
         .from('blocked_users')
         .select('blocker_id')
         .eq('blocked_id', user.id);
 
+      console.log('🔍 BLOCKING SERVICE: Users who blocked me query result:', {
+        data,
+        error: error?.message || null
+      });
+
       if (error) throw error;
-      return data?.map(item => item.blocker_id) || [];
+      const blockerIds = data?.map(item => item.blocker_id) || [];
+      console.log('🔍 BLOCKING SERVICE: Final blocker IDs:', blockerIds);
+      return blockerIds;
     } catch (error) {
       console.error('Error getting users who blocked me:', error);
       return [];
