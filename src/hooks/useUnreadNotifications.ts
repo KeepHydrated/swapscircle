@@ -84,6 +84,10 @@ export function useNotifications() {
       case 'match':
       case 'friend':
         return '/other-person-profile';
+      case 'item_removed':
+        return '/profile'; // Direct to profile to see items
+      case 'trade':
+        return '/trades';
       default:
         return undefined;
     }
