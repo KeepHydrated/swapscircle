@@ -9,6 +9,7 @@ import FriendsTab from '@/components/profile/FriendsTab';
 import { Star, Users, ArrowLeft } from 'lucide-react';
 import FriendRequestButton, { FriendRequestStatus } from '@/components/profile/FriendRequestButton';
 import { ReportButton } from '@/components/profile/ReportButton';
+import BlockUserButton from '@/components/profile/BlockUserButton';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -179,6 +180,10 @@ const OtherProfile: React.FC = () => {
           </div>
         </div>
         <div className="flex gap-2">
+          <BlockUserButton 
+            userId={profile.id} 
+            username={profile.name}
+          />
           <ReportButton 
             reportedUserId={profile.id}
             reportedUsername={profile.name}
