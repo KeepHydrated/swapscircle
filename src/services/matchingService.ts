@@ -42,6 +42,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
+    console.log('🚨 MATCHING DEBUG - Auth user:', user.id);
+    console.log('🚨 MATCHING DEBUG - Current user param:', currentUserId);
+    console.log('🚨 MATCHING DEBUG - Perspective user param:', perspectiveUserId);
+    console.log('🚨 MATCHING DEBUG - Selected item owner:', selectedItem.user_id);
+
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
     const effectiveUserId = perspectiveUserId || currentUserId;
     
