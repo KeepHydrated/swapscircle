@@ -6,7 +6,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { ReportButton } from '@/components/profile/ReportButton';
 import BlockUserButton from '@/components/profile/BlockUserButton';
-import { Star } from 'lucide-react';
+import { UserX, Star } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
@@ -73,6 +73,10 @@ const OtherPersonProfile: React.FC = () => {
 
         // Check friend status if user is logged in
         if (currentUser) {
+          // Check blocking status
+          const userIsBlocked = await blockingService.isUserBlocked(userId);
+          setIsUserBlocked(userIsBlocked);
+
           const { data: friendRequests } = await supabase
             .from('friend_requests')
             .select('*')
@@ -178,6 +182,7 @@ const OtherPersonProfile: React.FC = () => {
   // State for friendship status - defaulting to false (not friends)
   const [isFriend, setIsFriend] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isUserBlocked, setIsUserBlocked] = useState(false);
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
@@ -338,20 +343,32 @@ const OtherPersonProfile: React.FC = () => {
             userId={userId || undefined}
             isOwnProfile={false}
           />
-          <div className="absolute top-6 right-6 flex gap-2">
-            <BlockUserButton 
-              userId={userId || ""} 
-              username={profileData.name}
-            />
-            <ReportButton 
-              reportedUserId={userId || ""} 
-              reportedUsername={profileData.name}
-            />
-            <FriendRequestButton 
-              userId={userId || "profile1"} 
-              initialStatus="none" 
-              onStatusChange={(status) => setIsFriend(status === 'accepted')}
-            />
+          <div className="absolute top-6 right-6 flex flex-col items-end gap-2">
+            {/* Blocked status indicator */}
+            {isUserBlocked && (
+              <div className="bg-red-100 border border-red-300 text-red-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+                <UserX className="w-4 h-4" />
+                You blocked this user
+              </div>
+            )}
+            
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <BlockUserButton 
+                userId={userId || ""} 
+                username={profileData.name}
+                onBlockSuccess={() => setIsUserBlocked(!isUserBlocked)}
+              />
+              <ReportButton 
+                reportedUserId={userId || ""} 
+                reportedUsername={profileData.name}
+              />
+              <FriendRequestButton 
+                userId={userId || "profile1"} 
+                initialStatus="none" 
+                onStatusChange={(status) => setIsFriend(status === 'accepted')}
+              />
+            </div>
           </div>
         </div>
 
