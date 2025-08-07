@@ -85,18 +85,27 @@ const EditItem: React.FC = () => {
           setDescription(item.description || '');
           
           // Handle both old single image_url and new image_urls array
-          console.log('🖼️ IMAGE DEBUG:', {
+          console.log('🖼️ DETAILED IMAGE DEBUG:', {
+            fullItem: item,
             image_urls: (item as any).image_urls,
             image_url: (item as any).image_url,
-            both: { image_urls: (item as any).image_urls, image_url: (item as any).image_url }
+            imageProperty: (item as any).image,
+            allImageProps: {
+              image: (item as any).image,
+              image_url: (item as any).image_url, 
+              image_urls: (item as any).image_urls
+            }
           });
           
-          if ((item as any).image_urls && Array.isArray((item as any).image_urls)) {
+          if ((item as any).image_urls && Array.isArray((item as any).image_urls) && (item as any).image_urls.length > 0) {
             console.log('🖼️ Setting from image_urls array:', (item as any).image_urls);
             setExistingImageUrls((item as any).image_urls);
           } else if ((item as any).image_url) {
             console.log('🖼️ Setting from single image_url:', (item as any).image_url);
             setExistingImageUrls([(item as any).image_url]);
+          } else if ((item as any).image) {
+            console.log('🖼️ Setting from image property:', (item as any).image);
+            setExistingImageUrls([(item as any).image]);
           } else {
             console.log('🖼️ No images found, setting empty array');
             setExistingImageUrls([]);
