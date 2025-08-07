@@ -109,6 +109,9 @@ const MatchesCarousel: React.FC<MatchesCarouselProps> = ({
 
   return (
     <div className="relative w-full h-full flex flex-col">
+      <div className="text-center p-4 bg-blue-500 text-white font-bold">
+        MATCHES CAROUSEL IS WORKING - YOU SHOULD SEE NAVIGATION ARROWS
+      </div>
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       
       <div className="flex-grow">
@@ -148,13 +151,6 @@ const MatchesCarousel: React.FC<MatchesCarouselProps> = ({
         onNavigateNext={handleNavigateNext}
         currentIndex={currentIndex}
         totalItems={items.length}
-        skipDataFetch={true}
-        preloadedUserProfile={selectedItem?.userProfile ? {
-          name: selectedItem.userProfile.name,
-          username: selectedItem.userProfile.username,
-          avatar_url: selectedItem.userProfile.avatar_url || '',
-          created_at: '2025-01-01T00:00:00Z'
-        } : undefined}
       />
     </div>
   );
