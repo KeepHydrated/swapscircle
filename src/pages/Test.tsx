@@ -403,6 +403,10 @@ const Test: React.FC = () => {
                               image={item.image}
                               isSelected={selectedUserItemId === item.id}
                               onSelect={handleSelectUserItem}
+                              onReport={(id) => {
+                                toast.info('Report feature would be implemented here');
+                                console.log('Report item:', id);
+                              }}
                               compact={true}
                             />
                           </div>
