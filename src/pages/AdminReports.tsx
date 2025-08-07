@@ -57,11 +57,30 @@ const AdminReports: React.FC = () => {
   const [activeTab, setActiveTab] = useState('open');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  const [itemsData, setItemsData] = useState<any[]>([]); // Add state for items data
   
   // Confirmation dialog states
   const [showDismissDialog, setShowDismissDialog] = useState(false);
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [selectedReportForAction, setSelectedReportForAction] = useState<Report | null>(null);
+
+  // Extract item ID from action_taken field
+  const extractItemId = (actionTaken: string | null): string | null => {
+    if (!actionTaken) return null;
+    
+    // Look for pattern "Item "name"" and then find the item by name
+    const itemNameMatch = actionTaken.match(/Item "([^"]+)"/);
+    if (itemNameMatch) {
+      const itemName = itemNameMatch[1];
+      // Find the item by name in our fetched items data
+      const item = itemsData.find(i => i.name === itemName);
+      return item ? item.id : null;
+    }
+    
+    // Fallback: Look for pattern "ID: [uuid]" (legacy format)
+    const idMatch = actionTaken.match(/ID:\s*([a-f0-9-]{36})/i);
+    return idMatch ? idMatch[1] : null;
+  };
 
   const handleProfileClick = async (userId: string) => {
     // Get current user ID to check if this is their own profile
@@ -127,8 +146,8 @@ const AdminReports: React.FC = () => {
 
         // Get item IDs and fetch item details with owner info
         const itemIds = data?.map(r => extractItemId(r.action_taken)).filter(Boolean) || [];
-        let itemsData: any[] = [];
-        let itemOwnerProfiles: any[] = [];
+        let localItemsData: any[] = [];
+        let localItemOwnerProfiles: any[] = [];
         
         if (itemIds.length > 0) {
           const { data: items } = await supabase
@@ -136,17 +155,18 @@ const AdminReports: React.FC = () => {
             .select('id, name, description, user_id, image_url, image_urls')
             .in('id', itemIds);
           
-          itemsData = items || [];
+          localItemsData = items || [];
+          setItemsData(items || []); // Update state so extractItemId can access it
           
           // Get item owner profiles
-          const ownerIds = [...new Set(itemsData.map(item => item.user_id))];
+          const ownerIds = [...new Set(localItemsData.map(item => item.user_id))];
           if (ownerIds.length > 0) {
             const { data: ownerProfiles } = await supabase
               .from('profiles')
               .select('id, username, avatar_url, name')
               .in('id', ownerIds);
             
-            itemOwnerProfiles = ownerProfiles || [];
+            localItemOwnerProfiles = ownerProfiles || [];
           }
         }
 
@@ -166,8 +186,8 @@ const AdminReports: React.FC = () => {
           
           // Get item and owner info
           const itemId = extractItemId(report.action_taken);
-          const item = itemsData.find(i => i.id === itemId);
-          const itemOwner = item ? itemOwnerProfiles.find(p => p.id === item.user_id) : null;
+          const item = localItemsData.find(i => i.id === itemId);
+          const itemOwner = item ? localItemOwnerProfiles.find(p => p.id === item.user_id) : null;
           
           return {
             ...report,
@@ -245,14 +265,6 @@ const AdminReports: React.FC = () => {
     }
   };
 
-  // Extract item ID from action_taken field
-  const extractItemId = (actionTaken: string | null): string | null => {
-    if (!actionTaken) return null;
-    
-    // Look for pattern "ID: [uuid]"
-    const idMatch = actionTaken.match(/ID:\s*([a-f0-9-]{36})/i);
-    return idMatch ? idMatch[1] : null;
-  };
 
   // Handle viewing reported item
   const handleViewItem = (report: Report) => {
