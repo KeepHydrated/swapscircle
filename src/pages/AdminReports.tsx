@@ -63,18 +63,17 @@ const AdminReports: React.FC = () => {
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [selectedReportForAction, setSelectedReportForAction] = useState<Report | null>(null);
 
-  // Handle navigation to user profile
-  const handleProfileClick = async (reporterId: string) => {
+  const handleProfileClick = async (userId: string) => {
     // Get current user ID to check if this is their own profile
     const { data: { user: currentUser } } = await supabase.auth.getUser();
     const currentUserId = currentUser?.id;
     
-    if (currentUserId === reporterId) {
+    if (currentUserId === userId) {
       // It's their own profile - navigate to regular profile page
       navigate('/profile');
     } else {
       // It's someone else's profile - navigate to other person profile
-      navigate(`/other-profile/${reporterId}`);
+      navigate(`/other-person-profile?userId=${userId}`);
     }
   };
 
