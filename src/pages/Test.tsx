@@ -521,6 +521,10 @@ const Test: React.FC = () => {
                                   onSelect={() => handleOpenItemModal(item)}
                                   onLike={() => handleLikeFriendItem(item.id)}
                                   onReject={() => handleRejectFriendItem(item.id)}
+                                  onReport={(id) => {
+                                    toast.info('Report feature would be implemented here');
+                                    console.log('Report friend item:', id);
+                                  }}
                                   showLikeButton={true}
                                 />
                               </div>
