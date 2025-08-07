@@ -85,11 +85,20 @@ const EditItem: React.FC = () => {
           setDescription(item.description || '');
           
           // Handle both old single image_url and new image_urls array
+          console.log('🖼️ IMAGE DEBUG:', {
+            image_urls: (item as any).image_urls,
+            image_url: (item as any).image_url,
+            both: { image_urls: (item as any).image_urls, image_url: (item as any).image_url }
+          });
+          
           if ((item as any).image_urls && Array.isArray((item as any).image_urls)) {
+            console.log('🖼️ Setting from image_urls array:', (item as any).image_urls);
             setExistingImageUrls((item as any).image_urls);
           } else if ((item as any).image_url) {
+            console.log('🖼️ Setting from single image_url:', (item as any).image_url);
             setExistingImageUrls([(item as any).image_url]);
           } else {
+            console.log('🖼️ No images found, setting empty array');
             setExistingImageUrls([]);
           }
           
@@ -113,11 +122,19 @@ const EditItem: React.FC = () => {
             console.log('No price range min/max found');
           }
           const tags = (item as any).tags;
+          console.log('🏷️ SUBCATEGORY DEBUG:', {
+            tags,
+            isArray: Array.isArray(tags),
+            length: tags?.length,
+            firstTag: tags?.[0],
+            category: item.category
+          });
+          
           if (tags && Array.isArray(tags) && tags.length > 0) {
-            console.log('Found tags in item:', tags);
+            console.log('✅ Found tags in item, setting subcategory to:', tags[0]);
             setSubcategory(tags[0]);
           } else {
-            console.log('No tags found in item');
+            console.log('❌ No tags found in item, setting empty subcategory');
             setSubcategory('');
           }
           
