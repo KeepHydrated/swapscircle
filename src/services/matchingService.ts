@@ -224,6 +224,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Filter out items that:
     // 1. Current user has rejected for this specific item
     // 2. Item owners who have rejected the current user's selected item for their specific items
+    // 3. Items where bidirectional blocking exists
     const availableItems = allItems.filter(item => {
       // 1. Items rejected by the current user for this specific item or globally
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
@@ -239,7 +240,10 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 4. Don't show items from the same user as selected item (but this should be rare)
       const isSameUser = item.user_id === selectedItem.user_id;
 
-      console.log(`Debug - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}`);
+      // 5. Don't show items if there's bidirectional blocking
+      const isBlockedUser = allBlockedUserIds.includes(item.user_id);
+
+      console.log(`🔍 FILTER DEBUG - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}, isBlockedUser=${isBlockedUser}`);
 
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
@@ -250,7 +254,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // - NOT from owners who rejected current user's item for this specific item  
       // - NOT the user's own items
       // - NOT from the same user as the selected item
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected;
+      // - NOT from blocked/blocking users
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser;
     });
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);
