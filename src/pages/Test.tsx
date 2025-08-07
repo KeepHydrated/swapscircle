@@ -14,6 +14,7 @@ import ItemCard from '@/components/items/ItemCard';
 import MyItems from '@/components/items/MyItems';
 import Matches from '@/components/items/Matches';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { ReportItemModal } from '@/components/items/ReportItemModal';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { MatchItem } from '@/types/item';
@@ -39,6 +40,8 @@ const Test: React.FC = () => {
   // Modal state
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [itemToReport, setItemToReport] = useState<string | null>(null);
 
   // Fetch friends' items
   const fetchFriendsItems = async () => {
@@ -318,6 +321,17 @@ const Test: React.FC = () => {
     setSelectedItem(null);
   };
 
+  // Handle report functionality
+  const handleReport = (itemId: string) => {
+    setItemToReport(itemId);
+    setReportModalOpen(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setReportModalOpen(false);
+    setItemToReport(null);
+  };
+
   // Get displayed friends items (excluding rejected ones)
   const displayedFriendItems = friendItems.filter(item => !rejectedFriendItems.includes(item.id));
   
@@ -406,10 +420,7 @@ const Test: React.FC = () => {
                               image={item.image}
                               isSelected={selectedUserItemId === item.id}
                               onSelect={handleSelectUserItem}
-                              onReport={(id) => {
-                                toast.info('Report feature would be implemented here');
-                                console.log('Report item:', id);
-                              }}
+                              onReport={handleReport}
                               compact={true}
                             />
                           </div>
@@ -524,10 +535,7 @@ const Test: React.FC = () => {
                                   onSelect={() => handleOpenItemModal(item)}
                                   onLike={(id, global) => handleLikeFriendItem(id, global)}
                                   onReject={(id, global) => handleRejectFriendItem(id, global)}
-                                  onReport={(id) => {
-                                    toast.info('Report feature would be implemented here');
-                                    console.log('Report friend item:', id);
-                                  }}
+                                  onReport={handleReport}
                                   showLikeButton={true}
                                 />
                               </div>
@@ -561,6 +569,20 @@ const Test: React.FC = () => {
         onNavigateNext={navigateToNextFriendItem}
         currentIndex={currentFriendItemIndex}
         totalItems={displayedFriendItems.length}
+      />
+      
+      {/* Report Item Modal */}
+      <ReportItemModal
+        isOpen={reportModalOpen}
+        onClose={handleCloseReportModal}
+        itemId={itemToReport || ''}
+        itemName={
+          itemToReport 
+            ? (friendItems.find(item => item.id === itemToReport)?.name || 
+               userItems.find(item => item.id === itemToReport)?.name || 
+               'Unknown Item')
+            : ''
+        }
       />
     </div>
   );
