@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item, MatchItem } from '@/types/item';
+import { blockingService } from './blockingService';
 
 // Helper function to calculate distance between two coordinates using Haversine formula
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -41,6 +42,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
+    // Get blocked users to filter them out
+    const blockedUsers = await blockingService.getBlockedUsers();
+    const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
+    const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
+
+    console.log('Debug - Blocked users:', { blockedUsers, usersWhoBlockedMe, allBlockedUserIds });
+
     // Get all available and visible items from other users - EXPLICIT EXCLUSION
     console.log('Debug - Building query to exclude current user:', currentUserId);
     
@@ -51,6 +59,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .eq('is_available', true) // Only show available items
       .eq('is_hidden', false) // Only show non-hidden items
       .eq('status', 'published'); // Only show published items (not drafts)
+    
+    // Filter out items from blocked users
+    if (allBlockedUserIds.length > 0) {
+      itemsQuery = itemsQuery.not('user_id', 'in', `(${allBlockedUserIds.join(',')})`);
+    }
 
     console.log('Debug - Current user ID for exclusion:', currentUserId);
     console.log('Debug - Current user ID type:', typeof currentUserId);
