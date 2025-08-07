@@ -431,7 +431,6 @@ const AdminReports: React.FC = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="open">Open Reports ({reports.filter(r => r.status === 'open').length})</TabsTrigger>
-            <TabsTrigger value="in_progress">In Progress ({reports.filter(r => r.status === 'in_progress').length})</TabsTrigger>
             <TabsTrigger value="resolved">Resolved ({reports.filter(r => r.status === 'resolved').length})</TabsTrigger>
           </TabsList>
 
