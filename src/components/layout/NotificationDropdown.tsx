@@ -23,14 +23,20 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   const navigate = useNavigate();
 
   const handleNotificationClick = async (notification: Notification) => {
+    console.log('🔔 Header dropdown notification clicked:', notification);
+    
     // Mark individual notification as read when clicked
     if (!notification.is_read) {
+      console.log('🔔 Marking notification as read:', notification.id);
       await onNotificationRead(notification.id);
     }
     
     // Navigate based on action URL or type
     if (notification.action_url) {
+      console.log('🔔 Header dropdown navigating to action_url:', notification.action_url);
       navigate(notification.action_url);
+    } else {
+      console.log('🔔 Header dropdown: No action_url found, notification:', notification);
     }
   };
 
