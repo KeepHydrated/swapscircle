@@ -46,15 +46,12 @@ const OtherProfile: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Check if user is blocked before loading profile
+        // Check if user is blocked - but only redirect if THEY blocked YOU
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         if (currentUser && userId) {
-          const [isUserBlocked, isCurrentUserBlocked] = await Promise.all([
-            blockingService.isUserBlocked(userId),
-            blockingService.isCurrentUserBlockedBy(userId)
-          ]);
+          const isCurrentUserBlocked = await blockingService.isCurrentUserBlockedBy(userId);
 
-          if (isUserBlocked || isCurrentUserBlocked) {
+          if (isCurrentUserBlocked) {
             setError("This profile is not available");
             setLoading(false);
             return;

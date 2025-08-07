@@ -60,14 +60,11 @@ const OtherPersonProfile: React.FC = () => {
         const currentUser = user;
         setCurrentUserId(currentUser?.id || null);
 
-        // Check if user is blocked before loading profile
+        // Check if user is blocked - but only redirect if THEY blocked YOU
         if (currentUser && userId) {
-          const [isUserBlocked, isCurrentUserBlocked] = await Promise.all([
-            blockingService.isUserBlocked(userId),
-            blockingService.isCurrentUserBlockedBy(userId)
-          ]);
+          const isCurrentUserBlocked = await blockingService.isCurrentUserBlockedBy(userId);
 
-          if (isUserBlocked || isCurrentUserBlocked) {
+          if (isCurrentUserBlocked) {
             toast.error("This profile is not available");
             navigate('/home');
             return;
