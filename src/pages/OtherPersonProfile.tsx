@@ -122,7 +122,8 @@ const OtherPersonProfile: React.FC = () => {
         }
         
         if (itemsData) {
-          console.log('Fetched items data:', itemsData);
+          console.log('🔍 JOHN2 PROFILE: Fetched items data:', itemsData);
+          console.log('🔍 JOHN2 PROFILE: Items with removed status:', itemsData.filter(item => item.status === 'removed'));
           setUserItems(itemsData);
           
           // Load liked status for each item if user is logged in
