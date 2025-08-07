@@ -17,7 +17,12 @@ export const mockItems: Item[] = [
     category: 'Electronics',
     condition: 'Like New',
     description: 'Barely used iPhone 13 Pro in excellent condition',
-    tags: ['Apple', 'Smartphone', 'iOS']
+    tags: ['Apple', 'Smartphone', 'iOS'],
+    image_urls: [
+      'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=400&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1580522154071-c6ca47aae43c?w=400&h=400&fit=crop'
+    ]
   },
   {
     id: '2',
@@ -26,7 +31,12 @@ export const mockItems: Item[] = [
     category: 'Fashion',
     condition: 'Good',
     description: 'Classic Air Jordan 1 sneakers, size 10',
-    tags: ['Nike', 'Sneakers', 'Basketball']
+    tags: ['Nike', 'Sneakers', 'Basketball'],
+    image_urls: [
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop'
+    ]
   },
   {
     id: '3',
