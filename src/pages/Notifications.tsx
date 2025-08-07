@@ -1,216 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bell, MessageCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Bell, MessageCircle, User, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { mockNotifications } from '@/data/mockDemoData';
-
-interface Notification {
-  id: string;
-  type: 'system' | 'message' | 'trade' | 'friend';
-  title: string;
-  content: string;
-  isRead: boolean;
-  timestamp: string;
-  relatedId?: string;
-}
+import { useNotifications } from '@/hooks/useUnreadNotifications';
 
 const Notifications: React.FC = () => {
-  const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { notifications, loading, markAsRead } = useNotifications();
 
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchNotifications = async () => {
-      setLoading(true);
-      try {
-        if (!supabaseConfigured) {
-          // Demo mode - use mock notifications
-          setNotifications(mockNotifications);
-          setLoading(false);
-          return;
-        }
-
-        try {
-          const { data, error } = await supabase
-            .from('notifications')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
-
-          if (error) {
-            console.error('Error fetching notifications:', error);
-            throw error;
-          }
-
-          // Map the database fields to our interface
-          const formattedNotifications = (data || []).map((notification: any) => {
-            const getTitle = () => {
-              switch (notification.action_taken) {
-                case 'match':
-                  return 'New Match!';
-                case 'friend':
-                  return 'Friend Request';
-                case 'message':
-                  return 'New Message';
-                default:
-                  return 'Notification';
-              }
-            };
-
-            const getType = (): 'system' | 'message' | 'trade' | 'friend' => {
-              switch (notification.action_taken) {
-                case 'match':
-                  return 'trade';
-                case 'friend':
-                  return 'friend';
-                case 'message':
-                  return 'message';
-                default:
-                  return 'system';
-              }
-            };
-
-            return {
-              id: notification.id,
-              type: getType(),
-              title: getTitle(),
-              content: notification.message || 'No message content',
-              isRead: notification.status === 'read',
-              timestamp: notification.created_at,
-              relatedId: notification.reference_id
-            };
-          });
-
-          setNotifications(formattedNotifications);
-        } catch (error) {
-          console.error('Error in notification fetch:', error);
-          // Fall back to placeholder notifications
-          setNotifications([
-            {
-              id: '1',
-              type: 'message',
-              title: 'New message',
-              content: 'You have received a new message from Marcus Thompson.',
-              isRead: false,
-              timestamp: new Date().toISOString(),
-              relatedId: 'user2'
-            },
-            {
-              id: '2',
-              type: 'trade',
-              title: 'Trade request',
-              content: 'Jessica Parker wants to trade her Vintage Leather Jacket for your item.',
-              isRead: true,
-              timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-              relatedId: 'user1'
-            },
-            {
-              id: '3',
-              type: 'system',
-              title: 'Welcome to TradeMate',
-              content: 'Thank you for joining TradeMate. Start adding items to trade!',
-              isRead: true,
-              timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-            },
-          ]);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNotifications();
-  }, [user, supabaseConfigured]);
-
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  const handleNotificationClick = async (notification: Notification) => {
+  const handleNotificationClick = async (notification: any) => {
     console.log('🔔 Notification clicked:', notification);
-    if (!user) {
-      console.log('🔔 No user, returning early');
-      return;
-    }
     
     // Mark as read
-    try {
-      if (!notification.isRead) {
-        const updatedNotifications = notifications.map(n => 
-          n.id === notification.id ? { ...n, isRead: true } : n
-        );
-        setNotifications(updatedNotifications);
-        
-        // In a real app, update the read status in the database
-        if (supabaseConfigured) {
-          await supabase
-            .from('notifications')
-            .update({ status: 'read' })
-            .eq('id', notification.id);
-        }
-      }
-      
-      // Navigate based on notification type and content
-      console.log('🔔 Starting navigation logic for:', notification.type, notification.title, notification.content);
-      
-      if (notification.type === 'message') {
-        console.log('🔔 Message notification, relatedId:', notification.relatedId);
-        if (notification.relatedId) {
-          const route = `/messages?conversation=${notification.relatedId}`;
-          console.log('🔔 Navigating to:', route);
-          navigate(route);
-        } else {
-          console.log('🔔 Navigating to /messages');
-          navigate('/messages');
-        }
-      } else if (notification.type === 'trade') {
-        console.log('🔔 Trade notification');
-        if (notification.title.includes('Match') || notification.content.includes('match')) {
-          console.log('🔔 Match notification, navigating to /');
-          navigate('/');
-        } else if (notification.content.includes('trade') || notification.content.includes('Trade')) {
-          console.log('🔔 Trade request notification, navigating to /trades');
-          navigate('/trades');
-        } else if (notification.relatedId) {
-          const route = `/other-person-profile?userId=${notification.relatedId}`;
-          console.log('🔔 Other trade notification, navigating to:', route);
-          navigate(route);
-        }
-      } else if (notification.type === 'friend') {
-        console.log('🔔 Friend notification');
-        if (notification.relatedId) {
-          const route = `/other-person-profile?userId=${notification.relatedId}`;
-          console.log('🔔 Friend notification with relatedId, navigating to:', route);
-          navigate(route);
-        } else {
-          console.log('🔔 Friend notification without relatedId, navigating to /profile');
-          navigate('/profile');
-        }
-      } else if (notification.type === 'system') {
-        console.log('🔔 System notification');
-        if (notification.content.includes('item') || notification.content.includes('trade')) {
-          console.log('🔔 System notification about items/trade, navigating to /');
-          navigate('/');
-        } else {
-          console.log('🔔 General system notification, navigating to /profile');
-          navigate('/profile');
-        }
-      } else {
-        console.log('🔔 Unknown notification type, no navigation');
-      }
-    } catch (error) {
-      console.error('Error updating notification:', error);
-      toast.error('Failed to update notification');
+    if (!notification.is_read) {
+      await markAsRead(notification.id);
     }
+    
+    // Navigate based on action URL or type
+    if (notification.action_url) {
+      console.log('🔔 Navigating to action_url:', notification.action_url);
+      navigate(notification.action_url);
+    } else {
+      console.log('🔔 No action_url, using fallback navigation for type:', notification.type);
+      // Fallback navigation based on type
+      switch (notification.type) {
+        case 'message':
+          navigate('/messages');
+          break;
+        case 'match':
+        case 'like':
+          navigate('/');
+          break;
+        case 'friend':
+        case 'follower':
+          navigate('/profile');
+          break;
+        default:
+          navigate('/');
+      }
+    }
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'message':
+        return <MessageCircle className="h-5 w-5 text-white" />;
+      case 'like':
+      case 'match':
+        return <Heart className="h-5 w-5 text-white" />;
+      case 'friend':
+      case 'follower':
+        return <User className="h-5 w-5 text-white" />;
+      default:
+        return <Bell className="h-5 w-5 text-white" />;
+    }
+  };
+
+  const getNotificationIconBackground = (type: string) => {
+    switch (type) {
+      case 'message':
+        return 'bg-blue-500';
+      case 'like':
+      case 'match':
+        return 'bg-red-500';
+      case 'friend':
+      case 'follower':
+        return 'bg-purple-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) {
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+      return `${diffInMinutes} min ago`;
+    }
+    
+    if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) {
+      return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+    }
+    
+    return date.toLocaleDateString();
   };
 
   return (
@@ -228,7 +110,7 @@ const Notifications: React.FC = () => {
           notifications.map((notification) => (
             <Card 
               key={notification.id} 
-              className={`cursor-pointer hover:bg-accent/5 ${notification.isRead ? 'opacity-75' : ''}`}
+              className={`cursor-pointer hover:bg-accent/5 ${notification.is_read ? 'opacity-75' : ''}`}
               onClick={() => handleNotificationClick(notification)}
             >
               <CardContent className="p-4 flex items-start gap-4">
@@ -239,12 +121,12 @@ const Notifications: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-semibold">{notification.title}</h3>
-                      {!notification.isRead && (
+                      {!notification.is_read && (
                         <Badge variant="default" className="text-xs">New</Badge>
                       )}
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {formatTimestamp(notification.timestamp)}
+                      {formatTimestamp(notification.created_at)}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">{notification.content}</p>
@@ -263,50 +145,5 @@ const Notifications: React.FC = () => {
     </MainLayout>
   );
 };
-
-// Helper functions for notification UI
-function getNotificationIcon(type: string) {
-  switch (type) {
-    case 'message':
-      return <MessageCircle className="h-5 w-5 text-white" />;
-    case 'trade':
-      return <Bell className="h-5 w-5 text-white" />;
-    default:
-      return <Bell className="h-5 w-5 text-white" />;
-  }
-}
-
-function getNotificationIconBackground(type: string) {
-  switch (type) {
-    case 'message':
-      return 'bg-blue-500';
-    case 'trade':
-      return 'bg-green-500';
-    default:
-      return 'bg-gray-500';
-  }
-}
-
-function formatTimestamp(timestamp: string) {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-  
-  if (diffInHours < 1) {
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    return `${diffInMinutes} min ago`;
-  }
-  
-  if (diffInHours < 24) {
-    return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
-  }
-  
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) {
-    return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
-  }
-  
-  return date.toLocaleDateString();
-}
 
 export default Notifications;
