@@ -7,6 +7,7 @@ import { UserPlus, UserCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { createFriendRequestNotification, createFriendRequestAcceptedNotification } from '@/services/notificationService';
+import { blockingService } from '@/services/blockingService';
 
 export type FriendRequestStatus = 'none' | 'pending' | 'pending-received' | 'accepted' | 'rejected';
 
@@ -26,6 +27,8 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [friendRequestId, setFriendRequestId] = useState<string | null>(null);
   const [otherUserName, setOtherUserName] = useState<string>('');
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [isBlockedBy, setIsBlockedBy] = useState(false);
   
   // Check existing friend request status on mount
   useEffect(() => {
@@ -43,6 +46,20 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
 
         if (otherProfile) {
           setOtherUserName(otherProfile.name || otherProfile.username || 'this user');
+        }
+
+        // Check blocking relationships
+        const [userIsBlocked, userIsBlockedBy] = await Promise.all([
+          blockingService.isUserBlocked(userId),
+          blockingService.isCurrentUserBlockedBy(userId)
+        ]);
+
+        setIsBlocked(userIsBlocked);
+        setIsBlockedBy(userIsBlockedBy);
+
+        // If either user is blocked, don't check friend requests
+        if (userIsBlocked || userIsBlockedBy) {
+          return;
         }
 
         const { data: friendRequests } = await supabase
@@ -82,6 +99,22 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate('/auth');
+        return;
+      }
+
+      // Check if either user is blocked
+      const [userIsBlocked, userIsBlockedBy] = await Promise.all([
+        blockingService.isUserBlocked(userId),
+        blockingService.isCurrentUserBlockedBy(userId)
+      ]);
+
+      if (userIsBlocked) {
+        toast.error("You have blocked this user");
+        return;
+      }
+
+      if (userIsBlockedBy) {
+        toast.error("This user has blocked you");
         return;
       }
 
@@ -288,6 +321,11 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       setIsLoading(false);
     }
   };
+  
+  // Don't show friend request button if user is blocked or blocking
+  if (isBlocked || isBlockedBy) {
+    return null;
+  }
   
   // Button for sending a friend request
   if (status === 'none') {

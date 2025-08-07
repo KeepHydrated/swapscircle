@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { fetchUserReviews } from '@/services/authService';
 import { MatchItem } from '@/types/item';
 import { toast } from 'sonner';
+import { blockingService } from '@/services/blockingService';
 
 const OtherProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -44,6 +45,21 @@ const OtherProfile: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
+
+        // Check if user is blocked before loading profile
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        if (currentUser && userId) {
+          const [isUserBlocked, isCurrentUserBlocked] = await Promise.all([
+            blockingService.isUserBlocked(userId),
+            blockingService.isCurrentUserBlockedBy(userId)
+          ]);
+
+          if (isUserBlocked || isCurrentUserBlocked) {
+            setError("This profile is not available");
+            setLoading(false);
+            return;
+          }
+        }
 
         // Fetch user profile
         const { data: profileData, error: profileError } = await supabase

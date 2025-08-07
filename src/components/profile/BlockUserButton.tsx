@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserX } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface BlockUserButtonProps {
   userId: string;
@@ -18,12 +19,52 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
 
+  // Check if user is already blocked on component mount
+  useEffect(() => {
+    const checkBlockStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('blocked_users')
+          .select('id')
+          .eq('blocker_id', user.id)
+          .eq('blocked_id', userId)
+          .maybeSingle();
+
+        if (!error && data) {
+          setIsBlocked(true);
+        }
+      } catch (error) {
+        console.error('Error checking block status:', error);
+      }
+    };
+
+    if (userId) {
+      checkBlockStatus();
+    }
+  }, [userId]);
+
   const handleBlock = async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement actual blocking functionality with Supabase
-      // For now, just simulate the action
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('You must be logged in to block users');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('blocked_users')
+        .insert({
+          blocker_id: user.id,
+          blocked_id: userId
+        });
+
+      if (error) {
+        throw error;
+      }
       
       setIsBlocked(true);
       toast.success(`${username} has been blocked`);
@@ -36,17 +77,73 @@ const BlockUserButton: React.FC<BlockUserButtonProps> = ({
     }
   };
 
+  const handleUnblock = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('You must be logged in to unblock users');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('blocked_users')
+        .delete()
+        .eq('blocker_id', user.id)
+        .eq('blocked_id', userId);
+
+      if (error) {
+        throw error;
+      }
+      
+      setIsBlocked(false);
+      toast.success(`${username} has been unblocked`);
+      onBlockSuccess?.();
+    } catch (error) {
+      console.error('Error unblocking user:', error);
+      toast.error('Failed to unblock user. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isBlocked) {
     return (
-      <Button 
-        variant="outline" 
-        size="sm"
-        disabled
-        className="text-red-600 border-red-200 w-10 h-10 p-0"
-        title="Blocked"
-      >
-        <UserX className="w-4 h-4" />
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="text-red-600 border-red-200 w-10 h-10 p-0"
+            title="Unblock User"
+          >
+            <UserX className="w-4 h-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unblock {username}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This user will be able to:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Send you friend requests again</li>
+                <li>See your items and profile</li>
+                <li>Contact you through the app</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleUnblock}
+              disabled={isLoading}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {isLoading ? 'Unblocking...' : 'Unblock User'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
 

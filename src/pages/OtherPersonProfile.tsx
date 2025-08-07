@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem, isItemLiked, fetchUserReviews } from '@/services/authService';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { blockingService } from '@/services/blockingService';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -58,6 +59,20 @@ const OtherPersonProfile: React.FC = () => {
         // Use auth context instead of direct supabase call
         const currentUser = user;
         setCurrentUserId(currentUser?.id || null);
+
+        // Check if user is blocked before loading profile
+        if (currentUser && userId) {
+          const [isUserBlocked, isCurrentUserBlocked] = await Promise.all([
+            blockingService.isUserBlocked(userId),
+            blockingService.isCurrentUserBlockedBy(userId)
+          ]);
+
+          if (isUserBlocked || isCurrentUserBlocked) {
+            toast.error("This profile is not available");
+            navigate('/home');
+            return;
+          }
+        }
 
         // Check friend status if user is logged in
         if (currentUser) {

@@ -95,6 +95,27 @@ export type Database = {
         }
         Relationships: []
       }
+      blocked_users: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       book_follows: {
         Row: {
           book_id: string
@@ -2598,6 +2619,10 @@ export type Database = {
       }
       is_moderator: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      is_user_blocked: {
+        Args: { blocker_user_id: string; blocked_user_id: string }
         Returns: boolean
       }
       mark_notification_as_read: {

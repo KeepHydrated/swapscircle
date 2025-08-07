@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item } from '@/types/item';
 import { mockItems } from '@/data/mockDemoData';
+import { blockingService } from '@/services/blockingService';
 
 export function useDbItems() {
   const [items, setItems] = useState<Item[]>([]);
@@ -20,12 +21,25 @@ export function useDbItems() {
         return;
       }
       try {
-        const { data, error } = await supabase
+        // Get blocked users first
+        const blockedUsers = await blockingService.getBlockedUsers();
+        const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
+        const allBlockedUsers = [...blockedUsers, ...usersWhoBlockedMe];
+
+        // Build the query
+        let query = supabase
           .from('items')
-          .select('id, name, image_url, category, condition, description, tags')
+          .select('id, name, image_url, category, condition, description, tags, user_id')
           .eq('is_available', true) // Only show available items
           .eq('is_hidden', false) // Only show non-hidden items
           .eq('status', 'published'); // Only show published items (exclude drafts and removed items)
+
+        // If there are blocked users, exclude their items
+        if (allBlockedUsers.length > 0) {
+          query = query.not('user_id', 'in', `(${allBlockedUsers.join(',')})`);
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
 
