@@ -29,7 +29,7 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
   return { lat, lng };
 };
 
-export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide'): Promise<MatchItem[]> => {
+export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide', perspectiveUserId?: string): Promise<MatchItem[]> => {
   if (!isSupabaseConfigured()) {
     return [];
   }
@@ -42,23 +42,37 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
 
-    // Get blocked users to filter them out (bidirectional blocking)
-    const blockedUsers = await blockingService.getBlockedUsers();
-    const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
+    // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
+    const effectiveUserId = perspectiveUserId || currentUserId;
+    
+    // Get blocked users from the perspective user's viewpoint
+    const { data: blockedData } = await supabase
+      .from('blocked_users')
+      .select('blocked_id')
+      .eq('blocker_id', effectiveUserId);
+    
+    const { data: blockersData } = await supabase
+      .from('blocked_users')
+      .select('blocker_id')
+      .eq('blocked_id', effectiveUserId);
+    
+    const blockedUsers = blockedData?.map(item => item.blocked_id) || [];
+    const usersWhoBlockedMe = blockersData?.map(item => item.blocker_id) || [];
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
 
     console.log('🚨 BLOCKING DEBUG - Current user:', currentUserId);
-    console.log('🚨 BLOCKING DEBUG - Users I blocked:', blockedUsers);
-    console.log('🚨 BLOCKING DEBUG - Users who blocked me:', usersWhoBlockedMe);
+    console.log('🚨 BLOCKING DEBUG - Effective user (perspective):', effectiveUserId);
+    console.log('🚨 BLOCKING DEBUG - Users blocked by perspective user:', blockedUsers);
+    console.log('🚨 BLOCKING DEBUG - Users who blocked perspective user:', usersWhoBlockedMe);
     console.log('🚨 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
 
-    // Get all available and visible items from other users - EXPLICIT EXCLUSION
-    console.log('Debug - Building query to exclude current user:', currentUserId);
+    // Get all available and visible items from other users - exclude the perspective user's items
+    console.log('Debug - Building query to exclude effective user:', effectiveUserId);
     
     let itemsQuery = supabase
       .from('items')
       .select('*')
-      .not('user_id', 'eq', currentUserId) // More explicit exclusion
+      .not('user_id', 'eq', effectiveUserId) // Exclude the perspective user's items
       .eq('is_available', true) // Only show available items
       .eq('is_hidden', false) // Only show non-hidden items
       .eq('status', 'published'); // Only show published items (not drafts)

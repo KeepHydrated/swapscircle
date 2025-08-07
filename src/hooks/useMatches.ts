@@ -6,7 +6,7 @@ import { findMatchingItems } from '@/services/matchingService';
 import { isItemLiked } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 
-export function useMatches(selectedItem: Item | null, location: string = 'nationwide') {
+export function useMatches(selectedItem: Item | null, location: string = 'nationwide', perspectiveUserId?: string) {
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
       try {
         console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id, 'Location:', location);
-        const matchingItems = await findMatchingItems(selectedItem, user.id, location);
+        const matchingItems = await findMatchingItems(selectedItem, user.id, location, perspectiveUserId);
         
         // Return matches as-is, let useMatchActions handle the liked status
         console.log('Debug - Final matches:', matchingItems);
@@ -59,7 +59,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
     }
 
     fetchMatches();
-  }, [selectedItem, user, supabaseConfigured, location, refreshTrigger]);
+  }, [selectedItem, user, supabaseConfigured, location, refreshTrigger, perspectiveUserId]);
 
   return { matches, loading, error, refreshMatches };
 }
