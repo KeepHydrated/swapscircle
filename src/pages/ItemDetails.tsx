@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Calendar, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { blockingService } from '@/services/blockingService';
 
 interface ItemData {
   id: string;
@@ -23,7 +24,7 @@ interface ItemData {
 const ItemDetails: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
-  const { supabaseConfigured } = useAuth();
+  const { supabaseConfigured, user } = useAuth();
   const [item, setItem] = useState<ItemData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +58,17 @@ const ItemDetails: React.FC = () => {
           setError('Item not found');
           toast.error('Item not found');
         } else {
+          // Check if the item owner has blocked the current user or vice versa
+          if (user && data.user_id !== user.id) {
+            const isBlockedByOwner = await blockingService.isCurrentUserBlockedBy(data.user_id);
+            const hasBlockedOwner = await blockingService.isUserBlocked(data.user_id);
+            
+            if (isBlockedByOwner || hasBlockedOwner) {
+              setError('Item not accessible');
+              toast.error('This item is not accessible');
+              return;
+            }
+          }
           setItem(data);
         }
       } catch (error) {
@@ -69,7 +81,7 @@ const ItemDetails: React.FC = () => {
     };
 
     fetchItem();
-  }, [itemId, supabaseConfigured]);
+  }, [itemId, supabaseConfigured, user]);
 
   if (loading) {
     return (

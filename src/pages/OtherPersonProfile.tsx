@@ -47,29 +47,30 @@ const OtherPersonProfile: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      
-      // Wait for auth to finish loading before proceeding
-      if (authLoading) {
-        return;
+
+      if (!user) {
+        return; // Wait for auth to load
       }
-      
-      setIsLoading(true);
-      console.log('Fetching profile for userId:', userId);
+
       try {
+        // Check if the user has blocked us or we have blocked them
+        const isBlockedByUser = await blockingService.isCurrentUserBlockedBy(userId);
+        const haveBlockedUser = await blockingService.isUserBlocked(userId);
+        
+        if (isBlockedByUser || haveBlockedUser) {
+          // Redirect back if blocked in either direction
+          toast.error("This profile is not accessible");
+          navigate(-1);
+          return;
+        }
+        
+        // Fetch profile data after blocking check passes
+        setIsLoading(true);
+        console.log('Fetching profile for userId:', userId);
+        
         // Use auth context instead of direct supabase call
         const currentUser = user;
         setCurrentUserId(currentUser?.id || null);
-
-        // Check if user is blocked - but only redirect if THEY blocked YOU
-        if (currentUser && userId) {
-          const isCurrentUserBlocked = await blockingService.isCurrentUserBlockedBy(userId);
-
-          if (isCurrentUserBlocked) {
-            toast.error("This profile is not available");
-            navigate('/home');
-            return;
-          }
-        }
 
         // Check friend status if user is logged in
         if (currentUser) {
@@ -159,7 +160,9 @@ const OtherPersonProfile: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error fetching profile or checking blocking:', error);
+        toast.error("Unable to access profile");
+        navigate(-1);
       } finally {
         setIsLoading(false);
       }
