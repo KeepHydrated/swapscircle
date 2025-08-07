@@ -410,25 +410,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               </div>
             ) : (
               <>
-                {/* Item layout: Image left, details right */}
-                <div className="flex gap-6 mb-8">
-                  {/* Item Image */}
-                  <div className="w-20 h-20 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
-                    {allImages.length > 0 ? (
-                      <img
-                        src={allImages[0]}
-                        alt={displayItem.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <span className="text-xs">No image</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Title and Description on the right */}
-                  <div className="flex-1">
+                {/* Item details without thumbnail */}
+                <div className="mb-8">
+                  {/* Title and Description */}
+                  <div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       {displayItem.name}
                     </h2>
