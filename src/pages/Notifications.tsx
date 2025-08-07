@@ -160,32 +160,52 @@ const Notifications: React.FC = () => {
       }
       
       // Navigate based on notification type and content
+      console.log('🔔 Starting navigation logic for:', notification.type, notification.title, notification.content);
+      
       if (notification.type === 'message') {
+        console.log('🔔 Message notification, relatedId:', notification.relatedId);
         if (notification.relatedId) {
-          navigate(`/messages?conversation=${notification.relatedId}`);
+          const route = `/messages?conversation=${notification.relatedId}`;
+          console.log('🔔 Navigating to:', route);
+          navigate(route);
         } else {
+          console.log('🔔 Navigating to /messages');
           navigate('/messages');
         }
       } else if (notification.type === 'trade') {
+        console.log('🔔 Trade notification');
         if (notification.title.includes('Match') || notification.content.includes('match')) {
+          console.log('🔔 Match notification, navigating to /');
           navigate('/');
         } else if (notification.content.includes('trade') || notification.content.includes('Trade')) {
+          console.log('🔔 Trade request notification, navigating to /trades');
           navigate('/trades');
         } else if (notification.relatedId) {
-          navigate(`/other-person-profile?userId=${notification.relatedId}`);
+          const route = `/other-person-profile?userId=${notification.relatedId}`;
+          console.log('🔔 Other trade notification, navigating to:', route);
+          navigate(route);
         }
       } else if (notification.type === 'friend') {
+        console.log('🔔 Friend notification');
         if (notification.relatedId) {
-          navigate(`/other-person-profile?userId=${notification.relatedId}`);
+          const route = `/other-person-profile?userId=${notification.relatedId}`;
+          console.log('🔔 Friend notification with relatedId, navigating to:', route);
+          navigate(route);
         } else {
+          console.log('🔔 Friend notification without relatedId, navigating to /profile');
           navigate('/profile');
         }
       } else if (notification.type === 'system') {
+        console.log('🔔 System notification');
         if (notification.content.includes('item') || notification.content.includes('trade')) {
+          console.log('🔔 System notification about items/trade, navigating to /');
           navigate('/');
         } else {
+          console.log('🔔 General system notification, navigating to /profile');
           navigate('/profile');
         }
+      } else {
+        console.log('🔔 Unknown notification type, no navigation');
       }
     } catch (error) {
       console.error('Error updating notification:', error);
