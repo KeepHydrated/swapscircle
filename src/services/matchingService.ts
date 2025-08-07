@@ -408,7 +408,9 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // If there's any match, add to results
       if (isMatch) {
         const userProfile = profileMap.get(otherItem.user_id);
-        console.log(`🚨 FINAL MATCH ADDED: Item ${otherItem.id} (${otherItem.name}) from user ${otherItem.user_id}, currentUser: ${currentUserId}, effectiveUser: ${effectiveUserId}, selectedItem owner: ${selectedItem.user_id}`);
+        console.log(`🚨 FINAL MATCH ADDED: Item ${otherItem.id} (${otherItem.name}) from user ${otherItem.user_id}`);
+        console.log(`🚨 MATCH ITEM USER: ${otherItem.user_id} vs KNOWN BLOCKER: b5fbf0c4-f064-4be4-99cf-4d32a69b22fc`);
+        console.log(`🚨 IS THIS THE BLOCKING USER? ${otherItem.user_id === 'b5fbf0c4-f064-4be4-99cf-4d32a69b22fc'}`);
         matches.push({
           id: otherItem.id,
           name: otherItem.name,
