@@ -320,17 +320,11 @@ const AdminReports: React.FC = () => {
 
       if (itemFetchError) throw itemFetchError;
 
-      // 2. Mark the reported item as removed instead of deleting
+      // 2. Mark the reported item as removed using admin function
       console.log('🔍 Attempting to mark item as removed:', { itemId, itemName: itemData.name });
       
       const { data: updateResult, error: itemError } = await supabase
-        .from('items')
-        .update({ 
-          status: 'removed',
-          is_available: false 
-        })
-        .eq('id', itemId)
-        .select('id, status, is_available');
+        .rpc('admin_remove_item', { item_id_param: itemId });
 
       console.log('🔍 Update result:', { updateResult, itemError });
 
@@ -339,12 +333,12 @@ const AdminReports: React.FC = () => {
         throw itemError;
       }
 
-      if (!updateResult || updateResult.length === 0) {
-        console.error('❌ No item was updated - item not found or no permission');
+      if (!updateResult) {
+        console.error('❌ No item was updated - item not found or permission denied');
         throw new Error('Failed to update item - item not found or permission denied');
       }
 
-      console.log('✅ Item successfully marked as removed:', updateResult[0]);
+      console.log('✅ Item successfully marked as removed:', updateResult);
 
       // 3. Increment user strikes
       const { data: strikeCount, error: strikeError } = await supabase

@@ -2357,6 +2357,10 @@ export type Database = {
         Args: { moderator_email: string; admin_user_id: string }
         Returns: undefined
       }
+      admin_remove_item: {
+        Args: { item_id_param: string }
+        Returns: Json
+      }
       calculate_user_earnings: {
         Args: { p_user_id: string }
         Returns: undefined
