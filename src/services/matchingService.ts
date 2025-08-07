@@ -50,26 +50,28 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
     const effectiveUserId = perspectiveUserId || currentUserId;
     
-    // Get blocked users from the perspective user's viewpoint
+    // Get blocked users from the VIEWING user's perspective (not the perspective user)
+    // This ensures when you view your own matches, blocked users are filtered out
     const { data: blockedData } = await supabase
       .from('blocked_users')
       .select('blocked_id')
-      .eq('blocker_id', effectiveUserId);
+      .eq('blocker_id', currentUserId); // Always use currentUserId for blocking queries
     
     const { data: blockersData } = await supabase
       .from('blocked_users')
       .select('blocker_id')
-      .eq('blocked_id', effectiveUserId);
+      .eq('blocked_id', currentUserId); // Always use currentUserId for blocking queries
     
     const blockedUsers = blockedData?.map(item => item.blocked_id) || [];
     const usersWhoBlockedMe = blockersData?.map(item => item.blocker_id) || [];
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
 
-    console.log('🚨 BLOCKING DEBUG - Current user:', currentUserId);
+    console.log('🚨 BLOCKING DEBUG - Current viewing user:', currentUserId);
     console.log('🚨 BLOCKING DEBUG - Effective user (perspective):', effectiveUserId);
-    console.log('🚨 BLOCKING DEBUG - Users blocked by perspective user:', blockedUsers);
-    console.log('🚨 BLOCKING DEBUG - Users who blocked perspective user:', usersWhoBlockedMe);
+    console.log('🚨 BLOCKING DEBUG - Users blocked by viewing user:', blockedUsers);
+    console.log('🚨 BLOCKING DEBUG - Users who blocked viewing user:', usersWhoBlockedMe);
     console.log('🚨 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
+    console.log('🚨 BLOCKING DEBUG - Selected item owner:', selectedItem.user_id);
 
     // Get all available and visible items from other users - exclude the current user's items
     console.log('Debug - Building query to exclude current user:', currentUserId);
