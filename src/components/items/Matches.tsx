@@ -3,8 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { MatchItem } from '@/types/item';
 import { Button } from '@/components/ui/button';
-import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
-import MatchesContainer from './matches/MatchesContainer';
+import MatchesCarousel from './MatchesCarousel';
 import { useMatchActions } from './matches/useMatchActions';
 import { ReportItemModal } from './ReportItemModal';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
@@ -63,10 +62,8 @@ const Matches: React.FC<MatchesProps> = ({
     handleLike,
     handleReject,
     handleUndo,
-    handleOpenModal,
-    handlePopupLikeClick,
-    handleClosePopup,
     handleReport,
+    handleClosePopup,
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
@@ -119,29 +116,6 @@ const Matches: React.FC<MatchesProps> = ({
     !removedItems.includes(match.id) && !likedItems[match.id]
   );
 
-  // Find current index in displayed matches
-  const currentMatchIndex = selectedMatch 
-    ? displayedMatches.findIndex(match => match.id === selectedMatch.id)
-    : -1;
-
-  // Navigation functions
-  const navigateToPrevMatch = () => {
-    if (currentMatchIndex > 0) {
-      const prevMatch = displayedMatches[currentMatchIndex - 1];
-      if (prevMatch) {
-        setSelectedMatch(prevMatch);
-      }
-    }
-  };
-
-  const navigateToNextMatch = () => {
-    if (currentMatchIndex < displayedMatches.length - 1) {
-      const nextMatch = displayedMatches[currentMatchIndex + 1];
-      if (nextMatch) {
-        setSelectedMatch(nextMatch);
-      }
-    }
-  };
 
   // Don't render if we have no selected item
   if (!selectedItemName) {
@@ -166,39 +140,16 @@ const Matches: React.FC<MatchesProps> = ({
         </div>
       ) : displayedMatches.length > 0 ? (
         <div className="flex-grow">
-          <MatchesContainer
-            displayedMatches={displayedMatches}
-            likedItems={likedItems}
-            onOpenModal={handleOpenModal}
-            onLike={handleLike}
-            onReject={handleReject}
+          <MatchesCarousel
+            items={displayedMatches}
+            onLikeItem={handleLike}
+            onRejectItem={handleReject}
             onReport={handleReport}
+            likedItems={likedItems}
           />
         </div>
       ) : null}
       
-      {/* Modal for displaying match details */}
-      {selectedMatch && !(selectedMatch as any).isReportModal && (
-        <ItemDetailsModal
-          key={`${selectedMatch.id}-${selectedMatch.image}`} // Prevent flashing with stable key
-          item={selectedMatch}
-          isOpen={!!selectedMatch}
-          onClose={handleClosePopup}
-          onLikeClick={handlePopupLikeClick}
-          onNavigatePrev={navigateToPrevMatch}
-          onNavigateNext={navigateToNextMatch}
-          currentIndex={currentMatchIndex}
-          totalItems={displayedMatches.length}
-          skipDataFetch={true} // Skip API calls since we already have match data
-          preloadedUserProfile={selectedMatch.userProfile ? {
-            name: selectedMatch.userProfile.name,
-            username: selectedMatch.userProfile.username,
-            avatar_url: selectedMatch.userProfile.avatar_url || '',
-            created_at: '2025-01-01T00:00:00Z' // Default since we don't have this in match data
-          } : undefined}
-        />
-      )}
-
       {/* Report Item Modal */}
       {selectedMatch && (selectedMatch as any).isReportModal && (
         <ReportItemModal
