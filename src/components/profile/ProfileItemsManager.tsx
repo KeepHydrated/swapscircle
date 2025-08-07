@@ -102,6 +102,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
         looking_for_categories: item.lookingForCategories || item.looking_for_categories || [],
         looking_for_conditions: item.lookingForConditions || item.looking_for_conditions || [],
         looking_for_description: item.lookingForDescription || item.looking_for_description || '',
+        looking_for_price_ranges: (item as any).looking_for_price_ranges || [],
         price_range_min: item.priceRangeMin || (item as any).price_range_min,
         price_range_max: item.priceRangeMax || (item as any).price_range_max,
       };
