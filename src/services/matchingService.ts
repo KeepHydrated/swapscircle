@@ -58,26 +58,32 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     
     // Get blocked users from the VIEWING user's perspective (not the perspective user)
     // This ensures when you view your own matches, blocked users are filtered out
-    const { data: blockedData } = await supabase
+    console.log('🔥 BLOCKING QUERY 1 - Getting users blocked BY current user:', currentUserId);
+    const { data: blockedData, error: blockedError } = await supabase
       .from('blocked_users')
       .select('blocked_id')
       .eq('blocker_id', currentUserId); // Always use currentUserId for blocking queries
     
-    const { data: blockersData } = await supabase
+    console.log('🔥 BLOCKING QUERY 1 RESULT:', { blockedData, blockedError });
+    
+    console.log('🔥 BLOCKING QUERY 2 - Getting users who blocked current user:', currentUserId);
+    const { data: blockersData, error: blockersError } = await supabase
       .from('blocked_users')
       .select('blocker_id')
       .eq('blocked_id', currentUserId); // Always use currentUserId for blocking queries
+    
+    console.log('🔥 BLOCKING QUERY 2 RESULT:', { blockersData, blockersError });
     
     const blockedUsers = blockedData?.map(item => item.blocked_id) || [];
     const usersWhoBlockedMe = blockersData?.map(item => item.blocker_id) || [];
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
 
-    console.log('🚨 BLOCKING DEBUG - Current viewing user:', currentUserId);
-    console.log('🚨 BLOCKING DEBUG - Effective user (perspective):', effectiveUserId);
-    console.log('🚨 BLOCKING DEBUG - Users blocked by viewing user:', blockedUsers);
-    console.log('🚨 BLOCKING DEBUG - Users who blocked viewing user:', usersWhoBlockedMe);
-    console.log('🚨 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
-    console.log('🚨 BLOCKING DEBUG - Selected item owner:', selectedItem.user_id);
+    console.log('🔥 BLOCKING DEBUG - Current viewing user:', currentUserId);
+    console.log('🔥 BLOCKING DEBUG - Effective user (perspective):', effectiveUserId);
+    console.log('🔥 BLOCKING DEBUG - Users blocked by viewing user:', blockedUsers);
+    console.log('🔥 BLOCKING DEBUG - Users who blocked viewing user:', usersWhoBlockedMe);
+    console.log('🔥 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
+    console.log('🔥 BLOCKING DEBUG - Selected item owner:', selectedItem.user_id);
 
     // Get all available and visible items from other users - exclude the current user's items
     console.log('Debug - Building query to exclude current user:', currentUserId);
