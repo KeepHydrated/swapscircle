@@ -61,10 +61,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const handleCopyProfileLink = async () => {
     try {
-      // Always use /other-profile/${userId} for shareable links when userId is available
+      // Always use /other-person-profile?userId=${userId} for shareable links when userId is available
       // This ensures others can view the specific profile when they click the link
       const profileUrl = userId 
-        ? `${window.location.origin}/other-profile/${userId}`
+        ? `${window.location.origin}/other-person-profile?userId=${userId}`
         : `${window.location.origin}/profile`;
       
       await navigator.clipboard.writeText(profileUrl);
