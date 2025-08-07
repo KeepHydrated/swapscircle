@@ -146,7 +146,7 @@ const Test: React.FC = () => {
   }, [user, supabaseConfigured]);
 
   // Define handler for liking friend items with mutual matching
-  const handleLikeFriendItem = async (itemId: string) => {
+  const handleLikeFriendItem = async (itemId: string, global?: boolean) => {
     if (!user) {
       navigate('/auth');
       return;
@@ -174,10 +174,11 @@ const Test: React.FC = () => {
       let result;
       
       if (isCurrentlyLiked) {
-        result = await unlikeItem(itemId);
-        toast.success("Removed from favorites");
+        result = await unlikeItem(itemId, global ? undefined : selectedUserItemId);
+        const message = global ? 'Removed from favorites for all your items' : 'Removed from favorites';
+        toast.success(message);
       } else {
-        result = await likeItem(itemId);
+        result = await likeItem(itemId, global ? undefined : selectedUserItemId);
         
         // Check for mutual match result
         if (result && typeof result === 'object' && 'success' in result && result.success) {
@@ -193,7 +194,8 @@ const Test: React.FC = () => {
               });
             }, 2000);
           } else {
-            toast.success("Added to favorites");
+            const message = global ? 'Added to favorites for all your items' : 'Added to favorites';
+            toast.success(message);
           }
         }
       }
@@ -210,7 +212,7 @@ const Test: React.FC = () => {
   };
 
   // Handle rejecting friend items
-  const handleRejectFriendItem = (itemId: string) => {
+  const handleRejectFriendItem = (itemId: string, global?: boolean) => {
     // Track the action for undo (keep only last 3 actions)
     setLastFriendActions(prev => {
       const newAction = { type: 'reject' as const, itemId };
@@ -218,7 +220,8 @@ const Test: React.FC = () => {
       return updated.slice(0, 3); // Keep only last 3 actions
     });
     setRejectedFriendItems(prev => [...prev, itemId]);
-    toast.success('Item removed from friends\' items');
+    const message = global ? 'Item rejected for all your items' : 'Item removed from friends\' items';
+    toast.success(message);
   };
 
   // Handle undo for friend items
@@ -519,8 +522,8 @@ const Test: React.FC = () => {
                                   image={item.image}
                                   liked={item.liked}
                                   onSelect={() => handleOpenItemModal(item)}
-                                  onLike={() => handleLikeFriendItem(item.id)}
-                                  onReject={() => handleRejectFriendItem(item.id)}
+                                  onLike={(id, global) => handleLikeFriendItem(id, global)}
+                                  onReject={(id, global) => handleRejectFriendItem(id, global)}
                                   onReport={(id) => {
                                     toast.info('Report feature would be implemented here');
                                     console.log('Report friend item:', id);
