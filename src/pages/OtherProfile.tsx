@@ -77,13 +77,14 @@ const OtherProfile: React.FC = () => {
           friendStatus: 'none' as FriendRequestStatus
         });
 
-        // Fetch user's items (only visible ones)
+        // Fetch user's items (only visible and non-removed ones)
         const { data: itemsData, error: itemsError } = await supabase
           .from('items')
           .select('*')
           .eq('user_id', userId)
           .eq('is_available', true)
-          .eq('is_hidden', false);
+          .eq('is_hidden', false)
+          .is('removed_at', null);
 
         if (itemsError) {
           console.error('Error fetching items:', itemsError);
