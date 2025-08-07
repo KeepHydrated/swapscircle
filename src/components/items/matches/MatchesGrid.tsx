@@ -63,8 +63,6 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
             );
           })}
         </CarouselContent>
-        <CarouselPrevious className="left-2" />
-        <CarouselNext className="right-2" />
       </Carousel>
     </div>
   );
