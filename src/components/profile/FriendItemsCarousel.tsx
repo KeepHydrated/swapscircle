@@ -18,12 +18,14 @@ interface FriendItemsCarouselProps {
   items: MatchItem[];
   onLikeItem: (itemId: string) => void;
   title?: string;
+  onReport?: (id: string) => void;
 }
 
 const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({ 
   items, 
   onLikeItem,
-  title = "Your Friend's Items"
+  title = "Your Friend's Items",
+  onReport
 }) => {
   const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -132,6 +134,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
                     isSelected={selectedItem?.id === item.id}
                     onItemClick={() => handleItemClick(item)}
                     onLikeClick={handleLikeClick}
+                    onReport={onReport}
                   />
                 </div>
               </CarouselItem>

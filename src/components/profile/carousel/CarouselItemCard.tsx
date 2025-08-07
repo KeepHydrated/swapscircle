@@ -4,19 +4,22 @@ import { Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MatchItem } from '@/types/item';
+import MoreActionsMenu from '@/components/items/matches/MatchActionSelector';
 
 interface CarouselItemCardProps {
   item: MatchItem;
   isSelected?: boolean;
   onItemClick: () => void;
   onLikeClick: (e: React.MouseEvent, item: MatchItem) => void;
+  onReport?: (id: string) => void;
 }
 
 const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
   item,
   isSelected,
   onItemClick,
-  onLikeClick
+  onLikeClick,
+  onReport
 }) => {
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -48,6 +51,18 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
               fill={item.liked ? "red" : "none"} 
             />
           </div>
+
+          {onReport && (
+            <div className="absolute top-1 right-1">
+              <MoreActionsMenu
+                itemId={item.id}
+                onLikeAll={(id) => onLikeClick({} as React.MouseEvent, item)}
+                onRejectAll={() => {}}
+                onReport={onReport}
+                compact={true}
+              />
+            </div>
+          )}
         </div>
         <CardContent className="p-2">
           <h3 className="font-medium text-center truncate text-sm" title={item.name}>{item.name}</h3>
