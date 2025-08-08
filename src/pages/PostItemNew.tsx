@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,14 @@ import { Upload, Package, X } from 'lucide-react';
 const PostItemNew: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { itemId } = useParams<{ itemId: string }>();
+  
+  // Determine if we're editing or creating
+  const isEditing = !!itemId;
+  
+  // Loading and existing data state
+  const [loading, setLoading] = useState(isEditing);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   
   // Simple form state
   const [formData, setFormData] = useState({
@@ -49,6 +57,61 @@ const PostItemNew: React.FC = () => {
 
   const conditions = ["New", "Like New", "Good", "Fair", "Poor"];
   const priceRanges = ["0-50", "50-100", "100-250", "250-500", "500+"];
+
+  // Load existing item data if editing
+  useEffect(() => {
+    const loadItemData = async () => {
+      if (!isEditing || !itemId) return;
+      
+      setLoading(true);
+      try {
+        console.log('📝 Loading item for editing:', itemId);
+        const { data, error } = await supabase
+          .from('items')
+          .select('*')
+          .eq('id', itemId)
+          .eq('user_id', user!.id) // Ensure user owns this item
+          .single();
+        
+        if (error) {
+          console.error('❌ Failed to load item:', error);
+          toast.error('Failed to load item data');
+          navigate('/home');
+          return;
+        }
+        
+        console.log('✅ Loaded item data:', data);
+        
+        // Populate form with existing data
+        setFormData({
+          title: data.name || '',
+          description: data.description || '',
+          category: data.category || '',
+          subcategory: data.tags?.[0] || '', // First tag as subcategory
+          condition: data.condition || '',
+          priceRange: `${data.price_range_min}-${data.price_range_max}`,
+          lookingForDescription: data.looking_for_description || '',
+          lookingForCategories: data.looking_for_categories || [],
+          lookingForSubcategories: {}, // TODO: Parse from tags if needed
+          lookingForConditions: data.looking_for_conditions || [],
+          lookingForPriceRanges: data.looking_for_price_ranges || []
+        });
+        
+        setExistingImageUrls(data.image_urls || []);
+        
+      } catch (error) {
+        console.error('❌ Error loading item:', error);
+        toast.error('Failed to load item data');
+        navigate('/home');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (user) {
+      loadItemData();
+    }
+  }, [isEditing, itemId, user, navigate]);
 
   const handleInputChange = (field: string, value: string) => {
     console.log(`🔍 Field ${field} changed to:`, value);
@@ -128,6 +191,11 @@ const PostItemNew: React.FC = () => {
     console.log(`🔍 Subcategory ${subcategory} toggled for ${category}`);
   };
 
+  const removeExistingImage = (urlToRemove: string) => {
+    setExistingImageUrls(prev => prev.filter(url => url !== urlToRemove));
+    console.log('🗑️ Existing image removed:', urlToRemove);
+  };
+
   const uploadImages = async (): Promise<string[]> => {
     const uploadPromises = images.map(async (image, index) => {
       const fileExt = image.name.split('.').pop();
@@ -156,9 +224,10 @@ const PostItemNew: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log('🚀 SUBMIT CLICKED!');
+    console.log(isEditing ? '✏️ EDIT CLICKED!' : '🚀 SUBMIT CLICKED!');
     console.log('📋 Form Data:', formData);
-    console.log('📸 Images:', images.length);
+    console.log('📸 New Images:', images.length);
+    console.log('🖼️ Existing Images:', existingImageUrls.length);
     
     // Validation
     const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange', 'lookingForDescription'];
@@ -170,8 +239,15 @@ const PostItemNew: React.FC = () => {
       return;
     }
     
-    if (images.length === 0) {
+    // For editing, images are optional if there are existing ones
+    if (!isEditing && images.length === 0) {
       console.log('❌ No images');
+      toast.error('Please add at least one image');
+      return;
+    }
+    
+    if (isEditing && images.length === 0 && existingImageUrls.length === 0) {
+      console.log('❌ No images in edit mode');
       toast.error('Please add at least one image');
       return;
     }
@@ -186,10 +262,16 @@ const PostItemNew: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Upload images first
-      console.log('📸 Uploading images...');
-      const imageUrls = await uploadImages();
-      console.log('✅ Images uploaded:', imageUrls);
+      // Upload new images if any
+      let newImageUrls: string[] = [];
+      if (images.length > 0) {
+        console.log('📸 Uploading new images...');
+        newImageUrls = await uploadImages();
+        console.log('✅ New images uploaded:', newImageUrls);
+      }
+      
+      // Combine existing and new image URLs
+      const allImageUrls = [...existingImageUrls, ...newImageUrls];
       
       // Parse price range
       const [minPrice, maxPrice] = formData.priceRange.split('-').map(p => parseFloat(p.trim()));
@@ -206,7 +288,7 @@ const PostItemNew: React.FC = () => {
         user_id: user!.id,
         name: formData.title,
         description: formData.description,
-        image_urls: imageUrls,
+        image_urls: allImageUrls,
         category: formData.category,
         condition: formData.condition,
         tags: allTags,
@@ -218,37 +300,68 @@ const PostItemNew: React.FC = () => {
         looking_for_price_ranges: lookingForPriceRanges,
         status: 'published',
         is_available: true,
-        is_hidden: false
+        is_hidden: false,
+        updated_at: new Date().toISOString()
       };
       
       console.log('💾 Saving to database:', itemData);
       
-      // Insert into database
-      const { data, error } = await supabase
-        .from('items')
-        .insert(itemData)
-        .select()
-        .single();
-      
-      if (error) {
-        console.error('❌ Database error:', error);
-        throw new Error(`Failed to save item: ${error.message}`);
+      if (isEditing) {
+        // Update existing item
+        const { data, error } = await supabase
+          .from('items')
+          .update(itemData)
+          .eq('id', itemId)
+          .eq('user_id', user!.id)
+          .select()
+          .single();
+        
+        if (error) {
+          console.error('❌ Update error:', error);
+          throw new Error(`Failed to update item: ${error.message}`);
+        }
+        
+        console.log('✅ Item updated successfully:', data);
+        toast.success('Item updated successfully!');
+      } else {
+        // Insert new item
+        const { data, error } = await supabase
+          .from('items')
+          .insert(itemData)
+          .select()
+          .single();
+        
+        if (error) {
+          console.error('❌ Insert error:', error);
+          throw new Error(`Failed to save item: ${error.message}`);
+        }
+        
+        console.log('✅ Item created successfully:', data);
+        toast.success('Item posted successfully!');
       }
-      
-      console.log('✅ Item saved successfully:', data);
-      toast.success('Item posted successfully!');
       navigate('/home');
       
     } catch (error) {
       console.error('❌ Submission error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to post item. Please try again.');
+      toast.error(error instanceof Error ? error.message : `Failed to ${isEditing ? 'update' : 'post'} item. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (!user) {
-    return <div>Please log in to post an item.</div>;
+    return <div>Please log in to {isEditing ? 'edit' : 'post'} an item.</div>;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading item data...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -261,9 +374,9 @@ const PostItemNew: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-6 w-6" />
-              What You're Offering
+              {isEditing ? 'Edit Your Item' : 'What You\'re Offering'}
             </CardTitle>
-            <p className="text-muted-foreground mt-2">Tell us about the item you want to trade</p>
+            <p className="text-muted-foreground mt-2">{isEditing ? 'Update your item details' : 'Tell us about the item you want to trade'}</p>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Images */}
@@ -289,8 +402,37 @@ const PostItemNew: React.FC = () => {
                   PNG, JPG, GIF up to 10MB each
                 </div>
               </div>
+              
+              {/* Existing Images Display */}
+              {existingImageUrls.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Current Images ({existingImageUrls.length})</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {existingImageUrls.map((url, idx) => (
+                      <div key={idx} className="relative group">
+                        <img
+                          src={url}
+                          alt={`Current ${idx + 1}`}
+                          className="w-full h-32 object-cover rounded-lg border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeExistingImage(url)}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* New Images Display */}
               {images.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                <div className="space-y-2">
+                  <Label>New Images ({images.length})</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                   {images.map((img, idx) => (
                     <div key={idx} className="relative group">
                       <img
@@ -310,6 +452,7 @@ const PostItemNew: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -508,7 +651,7 @@ const PostItemNew: React.FC = () => {
             className="w-full"
             size="lg"
           >
-            {isSubmitting ? 'Posting...' : 'Post Item'}
+            {isSubmitting ? (isEditing ? 'Updating...' : 'Posting...') : (isEditing ? 'Update Item' : 'Post Item')}
           </Button>
         </div>
       </div>

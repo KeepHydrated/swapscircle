@@ -54,7 +54,7 @@ const App = () => {
               } />
               <Route path="/edit-item/:itemId" element={
                 <RequireAuth>
-                  <EditItem />
+                  <PostItemNew />
                 </RequireAuth>
               } />
               <Route path="/messages" element={
