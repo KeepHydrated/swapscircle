@@ -542,7 +542,14 @@ const PostItemFixed: React.FC = () => {
                 Save Draft
               </Button>
               <Button
-                onClick={handleSubmit}
+                onClick={() => {
+                  console.log('🔥 BUTTON CLICKED - checking state:', { 
+                    title: title?.trim(), 
+                    isSubmitting, 
+                    disabled: isSubmitting || !title.trim() 
+                  });
+                  handleSubmit();
+                }}
                 disabled={isSubmitting || !title.trim()}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 relative overflow-hidden"
               >
