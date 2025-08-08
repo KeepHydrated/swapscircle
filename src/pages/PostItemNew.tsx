@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Package } from 'lucide-react';
+import { Upload, Package, X } from 'lucide-react';
 
 const PostItemNew: React.FC = () => {
   const { user } = useAuth();
@@ -57,6 +57,11 @@ const PostItemNew: React.FC = () => {
       setImages(prev => [...prev, ...newImages]);
       console.log('📸 Images uploaded:', newImages.length);
     }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setImages(prev => prev.filter((_, index) => index !== indexToRemove));
+    console.log('🗑️ Image removed at index:', indexToRemove);
   };
 
   const handleSubmit = async () => {
@@ -136,9 +141,25 @@ const PostItemNew: React.FC = () => {
                 </label>
               </div>
               {images.length > 0 && (
-                <div className="text-sm text-muted-foreground">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                   {images.map((img, idx) => (
-                    <div key={idx}>• {img.name}</div>
+                    <div key={idx} className="relative group">
+                      <img
+                        src={URL.createObjectURL(img)}
+                        alt={`Preview ${idx + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 rounded-b-lg truncate">
+                        {img.name}
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
