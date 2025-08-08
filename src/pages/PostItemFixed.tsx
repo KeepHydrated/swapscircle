@@ -36,11 +36,6 @@ const PostItemFixed: React.FC = () => {
   
   // Item offering form state
   const [title, setTitle] = useState('');
-  
-  // Debug title changes
-  useEffect(() => {
-    console.log('🔍 TITLE CHANGED:', { title, length: title?.length, trimmed: title?.trim(), hasTitle: !!title?.trim() });
-  }, [title]);
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState<string>("");
@@ -68,6 +63,27 @@ const PostItemFixed: React.FC = () => {
   const [showExitConfirmation, setShowExitConfirmation] = useState<boolean>(false);
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
   const beforeUnloadHandlerRef = useRef<((event: BeforeUnloadEvent) => any) | null>(null);
+  
+  // Debug title changes
+  useEffect(() => {
+    console.log('🔍 TITLE CHANGED:', { title, length: title?.length, trimmed: title?.trim(), hasTitle: !!title?.trim() });
+  }, [title]);
+  
+  // Debug component state every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('🔍 COMPONENT STATE DEBUG:', {
+        title: title?.trim(),
+        titleLength: title?.length,
+        hasTitle: !!title?.trim(),
+        category,
+        subcategory,
+        isSubmitting,
+        buttonDisabled: isSubmitting || !title.trim()
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [title, category, subcategory, isSubmitting]);
 
   // Check if profile is complete before allowing posting
   useEffect(() => {
