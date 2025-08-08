@@ -36,6 +36,11 @@ const PostItemFixed: React.FC = () => {
   
   // Item offering form state
   const [title, setTitle] = useState('');
+  
+  // Debug title changes
+  useEffect(() => {
+    console.log('🔍 TITLE CHANGED:', { title, length: title?.length, trimmed: title?.trim(), hasTitle: !!title?.trim() });
+  }, [title]);
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState<string>("");
