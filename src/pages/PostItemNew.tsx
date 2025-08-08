@@ -302,7 +302,13 @@ const PostItemNew: React.FC = () => {
       const subcategoryTags = Object.values(formData.lookingForSubcategories).flat();
       const allTags = formData.subcategory ? [formData.subcategory, ...subcategoryTags] : subcategoryTags;
       
-      // Parse looking for price ranges  
+      
+      console.log('💾 SUBMISSION DEBUG: Form data before save:');
+      console.log('🔍 lookingForDescription:', formData.lookingForDescription);
+      console.log('🔍 lookingForCategories:', formData.lookingForCategories);
+      console.log('🔍 lookingForConditions:', formData.lookingForConditions);
+      console.log('🔍 lookingForPriceRanges:', formData.lookingForPriceRanges);
+      console.log('🔍 lookingForSubcategories:', formData.lookingForSubcategories);
       const lookingForPriceRanges = formData.lookingForPriceRanges.map(range => range.replace('$', ''));
       
       // Prepare item data
