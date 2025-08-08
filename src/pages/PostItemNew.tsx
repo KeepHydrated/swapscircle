@@ -25,6 +25,7 @@ const PostItemNew: React.FC = () => {
     priceRange: '',
     lookingForDescription: '',
     lookingForCategories: [] as string[],
+    lookingForSubcategories: {} as Record<string, string[]>,
     lookingForConditions: [] as string[],
     lookingForPriceRanges: [] as string[]
   });
@@ -77,9 +78,35 @@ const PostItemNew: React.FC = () => {
       const newArray = currentArray.includes(value)
         ? currentArray.filter(item => item !== value)
         : [...currentArray, value];
+      
+      // If removing a category, also remove its subcategories
+      if (field === 'lookingForCategories' && currentArray.includes(value)) {
+        const newSubcategories = { ...prev.lookingForSubcategories };
+        delete newSubcategories[value];
+        return { ...prev, [field]: newArray, lookingForSubcategories: newSubcategories };
+      }
+      
       return { ...prev, [field]: newArray };
     });
     console.log(`🔍 Array field ${field} toggled:`, value);
+  };
+
+  const handleSubcategoryToggle = (category: string, subcategory: string) => {
+    setFormData(prev => {
+      const currentSubs = prev.lookingForSubcategories[category] || [];
+      const newSubs = currentSubs.includes(subcategory)
+        ? currentSubs.filter(sub => sub !== subcategory)
+        : [...currentSubs, subcategory];
+      
+      return {
+        ...prev,
+        lookingForSubcategories: {
+          ...prev.lookingForSubcategories,
+          [category]: newSubs
+        }
+      };
+    });
+    console.log(`🔍 Subcategory ${subcategory} toggled for ${category}`);
   };
 
   const handleSubmit = async () => {
@@ -298,17 +325,36 @@ const PostItemNew: React.FC = () => {
               {/* Looking For Categories */}
               <div className="space-y-2">
                 <Label>Categories you're interested in</Label>
-                <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                <div className="space-y-3">
                   {Object.keys(categories).map((cat) => (
-                    <label key={cat} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.lookingForCategories.includes(cat)}
-                        onChange={() => handleArrayToggle('lookingForCategories', cat)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">{cat}</span>
-                    </label>
+                    <div key={cat} className="space-y-2">
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.lookingForCategories.includes(cat)}
+                          onChange={() => handleArrayToggle('lookingForCategories', cat)}
+                          className="rounded"
+                        />
+                        <span className="text-sm font-medium">{cat}</span>
+                      </label>
+                      
+                      {/* Subcategories - Show when category is selected */}
+                      {formData.lookingForCategories.includes(cat) && (
+                        <div className="ml-6 grid grid-cols-1 gap-1 bg-muted/30 p-3 rounded-lg">
+                          {categories[cat as keyof typeof categories].map((subcat) => (
+                            <label key={subcat} className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={formData.lookingForSubcategories[cat]?.includes(subcat) || false}
+                                onChange={() => handleSubcategoryToggle(cat, subcat)}
+                                className="rounded text-xs"
+                              />
+                              <span className="text-xs text-muted-foreground">{subcat}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
