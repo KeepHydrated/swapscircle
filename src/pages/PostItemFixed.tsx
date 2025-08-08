@@ -397,7 +397,13 @@ const PostItemFixed: React.FC = () => {
         lookingForPriceRanges: selectedPriceRanges,
       };
 
-      console.log('Posting item:', item);
+      console.log('🔍 POSTING ITEM DEBUG:', {
+        title,
+        category,
+        subcategory,
+        tags: subcategory ? [subcategory] : [],
+        fullItem: item
+      });
       
       const result = await postItem(item);
       if (result) {
