@@ -82,6 +82,24 @@ const PostItemNew: React.FC = () => {
         
         console.log('✅ Loaded item data:', data);
         
+        // Parse subcategories from stored tags
+        const storedTags = data.tags || [];
+        const lookingForCategories = data.looking_for_categories || [];
+        const parsedSubcategories: Record<string, string[]> = {};
+        
+        // For each "looking for" category, find which stored tags are subcategories of that category
+        lookingForCategories.forEach(category => {
+          if (categories[category as keyof typeof categories]) {
+            const categorySubcategories = categories[category as keyof typeof categories];
+            const matchingSubcategories = storedTags.filter(tag => 
+              categorySubcategories.includes(tag)
+            );
+            if (matchingSubcategories.length > 0) {
+              parsedSubcategories[category] = matchingSubcategories;
+            }
+          }
+        });
+
         // Populate form with existing data
         setFormData({
           title: data.name || '',
@@ -91,8 +109,8 @@ const PostItemNew: React.FC = () => {
           condition: data.condition || '',
           priceRange: `${data.price_range_min}-${data.price_range_max}`,
           lookingForDescription: data.looking_for_description || '',
-          lookingForCategories: data.looking_for_categories || [],
-          lookingForSubcategories: {}, // TODO: Parse from tags if needed
+          lookingForCategories: lookingForCategories,
+          lookingForSubcategories: parsedSubcategories,
           lookingForConditions: data.looking_for_conditions || [],
           lookingForPriceRanges: data.looking_for_price_ranges || []
         });
