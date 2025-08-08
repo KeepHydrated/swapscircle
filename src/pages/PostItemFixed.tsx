@@ -290,6 +290,14 @@ const PostItemFixed: React.FC = () => {
   
   // Handle item submission (posting)
   const handleSubmit = async () => {
+    console.log('🚨🚨🚨 SUBMIT BUTTON CLICKED - handleSubmit called');
+    console.log('🔍 FORM DATA AT SUBMIT:', {
+      title,
+      category,
+      subcategory,
+      tags: subcategory ? [subcategory] : []
+    });
+    
     if (!user) {
       navigate('/auth');
       return;
