@@ -60,16 +60,34 @@ const PostItemNew: React.FC = () => {
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    console.log('📸 File input triggered');
+    if (e.target.files && e.target.files.length > 0) {
       const newImages = Array.from(e.target.files);
-      setImages(prev => [...prev, ...newImages]);
-      console.log('📸 Images uploaded:', newImages.length);
+      console.log('📸 Files selected:', newImages.length, newImages.map(f => f.name));
+      setImages(prev => {
+        const updated = [...prev, ...newImages];
+        console.log('📸 Total images after upload:', updated.length);
+        return updated;
+      });
+    } else {
+      console.log('❌ No files selected');
     }
   };
 
   const removeImage = (indexToRemove: number) => {
     setImages(prev => prev.filter((_, index) => index !== indexToRemove));
     console.log('🗑️ Image removed at index:', indexToRemove);
+  };
+
+  const handleImageClick = () => {
+    console.log('🖱️ Upload area clicked');
+    const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+      console.log('🖱️ File input triggered');
+    } else {
+      console.error('❌ File input not found');
+    }
   };
 
   const handleArrayToggle = (field: string, value: string) => {
@@ -170,7 +188,10 @@ const PostItemNew: React.FC = () => {
             {/* Images */}
             <div className="space-y-2">
               <Label>Images * ({images.length} uploaded)</Label>
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+              <div 
+                className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors"
+                onClick={handleImageClick}
+              >
                 <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                 <input
                   type="file"
@@ -180,12 +201,12 @@ const PostItemNew: React.FC = () => {
                   className="hidden"
                   id="image-upload"
                 />
-                <label
-                  htmlFor="image-upload"
-                  className="cursor-pointer text-sm text-muted-foreground hover:text-foreground"
-                >
+                <div className="text-sm text-muted-foreground hover:text-foreground">
                   Click to upload images or drag and drop
-                </label>
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  PNG, JPG, GIF up to 10MB each
+                </div>
               </div>
               {images.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
