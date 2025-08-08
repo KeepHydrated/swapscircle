@@ -115,29 +115,6 @@ const PostItemNew: React.FC = () => {
             <p className="text-muted-foreground mt-2">Tell us about the item you want to trade</p>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                placeholder="Enter item title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-              />
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe your item"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                rows={4}
-              />
-            </div>
-
             {/* Images */}
             <div className="space-y-2">
               <Label>Images * ({images.length} uploaded)</Label>
@@ -165,6 +142,29 @@ const PostItemNew: React.FC = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Title */}
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input
+                id="title"
+                placeholder="Enter item title"
+                value={formData.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                placeholder="Describe your item"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                rows={4}
+              />
             </div>
 
             {/* Category */}
