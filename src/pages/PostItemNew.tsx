@@ -112,6 +112,7 @@ const PostItemNew: React.FC = () => {
               <Package className="h-6 w-6" />
               What You're Offering
             </CardTitle>
+            <p className="text-muted-foreground mt-2">Tell us about the item you want to trade</p>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Title */}
