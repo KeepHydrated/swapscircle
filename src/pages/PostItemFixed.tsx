@@ -28,7 +28,8 @@ import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 // PostItem component with navigation confirmation - COMPLETELY REBUILT NO USEBLOCKER
 
 const PostItemFixed: React.FC = () => {
-  console.log('✅ PostItemFixed LOADED SUCCESSFULLY - NO useBlocker - Time:', new Date().toISOString());
+  const componentId = Math.random().toString(36).substring(7);
+  console.log('✅ PostItemFixed LOADED - Component ID:', componentId, '- Time:', new Date().toISOString());
   
   const { user } = useAuth();
   const navigate = useNavigate();
