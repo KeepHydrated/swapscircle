@@ -542,13 +542,21 @@ const PostItemFixed: React.FC = () => {
                 Save Draft
               </Button>
               <Button
+                onMouseEnter={() => console.log('🎯 HOVER: Button hovered, state:', { title: !!title?.trim(), isSubmitting, disabled: isSubmitting || !title.trim() })}
                 onClick={() => {
-                  console.log('🔥 BUTTON CLICKED - checking state:', { 
+                  console.log('🔥🔥🔥 ACTUAL BUTTON CLICKED!!!');
+                  console.log('🔥 BUTTON STATE:', { 
                     title: title?.trim(), 
+                    titleLength: title?.length,
                     isSubmitting, 
-                    disabled: isSubmitting || !title.trim() 
+                    disabled: isSubmitting || !title.trim(),
+                    hasTitle: !!title?.trim()
                   });
-                  handleSubmit();
+                  try {
+                    handleSubmit();
+                  } catch (error) {
+                    console.error('Error in handleSubmit:', error);
+                  }
                 }}
                 disabled={isSubmitting || !title.trim()}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 relative overflow-hidden"
