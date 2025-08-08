@@ -81,6 +81,10 @@ const PostItemNew: React.FC = () => {
         }
         
         console.log('✅ Loaded item data:', data);
+        console.log('🔍 Looking for categories:', data.looking_for_categories);
+        console.log('🔍 Looking for conditions:', data.looking_for_conditions);
+        console.log('🔍 Looking for price ranges:', data.looking_for_price_ranges);
+        console.log('🔍 Looking for description:', data.looking_for_description);
         
         // Parse subcategories from stored tags
         const storedTags = data.tags || [];
