@@ -29,7 +29,8 @@ import LoadPreferencesDialog from '@/components/postItem/LoadPreferencesDialog';
 
 const PostItemFixed: React.FC = () => {
   const componentId = Math.random().toString(36).substring(7);
-  console.log('✅ PostItemFixed LOADED - Component ID:', componentId, '- Time:', new Date().toISOString());
+  console.error('🚨🚨🚨 COMPONENT MOUNT - ID:', componentId, '- Time:', new Date().toISOString());
+  console.warn('🚨🚨🚨 IF YOU SEE THIS MULTIPLE TIMES, COMPONENT IS RE-MOUNTING!');
   
   const { user } = useAuth();
   const navigate = useNavigate();
