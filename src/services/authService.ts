@@ -284,6 +284,8 @@ export const postItem = async (item: Item & {
     console.log('📝 POST ITEM - lookingForCategories:', item.lookingForCategories);
     console.log('📝 POST ITEM - lookingForConditions:', item.lookingForConditions);
     console.log('📝 POST ITEM - Database object to insert:', itemToInsert);
+    console.log('🏷️ SAVE DEBUG - Tags being saved:', itemToInsert.tags);
+    console.log('🏷️ SAVE DEBUG - Category being saved:', itemToInsert.category);
     console.log('📝 POST ITEM - Database looking_for_categories:', itemToInsert.looking_for_categories);
     console.log('📝 POST ITEM - Database looking_for_conditions:', itemToInsert.looking_for_conditions);
     console.log('📝 POST ITEM - About to call supabase.from(items).insert()...');
@@ -296,6 +298,8 @@ export const postItem = async (item: Item & {
 
     console.log('📝 POST ITEM - Database response data:', data);
     console.log('📝 POST ITEM - Database response error:', error);
+    console.log('🏷️ SAVE RESULT - Saved tags:', data?.tags);
+    console.log('🏷️ SAVE RESULT - Saved category:', data?.category);
     console.log('📝 POST ITEM - Saved looking_for_categories:', data?.looking_for_categories);
     console.log('📝 POST ITEM - Saved looking_for_conditions:', data?.looking_for_conditions);
 
