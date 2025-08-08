@@ -110,7 +110,7 @@ const PostItemNew: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-6 w-6" />
-              Post New Item
+              What You're Offering
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
