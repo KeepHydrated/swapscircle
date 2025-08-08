@@ -114,7 +114,14 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   // Get subcategories based on selected category
   const getSubcategories = () => {
     if (!category) return [];
-    return categories[category as keyof typeof categories] || [];
+    const subcats = categories[category as keyof typeof categories] || [];
+    console.log('🏷️ getSubcategories DEBUG:', {
+      category,
+      subcats,
+      currentSubcategory: subcategory,
+      isSubcategoryInList: subcats.includes(subcategory)
+    });
+    return subcats;
   };
 
   return (
