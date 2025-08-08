@@ -252,7 +252,7 @@ const PostItemNew: React.FC = () => {
     console.log('🖼️ Existing Images:', existingImageUrls.length);
     
     // Validation
-    const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange', 'lookingForDescription'];
+    const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
@@ -274,11 +274,7 @@ const PostItemNew: React.FC = () => {
       return;
     }
 
-    if (formData.lookingForCategories.length === 0) {
-      console.log('❌ No looking for categories');
-      toast.error('Please select at least one category you\'re looking for');
-      return;
-    }
+    // Note: Looking for categories and description are now optional
 
     console.log('✅ Validation passed, submitting...');
     setIsSubmitting(true);
@@ -585,7 +581,7 @@ const PostItemNew: React.FC = () => {
             <CardContent className="space-y-6">
               {/* Looking For Description */}
               <div className="space-y-2">
-                <Label htmlFor="lookingForDescription">What are you hoping to get? *</Label>
+                <Label htmlFor="lookingForDescription">What are you hoping to get?</Label>
                 <Textarea
                   id="lookingForDescription"
                   placeholder="Describe what you'd like to trade for..."
