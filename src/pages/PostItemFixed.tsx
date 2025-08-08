@@ -325,22 +325,30 @@ const PostItemFixed: React.FC = () => {
     }
 
     // Validation - all fields are now mandatory
+    console.log('🔍 VALIDATION CHECK - Title:', { title: title.trim(), hasTitle: !!title.trim() });
     if (!title.trim()) {
+      console.log('❌ VALIDATION FAILED: Missing title');
       toast.error('Please enter a title for your item');
       return;
     }
 
+    console.log('🔍 VALIDATION CHECK - Description:', { description: description.trim(), hasDescription: !!description.trim() });
     if (!description.trim()) {
+      console.log('❌ VALIDATION FAILED: Missing description');
       toast.error('Please enter a description for your item');
       return;
     }
 
+    console.log('🔍 VALIDATION CHECK - Images:', { imageCount: images.length });
     if (images.length === 0) {
+      console.log('❌ VALIDATION FAILED: Missing images');
       toast.error('Please add at least one image of your item');
       return;
     }
 
+    console.log('🔍 VALIDATION CHECK - Category:', { category, hasCategory: !!category });
     if (!category) {
+      console.log('❌ VALIDATION FAILED: Missing category');
       toast.error('Please select a category for your item');
       return;
     }
@@ -362,17 +370,23 @@ const PostItemFixed: React.FC = () => {
     };
     
     const hasSubcategories = categories[category as keyof typeof categories]?.length > 0;
+    console.log('🔍 VALIDATION CHECK - Subcategory:', { subcategory, hasSubcategories, required: hasSubcategories && !subcategory });
     if (hasSubcategories && !subcategory) {
+      console.log('❌ VALIDATION FAILED: Missing subcategory');
       toast.error('Please select a subcategory for your item');
       return;
     }
 
+    console.log('🔍 VALIDATION CHECK - Condition:', { condition, hasCondition: !!condition });
     if (!condition) {
+      console.log('❌ VALIDATION FAILED: Missing condition');
       toast.error('Please select the condition of your item');
       return;
     }
 
+    console.log('🔍 VALIDATION CHECK - Price Range:', { priceRange, hasPriceRange: !!priceRange });
     if (!priceRange) {
+      console.log('❌ VALIDATION FAILED: Missing price range');
       toast.error('Please select a price range for your item');
       return;
     }
