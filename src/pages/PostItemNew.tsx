@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -127,13 +128,40 @@ const PostItemNew: React.FC = () => {
     console.log(`🔍 Subcategory ${subcategory} toggled for ${category}`);
   };
 
+  const uploadImages = async (): Promise<string[]> => {
+    const uploadPromises = images.map(async (image, index) => {
+      const fileExt = image.name.split('.').pop();
+      const fileName = `${user!.id}/${Date.now()}_${index}.${fileExt}`;
+      
+      console.log('📸 Uploading image:', fileName);
+      const { data, error } = await supabase.storage
+        .from('item-images')
+        .upload(fileName, image);
+      
+      if (error) {
+        console.error('❌ Upload error:', error);
+        throw new Error(`Failed to upload ${image.name}: ${error.message}`);
+      }
+      
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('item-images')
+        .getPublicUrl(fileName);
+      
+      console.log('✅ Image uploaded:', urlData.publicUrl);
+      return urlData.publicUrl;
+    });
+    
+    return Promise.all(uploadPromises);
+  };
+
   const handleSubmit = async () => {
     console.log('🚀 SUBMIT CLICKED!');
     console.log('📋 Form Data:', formData);
     console.log('📸 Images:', images.length);
     
     // Validation
-    const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange'];
+    const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange', 'lookingForDescription'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
@@ -148,19 +176,72 @@ const PostItemNew: React.FC = () => {
       return;
     }
 
+    if (formData.lookingForCategories.length === 0) {
+      console.log('❌ No looking for categories');
+      toast.error('Please select at least one category you\'re looking for');
+      return;
+    }
+
     console.log('✅ Validation passed, submitting...');
     setIsSubmitting(true);
     
     try {
-      // TODO: Implement actual submission logic here
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      // Upload images first
+      console.log('📸 Uploading images...');
+      const imageUrls = await uploadImages();
+      console.log('✅ Images uploaded:', imageUrls);
       
-      console.log('✅ Item posted successfully!');
+      // Parse price range
+      const [minPrice, maxPrice] = formData.priceRange.split('-').map(p => parseFloat(p.trim()));
+      
+      // Flatten subcategories for tags
+      const subcategoryTags = Object.values(formData.lookingForSubcategories).flat();
+      const allTags = formData.subcategory ? [formData.subcategory, ...subcategoryTags] : subcategoryTags;
+      
+      // Parse looking for price ranges  
+      const lookingForPriceRanges = formData.lookingForPriceRanges.map(range => range.replace('$', ''));
+      
+      // Prepare item data
+      const itemData = {
+        user_id: user!.id,
+        name: formData.title,
+        description: formData.description,
+        image_urls: imageUrls,
+        category: formData.category,
+        condition: formData.condition,
+        tags: allTags,
+        price_range_min: minPrice,
+        price_range_max: maxPrice,
+        looking_for_description: formData.lookingForDescription,
+        looking_for_categories: formData.lookingForCategories,
+        looking_for_conditions: formData.lookingForConditions,
+        looking_for_price_ranges: lookingForPriceRanges,
+        status: 'published',
+        is_available: true,
+        is_hidden: false
+      };
+      
+      console.log('💾 Saving to database:', itemData);
+      
+      // Insert into database
+      const { data, error } = await supabase
+        .from('items')
+        .insert(itemData)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('❌ Database error:', error);
+        throw new Error(`Failed to save item: ${error.message}`);
+      }
+      
+      console.log('✅ Item saved successfully:', data);
       toast.success('Item posted successfully!');
       navigate('/home');
+      
     } catch (error) {
       console.error('❌ Submission error:', error);
-      toast.error('Failed to post item. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Failed to post item. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
