@@ -22,7 +22,11 @@ const PostItemNew: React.FC = () => {
     category: '',
     subcategory: '',
     condition: '',
-    priceRange: ''
+    priceRange: '',
+    lookingForDescription: '',
+    lookingForCategories: [] as string[],
+    lookingForConditions: [] as string[],
+    lookingForPriceRanges: [] as string[]
   });
   
   const [images, setImages] = useState<File[]>([]);
@@ -65,6 +69,17 @@ const PostItemNew: React.FC = () => {
   const removeImage = (indexToRemove: number) => {
     setImages(prev => prev.filter((_, index) => index !== indexToRemove));
     console.log('🗑️ Image removed at index:', indexToRemove);
+  };
+
+  const handleArrayToggle = (field: string, value: string) => {
+    setFormData(prev => {
+      const currentArray = prev[field as keyof typeof prev] as string[];
+      const newArray = currentArray.includes(value)
+        ? currentArray.filter(item => item !== value)
+        : [...currentArray, value];
+      return { ...prev, [field]: newArray };
+    });
+    console.log(`🔍 Array field ${field} toggled:`, value);
   };
 
   const handleSubmit = async () => {
@@ -113,8 +128,10 @@ const PostItemNew: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card>
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column - What You're Offering */}
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-6 w-6" />
@@ -253,17 +270,99 @@ const PostItemNew: React.FC = () => {
               </Select>
             </div>
 
-            {/* Submit Button */}
-            <Button 
-              onClick={handleSubmit} 
-              disabled={isSubmitting}
-              className="w-full"
-              size="lg"
-            >
-              {isSubmitting ? 'Posting...' : 'Post Item'}
-            </Button>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          {/* Right Column - What You're Looking For */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-6 w-6" />
+                What You're Looking For
+              </CardTitle>
+              <p className="text-muted-foreground mt-2">Describe what you'd like to receive in return</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Looking For Description */}
+              <div className="space-y-2">
+                <Label htmlFor="lookingForDescription">What are you hoping to get? *</Label>
+                <Textarea
+                  id="lookingForDescription"
+                  placeholder="Describe what you'd like to trade for..."
+                  value={formData.lookingForDescription}
+                  onChange={(e) => handleInputChange('lookingForDescription', e.target.value)}
+                  rows={4}
+                />
+              </div>
+
+              {/* Looking For Categories */}
+              <div className="space-y-2">
+                <Label>Categories you're interested in</Label>
+                <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                  {Object.keys(categories).map((cat) => (
+                    <label key={cat} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.lookingForCategories.includes(cat)}
+                        onChange={() => handleArrayToggle('lookingForCategories', cat)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">{cat}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Looking For Conditions */}
+              <div className="space-y-2">
+                <Label>Acceptable conditions</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {conditions.map((condition) => (
+                    <label key={condition} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.lookingForConditions.includes(condition)}
+                        onChange={() => handleArrayToggle('lookingForConditions', condition)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">{condition}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Looking For Price Ranges */}
+              <div className="space-y-2">
+                <Label>Price ranges you're interested in</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {priceRanges.map((range) => (
+                    <label key={range} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.lookingForPriceRanges.includes(range)}
+                        onChange={() => handleArrayToggle('lookingForPriceRanges', range)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">${range}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Submit Button - Full Width Below Both Columns */}
+        <div className="mt-8">
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting}
+            className="w-full"
+            size="lg"
+          >
+            {isSubmitting ? 'Posting...' : 'Post Item'}
+          </Button>
+        </div>
       </div>
     </div>
   );
