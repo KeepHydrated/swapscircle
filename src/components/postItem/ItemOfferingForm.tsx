@@ -254,7 +254,12 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
                <Select 
                 value={subcategory} 
                 onValueChange={(value) => {
-                  console.log('Subcategory selected:', value);
+                  console.log('🏷️ SUBCATEGORY SELECT DEBUG:', {
+                    selectedValue: value,
+                    currentSubcategory: subcategory,
+                    category: category,
+                    availableSubcategories: getSubcategories()
+                  });
                   setSubcategory(value);
                 }}
                >
