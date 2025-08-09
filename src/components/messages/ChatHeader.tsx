@@ -21,7 +21,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
   const profileName = profile?.username || activeChat.name;
   console.log('ChatHeader DEBUG - profileName:', profileName);
   
-  const avatarUrl = profile?.avatar_url || "/lovable-uploads/6326c61e-753c-4972-9f13-6c9f3b171144.png";
+  const avatarUrl = profile?.avatar_url;
   const location = profile?.location || "2.3 mi away";
   const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : 2023;
 
