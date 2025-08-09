@@ -394,15 +394,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         }
       }
 
-      // RELAXED LOGIC: Show match if EITHER user is interested (not requiring both)
-      // This ensures users can see more potential matches
-      isMatch = currentUserInterested || otherUserInterested;
+      // BIDIRECTIONAL LOGIC: Show match ONLY if BOTH users are interested in each other's items
+      // This ensures true mutual matching based on criteria
+      isMatch = currentUserInterested && otherUserInterested;
 
-      // Add bonus score for mutual interest
-      if (currentUserInterested && otherUserInterested) {
+      // Add bonus score for mutual interest (which is now required)
+      if (isMatch) {
         matchScore += 10; // Bonus for confirmed mutual match
-      } else if (isMatch) {
-        matchScore += 5; // Smaller bonus for one-way interest
       }
 
       console.log(`Debug - Item ${otherItem.id}: currentUserInterested=${currentUserInterested}, otherUserInterested=${otherUserInterested}, isMatch=${isMatch}, score=${matchScore}`);
