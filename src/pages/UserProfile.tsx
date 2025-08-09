@@ -96,6 +96,15 @@ const UserProfile: React.FC = () => {
           tags: item.tags || [],
           price_range_min: item.price_range_min,
           price_range_max: item.price_range_max,
+          // Add the missing "looking for" fields - both camelCase and snake_case for compatibility
+          looking_for_categories: item.looking_for_categories || [],
+          looking_for_conditions: item.looking_for_conditions || [],  
+          looking_for_description: item.looking_for_description || '',
+          lookingForCategories: item.looking_for_categories || [],
+          lookingForConditions: item.looking_for_conditions || [],
+          lookingForDescription: item.looking_for_description || '',
+          priceRangeMin: item.price_range_min,
+          priceRangeMax: item.price_range_max,
           liked: false,
           is_hidden: item.is_hidden || false,
           status: (item.status || 'published') as 'draft' | 'published' | 'removed', // Include status field with removed
