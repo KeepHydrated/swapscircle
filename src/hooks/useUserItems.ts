@@ -30,22 +30,33 @@ export function useUserItems(includeDrafts: boolean = false) {
       }
 
       try {
+        console.log('🔍 FETCHING USER ITEMS - User ID:', user.id, 'Include Drafts:', includeDrafts);
+        
         const { data, error } = await supabase
           .from('items')
-          .select('*')
+          .select('id, name, looking_for_categories, looking_for_conditions, looking_for_description, image_url, image_urls, category, condition, description, tags, status, price_range_min, price_range_max, created_at')
           .eq('user_id', user.id)
           .eq('is_hidden', false) // Only show non-hidden items
           .in('status', includeDrafts ? ['published', 'draft', 'removed'] : ['published', 'removed']) // Include removed items for display
           .order('created_at', { ascending: false });
 
+        console.log('🔍 SUPABASE QUERY RESULT - Error:', error);
+        console.log('🔍 SUPABASE QUERY RESULT - Data length:', data?.length);
+        console.log('🔍 SUPABASE QUERY RESULT - First item RAW:', JSON.stringify(data?.[0], null, 2));
+
         if (error) throw error;
 
-        console.log('🔍 RAW DATA FROM DB - First item:', data?.[0]);
-        console.log('🔍 RAW DATA FROM DB - looking_for_categories:', data?.[0]?.looking_for_categories);
-
         // Map DB items to your app's Item shape
-        setItems(
-          (data || []).map((item: any) => ({
+        const mappedItems = (data || []).map((item: any, index: number) => {
+          if (index === 0) {
+            console.log('🔍 MAPPING FIRST ITEM - Original:', {
+              looking_for_categories: item.looking_for_categories,
+              looking_for_conditions: item.looking_for_conditions,
+              looking_for_description: item.looking_for_description
+            });
+          }
+          
+          const mappedItem = {
             id: item.id,
             name: item.name,
             image: item.image_url || null, // Don't use placeholder, show null when no image
@@ -65,8 +76,28 @@ export function useUserItems(includeDrafts: boolean = false) {
             looking_for_description: item.looking_for_description,
             priceRangeMin: item.price_range_min,
             priceRangeMax: item.price_range_max,
-          }))
-        );
+          };
+          
+          if (index === 0) {
+            console.log('🔍 MAPPING FIRST ITEM - Mapped:', {
+              looking_for_categories: mappedItem.looking_for_categories,
+              lookingForCategories: mappedItem.lookingForCategories,
+              looking_for_conditions: mappedItem.looking_for_conditions,
+              lookingForConditions: mappedItem.lookingForConditions
+            });
+          }
+          
+          return mappedItem;
+        });
+        
+        console.log('🔍 FINAL MAPPED ITEMS - First item preview:', mappedItems[0] ? {
+          id: mappedItems[0].id,
+          name: mappedItems[0].name,
+          looking_for_categories: mappedItems[0].looking_for_categories,
+          lookingForCategories: mappedItems[0].lookingForCategories
+        } : 'No items');
+        
+        setItems(mappedItems);
       } catch (e: any) {
         setError(e.message || "Failed to fetch your items.");
         setItems([]);
