@@ -167,7 +167,6 @@ export const useMatchActions = (
           console.log('✅ Result has success=true, checking for match data...');
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
             console.log('🎉 MUTUAL MATCH DETECTED!', result.matchData);
-            toast.success('It\'s a match! Redirecting to messages...');
             // Only navigate to messages if there's a confirmed mutual match
             setTimeout(() => {
               console.log('🚀 Navigating to messages with match data');
