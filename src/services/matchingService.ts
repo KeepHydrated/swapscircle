@@ -414,7 +414,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         matches.push({
           id: otherItem.id,
           name: otherItem.name,
-          image: otherItem.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
+          image: otherItem.image_url || (otherItem.image_urls && otherItem.image_urls.length > 0 ? otherItem.image_urls[0] : "https://images.unsplash.com/photo-1544947950-fa07a98d237f"),
           category: otherItem.category,
           condition: otherItem.condition,
           description: otherItem.description,
