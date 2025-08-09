@@ -49,7 +49,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   }
 
   return (
-    <div className="relative h-full overflow-auto"> {/* Changed to allow both directions and full height */}
+    <div className="relative h-full overflow-x-auto overflow-y-hidden"> {/* Show horizontal scrollbar */}
       <div className="min-h-full">
         <MatchesGrid
           displayedMatches={displayedMatches}
