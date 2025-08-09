@@ -94,6 +94,18 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
       console.log('🔄 ORIGINAL looking_for_categories:', item.looking_for_categories);
       console.log('🔄 ORIGINAL looking_for_conditions:', item.looking_for_conditions);
       console.log('🔄 ORIGINAL looking_for_description:', item.looking_for_description);
+      console.log('🔄 ALL ORIGINAL ITEM FIELDS:', Object.keys(item));
+      
+      // Check if the original item has any "looking for" data at all
+      const hasLookingForData = Boolean(
+        (item.looking_for_categories && item.looking_for_categories.length > 0) ||
+        (item.looking_for_conditions && item.looking_for_conditions.length > 0) ||
+        (item.looking_for_description && item.looking_for_description.trim().length > 0) ||
+        (item.lookingForCategories && item.lookingForCategories.length > 0) ||
+        (item.lookingForConditions && item.lookingForConditions.length > 0) ||
+        (item.lookingForDescription && item.lookingForDescription.trim().length > 0)
+      );
+      console.log('🔄 ORIGINAL HAS LOOKING FOR DATA:', hasLookingForData);
       // Create the duplicated item data
       console.log('🔄 CREATING DUPLICATE WITH DATA:', {
         looking_for_categories: item.looking_for_categories,
