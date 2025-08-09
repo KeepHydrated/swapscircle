@@ -37,7 +37,11 @@ interface Report {
   created_at: string;
   updated_at: string;
   action_taken: string | null;
-  // Item owner info
+  reported_user_id?: string; // For profile reports
+  reported_username?: string; // For profile reports
+  reported_avatar_url?: string; // For profile reports
+  reported_name?: string; // For profile reports
+  // Item owner info (for item reports)
   item_owner_id?: string;
   item_owner_username?: string;
   item_owner_avatar_url?: string;
@@ -126,6 +130,7 @@ const AdminReports: React.FC = () => {
           .select(`
             id,
             reporter_id,
+            reported_user_id,
             type,
             message,
             status,
@@ -137,12 +142,15 @@ const AdminReports: React.FC = () => {
 
         if (error) throw error;
 
-        // Get reporter usernames separately
+        // Get all user IDs (reporters + reported users) and fetch profiles
         const reporterIds = [...new Set(data?.map(r => r.reporter_id) || [])];
+        const reportedUserIds = [...new Set(data?.map(r => r.reported_user_id).filter(Boolean) || [])];
+        const allUserIds = [...new Set([...reporterIds, ...reportedUserIds])];
+        
         const { data: profiles } = await supabase
           .from('profiles')
           .select('id, username, avatar_url, name')
-          .in('id', reporterIds);
+          .in('id', allUserIds);
 
         // Get item IDs and fetch item details with owner info
         const itemIds = data?.map(r => extractItemId(r.action_taken)).filter(Boolean) || [];
@@ -164,7 +172,7 @@ const AdminReports: React.FC = () => {
             const { data: ownerProfiles } = await supabase
               .from('profiles')
               .select('id, username, avatar_url, name')
-              .in('id', ownerIds);
+              .in('id', [...ownerIds, ...allUserIds]); // Include all user IDs
             
             localItemOwnerProfiles = ownerProfiles || [];
           }
@@ -184,10 +192,13 @@ const AdminReports: React.FC = () => {
             displayMessage = messageMatch[2];
           }
           
-          // Get item and owner info
+          // Get item and owner info (for item reports)
           const itemId = extractItemId(report.action_taken);
           const item = localItemsData.find(i => i.id === itemId);
           const itemOwner = item ? localItemOwnerProfiles.find(p => p.id === item.user_id) : null;
+          
+          // Get reported user info (for profile reports)
+          const reportedUser = report.reported_user_id ? profiles?.find(p => p.id === report.reported_user_id) : null;
           
           return {
             ...report,
@@ -197,7 +208,11 @@ const AdminReports: React.FC = () => {
             reporter_username: profile?.username || 'Unknown User',
             reporter_avatar_url: profile?.avatar_url,
             reporter_name: profile?.name,
-            // Item owner info
+            // Reported user info (for profile reports)
+            reported_username: reportedUser?.username,
+            reported_avatar_url: reportedUser?.avatar_url,
+            reported_name: reportedUser?.name,
+            // Item owner info (for item reports)
             item_owner_id: itemOwner?.id,
             item_owner_username: itemOwner?.username,
              item_owner_avatar_url: itemOwner?.avatar_url,
@@ -312,35 +327,12 @@ const AdminReports: React.FC = () => {
 
   // Handle accepting a profile report (ban user progressively)
   const handleAcceptProfileReport = async (report: Report) => {
-    if (!report.reporter_id) {
-      toast.error('Cannot find reported user ID in report');
+    if (!report.reported_user_id) {
+      toast.error('No reported user ID found in this report');
       return;
     }
 
-    // Parse the report to find the reported user ID
-    // For profile reports, we need to determine who is being reported
-    // This might be in action_taken field or we need to add a reported_user_id field
-    let reportedUserId: string | null = null;
-    
-    // Check if action_taken contains user info, or if we can extract from message
-    const actionTaken = report.action_taken;
-    if (actionTaken) {
-      const userIdMatch = actionTaken.match(/user:\s*([a-f0-9-]{36})/i);
-      if (userIdMatch) {
-        reportedUserId = userIdMatch[1];
-      }
-    }
-    
-    // If still no reported user ID found, assume the report is about a profile
-    // and we need the reported user ID from somewhere else
-    // For now, let's add an input to get the reported user's ID
-    const reportedUserIdInput = prompt('Enter the ID of the user being reported:');
-    if (!reportedUserIdInput) {
-      toast.error('Reported user ID is required');
-      return;
-    }
-    reportedUserId = reportedUserIdInput;
-
+    const reportedUserId = report.reported_user_id;
     const violationReason = report.displayMessage || report.message || 'Profile violation';
 
     try {
@@ -622,10 +614,46 @@ const AdminReports: React.FC = () => {
                                  <span>Reporter • Since 2024</span>
                                </div>
                             </div>
-                          </div>
+                           </div>
 
-                          {/* Item Owner Profile */}
-                          {report.item_owner_id && (
+                           {/* Reported User Profile (for profile reports) */}
+                           {report.reported_user_id && (
+                             <div 
+                               className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-red-50 p-3 rounded-lg border border-red-200 w-80"
+                               onClick={() => handleProfileClick(report.reported_user_id!)}
+                             >
+                               <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-red-600 text-white font-semibold text-sm flex-shrink-0">
+                                 {report.reported_avatar_url ? (
+                                   <img
+                                     src={report.reported_avatar_url}
+                                     alt={report.reported_name || report.reported_username}
+                                     className="w-full h-full rounded-full object-cover"
+                                   />
+                                 ) : (
+                                   <span>
+                                     {(report.reported_username || "U").substring(0, 2).toUpperCase()}
+                                   </span>
+                                 )}
+                               </div>
+                               <div className="min-w-0 flex-1">
+                                 <div className="flex items-center gap-2">
+                                   <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
+                                     {report.reported_name || report.reported_username || "Unknown User"}
+                                   </span>
+                                   <div className="flex items-center gap-1 flex-shrink-0">
+                                     <span className="text-yellow-500">★</span>
+                                     <span className="text-sm text-gray-600">No reviews</span>
+                                   </div>
+                                 </div>
+                                  <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                                    <span>Reported User • Since 2024</span>
+                                  </div>
+                               </div>
+                             </div>
+                           )}
+
+                           {/* Item Owner Profile (for item reports) */}
+                           {report.item_owner_id && (
                             <div 
                               className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
                               onClick={() => handleProfileClick(report.item_owner_id!)}
@@ -661,115 +689,117 @@ const AdminReports: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Item display column on the right */}
-                        {extractItemId(report.action_taken) && (
-                          <div className="flex gap-4">
-                            <div className="bg-white border border-gray-200 rounded-lg p-4 w-96">
-                              <div className="space-y-3">
-                                 {/* Item Image and Details Grid */}
-                                 <div className="flex gap-4">
-                                   {/* Item Image(s) on the left */}
-                                   <div className="flex-shrink-0">
-                                     {(report.item_image_url || (report.item_image_urls && report.item_image_urls.length > 0)) ? (
-                                       <div className="w-32 h-32 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
-                                         <img
-                                           src={report.item_image_url || report.item_image_urls?.[0]}
-                                           alt={report.item_name || "Item"}
-                                           className="w-full h-full object-cover"
-                                           onError={(e) => {
-                                             const target = e.target as HTMLImageElement;
-                                             target.style.display = 'none';
-                                             const parent = target.parentElement;
-                                             if (parent) {
-                                               parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>';
-                                             }
-                                           }}
-                                         />
-                                       </div>
-                                     ) : (
-                                       <div className="w-32 h-32 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
-                                         <span className="text-gray-400 text-xs text-center">No Image</span>
-                                       </div>
-                                     )}
-                                   </div>
-                                   
-                                    {/* Item Details on the right */}
-                                    <div className="flex-1 space-y-3">
-                                      {/* Item Name and Description */}
-                                      {report.item_name && (
-                                        <div>
-                                          <div className="text-lg font-semibold text-gray-900 truncate">
-                                            {report.item_name}
-                                          </div>
-                                          {report.item_description && (
-                                            <div className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                              {report.item_description}
-                                            </div>
-                                          )}
+                         {/* Item/Actions column on the right */}
+                         <div className="flex gap-4">
+                           {/* Item display (for item reports only) */}
+                           {extractItemId(report.action_taken) ? (
+                             <div className="bg-white border border-gray-200 rounded-lg p-4 w-96">
+                               <div className="space-y-3">
+                                  {/* Item Image and Details Grid */}
+                                  <div className="flex gap-4">
+                                    {/* Item Image(s) on the left */}
+                                    <div className="flex-shrink-0">
+                                      {(report.item_image_url || (report.item_image_urls && report.item_image_urls.length > 0)) ? (
+                                        <div className="w-32 h-32 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+                                          <img
+                                            src={report.item_image_url || report.item_image_urls?.[0]}
+                                            alt={report.item_name || "Item"}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                              const target = e.target as HTMLImageElement;
+                                              target.style.display = 'none';
+                                              const parent = target.parentElement;
+                                              if (parent) {
+                                                parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>';
+                                              }
+                                            }}
+                                          />
+                                        </div>
+                                      ) : (
+                                        <div className="w-32 h-32 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                                          <span className="text-gray-400 text-xs text-center">No Image</span>
                                         </div>
                                       )}
-                                      
-                                      {/* Item Details */}
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div className="font-medium text-gray-900">Electronics</div>
-                                        <div className="font-medium text-gray-900">Cameras</div>
-                                        <div className="font-medium text-gray-900">Brand New</div>
-                                        <div className="font-medium text-gray-900">Up to $50</div>
-                                      </div>
                                     </div>
-                                 </div>
-                               </div>
-                             </div>
-                              {/* Action buttons for open reports, or action taken indicator for resolved reports */}
-                              {report.status === 'resolved' ? (
-                                <div className="flex flex-col gap-2 min-w-[120px]">
-                                  <div className="text-center">
-                                    <div className="text-sm font-medium text-muted-foreground mb-2">Action Taken</div>
-                                    {report.action_taken?.includes('dismissed') ? (
-                                      <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                        Dismissed
-                                      </div>
-                                    ) : (
-                                      <div className="inline-flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        Accepted
-                                      </div>
-                                    )}
+                                    
+                                     {/* Item Details on the right */}
+                                     <div className="flex-1 space-y-3">
+                                       {/* Item Name and Description */}
+                                       {report.item_name && (
+                                         <div>
+                                           <div className="text-lg font-semibold text-gray-900 truncate">
+                                             {report.item_name}
+                                           </div>
+                                           {report.item_description && (
+                                             <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                               {report.item_description}
+                                             </div>
+                                           )}
+                                         </div>
+                                       )}
+                                       
+                                       {/* Item Details */}
+                                       <div className="grid grid-cols-2 gap-4 text-sm">
+                                         <div className="font-medium text-gray-900">Electronics</div>
+                                         <div className="font-medium text-gray-900">Cameras</div>
+                                         <div className="font-medium text-gray-900">Brand New</div>
+                                         <div className="font-medium text-gray-900">Up to $50</div>
+                                       </div>
+                                     </div>
                                   </div>
                                 </div>
-                              ) : (
-                                <div className="flex flex-col gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                      setSelectedReportForAction(report);
-                                      setShowDismissDialog(true);
-                                    }}
-                                    className="whitespace-nowrap"
-                                  >
-                                    Dismiss
-                                  </Button>
-                                  <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => {
-                                      setSelectedReportForAction(report);
-                                      setShowAcceptDialog(true);
-                                    }}
-                                    className="whitespace-nowrap"
-                                  >
-                                    Accept
-                                  </Button>
-                                </div>
-                              )}
-                           </div>
-                         )}
+                              </div>
+                           ) : null}
+                           
+                           {/* Action buttons for all open reports */}
+                           {report.status === 'resolved' ? (
+                             <div className="flex flex-col gap-2 min-w-[120px]">
+                               <div className="text-center">
+                                 <div className="text-sm font-medium text-muted-foreground mb-2">Action Taken</div>
+                                 {report.action_taken?.includes('dismissed') ? (
+                                   <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
+                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                     </svg>
+                                     Dismissed
+                                   </div>
+                                 ) : (
+                                   <div className="inline-flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
+                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                     </svg>
+                                     Accepted
+                                   </div>
+                                 )}
+                               </div>
+                             </div>
+                           ) : (
+                             <div className="flex flex-col gap-2">
+                               <Button
+                                 variant="outline"
+                                 size="sm"
+                                 onClick={() => {
+                                   setSelectedReportForAction(report);
+                                   setShowDismissDialog(true);
+                                 }}
+                                 className="whitespace-nowrap"
+                               >
+                                 Dismiss
+                               </Button>
+                               <Button
+                                 variant="default"
+                                 size="sm"
+                                 onClick={() => {
+                                   setSelectedReportForAction(report);
+                                   setShowAcceptDialog(true);
+                                 }}
+                                 className="whitespace-nowrap"
+                               >
+                                 Accept
+                               </Button>
+                             </div>
+                           )}
+                         </div>
                      </div>
                   </CardHeader>
                 </Card>
@@ -820,11 +850,23 @@ const AdminReports: React.FC = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Accept Report</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to accept this report? This will:
-                <br />• <strong>Permanently delete</strong> the item from the user's profile
-                <br />• Add a strike to the user's account
-                <br />• Send a violation notification to the user
-                <br />• This action cannot be undone
+                {selectedReportForAction && extractItemId(selectedReportForAction.action_taken) ? (
+                  <>
+                    Are you sure you want to accept this report? This will:
+                    <br />• <strong>Permanently delete</strong> the item from the user's profile
+                    <br />• Add a strike to the user's account
+                    <br />• Send a violation notification to the user
+                    <br />• This action cannot be undone
+                  </>
+                ) : (
+                  <>
+                    Are you sure you want to accept this profile report? This will:
+                    <br />• <strong>Suspend or ban</strong> the reported user (15 days → 30 days → permanent)
+                    <br />• Send a violation notification to the user
+                    <br />• Record the violation in their account history
+                    <br />• This action cannot be undone
+                  </>
+                )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

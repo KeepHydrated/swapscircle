@@ -1487,6 +1487,7 @@ export type Database = {
           created_at: string
           id: string
           message: string
+          reported_user_id: string | null
           reporter_id: string
           status: Database["public"]["Enums"]["report_status"]
           status_changed_at: string | null
@@ -1501,6 +1502,7 @@ export type Database = {
           created_at?: string
           id?: string
           message: string
+          reported_user_id?: string | null
           reporter_id: string
           status?: Database["public"]["Enums"]["report_status"]
           status_changed_at?: string | null
@@ -1515,6 +1517,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string
+          reported_user_id?: string | null
           reporter_id?: string
           status?: Database["public"]["Enums"]["report_status"]
           status_changed_at?: string | null
