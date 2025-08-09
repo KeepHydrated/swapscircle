@@ -62,7 +62,7 @@ const ConversationList = ({
                 <div className="flex-shrink-0">
                   <Avatar className="h-12 w-12">
                     <AvatarImage 
-                      src={(conversation as any).otherUserProfile?.avatar_url} 
+                      src={conversation.otherUserProfile?.avatar_url || undefined} 
                       alt={`${conversation.name}'s avatar`} 
                     />
                     <AvatarFallback className="bg-purple-100 text-purple-800">
