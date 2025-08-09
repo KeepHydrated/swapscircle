@@ -91,10 +91,14 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   const handleCopyClick = async (item: Item) => {
     try {
       console.log('🔄 ORIGINAL ITEM DATA FOR DUPLICATION:', item);
-      console.log('🔄 ORIGINAL looking_for_categories:', item.looking_for_categories);
-      console.log('🔄 ORIGINAL looking_for_conditions:', item.looking_for_conditions);
-      console.log('🔄 ORIGINAL looking_for_description:', item.looking_for_description);
+      console.log('🔄 FULL ORIGINAL ITEM JSON:', JSON.stringify(item, null, 2));
       console.log('🔄 ALL ORIGINAL ITEM FIELDS:', Object.keys(item));
+      console.log('🔄 FIELD CHECK - looking_for_categories:', item.looking_for_categories);
+      console.log('🔄 FIELD CHECK - lookingForCategories:', item.lookingForCategories);
+      console.log('🔄 FIELD CHECK - looking_for_conditions:', item.looking_for_conditions);
+      console.log('🔄 FIELD CHECK - lookingForConditions:', item.lookingForConditions);
+      console.log('🔄 FIELD CHECK - looking_for_description:', item.looking_for_description);
+      console.log('🔄 FIELD CHECK - lookingForDescription:', item.lookingForDescription);
       
       // Check if the original item has any "looking for" data at all
       const hasLookingForData = Boolean(
