@@ -20,9 +20,11 @@ export interface Item {
   lookingForCategories?: string[];
   lookingForConditions?: string[];
   lookingForDescription?: string;
+  lookingForPriceRanges?: string[]; // Add missing price ranges field
   looking_for_categories?: string[]; // Database field name
   looking_for_conditions?: string[]; // Database field name
   looking_for_description?: string; // Database field name
+  looking_for_price_ranges?: string[]; // Add missing price ranges field (database field name)
   priceRangeMin?: number;
   priceRangeMax?: number;
 }

@@ -100,9 +100,11 @@ const UserProfile: React.FC = () => {
           looking_for_categories: item.looking_for_categories || [],
           looking_for_conditions: item.looking_for_conditions || [],  
           looking_for_description: item.looking_for_description || '',
+          looking_for_price_ranges: item.looking_for_price_ranges || [], // Add missing price ranges
           lookingForCategories: item.looking_for_categories || [],
           lookingForConditions: item.looking_for_conditions || [],
           lookingForDescription: item.looking_for_description || '',
+          lookingForPriceRanges: item.looking_for_price_ranges || [], // Add missing price ranges
           priceRangeMin: item.price_range_min,
           priceRangeMax: item.price_range_max,
           liked: false,

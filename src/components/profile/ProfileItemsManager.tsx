@@ -127,7 +127,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
         looking_for_categories: item.lookingForCategories || item.looking_for_categories || [],
         looking_for_conditions: item.lookingForConditions || item.looking_for_conditions || [],
         looking_for_description: item.lookingForDescription || item.looking_for_description || '',
-        looking_for_price_ranges: (item as any).looking_for_price_ranges || [],
+        looking_for_price_ranges: item.lookingForPriceRanges || item.looking_for_price_ranges || [],
         price_range_min: item.priceRangeMin || (item as any).price_range_min,
         price_range_max: item.priceRangeMax || (item as any).price_range_max,
       };
@@ -152,9 +152,11 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
           looking_for_categories: duplicatedItemData.looking_for_categories,
           looking_for_conditions: duplicatedItemData.looking_for_conditions,
           looking_for_description: duplicatedItemData.looking_for_description,
+          looking_for_price_ranges: duplicatedItemData.looking_for_price_ranges,
           lookingForCategories: duplicatedItemData.looking_for_categories,
           lookingForConditions: duplicatedItemData.looking_for_conditions,
           lookingForDescription: duplicatedItemData.looking_for_description,
+          lookingForPriceRanges: duplicatedItemData.looking_for_price_ranges,
         };
         
         console.log('🔄 ADDING DUPLICATED ITEM TO LOCAL STATE:', newItem);
