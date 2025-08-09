@@ -40,6 +40,9 @@ export function useUserItems(includeDrafts: boolean = false) {
 
         if (error) throw error;
 
+        console.log('🔍 RAW DATA FROM DB - First item:', data?.[0]);
+        console.log('🔍 RAW DATA FROM DB - looking_for_categories:', data?.[0]?.looking_for_categories);
+
         // Map DB items to your app's Item shape
         setItems(
           (data || []).map((item: any) => ({
