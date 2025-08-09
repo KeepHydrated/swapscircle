@@ -89,8 +89,8 @@ export const fetchUserTradeConversations = async () => {
       .from('trade_conversations')
       .select(`
         *,
-        requester_item:items!trade_conversations_requester_item_id_fkey(*),
-        owner_item:items!trade_conversations_owner_item_id_fkey(*)
+        requester_item:items!trade_conversations_requester_item_id_fkey(id, name, image_url, image_urls, category, condition, description, tags, user_id, created_at, updated_at),
+        owner_item:items!trade_conversations_owner_item_id_fkey(id, name, image_url, image_urls, category, condition, description, tags, user_id, created_at, updated_at)
       `)
       .or(`requester_id.eq.${session.session.user.id},owner_id.eq.${session.session.user.id}`)
       .order('updated_at', { ascending: false });
