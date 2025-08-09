@@ -310,8 +310,115 @@ const AdminReports: React.FC = () => {
     }
   };
 
-  // Handle accepting a report (remove item and send violation notice)
-  const handleAcceptReport = async (report: Report) => {
+  // Handle accepting a profile report (ban user progressively)
+  const handleAcceptProfileReport = async (report: Report) => {
+    if (!report.reporter_id) {
+      toast.error('Cannot find reported user ID in report');
+      return;
+    }
+
+    // Parse the report to find the reported user ID
+    // For profile reports, we need to determine who is being reported
+    // This might be in action_taken field or we need to add a reported_user_id field
+    let reportedUserId: string | null = null;
+    
+    // Check if action_taken contains user info, or if we can extract from message
+    const actionTaken = report.action_taken;
+    if (actionTaken) {
+      const userIdMatch = actionTaken.match(/user:\s*([a-f0-9-]{36})/i);
+      if (userIdMatch) {
+        reportedUserId = userIdMatch[1];
+      }
+    }
+    
+    // If still no reported user ID found, assume the report is about a profile
+    // and we need the reported user ID from somewhere else
+    // For now, let's add an input to get the reported user's ID
+    const reportedUserIdInput = prompt('Enter the ID of the user being reported:');
+    if (!reportedUserIdInput) {
+      toast.error('Reported user ID is required');
+      return;
+    }
+    reportedUserId = reportedUserIdInput;
+
+    const violationReason = report.displayMessage || report.message || 'Profile violation';
+
+    try {
+      // 1. Get reported user info
+      const { data: reportedUser, error: userFetchError } = await supabase
+        .from('profiles')
+        .select('username, id')
+        .eq('id', reportedUserId)
+        .single();
+
+      if (userFetchError) {
+        console.error('Error fetching reported user:', userFetchError);
+        toast.error('Could not find reported user');
+        return;
+      }
+
+      // 2. Ban the user with progressive penalties
+      const { data: banResult, error: banError } = await supabase
+        .rpc('ban_user_progressive', {
+          target_user_id: reportedUserId,
+          admin_user_id: user!.id,
+          ban_reason: `Profile report: ${violationReason}`
+        });
+
+      if (banError) {
+        console.error('Error banning user:', banError);
+        throw banError;
+      }
+
+      const ban = banResult[0];
+      
+      // 3. Create notification for the banned user
+      const notificationMessage = ban.ban_type === 'permanent' 
+        ? `Your account has been permanently banned for: ${violationReason}. This is your ${ban.previous_ban_count + 1} violation.`
+        : `Your account has been temporarily suspended for ${ban.ban_duration_days} days for: ${violationReason}. This is your ${ban.previous_ban_count + 1} violation.`;
+
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert({
+          user_id: reportedUserId,
+          type: 'violation',
+          reference_id: report.id,
+          message: notificationMessage,
+          action_taken: 'account_suspended',
+          action_by: user!.id
+        });
+
+      if (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        // Continue even if notification fails
+      }
+
+      // 4. Update report status
+      const actionTakenText = ban.ban_type === 'permanent'
+        ? `User @${reportedUser.username} permanently banned. Reason: ${violationReason}`
+        : `User @${reportedUser.username} suspended for ${ban.ban_duration_days} days. Reason: ${violationReason}`;
+
+      await updateReportStatus(
+        report.id,
+        'resolved',
+        actionTakenText
+      );
+
+      // Show success message
+      const successMessage = ban.ban_type === 'permanent'
+        ? `User @${reportedUser.username} has been permanently banned (${ban.previous_ban_count + 1} violations).`
+        : `User @${reportedUser.username} has been suspended for ${ban.ban_duration_days} days (${ban.previous_ban_count + 1} violations).`;
+      
+      toast.success(successMessage);
+
+    } catch (error) {
+      console.error('Error accepting profile report:', error);
+      toast.error('Failed to process profile report');
+    }
+  };
+
+  // Handle accepting an item report (remove item and send violation notice)
+  const handleAcceptItemReport = async (report: Report) => {
     const itemId = extractItemId(report.action_taken);
     if (!itemId) {
       toast.error('Cannot find item ID in report');
@@ -725,7 +832,15 @@ const AdminReports: React.FC = () => {
               <AlertDialogAction
                 onClick={() => {
                   if (selectedReportForAction) {
-                    handleAcceptReport(selectedReportForAction);
+                    // Determine if this is a profile or item report
+                    const itemId = extractItemId(selectedReportForAction.action_taken);
+                    if (itemId) {
+                      // It's an item report
+                      handleAcceptItemReport(selectedReportForAction);
+                    } else {
+                      // It's a profile report
+                      handleAcceptProfileReport(selectedReportForAction);
+                    }
                   }
                   setShowAcceptDialog(false);
                   setSelectedReportForAction(null);

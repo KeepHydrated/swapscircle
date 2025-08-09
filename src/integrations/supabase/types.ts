@@ -2232,6 +2232,48 @@ export type Database = {
           },
         ]
       }
+      user_bans: {
+        Row: {
+          ban_duration_days: number | null
+          ban_type: string
+          banned_at: string
+          banned_by: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          reason: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ban_duration_days?: number | null
+          ban_type: string
+          banned_at?: string
+          banned_by: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          reason: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ban_duration_days?: number | null
+          ban_type?: string
+          banned_at?: string
+          banned_by?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          reason?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_earnings: {
         Row: {
           created_at: string
@@ -2393,6 +2435,19 @@ export type Database = {
           | { item_id_param: string; reason_param?: string }
         Returns: Json
       }
+      ban_user_progressive: {
+        Args: {
+          target_user_id: string
+          admin_user_id: string
+          ban_reason: string
+        }
+        Returns: {
+          ban_id: string
+          ban_duration_days: number
+          ban_type: string
+          previous_ban_count: number
+        }[]
+      }
       calculate_user_earnings: {
         Args: { p_user_id: string }
         Returns: undefined
@@ -2552,6 +2607,10 @@ export type Database = {
           discussion_count: number
         }[]
       }
+      get_user_ban_count: {
+        Args: { target_user_id: string }
+        Returns: number
+      }
       get_user_discussions_paginated: {
         Args: { p_user_id: string; p_limit: number; p_offset: number }
         Returns: Json[]
@@ -2619,6 +2678,10 @@ export type Database = {
       }
       is_moderator: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      is_user_banned: {
+        Args: { check_user_id: string }
         Returns: boolean
       }
       is_user_blocked: {
