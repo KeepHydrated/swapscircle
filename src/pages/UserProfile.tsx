@@ -87,7 +87,7 @@ const UserProfile: React.FC = () => {
         const formattedItems = items.map(item => ({
           id: item.id,
           name: item.name || 'Untitled Item',
-          image: item.image_url || null, // Don't use placeholder, let UI components handle it
+          image: item.image_url || (item.image_urls && item.image_urls.length > 0 ? item.image_urls[0] : null),
           image_url: item.image_url,
           image_urls: item.image_urls || [],
           category: item.category,
