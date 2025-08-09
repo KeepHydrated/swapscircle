@@ -59,7 +59,7 @@ export function useUserItems(includeDrafts: boolean = false) {
           const mappedItem = {
             id: item.id,
             name: item.name,
-            image: item.image_url || null, // Don't use placeholder, show null when no image
+            image: item.image_url || (item.image_urls && item.image_urls.length > 0 ? item.image_urls[0] : null),
             image_url: item.image_url,
             image_urls: item.image_urls || [],
             category: item.category,
