@@ -53,9 +53,13 @@ export function useUserItems(includeDrafts: boolean = false) {
             description: item.description,
             tags: item.tags,
             status: item.status, // Include status to show draft/published state
+            // Include both camelCase and snake_case for compatibility
             lookingForCategories: item.looking_for_categories,
             lookingForConditions: item.looking_for_conditions,
             lookingForDescription: item.looking_for_description,
+            looking_for_categories: item.looking_for_categories,
+            looking_for_conditions: item.looking_for_conditions,
+            looking_for_description: item.looking_for_description,
             priceRangeMin: item.price_range_min,
             priceRangeMax: item.price_range_max,
           }))
