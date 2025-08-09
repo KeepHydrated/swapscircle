@@ -147,7 +147,14 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
           id: newItemId,
           name: `${item.name} (Copy)`,
           status: 'draft' as const,
-          has_been_edited: false
+          has_been_edited: false,
+          // Include the "What You're Looking For" fields that were sent to the database
+          looking_for_categories: duplicatedItemData.looking_for_categories,
+          looking_for_conditions: duplicatedItemData.looking_for_conditions,
+          looking_for_description: duplicatedItemData.looking_for_description,
+          lookingForCategories: duplicatedItemData.looking_for_categories,
+          lookingForConditions: duplicatedItemData.looking_for_conditions,
+          lookingForDescription: duplicatedItemData.looking_for_description,
         };
         
         console.log('🔄 ADDING DUPLICATED ITEM TO LOCAL STATE:', newItem);
