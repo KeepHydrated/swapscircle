@@ -17,6 +17,7 @@ export interface TradeConversation {
     id: string;
     name: string;
     image_url: string;
+    image_urls?: string[];
     category: string;
     condition: string;
     description: string;
@@ -29,6 +30,7 @@ export interface TradeConversation {
     id: string;
     name: string;
     image_url: string;
+    image_urls?: string[];
     category: string;
     condition: string;
     description: string;

@@ -106,7 +106,7 @@ export const useTradeConversations = () => {
             partnerId: tc.id,
             item1: {
               name: myItem?.name || 'Your Item',
-              image: myItem?.image_url || '/placeholder.svg',
+              image: myItem?.image_url || (myItem?.image_urls && myItem?.image_urls.length > 0 ? myItem?.image_urls[0] : '/placeholder.svg'),
               description: myItem?.description,
               category: myItem?.category,
               condition: myItem?.condition,
@@ -116,7 +116,7 @@ export const useTradeConversations = () => {
             },
             item2: {
               name: theirItem?.name || 'Their Item', 
-              image: theirItem?.image_url || '/placeholder.svg',
+              image: theirItem?.image_url || (theirItem?.image_urls && theirItem?.image_urls.length > 0 ? theirItem?.image_urls[0] : '/placeholder.svg'),
               description: theirItem?.description,
               category: theirItem?.category,
               condition: theirItem?.condition,
