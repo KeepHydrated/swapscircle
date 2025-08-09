@@ -7,17 +7,17 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
 import DetailsPanel from '@/components/messages/details/DetailsPanel';
-import { ExchangePair, Conversation } from '@/hooks/useConversations';
+import { ExchangePairDisplay, ConversationDisplay } from '@/hooks/useTradeConversations';
 
 interface MessagesLayoutProps {
-  exchangePairs: ExchangePair[];
+  exchangePairs: ExchangePairDisplay[];
   selectedPairId: number | null;
   onPairSelect: (partnerId: string, pairId: number) => void;
-  conversations: Conversation[];
+  conversations: ConversationDisplay[];
   activeConversation: string | null;
   setActiveConversation: (id: string) => void;
-  activeChat: Conversation;
-  selectedPair: ExchangePair | undefined;
+  activeChat: ConversationDisplay;
+  selectedPair: ExchangePairDisplay | undefined;
   onSendFirstMessage: (conversationId: string) => void;
   onTradeCompleted: (conversationId: string) => void;
 }

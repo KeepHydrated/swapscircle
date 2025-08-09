@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { Conversation } from '@/hooks/useConversations';
+import { ConversationDisplay } from '@/hooks/useTradeConversations';
 import { toast } from 'sonner';
 import { getMessagesByChatId } from '@/utils/messageData';
 import NewMatchPrompt from './NewMatchPrompt';
 import MessageList from './MessageList';
 
 interface MessageDisplayProps {
-  activeChat: Conversation;
+  activeChat: ConversationDisplay;
   onSendFirstMessage?: (conversationId: string) => void;
 }
 

@@ -4,13 +4,13 @@ import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
-import { Conversation, ExchangePair } from '@/hooks/useConversations';
+import { ConversationDisplay, ExchangePairDisplay } from '@/hooks/useTradeConversations';
 
 interface ConversationListProps {
-  conversations: Conversation[];
+  conversations: ConversationDisplay[];
   activeConversation: string | null;
   setActiveConversation: (id: string) => void;
-  exchangePairs?: ExchangePair[];
+  exchangePairs?: ExchangePairDisplay[];
 }
 
 const ConversationList = ({ 
