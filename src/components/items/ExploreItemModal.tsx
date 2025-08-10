@@ -6,6 +6,7 @@ import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useNavigate } from "react-router-dom";
+import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
 
 interface ExploreItemModalProps {
   open: boolean;
@@ -21,6 +22,9 @@ interface ExploreItemModalProps {
   hideActions?: boolean; // New prop to hide X and heart buttons
   disableActions?: boolean; // New prop to show but disable X and heart buttons
   userProfile?: UserProfile; // Optional pre-loaded user profile to skip API call
+  onLikeAll?: (id: string) => void;
+  onRejectAll?: (id: string) => void;
+  onReport?: (id: string) => void;
 }
 
 interface UserProfile {
@@ -44,6 +48,9 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   hideActions = false,
   disableActions = false,
   userProfile: preloadedUserProfile,
+  onLikeAll,
+  onRejectAll,
+  onReport,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -371,6 +378,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
               <div className="absolute top-4 right-4 flex gap-3 z-20">
+                {(onLikeAll || onRejectAll || onReport) && item?.id && (
+                  <MatchActionSelector
+                    itemId={item.id}
+                    onLikeAll={onLikeAll || (() => {})}
+                    onRejectAll={onRejectAll || (() => {})}
+                    onReport={onReport || (() => {})}
+                    compact
+                  />
+                )}
                 <button
                   onClick={disableActions ? undefined : onClose}
                   className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${

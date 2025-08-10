@@ -5,6 +5,7 @@ import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
+import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
 
 interface UserProfile {
   name: string;
@@ -25,6 +26,9 @@ interface ItemDetailsModalProps {
   showProfileInfo?: boolean;
   preloadedUserProfile?: UserProfile; // Optional pre-loaded user profile to skip API call
   skipDataFetch?: boolean; // Skip all API calls if we already have the data
+  onLikeAll?: (id: string) => void;
+  onRejectAll?: (id: string) => void;
+  onReport?: (id: string) => void;
 }
 
 const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
@@ -39,6 +43,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   showProfileInfo = true,
   preloadedUserProfile,
   skipDataFetch = false,
+  onLikeAll,
+  onRejectAll,
+  onReport,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -319,6 +326,15 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
             
             {/* Heart and Close buttons - positioned over the image */}
             <div className="absolute top-4 right-4 flex gap-3 z-20">
+              {(onLikeAll || onRejectAll || onReport) && item?.id && (
+                <MatchActionSelector
+                  itemId={item.id}
+                  onLikeAll={onLikeAll || (() => {})}
+                  onRejectAll={onRejectAll || (() => {})}
+                  onReport={onReport || (() => {})}
+                  compact
+                />
+              )}
               <button
                 onClick={onClose}
                 className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
