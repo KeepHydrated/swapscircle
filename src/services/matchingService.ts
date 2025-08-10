@@ -195,8 +195,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     }
 
     if (!allItems || allItems.length === 0) {
+      console.log('🔍 NO ITEMS FOUND - returning empty array before mutual matches check');
       return [];
     }
+
+    console.log('🔍 FOUND', allItems.length, 'ITEMS - proceeding to mutual matches check');
 
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
