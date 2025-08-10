@@ -475,12 +475,15 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
       });
       
       // Create the confirmed match
+      console.error('🚨 MUTUAL MATCH DB: About to call createMatch()');
       const match = await createMatch(
         currentUserId,
         matchResult.matchData.otherUserId,
         matchResult.matchData.myItemId,
         matchResult.matchData.otherUserItemId
       );
+
+      console.error('🚨 MUTUAL MATCH DB: createMatch() returned:', match);
 
       if (match) {
         console.log('✅ MUTUAL MATCH CREATED:', match);

@@ -128,7 +128,6 @@ export const checkForMutualMatch = async (currentUserId: string, likedItemId: st
   }
 };
 
-// Create a confirmed match record
 export const createMatch = async (
   user1Id: string,
   user2Id: string,
@@ -136,40 +135,62 @@ export const createMatch = async (
   user2ItemId: string
 ): Promise<MutualMatch | null> => {
   if (!isSupabaseConfigured()) {
+    console.error('🚨 CREATE MATCH: Supabase not configured');
     return null;
   }
 
   try {
+    console.error('🚨 CREATE MATCH: Starting match creation process');
+    console.error('🚨 CREATE MATCH: Parameters:', { user1Id, user2Id, user1ItemId, user2ItemId });
+
     // Check if match already exists (in either direction)
-    const { data: existingMatch } = await supabase
+    console.error('🚨 CREATE MATCH: Checking for existing match...');
+    const { data: existingMatch, error: existingError } = await supabase
       .from('mutual_matches')
       .select('*')
       .or(`and(user1_id.eq.${user1Id},user2_id.eq.${user2Id}),and(user1_id.eq.${user2Id},user2_id.eq.${user1Id})`);
 
-    if (existingMatch && existingMatch.length > 0) {
-      return existingMatch[0];
-    }
+    console.error('🚨 CREATE MATCH: Existing match check result:', { existingMatch, existingError });
 
-    // Create new match
-    const { data, error } = await supabase
-      .from('mutual_matches')
-      .insert({
-        user1_id: user1Id,
-        user2_id: user2Id,
-        user1_item_id: user1ItemId,
-        user2_item_id: user2ItemId
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating match:', error);
+    if (existingError) {
+      console.error('🚨 CREATE MATCH: Error checking existing match:', existingError);
       return null;
     }
 
+    if (existingMatch && existingMatch.length > 0) {
+      console.error('🚨 CREATE MATCH: Match already exists, returning existing:', existingMatch[0]);
+      return existingMatch[0];
+    }
+
+    console.error('🚨 CREATE MATCH: No existing match found, creating new one...');
+
+    // Create new match
+    const insertData = {
+      user1_id: user1Id,
+      user2_id: user2Id,
+      user1_item_id: user1ItemId,
+      user2_item_id: user2ItemId
+    };
+
+    console.error('🚨 CREATE MATCH: Insert data:', insertData);
+
+    const { data, error } = await supabase
+      .from('mutual_matches')
+      .insert(insertData)
+      .select()
+      .single();
+
+    console.error('🚨 CREATE MATCH: Insert result:', { data, error });
+
+    if (error) {
+      console.error('🚨 CREATE MATCH: Error creating match:', error);
+      return null;
+    }
+
+    console.error('🚨 CREATE MATCH: Match created successfully!', data);
     return data;
   } catch (error) {
-    console.error('Error in createMatch:', error);
+    console.error('🚨 CREATE MATCH: Exception in createMatch:', error);
     return null;
   }
 };
