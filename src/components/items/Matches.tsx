@@ -43,15 +43,6 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }
   
-  // Debug logging
-  console.log('🔍 Matches component render:', {
-    selectedItemId,
-    syncedItemId,
-    matchesLength: matches.length,
-    loading,
-    selectedItemName,
-    isItemChanging
-  });
   
   // Get match actions from our custom hook - fixed flashing issue
   const {
@@ -70,23 +61,10 @@ const Matches: React.FC<MatchesProps> = ({
     setSelectedMatch
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
-  // Debug when matches prop changes
-  useEffect(() => {
-    console.log('🔍 Matches prop changed:', {
-      selectedItemId,
-      matchesLength: matches.length,
-      matches: matches.map(m => ({ id: m.id, name: m.name }))
-    });
-  }, [matches, selectedItemId]);
   
   // Update syncedItemId and clear isItemChanging when data is ready
   useEffect(() => {
     if (selectedItemId && !isLoadingLikedStatus && !loading) {
-      console.log('🔍 Data is ready, syncing itemId:', {
-        selectedItemId,
-        syncedItemId,
-        wasChanging: isItemChanging
-      });
       setSyncedItemId(selectedItemId);
       setIsItemChanging(false);
     }
@@ -102,18 +80,6 @@ const Matches: React.FC<MatchesProps> = ({
   // Hide content during transitions
   const isTransitioning = loading || isLoadingLikedStatus || isItemChanging;
   
-  console.log('🔍 Display logic:', {
-    loading,
-    isLoadingLikedStatus,
-    selectedItemId,
-    syncedItemId,
-    isItemChanging,
-    isTransitioning,
-    matchesLength: matches.length,
-    displayedMatchesLength: isTransitioning ? 0 : matches.filter(match => 
-      !removedItems.includes(match.id) && !likedItems[match.id]
-    ).length
-  });
   
   const displayedMatches = isTransitioning ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]

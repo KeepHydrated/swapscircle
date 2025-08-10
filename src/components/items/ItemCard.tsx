@@ -94,30 +94,18 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
   const handleCardClick = () => {
     if (disableClick) {
-      console.log('🔍 ItemCard: Click disabled during interaction');
       return;
     }
-    console.log('🔍 ItemCard: Card clicked!', { id, name, onSelect: !!onSelect });
-    console.log('🔍 ItemCard: Current isSelected state:', isSelected);
-    console.log('🔍 ItemCard: Is match card:', isMatch);
     onSelect(id);
   };
 
   const handleMouseDown = () => {
-    console.log('🔍 ItemCard: Mouse down detected!', { id, name });
+    // Mouse down handler
   };
 
   const handleMouseUp = () => {
-    console.log('🔍 ItemCard: Mouse up detected!', { id, name });
+    // Mouse up handler
   };
-
-  console.log('🔍 ItemCard: Rendering card', { 
-    id, 
-    name, 
-    isMatch, 
-    showLikeButton,
-    isSelected: typeof isSelected !== 'undefined' ? isSelected : 'undefined'
-  });
 
   return (
     <div className="flex flex-col w-full">

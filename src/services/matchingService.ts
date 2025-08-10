@@ -30,15 +30,7 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
 };
 
 export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide', perspectiveUserId?: string): Promise<MatchItem[]> => {
-  console.error('🚨🚨🚨 MATCHING SERVICE CALLED - CANNOT MISS THIS LOG 🚨🚨🚨');
-  console.error('🔥🔥🔥 UPDATED CODE VERSION - MUTUAL MATCHES FILTER ENABLED 🔥🔥🔥');
-  console.log('🔥 MATCHING SERVICE CALLED - START');
-  console.log('🔥 Selected item:', selectedItem.id, 'owned by:', selectedItem.user_id);
-  console.log('🔥 Current user ID:', currentUserId);
-  console.log('🔥 Perspective user ID:', perspectiveUserId);
-  
   if (!isSupabaseConfigured()) {
-    console.log('🔥 Supabase not configured, returning empty');
     return [];
   }
 
@@ -46,50 +38,29 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Get current user for authentication
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      console.error('🔥 Error getting user:', userError);
       return [];
     }
-
-    console.log('🔥 MATCHING DEBUG - Auth user:', user.id);
-    console.log('🔥 MATCHING DEBUG - Current user param:', currentUserId);
-    console.log('🔥 MATCHING DEBUG - Perspective user param:', perspectiveUserId);
-    console.log('🔥 MATCHING DEBUG - Selected item owner:', selectedItem.user_id);
 
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
     const effectiveUserId = perspectiveUserId || currentUserId;
     
     // Get blocked users from the VIEWING user's perspective (not the perspective user)
     // This ensures when you view your own matches, blocked users are filtered out
-    console.log('🔥 BLOCKING QUERY 1 - Getting users blocked BY current user:', currentUserId);
     const { data: blockedData, error: blockedError } = await supabase
       .from('blocked_users')
       .select('blocked_id')
-      .eq('blocker_id', currentUserId); // Always use currentUserId for blocking queries
+      .eq('blocker_id', currentUserId);
     
-    console.log('🔥 BLOCKING QUERY 1 RESULT:', { blockedData, blockedError });
-    
-    console.log('🔥 BLOCKING QUERY 2 - Getting users who blocked current user:', currentUserId);
     const { data: blockersData, error: blockersError } = await supabase
       .from('blocked_users')
       .select('blocker_id')
-      .eq('blocked_id', currentUserId); // Always use currentUserId for blocking queries
-    
-    console.log('🔥 BLOCKING QUERY 2 RESULT:', { blockersData, blockersError });
+      .eq('blocked_id', currentUserId);
     
     const blockedUsers = blockedData?.map(item => item.blocked_id) || [];
     const usersWhoBlockedMe = blockersData?.map(item => item.blocker_id) || [];
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
 
-    console.log('🔥 BLOCKING DEBUG - Current viewing user:', currentUserId);
-    console.log('🔥 BLOCKING DEBUG - Effective user (perspective):', effectiveUserId);
-    console.log('🔥 BLOCKING DEBUG - Users blocked by viewing user:', blockedUsers);
-    console.log('🔥 BLOCKING DEBUG - Users who blocked viewing user:', usersWhoBlockedMe);
-    console.log('🔥 BLOCKING DEBUG - All blocked user IDs:', allBlockedUserIds);
-    console.log('🔥 BLOCKING DEBUG - Selected item owner:', selectedItem.user_id);
-
     // Get all available and visible items from other users - exclude the current user's items
-    console.log('Debug - Building query to exclude current user:', currentUserId);
-    console.log('Debug - Effective user (perspective):', effectiveUserId);
     
     let itemsQuery = supabase
       .from('items')
@@ -104,14 +75,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       itemsQuery = itemsQuery.not('user_id', 'in', `(${allBlockedUserIds.join(',')})`);
     }
 
-    console.log('Debug - Current user ID for exclusion:', currentUserId);
-    console.log('Debug - Current user ID type:', typeof currentUserId);
 
     // If location is not nationwide, filter by GPS radius
     let userIdsToFilter: string[] = [];
     if (location !== 'nationwide' && ['5', '10', '20', '50'].includes(location)) {
       const radiusInMiles = parseInt(location);
-      console.log('Debug - Filtering by radius:', radiusInMiles, 'miles');
       
       // Get current user's location
       const { data: currentUserProfile, error: currentUserError } = await supabase
@@ -121,17 +89,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         .single();
       
       if (currentUserError || !currentUserProfile?.location) {
-        console.log('Debug - Current user has no location set, showing no results');
         return [];
       }
       
       const currentUserCoords = parseLocation(currentUserProfile.location);
       if (!currentUserCoords) {
-        console.log('Debug - Current user location could not be parsed, showing no results');
         return [];
       }
-      
-      console.log('Debug - Current user coordinates:', currentUserCoords);
       
       // Get all profiles with locations to calculate distances
       const { data: allProfiles, error: profilesError } = await supabase
@@ -146,7 +110,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       }
       
       if (!allProfiles || allProfiles.length === 0) {
-        console.log('Debug - No users with locations found');
         return [];
       }
       
@@ -160,36 +123,19 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           profileCoords.lat, profileCoords.lng
         );
         
-        const withinRadius = distance <= radiusInMiles;
-        console.log(`Debug - Profile ${profile.user_id}: distance=${distance.toFixed(2)} miles, withinRadius=${withinRadius}`);
-        return withinRadius;
+        return distance <= radiusInMiles;
       });
       
       userIdsToFilter = profilesWithinRadius.map(p => p.user_id);
-      console.log('Debug - User IDs within radius:', userIdsToFilter.length);
       
       if (userIdsToFilter.length === 0) {
-        console.log('Debug - No users found within radius, returning empty array');
         return [];
       }
       
       itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
-    } else {
-      console.log('Debug - Location is nationwide or unrecognized, no filtering applied');
     }
 
     const { data: allItems, error: itemsError } = await itemsQuery;
-
-    console.log('Debug - Items query result:', {
-      totalItems: allItems?.length || 0,
-      itemsError,
-      sampleItems: allItems?.slice(0, 3).map(item => ({
-        id: item.id,
-        user_id: item.user_id,
-        currentUserId,
-        isOwn: item.user_id === currentUserId
-      }))
-    });
 
     if (itemsError) {
       console.error('Error fetching items:', itemsError);
@@ -197,20 +143,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     }
 
     if (!allItems || allItems.length === 0) {
-      console.log('🔍 NO ITEMS FOUND - returning empty array before mutual matches check');
       return [];
     }
-
-    console.log('🔍 FOUND', allItems.length, 'ITEMS - proceeding to mutual matches check');
     
     // Get all mutual matches for current user to exclude them from matches feed
     const { data: mutualMatches, error: mutualMatchesError } = await supabase
       .from('mutual_matches')
       .select('user1_item_id, user2_item_id, user1_id, user2_id')
       .or(`user1_id.eq.${effectiveUserId},user2_id.eq.${effectiveUserId}`);
-
-    console.log('🚨 MUTUAL MATCHES QUERY RESULT:', mutualMatches);
-    console.log('🚨 MUTUAL MATCHES ERROR:', mutualMatchesError);
 
     // Extract all matched item IDs to exclude from matches feed
     const matchedItemIds = new Set<string>();
@@ -219,12 +159,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         // Add both items from each match to exclusion set
         matchedItemIds.add(match.user1_item_id);
         matchedItemIds.add(match.user2_item_id);
-        console.log('🚨 ADDED user1_item_id to exclude list:', match.user1_item_id);
-        console.log('🚨 ADDED user2_item_id to exclude list:', match.user2_item_id);
       });
     }
-
-    console.log('🚨 COMPLETE MATCHED ITEMS EXCLUDE LIST:', Array.from(matchedItemIds));
 
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
@@ -257,12 +193,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error('Error fetching owner rejections:', ownerRejectedError);
     }
 
-    console.log('Debug - Rejected items by current user for selected item:', rejectedItems);
-    console.log('Debug - Users who rejected current item:', ownerRejections);
-    console.log('Debug - Mutual matches:', mutualMatches);
-
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
-    console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
 
     // Filter out rejected items from both sides
     const rejectedItemIds = new Set(rejectedItems?.map(item => item.item_id) || []);
@@ -281,9 +212,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       }
     });
 
-    console.log('Debug - Rejected item IDs (by current user):', Array.from(rejectedItemIds));
-    console.log('Debug - Rejection map (by owners):', rejectedByOwnerMap);
-    console.log('Debug - ALL matched item IDs to exclude:', Array.from(matchedItemIds));
 
     // Filter out items that:
     // 1. Current user has rejected for this specific item
@@ -311,7 +239,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 6. Don't show ANY items that are part of existing mutual matches (global exclusion)
       const isAlreadyMatched = matchedItemIds.has(item.id);
 
-      console.log(`🚨 FILTER DEBUG - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}, isBlockedUser=${isBlockedUser}, isAlreadyMatched=${isAlreadyMatched}`);
+      
 
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
@@ -327,7 +255,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !isAlreadyMatched;
     });
     
-    console.log('Debug - Available items after filtering rejections:', availableItems.length);
+    
 
     const matches: Array<MatchItem & { matchScore: number; created_at?: string }> = [];
 
@@ -340,12 +268,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .select('id, name, username, avatar_url')
       .in('id', userIds);
 
-    console.log('🔍 PROFILE FETCH DEBUG:', {
-      userIds,
-      userProfiles,
-      profilesError,
-      profileCount: userProfiles?.length
-    });
 
     if (profilesError) {
       console.error('Error fetching user profiles:', profilesError);
@@ -438,14 +360,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         matchScore += 10; // Bonus for confirmed mutual match
       }
 
-      console.log(`Debug - Item ${otherItem.id}: currentUserInterested=${currentUserInterested}, otherUserInterested=${otherUserInterested}, isMatch=${isMatch}, score=${matchScore}`);
+      
 
       // If there's any match, add to results
       if (isMatch) {
         const userProfile = profileMap.get(otherItem.user_id);
-        console.log(`🚨 FINAL MATCH ADDED: Item ${otherItem.id} (${otherItem.name}) from user ${otherItem.user_id}`);
-        console.log(`🚨 MATCH ITEM USER: ${otherItem.user_id} vs KNOWN BLOCKER: b5fbf0c4-f064-4be4-99cf-4d32a69b22fc`);
-        console.log(`🚨 IS THIS THE BLOCKING USER? ${otherItem.user_id === 'b5fbf0c4-f064-4be4-99cf-4d32a69b22fc'}`);
         matches.push({
           id: otherItem.id,
           name: otherItem.name,

@@ -63,11 +63,8 @@ export const useMatchActions = (
 
   // Load actual liked status from database for this specific matching session
   const loadLikedStatus = async () => {
-    console.log('DEBUG: loadLikedStatus called with matches:', matches.length);
-    
     // If no matches, don't set loading state - just set empty state immediately
     if (matches.length === 0) {
-      console.log('DEBUG: No matches to load, setting empty state immediately');
       updateCurrentState({ likedItems: {}, isLoadingLikedStatus: false });
       return;
     }
@@ -76,7 +73,6 @@ export const useMatchActions = (
     updateCurrentState({ isLoadingLikedStatus: true });
     
     if (!user || !supabaseConfigured) {
-      console.log('DEBUG: Early return - no user or supabase');
       const initialLikedStatus: Record<string, boolean> = {};
       matches.forEach(match => {
         initialLikedStatus[match.id] = false;
@@ -85,46 +81,29 @@ export const useMatchActions = (
       return;
     }
     
-    console.log('DEBUG: Loading liked status for matches:', matches.map(m => m.id));
-    
     const likedStatus: Record<string, boolean> = {};
     for (const match of matches) {
       if (isValidUUID(match.id)) {
         try {
           const liked = await isItemLiked(match.id, selectedItemId);
           likedStatus[match.id] = liked;
-          console.log(`DEBUG: Item ${match.id} liked status: ${liked} for selectedItem: ${selectedItemId}`);
         } catch (e) {
           likedStatus[match.id] = false;
-          console.log(`DEBUG: Error checking liked status for ${match.id}:`, e);
         }
       } else {
         likedStatus[match.id] = false;
-        console.log(`DEBUG: Invalid UUID for ${match.id}`);
       }
     }
     
-    console.log('DEBUG: Final liked status:', JSON.stringify(likedStatus, null, 2));
     updateCurrentState({ likedItems: likedStatus, isLoadingLikedStatus: false });
   };
 
   useEffect(() => {
-    console.log('🚨 FLASH DEBUG: useMatchActions effect triggered:', {
-      matchesLength: matches.length,
-      userId: user?.id,
-      supabaseConfigured,
-      selectedItemId,
-      stateKey
-    });
     loadLikedStatus();
     // eslint-disable-next-line
   }, [matches, user, supabaseConfigured, selectedItemId, stateKey]);
 
   const handleLike = async (id: string, global?: boolean) => {
-    console.log('🚀 handleLike called with id:', id);
-    console.log('🚀 User:', user?.id);
-    console.log('🚀 Supabase configured:', supabaseConfigured);
-    
     if (!user) {
       navigate('/auth');
       return;
@@ -147,10 +126,8 @@ export const useMatchActions = (
         let result;
         if (isCurrentlyLiked) {
           result = await unlikeItem(id, global ? undefined : selectedItemId);
-          console.log('🔄 Unlike result:', result);
         } else {
           result = await likeItem(id, global ? undefined : selectedItemId);
-          console.log('🔄 Like result:', result);
         }
 
         // Keep the optimistic update - no need to reload from DB
@@ -162,14 +139,10 @@ export const useMatchActions = (
         }
 
         // Handle mutual match result - check if result is an object with match data
-        console.log('🔍 Checking mutual match result:', { result, isCurrentlyLiked });
         if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
-          console.log('✅ Result has success=true, checking for match data...');
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-            console.log('🎉 MUTUAL MATCH DETECTED!', result.matchData);
             // Only navigate to messages if there's a confirmed mutual match
             setTimeout(() => {
-              console.log('🚀 Navigating to messages with match data');
               navigate('/messages', {
                 state: {
                   newMatch: true,
@@ -178,20 +151,11 @@ export const useMatchActions = (
               });
             }, 2000); // Give user time to see the success message
           } else {
-            console.log('❌ No mutual match detected');
             // Show like message since no match occurred
             const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
             toast.success(likeMessage);
           }
         } else {
-          console.log('❌ Result check failed:', { 
-            hasResult: !!result, 
-            isObject: typeof result === 'object',
-            hasSuccess: result && 'success' in result,
-            successValue: result && 'success' in result ? result.success : 'N/A',
-            isCurrentlyLiked 
-          });
-          
           // Show like message if no match occurred
           if (!isCurrentlyLiked) {
             const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
@@ -217,8 +181,6 @@ export const useMatchActions = (
 
   // Handle rejecting an item (removing it from matches)
   const handleReject = async (id: string, global?: boolean) => {
-    console.log('DEBUG: handleReject called with id:', id);
-    
     if (!user) {
       navigate('/auth');
       return;
@@ -236,9 +198,7 @@ export const useMatchActions = (
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
-        console.log('DEBUG: About to call rejectItem for:', id, 'myItemId:', global ? undefined : selectedItemId);
         const result = await rejectItem(id, global ? undefined : selectedItemId);
-        console.log('DEBUG: rejectItem result:', result);
         
         if (result) {
           const message = global ? 'Item rejected for all your items' : 'Item removed from matches';
@@ -304,14 +264,9 @@ export const useMatchActions = (
   };
 
   const handleOpenModal = (id: string) => {
-    console.log('🔍 MODAL DEBUG: handleOpenModal called with id:', id);
     const match = matches.find(m => m.id === id);
-    console.log('🔍 MODAL DEBUG: Found match:', match);
     if (match) {
-      console.log('🔍 MODAL DEBUG: Setting selected match:', match);
       setSelectedMatch(match);
-    } else {
-      console.log('🔍 MODAL DEBUG: No match found for id:', id);
     }
   };
 

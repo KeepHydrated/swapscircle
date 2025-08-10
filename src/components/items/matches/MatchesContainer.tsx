@@ -27,13 +27,6 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
-  console.log('🔍 MATCHES CONTAINER: isMobile detected:', isMobile);
-
-  if (isMobile) {
-    console.log('🔍 MATCHES CONTAINER: Rendering MobileMatchesView');
-  } else {
-    console.log('🔍 MATCHES CONTAINER: Rendering MatchesGrid');
-  }
 
   if (isMobile) {
     return (

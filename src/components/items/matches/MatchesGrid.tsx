@@ -25,9 +25,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   return (
     <div className="relative w-full" ref={detailsRef}>
       <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'thin' }}>
-        {displayedMatches.map(match => {
-          console.log('🔍 MatchesGrid: Rendering match', { id: match.id, name: match.name, isMatch: true });
-          return (
+         {displayedMatches.map(match => (
             <div key={match.id} className="flex-shrink-0 w-64">
               <ItemCard
                 id={match.id}
@@ -44,8 +42,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 userProfile={match.userProfile}
               />
             </div>
-          );
-        })}
+          ))}
       </div>
     </div>
   );

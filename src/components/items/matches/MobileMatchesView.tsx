@@ -26,10 +26,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSwipeRight = () => {
-    console.log('📱 MOBILE: handleSwipeRight called, currentIndex:', currentIndex);
-    console.log('📱 MOBILE: current match:', matches[currentIndex]?.id);
     if (currentIndex < matches.length) {
-      console.log('📱 MOBILE: calling onLike with id:', matches[currentIndex].id);
       onLike(matches[currentIndex].id);
       setCurrentIndex(prev => prev + 1);
     }
@@ -89,7 +86,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           <div 
             className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col cursor-pointer"
             onClick={() => {
-              console.log('🔍 MOBILE CARD: Card clicked!', currentMatch.id);
               onOpenModal(currentMatch.id);
             }}
           >
@@ -99,11 +95,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 alt={currentMatch.name}
                 className="w-full h-64 object-cover block"
                 onError={(e) => {
-                  console.log('Image failed to load:', currentMatch.image);
                   e.currentTarget.src = '/placeholder.svg';
-                }}
-                onLoad={() => {
-                  console.log('Image loaded successfully:', currentMatch.image);
                 }}
                 style={{ display: 'block', width: '100%', height: '256px' }}
               />
