@@ -141,6 +141,11 @@ export const useMatchActions = (
         // Handle mutual match result - check if result is an object with match data
         if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+            // Refresh matches to remove the matched item from the feed
+            if (onRefreshMatches) {
+              onRefreshMatches();
+            }
+            
             // Only navigate to messages if there's a confirmed mutual match
             setTimeout(() => {
               navigate('/messages', {
