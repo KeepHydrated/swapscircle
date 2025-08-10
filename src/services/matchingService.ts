@@ -31,6 +31,7 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
 
 export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide', perspectiveUserId?: string): Promise<MatchItem[]> => {
   console.log('🔥 MATCHING SERVICE CALLED - START');
+  console.log('🔥🔥🔥 UPDATED CODE VERSION - MUTUAL MATCHES FILTER ENABLED 🔥🔥🔥');
   console.log('🔥 Selected item:', selectedItem.id, 'owned by:', selectedItem.user_id);
   console.log('🔥 Current user ID:', currentUserId);
   console.log('🔥 Perspective user ID:', perspectiveUserId);
