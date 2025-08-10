@@ -327,7 +327,17 @@ const Test: React.FC = () => {
   });
   
   // Get matches for selected item (real matches from DB)
+  console.error('🚨🚨🚨 TEST COMPONENT - BEFORE useMatches CALL 🚨🚨🚨');
+  console.error('🚨 selectedUserItem:', selectedUserItem);
+  console.error('🚨 selectedUserItem?.id:', selectedUserItem?.id);
+  console.error('🚨 selectedUserItem?.name:', selectedUserItem?.name);
+  console.error('🚨 selectedLocation:', selectedLocation);
+  
   const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
+
+  console.error('🚨 useMatches returned - matches count:', dbMatches?.length || 0);
+  console.error('🚨 useMatches loading:', matchesLoading);
+  console.error('🚨 useMatches error:', matchesError);
 
   // Use only real matches from database
   const matches = selectedUserItem ? dbMatches : [];
