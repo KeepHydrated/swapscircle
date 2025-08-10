@@ -443,6 +443,13 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
     const matchResult = await checkForMutualMatch(currentUserId, itemId, selectedItemId);
     
     if (matchResult.isMatch && matchResult.matchData) {
+      console.log('🎯 ABOUT TO CREATE MATCH WITH:', {
+        currentUserId,
+        otherUserId: matchResult.matchData.otherUserId,
+        selectedItemId,
+        itemId
+      });
+      
       // Create the confirmed match with the correct item IDs
       const match = await createMatch(
         currentUserId,
