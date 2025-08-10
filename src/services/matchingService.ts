@@ -246,13 +246,15 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
     console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
 
-    // Create a set of users who have mutual matches with current user
-    const mutualMatchUserIds = new Set<string>();
+    // Create a set of specific items that have mutual matches with the current selected item
+    const mutualMatchedItemIds = new Set<string>();
     mutualMatches?.forEach(match => {
-      if (match.user1_id === currentUserId) {
-        mutualMatchUserIds.add(match.user2_id);
-      } else if (match.user2_id === currentUserId) {
-        mutualMatchUserIds.add(match.user1_id);
+      if (match.user1_id === currentUserId && match.user1_item_id === selectedItem.id) {
+        // Current user's selected item matched with user2's item
+        mutualMatchedItemIds.add(match.user2_item_id);
+      } else if (match.user2_id === currentUserId && match.user2_item_id === selectedItem.id) {
+        // Current user's selected item matched with user1's item
+        mutualMatchedItemIds.add(match.user1_item_id);
       }
     });
 
@@ -275,13 +277,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
     console.log('Debug - Rejected item IDs (by current user):', Array.from(rejectedItemIds));
     console.log('Debug - Rejection map (by owners):', rejectedByOwnerMap);
-    console.log('Debug - Mutual match user IDs:', Array.from(mutualMatchUserIds));
+    console.log('Debug - Mutual matched item IDs for selected item:', Array.from(mutualMatchedItemIds));
 
     // Filter out items that:
     // 1. Current user has rejected for this specific item
     // 2. Item owners who have rejected the current user's selected item for their specific items
     // 3. Items where bidirectional blocking exists
-    // 4. Items from users who already have mutual matches with current user
+    // 4. Specific items that have already mutual matched with the current selected item
     const availableItems = allItems.filter(item => {
       // 1. Items rejected by the current user for this specific item or globally
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
@@ -300,10 +302,10 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 5. Don't show items if there's bidirectional blocking
       const isBlockedUser = allBlockedUserIds.includes(item.user_id);
 
-      // 6. Don't show items from users who already have mutual matches with current user
-      const hasMutualMatch = mutualMatchUserIds.has(item.user_id);
+      // 6. Don't show specific items that have already mutual matched with the current selected item
+      const hasItemSpecificMutualMatch = mutualMatchedItemIds.has(item.id);
 
-      console.log(`🔍 FILTER DEBUG - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}, isBlockedUser=${isBlockedUser}, hasMutualMatch=${hasMutualMatch}`);
+      console.log(`🔍 FILTER DEBUG - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}, isBlockedUser=${isBlockedUser}, hasItemSpecificMutualMatch=${hasItemSpecificMutualMatch}`);
 
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
@@ -315,8 +317,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // - NOT the user's own items
       // - NOT from the same user as the selected item
       // - NOT from blocked/blocking users
-      // - NOT from users who already have mutual matches with current user
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMutualMatch;
+      // - NOT specific items that have already mutual matched with the current selected item
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasItemSpecificMutualMatch;
     });
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);
