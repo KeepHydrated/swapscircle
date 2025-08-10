@@ -18,17 +18,8 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
   };
 
   useEffect(() => {
-    console.log('🎯 MATCHES HOOK: useEffect triggered', { 
-      selectedItemId: selectedItem?.id,
-      selectedItemName: selectedItem?.name,
-      userId: user?.id,
-      location,
-      refreshTrigger 
-    });
-    
     async function fetchMatches() {
       if (!selectedItem) {
-        console.log('🎯 MATCHES HOOK: No selectedItem, clearing matches');
         setMatches([]);
         setLoading(false);
         return;

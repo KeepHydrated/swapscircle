@@ -404,30 +404,22 @@ export const uploadAvatarImage = async (file: File): Promise<string | null> => {
 
 // New function to like an item with mutual matching logic
 export const likeItem = async (itemId: string, selectedItemId?: string) => {
-  console.log('DEBUG: likeItem function called with itemId:', itemId, 'selectedItemId:', selectedItemId);
-  
   if (!isSupabaseConfigured()) {
-    console.log('DEBUG: Supabase not configured');
     toast.error('Supabase is not configured. Please add environment variables.');
     return false;
   }
 
   try {
-    console.log('DEBUG: Getting current session...');
     const session = await getCurrentSession();
-    console.log('DEBUG: Session:', session?.user?.id);
     
     if (!session?.user) {
-      console.log('DEBUG: No user session found');
       toast.error('You must be logged in to like an item.');
       return false;
     }
 
     const currentUserId = session.user.id;
-    console.log('DEBUG: Current user ID:', currentUserId);
 
     // Skip the existing like check since we allow re-liking items for different matches
-    console.log('DEBUG: Inserting new like with selectedItemId:', selectedItemId);
     const { error } = await supabase
       .from('liked_items')
       .insert({
@@ -436,12 +428,10 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         my_item_id: selectedItemId || null // Include the specific item this like is from
       });
 
-    console.log('DEBUG: Insert like result:', { error });
-
     if (error) {
       // Handle duplicate like gracefully
       if (error.code === '23505') {
-        console.log('DEBUG: Like already exists, but checking for mutual match anyway...');
+        console.log('Like already exists, but checking for mutual match anyway...');
       } else {
         console.error('Error liking item:', error);
         toast.error('Error liking item');
@@ -450,37 +440,10 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
     }
 
     // Check for mutual match
-    console.log('🔍 MUTUAL MATCH CHECK:', { currentUserId, itemId, selectedItemId, itemOwner: 'will be determined' });
     const matchResult = await checkForMutualMatch(currentUserId, itemId, selectedItemId);
     
-    console.log('🔍 MUTUAL MATCH RESULT:', {
-      isMatch: matchResult.isMatch,
-      matchData: matchResult.matchData,
-      willCreateConversation: matchResult.isMatch && matchResult.matchData ? 'YES' : 'NO'
-    });
-    
-    // Add extra debug to see what's happening
-    console.error('🚨 LIKE DEBUG: About to check mutual match');
-    console.error('🚨 LIKE DEBUG: currentUserId:', currentUserId);
-    console.error('🚨 LIKE DEBUG: itemId (item being liked):', itemId); 
-    console.error('🚨 LIKE DEBUG: selectedItemId (my item):', selectedItemId);
-    console.error('🚨 LIKE DEBUG: matchResult:', matchResult);
-    
     if (matchResult.isMatch && matchResult.matchData) {
-      console.log('🚀 CREATING MUTUAL MATCH & CONVERSATION!', {
-        currentUserId,
-        otherUserId: matchResult.matchData.otherUserId,
-        myItemId: matchResult.matchData.myItemId,
-        otherUserItemId: matchResult.matchData.otherUserItemId
-      });
-      
-      // Create the confirmed match with the CORRECT item IDs
-      console.error('🚨 MUTUAL MATCH DB: About to call createMatch() with CORRECT items');
-      console.error('🚨 MUTUAL MATCH DB: My item (selected):', selectedItemId);
-      console.error('🚨 MUTUAL MATCH DB: Their item (clicked):', itemId);
-      console.error('🚨 MUTUAL MATCH DB: My user ID:', currentUserId);
-      console.error('🚨 MUTUAL MATCH DB: Their user ID:', matchResult.matchData.otherUserId);
-
+      // Create the confirmed match with the correct item IDs
       const match = await createMatch(
         currentUserId,
         matchResult.matchData.otherUserId,
@@ -488,16 +451,10 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         itemId         // This should be the item they clicked/liked
       );
 
-      console.error('🚨 MUTUAL MATCH DB: createMatch() returned:', match);
-
       if (match) {
         console.log('✅ MUTUAL MATCH CREATED:', match);
         
-        // Create trade conversation for the mutual match with CORRECT item IDs
-        console.error('🚨 TRADE CONVERSATION: Creating with correct item IDs');
-        console.error('🚨 TRADE CONVERSATION: My item (selected):', selectedItemId);
-        console.error('🚨 TRADE CONVERSATION: Their item (clicked):', itemId);
-
+        // Create trade conversation for the mutual match with correct item IDs
         const tradeConversation = await createTradeConversation(
           currentUserId,
           matchResult.matchData.otherUserId,
