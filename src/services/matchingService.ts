@@ -147,23 +147,30 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     }
     
     // Get mutual matches specifically involving the selected item  
+    console.log('🔥 MUTUAL MATCHES: Querying for selectedItem.id:', selectedItem.id);
     const { data: mutualMatches, error: mutualMatchesError } = await supabase
       .from('mutual_matches')
       .select('user1_item_id, user2_item_id, user1_id, user2_id')
       .or(`user1_item_id.eq.${selectedItem.id},user2_item_id.eq.${selectedItem.id}`);
 
+    console.log('🔥 MUTUAL MATCHES: Query result:', { mutualMatches, error: mutualMatchesError });
+
     // Extract item IDs that have specifically matched with the selected item
     const matchedWithSelectedItemIds = new Set<string>();
     if (mutualMatches) {
       mutualMatches.forEach(match => {
+        console.log('🔥 MUTUAL MATCHES: Processing match:', match);
         // Only add the OTHER item that matched with our selected item
         if (match.user1_item_id === selectedItem.id) {
+          console.log('🔥 MUTUAL MATCHES: Adding user2_item_id to exclusion:', match.user2_item_id);
           matchedWithSelectedItemIds.add(match.user2_item_id);
         } else if (match.user2_item_id === selectedItem.id) {
+          console.log('🔥 MUTUAL MATCHES: Adding user1_item_id to exclusion:', match.user1_item_id);
           matchedWithSelectedItemIds.add(match.user1_item_id);
         }
       });
     }
+    console.log('🔥 MUTUAL MATCHES: Final exclusion set:', Array.from(matchedWithSelectedItemIds));
 
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
