@@ -10,8 +10,18 @@ import TradeDetailsTabs from './TradeDetailsTabs';
 interface DetailsPanelProps {
   selectedPair?: {
     id: number;
-    item1: { name: string; image: string };
-    item2: { name: string; image: string };
+    item1: { 
+      name: string; 
+      image: string;
+      image_url?: string;
+      image_urls?: string[];
+    };
+    item2: { 
+      name: string; 
+      image: string;
+      image_url?: string;
+      image_urls?: string[];
+    };
     partnerId: string;
     partnerProfile?: {
       id: string;
@@ -32,13 +42,22 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
   
-  // Use actual item images only
+  // Use all available item images
   useEffect(() => {
     if (!selectedPair) return;
     
-    // Use selected item images without placeholders
-    const selectedItemImage = selectedPair[selectedItem].image;
-    const urls = selectedItemImage ? [selectedItemImage] : [];
+    // Get all images for the selected item (handle both single image and multiple images)
+    const selectedItemData = selectedPair[selectedItem];
+    let urls: string[] = [];
+    
+    if (selectedItemData.image_urls && selectedItemData.image_urls.length > 0) {
+      urls = selectedItemData.image_urls;
+    } else if (selectedItemData.image_url) {
+      urls = [selectedItemData.image_url];
+    } else if (selectedItemData.image) {
+      urls = [selectedItemData.image];
+    }
+    
     setImageUrls(urls);
   }, [selectedPair, selectedItem]);
   

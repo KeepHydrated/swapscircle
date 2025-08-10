@@ -15,6 +15,8 @@ interface TradeDetailsTabsProps {
     item1: { 
       name: string; 
       image: string;
+      image_url?: string;
+      image_urls?: string[];
       description?: string;
       category?: string;
       condition?: string;
@@ -25,6 +27,8 @@ interface TradeDetailsTabsProps {
     item2: { 
       name: string; 
       image: string;
+      image_url?: string;
+      image_urls?: string[];
       description?: string;
       category?: string;
       condition?: string;
@@ -64,9 +68,20 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     getCurrentUser();
   }, []);
 
-  // Use actual item images only
-  const itemImages = selectedPair.item1.image ? [selectedPair.item1.image] : [];
-  const theirItemImages = selectedPair.item2.image ? [selectedPair.item2.image] : [];
+  // Use all available item images
+  const getItemImages = (item: any) => {
+    if (item.image_urls && item.image_urls.length > 0) {
+      return item.image_urls;
+    } else if (item.image_url) {
+      return [item.image_url];
+    } else if (item.image) {
+      return [item.image];
+    }
+    return [];
+  };
+
+  const itemImages = getItemImages(selectedPair.item1);
+  const theirItemImages = getItemImages(selectedPair.item2);
 
   // Fetch trade status to check acceptance status
   const { data: tradeConversations = [] } = useQuery({
@@ -162,7 +177,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   };
 
   const handleNextTheirImage = () => {
-    setCurrentImageIndex((prev) => (prev === itemImages.length - 1 ? 0 : prev + 1));
+    setCurrentImageIndex((prev) => (prev === theirItemImages.length - 1 ? 0 : prev + 1));
   };
 
   return (
