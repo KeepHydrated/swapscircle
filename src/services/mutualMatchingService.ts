@@ -143,12 +143,12 @@ export const createMatch = async (
     console.error('🚨 CREATE MATCH: Starting match creation process');
     console.error('🚨 CREATE MATCH: Parameters:', { user1Id, user2Id, user1ItemId, user2ItemId });
 
-    // Check if match already exists (in either direction)
-    console.error('🚨 CREATE MATCH: Checking for existing match...');
+    // Check if match already exists for these specific items (in either direction)
+    console.error('🚨 CREATE MATCH: Checking for existing match with specific items...');
     const { data: existingMatch, error: existingError } = await supabase
       .from('mutual_matches')
       .select('*')
-      .or(`and(user1_id.eq.${user1Id},user2_id.eq.${user2Id}),and(user1_id.eq.${user2Id},user2_id.eq.${user1Id})`);
+      .or(`and(user1_id.eq.${user1Id},user2_id.eq.${user2Id},user1_item_id.eq.${user1ItemId},user2_item_id.eq.${user2ItemId}),and(user1_id.eq.${user2Id},user2_id.eq.${user1Id},user1_item_id.eq.${user2ItemId},user2_item_id.eq.${user1ItemId})`);
 
     console.error('🚨 CREATE MATCH: Existing match check result:', { existingMatch, existingError });
 
@@ -158,7 +158,7 @@ export const createMatch = async (
     }
 
     if (existingMatch && existingMatch.length > 0) {
-      console.error('🚨 CREATE MATCH: Match already exists, returning existing:', existingMatch[0]);
+      console.error('🚨 CREATE MATCH: Match already exists for these specific items, returning existing:', existingMatch[0]);
       return existingMatch[0];
     }
 
