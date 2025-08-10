@@ -474,13 +474,18 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         otherUserItemId: matchResult.matchData.otherUserItemId
       });
       
-      // Create the confirmed match
-      console.error('🚨 MUTUAL MATCH DB: About to call createMatch()');
+      // Create the confirmed match with the CORRECT item IDs
+      console.error('🚨 MUTUAL MATCH DB: About to call createMatch() with CORRECT items');
+      console.error('🚨 MUTUAL MATCH DB: My item (selected):', selectedItemId);
+      console.error('🚨 MUTUAL MATCH DB: Their item (clicked):', itemId);
+      console.error('🚨 MUTUAL MATCH DB: My user ID:', currentUserId);
+      console.error('🚨 MUTUAL MATCH DB: Their user ID:', matchResult.matchData.otherUserId);
+
       const match = await createMatch(
         currentUserId,
         matchResult.matchData.otherUserId,
-        matchResult.matchData.myItemId,
-        matchResult.matchData.otherUserItemId
+        selectedItemId, // This should be the user's selected item
+        itemId         // This should be the item they clicked/liked
       );
 
       console.error('🚨 MUTUAL MATCH DB: createMatch() returned:', match);
@@ -488,27 +493,31 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
       if (match) {
         console.log('✅ MUTUAL MATCH CREATED:', match);
         
-        // Create trade conversation for the mutual match
+        // Create trade conversation for the mutual match with CORRECT item IDs
+        console.error('🚨 TRADE CONVERSATION: Creating with correct item IDs');
+        console.error('🚨 TRADE CONVERSATION: My item (selected):', selectedItemId);
+        console.error('🚨 TRADE CONVERSATION: Their item (clicked):', itemId);
+
         const tradeConversation = await createTradeConversation(
           currentUserId,
           matchResult.matchData.otherUserId,
-          matchResult.matchData.myItemId,
-          matchResult.matchData.otherUserItemId
+          selectedItemId, // My selected item
+          itemId         // Item I clicked/liked
         );
         
         console.log('✅ TRADE CONVERSATION CREATED:', tradeConversation);
 
-        // Get item names for the notification
+        // Get item names for the notification using CORRECT item IDs
         const { data: myItem } = await supabase
           .from('items')
           .select('name')
-          .eq('id', matchResult.matchData.myItemId)
+          .eq('id', selectedItemId)
           .single();
 
         const { data: theirItem } = await supabase
           .from('items')
           .select('name')
-          .eq('id', matchResult.matchData.otherUserItemId)
+          .eq('id', itemId)
           .single();
 
         // Create notifications for both users
