@@ -141,9 +141,12 @@ export const useMatchActions = (
         // Handle mutual match result - check if result is an object with match data
         if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-            // Refresh matches to remove the matched item from the feed
+            // Refresh matches after a small delay to ensure DB is fully updated
             if (onRefreshMatches) {
-              onRefreshMatches();
+              setTimeout(() => {
+                console.log('🔄 REFRESHING MATCHES after mutual match creation');
+                onRefreshMatches();
+              }, 1000); // Give time for DB to fully commit the mutual match
             }
             
             // Only navigate to messages if there's a confirmed mutual match

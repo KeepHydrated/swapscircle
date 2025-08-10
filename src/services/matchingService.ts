@@ -152,6 +152,9 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .select('user1_item_id, user2_item_id, user1_id, user2_id')
       .or(`user1_item_id.eq.${selectedItem.id},user2_item_id.eq.${selectedItem.id}`);
 
+    console.log('🔍 FILTERING MATCHES: Selected item ID:', selectedItem.id);
+    console.log('🔍 FILTERING MATCHES: Mutual matches found:', mutualMatches);
+
     // Extract item IDs that have specifically matched with the selected item
     const matchedWithSelectedItemIds = new Set<string>();
     if (mutualMatches) {
@@ -159,8 +162,10 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         // Only add the OTHER item that matched with our selected item
         if (match.user1_item_id === selectedItem.id) {
           matchedWithSelectedItemIds.add(match.user2_item_id);
+          console.log('🔍 FILTERING MATCHES: Will exclude item:', match.user2_item_id);
         } else if (match.user2_item_id === selectedItem.id) {
           matchedWithSelectedItemIds.add(match.user1_item_id);
+          console.log('🔍 FILTERING MATCHES: Will exclude item:', match.user1_item_id);
         }
       });
     }
