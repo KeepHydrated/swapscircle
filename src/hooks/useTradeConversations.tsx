@@ -103,6 +103,22 @@ export const useTradeConversations = () => {
           const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
           const otherUserProfile = isRequester ? tc.owner_profile : tc.requester_profile;
           
+          // Debug the item data structure
+          console.log('DEBUG - Raw item data for conversation', tc.id, ':', {
+            myItem: myItem ? { 
+              name: myItem.name, 
+              price_range_min: myItem.price_range_min, 
+              price_range_max: myItem.price_range_max,
+              keys: Object.keys(myItem) 
+            } : null,
+            theirItem: theirItem ? { 
+              name: theirItem.name, 
+              price_range_min: theirItem.price_range_min, 
+              price_range_max: theirItem.price_range_max,
+              keys: Object.keys(theirItem) 
+            } : null
+          });
+          
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
