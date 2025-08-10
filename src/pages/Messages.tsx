@@ -186,8 +186,8 @@ const Messages = () => {
                     >
                       <div className="flex items-start gap-4">
                         <Avatar className="h-12 w-12">
-                          <AvatarImage 
-                            src={conversation.otherUserProfile?.avatar_url} 
+                           <AvatarImage 
+                            src={conversation.otherUserProfile?.avatar_url || undefined} 
                             alt={`${conversation.name}'s avatar`} 
                           />
                           <AvatarFallback className="bg-purple-100 text-purple-800">
@@ -243,7 +243,7 @@ const Messages = () => {
                 <div className="flex items-center">
                   <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} onClick={() => console.log('Messages.tsx Avatar Link - userId:', activeChat.otherUserProfile?.id)}>
                     <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                      <AvatarImage src={activeChat.otherUserProfile?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&h=250&auto=format&fit=crop"} />
+                      <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
                       <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 2)}</AvatarFallback>
                     </Avatar>
                   </Link>
