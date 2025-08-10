@@ -31,6 +31,8 @@ export interface ExchangePairDisplay {
   item1: { 
     name: string; 
     image: string;
+    image_url?: string;
+    image_urls?: string[];
     description?: string;
     category?: string;
     condition?: string;
@@ -41,6 +43,8 @@ export interface ExchangePairDisplay {
   item2: { 
     name: string; 
     image: string;
+    image_url?: string;
+    image_urls?: string[];
     description?: string;
     category?: string;
     condition?: string;
@@ -107,6 +111,8 @@ export const useTradeConversations = () => {
             item1: {
               name: myItem?.name || 'Your Item',
               image: myItem?.image_url || (myItem?.image_urls && myItem?.image_urls.length > 0 ? myItem?.image_urls[0] : '/placeholder.svg'),
+              image_url: myItem?.image_url,
+              image_urls: myItem?.image_urls,
               description: myItem?.description,
               category: myItem?.category,
               condition: myItem?.condition,
@@ -117,6 +123,8 @@ export const useTradeConversations = () => {
             item2: {
               name: theirItem?.name || 'Their Item', 
               image: theirItem?.image_url || (theirItem?.image_urls && theirItem?.image_urls.length > 0 ? theirItem?.image_urls[0] : '/placeholder.svg'),
+              image_url: theirItem?.image_url,
+              image_urls: theirItem?.image_urls,
               description: theirItem?.description,
               category: theirItem?.category,
               condition: theirItem?.condition,
