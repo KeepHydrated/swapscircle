@@ -235,6 +235,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .select('user1_id, user2_id, user1_item_id, user2_item_id')
       .or(`user1_id.eq.${currentUserId},user2_id.eq.${currentUserId}`);
 
+    console.log('🔍 MUTUAL MATCHES QUERY:', {
+      currentUserId,
+      selectedItemId: selectedItem.id,
+      mutualMatches,
+      mutualMatchesError
+    });
+
     if (mutualMatchesError) {
       console.error('Error fetching mutual matches:', mutualMatchesError);
     }
@@ -249,14 +256,26 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Create a set of specific items that have mutual matches with the current selected item
     const mutualMatchedItemIds = new Set<string>();
     mutualMatches?.forEach(match => {
+      console.log('🔍 CHECKING MATCH:', {
+        match,
+        currentUserId,
+        selectedItemId: selectedItem.id,
+        condition1: match.user1_id === currentUserId && match.user1_item_id === selectedItem.id,
+        condition2: match.user2_id === currentUserId && match.user2_item_id === selectedItem.id
+      });
+      
       if (match.user1_id === currentUserId && match.user1_item_id === selectedItem.id) {
         // Current user's selected item matched with user2's item
         mutualMatchedItemIds.add(match.user2_item_id);
+        console.log('✅ ADDED user2_item_id to exclude list:', match.user2_item_id);
       } else if (match.user2_id === currentUserId && match.user2_item_id === selectedItem.id) {
         // Current user's selected item matched with user1's item
         mutualMatchedItemIds.add(match.user1_item_id);
+        console.log('✅ ADDED user1_item_id to exclude list:', match.user1_item_id);
       }
     });
+
+    console.log('🔍 FINAL MUTUAL MATCHED ITEM IDS:', Array.from(mutualMatchedItemIds));
 
     // Filter out rejected items from both sides
     const rejectedItemIds = new Set(rejectedItems?.map(item => item.item_id) || []);
