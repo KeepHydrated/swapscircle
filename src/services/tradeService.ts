@@ -138,6 +138,16 @@ export const fetchUserTradeConversations = async () => {
     });
 
     console.log('Fetched trade conversations:', conversationsWithProfiles);
+    console.log('DEBUG - Item price data sample:', conversationsWithProfiles[0] ? {
+      requester_item_price: { 
+        min: conversationsWithProfiles[0].requester_item?.price_range_min, 
+        max: conversationsWithProfiles[0].requester_item?.price_range_max 
+      },
+      owner_item_price: { 
+        min: conversationsWithProfiles[0].owner_item?.price_range_min, 
+        max: conversationsWithProfiles[0].owner_item?.price_range_max 
+      }
+    } : 'No conversations');
     return conversationsWithProfiles || [];
   } catch (error) {
     console.error('Error fetching trade conversations:', error);
