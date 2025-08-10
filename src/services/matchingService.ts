@@ -294,7 +294,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);
 
-    const matches: Array<MatchItem & { matchScore: number }> = [];
+    const matches: Array<MatchItem & { matchScore: number; created_at?: string }> = [];
 
     // Get unique user IDs to fetch profiles in batch
     const userIds = [...new Set(availableItems.map(item => item.user_id))];
@@ -428,16 +428,29 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
             username: userProfile.username,
             avatar_url: userProfile.avatar_url
           } : undefined,
-          matchScore // Add match score for potential sorting
+          matchScore, // Add match score for potential sorting
+          created_at: otherItem.created_at // Include creation date for sorting
         });
       }
     }
 
-    // Sort by match score (highest first) and limit results
+    // Sort by newest uploaded items first (created_at desc), then by match score
     return matches
-      .sort((a, b) => b.matchScore - a.matchScore)
+      .sort((a, b) => {
+        // First sort by creation date (newest first)
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        const dateCompare = dateB.getTime() - dateA.getTime();
+        
+        // If dates are the same, sort by match score
+        if (dateCompare === 0) {
+          return b.matchScore - a.matchScore;
+        }
+        
+        return dateCompare;
+      })
       .slice(0, 20)
-      .map(({ matchScore, ...item }) => item); // Remove matchScore from final result
+      .map(({ matchScore, created_at, ...item }) => item); // Remove matchScore and created_at from final result
 
   } catch (error) {
     console.error('Error in findMatchingItems:', error);
