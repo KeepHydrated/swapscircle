@@ -278,6 +278,13 @@ export const useTradeConversations = () => {
   const selectedPair = exchangePairs.find(pair => 
     selectedPairId ? pair.id === selectedPairId : pair.partnerId === activeConversation
   );
+  
+  console.log('DEBUG - Selected pair determination:', {
+    selectedPairId,
+    activeConversation,
+    exchangePairsCount: exchangePairs.length,
+    selectedPair: selectedPair ? 'Found' : 'Not found'
+  });
 
   const handlePairSelect = (partnerId: string, pairId: number) => {
     setActiveConversation(partnerId);
