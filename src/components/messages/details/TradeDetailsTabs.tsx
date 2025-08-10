@@ -64,21 +64,9 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     getCurrentUser();
   }, []);
 
-  // Sample images for the carousel (you can replace these with actual item images)
-  const itemImages = [
-    selectedPair.item1.image || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=400&auto=format&fit=crop"
-  ];
-
-  // Sample images for their item
-  const theirItemImages = [
-    selectedPair.item2.image || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=400&h=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1515378791036-0648a814c963?w=400&h=400&auto=format&fit=crop"
-  ];
+  // Use actual item images only
+  const itemImages = selectedPair.item1.image ? [selectedPair.item1.image] : [];
+  const theirItemImages = selectedPair.item2.image ? [selectedPair.item2.image] : [];
 
   // Fetch trade status to check acceptance status
   const { data: tradeConversations = [] } = useQuery({

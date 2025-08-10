@@ -32,18 +32,13 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
   
-  // Sample image placeholders for the carousel
+  // Use actual item images only
   useEffect(() => {
     if (!selectedPair) return;
     
-    // Use selected item images and add some placeholder images
-    const selectedItemImage = selectedPair[selectedItem].image || "/placeholder.svg";
-    const urls = [
-      selectedItemImage,
-      "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
-      "https://images.unsplash.com/photo-1487887235947-a955ef187fcc",
-    ];
+    // Use selected item images without placeholders
+    const selectedItemImage = selectedPair[selectedItem].image;
+    const urls = selectedItemImage ? [selectedItemImage] : [];
     setImageUrls(urls);
   }, [selectedPair, selectedItem]);
   
