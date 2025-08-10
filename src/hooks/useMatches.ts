@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Item, MatchItem } from '@/types/item';
@@ -32,51 +31,43 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
     
     async function fetchMatches() {
       console.error('🚨🚨🚨 FETCH MATCHES FUNCTION CALLED 🚨🚨🚨');
-      console.log('🔥 USE MATCHES HOOK - FETCH TRIGGERED');
-      console.log('🔍 CURRENT USER DEBUG:', {
-        userId: user?.id,
-        userEmail: user?.email,
-        userObject: user,
-        selectedItemName: selectedItem?.name,
-        location,
-        refreshTrigger
-      });
       
-      console.error('🚨 EARLY RETURN - CONDITIONS:', {
-        hasSelectedItem: !!selectedItem,
-        selectedItem: selectedItem,
-        hasUser: !!user,
-        user: user,
-        supabaseConfigured: supabaseConfigured
-      });
+      console.error('🚨 DETAILED CONDITIONS CHECK:');
+      console.error('🚨 selectedItem:', selectedItem);
+      console.error('🚨 selectedItem?.id:', selectedItem?.id);
+      console.error('🚨 selectedItem?.name:', selectedItem?.name);
+      console.error('🚨 user:', user);
+      console.error('🚨 user?.id:', user?.id);
+      console.error('🚨 supabaseConfigured:', supabaseConfigured);
       
       if (!selectedItem) {
-        console.error('🚨 MISSING SELECTED ITEM');
+        console.error('🚨 EARLY RETURN: selectedItem is null/undefined');
         setMatches([]);
         setLoading(false);
         return;
       }
       
       if (!user) {
-        console.error('🚨 MISSING USER');
+        console.error('🚨 EARLY RETURN: user is null/undefined');  
         setMatches([]);
         setLoading(false);
         return;
       }
       
       if (!supabaseConfigured) {
-        console.error('🚨 SUPABASE NOT CONFIGURED');
+        console.error('🚨 EARLY RETURN: supabaseConfigured is false');
         setMatches([]);
         setLoading(false);
         return;
       }
 
-      console.log('DEBUG: Starting fetchMatches...');
+      console.error('🎉 ALL CONDITIONS PASSED - CALLING MATCHING SERVICE!');
+      console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id, 'Location:', location);
+      
       setLoading(true);
       setError(null);
 
       try {
-        console.log('Debug - Fetching matches for item:', selectedItem.name, 'User:', user.id, 'Location:', location);
         const matchingItems = await findMatchingItems(selectedItem, user.id, location, perspectiveUserId);
         
         // Return matches as-is, let useMatchActions handle the liked status
