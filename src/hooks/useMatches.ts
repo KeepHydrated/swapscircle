@@ -20,7 +20,18 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
   };
 
   useEffect(() => {
+    console.error('🚨🚨🚨 USE MATCHES EFFECT TRIGGERED 🚨🚨🚨');
+    console.error('Dependencies:', { 
+      selectedItemId: selectedItem?.id, 
+      userId: user?.id, 
+      supabaseConfigured, 
+      location, 
+      refreshTrigger, 
+      perspectiveUserId 
+    });
+    
     async function fetchMatches() {
+      console.error('🚨🚨🚨 FETCH MATCHES FUNCTION CALLED 🚨🚨🚨');
       console.log('🔥 USE MATCHES HOOK - FETCH TRIGGERED');
       console.log('🔍 CURRENT USER DEBUG:', {
         userId: user?.id,
@@ -63,7 +74,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
     }
 
     fetchMatches();
-  }, [selectedItem, user, supabaseConfigured, location, refreshTrigger, perspectiveUserId]);
+  }, [selectedItem?.id, user?.id, supabaseConfigured, location, refreshTrigger, perspectiveUserId]);
 
   return { matches, loading, error, refreshMatches };
 }
