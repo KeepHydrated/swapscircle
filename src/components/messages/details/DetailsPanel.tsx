@@ -15,12 +15,20 @@ interface DetailsPanelProps {
       image: string;
       image_url?: string;
       image_urls?: string[];
+      price_range_min?: number;
+      price_range_max?: number;
+      condition?: string;
+      category?: string;
     };
     item2: { 
       name: string; 
       image: string;
       image_url?: string;
       image_urls?: string[];
+      price_range_min?: number;
+      price_range_max?: number;
+      condition?: string;
+      category?: string;
     };
     partnerId: string;
     partnerProfile?: {
@@ -163,6 +171,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
           name={selectedPair ? selectedPair[selectedItem].name : "Selected Item"} 
           showProfileInfo={true}
           profileData={selectedPair?.partnerProfile}
+          itemData={selectedPair ? selectedPair[selectedItem] : undefined}
         />
       </div>
     </div>

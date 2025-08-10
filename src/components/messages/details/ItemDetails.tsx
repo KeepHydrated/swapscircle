@@ -16,9 +16,15 @@ interface ItemDetailsProps {
     location?: string;
     id?: string;
   };
+  itemData?: {
+    price_range_min?: number;
+    price_range_max?: number;
+    condition?: string;
+    category?: string;
+  };
 }
 
-const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsProps) => {
+const ItemDetails = ({ name, showProfileInfo = true, profileData, itemData }: ItemDetailsProps) => {
   console.log('ItemDetails rendered with:', { name, showProfileInfo, profileData });
   const [reviewData, setReviewData] = useState({ rating: 0.0, reviewCount: 0 });
 
@@ -106,7 +112,12 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData }: ItemDetailsP
           <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
             <DollarSign className="w-2 h-2 text-green-600" />
           </div>
-          <span className="text-gray-800 text-xs">100 - 250</span>
+          <span className="text-gray-800 text-xs">
+            {itemData?.price_range_min && itemData?.price_range_max 
+              ? `$${itemData.price_range_min} - $${itemData.price_range_max}`
+              : 'Price on request'
+            }
+          </span>
         </div>
         
         <div className="flex items-center">
