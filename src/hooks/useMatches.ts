@@ -14,17 +14,21 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
   const { user, supabaseConfigured } = useAuth();
 
   const refreshMatches = () => {
+    console.log('🔥 FORCING MATCHES REFRESH');
+    setMatches([]); // Clear existing matches
     setRefreshTrigger(prev => prev + 1);
   };
 
   useEffect(() => {
     async function fetchMatches() {
+      console.log('🔥 USE MATCHES HOOK - FETCH TRIGGERED');
       console.log('🔍 CURRENT USER DEBUG:', {
         userId: user?.id,
         userEmail: user?.email,
         userObject: user,
         selectedItemName: selectedItem?.name,
-        location
+        location,
+        refreshTrigger
       });
       
       if (!selectedItem || !user || !supabaseConfigured) {
