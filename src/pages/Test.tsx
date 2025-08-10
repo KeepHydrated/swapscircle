@@ -516,6 +516,9 @@ const Test: React.FC = () => {
                   
                   
                    <TabsContent value="matches" className="flex-1 mt-0">
+                     <div className="bg-red-100 border border-red-300 p-2 mb-2 text-red-800 text-sm">
+                       🚨 DEBUG: Matches Tab - Showing {matches?.length || 0} items from matching service
+                     </div>
                      {selectedUserItem ? (
                         <Matches
                           matches={matches}
