@@ -156,6 +156,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .or(`user1_id.eq.${currentUserId},user2_id.eq.${currentUserId}`);
     
     console.log('🔥 ALL USER MATCHES:', { allUserMatches, error: allMatchesError });
+    if (allUserMatches && allUserMatches.length > 0) {
+      console.log('🔥 DETAILED MATCHES:', allUserMatches.map(match => ({
+        user1_id: match.user1_id,
+        user2_id: match.user2_id, 
+        user1_item_id: match.user1_item_id,
+        user2_item_id: match.user2_item_id
+      })));
+    }
     
     const { data: mutualMatches, error: mutualMatchesError } = await supabase
       .from('mutual_matches')
