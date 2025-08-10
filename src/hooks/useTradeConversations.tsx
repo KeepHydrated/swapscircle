@@ -197,6 +197,7 @@ export const useTradeConversations = () => {
 
         console.log('Display conversations:', displayConversations);
         console.log('Display exchange pairs:', displayExchangePairs);
+        console.log('DEBUG - Exchange pairs partnerId mapping:', displayExchangePairs.map(ep => ({ id: ep.id, partnerId: ep.partnerId })));
 
         setConversations(displayConversations);
         setExchangePairs(displayExchangePairs);
@@ -283,7 +284,8 @@ export const useTradeConversations = () => {
     selectedPairId,
     activeConversation,
     exchangePairsCount: exchangePairs.length,
-    selectedPair: selectedPair ? 'Found' : 'Not found'
+    selectedPair: selectedPair ? 'Found' : 'Not found',
+    availablePartnerIds: exchangePairs.map(ep => ep.partnerId)
   });
 
   const handlePairSelect = (partnerId: string, pairId: number) => {
