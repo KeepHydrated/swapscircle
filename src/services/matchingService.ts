@@ -146,21 +146,46 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
     
+    // First, let's debug the entire mutual matches table to see what exists
+    console.error('🔍 MUTUAL MATCH DEBUG: Checking ALL mutual matches in database...');
+    const { data: allMatches, error: allMatchesError } = await supabase
+      .from('mutual_matches')
+      .select('*');
+    
+    console.error('🔍 MUTUAL MATCH DEBUG: ALL mutual matches in DB:', allMatches);
+    console.error('🔍 MUTUAL MATCH DEBUG: Total mutual matches count:', allMatches?.length || 0);
+
+    // Also check all liked items to see if likes are being recorded
+    console.error('🔍 LIKED ITEMS DEBUG: Checking ALL likes in database...');
+    const { data: allLikes, error: allLikesError } = await supabase
+      .from('liked_items')
+      .select('*');
+    
+    console.error('🔍 LIKED ITEMS DEBUG: ALL likes in DB:', allLikes);
+    console.error('🔍 LIKED ITEMS DEBUG: Total likes count:', allLikes?.length || 0);
+
     // Get mutual matches specifically involving the selected item
+    console.error('🔍 MUTUAL MATCH DEBUG: Checking matches for selected item:', selectedItem.id);
     const { data: mutualMatches, error: mutualMatchesError } = await supabase
       .from('mutual_matches')
       .select('user1_item_id, user2_item_id, user1_id, user2_id')
       .or(`user1_item_id.eq.${selectedItem.id},user2_item_id.eq.${selectedItem.id}`);
 
+    console.error('🔍 MUTUAL MATCH DEBUG: Raw mutual matches from DB for selected item:', mutualMatches);
+    console.error('🔍 MUTUAL MATCH DEBUG: Mutual matches error:', mutualMatchesError);
+
     // Extract item IDs that have specifically matched with the selected item
     const matchedWithSelectedItemIds = new Set<string>();
     if (mutualMatches) {
       mutualMatches.forEach(match => {
+        console.error('🔍 MUTUAL MATCH DEBUG: Processing match:', match);
         // Only add the OTHER item that matched with our selected item
         if (match.user1_item_id === selectedItem.id) {
           matchedWithSelectedItemIds.add(match.user2_item_id);
+          console.error(`🔍 MUTUAL MATCH DEBUG: Added ${match.user2_item_id} to exclusion list (matched with selected item)`);
         } else if (match.user2_item_id === selectedItem.id) {
           matchedWithSelectedItemIds.add(match.user1_item_id);
+          console.error(`🔍 MUTUAL MATCH DEBUG: Added ${match.user1_item_id} to exclusion list (matched with selected item)`);
         }
       });
     }
