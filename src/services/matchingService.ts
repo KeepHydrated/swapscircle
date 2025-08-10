@@ -152,15 +152,26 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       .select('user1_item_id, user2_item_id, user1_id, user2_id')
       .or(`user1_id.eq.${effectiveUserId},user2_id.eq.${effectiveUserId}`);
 
-    // Extract all matched item IDs to exclude from matches feed
+    // Extract all matched item IDs AND user IDs to exclude from matches feed
     const matchedItemIds = new Set<string>();
+    const matchedUserIds = new Set<string>(); // Track users who have mutual matches
     if (mutualMatches) {
       mutualMatches.forEach(match => {
         // Add both items from each match to exclusion set
         matchedItemIds.add(match.user1_item_id);
         matchedItemIds.add(match.user2_item_id);
+        
+        // IMPORTANT: Also track the users who have mutual matches
+        // We want to exclude ALL items from users we already have matches with
+        matchedUserIds.add(match.user1_id);
+        matchedUserIds.add(match.user2_id);
       });
     }
+
+    console.error('🚨 DEBUGGING MUTUAL MATCHES FILTER:');
+    console.error('🚨 matchedItemIds:', Array.from(matchedItemIds));
+    console.error('🚨 matchedUserIds:', Array.from(matchedUserIds));
+    console.error('🚨 currentUserId:', currentUserId);
 
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
@@ -238,6 +249,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
       // 6. Don't show ANY items that are part of existing mutual matches (global exclusion)
       const isAlreadyMatched = matchedItemIds.has(item.id);
+      
+      // 7. Don't show ANY items from users we already have mutual matches with
+      const isFromMatchedUser = matchedUserIds.has(item.user_id) && item.user_id !== currentUserId;
+
+      console.error(`🚨 FILTER DEBUG - Item ${item.id} (${item.name}) from user ${item.user_id}:`);
+      console.error(`🚨   - isAlreadyMatched: ${isAlreadyMatched}`);
+      console.error(`🚨   - isFromMatchedUser: ${isFromMatchedUser}`);
+      console.error(`🚨   - item.user_id in matchedUserIds: ${matchedUserIds.has(item.user_id)}`);
 
       
 
@@ -252,7 +271,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // - NOT from the same user as the selected item
       // - NOT from blocked/blocking users
       // - NOT already part of any mutual match
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !isAlreadyMatched;
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !isAlreadyMatched && !isFromMatchedUser;
     });
     
     
