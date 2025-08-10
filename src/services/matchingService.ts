@@ -148,6 +148,15 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     
     // Get mutual matches specifically involving the selected item  
     console.log('🔥 MUTUAL MATCHES: Querying for selectedItem.id:', selectedItem.id);
+    
+    // Also get ALL mutual matches for this user to see what exists
+    const { data: allUserMatches, error: allMatchesError } = await supabase
+      .from('mutual_matches')
+      .select('user1_item_id, user2_item_id, user1_id, user2_id')
+      .or(`user1_id.eq.${currentUserId},user2_id.eq.${currentUserId}`);
+    
+    console.log('🔥 ALL USER MATCHES:', { allUserMatches, error: allMatchesError });
+    
     const { data: mutualMatches, error: mutualMatchesError } = await supabase
       .from('mutual_matches')
       .select('user1_item_id, user2_item_id, user1_id, user2_id')
