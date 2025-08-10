@@ -42,21 +42,30 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
         refreshTrigger
       });
       
-      if (!selectedItem || !user || !supabaseConfigured) {
-        console.error('🚨 EARLY RETURN - CONDITIONS:', {
-          hasSelectedItem: !!selectedItem,
-          selectedItem: selectedItem,
-          hasUser: !!user,
-          user: user,
-          supabaseConfigured: supabaseConfigured
-        });
-        console.log('DEBUG: Early return from fetchMatches - missing required data', {
-          hasSelectedItem: !!selectedItem,
-          selectedItemName: selectedItem?.name,
-          hasUser: !!user,
-          userId: user?.id,
-          supabaseConfigured
-        });
+      console.error('🚨 EARLY RETURN - CONDITIONS:', {
+        hasSelectedItem: !!selectedItem,
+        selectedItem: selectedItem,
+        hasUser: !!user,
+        user: user,
+        supabaseConfigured: supabaseConfigured
+      });
+      
+      if (!selectedItem) {
+        console.error('🚨 MISSING SELECTED ITEM');
+        setMatches([]);
+        setLoading(false);
+        return;
+      }
+      
+      if (!user) {
+        console.error('🚨 MISSING USER');
+        setMatches([]);
+        setLoading(false);
+        return;
+      }
+      
+      if (!supabaseConfigured) {
+        console.error('🚨 SUPABASE NOT CONFIGURED');
         setMatches([]);
         setLoading(false);
         return;
