@@ -43,6 +43,13 @@ const Matches: React.FC<MatchesProps> = ({
     }
   }
   
+  // Debug what's actually being passed to this component
+  console.error('🚨🚨🚨 MATCHES COMPONENT RECEIVED:');
+  console.error('🚨 matches prop length:', matches?.length || 0);
+  console.error('🚨 matches prop data:', matches);
+  console.error('🚨 selectedItemName:', selectedItemName);
+  console.error('🚨 selectedItemId:', selectedItemId);
+  
   
   // Get match actions from our custom hook - fixed flashing issue
   const {

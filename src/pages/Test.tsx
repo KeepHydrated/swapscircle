@@ -329,8 +329,17 @@ const Test: React.FC = () => {
   // Get matches for selected item (real matches from DB)
   const { matches: dbMatches, loading: matchesLoading, error: matchesError } = useMatches(selectedUserItem, selectedLocation);
 
+  console.error('🚨🚨🚨 TEST PAGE MATCHES DEBUG:');
+  console.error('🚨 dbMatches:', dbMatches);
+  console.error('🚨 dbMatches.length:', dbMatches?.length || 0);
+  console.error('🚨 matchesLoading:', matchesLoading);
+  console.error('🚨 selectedUserItem:', selectedUserItem?.id, selectedUserItem?.name);
+
   // Use only real matches from database
   const matches = selectedUserItem ? dbMatches : [];
+  
+  console.error('🚨 FINAL MATCHES BEING PASSED TO COMPONENT:', matches);
+  console.error('🚨 FINAL MATCHES LENGTH:', matches?.length || 0);
 
   // Handle selecting a user item
   const handleSelectUserItem = (itemId: string) => {
