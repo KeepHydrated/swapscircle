@@ -257,22 +257,19 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error(`🚨   - isAlreadyMatched: ${isAlreadyMatched}`);
       console.error(`🚨   - isFromMatchedUser: ${isFromMatchedUser}`);
       console.error(`🚨   - item.user_id in matchedUserIds: ${matchedUserIds.has(item.user_id)}`);
-
       
-
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
                         (item.user_id && selectedItem.user_id && item.user_id.toString().trim() === selectedItem.user_id.toString().trim());
-
-      // Include items that are:
-      // - NOT rejected by current user for this specific item
-      // - NOT from owners who rejected current user's item for this specific item  
-      // - NOT the user's own items
-      // - NOT from the same user as the selected item
-      // - NOT from blocked/blocking users
-      // - NOT already part of any mutual match
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !isAlreadyMatched && !isFromMatchedUser;
+      
+      const shouldInclude = !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !isAlreadyMatched && !isFromMatchedUser;
+      console.error(`🚨   - FINAL DECISION - shouldInclude: ${shouldInclude}`);
+      
+      return shouldInclude;
     });
+    
+    console.error('🚨🚨🚨 AFTER FILTERING - availableItems count:', availableItems.length);
+    console.error('🚨🚨🚨 REMAINING ITEMS:', availableItems.map(item => `${item.id} (${item.name}) from ${item.user_id}`));
     
     
 
@@ -407,23 +404,21 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       }
     }
 
-    // Sort by newest uploaded items first (created_at desc), then by match score
-    return matches
-      .sort((a, b) => {
-        // First sort by creation date (newest first)
-        const dateA = new Date(a.created_at || 0);
-        const dateB = new Date(b.created_at || 0);
-        const dateCompare = dateB.getTime() - dateA.getTime();
-        
-        // If dates are the same, sort by match score
-        if (dateCompare === 0) {
-          return b.matchScore - a.matchScore;
-        }
-        
-        return dateCompare;
-      })
-      .slice(0, 20)
-      .map(({ matchScore, created_at, ...item }) => item); // Remove matchScore and created_at from final result
+    // Sort by date created, then by match score
+    matches.sort((a, b) => {
+      const dateA = new Date(a.created_at || '').getTime();
+      const dateB = new Date(b.created_at || '').getTime();
+      if (dateB !== dateA) return dateB - dateA;
+      return (b.matchScore || 0) - (a.matchScore || 0);
+    });
+
+    // Limit to top 50 matches
+    const finalMatches = matches.slice(0, 50);
+    
+    console.error('🚨🚨🚨 FINAL MATCHES BEING RETURNED:', finalMatches.length);
+    console.error('🚨🚨🚨 FINAL MATCHES LIST:', finalMatches.map(m => `${m.id} (${m.name}) from ${m.userProfile?.username || 'unknown'}`));
+    
+    return finalMatches.map(({ matchScore, created_at, ...item }) => item);
 
   } catch (error) {
     console.error('Error in findMatchingItems:', error);
