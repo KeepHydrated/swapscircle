@@ -146,32 +146,32 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
     
-    // Get mutual matches specifically involving the selected item  
-    const { data: mutualMatches, error: mutualMatchesError } = await supabase
+    // Get ALL mutual matches for the current user to filter out matched users entirely
+    const { data: allUserMatches, error: allMatchesError } = await supabase
       .from('mutual_matches')
-      .select('user1_item_id, user2_item_id, user1_id, user2_id')
-      .or(`user1_item_id.eq.${selectedItem.id},user2_item_id.eq.${selectedItem.id}`);
+      .select('user1_id, user2_id')
+      .or(`user1_id.eq.${currentUserId},user2_id.eq.${currentUserId}`);
 
-    console.log('🔥 MUTUAL MATCH DEBUG: Selected item ID:', selectedItem.id);
-    console.log('🔥 MUTUAL MATCH DEBUG: Query result:', { mutualMatches, mutualMatchesError });
+    console.log('🔥 ALL MUTUAL MATCHES DEBUG: Current user ID:', currentUserId);
+    console.log('🔥 ALL MUTUAL MATCHES DEBUG: Query result:', { allUserMatches, allMatchesError });
 
-    // Extract item IDs that have specifically matched with the selected item
-    const matchedWithSelectedItemIds = new Set<string>();
-    if (mutualMatches) {
-      mutualMatches.forEach(match => {
-        console.log('🔥 MUTUAL MATCH DEBUG: Processing match:', match);
-        // Only add the OTHER item that matched with our selected item
-        if (match.user1_item_id === selectedItem.id) {
-          matchedWithSelectedItemIds.add(match.user2_item_id);
-          console.log('🔥 MUTUAL MATCH DEBUG: Added user2 item to exclude:', match.user2_item_id);
-        } else if (match.user2_item_id === selectedItem.id) {
-          matchedWithSelectedItemIds.add(match.user1_item_id);
-          console.log('🔥 MUTUAL MATCH DEBUG: Added user1 item to exclude:', match.user1_item_id);
+    // Extract user IDs that have mutual matches with the current user
+    const matchedUserIds = new Set<string>();
+    if (allUserMatches) {
+      allUserMatches.forEach(match => {
+        console.log('🔥 ALL MUTUAL MATCHES DEBUG: Processing match:', match);
+        // Add the OTHER user that has matched with current user
+        if (match.user1_id === currentUserId) {
+          matchedUserIds.add(match.user2_id);
+          console.log('🔥 ALL MUTUAL MATCHES DEBUG: Added user2 to exclude:', match.user2_id);
+        } else if (match.user2_id === currentUserId) {
+          matchedUserIds.add(match.user1_id);
+          console.log('🔥 ALL MUTUAL MATCHES DEBUG: Added user1 to exclude:', match.user1_id);
         }
       });
     }
     
-    console.log('🔥 MUTUAL MATCH DEBUG: Final excluded item IDs:', Array.from(matchedWithSelectedItemIds));
+    console.log('🔥 ALL MUTUAL MATCHES DEBUG: Final excluded user IDs:', Array.from(matchedUserIds));
 
     // Get items that the current user has already liked (for display purposes only)
     const { data: likedItems, error: likedError } = await supabase
@@ -228,7 +228,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // 1. Current user has rejected for this specific item
     // 2. Item owners who have rejected the current user's selected item for their specific items
     // 3. Items where bidirectional blocking exists
-    // 4. Items that have specifically matched with the selected item
+    // 4. Items from users who already have mutual matches with current user
     const availableItems = allItems.filter(item => {
       // 1. Items rejected by the current user for this specific item or globally
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
@@ -247,14 +247,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 5. Don't show items if there's bidirectional blocking
       const isBlockedUser = allBlockedUserIds.includes(item.user_id);
 
-      // 6. Don't show items that have specifically matched with the selected item
-      const hasMatchedWithSelectedItem = matchedWithSelectedItemIds.has(item.id);
+      // 6. Don't show items from users who already have mutual matches with current user
+      const hasMatchedUser = matchedUserIds.has(item.user_id);
 
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
                         (item.user_id && selectedItem.user_id && item.user_id.toString().trim() === selectedItem.user_id.toString().trim());
 
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMatchedWithSelectedItem;
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMatchedUser;
     });
     
     
