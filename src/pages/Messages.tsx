@@ -355,25 +355,16 @@ const Messages = () => {
         {/* Right sidebar - Details panel with tabs */}
         <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0">
           {selectedPair ? (
-            <>
-              {console.log('DEBUG - Rendering TradeDetailsTabs with selectedPair:', {
-                id: selectedPair.id,
-                item1_price_range: `${selectedPair.item1.price_range_min}-${selectedPair.item1.price_range_max}`,
-                item2_price_range: `${selectedPair.item2.price_range_min}-${selectedPair.item2.price_range_max}`
-              })}
-              <TradeDetailsTabs 
-                selectedPair={selectedPair}
-                selectedItem={selectedItem}
-                onSelectItem={handleSelectItem}
-              />
-            </>
+            <TradeDetailsTabs 
+              selectedPair={selectedPair}
+              selectedItem={selectedItem}
+              onSelectItem={handleSelectItem}
+            />
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500 text-center">
                 Select a trade conversation<br />
                 to view details
-                <br /><br />
-                <small>Debug: activeConv={activeConversation}, selectedPairId={selectedPairId}</small>
               </p>
             </div>
           )}

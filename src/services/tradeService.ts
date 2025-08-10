@@ -22,6 +22,8 @@ export interface TradeConversation {
     condition: string;
     description: string;
     tags: string[];
+    price_range_min?: number;
+    price_range_max?: number;
     user_id: string;
     created_at: string;
     updated_at: string;
@@ -35,6 +37,8 @@ export interface TradeConversation {
     condition: string;
     description: string;
     tags: string[];
+    price_range_min?: number;
+    price_range_max?: number;
     user_id: string;
     created_at: string;
     updated_at: string;
@@ -89,8 +93,8 @@ export const fetchUserTradeConversations = async () => {
       .from('trade_conversations')
       .select(`
         *,
-        requester_item:items!trade_conversations_requester_item_id_fkey(id, name, image_url, image_urls, category, condition, description, tags, user_id, created_at, updated_at),
-        owner_item:items!trade_conversations_owner_item_id_fkey(id, name, image_url, image_urls, category, condition, description, tags, user_id, created_at, updated_at)
+        requester_item:items!trade_conversations_requester_item_id_fkey(id, name, image_url, image_urls, category, condition, description, tags, price_range_min, price_range_max, user_id, created_at, updated_at),
+        owner_item:items!trade_conversations_owner_item_id_fkey(id, name, image_url, image_urls, category, condition, description, tags, price_range_min, price_range_max, user_id, created_at, updated_at)
       `)
       .or(`requester_id.eq.${session.session.user.id},owner_id.eq.${session.session.user.id}`)
       .order('updated_at', { ascending: false });
