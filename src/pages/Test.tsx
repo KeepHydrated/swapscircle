@@ -82,6 +82,27 @@ const Test: React.FC = () => {
         return;
       }
 
+      console.log('🔥 FRIENDS DEBUG: Found friend IDs:', friendIds);
+
+      // Get all mutual matches to exclude them from friends' items
+      const { data: mutualMatches, error: mutualMatchesError } = await supabase
+        .from('mutual_matches')
+        .select('user1_item_id, user2_item_id')
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+
+      if (mutualMatchesError) {
+        console.error('Error fetching mutual matches:', mutualMatchesError);
+      }
+
+      // Extract all matched item IDs to filter out
+      const matchedItemIds = new Set();
+      mutualMatches?.forEach(match => {
+        matchedItemIds.add(match.user1_item_id);
+        matchedItemIds.add(match.user2_item_id);
+      });
+
+      console.log('🔥 FRIENDS DEBUG: Matched item IDs to exclude:', Array.from(matchedItemIds));
+
       // Fetch available and visible items from all friends and their profiles separately
       const { data: friendItemsData, error: itemsError } = await supabase
         .from('items')
@@ -94,6 +115,14 @@ const Test: React.FC = () => {
         console.error('Error fetching friend items:', itemsError);
         return;
       }
+
+      // Filter out mutual matches from friend items
+      const unMatchedFriendItems = friendItemsData?.filter(item => 
+        !matchedItemIds.has(item.id)
+      ) || [];
+
+      console.log('🔥 FRIENDS DEBUG: Friend items before filtering:', friendItemsData?.length || 0);
+      console.log('🔥 FRIENDS DEBUG: Friend items after filtering out matches:', unMatchedFriendItems.length);
 
       // Fetch profiles for the friends
       const { data: friendProfiles, error: profilesError } = await supabase
@@ -111,8 +140,8 @@ const Test: React.FC = () => {
         return acc;
       }, {} as Record<string, any>);
 
-      // Format items for the carousel
-      const formattedFriendItems = friendItemsData?.map(item => {
+      // Format items for the carousel (using filtered items)
+      const formattedFriendItems = unMatchedFriendItems?.map(item => {
         const ownerProfile = profileMap[item.user_id];
         return {
           id: item.id,
