@@ -229,11 +229,32 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error('Error fetching owner rejections:', ownerRejectedError);
     }
 
+    // Get mutual matches to exclude items where users have already matched
+    const { data: mutualMatches, error: mutualMatchesError } = await supabase
+      .from('mutual_matches')
+      .select('user1_id, user2_id, user1_item_id, user2_item_id')
+      .or(`user1_id.eq.${currentUserId},user2_id.eq.${currentUserId}`);
+
+    if (mutualMatchesError) {
+      console.error('Error fetching mutual matches:', mutualMatchesError);
+    }
+
     console.log('Debug - Rejected items by current user for selected item:', rejectedItems);
     console.log('Debug - Users who rejected current item:', ownerRejections);
+    console.log('Debug - Mutual matches:', mutualMatches);
 
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
     console.log('Debug - Liked item IDs:', Array.from(likedItemIds));
+
+    // Create a set of users who have mutual matches with current user
+    const mutualMatchUserIds = new Set<string>();
+    mutualMatches?.forEach(match => {
+      if (match.user1_id === currentUserId) {
+        mutualMatchUserIds.add(match.user2_id);
+      } else if (match.user2_id === currentUserId) {
+        mutualMatchUserIds.add(match.user1_id);
+      }
+    });
 
     // Filter out rejected items from both sides
     const rejectedItemIds = new Set(rejectedItems?.map(item => item.item_id) || []);
@@ -254,11 +275,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
     console.log('Debug - Rejected item IDs (by current user):', Array.from(rejectedItemIds));
     console.log('Debug - Rejection map (by owners):', rejectedByOwnerMap);
+    console.log('Debug - Mutual match user IDs:', Array.from(mutualMatchUserIds));
 
     // Filter out items that:
     // 1. Current user has rejected for this specific item
     // 2. Item owners who have rejected the current user's selected item for their specific items
     // 3. Items where bidirectional blocking exists
+    // 4. Items from users who already have mutual matches with current user
     const availableItems = allItems.filter(item => {
       // 1. Items rejected by the current user for this specific item or globally
       const isRejectedByCurrentUser = rejectedItemIds.has(item.id);
@@ -277,7 +300,10 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 5. Don't show items if there's bidirectional blocking
       const isBlockedUser = allBlockedUserIds.includes(item.user_id);
 
-      console.log(`🔍 FILTER DEBUG - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}, isBlockedUser=${isBlockedUser}`);
+      // 6. Don't show items from users who already have mutual matches with current user
+      const hasMutualMatch = mutualMatchUserIds.has(item.user_id);
+
+      console.log(`🔍 FILTER DEBUG - Item ${item.id} (user: ${item.user_id}): rejected=${isRejectedByCurrentUser}, ownerRejected=${!!ownerRejectedCurrentItem}, isMyOwnItem=${isMyOwnItem}, isBlockedUser=${isBlockedUser}, hasMutualMatch=${hasMutualMatch}`);
 
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
@@ -289,7 +315,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // - NOT the user's own items
       // - NOT from the same user as the selected item
       // - NOT from blocked/blocking users
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser;
+      // - NOT from users who already have mutual matches with current user
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMutualMatch;
     });
     
     console.log('Debug - Available items after filtering rejections:', availableItems.length);
