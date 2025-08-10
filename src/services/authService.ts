@@ -459,6 +459,13 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
       willCreateConversation: matchResult.isMatch && matchResult.matchData ? 'YES' : 'NO'
     });
     
+    // Add extra debug to see what's happening
+    console.error('🚨 LIKE DEBUG: About to check mutual match');
+    console.error('🚨 LIKE DEBUG: currentUserId:', currentUserId);
+    console.error('🚨 LIKE DEBUG: itemId (item being liked):', itemId); 
+    console.error('🚨 LIKE DEBUG: selectedItemId (my item):', selectedItemId);
+    console.error('🚨 LIKE DEBUG: matchResult:', matchResult);
+    
     if (matchResult.isMatch && matchResult.matchData) {
       console.log('🚀 CREATING MUTUAL MATCH & CONVERSATION!', {
         currentUserId,
