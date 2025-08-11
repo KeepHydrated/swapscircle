@@ -197,8 +197,8 @@ export function useNotifications() {
     };
   }, [user]);
 
-  // Calculate unread count - if dropdown has been viewed, count should be 0
-  const unreadCount = hasViewedDropdown ? 0 : notifications.filter(n => !n.is_read).length;
+  // Calculate unread count - always reflect real unread items
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   // Function to mark dropdown as viewed (clears the badge)
   const markDropdownAsViewed = () => {
