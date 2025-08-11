@@ -297,7 +297,7 @@ const OtherPersonProfile: React.FC = () => {
               });
             }, 2000);
           } else {
-            toast.success("Added to favorites");
+            toast.success("Item liked");
           }
         }
       }

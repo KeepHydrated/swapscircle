@@ -52,8 +52,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     onLikeItem(item.id);
     
     toast({
-      title: item.liked ? "Removed from favorites" : "Added to favorites",
-      description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
+      title: item.liked ? "Item unliked" : "Item liked",
     });
   };
 
@@ -65,8 +64,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
     setSelectedItem(prev => prev ? { ...prev, liked: !prev.liked } : null);
     
     toast({
-      title: item.liked ? "Removed from favorites" : "Added to favorites",
-      description: `${item.name} has been ${item.liked ? "removed from" : "added to"} your favorites.`
+      title: item.liked ? "Item unliked" : "Item liked",
     });
   };
 
