@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -376,18 +376,34 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
               </div>
             )}
             {/* Left 3-dots menu (larger) */}
-            {(onLikeAll || onRejectAll || onReport) && item?.id && (
-              <div className="absolute top-4 left-4 z-30">
-                <MatchActionSelector
-                  itemId={item.id}
-                  onLikeAll={onLikeAll || (() => {})}
-                  onRejectAll={onRejectAll || (() => {})}
-                  onReport={onReport || (() => {})}
-                  compact={false}
-                  className="w-12 h-12"
-                />
-              </div>
+            {item?.id && (
+              (onLikeAll || onRejectAll || onReport) ? (
+                <div className="absolute top-4 left-4 z-30">
+                  <MatchActionSelector
+                    itemId={item.id}
+                    onLikeAll={onLikeAll || (() => {})}
+                    onRejectAll={onRejectAll || (() => {})}
+                    onReport={onReport || (() => {})}
+                    compact={false}
+                    className="w-12 h-12"
+                  />
+                </div>
+              ) : (
+                disableActions && (
+                  <div className="absolute top-4 left-4 z-30">
+                    <button
+                      className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center cursor-not-allowed opacity-60"
+                      aria-label="More actions (disabled)"
+                      disabled
+                      title="Actions unavailable on your profile"
+                    >
+                      <MoreVertical className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </div>
+                )
+              )
             )}
+
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
               <div className="absolute top-4 right-4 flex gap-3 z-20">
