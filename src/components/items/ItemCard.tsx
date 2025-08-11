@@ -138,7 +138,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                   setImageLoaded(true);
                 }}
               />
-              <AvatarFallback className="rounded-none text-gray-400 text-xs font-medium bg-gradient-to-br from-gray-100 to-gray-200">
+              <AvatarFallback className="rounded-none text-xs font-medium">
                 {name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
