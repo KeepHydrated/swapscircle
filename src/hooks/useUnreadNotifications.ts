@@ -91,11 +91,10 @@ export function useNotifications() {
       case 'message':
         return '/messages';
       case 'match':
-        // If referenceId is a conversation id use it, otherwise treat it as partner user id
+        // For backward compatibility we don't know if referenceId is a conversationId or a partner userId (both UUIDs)
+        // Include both so the Messages page can resolve correctly
         return referenceId
-          ? (isUuid(referenceId)
-              ? `/messages?conversation=${referenceId}`
-              : `/messages?partnerId=${referenceId}`)
+          ? `/messages?conversation=${referenceId}&partnerId=${referenceId}`
           : '/messages';
       case 'friend':
         return `/other-person-profile?userId=${referenceId}`;

@@ -279,14 +279,24 @@ export const useTradeConversations = () => {
             console.log('New match conversation set as active:', newMatchConversation.id);
           }
         } else if (conversationParam && displayConversations.find(conv => conv.id === conversationParam)) {
-          // Handle URL parameter ?conversation=xyz
+          // Handle URL parameter ?conversation=xyz (conversation id)
           console.log('Setting active conversation from URL parameter:', conversationParam);
           setActiveConversation(conversationParam);
-          
           // Find the corresponding pair
           const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === conversationParam);
           if (pairIndex !== -1) {
             setSelectedPairId(displayExchangePairs[pairIndex].id);
+          }
+        } else if (conversationParam) {
+          // Back-compat: some old notifications put partner userId in the "conversation" param
+          const byPartnerLikeConv = displayConversations.find(conv => conv.otherUserProfile?.id === conversationParam);
+          if (byPartnerLikeConv) {
+            console.log('Resolved legacy conversation param as partnerId, selecting conversation:', byPartnerLikeConv.id);
+            setActiveConversation(byPartnerLikeConv.id);
+            const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === byPartnerLikeConv.id);
+            if (pairIndex !== -1) {
+              setSelectedPairId(displayExchangePairs[pairIndex].id);
+            }
           }
         } else if (partnerParam) {
           // Fallback: if we have a partnerId, find conversation with that user
