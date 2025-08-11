@@ -22,6 +22,7 @@ export function useNotifications() {
     // Initialize from localStorage
     return localStorage.getItem('notifications-viewed') === 'true';
   });
+  const [locallyReadIds, setLocallyReadIds] = useState<Set<string>>(new Set());
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -55,7 +56,8 @@ export function useNotifications() {
         created_at: notification.created_at
       }));
 
-      setNotifications(mappedNotifications);
+      const withLocalOverrides = mappedNotifications.map(n => locallyReadIds.has(n.id) ? { ...n, is_read: true } : n);
+      setNotifications(withLocalOverrides);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       toast({
@@ -129,6 +131,11 @@ export function useNotifications() {
             : notification
         )
       );
+      setLocallyReadIds(prev => {
+        const next = new Set(prev);
+        next.add(notificationId);
+        return next;
+      });
 
       console.log('Notification marked as read:', notificationId);
     } catch (error) {
@@ -153,6 +160,11 @@ export function useNotifications() {
       setNotifications(prev =>
         prev.map(notification => ({ ...notification, is_read: true }))
       );
+      setLocallyReadIds(prev => {
+        const next = new Set(prev);
+        notifications.forEach(n => next.add(n.id));
+        return next;
+      });
 
       toast({
         title: "All notifications marked as read",
