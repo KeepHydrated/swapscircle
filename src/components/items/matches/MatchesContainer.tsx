@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { MatchItem } from '@/types/item';
-import MatchesCarousel from './MatchesCarousel';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import MatchesGrid from './MatchesGrid';
 import { MobileMatchesView } from './MobileMatchesView';
 import { useIsMobile } from '@/hooks/use-mobile'; // Fixed import
 
@@ -22,6 +23,8 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   onReject,
   onReport
 }) => {
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
 
@@ -39,15 +42,18 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   }
 
   return (
-    <div className="relative h-full">
-      <MatchesCarousel
-        items={displayedMatches}
-        likedItems={likedItems}
-        onOpenModal={onOpenModal}
-        onLike={onLike}
-        onReject={onReject}
-        onReport={onReport}
-      />
+    <div className="relative h-full overflow-x-auto overflow-y-hidden"> {/* Show horizontal scrollbar */}
+      <div className="min-h-full">
+        <MatchesGrid
+          displayedMatches={displayedMatches}
+          onOpenModal={onOpenModal}
+          onLike={onLike}
+          onReject={onReject}
+          onReport={onReport}
+          likedItems={likedItems}
+          detailsRef={detailsRef}
+        />
+      </div>
     </div>
   );
 };
