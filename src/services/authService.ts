@@ -446,16 +446,19 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
       console.log('🎯 ABOUT TO CREATE MATCH WITH:', {
         currentUserId,
         otherUserId: matchResult.matchData.otherUserId,
-        selectedItemId,
-        itemId
+        myItemThatWasLiked: matchResult.matchData.myItemId,
+        itemILiked: itemId
       });
       
       // Create the confirmed match with the correct item IDs
+      // The mutual match exists because:
+      // - I (currentUserId) just liked their item (itemId)
+      // - They (otherUserId) previously liked my item (matchData.myItemId)
       const match = await createMatch(
         currentUserId,
         matchResult.matchData.otherUserId,
-        selectedItemId, // This should be the user's selected item
-        itemId         // This should be the item they clicked/liked
+        matchResult.matchData.myItemId, // My item that they liked (creating the mutual match)
+        itemId                           // Their item that I just liked
       );
 
       if (match) {
@@ -465,8 +468,8 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         const tradeConversation = await createTradeConversation(
           currentUserId,
           matchResult.matchData.otherUserId,
-          selectedItemId, // My selected item
-          itemId         // Item I clicked/liked
+          matchResult.matchData.myItemId, // My item that they liked
+          itemId                           // Their item that I liked
         );
         
         console.log('✅ TRADE CONVERSATION CREATED:', tradeConversation);
@@ -475,7 +478,7 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         const { data: myItem } = await supabase
           .from('items')
           .select('name')
-          .eq('id', selectedItemId)
+          .eq('id', matchResult.matchData.myItemId) // Use the actual item that created the match
           .single();
 
         const { data: theirItem } = await supabase
