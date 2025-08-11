@@ -475,7 +475,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       ) : (
                         // Show initials if no avatar
                         <span>
-                          {(userProfile.username || userProfile.name || "U").substring(0, 2).toUpperCase()}
+                          {(userProfile.username || userProfile.name || "U").substring(0, 1).toUpperCase()}
                         </span>
                       )}
                     </div>
