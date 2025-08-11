@@ -85,3 +85,20 @@ export const createMessageNotification = async (recipientId: string, senderName:
     relatedId: recipientId
   });
 };
+
+// Trade accepted notification
+export const createTradeAcceptedNotification = async (
+  recipientId: string,
+  accepterName?: string,
+  conversationId?: string
+) => {
+  await createNotification({
+    userId: recipientId,
+    type: 'trade',
+    title: 'Trade accepted',
+    content: accepterName
+      ? `${accepterName} accepted your trade.`
+      : 'The other party accepted your trade.',
+    relatedId: conversationId || recipientId,
+  });
+};
