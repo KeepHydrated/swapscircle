@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface Notification {
   id: string;
-  type: 'message' | 'like' | 'discount' | 'feedback' | 'follower' | 'newItem' | 'rental_request';
+  type: 'message' | 'like' | 'match' | 'friend' | 'trade' | 'follower' | 'newItem' | 'rental_request' | 'discount' | 'feedback';
   title: string;
   content: string;
   is_read: boolean;
@@ -77,6 +77,8 @@ export function useNotifications() {
         return 'Friend Request';
       case 'message':
         return 'New Message';
+      case 'trade':
+        return 'Trade Accepted';
       default:
         return 'Notification';
     }
@@ -94,7 +96,7 @@ export function useNotifications() {
       case 'item_removed':
         return '/profile'; // Direct to profile to see items
       case 'trade':
-        return '/trades';
+        return `/messages?conversation=${referenceId}`;
       default:
         return undefined;
     }
