@@ -128,11 +128,19 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               
               {currentMatch.userProfile && (
                 <div className="flex items-center gap-2 mt-4">
-                  <img
-                    src={currentMatch.userProfile.avatar_url || '/placeholder.svg'}
-                    alt={currentMatch.userProfile.name}
-                    className="w-6 h-6 rounded-full"
-                  />
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
+                    {currentMatch.userProfile.avatar_url ? (
+                      <img
+                        src={currentMatch.userProfile.avatar_url}
+                        alt={currentMatch.userProfile.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center">
+                        {currentMatch.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                      </div>
+                    )}
+                  </div>
                   <span className="text-sm text-gray-700">{currentMatch.userProfile.name}</span>
                   <div className="flex items-center gap-1 ml-2">
                     <span className="text-yellow-500">★</span>
