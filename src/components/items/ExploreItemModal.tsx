@@ -461,7 +461,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}
                 {userProfile && !loading ? (
                   <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-6 -mb-6">
-                    <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm"
+                    <div className="relative w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden"
                          onClick={() => {
                            console.log('MODAL DEBUG: Avatar clicked!');
                            handleProfileClick();
@@ -470,13 +470,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         <img
                           src={userProfile.avatar_url}
                           alt={userProfile.name || userProfile.username}
-                          className="w-full h-full rounded-full object-cover"
+                          className="w-full h-full object-cover"
                         />
                       ) : (
-                        // Show initials if no avatar
-                        <span>
+                        <div className="w-full h-full bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center">
                           {(userProfile.username || userProfile.name || "U").substring(0, 1).toUpperCase()}
-                        </span>
+                        </div>
                       )}
                     </div>
                      <div>
