@@ -375,18 +375,22 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 </button>
               </div>
             )}
+            {/* Left 3-dots menu (larger) */}
+            {(onLikeAll || onRejectAll || onReport) && item?.id && (
+              <div className="absolute top-4 left-4 z-30">
+                <MatchActionSelector
+                  itemId={item.id}
+                  onLikeAll={onLikeAll || (() => {})}
+                  onRejectAll={onRejectAll || (() => {})}
+                  onReport={onReport || (() => {})}
+                  compact={false}
+                  className="w-12 h-12"
+                />
+              </div>
+            )}
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
               <div className="absolute top-4 right-4 flex gap-3 z-20">
-                {(onLikeAll || onRejectAll || onReport) && item?.id && (
-                  <MatchActionSelector
-                    itemId={item.id}
-                    onLikeAll={onLikeAll || (() => {})}
-                    onRejectAll={onRejectAll || (() => {})}
-                    onReport={onReport || (() => {})}
-                    compact
-                  />
-                )}
                 <button
                   onClick={disableActions ? undefined : onClose}
                   className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
