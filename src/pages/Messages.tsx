@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 import MessageInput from '@/components/messages/MessageInput';
@@ -194,15 +194,6 @@ const Messages = () => {
                       }}
                     >
                       <div className="flex items-start gap-4">
-                        <Avatar className="h-12 w-12">
-                           <AvatarImage 
-                            src={conversation.otherUserProfile?.avatar_url || undefined} 
-                            alt={`${conversation.name}'s avatar`} 
-                          />
-                          <AvatarFallback className="bg-purple-100 text-purple-800">
-                            {conversation.name.substring(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
                             <div className="font-medium truncate">
@@ -250,12 +241,6 @@ const Messages = () => {
               {/* Partner information header */}
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-center">
-                  <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} onClick={() => console.log('Messages.tsx Avatar Link - userId:', activeChat.otherUserProfile?.id)}>
-                    <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                      <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
-                      <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 2)}</AvatarFallback>
-                    </Avatar>
-                  </Link>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
 import { supabase } from '@/integrations/supabase/client';
 
 interface TradeMessageBubbleProps {
@@ -28,15 +28,7 @@ const TradeMessageBubble = ({ message, senderName, onImageLoad, currentUserId }:
     <div 
       className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'}`}
     >
-      <div className={`flex items-end gap-2 max-w-[70%] ${isUserMessage ? 'flex-row-reverse' : 'flex-row'}`}>
-        {!isUserMessage && (
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-purple-100 text-purple-800">
-              {(message.sender_profile?.username || senderName).substring(0, 2)}
-            </AvatarFallback>
-          </Avatar>
-        )}
-        
+      <div className={`flex items-end max-w-[70%] ${isUserMessage ? 'flex-row-reverse' : 'flex-row'}`}>
         <div className={`rounded-2xl px-4 py-2 ${
           isUserMessage 
             ? 'bg-blue-500 text-white rounded-tr-none' 
