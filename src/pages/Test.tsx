@@ -598,6 +598,7 @@ const Test: React.FC = () => {
         onNavigateNext={navigateToNextFriendItem}
         currentIndex={currentFriendItemIndex}
         totalItems={displayedFriendItems.length}
+        onReport={(id) => handleReport(id)}
       />
       
       {/* Report Item Modal */}
