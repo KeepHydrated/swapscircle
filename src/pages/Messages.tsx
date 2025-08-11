@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
 import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
@@ -37,6 +37,7 @@ const Messages = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const location = useLocation();
 
   // Get current user ID
   useEffect(() => {
@@ -144,6 +145,25 @@ const Messages = () => {
       scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, [activeConversation]);
+
+  // Sync selection from URL params to ensure left column highlights correct chat
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const convId = params.get('conversation');
+    const partnerId = params.get('partnerId');
+    if (convId) {
+      setActiveConversation(convId);
+      const pair = exchangePairs.find(p => p.partnerId === convId);
+      if (pair) handlePairSelect(convId, pair.id);
+    } else if (partnerId) {
+      const byPartner = conversations.find(c => c.otherUserProfile?.id === partnerId);
+      if (byPartner) {
+        setActiveConversation(byPartner.id);
+        const pair = exchangePairs.find(p => p.partnerId === byPartner.id);
+        if (pair) handlePairSelect(byPartner.id, pair.id);
+      }
+    }
+  }, [location.search, conversations, exchangePairs]);
 
   if (loading) {
     return (
