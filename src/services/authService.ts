@@ -493,14 +493,16 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
             currentUserId,
             myItem?.name || 'your item',
             theirItem?.name || 'their item',
-            matchResult.matchData.otherUserId
+            matchResult.matchData.otherUserId,
+            tradeConversation?.id || undefined
           );
           
           await createMatchNotification(
             matchResult.matchData.otherUserId,
             theirItem?.name || 'their item',
             myItem?.name || 'your item',
-            currentUserId
+            currentUserId,
+            tradeConversation?.id || undefined
           );
         } catch (notificationError) {
           console.error('Error creating match notifications:', notificationError);

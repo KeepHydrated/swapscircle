@@ -90,13 +90,13 @@ export function useNotifications() {
       case 'message':
         return '/messages';
       case 'match':
-        return '/';
+        return referenceId ? `/messages?conversation=${referenceId}` : '/messages';
       case 'friend':
         return `/other-person-profile?userId=${referenceId}`;
       case 'item_removed':
         return '/profile'; // Direct to profile to see items
       case 'trade':
-        return `/messages?conversation=${referenceId}`;
+        return referenceId ? `/messages?conversation=${referenceId}` : '/messages';
       default:
         return undefined;
     }

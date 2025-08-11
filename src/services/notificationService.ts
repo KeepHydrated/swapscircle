@@ -54,13 +54,19 @@ export const createFriendRequestAcceptedNotification = async (requesterId: strin
 };
 
 // Match notifications
-export const createMatchNotification = async (userId: string, userItemName: string, matchItemName: string, matchUserId: string) => {
+export const createMatchNotification = async (
+  userId: string,
+  userItemName: string,
+  matchItemName: string,
+  matchUserId: string,
+  conversationId?: string
+) => {
   await createNotification({
     userId: userId,
     type: 'match',
     title: 'New match found!',
     content: `Your ${userItemName} matched with ${matchItemName}.`,
-    relatedId: matchUserId
+    relatedId: conversationId || ''
   });
 };
 
