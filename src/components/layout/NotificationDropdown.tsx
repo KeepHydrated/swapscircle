@@ -64,6 +64,10 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
     }
     
     // Default: navigate based on action URL
+    if (notification.type === 'item_removed') {
+      navigate(`/notifications/${notification.id}`);
+      return;
+    }
     if (notification.action_url) {
       console.log('🔔 Header dropdown navigating to action_url:', notification.action_url);
       navigate(notification.action_url);

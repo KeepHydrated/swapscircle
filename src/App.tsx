@@ -14,6 +14,7 @@ import Messages from "./pages/Messages";
 import Messages3 from "./pages/Messages3";
 import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
+import NotificationDetails from "./pages/NotificationDetails";
 import NotFound from "./pages/NotFound";
 
 import Settings from "./pages/Settings";
@@ -76,6 +77,11 @@ const App = () => {
               <Route path="/notifications" element={
                 <RequireAuth>
                   <Notifications />
+                </RequireAuth>
+              } />
+              <Route path="/notifications/:id" element={
+                <RequireAuth>
+                  <NotificationDetails />
                 </RequireAuth>
               } />
               <Route path="/profile" element={

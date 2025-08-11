@@ -5,11 +5,12 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface Notification {
   id: string;
-  type: 'message' | 'like' | 'match' | 'friend' | 'trade' | 'follower' | 'newItem' | 'rental_request' | 'discount' | 'feedback';
+  type: 'message' | 'like' | 'match' | 'friend' | 'trade' | 'follower' | 'newItem' | 'rental_request' | 'discount' | 'feedback' | 'item_removed';
   title: string;
   content: string;
   is_read: boolean;
   action_url?: string;
+  reference_id?: string;
   created_at: string;
 }
 
@@ -52,7 +53,8 @@ export function useNotifications() {
         title: getNotificationTitle(notification.action_taken),
         content: notification.message || 'No message content',
         is_read: notification.status === 'read',
-        action_url: getActionUrl(notification.action_taken, notification.reference_id),
+        action_url: getActionUrl(notification.action_taken, notification.reference_id, notification.id),
+        reference_id: notification.reference_id,
         created_at: notification.created_at
       }));
 
@@ -81,13 +83,14 @@ export function useNotifications() {
         return 'New Message';
       case 'trade':
         return 'Trade Accepted';
+      case 'item_removed':
+        return 'Item removed for policy violation';
       default:
         return 'Notification';
     }
   };
-
   // Helper function to get action URL
-  const getActionUrl = (actionTaken: string, referenceId: string) => {
+  const getActionUrl = (actionTaken: string, referenceId: string, notificationId: string) => {
     const isUuid = (v?: string) => !!v && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
     switch (actionTaken) {
       case 'message':
@@ -101,14 +104,13 @@ export function useNotifications() {
       case 'friend':
         return `/other-person-profile?userId=${referenceId}`;
       case 'item_removed':
-        return '/profile'; // Direct to profile to see items
+        return `/notifications/${notificationId}`; // Go to dedicated details page
       case 'trade':
         return referenceId ? `/messages?conversation=${referenceId}` : '/messages';
       default:
         return undefined;
     }
   };
-
   // Mark notification as read
   const markAsRead = async (notificationId: string) => {
     if (!user) return;
