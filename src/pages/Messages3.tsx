@@ -131,7 +131,7 @@ const Messages3: React.FC = () => {
       
       if (isCurrentlyLiked) {
         result = await unlikeItem(itemId);
-        toast.success("Removed from favorites");
+        toast.success("Item unliked");
       } else {
         result = await likeItem(itemId);
         
@@ -149,7 +149,7 @@ const Messages3: React.FC = () => {
               });
             }, 2000);
           } else {
-            toast.success("Added to favorites");
+            toast.success("Item liked");
           }
         }
       }

@@ -207,7 +207,7 @@ const Test: React.FC = () => {
       
       if (isCurrentlyLiked) {
         result = await unlikeItem(itemId, global ? undefined : selectedUserItemId);
-        const message = global ? 'Removed from favorites for all your items' : 'Removed from favorites';
+        const message = global ? 'Item unliked for all your items' : 'Item unliked';
         toast.success(message);
       } else {
         result = await likeItem(itemId, global ? undefined : selectedUserItemId);
@@ -226,7 +226,7 @@ const Test: React.FC = () => {
               });
             }, 2000);
           } else {
-            const message = global ? 'Added to favorites for all your items' : 'Added to favorites';
+            const message = global ? 'Item liked for all your items' : 'Item liked';
             toast.success(message);
           }
         }
