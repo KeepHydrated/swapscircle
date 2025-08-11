@@ -324,17 +324,21 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               );
             })()}
             
-            {/* Heart and Close buttons - positioned over the image */}
-            <div className="absolute top-4 right-4 flex gap-3 z-20">
-              {(onLikeAll || onRejectAll || onReport) && item?.id && (
+            {/* 3 dots menu - positioned on the left */}
+            {(onLikeAll || onRejectAll || onReport) && item?.id && (
+              <div className="absolute top-4 left-4 z-20">
                 <MatchActionSelector
                   itemId={item.id}
                   onLikeAll={onLikeAll || (() => {})}
                   onRejectAll={onRejectAll || (() => {})}
                   onReport={onReport || (() => {})}
-                  compact
+                  compact={false}
                 />
-              )}
+              </div>
+            )}
+            
+            {/* Heart and Close buttons - positioned over the image */}
+            <div className="absolute top-4 right-4 flex gap-3 z-20">
               <button
                 onClick={onClose}
                 className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
