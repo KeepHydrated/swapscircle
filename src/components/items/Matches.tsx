@@ -81,8 +81,6 @@ const Matches: React.FC<MatchesProps> = ({
   // Hide content during transitions
   const isTransitioning = loading || isLoadingLikedStatus || isItemChanging;
   
-  // Transition class (match Friends)
-  const [transitionClassName, setTransitionClassName] = useState<string>('animate-enter');
   
   const displayedMatches = isTransitioning ? [] : matches.filter(match => 
     !removedItems.includes(match.id) && !likedItems[match.id]
@@ -97,7 +95,6 @@ const Matches: React.FC<MatchesProps> = ({
     if (currentMatchIndex > 0) {
       const prevMatch = displayedMatches[currentMatchIndex - 1];
       if (prevMatch) {
-        setTransitionClassName('animate-enter');
         setSelectedMatch(prevMatch);
       }
     }
@@ -107,7 +104,6 @@ const Matches: React.FC<MatchesProps> = ({
     if (currentMatchIndex < displayedMatches.length - 1) {
       const nextMatch = displayedMatches[currentMatchIndex + 1];
       if (nextMatch) {
-        setTransitionClassName('animate-enter');
         setSelectedMatch(nextMatch);
       }
     }
@@ -150,7 +146,6 @@ const Matches: React.FC<MatchesProps> = ({
       {/* Modal for displaying match details */}
       {selectedMatch && !(selectedMatch as any).isReportModal && (
         <ItemDetailsModal
-          key={`${selectedMatch.id}-${selectedMatch.image}`} // Prevent flashing with stable key
           item={selectedMatch}
           isOpen={!!selectedMatch}
           onClose={handleClosePopup}
@@ -169,7 +164,7 @@ const Matches: React.FC<MatchesProps> = ({
           onLikeAll={(id) => handleLike(id, true)}
           onRejectAll={(id) => handleReject(id, true)}
           onReport={handleReport}
-          transitionClassName={transitionClassName}
+          
         />
       )}
 
