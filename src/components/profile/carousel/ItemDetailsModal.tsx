@@ -419,7 +419,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                 
                 {/* User profile info - only show if showProfileInfo is true */}
                 {showProfileInfo && userProfile && (
-                  <div className="flex gap-3 items-center mt-auto pt-6">
+                  <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
                     <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden" onClick={handleProfileClick}>
                       {userProfile.avatar_url ? (
                         <img
