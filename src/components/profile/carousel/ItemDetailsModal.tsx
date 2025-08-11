@@ -29,6 +29,7 @@ interface ItemDetailsModalProps {
   onLikeAll?: (id: string) => void;
   onRejectAll?: (id: string) => void;
   onReport?: (id: string) => void;
+  transitionClassName?: string;
 }
 
 const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
@@ -46,6 +47,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   onLikeAll,
   onRejectAll,
   onReport,
+  transitionClassName,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -282,7 +284,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           </button>
         )}
 
-        <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
+        <div className={`flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
           {/* Image */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
             {/* Get all available images */}
