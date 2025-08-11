@@ -316,6 +316,20 @@ const Test: React.FC = () => {
     }
   }, [userItems, selectedUserItemId]);
   
+  // Persist selected item for cross-page matching and notify listeners
+  useEffect(() => {
+    if (selectedUserItemId) {
+      localStorage.setItem('selectedUserItemId', selectedUserItemId);
+      window.dispatchEvent(new Event('selectedItemChanged'));
+    }
+  }, [selectedUserItemId]);
+
+  // Restore last selected item if available
+  useEffect(() => {
+    const stored = localStorage.getItem('selectedUserItemId');
+    if (stored) setSelectedUserItemId(stored);
+  }, []);
+  
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
   
