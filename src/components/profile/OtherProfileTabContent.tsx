@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import ItemCard from '@/components/items/ItemCard';
@@ -42,24 +42,22 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
               <p className="text-muted-foreground">You must be friends to like items from this profile</p>
             </div>
           )}
-          <ScrollArea className="h-[calc(100vh-320px)]">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
-              {items.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  image={item.image}
-                  isMatch={true}
-                  liked={item.liked}
-                  onSelect={handleItemClick}
-                  onLike={onLikeItem}
-                  disableLike={!isFriend}
-                  status={item.status}
-                />
-              ))}
-            </div>
-          </ScrollArea>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {items.map((item) => (
+              <ItemCard
+                key={item.id}
+                id={item.id}
+                name={item.name}
+                image={item.image}
+                isMatch={true}
+                liked={item.liked}
+                onSelect={handleItemClick}
+                onLike={onLikeItem}
+                disableLike={!isFriend}
+                status={item.status}
+              />
+            ))}
+          </div>
         </div>
       )}
 
