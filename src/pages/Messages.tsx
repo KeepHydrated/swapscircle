@@ -36,6 +36,7 @@ const Messages = () => {
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const leftListRef = useRef<HTMLDivElement>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const location = useLocation();
 
@@ -165,6 +166,15 @@ const Messages = () => {
     }
   }, [location.search, conversations, exchangePairs]);
 
+  // Ensure the selected conversation is scrolled into view in the left list
+  useEffect(() => {
+    if (!activeConversation) return;
+    const el = document.querySelector(`[data-conv-id="${activeConversation}"]`) as HTMLElement | null;
+    if (el) {
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [activeConversation, conversations]);
+
   if (loading) {
     return (
       <div className="flex flex-col h-screen">
@@ -187,13 +197,15 @@ const Messages = () => {
         <div className="w-[350px] border-r border-gray-200 flex flex-col">
           {conversations.length > 0 ? (
             <div className="flex flex-col h-full">
-              <div className="flex-1 overflow-y-auto">
+              <div ref={leftListRef} className="flex-1 overflow-y-auto">
                 {conversations.map((conversation) => {
                   const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
                   
                   return (
                     <div 
                       key={conversation.id}
+                      data-conv-id={conversation.id}
+                      id={`conv-${conversation.id}`}
                       className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                       onClick={(e) => {
                         e.preventDefault();
