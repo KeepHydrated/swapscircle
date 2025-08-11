@@ -86,11 +86,17 @@ export function useNotifications() {
 
   // Helper function to get action URL
   const getActionUrl = (actionTaken: string, referenceId: string) => {
+    const isUuid = (v?: string) => !!v && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
     switch (actionTaken) {
       case 'message':
         return '/messages';
       case 'match':
-        return referenceId ? `/messages?conversation=${referenceId}` : '/messages';
+        // If referenceId is a conversation id use it, otherwise treat it as partner user id
+        return referenceId
+          ? (isUuid(referenceId)
+              ? `/messages?conversation=${referenceId}`
+              : `/messages?partnerId=${referenceId}`)
+          : '/messages';
       case 'friend':
         return `/other-person-profile?userId=${referenceId}`;
       case 'item_removed':

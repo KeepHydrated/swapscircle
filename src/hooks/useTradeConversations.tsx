@@ -247,6 +247,7 @@ export const useTradeConversations = () => {
         // Handle navigation from trade creation or URL parameters
         const searchParams = new URLSearchParams(location.search);
         const conversationParam = searchParams.get('conversation');
+        const partnerParam = searchParams.get('partnerId');
         
         if (location.state?.tradeConversationId && location.state?.newTrade) {
           const newTradeId = location.state.tradeConversationId;
@@ -286,6 +287,20 @@ export const useTradeConversations = () => {
           const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === conversationParam);
           if (pairIndex !== -1) {
             setSelectedPairId(displayExchangePairs[pairIndex].id);
+          }
+        } else if (partnerParam) {
+          // Fallback: if we have a partnerId, find conversation with that user
+          const byPartner = displayConversations.find(conv => conv.otherUserProfile?.id === partnerParam);
+          if (byPartner) {
+            setActiveConversation(byPartner.id);
+            const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === byPartner.id);
+            if (pairIndex !== -1) {
+              setSelectedPairId(displayExchangePairs[pairIndex].id);
+            }
+          } else if (displayConversations.length > 0) {
+            // Default to first conversation
+            setActiveConversation(displayConversations[0].id);
+            setSelectedPairId(displayExchangePairs[0]?.id || null);
           }
         } else if (displayConversations.length > 0) {
           // Set first conversation as active if none is selected
