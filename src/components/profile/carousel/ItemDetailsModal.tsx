@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign } from "lucide-react";
+import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat } from "lucide-react";
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
@@ -54,6 +54,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const [isReady, setIsReady] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [userRating, setUserRating] = useState<number>(0);
+  const [tradesCompleted, setTradesCompleted] = useState<number>(0);
 
   // Reset slide when item changes
   useEffect(() => {
@@ -169,10 +170,29 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     }
   };
   
-  // Listen for when modal opens to refresh rating
+  const refreshTradesCount = async () => {
+    const userId = skipDataFetch ? (item as any)?.user_id : fullItem?.user_id;
+    if (userId) {
+      const { data: tradesData, error: tradesError } = await supabase
+        .from('trade_conversations')
+        .select('id')
+        .eq('status', 'completed')
+        .or(`requester_id.eq.${userId},owner_id.eq.${userId}`);
+      if (!tradesError && tradesData) {
+        setTradesCompleted(tradesData.length);
+      } else {
+        setTradesCompleted(0);
+      }
+    } else {
+      setTradesCompleted(0);
+    }
+  };
+  
+  // Listen for when modal opens to refresh rating and trades
   useEffect(() => {
     if (isOpen && (fullItem || item)) {
       refreshUserRating();
+      refreshTradesCount();
     }
   }, [isOpen]);
 
@@ -429,8 +449,12 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                         </div>
                       </div>
                       {memberSince && (
-                        <div className="flex text-xs text-gray-500 mt-1">
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
                           <span>Since {memberSince}</span>
+                          <div className="flex items-center gap-1">
+                            <Repeat className="h-3 w-3" />
+                            <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
+                          </div>
                         </div>
                       )}
                     </div>
