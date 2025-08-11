@@ -248,10 +248,12 @@ export const useTradeConversations = () => {
         const searchParams = new URLSearchParams(location.search);
         const conversationParam = searchParams.get('conversation');
         const partnerParam = searchParams.get('partnerId');
+        let didSelect = false;
         
         if (location.state?.tradeConversationId && location.state?.newTrade) {
           const newTradeId = location.state.tradeConversationId;
           setActiveConversation(newTradeId);
+          didSelect = true;
           
           // Find the corresponding pair
           const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === newTradeId);
@@ -269,6 +271,7 @@ export const useTradeConversations = () => {
           if (displayConversations.length > 0) {
             const newMatchConversation = displayConversations[0]; // Should be the newest
             setActiveConversation(newMatchConversation.id);
+            didSelect = true;
             
             // Find the corresponding pair
             const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === newMatchConversation.id);
@@ -282,6 +285,7 @@ export const useTradeConversations = () => {
           // Handle URL parameter ?conversation=xyz (conversation id)
           console.log('Setting active conversation from URL parameter:', conversationParam);
           setActiveConversation(conversationParam);
+          didSelect = true;
           // Find the corresponding pair
           const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === conversationParam);
           if (pairIndex !== -1) {
@@ -293,27 +297,32 @@ export const useTradeConversations = () => {
           if (byPartnerLikeConv) {
             console.log('Resolved legacy conversation param as partnerId, selecting conversation:', byPartnerLikeConv.id);
             setActiveConversation(byPartnerLikeConv.id);
+            didSelect = true;
             const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === byPartnerLikeConv.id);
             if (pairIndex !== -1) {
               setSelectedPairId(displayExchangePairs[pairIndex].id);
             }
+          } else {
+            // Last resort: still honor the param to avoid defaulting to the first chat
+            console.warn('Conversation param provided but not found in list. Honoring param anyway:', conversationParam);
+            setActiveConversation(conversationParam);
+            didSelect = true;
           }
         } else if (partnerParam) {
           // Fallback: if we have a partnerId, find conversation with that user
           const byPartner = displayConversations.find(conv => conv.otherUserProfile?.id === partnerParam);
           if (byPartner) {
             setActiveConversation(byPartner.id);
+            didSelect = true;
             const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === byPartner.id);
             if (pairIndex !== -1) {
               setSelectedPairId(displayExchangePairs[pairIndex].id);
             }
-          } else if (displayConversations.length > 0) {
-            // Default to first conversation
-            setActiveConversation(displayConversations[0].id);
-            setSelectedPairId(displayExchangePairs[0]?.id || null);
           }
-        } else if (displayConversations.length > 0) {
-          // Set first conversation as active if none is selected
+        }
+        
+        // Default to first conversation only if nothing else selected
+        if (!didSelect && displayConversations.length > 0) {
           setActiveConversation(displayConversations[0].id);
           setSelectedPairId(displayExchangePairs[0]?.id || null);
         }
