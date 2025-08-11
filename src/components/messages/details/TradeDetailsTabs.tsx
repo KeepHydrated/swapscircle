@@ -214,7 +214,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
         {selectedItem === 'item1' ? (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Item Image with Navigation */}
-            <div className="relative aspect-square bg-gray-100 w-full h-48">
+            <div className="relative aspect-square bg-gray-100 w-full h-64">
               <img 
                 src={itemImages[currentImageIndex]} 
                 alt={selectedPair.item1.name} 
@@ -280,7 +280,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
         ) : (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Their Item Image with Navigation */}
-            <div className="relative aspect-square bg-gray-100 w-full h-48">
+            <div className="relative aspect-square bg-gray-100 w-full h-64">
               <img 
                 src={theirItemImages[currentImageIndex]} 
                 alt={selectedPair.item2.name} 
