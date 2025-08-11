@@ -256,25 +256,21 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
               <div className="grid grid-cols-2 gap-1.5 text-sm">
                 {selectedPair.item1.category && (
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item1.category}</span>
                   </div>
                 )}
                 {selectedPair.item1.tags && selectedPair.item1.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <Layers className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item1.tags[0]}</span>
                   </div>
                 )}
                 {selectedPair.item1.condition && (
                   <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item1.condition}</span>
                   </div>
                 )}
                 {(selectedPair.item1.price_range_min || selectedPair.item1.price_range_max) && (
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item1.price_range_min || 0} - {selectedPair.item1.price_range_max || '∞'}</span>
                   </div>
                 )}
@@ -326,25 +322,21 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
               <div className="grid grid-cols-2 gap-1.5 text-sm">
                 {selectedPair.item2.category && (
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item2.category}</span>
                   </div>
                 )}
                 {selectedPair.item2.tags && selectedPair.item2.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <Layers className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item2.tags[0]}</span>
                   </div>
                 )}
                 {selectedPair.item2.condition && (
                   <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item2.condition}</span>
                   </div>
                 )}
                 {(selectedPair.item2.price_range_min || selectedPair.item2.price_range_max) && (
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
                     <span>{selectedPair.item2.price_range_min || 0} - {selectedPair.item2.price_range_max || '∞'}</span>
                   </div>
                 )}
