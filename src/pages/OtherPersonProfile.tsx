@@ -187,6 +187,23 @@ const OtherPersonProfile: React.FC = () => {
   
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+
+  // Listen for like updates from other pages (e.g., Home) and update UI
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<{ itemId: string; liked: boolean }>;
+      const detail: any = ce.detail || {};
+      const itemId = detail.itemId as string | undefined;
+      const liked = !!detail.liked;
+      if (!itemId) return;
+      // Only update if the item belongs to this profile
+      if (userItems.some(item => item.id === itemId)) {
+        setLikedItems(prev => ({ ...prev, [itemId]: liked }));
+      }
+    };
+    window.addEventListener('likedItemsChanged', handler as EventListener);
+    return () => window.removeEventListener('likedItemsChanged', handler as EventListener);
+  }, [userItems]);
   // State for friendship status - defaulting to false (not friends)
   const [isFriend, setIsFriend] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);

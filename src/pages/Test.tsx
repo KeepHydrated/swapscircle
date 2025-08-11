@@ -209,6 +209,8 @@ const Test: React.FC = () => {
         result = await unlikeItem(itemId, global ? undefined : selectedUserItemId);
         const message = global ? 'Item unliked for all your items' : 'Item unliked';
         toast.success(message);
+        // Broadcast liked state change to other pages (e.g., profile)
+        window.dispatchEvent(new CustomEvent('likedItemsChanged', { detail: { itemId, liked: false } }));
       } else {
         result = await likeItem(itemId, global ? undefined : selectedUserItemId);
         
@@ -229,6 +231,8 @@ const Test: React.FC = () => {
             const message = global ? 'Item liked for all your items' : 'Item liked';
             toast.success(message);
           }
+          // Broadcast liked state change to other pages (e.g., profile)
+          window.dispatchEvent(new CustomEvent('likedItemsChanged', { detail: { itemId, liked: true } }));
         }
       }
     } catch (error) {
