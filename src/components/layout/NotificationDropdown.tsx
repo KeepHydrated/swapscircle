@@ -11,6 +11,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Notification } from '@/hooks/useUnreadNotifications';
+import { supabase } from '@/integrations/supabase/client';
+
 
 interface NotificationDropdownProps {
   notifications: Notification[];
@@ -32,7 +34,36 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
       await onNotificationRead(notification.id);
     }
     
-    // Navigate based on action URL or type
+    // Smart routing for match notifications to the exact conversation
+    if (notification.type === 'match' && notification.action_url) {
+      try {
+        const url = new URL(notification.action_url, window.location.origin);
+        const params = url.searchParams;
+        const partnerId = params.get('partnerId') || params.get('conversation');
+        const { data: { user } } = await supabase.auth.getUser();
+        const currentUserId = user?.id;
+        
+        if (partnerId && currentUserId) {
+          const { data: conv, error } = await supabase
+            .from('trade_conversations')
+            .select('id, requester_id, owner_id, created_at')
+            .or(`and(requester_id.eq.${currentUserId},owner_id.eq.${partnerId}),and(requester_id.eq.${partnerId},owner_id.eq.${currentUserId})`)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          
+          if (!error && conv?.id) {
+            console.log('🔔 Resolved match to conversation:', conv.id);
+            navigate(`/messages?conversation=${conv.id}`);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('🔔 Match resolve failed, falling back to action_url:', e);
+      }
+    }
+    
+    // Default: navigate based on action URL
     if (notification.action_url) {
       console.log('🔔 Header dropdown navigating to action_url:', notification.action_url);
       navigate(notification.action_url);
