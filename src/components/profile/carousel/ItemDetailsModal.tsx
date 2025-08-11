@@ -257,7 +257,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const canNavigateNext = onNavigateNext && typeof currentIndex === 'number' && typeof totalItems === 'number' && currentIndex < totalItems - 1;
 
   return (
-    <Dialog key={item?.id} open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
         <DialogTitle className="sr-only">Item Details</DialogTitle>
