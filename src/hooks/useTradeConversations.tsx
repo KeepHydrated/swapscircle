@@ -95,6 +95,27 @@ export const useTradeConversations = () => {
         const displayConversations: ConversationDisplay[] = [];
         const displayExchangePairs: ExchangePairDisplay[] = [];
 
+        // Fetch last message for each conversation to show in sidebar
+        const conversationIds = tradeConversations.map((tc: any) => tc.id);
+        let lastMessagesMap: Record<string, { message: string; created_at: string }> = {};
+        if (conversationIds.length > 0) {
+          const { data: lastMsgs, error: lastMsgsError } = await supabase
+            .from('trade_messages')
+            .select('conversation_id, message, created_at')
+            .in('conversation_id', conversationIds)
+            .order('created_at', { ascending: false });
+
+          if (!lastMsgsError && lastMsgs) {
+            (lastMsgs as any[]).forEach((m: any) => {
+              if (!lastMessagesMap[m.conversation_id]) {
+                lastMessagesMap[m.conversation_id] = { message: m.message, created_at: m.created_at };
+              }
+            });
+          } else if (lastMsgsError) {
+            console.error('Error fetching last messages:', lastMsgsError);
+          }
+        }
+
         tradeConversations.forEach((tc: any, index: number) => {
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
@@ -143,10 +164,27 @@ export const useTradeConversations = () => {
 
           displayExchangePairs.push(exchangePair);
 
+          // Determine the last activity text for the sidebar
+          const lastMsg = lastMessagesMap[tc.id];
+          let lastMessageText = `Trading ${myItem?.name} for ${theirItem?.name}`;
+          if (lastMsg?.message) {
+            lastMessageText = lastMsg.message;
+          }
+          const lastMsgTime = lastMsg ? new Date(lastMsg.created_at).getTime() : 0;
+          const updatedTime = new Date(tc.updated_at).getTime();
+          if ((tc.requester_accepted || tc.owner_accepted) && updatedTime >= lastMsgTime) {
+            const youAreRequester = tc.requester_id === currentUserId;
+            const youAreOwner = tc.owner_id === currentUserId;
+            const youAccepted = (youAreRequester && tc.requester_accepted) || (youAreOwner && tc.owner_accepted);
+            const otherAccepted = !youAccepted && (tc.requester_accepted || tc.owner_accepted);
+            if (youAccepted) lastMessageText = 'You accepted the trade';
+            else if (otherAccepted) lastMessageText = 'They accepted the trade';
+          }
+
           const conversation: ConversationDisplay = {
             id: tc.id,
             name: otherUserProfile?.username || `Trading Partner`,
-            lastMessage: `Trading ${myItem?.name} for ${theirItem?.name}`,
+            lastMessage: lastMessageText,
             time: new Date(tc.updated_at).toLocaleDateString(),
             rating: 5,
             distance: '2.3 mi away',
