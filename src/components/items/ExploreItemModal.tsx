@@ -464,12 +464,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
                 {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}
                 {userProfile && !loading ? (
-                  <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-6 -mb-6">
-                    <div className="relative w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden"
-                         onClick={() => {
-                           console.log('MODAL DEBUG: Avatar clicked!');
-                           handleProfileClick();
-                         }}>
+                  <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
+                    <div
+                      className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden"
+                      onClick={handleProfileClick}
+                    >
                       {userProfile.avatar_url ? (
                         <img
                           src={userProfile.avatar_url}
@@ -478,38 +477,35 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         />
                       ) : (
                         <div className="w-full h-full bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center">
-                          {(userProfile.username || userProfile.name || "U").substring(0, 1).toUpperCase()}
+                          {(userProfile.name || userProfile.username || "U").substring(0, 1).toUpperCase()}
                         </div>
                       )}
                     </div>
-                     <div>
-                       <div className="flex items-center gap-2">
-                         <span 
-                           className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
-                           onClick={() => {
-                             console.log('MODAL DEBUG: Profile name clicked!');
-                             handleProfileClick();
-                           }}
-                         >
-                           {userProfile.username || userProfile.name || "Unknown User"}
-                         </span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                          onClick={handleProfileClick}
+                        >
+                          {userProfile.username || userProfile.name || "Unknown User"}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-500">★</span>
+                          <span className="text-sm text-gray-600">
+                            {userRating > 0 ? userRating.toFixed(1) : "No reviews"}
+                          </span>
+                        </div>
+                      </div>
+                      {memberSince && (
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                          <span>Since {memberSince}</span>
                           <div className="flex items-center gap-1">
-                            <span className="text-yellow-500">★</span>
-                            <span className="text-sm text-gray-600">
-                              {userRating > 0 ? userRating.toFixed(1) : "No reviews"}
-                            </span>
+                            <Repeat className="h-3 w-3" />
+                            <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
                           </div>
-                       </div>
-                          {memberSince && (
-                             <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                               <span>Since {memberSince}</span>
-                               <div className="flex items-center gap-1">
-                                 <Repeat className="h-3 w-3" />
-                                 <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
-                               </div>
-                             </div>
-                          )}
-                     </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : null}
               </>
