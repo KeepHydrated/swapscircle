@@ -163,6 +163,9 @@ const Matches: React.FC<MatchesProps> = ({
             avatar_url: selectedMatch.userProfile.avatar_url || '',
             created_at: '2025-01-01T00:00:00Z' // Default since we don't have this in match data
           } : undefined}
+          onLikeAll={(id) => handleLike(id, true)}
+          onRejectAll={(id) => handleReject(id, true)}
+          onReport={handleReport}
         />
       )}
 
