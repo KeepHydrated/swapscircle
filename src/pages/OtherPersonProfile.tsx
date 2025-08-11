@@ -181,6 +181,10 @@ const OtherPersonProfile: React.FC = () => {
   // State for popup
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
   const [reportModal, setReportModal] = useState<{ id: string; name: string } | null>(null);
+  // Track index of the popup item among visible items for navigation arrows
+  const [currentPopupIndex, setCurrentPopupIndex] = useState<number>(0);
+
+  
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   // State for friendship status - defaulting to false (not friends)
@@ -313,6 +317,26 @@ const OtherPersonProfile: React.FC = () => {
     liked: likedItems[item.id] || false
   }));
 
+  // Keep track of the index of the current popup item among this profile's items
+  useEffect(() => {
+    if (!popupItem) return;
+    const idx = itemsWithLikedStatus.findIndex(i => i.id === popupItem.id);
+    if (idx >= 0) setCurrentPopupIndex(idx);
+  }, [popupItem?.id, itemsWithLikedStatus]);
+
+  // Handlers for navigating between this user's items in the modal
+  const handleNavigatePrev = () => {
+    if (currentPopupIndex > 0) {
+      setPopupItem(itemsWithLikedStatus[currentPopupIndex - 1]);
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (currentPopupIndex < itemsWithLikedStatus.length - 1) {
+      setPopupItem(itemsWithLikedStatus[currentPopupIndex + 1]);
+    }
+  };
+
   // Handle reporting an item from the popup
   const handleReport = (id: string) => {
     const item = itemsWithLikedStatus.find(i => i.id === id) || popupItem;
@@ -424,6 +448,10 @@ const OtherPersonProfile: React.FC = () => {
           isOpen={!!popupItem}
           onClose={handlePopupClose}
           onLikeClick={handlePopupLikeClick}
+          onNavigatePrev={handleNavigatePrev}
+          onNavigateNext={handleNavigateNext}
+          currentIndex={currentPopupIndex}
+          totalItems={itemsWithLikedStatus.length}
           showProfileInfo={true}
           preloadedUserProfile={{
             name: profileData.name,
