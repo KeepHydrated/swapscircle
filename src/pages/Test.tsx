@@ -109,7 +109,9 @@ const Test: React.FC = () => {
         .select('*')
         .in('user_id', friendIds)
         .eq('is_available', true) // Only show available items
-        .eq('is_hidden', false); // Only show non-hidden items
+        .eq('is_hidden', false) // Only show non-hidden items
+        .eq('status', 'published') // Only show published items (exclude drafts)
+        .is('removed_at', null); // Exclude removed items
 
       if (itemsError) {
         console.error('Error fetching friend items:', itemsError);
