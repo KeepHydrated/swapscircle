@@ -17,6 +17,7 @@ import { likeItem, unlikeItem, isItemLiked, fetchUserReviews } from '@/services/
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { blockingService } from '@/services/blockingService';
+import { ReportItemModal } from '@/components/items/ReportItemModal';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -179,6 +180,7 @@ const OtherPersonProfile: React.FC = () => {
   }, [userId]);
   // State for popup
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
+  const [reportModal, setReportModal] = useState<{ id: string; name: string } | null>(null);
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
   // State for friendship status - defaulting to false (not friends)
@@ -311,6 +313,11 @@ const OtherPersonProfile: React.FC = () => {
     liked: likedItems[item.id] || false
   }));
 
+  // Handle reporting an item from the popup
+  const handleReport = (id: string) => {
+    const item = itemsWithLikedStatus.find(i => i.id === id) || popupItem;
+    setReportModal({ id, name: item?.name || 'Item' });
+  };
   if (isLoading) {
     return (
       <MainLayout>
@@ -425,6 +432,16 @@ const OtherPersonProfile: React.FC = () => {
             created_at: `${profileData.memberSince}-01-01T00:00:00.000Z`
           }}
           skipDataFetch={true}
+          onReport={handleReport}
+        />
+      )}
+
+      {reportModal && (
+        <ReportItemModal
+          isOpen={true}
+          onClose={() => setReportModal(null)}
+          itemId={reportModal.id}
+          itemName={reportModal.name}
         />
       )}
     </MainLayout>
