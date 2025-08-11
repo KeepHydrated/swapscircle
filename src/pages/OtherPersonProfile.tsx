@@ -148,9 +148,10 @@ const OtherPersonProfile: React.FC = () => {
           // Load liked status for each item if user is logged in
           if (currentUser) {
             const likedStatus: Record<string, boolean> = {};
+            const selectedId = localStorage.getItem('selectedUserItemId') || undefined;
             for (const item of itemsData) {
               try {
-                const liked = await isItemLiked(item.id);
+                const liked = await isItemLiked(item.id, selectedId as string | undefined);
                 likedStatus[item.id] = liked;
               } catch (e) {
                 likedStatus[item.id] = false;
@@ -252,6 +253,24 @@ const OtherPersonProfile: React.FC = () => {
       window.removeEventListener('selectedItemChanged', updateSelectedItem);
     };
   }, []);
+
+  // Recompute liked status when selected item or items change
+  useEffect(() => {
+    const refresh = async () => {
+      if (!userItems || userItems.length === 0) return;
+      const map: Record<string, boolean> = {};
+      for (const item of userItems) {
+        try {
+          const liked = await isItemLiked(item.id, selectedItemIdFromHomepage || undefined);
+          map[item.id] = liked;
+        } catch (e) {
+          map[item.id] = false;
+        }
+      }
+      setLikedItems(map);
+    };
+    refresh();
+  }, [userItems, selectedItemIdFromHomepage]);
 
   // Handle liking an item - now with real backend calls and homepage context
   const handleLikeItem = async (id: string) => {
