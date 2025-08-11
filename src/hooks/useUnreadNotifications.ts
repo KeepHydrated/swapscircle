@@ -114,16 +114,11 @@ export function useNotifications() {
     if (!user) return;
 
     try {
-      // First update the database
-      const { error } = await supabase
-        .from('notifications')
-        .update({ status: 'read' })
-        .eq('id', notificationId)
-        .eq('user_id', user.id);
-
+      // Prefer RPC to bypass RLS issues
+      const { error } = await supabase.rpc('mark_notification_as_read', { p_notification_id: notificationId });
       if (error) throw error;
 
-      // Then update local state immediately (don't wait for real-time update)
+      // Update local state immediately
       setNotifications(prev =>
         prev.map(notification =>
           notification.id === notificationId
@@ -137,7 +132,10 @@ export function useNotifications() {
         return next;
       });
 
-      console.log('Notification marked as read:', notificationId);
+      // Re-fetch to ensure DB state persists across reloads
+      fetchNotifications();
+
+      console.log('Notification marked as read via RPC:', notificationId);
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -148,13 +146,23 @@ export function useNotifications() {
     if (!user) return;
 
     try {
-      const { error } = await supabase
+      let err: any = null;
+      const { error: updError } = await supabase
         .from('notifications')
         .update({ status: 'read' })
         .eq('user_id', user.id)
         .eq('status', 'unread');
+      err = updError;
 
-      if (error) throw error;
+      // If direct update fails due to RLS, fall back to per-item RPC calls
+      if (err) {
+        const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
+        const results = await Promise.all(
+          unreadIds.map(id => supabase.rpc('mark_notification_as_read', { p_notification_id: id }))
+        );
+        const anyErr = results.find((r: any) => r && r.error);
+        if (anyErr && anyErr.error) throw anyErr.error;
+      }
 
       // Update local state
       setNotifications(prev =>
@@ -165,6 +173,9 @@ export function useNotifications() {
         notifications.forEach(n => next.add(n.id));
         return next;
       });
+
+      // Re-fetch to ensure DB state persists across reloads
+      fetchNotifications();
 
       toast({
         title: "All notifications marked as read",
