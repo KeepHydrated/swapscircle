@@ -330,11 +330,6 @@ const Test: React.FC = () => {
     }
   }, [selectedUserItemId]);
 
-  // Restore last selected item if available
-  useEffect(() => {
-    const stored = localStorage.getItem('selectedUserItemId');
-    if (stored) setSelectedUserItemId(stored);
-  }, []);
   
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
