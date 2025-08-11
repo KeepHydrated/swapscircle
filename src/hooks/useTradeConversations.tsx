@@ -246,8 +246,10 @@ export const useTradeConversations = () => {
 
         // Handle navigation from trade creation or URL parameters
         const searchParams = new URLSearchParams(location.search);
-        const conversationParam = searchParams.get('conversation');
+        const rawConversationParam = searchParams.get('conversation');
         const partnerParam = searchParams.get('partnerId');
+        // If both params are present and identical (likely a userId), prefer treating it as partnerId
+        const conversationParam = partnerParam && rawConversationParam === partnerParam ? null : rawConversationParam;
         let didSelect = false;
         
         if (location.state?.tradeConversationId && location.state?.newTrade) {
@@ -317,6 +319,14 @@ export const useTradeConversations = () => {
             const pairIndex = displayExchangePairs.findIndex(pair => pair.partnerId === byPartner.id);
             if (pairIndex !== -1) {
               setSelectedPairId(displayExchangePairs[pairIndex].id);
+            }
+          } else {
+            // Secondary fallback: resolve via exchange pairs partnerProfile mapping
+            const pairByPartner = displayExchangePairs.find(pair => pair.partnerProfile?.id === partnerParam);
+            if (pairByPartner) {
+              setActiveConversation(pairByPartner.partnerId);
+              setSelectedPairId(pairByPartner.id);
+              didSelect = true;
             }
           }
         }
