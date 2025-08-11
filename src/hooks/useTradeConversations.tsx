@@ -167,20 +167,24 @@ export const useTradeConversations = () => {
           // Determine the last activity text for the sidebar
           const lastMsg = lastMessagesMap[tc.id];
           let lastMessageText = `Trading ${myItem?.name} for ${theirItem?.name}`;
-          if (lastMsg?.message) {
-            lastMessageText = lastMsg.message;
-          }
-          const lastMsgTime = lastMsg ? new Date(lastMsg.created_at).getTime() : 0;
-          const updatedTime = new Date(tc.updated_at).getTime();
-          if ((tc.requester_accepted || tc.owner_accepted) && updatedTime >= lastMsgTime) {
-            const youAreRequester = tc.requester_id === currentUserId;
-            const youAreOwner = tc.owner_id === currentUserId;
-            const youAccepted = (youAreRequester && tc.requester_accepted) || (youAreOwner && tc.owner_accepted);
-            const otherAccepted = !youAccepted && (tc.requester_accepted || tc.owner_accepted);
-            if (youAccepted) lastMessageText = 'You accepted the trade';
-            else if (otherAccepted) lastMessageText = 'They accepted the trade';
-          }
 
+          if (tc.status === 'completed') {
+            lastMessageText = 'Trade Completed';
+          } else {
+            if (lastMsg?.message) {
+              lastMessageText = lastMsg.message;
+            }
+            const lastMsgTime = lastMsg ? new Date(lastMsg.created_at).getTime() : 0;
+            const updatedTime = new Date(tc.updated_at).getTime();
+            if ((tc.requester_accepted || tc.owner_accepted) && updatedTime >= lastMsgTime) {
+              const youAreRequester = tc.requester_id === currentUserId;
+              const youAreOwner = tc.owner_id === currentUserId;
+              const youAccepted = (youAreRequester && tc.requester_accepted) || (youAreOwner && tc.owner_accepted);
+              const otherAccepted = !youAccepted && (tc.requester_accepted || tc.owner_accepted);
+              if (youAccepted) lastMessageText = 'You accepted the trade';
+              else if (otherAccepted) lastMessageText = 'They accepted the trade';
+            }
+          }
           const conversation: ConversationDisplay = {
             id: tc.id,
             name: otherUserProfile?.username || `Trading Partner`,
