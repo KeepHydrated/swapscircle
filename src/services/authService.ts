@@ -508,9 +508,15 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
         }
 
         if (tradeConversation) {
-          toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}". A new chat has been created!`);
+          toast.success(
+            `🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}". A new chat has been created!`,
+            { duration: 2500 }
+          );
         } else {
-          toast.success(`🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}"`);
+          toast.success(
+            `🎉 It's a match! You both liked each other's items: "${myItem?.name}" ↔ "${theirItem?.name}"`,
+            { duration: 2500 }
+          );
         }
         
         return { success: true, isMatch: true, matchData: match, conversationId: tradeConversation?.id };
