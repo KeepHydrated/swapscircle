@@ -146,15 +146,16 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
       </div>
 
       <ItemDetailsModal
-        item={selectedItem}
-        isOpen={!!selectedItem}
-        onClose={handleCloseModal}
-        onLikeClick={handleModalLikeClick}
-        onNavigatePrev={handleNavigatePrev}
-        onNavigateNext={handleNavigateNext}
-        currentIndex={currentIndex}
-        totalItems={items.length}
-      />
+         item={selectedItem}
+         isOpen={!!selectedItem}
+         onClose={handleCloseModal}
+         onLikeClick={handleModalLikeClick}
+         onNavigatePrev={handleNavigatePrev}
+         onNavigateNext={handleNavigateNext}
+         currentIndex={currentIndex}
+         totalItems={items.length}
+         onReport={onReport}
+       />
     </div>
   );
 };
