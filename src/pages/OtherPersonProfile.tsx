@@ -382,7 +382,7 @@ const OtherPersonProfile: React.FC = () => {
         </div>
 
         {/* Tabs with sticky header */}
-        <div className="sticky top-16 bg-white z-10">
+        <div className="bg-white">
           <Tabs 
             value={activeTab} 
             onValueChange={setActiveTab}
