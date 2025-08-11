@@ -17,9 +17,10 @@ interface NotificationDropdownProps {
   unreadCount: number;
   onNotificationRead: (notificationId: string) => Promise<void>;
   onDropdownViewed: () => void;
+  onMarkAllAsRead: () => Promise<void>;
 }
 
-const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notifications, unreadCount, onNotificationRead, onDropdownViewed }) => {
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notifications, unreadCount, onNotificationRead, onDropdownViewed, onMarkAllAsRead }) => {
   const navigate = useNavigate();
 
   const handleNotificationClick = async (notification: Notification) => {
@@ -109,7 +110,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 p-0 bg-white border border-gray-200 shadow-lg z-50">{/* Added proper styling */}
         <div className="p-4 border-b">
-          <h3 className="font-semibold text-sm">Notifications</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm">Notifications</h3>
+            {unreadCount > 0 && (
+              <Button size="sm" variant="outline" onClick={onMarkAllAsRead}>
+                Mark all as read
+              </Button>
+            )}
+          </div>
           {unreadCount > 0 && (
             <p className="text-xs text-muted-foreground mt-1">
               You have {unreadCount} unread notification{unreadCount > 1 ? 's' : ''}

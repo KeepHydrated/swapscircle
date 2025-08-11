@@ -2,13 +2,14 @@ import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Bell, MessageCircle, User, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '@/hooks/useUnreadNotifications';
 
 const Notifications: React.FC = () => {
   const navigate = useNavigate();
-  const { notifications, loading, markAsRead } = useNotifications();
+  const { notifications, loading, markAsRead, markAllAsRead } = useNotifications();
 
   console.log('🔔 NOTIFICATIONS PAGE: Render state:', { 
     notificationsLength: notifications.length, 
@@ -103,8 +104,13 @@ const Notifications: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Notifications</h1>
+        {notifications.length > 0 && (
+          <Button variant="outline" size="sm" onClick={markAllAsRead}>
+            Mark all as read
+          </Button>
+        )}
       </div>
 
       <div className="space-y-4">

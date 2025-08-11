@@ -21,7 +21,7 @@ import { useNotifications } from '@/hooks/useUnreadNotifications';
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
-  const { notifications, unreadCount, markAsRead, markDropdownAsViewed } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
 
   const handleLogout = async () => {
     await signOut();
@@ -93,7 +93,7 @@ const Header = () => {
                 </Link>
               </Button>
               
-              <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} />
+              <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
