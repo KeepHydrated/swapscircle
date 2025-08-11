@@ -65,8 +65,8 @@ const ConversationList = ({
                       src={conversation.otherUserProfile?.avatar_url || undefined} 
                       alt={`${conversation.name}'s avatar`} 
                     />
-                    <AvatarFallback className="bg-purple-100 text-purple-800">
-                      {conversation.name.substring(0, 2)}
+                    <AvatarFallback>
+                      {conversation.name.substring(0, 1).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </div>

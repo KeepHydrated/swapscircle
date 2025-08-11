@@ -18,8 +18,8 @@ const MessageBubble = ({ message, senderName }: MessageBubbleProps) => {
       <div className={`flex items-end gap-2 max-w-[70%] ${isUserMessage ? 'flex-row-reverse' : 'flex-row'}`}>
         {!isUserMessage && (
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-purple-100 text-purple-800">
-              {senderName.substring(0, 2)}
+            <AvatarFallback>
+              {senderName.substring(0, 1).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         )}

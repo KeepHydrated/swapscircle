@@ -32,8 +32,8 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
           <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
             <Avatar className="h-12 w-12 cursor-pointer">
               <AvatarImage src={avatarUrl} alt={profileName} />
-              <AvatarFallback className="bg-purple-100 text-purple-800">
-                {profileName.substring(0, 2)}
+              <AvatarFallback>
+                {profileName.substring(0, 1).toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </Link>

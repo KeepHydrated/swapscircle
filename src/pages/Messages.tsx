@@ -200,8 +200,8 @@ const Messages = () => {
                             src={conversation.otherUserProfile?.avatar_url || undefined} 
                             alt={`${conversation.name}'s avatar`} 
                           />
-                          <AvatarFallback className="bg-purple-100 text-purple-800">
-                            {conversation.name.substring(0, 2)}
+                          <AvatarFallback>
+                            {conversation.name.substring(0, 1).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
@@ -254,7 +254,7 @@ const Messages = () => {
                   <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} onClick={() => console.log('Messages.tsx Avatar Link - userId:', activeChat.otherUserProfile?.id)}>
                     <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
                       <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
-                      <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 2)}</AvatarFallback>
+                      <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Link>
                   <div className="flex-1">
