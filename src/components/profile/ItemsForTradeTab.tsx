@@ -132,11 +132,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                     Draft
                   </div>
                 )}
-                {isRemoved && (
-                  <div className="bg-red-800/75 text-white text-xs px-2 py-1 rounded">
-                    Removed
-                  </div>
-                )}
+                {/* Removed chip intentionally omitted; large overlay is sufficient */}
               </div>
 
             </div>
