@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { TriangleAlert, ShieldAlert, Clock, Info } from 'lucide-react';
+import { TriangleAlert, ShieldAlert, Clock } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import ItemCarousel from '@/components/messages/details/ItemCarousel';
@@ -230,13 +230,6 @@ const NotificationDetails: React.FC = () => {
                 <div className="text-sm whitespace-pre-wrap">
                   {notification?.message || 'No additional details provided.'}
                 </div>
-                <Alert>
-                  <Info className="h-4 w-4" />
-                  <AlertTitle>Need help?</AlertTitle>
-                  <AlertDescription>
-                    If you think this was a mistake, you can update your item to comply with the guidelines and republish it.
-                  </AlertDescription>
-                </Alert>
                 <div className="flex gap-2">
                   <Button variant="destructive" onClick={handleDelete}>Delete item</Button>
                   <Button onClick={() => navigate('/profile')}>Go to your profile</Button>
