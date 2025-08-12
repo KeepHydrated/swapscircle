@@ -9,6 +9,7 @@ import { TriangleAlert, ShieldAlert, Clock, Info } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import ItemCarousel from '@/components/messages/details/ItemCarousel';
+import { deleteItem } from '@/services/authService';
 
 interface DbNotification {
   id: string;
@@ -133,6 +134,25 @@ const NotificationDetails: React.FC = () => {
     navigate('/notifications');
   };
 
+  const handleDelete = async () => {
+    try {
+      // Prefer deleting the referenced item if available
+      const targetId = item?.id || notification?.reference_id;
+      if (!targetId) {
+        navigate('/notifications');
+        return;
+      }
+      const confirmDelete = window.confirm('Delete this item permanently? This cannot be undone.');
+      if (!confirmDelete) return;
+      const ok = await deleteItem(targetId);
+      if (ok) {
+        navigate('/notifications');
+      }
+    } catch (e) {
+      console.error('Delete failed', e);
+    }
+  };
+
   return (
     <MainLayout>
       <header className="mb-6 flex items-center justify-between gap-4">
@@ -218,7 +238,7 @@ const NotificationDetails: React.FC = () => {
                   </AlertDescription>
                 </Alert>
                 <div className="flex gap-2">
-                  <Button variant="secondary" onClick={handleBack}>Back to notifications</Button>
+                  <Button variant="destructive" onClick={handleDelete}>Delete item</Button>
                   <Button onClick={() => navigate('/profile')}>Go to your profile</Button>
                 </div>
               </CardContent>
