@@ -324,7 +324,7 @@ const OtherPersonProfile: React.FC = () => {
         } else {
           // Check for mutual match result and navigate to messages
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-            toast.success("It's a match! 🎉 Starting conversation...");
+            // Keep single match toast handled in authService; just navigate
             // Navigate to messages after a delay
             setTimeout(() => {
               navigate('/messages', {

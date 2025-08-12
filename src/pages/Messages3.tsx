@@ -138,7 +138,7 @@ const Messages3: React.FC = () => {
         // Check for mutual match result
         if (result && typeof result === 'object' && 'success' in result && result.success) {
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-            toast.success("It's a match! 🎉 Starting conversation...");
+            // Keep single match toast handled in authService; just navigate
             // Navigate to messages after a delay
             setTimeout(() => {
               navigate('/messages', {
