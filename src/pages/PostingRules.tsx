@@ -143,7 +143,7 @@ const PostingRules: React.FC = () => {
             </div>
             <Separator />
             <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-              <li>Set fair prices. If open to offers, include a price range.</li>
+              
               <li>Don’t misrepresent retail value or condition.</li>
               <li>Post only items you currently own and can trade.</li>
               <li>No bait listings or placeholders intended to redirect users.</li>
