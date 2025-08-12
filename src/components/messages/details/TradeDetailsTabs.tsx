@@ -221,27 +221,31 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
                 className="w-full h-full object-cover"
               />
               
-              {/* Navigation Arrows */}
-              <button
-                onClick={handlePrevImage}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700" />
-              </button>
-              
-              <button
-                onClick={handleNextImage}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-700" />
-              </button>
-              
-              {/* Image Counter */}
-              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
-                {currentImageIndex + 1}/{itemImages.length}
-              </div>
+{itemImages.length > 1 && (
+              <>
+                {/* Navigation Arrows */}
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </button>
+                
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-700" />
+                </button>
+                
+                {/* Image Counter */}
+                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
+                  {currentImageIndex + 1}/{itemImages.length}
+                </div>
+              </>
+            )}
             </div>
             
             {/* Item Details */}
@@ -287,27 +291,31 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
                 className="w-full h-full object-cover"
               />
               
-              {/* Navigation Arrows */}
-              <button
-                onClick={handlePrevTheirImage}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700" />
-              </button>
-              
-              <button
-                onClick={handleNextTheirImage}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-700" />
-              </button>
-              
-              {/* Image Counter */}
-              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
-                {currentImageIndex + 1}/{theirItemImages.length}
-              </div>
+{theirItemImages.length > 1 && (
+              <>
+                {/* Navigation Arrows */}
+                <button
+                  onClick={handlePrevTheirImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </button>
+                
+                <button
+                  onClick={handleNextTheirImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-700" />
+                </button>
+                
+                {/* Image Counter */}
+                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
+                  {currentImageIndex + 1}/{theirItemImages.length}
+                </div>
+              </>
+            )}
             </div>
             
             {/* Their Item Details */}
