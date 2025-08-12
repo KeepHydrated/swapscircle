@@ -53,7 +53,7 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
         </div>
         <div className="p-4">
           <div className="flex items-center justify-between">
-            <h3 className={`font-medium ${isRemoved ? 'text-red-700' : 'text-gray-800'}`}>
+            <h3 className={`font-medium text-center ${isRemoved ? 'text-red-700' : 'text-gray-800'}`}>
               {item.name}
             </h3>
             {isRemoved && (

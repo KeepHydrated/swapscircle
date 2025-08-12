@@ -137,7 +137,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
 
             </div>
             <div className="p-4">
-              <h3 className={`font-medium ${isHidden || isDraft || isRemoved ? 'text-gray-500' : 'text-gray-800'}`}>
+              <h3 className={`font-medium text-center ${isHidden || isDraft || isRemoved ? 'text-gray-500' : 'text-gray-800'}`}>
                 {item.name}
               </h3>
             </div>
