@@ -12,6 +12,7 @@ interface OtherProfileTabContentProps {
   reviews: any[];
   setPopupItem: (item: MatchItem | null) => void;
   onLikeItem: (id: string) => void;
+  onRejectItem: (id: string) => void;
   isFriend: boolean;
 }
 
@@ -21,6 +22,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
   reviews,
   setPopupItem,
   onLikeItem,
+  onRejectItem,
   isFriend
 }) => {
   // Handle item click to show popup
@@ -53,6 +55,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                 liked={item.liked}
                 onSelect={handleItemClick}
                 onLike={onLikeItem}
+                onReject={(id) => onRejectItem(id)}
                 disableLike={!isFriend}
                 status={item.status}
               />

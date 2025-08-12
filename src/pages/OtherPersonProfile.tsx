@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { blockingService } from '@/services/blockingService';
 import { ReportItemModal } from '@/components/items/ReportItemModal';
+import { rejectItem } from '@/services/rejectionService';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -189,7 +190,7 @@ const OtherPersonProfile: React.FC = () => {
   
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
-
+  const [globallyRejectedIds, setGloballyRejectedIds] = useState<Set<string>>(new Set());
   // Listen for like updates from other pages (e.g., Home) and update UI
   useEffect(() => {
     const handler = (e: Event) => {
@@ -348,11 +349,37 @@ const OtherPersonProfile: React.FC = () => {
     }
   };
 
+  // Reject an item globally (for all my items)
+  const handleRejectItemGlobal = async (id: string) => {
+    if (!currentUserId) {
+      navigate('/auth');
+      return;
+    }
+    try {
+      const success = await rejectItem(id);
+      if (success) {
+        setGloballyRejectedIds(prev => {
+          const next = new Set(prev);
+          next.add(id);
+          return next;
+        });
+        toast.success('Item rejected for all your items');
+      } else {
+        toast.error('Failed to reject item');
+      }
+    } catch (error) {
+      console.error('Error rejecting item globally:', error);
+      toast.error('Failed to reject item');
+    }
+  };
   // Update items with liked status
   const itemsWithLikedStatus = itemsAsMatchItems.map(item => ({
     ...item,
     liked: likedItems[item.id] || false
   }));
+
+  // Hide globally rejected items locally after action
+  const visibleItems = itemsWithLikedStatus.filter(item => !globallyRejectedIds.has(item.id));
 
   // Keep track of the index of the current popup item among this profile's items
   useEffect(() => {
@@ -468,10 +495,11 @@ const OtherPersonProfile: React.FC = () => {
             {/* We're moving the tab content inside the Tabs component */}
             <OtherProfileTabContent 
               activeTab={activeTab}
-              items={itemsWithLikedStatus}
+              items={visibleItems}
               reviews={userReviews}
               setPopupItem={setPopupItem}
               onLikeItem={handleLikeItem}
+              onRejectItem={handleRejectItemGlobal}
               isFriend={isFriend}
             />
           </Tabs>
