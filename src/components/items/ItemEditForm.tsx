@@ -29,6 +29,8 @@ interface ItemEditFormProps {
   categoryOptions: string[];
   conditionOptions: string[];
   priceRangeOptions: string[];
+  lookingForPriceRanges: string[];
+  setLookingForPriceRanges: (ranges: string[]) => void;
 }
 
 const ItemEditForm: React.FC<ItemEditFormProps> = ({
@@ -53,6 +55,8 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
   categoryOptions,
   conditionOptions,
   priceRangeOptions,
+  lookingForPriceRanges,
+  setLookingForPriceRanges,
 }) => {
   return (
     <div className="space-y-4">
@@ -186,6 +190,33 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
                 />
                 <Label htmlFor={`looking-condition-${cond}`} className="text-sm">
                   {cond}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Looking For Price Range */}
+        <div className="space-y-3 mt-4">
+          <Label className="text-sm font-medium">
+            Price Range <span className="text-red-500">*</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            {priceRangeOptions.map((range) => (
+              <div key={range} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`looking-price-${range}`}
+                  checked={lookingForPriceRanges.includes(range)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setLookingForPriceRanges([...lookingForPriceRanges, range]);
+                    } else {
+                      setLookingForPriceRanges(lookingForPriceRanges.filter(r => r !== range));
+                    }
+                  }}
+                />
+                <Label htmlFor={`looking-price-${range}`} className="text-sm">
+                  {range}
                 </Label>
               </div>
             ))}

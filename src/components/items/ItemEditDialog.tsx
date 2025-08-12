@@ -38,6 +38,7 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
   const [lookingForCategories, setLookingForCategories] = useState<string[]>(item?.looking_for_categories || []);
   const [lookingForConditions, setLookingForConditions] = useState<string[]>(item?.looking_for_conditions || []);
   const [lookingForDescription, setLookingForDescription] = useState(item?.looking_for_description || '');
+  const [lookingForPriceRanges, setLookingForPriceRanges] = useState<string[]>(item?.looking_for_price_ranges || []);
 
   // Reset form when item changes
   React.useEffect(() => {
@@ -51,6 +52,7 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
       setLookingForCategories(item.looking_for_categories || []);
       setLookingForConditions(item.looking_for_conditions || []);
       setLookingForDescription(item.looking_for_description || '');
+      setLookingForPriceRanges(item.looking_for_price_ranges || []);
     }
   }, [item]);
 
@@ -79,6 +81,7 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
       looking_for_categories: lookingForCategories,
       looking_for_conditions: lookingForConditions,
       looking_for_description: lookingForDescription,
+      looking_for_price_ranges: lookingForPriceRanges,
     };
     
     onSave(updatedItem);
@@ -127,6 +130,8 @@ const ItemEditDialog: React.FC<ItemEditDialogProps> = ({
             categoryOptions={categoryOptions}
             conditionOptions={conditionOptions}
             priceRangeOptions={priceRangeOptions}
+            lookingForPriceRanges={lookingForPriceRanges}
+            setLookingForPriceRanges={setLookingForPriceRanges}
           />
           
           {/* Dialog Footer */}
