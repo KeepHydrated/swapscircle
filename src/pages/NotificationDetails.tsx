@@ -9,7 +9,7 @@ import { TriangleAlert, ShieldAlert, Clock, Info } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import ItemCarousel from '@/components/messages/details/ItemCarousel';
-import { deleteItem } from '@/services/authService';
+import { deleteItemWithRelations } from '@/services/authService';
 
 interface DbNotification {
   id: string;
@@ -144,7 +144,7 @@ const NotificationDetails: React.FC = () => {
       }
       const confirmDelete = window.confirm('Delete this item permanently? This cannot be undone.');
       if (!confirmDelete) return;
-      const ok = await deleteItem(targetId);
+      const ok = await deleteItemWithRelations(targetId);
       if (ok) {
         navigate('/notifications');
       }
