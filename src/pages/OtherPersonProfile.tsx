@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { blockingService } from '@/services/blockingService';
 import { ReportItemModal } from '@/components/items/ReportItemModal';
-import { rejectItem } from '@/services/rejectionService';
+import { rejectItem, getUserRejectedItems } from '@/services/rejectionService';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -190,7 +190,7 @@ const OtherPersonProfile: React.FC = () => {
   
   // State to track liked items
   const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
-  const [globallyRejectedIds, setGloballyRejectedIds] = useState<Set<string>>(new Set());
+  const [rejectedForSelected, setRejectedForSelected] = useState<Set<string>>(new Set());
   // Listen for like updates from other pages (e.g., Home) and update UI
   useEffect(() => {
     const handler = (e: Event) => {
@@ -256,10 +256,13 @@ const OtherPersonProfile: React.FC = () => {
     };
   }, []);
 
-  // Recompute liked status when selected item or items change
+  // Recompute liked status and rejected list when selected item or items change
   useEffect(() => {
     const refresh = async () => {
-      if (!userItems || userItems.length === 0) return;
+      if (!userItems || userItems.length === 0) {
+        setRejectedForSelected(new Set());
+        return;
+      }
       const map: Record<string, boolean> = {};
       for (const item of userItems) {
         try {
@@ -270,6 +273,18 @@ const OtherPersonProfile: React.FC = () => {
         }
       }
       setLikedItems(map);
+
+      // Load pair-specific rejections for the currently selected item
+      if (selectedItemIdFromHomepage) {
+        try {
+          const rejected = await getUserRejectedItems(selectedItemIdFromHomepage);
+          setRejectedForSelected(new Set(rejected));
+        } catch (e) {
+          setRejectedForSelected(new Set());
+        }
+      } else {
+        setRejectedForSelected(new Set());
+      }
     };
     refresh();
   }, [userItems, selectedItemIdFromHomepage]);
@@ -349,26 +364,31 @@ const OtherPersonProfile: React.FC = () => {
     }
   };
 
-  // Reject an item globally (for all my items)
-  const handleRejectItemGlobal = async (id: string) => {
+  // Reject an item only for the currently selected item (pair-specific)
+  const handleRejectItemForSelected = async (id: string) => {
     if (!currentUserId) {
       navigate('/auth');
       return;
     }
+    const currentSelectedItemId = localStorage.getItem('selectedUserItemId');
+    if (!currentSelectedItemId) {
+      toast.error('Select one of your items first to reject for that item');
+      return;
+    }
     try {
-      const success = await rejectItem(id);
+      const success = await rejectItem(id, currentSelectedItemId);
       if (success) {
-        setGloballyRejectedIds(prev => {
+        setRejectedForSelected(prev => {
           const next = new Set(prev);
           next.add(id);
           return next;
         });
-        toast.success('Item rejected for all your items');
+        toast.success('Item removed from this item’s feed');
       } else {
         toast.error('Failed to reject item');
       }
     } catch (error) {
-      console.error('Error rejecting item globally:', error);
+      console.error('Error rejecting item:', error);
       toast.error('Failed to reject item');
     }
   };
@@ -378,8 +398,8 @@ const OtherPersonProfile: React.FC = () => {
     liked: likedItems[item.id] || false
   }));
 
-  // Hide globally rejected items locally after action
-  const visibleItems = itemsWithLikedStatus.filter(item => !globallyRejectedIds.has(item.id));
+  // Hide items rejected for the currently selected item only
+  const visibleItems = itemsWithLikedStatus.filter(item => !rejectedForSelected.has(item.id));
 
   // Keep track of the index of the current popup item among this profile's items
   useEffect(() => {
@@ -499,7 +519,7 @@ const OtherPersonProfile: React.FC = () => {
               reviews={userReviews}
               setPopupItem={setPopupItem}
               onLikeItem={handleLikeItem}
-              onRejectItem={handleRejectItemGlobal}
+              onRejectItem={handleRejectItemForSelected}
               isFriend={isFriend}
             />
           </Tabs>
