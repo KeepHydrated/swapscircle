@@ -324,94 +324,82 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
     for (const otherItem of availableItems) {
       let matchScore = 0;
-      let isMatch = false;
 
-      // BIDIRECTIONAL MATCHING: Check both directions for interest
-      let currentUserInterested = false;
-      let otherUserInterested = false;
+      // Build per-criterion gates (bi-directional). Each side must satisfy all criteria that the other specified.
+      // A = selectedItem (current user), B = otherItem (owner)
 
-      // Direction 1: Does the other item match what the current user is looking for?
-      if (selectedItem.looking_for_categories && selectedItem.looking_for_categories.length > 0) {
-        if (otherItem.category && selectedItem.looking_for_categories.includes(otherItem.category)) {
-          matchScore += 3;
-          currentUserInterested = true;
-        }
-      }
+      // Category gates
+      const aRequiresCategory = Array.isArray(selectedItem.looking_for_categories) && selectedItem.looking_for_categories.length > 0;
+      const bSatisfiesACategory = !!(otherItem.category && aRequiresCategory && selectedItem.looking_for_categories!.includes(otherItem.category));
+      const aCategoryGate = !aRequiresCategory || bSatisfiesACategory;
 
-      if (selectedItem.looking_for_conditions && selectedItem.looking_for_conditions.length > 0) {
-        if (otherItem.condition && selectedItem.looking_for_conditions.includes(otherItem.condition)) {
-          matchScore += 2;
-          currentUserInterested = true;
-        }
-      }
+      const bRequiresCategory = Array.isArray(otherItem.looking_for_categories) && otherItem.looking_for_categories.length > 0;
+      const aSatisfiesBCategory = !!(selectedItem.category && bRequiresCategory && otherItem.looking_for_categories!.includes(selectedItem.category));
+      const bCategoryGate = !bRequiresCategory || aSatisfiesBCategory;
 
-      // Keyword matching in description/name
-      if (selectedItem.looking_for_description && (otherItem.name || otherItem.description)) {
-        const lookingForKeywords = selectedItem.looking_for_description.toLowerCase().split(' ');
-        const itemName = (otherItem.name || '').toLowerCase();
-        const itemDescription = (otherItem.description || '').toLowerCase();
-        for (const keyword of lookingForKeywords) {
-          if (keyword.length > 2 && (itemName.includes(keyword) || itemDescription.includes(keyword))) {
-            matchScore += 1;
-            currentUserInterested = true;
-            break;
-          }
-        }
-      }
+      if (bSatisfiesACategory) matchScore += 3;
+      if (aSatisfiesBCategory) matchScore += 5;
 
-      // PRICE: require overlap with at least one of selectedItem's desired ranges (if any)
-      const priceCheck1 = priceOverlapsAny(otherItem.price_range_min, otherItem.price_range_max, selectedItem.looking_for_price_ranges);
-      if (priceCheck1.matched) {
-        matchScore += 3; // contribute to score when price matches desired
-        currentUserInterested = true;
-      }
+      // Condition gates
+      const aRequiresCondition = Array.isArray(selectedItem.looking_for_conditions) && selectedItem.looking_for_conditions.length > 0;
+      const bSatisfiesACondition = !!(otherItem.condition && aRequiresCondition && selectedItem.looking_for_conditions!.includes(otherItem.condition));
+      const aConditionGate = !aRequiresCondition || bSatisfiesACondition;
 
-      // Direction 2: Does the current user's item match what the other user is looking for?
-      if (otherItem.looking_for_categories && otherItem.looking_for_categories.length > 0) {
-        if (selectedItem.category && otherItem.looking_for_categories.includes(selectedItem.category)) {
-          matchScore += 5;
-          otherUserInterested = true;
-        }
-      }
+      const bRequiresCondition = Array.isArray(otherItem.looking_for_conditions) && otherItem.looking_for_conditions.length > 0;
+      const aSatisfiesBCondition = !!(selectedItem.condition && bRequiresCondition && otherItem.looking_for_conditions!.includes(selectedItem.condition));
+      const bConditionGate = !bRequiresCondition || aSatisfiesBCondition;
 
-      if (otherItem.looking_for_conditions && otherItem.looking_for_conditions.length > 0) {
-        if (selectedItem.condition && otherItem.looking_for_conditions.includes(selectedItem.condition)) {
-          matchScore += 3;
-          otherUserInterested = true;
-        }
-      }
+      if (bSatisfiesACondition) matchScore += 2;
+      if (aSatisfiesBCondition) matchScore += 3;
 
-      if (otherItem.looking_for_description && (selectedItem.name || selectedItem.description)) {
-        const otherLookingForKeywords = otherItem.looking_for_description.toLowerCase().split(' ');
-        const ourItemName = (selectedItem.name || '').toLowerCase();
-        const ourItemDescription = (selectedItem.description || '').toLowerCase();
-        for (const keyword of otherLookingForKeywords) {
-          if (keyword.length > 2 && (ourItemName.includes(keyword) || ourItemDescription.includes(keyword))) {
-            matchScore += 2;
-            otherUserInterested = true;
-            break;
-          }
-        }
-      }
+      // Description/keyword gates
+      const tokenize = (s?: string | null) => (s || '').toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2);
 
-      // PRICE: require overlap with at least one of otherItem's desired ranges (if any)
-      const priceCheck2 = priceOverlapsAny(selectedItem.priceRangeMin, selectedItem.priceRangeMax, otherItem.looking_for_price_ranges);
-      if (priceCheck2.matched) {
-        matchScore += 4;
-        otherUserInterested = true;
-      }
+      const aKeywords = tokenize(selectedItem.looking_for_description);
+      const aRequiresKeywords = aKeywords.length > 0;
+      const bText = `${(otherItem.name || '').toLowerCase()} ${
+        (otherItem.description || '').toLowerCase()
+      }`;
+      const bSatisfiesADescription = aRequiresKeywords && aKeywords.some(k => bText.includes(k));
+      const aDescriptionGate = !aRequiresKeywords || bSatisfiesADescription;
 
-      // BIDIRECTIONAL AND PRICE GATE: must be mutually interested AND pass price gates when ranges are selected
-      const priceGatesPass = priceCheck1.gatePass && priceCheck2.gatePass;
-      isMatch = currentUserInterested && otherUserInterested && priceGatesPass;
+      const bKeywords = tokenize(otherItem.looking_for_description);
+      const bRequiresKeywords = bKeywords.length > 0;
+      const aText = `${(selectedItem.name || '').toLowerCase()} ${
+        (selectedItem.description || '').toLowerCase()
+      }`;
+      const aSatisfiesBDescription = bRequiresKeywords && bKeywords.some(k => aText.includes(k));
+      const bDescriptionGate = !bRequiresKeywords || aSatisfiesBDescription;
 
-      // Bonus for mutual confirmed match
+      if (bSatisfiesADescription) matchScore += 1;
+      if (aSatisfiesBDescription) matchScore += 2;
+
+      // Price range gates (using helper)
+      const priceCheckA = priceOverlapsAny(
+        otherItem.price_range_min,
+        otherItem.price_range_max,
+        selectedItem.looking_for_price_ranges
+      );
+      const aPriceGate = priceCheckA.gatePass; // true if no ranges specified OR overlap exists
+      if (priceCheckA.matched) matchScore += 3;
+
+      const priceCheckB = priceOverlapsAny(
+        selectedItem.priceRangeMin,
+        selectedItem.priceRangeMax,
+        otherItem.looking_for_price_ranges
+      );
+      const bPriceGate = priceCheckB.gatePass;
+      if (priceCheckB.matched) matchScore += 4;
+
+      // Final decision: both sides must pass ALL gates they require
+      const currentUserAllGates = aCategoryGate && aConditionGate && aDescriptionGate && aPriceGate;
+      const otherUserAllGates = bCategoryGate && bConditionGate && bDescriptionGate && bPriceGate;
+      const isMatch = currentUserAllGates && otherUserAllGates;
+
       if (isMatch) {
+        // Bonus for mutual confirmed match
         matchScore += 10;
-      }
 
-      // If there's any match, add to results
-      if (isMatch) {
         const userProfile = profileMap.get(otherItem.user_id);
         matches.push({
           id: otherItem.id,
