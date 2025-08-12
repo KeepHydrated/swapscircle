@@ -38,6 +38,7 @@ export function useUserItems(includeDrafts: boolean = false) {
           .eq('user_id', user.id)
           .eq('is_hidden', false) // Only show non-hidden items
           .in('status', includeDrafts ? ['published', 'draft', 'removed'] : ['published']) // Exclude removed items on homepage and matches
+          .eq('is_available', true) // Hide items taken off the market after trade completion
           .order('created_at', { ascending: false });
 
         console.log('🔍 SUPABASE QUERY RESULT - Error:', error);
