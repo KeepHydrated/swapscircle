@@ -79,8 +79,7 @@ const UserProfile: React.FC = () => {
         .from('items')
         .select('*')
         .eq('user_id', user_id)
-         .eq('is_hidden', false) // Only show non-hidden items
-         .in('status', ['published', 'draft', 'removed']) // Include removed items for display
+        .in('status', ['published', 'draft', 'removed']) // Include removed and hidden items for owner's view
         .order('updated_at', { ascending: false });
 
       if (items) {
