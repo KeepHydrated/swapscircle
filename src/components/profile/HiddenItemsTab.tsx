@@ -38,7 +38,7 @@ const HiddenItemsTab: React.FC<HiddenItemsTabProps> = ({
         >
           <div className="aspect-[4/3] relative overflow-hidden">
             <img 
-              src={item.image} 
+              src={item.image || (item as any).image_url || (Array.isArray((item as any).image_urls) ? (item as any).image_urls[0] : undefined) || '/placeholder.svg' } 
               alt={item.name} 
               className="w-full h-full object-cover"
             />

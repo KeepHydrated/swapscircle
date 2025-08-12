@@ -37,7 +37,7 @@ const OtherPersonProfile: React.FC = () => {
   // Convert items to MatchItems and add liked property
   const itemsAsMatchItems: MatchItem[] = userItems.map(item => ({
     ...item, 
-    image: item.image_url, // Map image_url to image for ItemCard component
+    image: (Array.isArray(item.image_urls) && item.image_urls.length > 0 ? item.image_urls[0] : (item.image_url || item.image)), // Prefer first image_url from array, then single url, then legacy image
     liked: false
   }));
   

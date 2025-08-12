@@ -40,9 +40,9 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
             onClick={() => onItemClick && onItemClick(item)}
           >
             <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 flex items-center justify-center">
-              {item.image ? (
+              {(item.image || item.image_url || (Array.isArray(item.image_urls) ? item.image_urls[0] : undefined)) ? (
                 <img 
-                  src={item.image} 
+                  src={item.image || item.image_url || (Array.isArray(item.image_urls) ? item.image_urls[0] : undefined)} 
                   alt={item.name} 
                   className={`w-full h-full object-cover ${isRemoved ? 'grayscale' : ''}`}
                 />

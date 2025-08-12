@@ -35,7 +35,7 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
         <div className="relative">
           <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
             <Avatar className="h-full w-full rounded-none">
-              <AvatarImage src={item.image} alt={item.name} className="object-cover" />
+              <AvatarImage src={item.image_urls?.[0] || item.image_url || item.image || '/placeholder.svg'} alt={item.name} className="object-cover" />
               <AvatarFallback className="rounded-none text-gray-400 text-xs">
                 320 × 240
               </AvatarFallback>
