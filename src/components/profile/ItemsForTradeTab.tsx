@@ -58,6 +58,33 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                   </div>
                 </div>
               )}
+              {/* Action Icons - Top Left - for removed items */}
+              {isRemoved && (
+                <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button 
+                    size="icon" 
+                    variant="secondary" 
+                    className="h-8 w-8 bg-white/90 hover:bg-white" 
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      if (onEditClick) onEditClick(item);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    size="icon" 
+                    variant="secondary" 
+                    className="h-8 w-8 bg-white/90 hover:bg-white" 
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      if (onDeleteClick) onDeleteClick(item);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+              )}
               {/* Action Icons - Top Left - Hide for removed items */}
               {!isRemoved && (
                 <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
