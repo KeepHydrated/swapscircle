@@ -23,7 +23,7 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
       <Card 
         className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
           isSelected ? 'ring-2 ring-primary shadow-md' : ''
-        } ${isRemoved ? 'border-red-200 bg-red-50/50' : ''}`}
+        } ${isRemoved ? 'bg-red-50/50' : ''}`}
         onClick={() => onItemClick(item)}
       >
         <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 flex items-center justify-center">

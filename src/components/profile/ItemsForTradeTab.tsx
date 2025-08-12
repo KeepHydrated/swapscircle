@@ -36,7 +36,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
             key={item.id} 
             className={`overflow-hidden hover:shadow-md transition-shadow cursor-pointer group relative ${
               isHidden || isDraft || isRemoved ? 'opacity-60' : ''
-            } ${isRemoved ? 'border-2 border-red-500' : ''}`}
+            }`}
             onClick={() => onItemClick && onItemClick(item)}
           >
             <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 flex items-center justify-center">
