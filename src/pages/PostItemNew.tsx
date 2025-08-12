@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
@@ -401,6 +401,9 @@ const PostItemNew: React.FC = () => {
               {isEditing ? 'Edit Your Item' : 'What You\'re Offering'}
             </CardTitle>
             <p className="text-muted-foreground mt-2">{isEditing ? 'Update your item details' : 'Tell us about the item you want to trade'}</p>
+            <div className="text-xs text-muted-foreground mt-1">
+              Please review our <Link to="/posting-rules" className="underline underline-offset-2">Posting Rules</Link> before posting.
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Images */}
