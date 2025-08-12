@@ -67,17 +67,6 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                     className="h-8 w-8 bg-white/90 hover:bg-white" 
                     onClick={(e) => { 
                       e.stopPropagation(); 
-                      if (onEditClick) onEditClick(item);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    size="icon" 
-                    variant="secondary" 
-                    className="h-8 w-8 bg-white/90 hover:bg-white" 
-                    onClick={(e) => { 
-                      e.stopPropagation(); 
                       if (onDeleteClick) onDeleteClick(item);
                     }}
                   >
