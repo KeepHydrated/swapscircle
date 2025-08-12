@@ -497,10 +497,10 @@ const PostItemNew: React.FC = () => {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description">Description * (include what you want in trade)</Label>
               <Textarea
                 id="description"
-                placeholder="Describe your item"
+                placeholder="Describe your item, its condition, and what you're looking to trade for."
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={4}
@@ -582,17 +582,6 @@ const PostItemNew: React.FC = () => {
               <p className="text-muted-foreground mt-2">Describe what you'd like to receive in return</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Looking For Description */}
-              <div className="space-y-2">
-                <Label htmlFor="lookingForDescription">What are you hoping to get?</Label>
-                <Textarea
-                  id="lookingForDescription"
-                  placeholder="Describe what you'd like to trade for..."
-                  value={formData.lookingForDescription}
-                  onChange={(e) => handleInputChange('lookingForDescription', e.target.value)}
-                  rows={4}
-                />
-              </div>
 
               {/* Looking For Categories */}
               <div className="space-y-2">
