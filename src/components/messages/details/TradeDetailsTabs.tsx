@@ -80,8 +80,13 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     return [];
   };
 
-  const itemImages = getItemImages(selectedPair.item1);
-  const theirItemImages = getItemImages(selectedPair.item2);
+const itemImages = getItemImages(selectedPair.item1);
+const theirItemImages = getItemImages(selectedPair.item2);
+
+// Always start from the first image when switching items or pairs
+React.useEffect(() => {
+  setCurrentImageIndex(0);
+}, [selectedItem, selectedPair]);
 
   // Fetch trade status to check acceptance status
   const { data: tradeConversations = [] } = useQuery({
