@@ -38,7 +38,7 @@ const ItemCarousel = ({ imageUrls }: ItemCarouselProps) => {
     <>
       {/* Main image container with navigation buttons */}
       <div className="relative h-56 bg-gray-100 overflow-hidden">
-        <Carousel setApi={setApi} opts={{ align: "center", loop: true }}>
+        <Carousel setApi={setApi} opts={{ align: "center", loop: true }} className="h-full">
           <CarouselContent className="h-full">
             {imageUrls.map((url, index) => (
               <CarouselItem key={index} className="h-full">
