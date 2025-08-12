@@ -1,6 +1,5 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { createTradeAcceptedNotification } from '@/services/notificationService';
 
 export interface TradeConversation {
   id: string;
@@ -258,16 +257,17 @@ export const updateTradeAcceptance = async (conversationId: string, userRole: 'r
       throw error;
     }
 
-    // Notify the other party when someone accepts the trade
+    // Notify the other party when someone accepts the trade (server-side RPC to bypass RLS)
     try {
-      const { data: sessionRes } = await supabase.auth.getSession();
-      const currentUserId = sessionRes?.session?.user?.id;
-      if (accepted && currentUserId && data) {
-        const recipientId = currentUserId === data.requester_id ? data.owner_id : data.requester_id;
-        await createTradeAcceptedNotification(recipientId, undefined, conversationId);
+      if (accepted && data) {
+        const { error: rpcError } = await (supabase as any).rpc('create_trade_accepted_notification', {
+          p_conversation_id: conversationId,
+          p_message: null
+        });
+        if (rpcError) throw rpcError;
       }
     } catch (notifyError) {
-      console.error('Error sending trade accepted notification:', notifyError);
+      console.error('Error sending trade accepted notification via RPC:', notifyError);
     }
 
     return data;
