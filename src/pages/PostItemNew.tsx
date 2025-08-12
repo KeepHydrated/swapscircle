@@ -497,7 +497,7 @@ const PostItemNew: React.FC = () => {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description * (include what you want in trade)</Label>
+              <Label htmlFor="description">Description *</Label>
               <Textarea
                 id="description"
                 placeholder="Describe your item, its condition, and what you're looking to trade for."
