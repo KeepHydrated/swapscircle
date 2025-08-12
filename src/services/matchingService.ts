@@ -280,35 +280,76 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       });
     }
 
+    // Helper functions for price range matching within scope
+    const parsePriceRange = (range: string): { min: number; max: number } | null => {
+      if (!range) return null;
+      const trimmed = range.trim();
+      if (/^\d+\+$/.test(trimmed)) {
+        const min = parseFloat(trimmed.replace('+', ''));
+        if (isNaN(min)) return null;
+        return { min, max: Number.POSITIVE_INFINITY };
+      }
+      const parts = trimmed.split('-');
+      if (parts.length === 2) {
+        const min = parseFloat(parts[0]);
+        const max = parseFloat(parts[1]);
+        if (isNaN(min) || isNaN(max)) return null;
+        return { min, max };
+      }
+      return null;
+    };
+
+    const priceOverlapsAny = (
+      itemMin?: number | null,
+      itemMax?: number | null,
+      desiredRanges?: string[] | null
+    ): { gatePass: boolean; matched: boolean } => {
+      // If no desired ranges selected, treat as no restriction (gatePass) and no score contribution (matched=false)
+      if (!desiredRanges || desiredRanges.length === 0) return { gatePass: true, matched: false };
+      if (itemMin === undefined || itemMin === null) return { gatePass: false, matched: false };
+      const min = Number(itemMin);
+      const max = Number(itemMax ?? itemMin);
+      let matched = false;
+      for (const r of desiredRanges) {
+        const pr = parsePriceRange(r);
+        if (!pr) continue;
+        // overlap if ranges intersect
+        if (max >= pr.min && min <= pr.max) {
+          matched = true;
+          break;
+        }
+      }
+      return { gatePass: matched, matched };
+    };
+
     for (const otherItem of availableItems) {
       let matchScore = 0;
       let isMatch = false;
 
       // BIDIRECTIONAL MATCHING: Check both directions for interest
-      
-      // Direction 1: Does the other item match what the current user is looking for?
       let currentUserInterested = false;
-      
+      let otherUserInterested = false;
+
+      // Direction 1: Does the other item match what the current user is looking for?
       if (selectedItem.looking_for_categories && selectedItem.looking_for_categories.length > 0) {
-        if (selectedItem.looking_for_categories.includes(otherItem.category)) {
+        if (otherItem.category && selectedItem.looking_for_categories.includes(otherItem.category)) {
           matchScore += 3;
           currentUserInterested = true;
         }
       }
 
       if (selectedItem.looking_for_conditions && selectedItem.looking_for_conditions.length > 0) {
-        if (selectedItem.looking_for_conditions.includes(otherItem.condition)) {
+        if (otherItem.condition && selectedItem.looking_for_conditions.includes(otherItem.condition)) {
           matchScore += 2;
           currentUserInterested = true;
         }
       }
 
-      // Check keyword matching in description
-      if (selectedItem.looking_for_description && otherItem.name) {
+      // Keyword matching in description/name
+      if (selectedItem.looking_for_description && (otherItem.name || otherItem.description)) {
         const lookingForKeywords = selectedItem.looking_for_description.toLowerCase().split(' ');
-        const itemName = otherItem.name.toLowerCase();
+        const itemName = (otherItem.name || '').toLowerCase();
         const itemDescription = (otherItem.description || '').toLowerCase();
-        
         for (const keyword of lookingForKeywords) {
           if (keyword.length > 2 && (itemName.includes(keyword) || itemDescription.includes(keyword))) {
             matchScore += 1;
@@ -318,29 +359,32 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         }
       }
 
+      // PRICE: require overlap with at least one of selectedItem's desired ranges (if any)
+      const priceCheck1 = priceOverlapsAny(otherItem.price_range_min, otherItem.price_range_max, selectedItem.looking_for_price_ranges);
+      if (priceCheck1.matched) {
+        matchScore += 3; // contribute to score when price matches desired
+        currentUserInterested = true;
+      }
+
       // Direction 2: Does the current user's item match what the other user is looking for?
-      let otherUserInterested = false;
-      
       if (otherItem.looking_for_categories && otherItem.looking_for_categories.length > 0) {
-        if (otherItem.looking_for_categories.includes(selectedItem.category)) {
+        if (selectedItem.category && otherItem.looking_for_categories.includes(selectedItem.category)) {
           matchScore += 5;
           otherUserInterested = true;
         }
       }
 
       if (otherItem.looking_for_conditions && otherItem.looking_for_conditions.length > 0) {
-        if (otherItem.looking_for_conditions.includes(selectedItem.condition)) {
+        if (selectedItem.condition && otherItem.looking_for_conditions.includes(selectedItem.condition)) {
           matchScore += 3;
           otherUserInterested = true;
         }
       }
 
-      // Check if other user's looking for description matches our item
-      if (otherItem.looking_for_description && selectedItem.name) {
+      if (otherItem.looking_for_description && (selectedItem.name || selectedItem.description)) {
         const otherLookingForKeywords = otherItem.looking_for_description.toLowerCase().split(' ');
-        const ourItemName = selectedItem.name.toLowerCase();
+        const ourItemName = (selectedItem.name || '').toLowerCase();
         const ourItemDescription = (selectedItem.description || '').toLowerCase();
-        
         for (const keyword of otherLookingForKeywords) {
           if (keyword.length > 2 && (ourItemName.includes(keyword) || ourItemDescription.includes(keyword))) {
             matchScore += 2;
@@ -350,16 +394,21 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         }
       }
 
-      // BIDIRECTIONAL LOGIC: Show match ONLY if BOTH users are interested in each other's items
-      // This ensures true mutual matching based on criteria
-      isMatch = currentUserInterested && otherUserInterested;
-
-      // Add bonus score for mutual interest (which is now required)
-      if (isMatch) {
-        matchScore += 10; // Bonus for confirmed mutual match
+      // PRICE: require overlap with at least one of otherItem's desired ranges (if any)
+      const priceCheck2 = priceOverlapsAny(selectedItem.priceRangeMin, selectedItem.priceRangeMax, otherItem.looking_for_price_ranges);
+      if (priceCheck2.matched) {
+        matchScore += 4;
+        otherUserInterested = true;
       }
 
-      
+      // BIDIRECTIONAL AND PRICE GATE: must be mutually interested AND pass price gates when ranges are selected
+      const priceGatesPass = priceCheck1.gatePass && priceCheck2.gatePass;
+      isMatch = currentUserInterested && otherUserInterested && priceGatesPass;
+
+      // Bonus for mutual confirmed match
+      if (isMatch) {
+        matchScore += 10;
+      }
 
       // If there's any match, add to results
       if (isMatch) {
@@ -374,15 +423,15 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           tags: otherItem.tags,
           priceRangeMin: otherItem.price_range_min,
           priceRangeMax: otherItem.price_range_max,
-          liked: false, // Will be determined by like status
-          user_id: otherItem.user_id, // Include user_id for profile navigation
+          liked: false,
+          user_id: otherItem.user_id,
           userProfile: userProfile ? {
             name: userProfile.name,
             username: userProfile.username,
             avatar_url: userProfile.avatar_url
           } : undefined,
-          matchScore, // Add match score for potential sorting
-          created_at: otherItem.created_at // Include creation date for sorting
+          matchScore,
+          created_at: otherItem.created_at
         });
       }
     }
