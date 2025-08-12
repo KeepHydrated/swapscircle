@@ -274,7 +274,26 @@ const PostItemNew: React.FC = () => {
       return;
     }
 
-    // Note: Looking for categories and description are now optional
+    // Validation for preferences (right column) - all fields are now mandatory
+    if (!formData.lookingForDescription.trim()) {
+      toast.error("Please describe what you're looking for");
+      return;
+    }
+
+    if (formData.lookingForCategories.length === 0) {
+      toast.error("Please select at least one category you're looking for");
+      return;
+    }
+
+    if (formData.lookingForConditions.length === 0) {
+      toast.error("Please select at least one condition you're looking for");
+      return;
+    }
+
+    if (formData.lookingForPriceRanges.length === 0) {
+      toast.error("Please select at least one price range you're looking for");
+      return;
+    }
 
     console.log('✅ Validation passed, submitting...');
     setIsSubmitting(true);
