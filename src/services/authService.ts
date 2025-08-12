@@ -933,7 +933,7 @@ export const deleteItem = async (itemId: string) => {
   }
 };
 
-// Delete item and related rows to satisfy FK constraints
+// Delete item and related rows via secure server-side RPC to satisfy FK/RLS constraints
 export const deleteItemWithRelations = async (itemId: string) => {
   if (!isSupabaseConfigured()) {
     toast.error('Supabase is not configured. Please add environment variables.');
@@ -947,54 +947,12 @@ export const deleteItemWithRelations = async (itemId: string) => {
       return false;
     }
 
-    // 1) Remove dependent records to avoid FK constraint errors
-    // 1a) Messages in trade conversations involving this item
-    const { data: convs } = await supabase
-      .from('trade_conversations')
-      .select('id')
-      .or(`requester_item_id.eq.${itemId},owner_item_id.eq.${itemId}`);
+    // Use server-side cascade delete to avoid FK/RLS errors
+    const { error } = await supabase.rpc('delete_item_cascade', { p_item_id: itemId });
 
-    const convIds = (convs || []).map((c: any) => c.id);
-    if (convIds.length > 0) {
-      await supabase
-        .from('messages')
-        .delete()
-        .in('conversation_id', convIds);
-    }
-
-    // 1b) Trade conversations
-    await supabase
-      .from('trade_conversations')
-      .delete()
-      .or(`requester_item_id.eq.${itemId},owner_item_id.eq.${itemId}`);
-
-    // 1c) Mutual matches
-    await supabase
-      .from('mutual_matches')
-      .delete()
-      .or(`user1_item_id.eq.${itemId},user2_item_id.eq.${itemId}`);
-
-    // 1d) Likes and rejections
-    await supabase
-      .from('liked_items')
-      .delete()
-      .or(`item_id.eq.${itemId},my_item_id.eq.${itemId}`);
-
-    await supabase
-      .from('rejections')
-      .delete()
-      .or(`item_id.eq.${itemId},my_item_id.eq.${itemId}`);
-
-    // 2) Finally delete the item (owner only)
-    const { error: itemErr } = await supabase
-      .from('items')
-      .delete()
-      .eq('id', itemId)
-      .eq('user_id', session.user.id);
-
-    if (itemErr) {
-      console.error('Error deleting item:', itemErr);
-      toast.error('Error deleting item');
+    if (error) {
+      console.error('Error deleting item (RPC):', error);
+      toast.error(error.message || 'Error deleting item');
       return false;
     }
 

@@ -2486,6 +2486,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: undefined
       }
+      delete_item_cascade: {
+        Args: { p_item_id: string }
+        Returns: undefined
+      }
       delete_user_account: {
         Args: Record<PropertyKey, never>
         Returns: undefined
