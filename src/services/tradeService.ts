@@ -301,6 +301,17 @@ export const updateTradeStatus = async (conversationId: string, status: 'accepte
       throw error;
     }
 
+    if (status === 'completed') {
+      try {
+        const { error: rpcError2 } = await (supabase as any).rpc('create_trade_completed_notifications', {
+          p_conversation_id: conversationId,
+          p_message: null
+        });
+        if (rpcError2) throw rpcError2;
+      } catch (notifyErr) {
+        console.error('Error sending trade completed notifications via RPC:', notifyErr);
+      }
+    }
     return data;
   } catch (error) {
     console.error('Error updating trade status:', error);

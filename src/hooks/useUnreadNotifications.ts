@@ -83,6 +83,8 @@ export function useNotifications() {
         return 'New Message';
       case 'trade':
         return 'Trade Accepted';
+      case 'trade_completed':
+        return 'Trade Completed';
       case 'item_removed':
         return 'Item removed for policy violation';
       default:
@@ -106,6 +108,8 @@ export function useNotifications() {
       case 'item_removed':
         return `/notifications/${notificationId}`; // Go to dedicated details page
       case 'trade':
+        return referenceId ? `/messages?conversation=${referenceId}` : '/messages';
+      case 'trade_completed':
         return referenceId ? `/messages?conversation=${referenceId}` : '/messages';
       default:
         return undefined;
