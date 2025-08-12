@@ -72,6 +72,11 @@ const Trades = () => {
     ));
   };
 
+  const getItemImage = (item: any) => {
+    const urls = item?.image_urls as string[] | undefined;
+    return item?.image_url || (Array.isArray(urls) && urls.length > 0 ? urls[0] : '/placeholder.svg');
+  };
+
   const handleOpenChat = (tradeId: string) => {
     navigate(`/messages?conversation=${tradeId}`);
   };
@@ -176,8 +181,9 @@ const Trades = () => {
                         {/* Their Item */}
                          <div className="flex flex-col items-center">
                            <img 
-                             src={theirItem?.image_url || '/placeholder.svg'} 
+                             src={getItemImage(theirItem)} 
                              alt={theirItem?.name || 'Item'}
+                             loading="lazy"
                              className="w-24 h-24 object-cover rounded-lg mb-2 cursor-pointer hover:opacity-80 transition-opacity"
                              onClick={() => handleItemClick(theirItem)}
                            />
@@ -194,8 +200,9 @@ const Trades = () => {
                          {/* Your Item */}
                          <div className="flex flex-col items-center">
                            <img 
-                             src={yourItem?.image_url || '/placeholder.svg'} 
+                             src={getItemImage(yourItem)} 
                              alt={yourItem?.name || 'Item'}
+                             loading="lazy"
                              className="w-24 h-24 object-cover rounded-lg mb-2 cursor-pointer hover:opacity-80 transition-opacity"
                              onClick={() => handleItemClick(yourItem)}
                            />
