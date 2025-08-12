@@ -10,9 +10,10 @@ import {
 
 interface ItemCarouselProps {
   imageUrls: string[];
+  showThumbnails?: boolean;
 }
 
-const ItemCarousel = ({ imageUrls }: ItemCarouselProps) => {
+const ItemCarousel = ({ imageUrls, showThumbnails = true }: ItemCarouselProps) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   
@@ -76,23 +77,24 @@ const ItemCarousel = ({ imageUrls }: ItemCarouselProps) => {
         </div>
       </div>
       
-      {/* Thumbnail strip */}
-      <div className="p-2 flex overflow-x-auto bg-white border-t border-gray-100">
-        {imageUrls.map((url, index) => (
-          <div 
-            key={index}
-            onClick={() => api?.scrollTo(index)} 
-            className={`flex-shrink-0 w-16 h-16 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
-          >
-            <div 
-              className="w-full h-full bg-center bg-cover flex items-center justify-center text-gray-400"
-              style={{ backgroundImage: `url(${url})` }}
-            >
-              {!url && <span>Image {index + 1}</span>}
-            </div>
-          </div>
-        ))}
+{showThumbnails && (
+  <div className="p-2 flex overflow-x-auto bg-white border-t border-gray-100">
+    {imageUrls.map((url, index) => (
+      <div 
+        key={index}
+        onClick={() => api?.scrollTo(index)} 
+        className={`flex-shrink-0 w-16 h-16 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
+      >
+        <div 
+          className="w-full h-full bg-center bg-cover flex items-center justify-center text-gray-400"
+          style={{ backgroundImage: `url(${url})` }}
+        >
+          {!url && <span>Image {index + 1}</span>}
+        </div>
       </div>
+    ))}
+  </div>
+)}
     </>
   );
 };

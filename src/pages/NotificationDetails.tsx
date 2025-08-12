@@ -166,7 +166,7 @@ const NotificationDetails: React.FC = () => {
                 {item ? (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="rounded-lg overflow-hidden border border-border">
-                      <ItemCarousel imageUrls={getImageUrls(item)} />
+                      <ItemCarousel imageUrls={getImageUrls(item)} showThumbnails={false} />
                     </div>
                     <div className="flex flex-col gap-3">
                       <div>
