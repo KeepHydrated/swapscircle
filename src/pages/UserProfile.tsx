@@ -74,11 +74,12 @@ const UserProfile: React.FC = () => {
       });
 
       // Fetch items ordered by updated_at so recently published items appear first
-      // Include both published and draft items for the user's own profile
+      // Include both published and draft items for the user's own profile, but exclude traded (unavailable)
       const { data: items } = await supabase
         .from('items')
         .select('*')
         .eq('user_id', user_id)
+        .eq('is_available', true) // Hide items that were traded
         .in('status', ['published', 'draft', 'removed']) // Include removed and hidden items for owner's view
         .order('updated_at', { ascending: false });
 

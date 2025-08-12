@@ -101,6 +101,7 @@ const OtherPersonProfile: React.FC = () => {
           .eq('user_id', userId)
           .eq('is_hidden', false) // Only show non-hidden items
           .eq('status', 'published') // Only show published items, exclude removed
+          .eq('is_available', true) // Hide items traded away
           .is('removed_at', null); // Only show non-removed items
         
         if (profileError) {
