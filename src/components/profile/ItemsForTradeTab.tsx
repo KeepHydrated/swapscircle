@@ -144,11 +144,6 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
               <h3 className={`font-medium ${isHidden || isDraft || isRemoved ? 'text-gray-500' : 'text-gray-800'}`}>
                 {item.name}
               </h3>
-              {isRemoved && (item as any).removal_reason && (
-                <p className="text-xs text-red-600 mt-1 break-words">
-                  {(item as any).removal_reason}
-                </p>
-              )}
             </div>
           </Card>
         );

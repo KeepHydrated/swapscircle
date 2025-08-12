@@ -62,11 +62,6 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
               </Badge>
             )}
           </div>
-          {isRemoved && (item as any).removal_reason && (
-            <p className="text-xs text-red-600 mt-2 truncate">
-              {(item as any).removal_reason}
-            </p>
-          )}
         </div>
       </Card>
     </div>
