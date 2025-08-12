@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface Notification {
   id: string;
-  type: 'message' | 'like' | 'match' | 'friend' | 'trade' | 'follower' | 'newItem' | 'rental_request' | 'discount' | 'feedback' | 'item_removed';
+  type: 'message' | 'like' | 'match' | 'friend' | 'trade' | 'trade_completed' | 'follower' | 'newItem' | 'rental_request' | 'discount' | 'feedback' | 'item_removed';
   title: string;
   content: string;
   is_read: boolean;
@@ -203,6 +203,10 @@ export function useNotifications() {
 
     fetchNotifications();
 
+    // Listen for manual refresh events (fallback in case realtime misses)
+    const refreshHandler = () => fetchNotifications();
+    window.addEventListener('notificationsRefresh', refreshHandler);
+
     // Subscribe to real-time changes with unique channel name  
     const channelName = `notifications-${user.id}-${Date.now()}`;
     const channel = supabase
@@ -227,6 +231,7 @@ export function useNotifications() {
       .subscribe();
 
     return () => {
+      window.removeEventListener('notificationsRefresh', refreshHandler);
       supabase.removeChannel(channel);
     };
   }, [user]);

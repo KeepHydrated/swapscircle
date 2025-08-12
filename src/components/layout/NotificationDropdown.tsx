@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, MessageCircle, User, ArrowRight } from 'lucide-react';
+import { Bell, MessageCircle, User, ArrowRight, Handshake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -96,6 +96,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
       case 'newItem':
       case 'rental_request':
         return <User className="h-4 w-4 text-purple-500" />;
+      case 'trade':
+      case 'trade_completed':
+        return <Handshake className="h-4 w-4 text-emerald-600" />;
       default:
         return <Bell className="h-4 w-4 text-gray-500" />;
     }

@@ -130,6 +130,8 @@ React.useEffect(() => {
         try {
           await updateTradeStatus(selectedPair.partnerId, 'completed');
           queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+          // Proactively refresh notifications in case realtime misses
+          window.dispatchEvent(new Event('notificationsRefresh'));
           toast.success('Trade completed! Both parties have accepted.');
         } catch (error) {
           console.error('Error completing trade:', error);
