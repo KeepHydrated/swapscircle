@@ -85,7 +85,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       const { data: currentUserProfile, error: currentUserError } = await supabase
         .from('profiles')
         .select('location')
-        .eq('user_id', currentUserId)
+        .eq('id', currentUserId)
         .single();
       
       if (currentUserError || !currentUserProfile?.location) {
@@ -100,9 +100,9 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // Get all profiles with locations to calculate distances
       const { data: allProfiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('user_id, location')
+        .select('id, location')
         .not('location', 'is', null)
-        .not('user_id', 'eq', currentUserId); // Exclude current user
+        .not('id', 'eq', currentUserId); // Exclude current user
       
       if (profilesError) {
         console.error('Error fetching profiles for distance calculation:', profilesError);
@@ -126,7 +126,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         return distance <= radiusInMiles;
       });
       
-      userIdsToFilter = profilesWithinRadius.map(p => p.user_id);
+      userIdsToFilter = profilesWithinRadius.map(p => p.id);
       
       if (userIdsToFilter.length === 0) {
         return [];
