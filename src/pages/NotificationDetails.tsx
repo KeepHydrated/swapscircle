@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TriangleAlert, ShieldAlert, Clock, Info } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import ItemCard from '@/components/items/ItemCard';
+import ItemCarousel from '@/components/messages/details/ItemCarousel';
 
 interface DbNotification {
   id: string;
@@ -31,6 +31,8 @@ interface DbItem {
   condition?: string;
   tags?: string[];
   user_id?: string;
+  price_range_min?: number;
+  price_range_max?: number;
 }
 
 const getPrimaryImage = (item?: DbItem) => {
@@ -38,6 +40,20 @@ const getPrimaryImage = (item?: DbItem) => {
   if (item.image_url) return item.image_url;
   if (item.image_urls && item.image_urls.length > 0) return item.image_urls[0] || '';
   return '';
+};
+
+const getImageUrls = (item?: DbItem) => {
+  if (!item) return [] as string[];
+  if (item.image_urls && item.image_urls.length) return item.image_urls;
+  if (item.image_url) return [item.image_url];
+  return [] as string[];
+};
+
+const formatPriceRange = (min?: number, max?: number) => {
+  if (min != null && max != null) return `$${min} - $${max}`;
+  if (max != null) return `Up to $${max}`;
+  if (min != null) return `$${min}+`;
+  return 'Price not specified';
 };
 
 const NotificationDetails: React.FC = () => {
@@ -89,7 +105,7 @@ const NotificationDetails: React.FC = () => {
         if (notif?.reference_id) {
           const { data: itemData, error: itemErr } = await supabase
             .from('items')
-            .select('id, name, description, image_url, image_urls, status, category, condition, tags, user_id')
+            .select('id, name, description, image_url, image_urls, status, category, condition, tags, user_id, price_range_min, price_range_max')
             .eq('id', notif.reference_id)
             .maybeSingle();
           if (itemErr) {
@@ -121,7 +137,7 @@ const NotificationDetails: React.FC = () => {
     <MainLayout>
       <header className="mb-6">
         <h1 className="text-3xl font-bold">{title}</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Review what was posted and why it was removed.</p>
+        <p className="text-muted-foreground mt-1 text-sm">See your post and the removal reason side by side.</p>
       </header>
 
       {loading ? (
@@ -148,22 +164,24 @@ const NotificationDetails: React.FC = () => {
                 </div>
 
                 {item ? (
-                  <div className="space-y-3">
-                    <ItemCard
-                      id={item.id}
-                      name={item.name}
-                      image={getPrimaryImage(item)}
-                      status={item.status}
-                      onSelect={() => {}}
-                      disableLike
-                      disableClick
-                      compact
-                    />
-                    {item.description && (
-                      <div className="text-sm text-muted-foreground">
-                        {item.description}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="rounded-lg overflow-hidden border border-border">
+                      <ItemCarousel imageUrls={getImageUrls(item)} />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <h4 className="text-xl font-semibold leading-tight">{item.name}</h4>
+                        {item.description && (
+                          <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                        )}
                       </div>
-                    )}
+                      <div className="grid grid-cols-2 gap-y-3 text-sm">
+                        {item.category && <div className="font-medium">{item.category}</div>}
+                        {item.tags && item.tags.length > 0 && <div className="font-medium">{item.tags[0]}</div>}
+                        {item.condition && <div className="font-medium">{item.condition}</div>}
+                        <div className="font-medium">{formatPriceRange(item.price_range_min, item.price_range_max)}</div>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-sm text-muted-foreground">
