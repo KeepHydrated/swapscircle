@@ -17,6 +17,7 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { deleteItem, hideItem, unhideItem } from '@/services/authService';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProfileItemsManagerProps {
   initialItems: Item[];
@@ -46,9 +47,41 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     setItems(initialItems);
   }, [initialItems]);
 
-  // Function to handle clicking on an item - open modal instead of navigation
-  const handleItemClick = (item: Item) => {
-    // Disable popup on mobile
+  // Function to handle clicking on an item - open modal unless removed; for removed navigate to its notification
+  const handleItemClick = async (item: Item) => {
+    // If the item was removed, take the user to the removal notification details
+    if (item.status === 'removed') {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const userId = user?.id;
+        if (!userId) {
+          toast.error('Please sign in to view details');
+          return;
+        }
+
+        const { data: notif } = await supabase
+          .from('notifications')
+          .select('id, type, reference_id, created_at')
+          .eq('user_id', userId)
+          .eq('reference_id', item.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (notif?.id) {
+          navigate(`/notifications/${notif.id}`);
+        } else {
+          // Fallback to notifications list if we can't find a direct match
+          navigate('/notifications');
+        }
+      } catch (e) {
+        console.error('Failed to open removal details:', e);
+        toast.error('Could not open removal details');
+      }
+      return;
+    }
+
+    // Otherwise, open the preview modal on desktop
     if (isMobile) {
       return;
     }

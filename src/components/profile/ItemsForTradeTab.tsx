@@ -52,7 +52,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
               
               {/* Red overlay for removed items */}
               {isRemoved && (
-                <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center pointer-events-none">
                   <div className="bg-red-600 text-white text-sm font-semibold px-3 py-1 rounded-lg shadow-lg">
                     REMOVED
                   </div>
