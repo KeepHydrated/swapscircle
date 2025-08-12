@@ -16,6 +16,7 @@ import OtherPersonProfile from "./pages/OtherPersonProfile";
 import Notifications from "./pages/Notifications";
 import NotificationDetails from "./pages/NotificationDetails";
 import NotFound from "./pages/NotFound";
+import PostingRules from "./pages/PostingRules";
 
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -98,8 +99,9 @@ const App = () => {
                  <RequireAuth>
                    <AdminReports />
                  </RequireAuth>
-               } />
-               <Route path="*" element={<NotFound />} />
+                } />
++               <Route path="/posting-rules" element={<PostingRules />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

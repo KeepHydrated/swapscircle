@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -119,6 +119,12 @@ const Header = () => {
                     <Link to="/trades" className="flex w-full cursor-pointer items-center">
                       <Handshake className="mr-2 h-4 w-4" />
                       <span>Trades</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/posting-rules" className="flex w-full cursor-pointer items-center">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Posting Rules</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
