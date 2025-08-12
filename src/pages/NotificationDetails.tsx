@@ -162,6 +162,10 @@ const NotificationDetails: React.FC = () => {
                     <Badge>{item.status}</Badge>
                   )}
                 </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>{notification ? new Date(notification.created_at).toLocaleString() : ''}</span>
+                </div>
 
                 {item ? (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -203,10 +207,6 @@ const NotificationDetails: React.FC = () => {
                 <Separator />
                 <div className="text-sm whitespace-pre-wrap">
                   {notification?.message || 'No additional details provided.'}
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>{notification ? new Date(notification.created_at).toLocaleString() : ''}</span>
                 </div>
                 <Alert>
                   <Info className="h-4 w-4" />
