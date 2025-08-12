@@ -255,7 +255,7 @@ const AdminReports: React.FC = () => {
           : report
       ));
 
-      toast.success('Report status updated');
+      
     } catch (error) {
       console.error('Error updating report:', error);
       toast.error('Failed to update report status');
