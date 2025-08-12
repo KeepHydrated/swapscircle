@@ -163,11 +163,11 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
         setItems(prevItems => [newItem, ...prevItems]);
         toast.success(`${item.name} has been duplicated as a draft. Edit it to publish.`);
       } else {
-        toast.error('Failed to duplicate item');
+        toast.error("You've reached your draft limit");
       }
     } catch (error) {
       console.error('Error duplicating item:', error);
-      toast.error('Failed to duplicate item');
+      toast.error("You've reached your draft limit");
     }
   };
 
