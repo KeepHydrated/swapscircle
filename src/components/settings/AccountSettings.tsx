@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Eraser } from 'lucide-react';
 
 const AccountSettings: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -79,6 +79,33 @@ const AccountSettings: React.FC = () => {
       }
     } catch (error) {
       toast.error('Failed to send password reset email');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+const handleStartFresh = async () => {
+    if (!user) {
+      toast.error('No user found');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      // Remove chats (trade conversations and messages) and items via RPC
+      const { error: cleanupError } = await supabase.rpc('cleanup_user_data');
+      if (cleanupError) throw cleanupError;
+
+      // Remove all likes
+      const { error: likesError } = await supabase
+        .from('liked_items')
+        .delete()
+        .eq('user_id', user.id);
+      if (likesError) throw likesError;
+
+      toast.success("You're all set. Chats, items, and likes have been deleted.");
+    } catch (error: any) {
+      console.error('Start fresh error:', error);
+      toast.error('Failed to start fresh: ' + (error?.message || 'Unknown error'));
     } finally {
       setIsLoading(false);
     }
@@ -214,6 +241,46 @@ const AccountSettings: React.FC = () => {
               >
                 {isLoading ? 'Sending...' : 'Reset Password'}
               </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Start Fresh</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <p className="text-sm text-muted-foreground">
+                Delete all your chats, items, and likes. Your account will remain active.
+              </p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" disabled={isLoading} className="w-full md:w-auto">
+                    <Eraser className="w-4 h-4 mr-2" />
+                    Start Fresh
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Start fresh?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will delete all your chats (and messages), items, and likes. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleStartFresh}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {isLoading ? 'Cleaning...' : 'Delete Data'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </CardContent>
