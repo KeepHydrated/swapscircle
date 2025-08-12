@@ -369,10 +369,6 @@ const PostItem: React.FC = () => {
     }
 
     // Validation for preferences (right column) - all fields are now mandatory
-    if (!lookingForText.trim()) {
-      toast.error('Please describe what you\'re looking for');
-      return;
-    }
 
     if (selectedCategories.length === 0) {
       toast.error('Please select at least one category you\'re looking for');

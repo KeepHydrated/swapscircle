@@ -150,7 +150,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
             rows={4}
             value={lookingForText}
             onChange={(e) => setLookingForText(e.target.value)}
-            required
+            
           />
         </div>
         
