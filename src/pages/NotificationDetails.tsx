@@ -135,9 +135,15 @@ const NotificationDetails: React.FC = () => {
 
   return (
     <MainLayout>
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">{title}</h1>
-        <p className="text-muted-foreground mt-1 text-sm">See your post and the removal reason side by side.</p>
+      <header className="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{title}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">See your post and the removal reason side by side.</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
+          <Clock className="h-3.5 w-3.5" />
+          <span>{notification ? new Date(notification.created_at).toLocaleString() : ''}</span>
+        </div>
       </header>
 
       {loading ? (
@@ -161,10 +167,6 @@ const NotificationDetails: React.FC = () => {
                   {item?.status && (
                     <Badge>{item.status}</Badge>
                   )}
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>{notification ? new Date(notification.created_at).toLocaleString() : ''}</span>
                 </div>
 
                 {item ? (
