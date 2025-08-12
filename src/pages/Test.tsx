@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { blockingService } from '@/services/blockingService';
+import { rejectItem, undoRejectItem, getUserRejectedItems } from '@/services/rejectionService';
 
 const Test: React.FC = () => {
   // User's authentication and navigation
@@ -35,7 +36,17 @@ const Test: React.FC = () => {
   const [friendItems, setFriendItems] = useState([]);
   const [friendItemsLoading, setFriendItemsLoading] = useState(false);
   const [rejectedFriendItems, setRejectedFriendItems] = useState<string[]>([]);
-  const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
+  const [pairRejectedFriendIds, setPairRejectedFriendIds] = useState<Set<string>>(new Set());
+  const [lastFriendActions, setLastFriendActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean; global?: boolean }[]>([]);
+
+  // User's items and matching functionality (moved up to use selectedUserItemId earlier)
+  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems(false); // Don't include drafts on test page
+  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<string>('matches');
+  const [selectedLocation, setSelectedLocation] = useState('nationwide');
+  // Matches undo state - will be set by the Matches component
+  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
+  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
 
   // Modal state
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -177,7 +188,24 @@ const Test: React.FC = () => {
     } else {
       setFriendItems([]);
     }
-  }, [user, supabaseConfigured]);
+}, [user, supabaseConfigured]);
+
+  // Load DB rejections for the currently selected item (pair-specific + global)
+  useEffect(() => {
+    const loadRejections = async () => {
+      if (user && supabaseConfigured && selectedUserItemId) {
+        try {
+          const ids = await getUserRejectedItems(selectedUserItemId);
+          setPairRejectedFriendIds(new Set(ids));
+        } catch (e) {
+          setPairRejectedFriendIds(new Set());
+        }
+      } else {
+        setPairRejectedFriendIds(new Set());
+      }
+    };
+    loadRejections();
+  }, [user, supabaseConfigured, selectedUserItemId]);
 
   // Define handler for liking friend items with mutual matching
   const handleLikeFriendItem = async (itemId: string, global?: boolean) => {
@@ -249,17 +277,46 @@ const Test: React.FC = () => {
     }
   };
 
-  // Handle rejecting friend items
-  const handleRejectFriendItem = (itemId: string, global?: boolean) => {
+  // Handle rejecting friend items (pair-specific by default; global via menu)
+  const handleRejectFriendItem = async (itemId: string, global?: boolean) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
     // Track the action for undo (keep only last 3 actions)
     setLastFriendActions(prev => {
-      const newAction = { type: 'reject' as const, itemId };
+      const newAction = { type: 'reject' as const, itemId, global: !!global };
       const updated = [newAction, ...prev];
-      return updated.slice(0, 3); // Keep only last 3 actions
+      return updated.slice(0, 3);
     });
-    setRejectedFriendItems(prev => [...prev, itemId]);
-    const message = global ? 'Item rejected for all your items' : 'Item removed from friends\' items';
-    toast.success(message);
+
+    try {
+      if (!global && !selectedUserItemId) {
+        toast.error('Select one of your items first');
+        return;
+      }
+
+      const ok = await rejectItem(itemId, global ? undefined : selectedUserItemId);
+      if (ok) {
+        if (global) {
+          setRejectedFriendItems(prev => [...prev, itemId]);
+          toast.success('Item rejected for all your items');
+        } else {
+          setPairRejectedFriendIds(prev => {
+            const next = new Set(prev);
+            next.add(itemId);
+            return next;
+          });
+          toast.success("Item removed from this item's feed");
+        }
+      } else {
+        toast.error('Failed to reject item');
+      }
+    } catch (e) {
+      console.error('Error rejecting friend item:', e);
+      toast.error('Failed to reject item');
+    }
   };
 
   // Handle undo for friend items
@@ -279,8 +336,18 @@ const Test: React.FC = () => {
       );
       toast.success('Like action undone');
     } else if (actionToUndo.type === 'reject') {
-      // Undo reject action - restore item to friends' items
+      // Undo reject action - restore item to friends' items and DB
+      try {
+        undoRejectItem(actionToUndo.itemId, actionToUndo.global ? undefined : selectedUserItemId).catch((err) => {
+          console.error('Error undoing rejection in database:', err);
+        });
+      } catch {}
       setRejectedFriendItems(prev => prev.filter(id => id !== actionToUndo.itemId));
+      setPairRejectedFriendIds(prev => {
+        const next = new Set(prev);
+        next.delete(actionToUndo.itemId);
+        return next;
+      });
       toast.success('Reject action undone');
     }
 
@@ -288,25 +355,7 @@ const Test: React.FC = () => {
     setLastFriendActions(prev => prev.slice(1));
   };
 
-  // User's items and matching functionality
-  const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems(false); // Don't include drafts on test page
-  
-  console.log('🔍 USER ITEMS: Hook results', {
-    userItemsLength: userItems.length,
-    userItemsLoading,
-    userItemsError,
-    firstItemId: userItems[0]?.id,
-    firstItemName: userItems[0]?.name
-  });
-  
-  // Selected items state - auto-select first item
-  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<string>('matches');
-  const [selectedLocation, setSelectedLocation] = useState('nationwide');
-  
-  // Matches undo state - will be set by the Matches component
-  const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
-  const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
+  // ... keep existing code (user items hook and related state moved earlier)
   
   // Auto-select first item when userItems are loaded
   useEffect(() => {
@@ -383,7 +432,7 @@ const Test: React.FC = () => {
   };
 
   // Get displayed friends items (excluding rejected ones)
-  const displayedFriendItems = friendItems.filter(item => !rejectedFriendItems.includes(item.id));
+  const displayedFriendItems = friendItems.filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id));
   
   // Find current index in displayed friend items
   const currentFriendItemIndex = selectedItem 
@@ -573,9 +622,9 @@ const Test: React.FC = () => {
                          ) : (
                            <div className="overflow-x-auto overflow-y-hidden p-2">
                              <div className="flex gap-2 min-w-max">
-                               {friendItems
-                                 .filter(item => !rejectedFriendItems.includes(item.id))
-                                 .map((item) => (
+                                {friendItems
+                                  .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
+                                  .map((item) => (
                               <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200">
                                 <ItemCard
                                   id={item.id}
