@@ -37,7 +37,7 @@ export function useUserItems(includeDrafts: boolean = false) {
           .select('id, name, looking_for_categories, looking_for_conditions, looking_for_description, image_url, image_urls, category, condition, description, tags, status, price_range_min, price_range_max, created_at')
           .eq('user_id', user.id)
           .eq('is_hidden', false) // Only show non-hidden items
-          .in('status', includeDrafts ? ['published', 'draft', 'removed'] : ['published', 'removed']) // Include removed items for display
+          .in('status', includeDrafts ? ['published', 'draft', 'removed'] : ['published']) // Exclude removed items on homepage and matches
           .order('created_at', { ascending: false });
 
         console.log('🔍 SUPABASE QUERY RESULT - Error:', error);
