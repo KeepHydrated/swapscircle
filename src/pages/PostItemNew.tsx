@@ -285,6 +285,16 @@ const PostItemNew: React.FC = () => {
       return;
     }
 
+    // Require at least one subcategory across the selected categories
+    const totalSelectedSubcats = Object.values(formData.lookingForSubcategories || {}).reduce(
+      (sum, arr) => sum + ((arr as string[] | undefined)?.length || 0),
+      0
+    );
+    if (totalSelectedSubcats === 0) {
+      toast.error("Please select at least one subcategory you're looking for");
+      return;
+    }
+
     if (formData.lookingForConditions.length === 0) {
       toast.error("Please select at least one condition you're looking for");
       return;
