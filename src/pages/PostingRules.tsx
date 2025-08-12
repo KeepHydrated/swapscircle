@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
+
 import { Link } from 'react-router-dom';
 import { ShieldAlert, Image as ImageIcon, Tag, HandCoins, Info } from 'lucide-react';
 
@@ -178,11 +178,6 @@ const PostingRules: React.FC = () => {
               <li>Repeat violations can limit posting, messaging, or account access.</li>
               <li>If you believe a removal was in error, reply to the notice or contact support from your notifications.</li>
             </ul>
-            <div className="pt-2">
-              <Button asChild>
-                <Link to="/post-item">Post an item</Link>
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </main>
