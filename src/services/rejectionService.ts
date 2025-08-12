@@ -12,6 +12,33 @@ export const rejectItem = async (itemId: string, myItemId?: string): Promise<boo
       return false;
     }
 
+    // If this is a pair-specific rejection, remove any previous GLOBAL rejection
+    if (myItemId) {
+      try {
+        await supabase
+          .from('rejections')
+          .delete()
+          .eq('item_id', itemId)
+          .eq('user_id', user.data.user.id)
+          .is('my_item_id', null);
+      } catch (cleanupErr) {
+        console.warn('DEBUG: Failed to cleanup existing global rejection (safe to ignore):', cleanupErr);
+      }
+
+      // If a pair-specific rejection already exists, short-circuit to success
+      const { data: existingPair, error: existingErr } = await supabase
+        .from('rejections')
+        .select('item_id')
+        .eq('item_id', itemId)
+        .eq('user_id', user.data.user.id)
+        .eq('my_item_id', myItemId)
+        .maybeSingle();
+      if (!existingErr && existingPair) {
+        console.log('DEBUG: Pair-specific rejection already exists. Skipping insert.');
+        return true;
+      }
+    }
+
     const { error } = await supabase
       .from('rejections')
       .insert({
