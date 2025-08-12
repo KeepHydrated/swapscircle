@@ -16,6 +16,7 @@ interface ItemCarouselProps {
 const ItemCarousel = ({ imageUrls, showThumbnails = true }: ItemCarouselProps) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const hasMultiple = imageUrls.length > 1;
   
   useEffect(() => {
     if (!api) return;
@@ -39,7 +40,7 @@ const ItemCarousel = ({ imageUrls, showThumbnails = true }: ItemCarouselProps) =
     <>
       {/* Main image container with navigation buttons */}
       <div className="relative h-56 bg-gray-100 overflow-hidden">
-        <Carousel setApi={setApi} opts={{ align: "center", loop: true }} className="h-full">
+        <Carousel setApi={setApi} opts={{ align: "center", loop: hasMultiple }} className="h-full">
           <CarouselContent className="h-full">
             {imageUrls.map((url, index) => (
               <CarouselItem key={index} className="h-full">
@@ -54,27 +55,31 @@ const ItemCarousel = ({ imageUrls, showThumbnails = true }: ItemCarouselProps) =
           </CarouselContent>
         </Carousel>
         
-        {/* Navigation buttons */}
-        <button 
-          onClick={scrollPrev}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
-          aria-label="Previous image"
-        >
-          <ChevronLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        
-        <button 
-          onClick={scrollNext}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
-          aria-label="Next image"
-        >
-          <ChevronRight className="w-5 h-5 text-gray-600" />
-        </button>
-        
-        {/* Image counter */}
-        <div className="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 text-white text-sm rounded-full px-2 py-0.5">
-          {selectedIndex + 1}/{imageUrls.length}
-        </div>
+        {hasMultiple && (
+          <>
+            {/* Navigation buttons */}
+            <button 
+              onClick={scrollPrev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            
+            <button 
+              onClick={scrollNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+            
+            {/* Image counter */}
+            <div className="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 text-white text-sm rounded-full px-2 py-0.5">
+              {selectedIndex + 1}/{imageUrls.length}
+            </div>
+          </>
+        )}
       </div>
       
 {showThumbnails && (
