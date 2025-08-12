@@ -330,7 +330,13 @@ const Test: React.FC = () => {
     }
   }, [selectedUserItemId]);
 
-  
+  // Refresh friends' items when the selected user item changes
+  useEffect(() => {
+    if (user && supabaseConfigured) {
+      fetchFriendsItems();
+    }
+  }, [selectedUserItemId]);
+
   // Get selected user item
   const selectedUserItem = userItems.find(item => item.id === selectedUserItemId) || null;
   
