@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { deleteItem, hideItem, unhideItem } from '@/services/authService';
+import { deleteItemWithRelations, hideItem, unhideItem } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ProfileItemsManagerProps {
@@ -262,7 +262,7 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
   // Delete item from DB
   const confirmDelete = async () => {
     if (itemToDelete) {
-      const ok = await deleteItem(itemToDelete.id);
+      const ok = await deleteItemWithRelations(itemToDelete.id);
       if (ok) {
         setItems(prevItems => prevItems.filter(item => item.id !== itemToDelete.id));
       }
@@ -270,7 +270,6 @@ const ProfileItemsManager: React.FC<ProfileItemsManagerProps> = ({ initialItems,
     }
     setIsDeleteDialogOpen(false);
   };
-
   return (
     <>
         <ItemsForTradeTab 
