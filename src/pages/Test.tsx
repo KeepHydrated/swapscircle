@@ -596,30 +596,36 @@ const Test: React.FC = () => {
                      )}
                    </TabsContent>
                   
-                     <TabsContent value="friends" className="flex-1 mt-0">
-                       <div className="h-full flex flex-col">
-                       {friendItemsLoading ? (
-                         <div className="overflow-x-auto overflow-y-hidden p-2">
-                           <div className="flex gap-2 min-w-max">
-                             {Array.from({ length: 3 }).map((_, index) => (
-                               <div key={`friend-skeleton-${index}`} className="flex-shrink-0 w-64">
-                                 <Card className="overflow-hidden">
-                                   <Skeleton className="aspect-[4/3] w-full" />
-                                   <div className="p-3">
-                                     <Skeleton className="h-4 w-3/4 mx-auto" />
-                                   </div>
-                                 </Card>
-                               </div>
-                             ))}
-                           </div>
-                         </div>
-                       ) : friendItems.length === 0 ? (
-                         <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                           <div className="text-4xl mb-3">👥</div>
-                           <p className="text-base font-medium mb-1">No friends' items</p>
-                           <p className="text-sm">Add friends to see their items here</p>
-                         </div>
-                         ) : (
+                      <TabsContent value="friends" className="flex-1 mt-0">
+                        <div className="h-full flex flex-col">
+                        {friendItemsLoading ? (
+                          <div className="overflow-x-auto overflow-y-hidden p-2">
+                            <div className="flex gap-2 min-w-max">
+                              {Array.from({ length: 3 }).map((_, index) => (
+                                <div key={`friend-skeleton-${index}`} className="flex-shrink-0 w-64">
+                                  <Card className="overflow-hidden">
+                                    <Skeleton className="aspect-[4/3] w-full" />
+                                    <div className="p-3">
+                                      <Skeleton className="h-4 w-3/4 mx-auto" />
+                                    </div>
+                                  </Card>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : friendItems.length === 0 ? (
+                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                            <div className="text-4xl mb-3">👥</div>
+                            <p className="text-base font-medium mb-1">No friends' items</p>
+                            <p className="text-sm">Add friends to see their items here</p>
+                          </div>
+                        ) : displayedFriendItems.length === 0 ? (
+                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                            <div className="text-4xl mb-3">🔍</div>
+                            <p className="text-base font-medium mb-1">No matches found</p>
+                            <p className="text-sm">Try updating your preferences or check back later</p>
+                          </div>
+                          ) : (
                            <div className="overflow-x-auto overflow-y-hidden p-2">
                              <div className="flex gap-2 min-w-max">
                                 {friendItems
