@@ -1,11 +1,11 @@
 
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
+import SupportChat from '@/components/chat/SupportChat';
 
 import { useDbItems } from '@/hooks/useDbItems';
 import { useUserItems } from '@/hooks/useUserItems';
@@ -690,6 +690,9 @@ const Test: React.FC = () => {
             : ''
         }
       />
+
+      {/* Support Chat */}
+      <SupportChat />
     </div>
   );
 };
