@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAuth } from '@/context/AuthContext';
 
 interface Message {
   id: string;
@@ -13,6 +14,7 @@ interface Message {
 }
 
 const SupportChat = () => {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -23,6 +25,11 @@ const SupportChat = () => {
     }
   ]);
   const [inputValue, setInputValue] = useState('');
+
+  // Don't show chat button if user is not logged in
+  if (!user) {
+    return null;
+  }
 
   const sendMessage = () => {
     if (!inputValue.trim()) return;
