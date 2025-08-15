@@ -62,7 +62,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           const formattedMessages: Message[] = supportMessages.map(msg => ({
             id: msg.id,
             text: msg.message,
-            sender: msg.sender_type as 'user' | 'support',
+            // If it's an auto-reply message, treat it as support
+            // Otherwise, if it's from current user, treat it as user message
+            sender: msg.message === "Thanks for your message! I'll get back to you shortly." 
+              ? 'support' 
+              : (msg.user_id === user.id ? 'user' : 'support'),
             timestamp: new Date(msg.created_at)
           }));
 
