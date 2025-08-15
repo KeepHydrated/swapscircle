@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, User, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -36,9 +36,20 @@ const AdminSupportChat = () => {
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Check if user is admin (nadiachibri@gmail.com)
   const isAdmin = user?.email === 'nadiachibri@gmail.com';
+
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Load conversations on mount
   useEffect(() => {
@@ -305,9 +316,10 @@ const AdminSupportChat = () => {
                       </span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </ScrollArea>
+                 ))}
+                 <div ref={messagesEndRef} />
+               </div>
+             </ScrollArea>
 
             {/* Input */}
             <div className="p-4 border-t">
