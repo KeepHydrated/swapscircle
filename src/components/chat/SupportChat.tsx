@@ -194,7 +194,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     return (
       <div className="flex flex-col h-full">
         {/* Category Selection */}
-        <div className="p-4 border-b">
+        <div className="px-4 pt-2 pb-4 border-b">
           <SelectField
             id="category"
             label=""
@@ -285,7 +285,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           </div>
 
           {/* Category Selection */}
-          <div className="p-4 border-b">
+          <div className="px-4 pt-2 pb-4 border-b">
             <SelectField
               id="category"
               label=""
