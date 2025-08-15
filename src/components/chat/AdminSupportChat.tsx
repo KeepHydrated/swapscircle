@@ -240,7 +240,7 @@ const AdminSupportChat = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-fit">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full max-h-[calc(100vh-8rem)]">
       {/* Conversations List */}
       <Card className="lg:col-span-1 h-[700px] flex flex-col">
         <div className="p-4 border-b">

@@ -4,8 +4,8 @@ import AdminSupportChat from '@/components/chat/AdminSupportChat';
 const Test2 = () => {
   return (
     <MainLayout>
-      <div className="bg-background">
-        <div className="p-6">
+      <div className="h-screen overflow-hidden bg-background">
+        <div className="h-full p-6 overflow-hidden">
           <AdminSupportChat />
         </div>
       </div>
