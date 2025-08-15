@@ -197,7 +197,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         <div className="p-4 border-b">
           <SelectField
             id="category"
-            label="Category"
+            label=""
             value={category}
             onChange={setCategory}
             options={categories}
@@ -288,7 +288,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           <div className="p-4 border-b">
             <SelectField
               id="category"
-              label="Category"
+              label=""
               value={category}
               onChange={setCategory}
               options={categories}
