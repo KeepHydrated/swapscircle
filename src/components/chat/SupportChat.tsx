@@ -218,7 +218,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         
         {/* Messages */}
         <ScrollArea className="flex-1 p-4">
-          <div className="space-y-3">
+          <div className="space-y-3 flex flex-col justify-end min-h-full">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -310,7 +310,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
           {/* Messages */}
           <ScrollArea className="flex-1 p-4">
-            <div className="space-y-3">
+            <div className="space-y-3 flex flex-col justify-end min-h-full">
               {messages.map((message) => (
                 <div
                   key={message.id}
