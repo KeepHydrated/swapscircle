@@ -15,7 +15,7 @@ const BlankTest = () => {
     id: user?.id || 'unknown',
     name: user?.name || user?.email?.split('@')[0] || 'Chat User',
     email: user?.email || 'user@example.com',
-    avatar: user?.avatar_url || '',
+    avatar: '',
     memberSince: new Date().toISOString(),
     location: 'Location not set',
     rating: 0,
@@ -29,6 +29,16 @@ const BlankTest = () => {
 
       try {
         console.log('🔍 Fetching profile data for user:', user.id);
+        console.log('👤 Auth user data:', user);
+        
+        // Fetch user profile from profiles table to get avatar
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('avatar_url, username, name')
+          .eq('id', user.id)
+          .single();
+
+        console.log('📸 Profile data with avatar:', userProfile);
         
         // Fetch reviews where user is the reviewee
         const { data: reviews, error: reviewsError } = await supabase
@@ -84,6 +94,8 @@ const BlankTest = () => {
 
         setProfileData(prev => ({
           ...prev,
+          name: userProfile?.name || userProfile?.username || user?.name || user?.email?.split('@')[0] || 'Chat User',
+          avatar: userProfile?.avatar_url || '',
           rating: Number(avgRating.toFixed(1)),
           reviewCount: reviews?.length || 0,
           totalTrades: tradeCount,
