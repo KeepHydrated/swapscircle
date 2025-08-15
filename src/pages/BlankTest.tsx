@@ -38,22 +38,22 @@ const BlankTest = () => {
         console.log('📊 Reviews query result:', { reviews, error: reviewsError });
 
         // Try different approaches to count completed trades
-        // First, let's check what statuses exist in trades table
-        const { data: tradeStatuses } = await supabase
-          .from('trades')
+        // First, let's check what statuses exist in trade_conversations table (this is the correct table)
+        const { data: tradeConversationStatuses } = await supabase
+          .from('trade_conversations')
           .select('status')
           .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`);
 
-        console.log('🔍 Trade statuses found:', tradeStatuses);
+        console.log('🔍 Trade conversation statuses found:', tradeConversationStatuses);
 
-        // Count completed trades - try both 'completed' and 'complete'
-        const { data: completedTrades } = await supabase
-          .from('trades')
+        // Count completed trade conversations (this is the actual completed trades)
+        const { data: completedTradeConversations } = await supabase
+          .from('trade_conversations')
           .select('id, status')
           .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`)
-          .in('status', ['completed', 'complete']);
+          .eq('status', 'completed');
 
-        console.log('✅ Completed trades:', completedTrades);
+        console.log('✅ Completed trade conversations:', completedTradeConversations);
 
         // Alternative: Count from notifications table
         const { data: tradeNotifications } = await supabase
@@ -71,7 +71,7 @@ const BlankTest = () => {
 
         // Use the highest count from either method
         const tradeCount = Math.max(
-          completedTrades?.length || 0,
+          completedTradeConversations?.length || 0,
           tradeNotifications?.length || 0
         );
 
