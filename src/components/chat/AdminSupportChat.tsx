@@ -95,21 +95,33 @@ const AdminSupportChat = () => {
   const loadConversations = async () => {
     console.log('AdminSupportChat: loadConversations called');
     try {
-      const { data, error } = await supabase
-        .from('support_conversations' as any)
-        .select(`
-          *,
-          profiles:user_id (
-            username,
-            name
-          )
-        `)
+      // First get conversations
+      const { data: conversations, error: convError } = await supabase
+        .from('support_conversations')
+        .select('*')
         .order('last_message_at', { ascending: false });
 
-      console.log('AdminSupportChat: Query result:', { data, error });
+      if (convError) throw convError;
+
+      // Then get profile data for each conversation
+      const conversationsWithProfiles = await Promise.all(
+        (conversations || []).map(async (conv) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('username, name')
+            .eq('id', conv.user_id)
+            .single();
+          
+          return {
+            ...conv,
+            profiles: profile
+          };
+        })
+      );
+
+      console.log('AdminSupportChat: Query result:', { data: conversationsWithProfiles });
       
-      if (error) throw error;
-      setConversations((data || []) as unknown as SupportConversation[]);
+      setConversations(conversationsWithProfiles as unknown as SupportConversation[]);
     } catch (error) {
       console.error('Error loading conversations:', error);
       toast.error('Failed to load conversations');
