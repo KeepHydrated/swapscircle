@@ -89,7 +89,9 @@ const BlankTest = () => {
         console.log('📈 Final calculated data:', {
           rating: Number(avgRating.toFixed(1)),
           reviewCount: reviews?.length || 0,
-          totalTrades: tradeCount
+          totalTrades: tradeCount,
+          name: userProfile?.name || userProfile?.username || user?.name || user?.email?.split('@')[0] || 'Chat User',
+          avatar: userProfile?.avatar_url || '',
         });
 
         setProfileData(prev => ({
@@ -121,7 +123,9 @@ const BlankTest = () => {
               <Link to="/profile" className="block">
                 <div className="flex items-center space-x-4 hover:bg-muted/50 p-4 rounded-lg transition-colors cursor-pointer">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src={profileData.avatar} alt={profileData.name} />
+                    {profileData.avatar && profileData.avatar.trim() ? (
+                      <AvatarImage src={profileData.avatar} alt={profileData.name} />
+                    ) : null}
                     <AvatarFallback className="text-lg font-semibold bg-muted">
                       {profileData.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
