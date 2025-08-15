@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1832,6 +1832,66 @@ export type Database = {
         }
         Relationships: []
       }
+      support_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_messages: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          sender_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          sender_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          sender_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       task_comment_likes: {
         Row: {
           comment_id: string
@@ -2429,7 +2489,7 @@ export type Database = {
         Returns: undefined
       }
       add_moderator_by_email: {
-        Args: { moderator_email: string; admin_user_id: string }
+        Args: { admin_user_id: string; moderator_email: string }
         Returns: undefined
       }
       admin_remove_item: {
@@ -2440,13 +2500,13 @@ export type Database = {
       }
       ban_user_progressive: {
         Args: {
-          target_user_id: string
           admin_user_id: string
           ban_reason: string
+          target_user_id: string
         }
         Returns: {
-          ban_id: string
           ban_duration_days: number
+          ban_id: string
           ban_type: string
           previous_ban_count: number
         }[]
@@ -2473,14 +2533,22 @@ export type Database = {
       }
       create_notification: {
         Args: {
-          p_user_id: string
-          p_type: Database["public"]["Enums"]["notification_type"]
-          p_reference_id: string
-          p_message: string
-          p_action_taken: string
           p_action_by: string
+          p_action_taken: string
+          p_message: string
+          p_reference_id: string
+          p_type: Database["public"]["Enums"]["notification_type"]
+          p_user_id: string
         }
         Returns: string
+      }
+      create_trade_accepted_notification: {
+        Args: { p_conversation_id: string; p_message?: string }
+        Returns: string
+      }
+      create_trade_completed_notifications: {
+        Args: { p_conversation_id: string; p_message?: string }
+        Returns: undefined
       }
       deactivate_user_account: {
         Args: { target_user_id: string }
@@ -2504,25 +2572,25 @@ export type Database = {
       get_book_requests: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
-          title: string
           author: string
-          published_year: number
           cover_url: string
-          isbn: string
           created_at: string
           created_by: string
-          requester_username: string
           genre: Database["public"]["Enums"]["book_genre"]
+          id: string
+          isbn: string
+          published_year: number
+          requester_username: string
           status: Database["public"]["Enums"]["book_request_status"]
+          title: string
         }[]
       }
       get_chapter_stats: {
         Args: { chapter_ids: string[] }
         Returns: {
           chapter_id: string
-          view_count: number
           reaction_count: number
+          view_count: number
         }[]
       }
       get_discussion_like_counts: {
@@ -2535,83 +2603,83 @@ export type Database = {
       get_moderators: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
-          email: string
-          username: string
           created_at: string
           created_by: string
+          email: string
+          id: string
           is_active: boolean
+          username: string
         }[]
       }
       get_most_engaged_books: {
         Args: { limit_count: number }
         Returns: {
-          book_id: string
-          title: string
           author: string
-          published_year: number
+          book_id: string
           cover_url: string
-          genre: Database["public"]["Enums"]["book_genre"]
-          view_count: number
-          reaction_count: number
           discussion_count: number
+          genre: Database["public"]["Enums"]["book_genre"]
+          published_year: number
+          reaction_count: number
+          title: string
+          view_count: number
         }[]
       }
       get_recent_discussions: {
         Args: { limit_count: number }
         Returns: {
-          discussion_id: string
-          content: string
-          created_at: string
-          username: string
           avatar_url: string
+          book_id: string
           book_title: string
           chapter_id: string
-          chapter_title: string
           chapter_number: number
-          book_id: string
+          chapter_title: string
+          content: string
+          created_at: string
+          discussion_id: string
+          username: string
         }[]
       }
       get_reports: {
         Args: {
-          p_status?: Database["public"]["Enums"]["report_status"]
-          p_type?: Database["public"]["Enums"]["report_type"]
           p_limit?: number
           p_offset?: number
+          p_status?: Database["public"]["Enums"]["report_status"]
+          p_type?: Database["public"]["Enums"]["report_type"]
         }
         Returns: {
-          id: string
-          reporter_id: string
-          reporter_username: string
-          type: Database["public"]["Enums"]["report_type"]
+          action_taken: string
+          attachment_count: number
           book_id: string
           book_title: string
           chapter_id: string
-          chapter_title: string
           chapter_number: number
-          message: string
-          status: Database["public"]["Enums"]["report_status"]
+          chapter_title: string
           created_at: string
-          updated_at: string
-          attachment_count: number
+          id: string
+          message: string
+          reporter_id: string
+          reporter_username: string
+          status: Database["public"]["Enums"]["report_status"]
+          status_changed_at: string
           status_changed_by: string
           status_changed_by_username: string
-          status_changed_at: string
-          action_taken: string
+          type: Database["public"]["Enums"]["report_type"]
+          updated_at: string
         }[]
       }
       get_trending_books: {
         Args: { limit_count: number }
         Returns: {
-          book_id: string
-          title: string
           author: string
-          published_year: number
+          book_id: string
           cover_url: string
-          genre: Database["public"]["Enums"]["book_genre"]
-          view_count: number
-          reaction_count: number
           discussion_count: number
+          genre: Database["public"]["Enums"]["book_genre"]
+          published_year: number
+          reaction_count: number
+          title: string
+          view_count: number
         }[]
       }
       get_user_ban_count: {
@@ -2619,44 +2687,44 @@ export type Database = {
         Returns: number
       }
       get_user_discussions_paginated: {
-        Args: { p_user_id: string; p_limit: number; p_offset: number }
+        Args: { p_limit: number; p_offset: number; p_user_id: string }
         Returns: Json[]
       }
       get_user_notifications: {
         Args: { p_user_id: string }
         Returns: {
-          id: string
-          type: Database["public"]["Enums"]["notification_type"]
-          reference_id: string
-          created_at: string
-          status: Database["public"]["Enums"]["notification_status"]
           action_by_username: string
           book_title: string
+          chapter_number: number
+          chapter_title: string
+          created_at: string
+          id: string
+          message: string
+          reference_id: string
           report_type: string
           resolved_at: string
           resolved_by: string
-          chapter_title: string
-          chapter_number: number
-          message: string
+          status: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["notification_type"]
         }[]
       }
       get_user_notifications_paginated: {
-        Args: { p_user_id: string; p_limit: number; p_offset: number }
+        Args: { p_limit: number; p_offset: number; p_user_id: string }
         Returns: {
-          id: string
-          type: Database["public"]["Enums"]["notification_type"]
-          reference_id: string
-          created_at: string
-          status: Database["public"]["Enums"]["notification_status"]
           action_by_username: string
           book_title: string
+          chapter_number: number
+          chapter_title: string
+          created_at: string
+          id: string
+          message: string
+          reference_id: string
           report_type: string
           resolved_at: string
           resolved_by: string
-          chapter_title: string
-          chapter_number: number
-          message: string
+          status: Database["public"]["Enums"]["notification_status"]
           total_count: number
+          type: Database["public"]["Enums"]["notification_type"]
         }[]
       }
       get_user_stats: {
@@ -2668,7 +2736,7 @@ export type Database = {
         }[]
       }
       has_role: {
-        Args: { user_id: string; role: Database["public"]["Enums"]["app_role"] }
+        Args: { role: Database["public"]["Enums"]["app_role"]; user_id: string }
         Returns: boolean
       }
       increment_user_strikes: {
@@ -2692,7 +2760,7 @@ export type Database = {
         Returns: boolean
       }
       is_user_blocked: {
-        Args: { blocker_user_id: string; blocked_user_id: string }
+        Args: { blocked_user_id: string; blocker_user_id: string }
         Returns: boolean
       }
       mark_notification_as_read: {
@@ -2700,21 +2768,21 @@ export type Database = {
         Returns: undefined
       }
       remove_moderator: {
-        Args: { moderator_id: string; admin_user_id: string }
+        Args: { admin_user_id: string; moderator_id: string }
         Returns: undefined
       }
       search_books: {
         Args: { search_term: string }
         Returns: {
-          id: string
-          title: string
           author: string
-          published_year: number
-          cover_url: string
           chapter_count: number
-          has_prologue: boolean
-          has_epilogue: boolean
+          cover_url: string
           genre: Database["public"]["Enums"]["book_genre"]
+          has_epilogue: boolean
+          has_prologue: boolean
+          id: string
+          published_year: number
+          title: string
         }[]
       }
       search_books_ai: {
@@ -2724,43 +2792,43 @@ export type Database = {
       send_violation_notification: {
         Args:
           | {
-              target_user_id: string
               item_id: string
               item_name: string
-              violation_reason: string
               strike_count: number
+              target_user_id: string
+              violation_reason: string
             }
           | {
-              target_user_id: string
               item_name: string
-              violation_reason: string
               strike_count: number
+              target_user_id: string
+              violation_reason: string
             }
         Returns: string
       }
       toggle_moderator_status: {
-        Args: { moderator_id: string; admin_user_id: string }
+        Args: { admin_user_id: string; moderator_id: string }
         Returns: undefined
       }
       update_report_status: {
         Args:
           | {
+              p_action_taken?: string
               p_report_id: string
               p_status: Database["public"]["Enums"]["report_status"]
+              p_user_id: string
             }
           | {
               p_report_id: string
               p_status: Database["public"]["Enums"]["report_status"]
-              p_user_id: string
-              p_action_taken?: string
             }
         Returns: undefined
       }
       update_submission_admin: {
         Args: {
-          submission_id: string
           new_status: string
           rejection_reason_param?: string
+          submission_id: string
         }
         Returns: undefined
       }

@@ -23,31 +23,55 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
-  // Fetch notifications and convert them to messages
+  // Get or create conversation and fetch messages
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const initializeConversation = async () => {
       if (!user?.id) return;
 
-      const { data: notifications } = await supabase
-        .from('notifications')
-        .select('*')
+      // First, try to find existing conversation
+      let { data: conversation } = await supabase
+        .from('support_conversations')
+        .select('id')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: true });
+        .single();
 
-      if (notifications) {
-        const formattedMessages: Message[] = notifications.map(notification => ({
-          id: notification.id,
-          text: notification.message,
-          sender: 'support' as const,
-          timestamp: new Date(notification.created_at)
-        }));
+      // If no conversation exists, create one
+      if (!conversation) {
+        const { data: newConversation } = await supabase
+          .from('support_conversations')
+          .insert({ user_id: user.id })
+          .select('id')
+          .single();
+        
+        conversation = newConversation;
+      }
 
-        setMessages(formattedMessages);
+      if (conversation) {
+        setConversationId(conversation.id);
+
+        // Now fetch messages for this conversation
+        const { data: supportMessages } = await supabase
+          .from('support_messages')
+          .select('*')
+          .eq('conversation_id', conversation.id)
+          .order('created_at', { ascending: true });
+
+        if (supportMessages) {
+          const formattedMessages: Message[] = supportMessages.map(msg => ({
+            id: msg.id,
+            text: msg.message,
+            sender: msg.sender_type as 'user' | 'support',
+            timestamp: new Date(msg.created_at)
+          }));
+
+          setMessages(formattedMessages);
+        }
       }
     };
 
-    fetchNotifications();
+    initializeConversation();
   }, [user?.id]);
 
   // Don't show chat button if user is not logged in
@@ -55,28 +79,59 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     return null;
   }
 
-  const sendMessage = () => {
-    if (!inputValue.trim()) return;
+  const sendMessage = async () => {
+    if (!inputValue.trim() || !user?.id || !conversationId) return;
 
+    // Save user message to database
+    const { data: userMessage, error } = await supabase
+      .from('support_messages')
+      .insert({
+        conversation_id: conversationId,
+        user_id: user.id,
+        message: inputValue,
+        sender_type: 'user'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving message:', error);
+      return;
+    }
+
+    // Add user message to local state
     const newMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
+      id: userMessage.id,
+      text: userMessage.message,
       sender: 'user',
-      timestamp: new Date()
+      timestamp: new Date(userMessage.created_at)
     };
 
     setMessages(prev => [...prev, newMessage]);
     setInputValue('');
 
-    // Auto-reply (you can replace this with actual support integration)
-    setTimeout(() => {
-      const supportReply: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Thanks for your message! I'll get back to you shortly.",
-        sender: 'support',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, supportReply]);
+    // Auto-reply from support
+    setTimeout(async () => {
+      const { data: supportReply } = await supabase
+        .from('support_messages')
+        .insert({
+          conversation_id: conversationId,
+          user_id: user.id,
+          message: "Thanks for your message! I'll get back to you shortly.",
+          sender_type: 'support'
+        })
+        .select()
+        .single();
+
+      if (supportReply) {
+        const supportMessage: Message = {
+          id: supportReply.id,
+          text: supportReply.message,
+          sender: 'support',
+          timestamp: new Date(supportReply.created_at)
+        };
+        setMessages(prev => [...prev, supportMessage]);
+      }
     }, 1000);
   };
 
