@@ -132,7 +132,15 @@ const AdminSupportChat = () => {
 
       console.log('AdminSupportChat: Query result:', { data: conversationsWithProfiles });
       
-      setConversations(conversationsWithProfiles as unknown as SupportConversation[]);
+      const conversationsList = conversationsWithProfiles as unknown as SupportConversation[];
+      setConversations(conversationsList);
+      
+      // Auto-select first conversation if none is selected and conversations exist
+      if (!selectedConversation && conversationsList.length > 0) {
+        const firstConversation = conversationsList[0];
+        setSelectedConversation(firstConversation);
+        loadMessages(firstConversation.id);
+      }
     } catch (error) {
       console.error('Error loading conversations:', error);
       toast.error('Failed to load conversations');
