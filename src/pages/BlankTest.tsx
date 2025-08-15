@@ -114,11 +114,11 @@ const BlankTest = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-background p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="h-screen bg-background p-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
             {/* Left Column - Profile Info */}
-            <Card className="p-6">
+            <Card className="p-6 h-full overflow-y-auto">
               <h2 className="text-2xl font-bold mb-6 text-foreground">Chat User Profile</h2>
               
               {/* Compact Profile Layout */}
@@ -156,7 +156,7 @@ const BlankTest = () => {
             </Card>
 
             {/* Right Column - Support Chat Messages */}
-            <Card className="flex flex-col h-[600px]">
+            <Card className="flex flex-col h-full">
               <div className="p-6 border-b">
                 <h2 className="text-2xl font-bold text-foreground">Support Messages</h2>
               </div>
