@@ -221,10 +221,10 @@ const AdminSupportChat = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full overflow-hidden">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       {/* Conversations List */}
-      <Card className="lg:col-span-1 flex flex-col h-full">
-        <div className="p-4 border-b shrink-0">
+      <Card className="lg:col-span-1">
+        <div className="p-4 border-b">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
             Support Conversations
@@ -233,7 +233,7 @@ const AdminSupportChat = () => {
             {conversations.length} conversations
           </p>
         </div>
-        <ScrollArea className="flex-1 min-h-0">
+        <ScrollArea className="h-[calc(100%-5rem)]">
           <div className="p-2">
             {conversations.map((conversation) => (
               <div
@@ -283,36 +283,34 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 min-h-0 overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="p-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex mb-4 ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className="flex flex-col space-y-1 max-w-[70%]">
-                        <div
-                          className={`rounded-lg px-4 py-2 text-sm ${
-                            message.sender_type === 'support'
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-muted'
-                          }`}
-                        >
-                          {message.message}
-                        </div>
-                        <span className="text-xs text-muted-foreground px-1">
-                          {formatTime(message.created_at)}
-                        </span>
+            <ScrollArea className="flex-1 min-h-0 p-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className="flex flex-col space-y-1 max-w-[70%]">
+                      <div
+                        className={`rounded-lg px-4 py-2 text-sm ${
+                          message.sender_type === 'support'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted'
+                        }`}
+                      >
+                        {message.message}
                       </div>
+                      <span className="text-xs text-muted-foreground px-1">
+                        {formatTime(message.created_at)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
 
-            {/* Input - Always visible at bottom */}
-            <div className="p-4 border-t shrink-0">
+            {/* Input */}
+            <div className="p-4 border-t">
               <div className="flex gap-2">
                 <Input
                   value={inputValue}
