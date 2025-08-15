@@ -283,9 +283,9 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 min-h-0">
-              <div className="p-4">
-                <div className="space-y-4">
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full pr-4">
+                <div className="p-4 space-y-4">
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -308,11 +308,11 @@ const AdminSupportChat = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            </ScrollArea>
+              </ScrollArea>
+            </div>
 
-            {/* Input */}
-            <div className="p-4 border-t">
+            {/* Input - Always visible at bottom */}
+            <div className="p-4 border-t shrink-0">
               <div className="flex gap-2">
                 <Input
                   value={inputValue}
