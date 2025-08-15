@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-interface Message {
+interface SupportMessage {
   id: string;
-  text: string;
-  sender: 'user' | 'support';
-  timestamp: Date;
+  message: string;
+  sender_type: 'user' | 'support';
+  created_at: string;
+  is_read: boolean;
 }
 
 interface SupportChatProps {
@@ -20,50 +23,158 @@ interface SupportChatProps {
 const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hi! How can I help you today?",
-      sender: 'support',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Don't show chat button if user is not logged in
   if (!user) {
     return null;
   }
 
-  const sendMessage = () => {
-    if (!inputValue.trim()) return;
+  // Initialize conversation and load messages
+  useEffect(() => {
+    initializeConversation();
+  }, [user?.id]);
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
-      sender: 'user',
-      timestamp: new Date()
+  // Real-time message subscription
+  useEffect(() => {
+    if (!conversationId) return;
+
+    const channel = supabase
+      .channel('support_messages')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'support_messages',
+        filter: `conversation_id=eq.${conversationId}`,
+      }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setMessages(prev => [...prev, payload.new as SupportMessage]);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
+  }, [conversationId]);
 
-    setMessages(prev => [...prev, newMessage]);
+  const initializeConversation = async () => {
+    if (!user?.id) return;
+
+    try {
+      // Check if user has an existing conversation
+      const { data: existingConversation, error: convError } = await supabase
+        .from('support_conversations' as any)
+        .select('id')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      let conversationId: string;
+
+      if (existingConversation && !convError) {
+        conversationId = (existingConversation as any).id;
+      } else {
+        // Create new conversation
+        const { data: newConversation, error: createError } = await supabase
+          .from('support_conversations' as any)
+          .insert({
+            user_id: user.id,
+            status: 'open'
+          })
+          .select('id')
+          .single();
+
+        if (createError) throw createError;
+        conversationId = (newConversation as any).id;
+      }
+
+      setConversationId(conversationId);
+
+      // Load messages for this conversation
+      const { data: messages, error: messagesError } = await supabase
+        .from('support_messages' as any)
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (messagesError) throw messagesError;
+
+      if (messages && messages.length === 0) {
+        // Add welcome message if no messages exist
+        const { error: welcomeError } = await supabase
+          .from('support_messages' as any)
+          .insert({
+            conversation_id: conversationId,
+            user_id: user.id,
+            message: "Hi! How can I help you today?",
+            sender_type: 'support'
+          });
+
+        if (welcomeError) throw welcomeError;
+      } else if (messages) {
+        setMessages(messages as unknown as SupportMessage[]);
+      }
+
+    } catch (error) {
+      console.error('Error initializing conversation:', error);
+      toast.error('Failed to initialize support chat');
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!inputValue.trim() || !conversationId || !user?.id) return;
+
+    const messageText = inputValue.trim();
     setInputValue('');
+    setLoading(true);
 
-    // Auto-reply (you can replace this with actual support integration)
-    setTimeout(() => {
-      const supportReply: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Thanks for your message! I'll get back to you shortly.",
-        sender: 'support',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, supportReply]);
-    }, 1000);
+    try {
+      const { error } = await supabase
+        .from('support_messages' as any)
+        .insert({
+          conversation_id: conversationId,
+          user_id: user.id,
+          message: messageText,
+          sender_type: 'user'
+        });
+
+      if (error) throw error;
+
+      // Update conversation last_message_at
+      await supabase
+        .from('support_conversations' as any)
+        .update({ 
+          last_message_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', conversationId);
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message');
+      setInputValue(messageText); // Restore message on error
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       sendMessage();
     }
+  };
+
+  const formatTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   };
 
   if (embedded) {
@@ -75,16 +186,21 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div
-                  className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                    message.sender === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  {message.text}
+                <div className="flex flex-col space-y-1">
+                  <div
+                    className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+                      message.sender_type === 'user'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    }`}
+                  >
+                    {message.message}
+                  </div>
+                  <span className="text-xs text-muted-foreground px-1">
+                    {formatTime(message.created_at)}
+                  </span>
                 </div>
               </div>
             ))}
@@ -100,8 +216,13 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               className="flex-1"
+              disabled={loading}
             />
-            <Button size="icon" onClick={sendMessage}>
+            <Button 
+              size="icon" 
+              onClick={sendMessage}
+              disabled={loading || !inputValue.trim()}
+            >
               <Send className="h-4 w-4" />
             </Button>
           </div>
@@ -145,16 +266,21 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div
-                    className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                      message.sender === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}
-                  >
-                    {message.text}
+                  <div className="flex flex-col space-y-1">
+                    <div
+                      className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+                        message.sender_type === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      {message.message}
+                    </div>
+                    <span className="text-xs text-muted-foreground px-1">
+                      {formatTime(message.created_at)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -170,8 +296,13 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
                 className="flex-1"
+                disabled={loading}
               />
-              <Button size="icon" onClick={sendMessage}>
+              <Button 
+                size="icon" 
+                onClick={sendMessage}
+                disabled={loading || !inputValue.trim()}
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </div>
