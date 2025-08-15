@@ -42,7 +42,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Scroll to bottom function
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
   // Auto-scroll when messages change
