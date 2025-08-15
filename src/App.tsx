@@ -23,6 +23,7 @@ import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
+import BlankTest from "./pages/BlankTest";
 
 import AdminReports from "./pages/AdminReports";
 import RequireAuth from "./components/auth/RequireAuth";
@@ -99,8 +100,9 @@ const App = () => {
                  <RequireAuth>
                    <AdminReports />
                  </RequireAuth>
-                } />
-+               <Route path="/posting-rules" element={<PostingRules />} />
+                 } />
+               <Route path="/posting-rules" element={<PostingRules />} />
+               <Route path="/test" element={<BlankTest />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
