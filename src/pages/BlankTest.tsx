@@ -27,32 +27,68 @@ const BlankTest = () => {
       if (!user?.id) return;
 
       try {
+        console.log('🔍 Fetching profile data for user:', user.id);
+        
         // Fetch reviews where user is the reviewee
-        const { data: reviews } = await supabase
+        const { data: reviews, error: reviewsError } = await supabase
           .from('reviews')
           .select('rating')
           .eq('reviewee_id', user.id);
 
-        // Fetch completed trades
-        const { data: trades } = await supabase
+        console.log('📊 Reviews query result:', { reviews, error: reviewsError });
+
+        // Try different approaches to count completed trades
+        // First, let's check what statuses exist in trades table
+        const { data: tradeStatuses } = await supabase
           .from('trades')
-          .select('id')
+          .select('status')
+          .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`);
+
+        console.log('🔍 Trade statuses found:', tradeStatuses);
+
+        // Count completed trades - try both 'completed' and 'complete'
+        const { data: completedTrades } = await supabase
+          .from('trades')
+          .select('id, status')
           .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`)
-          .eq('status', 'completed');
+          .in('status', ['completed', 'complete']);
+
+        console.log('✅ Completed trades:', completedTrades);
+
+        // Alternative: Count from notifications table
+        const { data: tradeNotifications } = await supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('action_taken', 'trade_completed');
+
+        console.log('📢 Trade completion notifications:', tradeNotifications);
 
         // Calculate average rating
         const avgRating = reviews && reviews.length > 0 
           ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
           : 0;
 
+        // Use the highest count from either method
+        const tradeCount = Math.max(
+          completedTrades?.length || 0,
+          tradeNotifications?.length || 0
+        );
+
+        console.log('📈 Final calculated data:', {
+          rating: Number(avgRating.toFixed(1)),
+          reviewCount: reviews?.length || 0,
+          totalTrades: tradeCount
+        });
+
         setProfileData(prev => ({
           ...prev,
           rating: Number(avgRating.toFixed(1)),
           reviewCount: reviews?.length || 0,
-          totalTrades: trades?.length || 0,
+          totalTrades: tradeCount,
         }));
       } catch (error) {
-        console.error('Error fetching profile data:', error);
+        console.error('❌ Error fetching profile data:', error);
       }
     };
 
