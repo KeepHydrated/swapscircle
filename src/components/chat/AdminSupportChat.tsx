@@ -42,7 +42,9 @@ const AdminSupportChat = () => {
 
   // Load conversations on mount
   useEffect(() => {
+    console.log('AdminSupportChat: isAdmin check:', isAdmin, 'user email:', user?.email);
     if (isAdmin) {
+      console.log('AdminSupportChat: Loading conversations...');
       loadConversations();
     }
   }, [isAdmin]);
@@ -91,6 +93,7 @@ const AdminSupportChat = () => {
   }, [selectedConversation, isAdmin]);
 
   const loadConversations = async () => {
+    console.log('AdminSupportChat: loadConversations called');
     try {
       const { data, error } = await supabase
         .from('support_conversations' as any)
@@ -103,6 +106,8 @@ const AdminSupportChat = () => {
         `)
         .order('last_message_at', { ascending: false });
 
+      console.log('AdminSupportChat: Query result:', { data, error });
+      
       if (error) throw error;
       setConversations((data || []) as unknown as SupportConversation[]);
     } catch (error) {
