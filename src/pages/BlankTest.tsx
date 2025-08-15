@@ -7,6 +7,7 @@ import { Calendar, MapPin, Star, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
+import SupportChat from '@/components/chat/SupportChat';
 
 const BlankTest = () => {
   const { user } = useAuth();
@@ -136,12 +137,10 @@ const BlankTest = () => {
               </Link>
             </Card>
 
-            {/* Right Column - Placeholder for future content */}
+            {/* Right Column - Support Chat Messages */}
             <Card className="p-6">
-              <h2 className="text-2xl font-bold mb-6 text-foreground">Additional Info</h2>
-              <div className="flex items-center justify-center h-64 text-muted-foreground">
-                <p>Right column content will go here</p>
-              </div>
+              <h2 className="text-2xl font-bold mb-6 text-foreground">Support Messages</h2>
+              <SupportChat />
             </Card>
           </div>
         </div>
