@@ -127,6 +127,14 @@ const Header = () => {
                       <span>Settings</span>
                     </Link>
                    </DropdownMenuItem>
+                   {user?.email === 'nadiachibri@gmail.com' && (
+                     <DropdownMenuItem asChild>
+                       <Link to="/messages" className="flex w-full cursor-pointer items-center">
+                         <MessageCircle className="mr-2 h-4 w-4" />
+                         <span>Messages</span>
+                       </Link>
+                     </DropdownMenuItem>
+                   )}
                    {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com' || user?.email === 'nadiachibri@gmail.com') && (
                      <>
                        <DropdownMenuItem asChild>
