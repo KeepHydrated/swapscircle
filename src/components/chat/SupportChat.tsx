@@ -23,11 +23,6 @@ const SupportChat = () => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Don't show chat button if user is not logged in
-  if (!user) {
-    return null;
-  }
-
   // Load conversation when chat opens
   useEffect(() => {
     if (isOpen && user && !conversationId) {
@@ -91,6 +86,11 @@ const SupportChat = () => {
       sendMessage();
     }
   };
+
+  // Don't show chat button if user is not logged in
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
