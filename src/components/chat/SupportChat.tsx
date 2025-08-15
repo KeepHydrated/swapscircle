@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
@@ -20,15 +21,34 @@ interface SupportChatProps {
 const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hi! How can I help you today?",
-      sender: 'support',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
+
+  // Fetch notifications and convert them to messages
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (!user?.id) return;
+
+      const { data: notifications } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+
+      if (notifications) {
+        const formattedMessages: Message[] = notifications.map(notification => ({
+          id: notification.id,
+          text: notification.message,
+          sender: 'support' as const,
+          timestamp: new Date(notification.created_at)
+        }));
+
+        setMessages(formattedMessages);
+      }
+    };
+
+    fetchNotifications();
+  }, [user?.id]);
 
   // Don't show chat button if user is not logged in
   if (!user) {
