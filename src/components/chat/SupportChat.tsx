@@ -132,20 +132,20 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
 
   if (embedded) {
     return (
-      <div className="flex flex-col h-full max-h-full">
-        {/* Messages */}
-        <ScrollArea className="flex-1 p-4 max-h-0">
-          <div className="space-y-3">
+      <div className="flex flex-col h-full">
+        {/* Messages Area - Clean and minimal */}
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="space-y-4 max-w-none">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+                  className={`max-w-[80%] rounded-lg px-4 py-3 text-sm ${
                     message.sender === 'user'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
+                      : 'bg-muted text-foreground'
                   }`}
                 >
                   {message.text}
@@ -154,20 +154,20 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
             ))}
             <div ref={messagesEndRef} />
           </div>
-        </ScrollArea>
+        </div>
 
-        {/* Input */}
-        <div className="p-4 border-t flex-shrink-0">
-          <div className="flex gap-2">
+        {/* Input Area - Clean bottom section */}
+        <div className="p-6 border-t bg-background">
+          <div className="flex gap-3">
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={asSupport ? "Reply as support..." : "Type your message..."}
-              className="flex-1"
+              className="flex-1 h-12 text-base border-2 rounded-lg"
             />
-            <Button size="icon" onClick={sendMessage}>
-              <Send className="h-4 w-4" />
+            <Button size="lg" onClick={sendMessage} className="h-12 px-4 bg-green-600 hover:bg-green-700">
+              <Send className="h-5 w-5" />
             </Button>
           </div>
         </div>
