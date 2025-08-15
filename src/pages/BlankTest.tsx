@@ -125,7 +125,7 @@ const BlankTest = () => {
               <Link to="/profile" className="block">
                 <div className="flex items-center space-x-4 hover:bg-muted/50 p-4 rounded-lg transition-colors cursor-pointer">
                   <Avatar className="h-16 w-16">
-                    {profileData.avatar && profileData.avatar.trim() ? (
+                    {profileData.avatar && profileData.avatar.trim() !== '' ? (
                       <AvatarImage src={profileData.avatar} alt={profileData.name} />
                     ) : null}
                     <AvatarFallback className="text-lg font-semibold bg-muted">
