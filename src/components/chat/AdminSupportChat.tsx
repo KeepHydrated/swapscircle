@@ -240,9 +240,9 @@ const AdminSupportChat = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full max-h-[calc(100vh-8rem)]">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       {/* Conversations List */}
-      <Card className="lg:col-span-1 h-[700px] flex flex-col">
+      <Card className="lg:col-span-1 h-full flex flex-col">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
@@ -288,7 +288,7 @@ const AdminSupportChat = () => {
       </Card>
 
       {/* Chat Interface */}
-      <Card className="lg:col-span-2 flex flex-col h-[700px]">
+      <Card className="lg:col-span-2 flex flex-col h-full">
         {selectedConversation ? (
           <div className="flex flex-col h-full">
             {/* Chat Header */}
@@ -302,7 +302,7 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 min-h-0 p-4 max-h-96">
+            <ScrollArea className="flex-1 min-h-0 p-4">
               <div className="space-y-2">
                 {messages.map((message) => (
                   <div
