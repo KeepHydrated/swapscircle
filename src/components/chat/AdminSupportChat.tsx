@@ -280,7 +280,7 @@ const AdminSupportChat = () => {
       </Card>
 
       {/* Chat Interface */}
-      <Card className="lg:col-span-2 flex flex-col h-full">
+      <Card className="lg:col-span-2 flex flex-col max-h-[600px]">
         {selectedConversation ? (
           <div className="flex flex-col h-full">
             {/* Chat Header */}
