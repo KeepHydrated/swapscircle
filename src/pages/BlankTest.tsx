@@ -38,7 +38,7 @@ const BlankTest = () => {
           .eq('id', user.id)
           .single();
 
-        console.log('📸 Profile data with avatar:', userProfile);
+        console.log('📸 Profile data with avatar:', JSON.stringify(userProfile, null, 2));
         
         // Fetch reviews where user is the reviewee
         const { data: reviews, error: reviewsError } = await supabase
@@ -86,13 +86,15 @@ const BlankTest = () => {
           tradeNotifications?.length || 0
         );
 
-        console.log('📈 Final calculated data:', {
+        const finalData = {
           rating: Number(avgRating.toFixed(1)),
           reviewCount: reviews?.length || 0,
           totalTrades: tradeCount,
           name: userProfile?.name || userProfile?.username || user?.name || user?.email?.split('@')[0] || 'Chat User',
           avatar: userProfile?.avatar_url || '',
-        });
+        };
+        
+        console.log('📈 Final calculated data:', JSON.stringify(finalData, null, 2));
 
         setProfileData(prev => ({
           ...prev,
