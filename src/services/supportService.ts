@@ -94,17 +94,14 @@ export const supportService = {
   async getAllConversations(): Promise<(SupportConversation & { user_name: string; user_email: string; latest_message: string })[]> {
     const { data, error } = await supabase
       .from('support_conversations')
-      .select(`
-        *,
-        profiles(name, username)
-      `)
+      .select('*')
       .order('last_message_at', { ascending: false });
 
     if (error) {
       throw error;
     }
 
-    // Get latest messages for each conversation
+    // Get latest messages and user details for each conversation
     const conversationsWithDetails = await Promise.all(
       (data || []).map(async (conversation) => {
         // Get the latest message for this conversation
@@ -115,13 +112,20 @@ export const supportService = {
           .order('created_at', { ascending: false })
           .limit(1);
         
+        // Get user profile info
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('name, username')
+          .eq('id', conversation.user_id)
+          .single();
+        
         const latestMessage = messages?.[0];
         
         return {
           ...conversation,
           status: conversation.status as 'open' | 'closed',
-          user_name: (conversation.profiles as any)?.name || (conversation.profiles as any)?.username || 'Unknown User',
-          user_email: '', // We'll need to get this differently since auth.users is not directly accessible
+          user_name: profile?.name || profile?.username || 'Unknown User',
+          user_email: '', // Email is in auth.users which we can't access directly
           latest_message: latestMessage?.message || 'No messages yet'
         };
       })
