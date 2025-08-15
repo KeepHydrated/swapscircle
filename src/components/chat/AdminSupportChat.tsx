@@ -294,7 +294,7 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 min-h-0 p-4" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+            <ScrollArea className="flex-1 min-h-0 p-4 max-h-96">
               <div className="space-y-4">
                 {messages.map((message) => (
                   <div
