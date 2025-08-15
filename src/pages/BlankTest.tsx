@@ -5,22 +5,59 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Star, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState } from 'react';
 
 const BlankTest = () => {
   const { user } = useAuth();
-
-  // Profile data from authenticated user
-  const profileData = {
+  const [profileData, setProfileData] = useState({
     id: user?.id || 'unknown',
     name: user?.name || user?.email?.split('@')[0] || 'Chat User',
     email: user?.email || 'user@example.com',
     avatar: user?.avatar_url || '',
-    memberSince: new Date().toISOString(), // Current date as placeholder
-    location: 'Location not set', // Will be set once user adds location
-    rating: 4.5, // Placeholder rating
-    reviewCount: 0, // Will be from actual data
-    totalTrades: 3, // Placeholder trade count
-  };
+    memberSince: new Date().toISOString(),
+    location: 'Location not set',
+    rating: 0,
+    reviewCount: 0,
+    totalTrades: 0,
+  });
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!user?.id) return;
+
+      try {
+        // Fetch reviews where user is the reviewee
+        const { data: reviews } = await supabase
+          .from('reviews')
+          .select('rating')
+          .eq('reviewee_id', user.id);
+
+        // Fetch completed trades
+        const { data: trades } = await supabase
+          .from('trades')
+          .select('id')
+          .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`)
+          .eq('status', 'completed');
+
+        // Calculate average rating
+        const avgRating = reviews && reviews.length > 0 
+          ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+          : 0;
+
+        setProfileData(prev => ({
+          ...prev,
+          rating: Number(avgRating.toFixed(1)),
+          reviewCount: reviews?.length || 0,
+          totalTrades: trades?.length || 0,
+        }));
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+
+    fetchProfileData();
+  }, [user?.id]);
 
   return (
     <MainLayout>
