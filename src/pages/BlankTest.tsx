@@ -1,8 +1,12 @@
+import MainLayout from '@/components/layout/MainLayout';
+
 const BlankTest = () => {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Blank page */}
-    </div>
+    <MainLayout>
+      <div className="min-h-screen bg-background">
+        {/* Blank page */}
+      </div>
+    </MainLayout>
   );
 };
 
