@@ -47,7 +47,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Auto-scroll when messages change
   useEffect(() => {
-    scrollToBottom();
+    // Use setTimeout to ensure DOM is updated before scrolling
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
   }, [messages]);
 
   // Initialize conversation and load messages
@@ -218,7 +221,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         
         {/* Messages */}
         <ScrollArea className="flex-1 p-4">
-          <div className="space-y-3 flex flex-col justify-end min-h-full">
+          <div className="space-y-3">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -310,7 +313,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
           {/* Messages */}
           <ScrollArea className="flex-1 p-4">
-            <div className="space-y-3 flex flex-col justify-end min-h-full">
+            <div className="space-y-3">
               {messages.map((message) => (
                 <div
                   key={message.id}
