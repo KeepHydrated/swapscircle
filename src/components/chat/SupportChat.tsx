@@ -42,11 +42,13 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Scroll to bottom function
   const scrollToBottom = () => {
+    console.log('scrollToBottom called, messagesEndRef:', messagesEndRef.current);
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
   // Auto-scroll when messages change
   useEffect(() => {
+    console.log('Messages changed, scrolling to bottom. Message count:', messages.length);
     // Use setTimeout to ensure DOM is updated before scrolling
     setTimeout(() => {
       scrollToBottom();
@@ -138,6 +140,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
         if (welcomeError) throw welcomeError;
       } else if (messages) {
+        console.log('Setting messages from DB:', messages.length);
         setMessages(messages as unknown as SupportMessage[]);
       }
 
@@ -275,7 +278,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     <>
       {/* Chat Button */}
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setIsOpen(true);
+          // Scroll to bottom when chat opens
+          setTimeout(() => scrollToBottom(), 200);
+        }}
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 z-50"
         size="icon"
       >
