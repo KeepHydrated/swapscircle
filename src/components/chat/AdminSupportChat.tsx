@@ -221,10 +221,10 @@ const AdminSupportChat = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full max-h-[calc(100vh-120px)]">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full overflow-hidden">
       {/* Conversations List */}
-      <Card className="lg:col-span-1">
-        <div className="p-4 border-b">
+      <Card className="lg:col-span-1 flex flex-col h-full">
+        <div className="p-4 border-b shrink-0">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
             Support Conversations
@@ -233,7 +233,7 @@ const AdminSupportChat = () => {
             {conversations.length} conversations
           </p>
         </div>
-        <ScrollArea className="h-[calc(100%-5rem)] max-h-[calc(100vh-300px)]">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-2">
             {conversations.map((conversation) => (
               <div
