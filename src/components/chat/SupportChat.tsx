@@ -193,6 +193,18 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   if (embedded) {
     return (
       <div className="flex flex-col h-full">
+        {/* Category Selection */}
+        <div className="p-4 border-b">
+          <SelectField
+            id="category"
+            label="Category"
+            value={category}
+            onChange={setCategory}
+            options={categories}
+            placeholder="Select a topic category"
+          />
+        </div>
+        
         {/* Messages */}
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
@@ -221,15 +233,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         </ScrollArea>
 
         {/* Input */}
-        <div className="p-4 border-t space-y-3">
-          <SelectField
-            id="category"
-            label="Category"
-            value={category}
-            onChange={setCategory}
-            options={categories}
-            placeholder="Select a topic category"
-          />
+        <div className="p-4 border-t">
           <div className="flex gap-2">
             <Input
               value={inputValue}
@@ -281,6 +285,18 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             </Button>
           </div>
 
+          {/* Category Selection */}
+          <div className="p-4 border-b">
+            <SelectField
+              id="category"
+              label="Category"
+              value={category}
+              onChange={setCategory}
+              options={categories}
+              placeholder="Select a topic category"
+            />
+          </div>
+
           {/* Messages */}
           <ScrollArea className="flex-1 p-4">
             <div className="space-y-3">
@@ -309,15 +325,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           </ScrollArea>
 
           {/* Input */}
-          <div className="p-4 border-t space-y-3">
-            <SelectField
-              id="category"
-              label="Category"
-              value={category}
-              onChange={setCategory}
-              options={categories}
-              placeholder="Select a topic category"
-            />
+          <div className="p-4 border-t">
             <div className="flex gap-2">
               <Input
                 value={inputValue}
