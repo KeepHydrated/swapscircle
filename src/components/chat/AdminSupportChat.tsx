@@ -93,7 +93,7 @@ const AdminSupportChat = () => {
   const loadConversations = async () => {
     try {
       const { data, error } = await supabase
-        .from('support_conversations')
+        .from('support_conversations' as any)
         .select(`
           *,
           profiles:user_id (
@@ -104,7 +104,7 @@ const AdminSupportChat = () => {
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
-      setConversations(data || []);
+      setConversations((data || []) as unknown as SupportConversation[]);
     } catch (error) {
       console.error('Error loading conversations:', error);
       toast.error('Failed to load conversations');
@@ -114,13 +114,13 @@ const AdminSupportChat = () => {
   const loadMessages = async (conversationId: string) => {
     try {
       const { data, error } = await supabase
-        .from('support_messages')
+        .from('support_messages' as any)
         .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setMessages(data || []);
+      setMessages((data || []) as unknown as SupportMessage[]);
     } catch (error) {
       console.error('Error loading messages:', error);
       toast.error('Failed to load messages');
@@ -136,7 +136,7 @@ const AdminSupportChat = () => {
 
     try {
       const { error } = await supabase
-        .from('support_messages')
+        .from('support_messages' as any)
         .insert({
           conversation_id: selectedConversation.id,
           user_id: user.id,
@@ -148,7 +148,7 @@ const AdminSupportChat = () => {
 
       // Update conversation last_message_at
       await supabase
-        .from('support_conversations')
+        .from('support_conversations' as any)
         .update({ 
           last_message_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
