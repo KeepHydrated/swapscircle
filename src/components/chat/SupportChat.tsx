@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import SelectField from '@/components/ui/select-field';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -27,6 +28,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const [inputValue, setInputValue] = useState('');
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState('');
+
+  const categories = [
+    'General Question',
+    'Technical Issue',
+    'Feature Request',
+    'Bug Report',
+    'Account Help',
+    'Other'
+  ];
 
   // Initialize conversation and load messages
   useEffect(() => {
@@ -123,10 +134,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || !conversationId || !user?.id) return;
+    if (!inputValue.trim() || !conversationId || !user?.id || !category) return;
 
-    const messageText = inputValue.trim();
+    const messageText = category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
     setInputValue('');
+    setCategory('');
     setLoading(true);
 
     try {
@@ -209,7 +221,15 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         </ScrollArea>
 
         {/* Input */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t space-y-3">
+          <SelectField
+            id="category"
+            label="Category"
+            value={category}
+            onChange={setCategory}
+            options={categories}
+            placeholder="Select a topic category"
+          />
           <div className="flex gap-2">
             <Input
               value={inputValue}
@@ -222,7 +242,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             <Button 
               size="icon" 
               onClick={sendMessage}
-              disabled={loading || !inputValue.trim()}
+              disabled={loading || !inputValue.trim() || !category}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -249,8 +269,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <div>
-              <h3 className="font-semibold">Support Chat</h3>
-              <p className="text-sm text-muted-foreground">Ask any questions!</p>
+              <h3 className="font-semibold">Reach Out</h3>
+              <p className="text-sm text-muted-foreground">Questions or comments about the website</p>
             </div>
             <Button
               variant="ghost"
@@ -289,7 +309,15 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           </ScrollArea>
 
           {/* Input */}
-          <div className="p-4 border-t">
+          <div className="p-4 border-t space-y-3">
+            <SelectField
+              id="category"
+              label="Category"
+              value={category}
+              onChange={setCategory}
+              options={categories}
+              placeholder="Select a topic category"
+            />
             <div className="flex gap-2">
               <Input
                 value={inputValue}
@@ -302,7 +330,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               <Button 
                 size="icon" 
                 onClick={sendMessage}
-                disabled={loading || !inputValue.trim()}
+                disabled={loading || !inputValue.trim() || !category}
               >
                 <Send className="h-4 w-4" />
               </Button>
