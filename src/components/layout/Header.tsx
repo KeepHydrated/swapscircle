@@ -23,9 +23,6 @@ const Header = () => {
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
 
-  // Debug line to check email
-  console.log('User email:', user?.email);
-
   const handleLogout = async () => {
     await signOut();
   };
@@ -111,7 +108,7 @@ const Header = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white z-50 shadow-lg border">
+                <DropdownMenuContent align="end" className="w-56 bg-white">
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />
@@ -130,29 +127,13 @@ const Header = () => {
                       <span>Settings</span>
                     </Link>
                    </DropdownMenuItem>
-                   {user?.email === 'nadiachibri@gmail.com' && (
+                   {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
                      <DropdownMenuItem asChild>
-                       <Link to="/messages" className="flex w-full cursor-pointer items-center">
-                         <MessageCircle className="mr-2 h-4 w-4" />
-                         <span>Messages</span>
+                       <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
+                         <Flag className="mr-2 h-4 w-4" />
+                         <span>Admin Reports</span>
                        </Link>
                      </DropdownMenuItem>
-                   )}
-                   {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com' || user?.email === 'nadiachibri@gmail.com') && (
-                     <>
-                       <DropdownMenuItem asChild>
-                         <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
-                           <Flag className="mr-2 h-4 w-4" />
-                           <span>Admin Reports</span>
-                         </Link>
-                       </DropdownMenuItem>
-                       <DropdownMenuItem asChild>
-                         <Link to="/submissions" className="flex w-full cursor-pointer items-center">
-                           <FileText className="mr-2 h-4 w-4" />
-                           <span>Submissions</span>
-                         </Link>
-                       </DropdownMenuItem>
-                     </>
                    )}
                    <DropdownMenuSeparator />
                   {supabaseConfigured && (
