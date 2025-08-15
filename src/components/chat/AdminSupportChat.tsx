@@ -221,7 +221,7 @@ const AdminSupportChat = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-h-[70vh] h-[70vh]">
       {/* Conversations List */}
       <Card className="lg:col-span-1">
         <div className="p-4 border-b">
@@ -283,7 +283,7 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 min-h-0 p-4" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+            <ScrollArea className="flex-1 min-h-0 p-4">
               <div className="space-y-4">
                 {messages.map((message) => (
                   <div
