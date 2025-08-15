@@ -24,6 +24,7 @@ import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
 import BlankTest from "./pages/BlankTest";
+import Test2 from "./pages/Test2";
 
 import AdminReports from "./pages/AdminReports";
 import RequireAuth from "./components/auth/RequireAuth";
@@ -103,6 +104,7 @@ const App = () => {
                  } />
                <Route path="/posting-rules" element={<PostingRules />} />
                <Route path="/test" element={<BlankTest />} />
+               <Route path="/test2" element={<Test2 />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
