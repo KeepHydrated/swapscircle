@@ -13,7 +13,11 @@ interface Message {
   timestamp: Date;
 }
 
-const SupportChat = () => {
+interface SupportChatProps {
+  embedded?: boolean;
+}
+
+const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -61,6 +65,50 @@ const SupportChat = () => {
       sendMessage();
     }
   };
+
+  if (embedded) {
+    return (
+      <div className="flex flex-col h-full">
+        {/* Messages */}
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-3">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+                    message.sender === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  }`}
+                >
+                  {message.text}
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+
+        {/* Input */}
+        <div className="p-4 border-t">
+          <div className="flex gap-2">
+            <Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+              className="flex-1"
+            />
+            <Button size="icon" onClick={sendMessage}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

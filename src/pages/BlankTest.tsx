@@ -156,9 +156,13 @@ const BlankTest = () => {
             </Card>
 
             {/* Right Column - Support Chat Messages */}
-            <Card className="p-6">
-              <h2 className="text-2xl font-bold mb-6 text-foreground">Support Messages</h2>
-              <SupportChat />
+            <Card className="flex flex-col h-[600px]">
+              <div className="p-6 border-b">
+                <h2 className="text-2xl font-bold text-foreground">Support Messages</h2>
+              </div>
+              <div className="flex-1">
+                <SupportChat embedded={true} />
+              </div>
             </Card>
           </div>
         </div>
