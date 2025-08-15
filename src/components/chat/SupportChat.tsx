@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
@@ -16,112 +15,49 @@ interface Message {
 
 interface SupportChatProps {
   embedded?: boolean;
-  asSupport?: boolean;
 }
 
-const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) => {
+const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: "Hi! How can I help you today?",
+      sender: 'support',
+      timestamp: new Date()
+    }
+  ]);
   const [inputValue, setInputValue] = useState('');
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  // Get or create conversation and fetch messages
-  useEffect(() => {
-    const initializeConversation = async () => {
-      if (!user?.id) return;
-
-      // First, try to find existing conversation
-      let { data: conversation } = await supabase
-        .from('support_conversations')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-
-      // If no conversation exists, create one
-      if (!conversation) {
-        const { data: newConversation } = await supabase
-          .from('support_conversations')
-          .insert({ user_id: user.id })
-          .select('id')
-          .single();
-        
-        conversation = newConversation;
-      }
-
-      if (conversation) {
-        setConversationId(conversation.id);
-
-        // Now fetch messages for this conversation
-        const { data: supportMessages } = await supabase
-          .from('support_messages')
-          .select('*')
-          .eq('conversation_id', conversation.id)
-          .order('created_at', { ascending: true });
-
-        if (supportMessages) {
-          const formattedMessages: Message[] = supportMessages.map(msg => ({
-            id: msg.id,
-            text: msg.message,
-            sender: msg.sender_type as 'user' | 'support',
-            timestamp: new Date(msg.created_at)
-          }));
-
-          setMessages(formattedMessages);
-        }
-      }
-    };
-
-    initializeConversation();
-  }, [user?.id]);
 
   // Don't show chat button if user is not logged in
   if (!user) {
     return null;
   }
 
-  const sendMessage = async () => {
-    if (!inputValue.trim() || !user?.id || !conversationId) return;
+  const sendMessage = () => {
+    if (!inputValue.trim()) return;
 
-    // Determine sender type based on mode
-    const senderType = asSupport ? 'support' : 'user';
-
-    // Save message to database
-    const { data: newMessage, error } = await supabase
-      .from('support_messages')
-      .insert({
-        conversation_id: conversationId,
-        user_id: user.id,
-        message: inputValue,
-        sender_type: senderType
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error saving message:', error);
-      return;
-    }
-
-    // Add message to local state
-    const messageObj: Message = {
-      id: newMessage.id,
-      text: newMessage.message,
-      sender: asSupport ? 'support' : 'user',
-      timestamp: new Date(newMessage.created_at)
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      text: inputValue,
+      sender: 'user',
+      timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, messageObj]);
+    setMessages(prev => [...prev, newMessage]);
     setInputValue('');
+
+    // Auto-reply (you can replace this with actual support integration)
+    setTimeout(() => {
+      const supportReply: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Thanks for your message! I'll get back to you shortly.",
+        sender: 'support',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, supportReply]);
+    }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -133,41 +69,40 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
   if (embedded) {
     return (
       <div className="flex flex-col h-full">
-        {/* Messages Area - Clean and minimal with proper scrolling */}
-        <div className="flex-1 overflow-y-auto p-6" style={{ maxHeight: 'calc(100% - 120px)' }}>
-          <div className="space-y-4">
+        {/* Messages */}
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-3">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-3 text-sm ${
+                  className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
                     message.sender === 'user'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-foreground'
+                      : 'bg-muted'
                   }`}
                 >
                   {message.text}
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} />
           </div>
-        </div>
+        </ScrollArea>
 
-        {/* Input Area - Clean bottom section */}
-        <div className="p-6 border-t bg-background">
-          <div className="flex gap-3">
+        {/* Input */}
+        <div className="p-4 border-t">
+          <div className="flex gap-2">
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={asSupport ? "Reply as support..." : "Type your message..."}
-              className="flex-1 h-12 text-base border-2 rounded-lg"
+              placeholder="Type your message..."
+              className="flex-1"
             />
-            <Button size="lg" onClick={sendMessage} className="h-12 px-4 bg-green-600 hover:bg-green-700">
-              <Send className="h-5 w-5" />
+            <Button size="icon" onClick={sendMessage}>
+              <Send className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -223,7 +158,6 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
                   </div>
                 </div>
               ))}
-              <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
 

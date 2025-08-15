@@ -114,58 +114,54 @@ const BlankTest = () => {
 
   return (
     <MainLayout>
-      <div className="h-screen bg-background p-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto h-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column - Profile Info */}
-            <Card className="flex flex-col h-full">
-              <div className="p-6 border-b flex-shrink-0">
-                <h2 className="text-2xl font-bold mb-6 text-foreground">Chat User Profile</h2>
-              </div>
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold mb-6 text-foreground">Chat User Profile</h2>
               
-              <div className="flex-1 overflow-y-auto p-6">
-                {/* Compact Profile Layout */}
-                <Link to="/profile" className="block">
-                  <div className="flex items-center space-x-4 hover:bg-muted/50 p-4 rounded-lg transition-colors cursor-pointer">
-                    <Avatar className="h-16 w-16">
-                      {profileData.avatar && profileData.avatar.trim() !== '' ? (
-                        <AvatarImage src={profileData.avatar} alt={profileData.name} />
-                      ) : null}
-                      <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">
-                        {profileData.name.substring(0, 1).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="text-xl font-semibold text-foreground">{profileData.name}</h3>
-                        <div className="flex items-center space-x-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{profileData.rating}</span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Since {new Date(profileData.memberSince).getFullYear()}
-                      </p>
-                      
-                      <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                        <MessageCircle className="h-4 w-4" />
-                        <span>{profileData.totalTrades} trades completed</span>
+              {/* Compact Profile Layout */}
+              <Link to="/profile" className="block">
+                <div className="flex items-center space-x-4 hover:bg-muted/50 p-4 rounded-lg transition-colors cursor-pointer">
+                  <Avatar className="h-16 w-16">
+                    {profileData.avatar && profileData.avatar.trim() !== '' ? (
+                      <AvatarImage src={profileData.avatar} alt={profileData.name} />
+                    ) : null}
+                    <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">
+                      {profileData.name.substring(0, 1).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h3 className="text-xl font-semibold text-foreground">{profileData.name}</h3>
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{profileData.rating}</span>
                       </div>
                     </div>
+                    
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Since {new Date(profileData.memberSince).getFullYear()}
+                    </p>
+                    
+                    <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                      <MessageCircle className="h-4 w-4" />
+                      <span>{profileData.totalTrades} trades completed</span>
+                    </div>
                   </div>
-                </Link>
-              </div>
+                </div>
+              </Link>
             </Card>
 
             {/* Right Column - Support Chat Messages */}
-            <Card className="flex flex-col h-full">
+            <Card className="flex flex-col h-[600px]">
               <div className="p-6 border-b">
                 <h2 className="text-2xl font-bold text-foreground">Support Messages</h2>
               </div>
               <div className="flex-1">
-                <SupportChat embedded={true} asSupport={true} />
+                <SupportChat embedded={true} />
               </div>
             </Card>
           </div>
