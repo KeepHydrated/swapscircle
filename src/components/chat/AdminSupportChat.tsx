@@ -283,29 +283,31 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 min-h-0 p-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className="flex flex-col space-y-1 max-w-[70%]">
-                      <div
-                        className={`rounded-lg px-4 py-2 text-sm ${
-                          message.sender_type === 'support'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        }`}
-                      >
-                        {message.message}
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="p-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className="flex flex-col space-y-1 max-w-[70%]">
+                        <div
+                          className={`rounded-lg px-4 py-2 text-sm ${
+                            message.sender_type === 'support'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted'
+                          }`}
+                        >
+                          {message.message}
+                        </div>
+                        <span className="text-xs text-muted-foreground px-1">
+                          {formatTime(message.created_at)}
+                        </span>
                       </div>
-                      <span className="text-xs text-muted-foreground px-1">
-                        {formatTime(message.created_at)}
-                      </span>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </ScrollArea>
 
