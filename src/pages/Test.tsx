@@ -7,6 +7,7 @@ import { Send, MessageCircle, User } from 'lucide-react';
 import { supportService, SupportMessage, SupportConversation } from '@/services/supportService';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import MainLayout from '@/components/layout/MainLayout';
 
 interface ConversationWithDetails extends SupportConversation {
   user_name: string;
@@ -85,17 +86,19 @@ const Test = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-          <p className="text-muted-foreground">This page is only accessible to administrators.</p>
-        </Card>
-      </div>
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <Card className="p-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+            <p className="text-muted-foreground">This page is only accessible to administrators.</p>
+          </Card>
+        </div>
+      </MainLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <MainLayout>
       <div className="container mx-auto p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Support Messages</h1>
@@ -222,7 +225,7 @@ const Test = () => {
           </Card>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
