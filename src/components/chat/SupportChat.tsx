@@ -273,8 +273,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <div>
-              <h3 className="font-semibold">Reach Out</h3>
-              <p className="text-sm text-muted-foreground">Questions or comments about the website</p>
+              <h3 className="font-semibold">Reach Out to Customer Support</h3>
             </div>
             <Button
               variant="ghost"
