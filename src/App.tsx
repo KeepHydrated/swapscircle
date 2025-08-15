@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import PostingRules from "./pages/PostingRules";
 import SupportAdmin from "./pages/SupportAdmin";
 import Submissions from "./pages/Submissions";
+import Dashboard from "./pages/Dashboard";
 
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -43,7 +44,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Navigate to="/home" replace />} />
-              <Route path="/home" element={<Navigate to="/test" replace />} />
+              <Route path="/home" element={<Dashboard />} />
               <Route path="/test" element={<Test />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/trades" element={
