@@ -283,13 +283,13 @@ const AdminSupportChat = () => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-hidden">
-              <ScrollArea className="h-full pr-4">
-                <div className="p-4 space-y-4">
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="p-4">
                   {messages.map((message) => (
                     <div
                       key={message.id}
-                      className={`flex ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
+                      className={`flex mb-4 ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div className="flex flex-col space-y-1 max-w-[70%]">
                         <div
