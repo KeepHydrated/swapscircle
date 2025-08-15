@@ -17,6 +17,7 @@ import Notifications from "./pages/Notifications";
 import NotificationDetails from "./pages/NotificationDetails";
 import NotFound from "./pages/NotFound";
 import PostingRules from "./pages/PostingRules";
+import SupportAdmin from "./pages/SupportAdmin";
 
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -100,7 +101,12 @@ const App = () => {
                    <AdminReports />
                  </RequireAuth>
                 } />
-+               <Route path="/posting-rules" element={<PostingRules />} />
+                <Route path="/support-admin" element={
+                  <RequireAuth>
+                    <SupportAdmin />
+                  </RequireAuth>
+                } />
+                <Route path="/posting-rules" element={<PostingRules />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

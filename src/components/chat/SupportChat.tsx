@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
+import { supportService, SupportMessage } from '@/services/supportService';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -16,23 +18,50 @@ interface Message {
 const SupportChat = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hi! How can I help you today?",
-      sender: 'support',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Don't show chat button if user is not logged in
   if (!user) {
     return null;
   }
 
-  const sendMessage = () => {
-    if (!inputValue.trim()) return;
+  // Load conversation when chat opens
+  useEffect(() => {
+    if (isOpen && user && !conversationId) {
+      loadConversation();
+    }
+  }, [isOpen, user, conversationId]);
+
+  const loadConversation = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const convId = await supportService.getOrCreateConversation(user.id);
+      setConversationId(convId);
+      
+      const supportMessages = await supportService.getMessages(convId);
+      const formattedMessages = supportMessages.map(msg => ({
+        id: msg.id,
+        text: msg.message,
+        sender: msg.sender_type,
+        timestamp: new Date(msg.created_at)
+      }));
+      
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+      toast.error('Failed to load conversation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!inputValue.trim() || !conversationId || !user) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -41,19 +70,20 @@ const SupportChat = () => {
       timestamp: new Date()
     };
 
+    // Add message to UI immediately
     setMessages(prev => [...prev, newMessage]);
+    const messageText = inputValue;
     setInputValue('');
 
-    // Auto-reply (you can replace this with actual support integration)
-    setTimeout(() => {
-      const supportReply: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Thanks for your message! I'll get back to you shortly.",
-        sender: 'support',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, supportReply]);
-    }, 1000);
+    try {
+      // Save to database
+      await supportService.sendMessage(conversationId, messageText, 'user', user.id);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message');
+      // Remove message from UI if failed to save
+      setMessages(prev => prev.filter(msg => msg.id !== newMessage.id));
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -80,7 +110,9 @@ const SupportChat = () => {
           <div className="flex items-center justify-between p-4 border-b">
             <div>
               <h3 className="font-semibold">Support Chat</h3>
-              <p className="text-sm text-muted-foreground">Ask any questions!</p>
+              <p className="text-sm text-muted-foreground">
+                {loading ? 'Loading...' : 'Ask any questions!'}
+              </p>
             </div>
             <Button
               variant="ghost"
@@ -93,24 +125,36 @@ const SupportChat = () => {
 
           {/* Messages */}
           <ScrollArea className="flex-1 p-4">
-            <div className="space-y-3">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                      message.sender === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}
-                  >
-                    {message.text}
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-sm text-muted-foreground">Loading messages...</div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {messages.length === 0 && (
+                  <div className="text-center py-8">
+                    <div className="text-sm text-muted-foreground mb-2">👋 Welcome to support!</div>
+                    <div className="text-sm text-muted-foreground">How can we help you today?</div>
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+                        message.sender === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      {message.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </ScrollArea>
 
           {/* Input */}
@@ -123,7 +167,7 @@ const SupportChat = () => {
                 placeholder="Type your message..."
                 className="flex-1"
               />
-              <Button size="icon" onClick={sendMessage}>
+              <Button size="icon" onClick={sendMessage} disabled={loading || !inputValue.trim()}>
                 <Send className="h-4 w-4" />
               </Button>
             </div>
