@@ -83,9 +83,8 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
   const sendMessage = async () => {
     if (!inputValue.trim() || !user?.id || !conversationId) return;
 
-    // Determine sender type and message details based on mode
+    // Determine sender type based on mode
     const senderType = asSupport ? 'support' : 'user';
-    const messageText = inputValue;
 
     // Save message to database
     const { data: newMessage, error } = await supabase
@@ -93,7 +92,7 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
       .insert({
         conversation_id: conversationId,
         user_id: user.id,
-        message: messageText,
+        message: inputValue,
         sender_type: senderType
       })
       .select()
@@ -114,32 +113,6 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
 
     setMessages(prev => [...prev, messageObj]);
     setInputValue('');
-
-    // Only auto-reply when user sends message (not when admin replies)
-    if (!asSupport) {
-      setTimeout(async () => {
-        const { data: supportReply } = await supabase
-          .from('support_messages')
-          .insert({
-            conversation_id: conversationId,
-            user_id: user.id,
-            message: "Thanks for your message! I'll get back to you shortly.",
-            sender_type: 'support'
-          })
-          .select()
-          .single();
-
-        if (supportReply) {
-          const supportMessage: Message = {
-            id: supportReply.id,
-            text: supportReply.message,
-            sender: 'support',
-            timestamp: new Date(supportReply.created_at)
-          };
-          setMessages(prev => [...prev, supportMessage]);
-        }
-      }, 1000);
-    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
