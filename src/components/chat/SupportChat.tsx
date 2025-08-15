@@ -133,9 +133,9 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
   if (embedded) {
     return (
       <div className="flex flex-col h-full">
-        {/* Messages Area - Clean and minimal */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          <div className="space-y-4 max-w-none">
+        {/* Messages Area - Clean and minimal with proper scrolling */}
+        <div className="flex-1 overflow-y-auto p-6" style={{ maxHeight: 'calc(100% - 120px)' }}>
+          <div className="space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
