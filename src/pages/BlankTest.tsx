@@ -128,8 +128,8 @@ const BlankTest = () => {
                     {profileData.avatar && profileData.avatar.trim() !== '' ? (
                       <AvatarImage src={profileData.avatar} alt={profileData.name} />
                     ) : null}
-                    <AvatarFallback className="text-lg font-semibold bg-muted">
-                      {profileData.name.substring(0, 2).toUpperCase()}
+                    <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">
+                      {profileData.name.substring(0, 1).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   
