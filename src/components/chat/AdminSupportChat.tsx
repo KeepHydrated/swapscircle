@@ -221,7 +221,7 @@ const AdminSupportChat = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-h-[70vh] h-[70vh]">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full max-h-[calc(100vh-120px)]">
       {/* Conversations List */}
       <Card className="lg:col-span-1">
         <div className="p-4 border-b">
@@ -233,7 +233,7 @@ const AdminSupportChat = () => {
             {conversations.length} conversations
           </p>
         </div>
-        <ScrollArea className="h-[calc(100%-5rem)]">
+        <ScrollArea className="h-[calc(100%-5rem)] max-h-[calc(100vh-300px)]">
           <div className="p-2">
             {conversations.map((conversation) => (
               <div
