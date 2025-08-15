@@ -161,7 +161,7 @@ const BlankTest = () => {
                 <h2 className="text-2xl font-bold text-foreground">Support Messages</h2>
               </div>
               <div className="flex-1">
-                <SupportChat embedded={true} />
+                <SupportChat embedded={true} asSupport={true} />
               </div>
             </Card>
           </div>

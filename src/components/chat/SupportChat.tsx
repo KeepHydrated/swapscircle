@@ -16,9 +16,10 @@ interface Message {
 
 interface SupportChatProps {
   embedded?: boolean;
+  asSupport?: boolean;
 }
 
-const SupportChat = ({ embedded = false }: SupportChatProps) => {
+const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -62,11 +63,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           const formattedMessages: Message[] = supportMessages.map(msg => ({
             id: msg.id,
             text: msg.message,
-            // If it's an auto-reply message, treat it as support
-            // Otherwise, if it's from current user, treat it as user message
-            sender: msg.message === "Thanks for your message! I'll get back to you shortly." 
-              ? 'support' 
-              : (msg.user_id === user.id ? 'user' : 'support'),
+            sender: msg.sender_type as 'user' | 'support',
             timestamp: new Date(msg.created_at)
           }));
 
@@ -86,14 +83,18 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const sendMessage = async () => {
     if (!inputValue.trim() || !user?.id || !conversationId) return;
 
-    // Save user message to database
-    const { data: userMessage, error } = await supabase
+    // Determine sender type and message details based on mode
+    const senderType = asSupport ? 'support' : 'user';
+    const messageText = inputValue;
+
+    // Save message to database
+    const { data: newMessage, error } = await supabase
       .from('support_messages')
       .insert({
         conversation_id: conversationId,
         user_id: user.id,
-        message: inputValue,
-        sender_type: 'user'
+        message: messageText,
+        sender_type: senderType
       })
       .select()
       .single();
@@ -103,40 +104,42 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       return;
     }
 
-    // Add user message to local state
-    const newMessage: Message = {
-      id: userMessage.id,
-      text: userMessage.message,
-      sender: 'user',
-      timestamp: new Date(userMessage.created_at)
+    // Add message to local state
+    const messageObj: Message = {
+      id: newMessage.id,
+      text: newMessage.message,
+      sender: asSupport ? 'support' : 'user',
+      timestamp: new Date(newMessage.created_at)
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, messageObj]);
     setInputValue('');
 
-    // Auto-reply from support
-    setTimeout(async () => {
-      const { data: supportReply } = await supabase
-        .from('support_messages')
-        .insert({
-          conversation_id: conversationId,
-          user_id: user.id,
-          message: "Thanks for your message! I'll get back to you shortly.",
-          sender_type: 'support'
-        })
-        .select()
-        .single();
+    // Only auto-reply when user sends message (not when admin replies)
+    if (!asSupport) {
+      setTimeout(async () => {
+        const { data: supportReply } = await supabase
+          .from('support_messages')
+          .insert({
+            conversation_id: conversationId,
+            user_id: user.id,
+            message: "Thanks for your message! I'll get back to you shortly.",
+            sender_type: 'support'
+          })
+          .select()
+          .single();
 
-      if (supportReply) {
-        const supportMessage: Message = {
-          id: supportReply.id,
-          text: supportReply.message,
-          sender: 'support',
-          timestamp: new Date(supportReply.created_at)
-        };
-        setMessages(prev => [...prev, supportMessage]);
-      }
-    }, 1000);
+        if (supportReply) {
+          const supportMessage: Message = {
+            id: supportReply.id,
+            text: supportReply.message,
+            sender: 'support',
+            timestamp: new Date(supportReply.created_at)
+          };
+          setMessages(prev => [...prev, supportMessage]);
+        }
+      }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -177,7 +180,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={asSupport ? "Reply as support..." : "Type your message..."}
               className="flex-1"
             />
             <Button size="icon" onClick={sendMessage}>
