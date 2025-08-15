@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -29,6 +29,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const categories = [
     'General Question',
@@ -38,6 +39,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     'Account Help',
     'Other'
   ];
+
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Initialize conversation and load messages
   useEffect(() => {
@@ -229,6 +240,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
 
@@ -320,6 +332,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
 
