@@ -242,7 +242,7 @@ const AdminSupportChat = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-fit overflow-hidden">
       {/* Conversations List */}
-      <Card className="lg:col-span-1 h-[500px] flex flex-col">
+      <Card className="lg:col-span-1 h-[520px] flex flex-col">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
@@ -288,7 +288,7 @@ const AdminSupportChat = () => {
       </Card>
 
       {/* Chat Interface */}
-      <Card className="lg:col-span-2 flex flex-col h-[500px]">
+      <Card className="lg:col-span-2 flex flex-col h-[520px]">
         {selectedConversation ? (
           <div className="flex flex-col h-full">
             {/* Chat Header */}
