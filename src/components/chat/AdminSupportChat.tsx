@@ -295,15 +295,15 @@ const AdminSupportChat = () => {
 
             {/* Messages */}
             <ScrollArea className="flex-1 min-h-0 p-4 max-h-96">
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {messages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className="flex flex-col space-y-1 max-w-[70%]">
+                    <div className="flex flex-col space-y-0.5 max-w-[70%]">
                       <div
-                        className={`rounded-lg px-4 py-2 text-sm ${
+                        className={`rounded-lg px-3 py-1.5 text-sm ${
                           message.sender_type === 'support'
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
