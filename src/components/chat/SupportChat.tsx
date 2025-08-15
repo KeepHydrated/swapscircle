@@ -132,9 +132,9 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
 
   if (embedded) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full max-h-full">
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4">
+        <ScrollArea className="flex-1 p-4 max-h-0">
           <div className="space-y-3">
             {messages.map((message) => (
               <div
@@ -157,7 +157,7 @@ const SupportChat = ({ embedded = false, asSupport = false }: SupportChatProps) 
         </ScrollArea>
 
         {/* Input */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t flex-shrink-0">
           <div className="flex gap-2">
             <Input
               value={inputValue}
