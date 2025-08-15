@@ -23,6 +23,9 @@ const Header = () => {
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
 
+  // Debug line to check email
+  console.log('User email:', user?.email);
+
   const handleLogout = async () => {
     await signOut();
   };
@@ -108,7 +111,7 @@ const Header = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white">
+                <DropdownMenuContent align="end" className="w-56 bg-white z-50 shadow-lg border">
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />
