@@ -28,13 +28,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Don't show chat button if user is not logged in
-  if (!user) {
-    return null;
-  }
-
   // Initialize conversation and load messages
   useEffect(() => {
+    if (!user?.id) return;
     initializeConversation();
   }, [user?.id]);
 
@@ -176,6 +172,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       minute: '2-digit' 
     });
   };
+
+  // Don't render anything if user is not logged in
+  if (!user) {
+    return null;
+  }
 
   if (embedded) {
     return (
