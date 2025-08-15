@@ -122,20 +122,24 @@ const BlankTest = () => {
               <h2 className="text-2xl font-bold mb-6 text-foreground">Chat User Profile</h2>
               
               {/* Compact Profile Layout */}
-              <Link to="/profile" className="block">
+              <Link to="/messages" className="block">
                 <div className="flex items-center space-x-4 hover:bg-muted/50 p-4 rounded-lg transition-colors cursor-pointer">
-                  <Avatar className="h-16 w-16">
-                    {profileData.avatar && profileData.avatar.trim() !== '' ? (
-                      <AvatarImage src={profileData.avatar} alt={profileData.name} />
-                    ) : null}
-                    <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">
-                      {profileData.name.substring(0, 1).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link to="/profile" className="relative z-10" onClick={(e) => e.stopPropagation()}>
+                    <Avatar className="h-16 w-16 hover:ring-2 hover:ring-primary transition-all">
+                      {profileData.avatar && profileData.avatar.trim() !== '' ? (
+                        <AvatarImage src={profileData.avatar} alt={profileData.name} />
+                      ) : null}
+                      <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">
+                        {profileData.name.substring(0, 1).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
-                      <h3 className="text-xl font-semibold text-foreground">{profileData.name}</h3>
+                      <Link to="/profile" className="relative z-10 hover:underline" onClick={(e) => e.stopPropagation()}>
+                        <h3 className="text-xl font-semibold text-foreground">{profileData.name}</h3>
+                      </Link>
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm font-medium">{profileData.rating}</span>
