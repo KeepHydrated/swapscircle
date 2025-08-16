@@ -27,6 +27,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationStatus, setConversationStatus] = useState<'open' | 'closed'>('open');
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -78,6 +79,12 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       }, (payload) => {
         console.log('Real-time message received:', payload);
         const newMessage = payload.new as SupportMessage;
+        
+        // Check if it's a closure message
+        if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
+          setConversationStatus('closed');
+        }
+        
         setMessages(prev => {
           // Avoid duplicates by checking if message already exists
           const exists = prev.some(msg => msg.id === newMessage.id);
@@ -120,21 +127,24 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     if (!user?.id) return;
 
     try {
-      // Check if user has an existing conversation
+      // Check if user has an existing open conversation
       const { data: existingConversation, error: convError } = await supabase
         .from('support_conversations' as any)
-        .select('id')
+        .select('id, status')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       let conversationId: string;
+      let status: 'open' | 'closed' = 'open';
 
-      if (existingConversation && !convError) {
+      if (existingConversation && !convError && (existingConversation as any).status === 'open') {
+        // Use existing open conversation
         conversationId = (existingConversation as any).id;
+        status = (existingConversation as any).status;
       } else {
-        // Create new conversation
+        // Previous conversation was closed or doesn't exist, create new one
         const { data: newConversation, error: createError } = await supabase
           .from('support_conversations' as any)
           .insert({
@@ -146,9 +156,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
         if (createError) throw createError;
         conversationId = (newConversation as any).id;
+        status = 'open';
       }
 
       setConversationId(conversationId);
+      setConversationStatus(status);
 
       // Load messages for this conversation
       const { data: messages, error: messagesError } = await supabase
@@ -183,7 +195,19 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || !conversationId || !user?.id) return;
+    if (!inputValue.trim() || !user?.id) return;
+
+    // If conversation is closed, create a new one
+    if (conversationStatus === 'closed') {
+      if (!category) {
+        toast.error('Please select a category to start a new conversation');
+        return;
+      }
+      await initializeConversation();
+      return;
+    }
+
+    if (!conversationId) return;
 
     // Only require category for the very first message (when no messages exist yet)
     const isFirstMessage = messages.length === 0;
@@ -247,11 +271,23 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   }
 
   if (embedded) {
-    const isFirstMessage = messages.length === 0;
+    const isFirstMessage = messages.length === 0 || conversationStatus === 'closed';
     
     return (
       <div className="flex flex-col h-full">
-        {/* Category Selection - Only for first message */}
+        {/* Closed Conversation Notice */}
+        {conversationStatus === 'closed' && (
+          <div className="px-4 pt-3 pb-2 border-b bg-red-50 border-red-200">
+            <p className="text-sm text-red-800 font-medium text-center">
+              🎫 Previous ticket was closed
+            </p>
+            <p className="text-xs text-red-600 text-center mt-1">
+              Select a category to start a new conversation
+            </p>
+          </div>
+        )}
+        
+        {/* Category Selection - Only for first message or closed conversation */}
         {isFirstMessage && (
           <div className="px-4 pt-2 pb-4 border-b">
             <SelectField
@@ -278,6 +314,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                     className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
                       message.sender_type === 'user'
                         ? 'bg-primary text-primary-foreground'
+                        : message.message.includes('This ticket has been closed')
+                        ? 'bg-red-100 text-red-800 border border-red-200'
                         : 'bg-muted'
                     }`}
                   >
@@ -300,7 +338,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={conversationStatus === 'closed' ? "Start a new conversation..." : "Type your message..."}
               className="flex-1"
               disabled={loading}
             />
@@ -350,7 +388,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           </div>
 
           {/* Category Selection - Only for first message */}
-          {messages.length === 0 && (
+          {messages.length === 0 && conversationStatus === 'open' && (
             <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
               <SelectField
                 id="category"
@@ -362,6 +400,26 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               />
               <p className="text-xs text-muted-foreground mt-1">
                 Please select a category for your first message
+              </p>
+            </div>
+          )}
+
+          {/* New Conversation Notice for Closed Tickets */}
+          {conversationStatus === 'closed' && (
+            <div className="px-4 pt-2 pb-4 border-b bg-red-50 border-red-200">
+              <p className="text-sm text-red-800 font-medium text-center mb-2">
+                🎫 Previous ticket was closed
+              </p>
+              <SelectField
+                id="category"
+                label=""
+                value={category}
+                onChange={setCategory}
+                options={categories}
+                placeholder="Select category for new conversation"
+              />
+              <p className="text-xs text-red-600 text-center mt-1">
+                Select a category to start a new conversation
               </p>
             </div>
           )}
@@ -379,6 +437,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                       className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
                         message.sender_type === 'user'
                           ? 'bg-primary text-primary-foreground'
+                          : message.message.includes('This ticket has been closed')
+                          ? 'bg-red-100 text-red-800 border border-red-200'
                           : 'bg-muted'
                       }`}
                     >
@@ -401,14 +461,14 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
+                placeholder={conversationStatus === 'closed' ? "Start a new conversation..." : "Type your message..."}
                 className="flex-1"
                 disabled={loading}
               />
               <Button 
                 size="icon" 
                 onClick={sendMessage}
-                disabled={loading || !inputValue.trim() || (messages.length === 0 && !category)}
+                disabled={loading || !inputValue.trim() || ((messages.length === 0 || conversationStatus === 'closed') && !category)}
               >
                 <Send className="h-4 w-4" />
               </Button>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Send, User, Clock, Star } from 'lucide-react';
+import { MessageCircle, Send, User, Clock, Star, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -289,6 +289,45 @@ const AdminSupportChat = () => {
     });
   };
 
+  const closeTicket = async () => {
+    if (!selectedConversation) return;
+    
+    try {
+      // Update conversation status to closed
+      const { error } = await supabase
+        .from('support_conversations')
+        .update({ 
+          status: 'closed',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', selectedConversation.id);
+
+      if (error) throw error;
+
+      // Send a closing message
+      await supabase
+        .from('support_messages')
+        .insert({
+          conversation_id: selectedConversation.id,
+          user_id: user.id,
+          message: "This ticket has been closed by customer support. If you need further assistance, please start a new conversation.",
+          sender_type: 'support'
+        });
+
+      toast.success('Ticket closed successfully');
+      
+      // Refresh conversations list
+      loadConversations();
+      
+      // Clear selected conversation
+      setSelectedConversation(null);
+      
+    } catch (error) {
+      console.error('Error closing ticket:', error);
+      toast.error('Failed to close ticket');
+    }
+  };
+
   const formatDate = (timestamp: string) => {
     return new Date(timestamp).toLocaleDateString([], { 
       month: 'short',
@@ -408,9 +447,29 @@ const AdminSupportChat = () => {
                     </div>
                   </div>
                   
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Started {formatDate(selectedConversation.created_at)}
-                  </p>
+                  <div className="flex items-center justify-between p-3 border-b bg-muted/30">
+                    <p className="text-xs text-muted-foreground">
+                      Started {formatDate(selectedConversation.created_at)}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {selectedConversation.status === 'open' && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={closeTicket}
+                          className="h-7 px-2 text-xs"
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Close Ticket
+                        </Button>
+                      )}
+                      {selectedConversation.status === 'closed' && (
+                        <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
+                          CLOSED
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -443,26 +502,34 @@ const AdminSupportChat = () => {
                </div>
              </ScrollArea>
 
-            {/* Input */}
-            <div className="p-4 border-t">
-              <div className="flex gap-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your response..."
-                  className="flex-1"
-                  disabled={loading}
-                />
-                <Button 
-                  size="icon" 
-                  onClick={sendMessage}
-                  disabled={loading || !inputValue.trim()}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
+            {/* Input - Only show if conversation is open */}
+            {selectedConversation?.status === 'open' ? (
+              <div className="p-4 border-t">
+                <div className="flex gap-2">
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your response..."
+                    className="flex-1"
+                    disabled={loading}
+                  />
+                  <Button 
+                    size="icon" 
+                    onClick={sendMessage}
+                    disabled={loading || !inputValue.trim()}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="p-4 border-t bg-muted/30">
+                <p className="text-center text-sm text-muted-foreground">
+                  This ticket is closed. Customer must start a new conversation for further assistance.
+                </p>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center">
