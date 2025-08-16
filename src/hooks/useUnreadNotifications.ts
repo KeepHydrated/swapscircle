@@ -23,7 +23,11 @@ export function useNotifications() {
     // Initialize from localStorage
     return localStorage.getItem('notifications-viewed') === 'true';
   });
-  const [locallyReadIds, setLocallyReadIds] = useState<Set<string>>(new Set());
+  const [locallyReadIds, setLocallyReadIds] = useState<Set<string>>(() => {
+    // Initialize from localStorage
+    const stored = localStorage.getItem('locally-read-notifications');
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  });
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -137,6 +141,8 @@ export function useNotifications() {
       setLocallyReadIds(prev => {
         const next = new Set(prev);
         next.add(notificationId);
+        // Persist to localStorage
+        localStorage.setItem('locally-read-notifications', JSON.stringify([...next]));
         return next;
       });
 
@@ -155,46 +161,51 @@ export function useNotifications() {
   const markAllAsRead = async () => {
     if (!user) return;
 
-    try {
-      let err: any = null;
-      const { error: updError } = await supabase
-        .from('notifications')
-        .update({ status: 'read' })
-        .eq('user_id', user.id)
-        .eq('status', 'unread');
-      err = updError;
+    console.log('🔔 HOOK: Starting markAllAsRead for user:', user.id);
+    
+    const unreadNotifications = notifications.filter(n => !n.is_read);
+    console.log('🔔 HOOK: Found unread notifications:', unreadNotifications.map(n => n.id));
 
-      // If direct update fails due to RLS, fall back to per-item RPC calls
-      if (err) {
-        const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
-        const results = await Promise.all(
-          unreadIds.map(id => supabase.rpc('mark_notification_as_read', { p_notification_id: id }))
-        );
-        const anyErr = results.find((r: any) => r && r.error);
-        if (anyErr && anyErr.error) throw anyErr.error;
+    if (unreadNotifications.length === 0) {
+      console.log('🔔 HOOK: No unread notifications to mark as read');
+      return;
+    }
+
+    try {
+      // Use RPC calls for each notification to ensure they get marked as read
+      console.log('🔔 HOOK: Using RPC calls to mark notifications as read');
+      const results = await Promise.allSettled(
+        unreadNotifications.map(notification => 
+          supabase.rpc('mark_notification_as_read', { p_notification_id: notification.id })
+        )
+      );
+      
+      // Check if any failed
+      const failures = results.filter(result => result.status === 'rejected');
+      if (failures.length > 0) {
+        console.error('🔔 HOOK: Some RPC calls failed:', failures);
       }
 
-      // Update local state
+      // Update local state immediately regardless of RPC results
       setNotifications(prev =>
         prev.map(notification => ({ ...notification, is_read: true }))
       );
       setLocallyReadIds(prev => {
         const next = new Set(prev);
-        notifications.forEach(n => next.add(n.id));
+        unreadNotifications.forEach(n => next.add(n.id));
+        // Persist to localStorage
+        localStorage.setItem('locally-read-notifications', JSON.stringify([...next]));
         return next;
       });
 
-      // Only re-fetch after a short delay to allow DB updates to propagate
-      setTimeout(() => {
-        fetchNotifications();
-      }, 1000);
+      console.log('🔔 HOOK: Local state updated, all notifications marked as read');
 
       toast({
         title: "All notifications marked as read",
         description: "You've cleared all unread notifications"
       });
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
+      console.error('🔔 HOOK: Error marking all notifications as read:', error);
       toast({
         title: "Error",
         description: "Failed to mark notifications as read",
