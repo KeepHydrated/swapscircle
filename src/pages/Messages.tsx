@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import SupportChat from '@/components/chat/SupportChat';
 
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
@@ -403,6 +404,7 @@ const Messages = () => {
           )}
         </div>
       </div>
+      <SupportChat />
     </div>
   );
 };

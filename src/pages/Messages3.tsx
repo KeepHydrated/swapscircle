@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem } from '@/services/authService';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import SupportChat from '@/components/chat/SupportChat';
 
 const Messages3: React.FC = () => {
   // User's authentication and navigation
@@ -388,6 +389,7 @@ const Messages3: React.FC = () => {
         currentIndex={currentItemIndex}
         totalItems={displayedItems.length}
       />
+      <SupportChat />
     </div>
   );
 };

@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, Package, X } from 'lucide-react';
+import SupportChat from '@/components/chat/SupportChat';
 
 const PostItemNew: React.FC = () => {
   const { user } = useAuth();
@@ -696,6 +697,7 @@ const PostItemNew: React.FC = () => {
           </Button>
         </div>
       </div>
+      <SupportChat />
     </div>
   );
 };
