@@ -149,34 +149,25 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     if (!user?.id) return;
 
     try {
-      // Load ALL conversations for the user
-      const { data: allConversations, error: convError } = await supabase
+      // Find or create a single conversation for the user
+      const { data: conversations, error: convError } = await supabase
         .from('support_conversations' as any)
         .select('id, status, created_at')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true })
+        .limit(1);
 
       if (convError) throw convError;
 
-      // Load ALL messages from ALL conversations
-      const { data: allMessages, error: messagesError } = await supabase
-        .from('support_messages' as any)
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: true });
-
-      if (messagesError) throw messagesError;
-
-      // Find the current active (open) conversation or create one
-      let currentConversation = (allConversations as any)?.find((c: any) => c.status === 'open');
       let currentConversationId: string;
       let currentStatus: 'open' | 'closed' = 'open';
 
-      if (currentConversation) {
-        currentConversationId = currentConversation.id;
-        currentStatus = currentConversation.status;
+      if (conversations && conversations.length > 0) {
+        // Use existing conversation
+        currentConversationId = (conversations as any)[0].id;
+        currentStatus = (conversations as any)[0].status;
       } else {
-        // Create new conversation if no open conversation exists
+        // Create new conversation if none exists
         const { data: newConversation, error: createError } = await supabase
           .from('support_conversations' as any)
           .insert({
@@ -190,9 +181,6 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         
         currentConversationId = (newConversation as any).id;
         currentStatus = (newConversation as any).status;
-        
-        // Add new conversation to the list
-        (allConversations as any)?.push(newConversation as any);
         
         // Add welcome message to new conversation
         const { error: welcomeError } = await supabase
@@ -210,34 +198,18 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       setConversationId(currentConversationId);
       setConversationStatus(currentStatus);
 
-      // Create history items with conversation separators
-      const historyItems: (SupportMessage | ConversationSeparator)[] = [];
-      
-      if (allConversations && allConversations.length > 0) {
-        (allConversations as any).forEach((conversation: any, index: number) => {
-          // Add conversation separator (except for the first one)
-          if (index > 0) {
-            historyItems.push({
-              id: `separator-${conversation.id}`,
-              type: 'separator',
-              conversation_id: conversation.id,
-              created_at: conversation.created_at,
-              status: conversation.status
-            });
-          }
-          
-          // Add messages for this conversation
-          const conversationMessages = (allMessages as any)?.filter((msg: any) => msg.conversation_id === conversation.id) || [];
-          historyItems.push(...conversationMessages);
-        });
-      }
+      // Load all messages from the single conversation
+      const { data: allMessages, error: messagesError } = await supabase
+        .from('support_messages' as any)
+        .select('*')
+        .eq('conversation_id', currentConversationId)
+        .order('created_at', { ascending: true });
 
-      // Set the full history for display
-      setAllHistoryItems(historyItems);
-      
-      // Set current conversation messages for logic
-      const currentMessages = (allMessages as any)?.filter((msg: any) => msg.conversation_id === currentConversationId) || [];
-      setMessages(currentMessages as unknown as SupportMessage[]);
+      if (messagesError) throw messagesError;
+
+      // Set messages for both display and logic (no separators needed)
+      setMessages((allMessages as any) || []);
+      setAllHistoryItems((allMessages as any) || []);
 
     } catch (error) {
       console.error('Error initializing conversation:', error);
@@ -258,41 +230,23 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
     let currentConversationId = conversationId;
 
-    // For closed conversations, user can continue in the same thread
-    if (conversationStatus === 'closed') {
-      if (!category) {
-        toast.error('Please select a category to continue the conversation');
-        return;
-      }
-    }
-
     if (!currentConversationId) {
       console.error('No conversationId available');
       toast.error('Could not establish conversation. Please try again.');
       return;
     }
 
-    // Check if this is the first user message
-    const isFirstMessage = messages.length <= 1; // <= 1 because welcome message exists
+    // Check if this is the first user message (only welcome message exists)
+    const isFirstMessage = messages.length <= 1;
     
-    // For ongoing open conversations, check if user needs to wait for admin response
-    if (!isFirstMessage && conversationStatus === 'open') {
-      // Check if last message was from user (meaning they're waiting for admin response)
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage && lastMessage.sender_type === 'user') {
-        toast.error('Please wait for a support response before sending another message');
-        return;
-      }
-    }
-
-    // Only require category for first message or when conversation is closed
-    if ((isFirstMessage || conversationStatus === 'closed') && !category) {
-      toast.error('Please select a category for your message');
+    // Only require category for the very first message
+    if (isFirstMessage && !category) {
+      toast.error('Please select a category for your first message');
       return;
     }
 
-    const messageText = (isFirstMessage || conversationStatus === 'closed') && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
-    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, conversationStatus });
+    const messageText = isFirstMessage && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage });
     
     setInputValue('');
     setCategory('');
@@ -352,16 +306,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   };
 
   const renderHistoryItem = (item: SupportMessage | ConversationSeparator) => {
-    if ('type' in item && item.type === 'separator') {
-      return (
-        <div key={item.id} className="flex justify-center my-4">
-          <div className="bg-muted/50 px-3 py-1 rounded-full text-xs text-muted-foreground border">
-            New conversation • {formatDate(item.created_at)} • {item.status}
-          </div>
-        </div>
-      );
-    }
-
+    // Since we're using a single conversation, no separators needed
     const message = item as SupportMessage;
     return (
       <div
@@ -397,13 +342,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   if (embedded) {
     const isFirstMessage = messages.length <= 1;
-    const showCategorySelector = isFirstMessage || conversationStatus === 'closed';
-    const lastMessage = messages[messages.length - 1];
-    const isWaitingForResponse = lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && !isFirstMessage;
+    const showCategorySelector = isFirstMessage;
     
     return (
       <div className="flex flex-col h-full">
-        {/* Category Selection - Show for first message OR when conversation is closed */}
+        {/* Category Selection - Show only for first message */}
         {showCategorySelector && (
           <div className="px-4 pt-2 pb-4 border-b">
             <SelectField
@@ -412,7 +355,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={category}
               onChange={setCategory}
               options={categories}
-              placeholder={conversationStatus === 'closed' ? "Select category to continue conversation" : "Select a topic category"}
+              placeholder="Select a topic category"
             />
           </div>
         )}
@@ -432,20 +375,14 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={
-                isWaitingForResponse 
-                  ? "Waiting for support response..." 
-                  : conversationStatus === 'closed' 
-                  ? "Continue conversation..." 
-                  : "Type your message..."
-              }
+              placeholder="Type your message..."
               className="flex-1"
-              disabled={loading || isWaitingForResponse}
+              disabled={loading}
             />
             <Button 
               size="icon" 
               onClick={sendMessage}
-              disabled={loading || !inputValue.trim() || (showCategorySelector && !category) || isWaitingForResponse}
+              disabled={loading || !inputValue.trim() || (showCategorySelector && !category)}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -487,8 +424,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             </Button>
           </div>
 
-          {/* Category Selection - Show for first message OR when conversation is closed */}
-          {(messages.length <= 1 || conversationStatus === 'closed') && (
+          {/* Category Selection - Show only for first message */}
+          {messages.length <= 1 && (
             <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
               <SelectField
                 id="category"
@@ -496,7 +433,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 value={category}
                 onChange={setCategory}
                 options={categories}
-                placeholder={conversationStatus === 'closed' ? "Select category to continue conversation" : "Select a topic category"}
+                placeholder="Select a topic category"
               />
             </div>
           )}
