@@ -56,7 +56,7 @@ const SuccessDialog: React.FC<SuccessDialogProps> = ({
             Item Successfully Posted!
           </AlertDialogTitle>
           <AlertDialogDescription className="text-gray-600">
-            Your item has been successfully posted for trade on TradeMate.
+            Your item has been successfully posted for trade on SwapsCircle.
             Would you like to add another item?
           </AlertDialogDescription>
         </AlertDialogHeader>

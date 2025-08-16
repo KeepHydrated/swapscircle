@@ -12,7 +12,7 @@ const PostingRules: React.FC = () => {
     const title = 'Posting Rules and Guidelines';
     document.title = title;
 
-    const desc = 'Posting rules for TradeMate: what you can list, what’s prohibited, and how to create high‑quality listings.';
+    const desc = 'Posting rules for SwapsCircle: what you can list, what’s prohibited, and how to create high‑quality listings.';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
@@ -84,7 +84,7 @@ const PostingRules: React.FC = () => {
     <MainLayout>
       <header className="mb-6">
         <h1 className="text-3xl font-bold">Posting Rules and Guidelines</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Keep TradeMate safe and fair. Review these rules before posting.</p>
+        <p className="text-muted-foreground mt-1 text-sm">Keep SwapsCircle safe and fair. Review these rules before posting.</p>
       </header>
 
       <main className="space-y-6">

@@ -56,7 +56,7 @@ const Header = () => {
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-trademate-blue">TradeMate</h1>
+            <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>
           </Link>
         </div>
 

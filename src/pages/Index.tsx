@@ -13,7 +13,7 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="animate-pulse">
-        <h1 className="text-2xl font-bold text-trademate-blue">TradeMate</h1>
+        <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>
       </div>
     </div>
   );

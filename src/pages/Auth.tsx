@@ -104,7 +104,7 @@ const Auth: React.FC = () => {
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">TradeMate</CardTitle>
+          <CardTitle className="text-2xl text-center">SwapsCircle</CardTitle>
           <CardDescription className="text-center">
             {activeTab === "login" 
               ? "Sign in to your account to continue" 

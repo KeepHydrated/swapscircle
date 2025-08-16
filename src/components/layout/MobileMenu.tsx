@@ -24,7 +24,7 @@ export const MobileMenu = () => {
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle className="text-left text-2xl font-bold text-trademate-blue">
-            TradeMate
+            SwapsCircle
           </SheetTitle>
         </SheetHeader>
         <Separator className="my-4" />
