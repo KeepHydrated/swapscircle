@@ -253,7 +253,7 @@ const Messages = () => {
       <Header />
       
       {/* Main content area */}
-      <div className="flex-1 min-h-0">{/* Allow flexing properly */}        
+      <div className="flex flex-1 min-h-0">{/* Add flex class for horizontal layout */}        
         {/* Left sidebar - Conversations */}
         <div className="w-[350px] border-r border-gray-200 flex flex-col">
           {conversations.length > 0 ? (
