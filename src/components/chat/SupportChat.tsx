@@ -481,10 +481,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           </div>
 
           {/* Category Selection - Show for first message OR when conversation is closed */}
-          {(messages.length <= 1 || conversationStatus === 'closed') && (
+          {((messages.length <= 1 || conversationStatus === 'closed')) && (
             <div className="px-4 pt-2 pb-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <SelectField
-                id="category"
+                id="popup-category"
                 label=""
                 value={category}
                 onChange={setCategory}
@@ -521,7 +521,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               <Button 
                 size="icon" 
                 onClick={sendMessage}
-                disabled={loading || !inputValue.trim() || ((messages.length <= 1 || conversationStatus === 'closed') && !category)}
+              disabled={loading || !inputValue.trim() || ((messages.length <= 1 || conversationStatus === 'closed') && !category)}
               >
                 <Send className="h-4 w-4" />
               </Button>
