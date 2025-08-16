@@ -482,28 +482,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={(() => {
-                  const lastMessage = messages[messages.length - 1];
-                  const isWaitingForResponse = lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && messages.length > 1;
-                  return isWaitingForResponse 
-                    ? "Waiting for support response..." 
-                    : conversationStatus === 'closed' 
-                    ? "Continue conversation..." 
-                    : "Type your message...";
-                })()}
+                placeholder={conversationStatus === 'closed' 
+                  ? "Continue conversation..." 
+                  : "Type your message..."}
                 className="flex-1"
-                disabled={loading || (() => {
-                  const lastMessage = messages[messages.length - 1];
-                  return lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && messages.length > 1;
-                })()}
+                disabled={loading}
               />
               <Button 
                 size="icon" 
                 onClick={sendMessage}
-                disabled={loading || !inputValue.trim() || ((messages.length <= 1 || conversationStatus === 'closed') && !category) || (() => {
-                  const lastMessage = messages[messages.length - 1];
-                  return lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && messages.length > 1;
-                })()}
+                disabled={loading || !inputValue.trim() || ((messages.length <= 1 || conversationStatus === 'closed') && !category)}
               >
                 <Send className="h-4 w-4" />
               </Button>
