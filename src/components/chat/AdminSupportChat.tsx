@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Send, User, Clock } from 'lucide-react';
+import { MessageCircle, Send, User, Clock, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -36,6 +37,13 @@ const AdminSupportChat = () => {
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState<{ 
+    username?: string; 
+    name?: string; 
+    avatar_url?: string;
+    averageRating?: number;
+    reviewCount?: number;
+  } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Check if user is admin (nadiachibri@gmail.com)
@@ -163,6 +171,49 @@ const AdminSupportChat = () => {
     }
   };
 
+  const loadUserProfile = async (userId: string) => {
+    try {
+      // Get user profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('username, name, avatar_url')
+        .eq('id', userId)
+        .single();
+
+      if (profileError) throw profileError;
+
+      // Get user reviews and calculate average rating
+      const { data: reviews, error: reviewsError } = await supabase
+        .from('reviews')
+        .select('rating')
+        .eq('reviewee_id', userId);
+
+      if (reviewsError) throw reviewsError;
+
+      const reviewCount = reviews?.length || 0;
+      const averageRating = reviewCount > 0 
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount 
+        : 0;
+
+      setUserProfile({
+        ...profile,
+        averageRating,
+        reviewCount
+      });
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      // Set basic profile info even if ratings fail
+      if (selectedConversation?.profiles) {
+        setUserProfile({
+          username: selectedConversation.profiles.username,
+          name: selectedConversation.profiles.name,
+          averageRating: 0,
+          reviewCount: 0
+        });
+      }
+    }
+  };
+
   const sendMessage = async () => {
     if (!inputValue.trim() || !selectedConversation || !user?.id) return;
 
@@ -203,6 +254,7 @@ const AdminSupportChat = () => {
   const handleConversationSelect = (conversation: SupportConversation) => {
     setSelectedConversation(conversation);
     loadMessages(conversation.id);
+    loadUserProfile(conversation.user_id);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -291,14 +343,44 @@ const AdminSupportChat = () => {
       <Card className="lg:col-span-2 flex flex-col h-[520px]">
         {selectedConversation ? (
           <div className="flex flex-col h-full">
-            {/* Chat Header */}
-            <div className="p-4 border-b">
-              <h3 className="font-semibold">
-                Chat with {selectedConversation.profiles?.username || selectedConversation.profiles?.name || 'User'}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Started {formatDate(selectedConversation.created_at)}
-              </p>
+            {/* Profile Header */}
+            <div className="p-6 border-b bg-muted/30">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={userProfile?.avatar_url} />
+                  <AvatarFallback>
+                    {(userProfile?.name || userProfile?.username || 'U').charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg">
+                    {userProfile?.name || userProfile?.username || 'User'}
+                  </h3>
+                  
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`h-4 w-4 ${
+                            star <= Math.round(userProfile?.averageRating || 0)
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      ({userProfile?.reviewCount || 0})
+                    </span>
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Started {formatDate(selectedConversation.created_at)}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Messages */}
