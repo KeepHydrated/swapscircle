@@ -22,6 +22,7 @@ export const useRealtimeSupportMessages = ({
   onConversationUpdate
 }: UseRealtimeSupportMessagesProps) => {
   const channelRef = useRef<any>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!conversationId) {
@@ -34,6 +35,12 @@ export const useRealtimeSupportMessages = ({
       hasOnNewMessage: !!onNewMessage,
       hasOnConversationUpdate: !!onConversationUpdate
     });
+
+    // Clear any pending retries
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
 
     // Clean up existing subscription
     if (channelRef.current) {
@@ -112,17 +119,27 @@ export const useRealtimeSupportMessages = ({
         
         if (status === 'SUBSCRIBED') {
           console.log('🎯 Successfully subscribed to real-time updates!');
+          // Clear any pending retries on successful subscription
+          if (retryTimeoutRef.current) {
+            clearTimeout(retryTimeoutRef.current);
+            retryTimeoutRef.current = null;
+          }
         } else if (status === 'CHANNEL_ERROR') {
           console.error('❌ Channel error in real-time subscription');
-          console.log('🔄 Attempting to resubscribe in 2 seconds...');
           
-          // Retry subscription after delay
-          setTimeout(() => {
-            if (channelRef.current) {
-              console.log('♻️ Retrying subscription...');
-              channelRef.current.subscribe();
-            }
-          }, 2000);
+          // Only retry if we don't already have a retry pending
+          if (!retryTimeoutRef.current) {
+            console.log('🔄 Attempting to resubscribe in 3 seconds...');
+            
+            retryTimeoutRef.current = setTimeout(() => {
+              // Only retry if the channel is still the current one
+              if (channelRef.current === channel) {
+                console.log('♻️ Retrying subscription...');
+                channel.subscribe();
+              }
+              retryTimeoutRef.current = null;
+            }, 3000);
+          }
         } else if (status === 'TIMED_OUT') {
           console.error('⏰ Real-time subscription timed out');
         } else if (status === 'CLOSED') {
@@ -133,13 +150,19 @@ export const useRealtimeSupportMessages = ({
     channelRef.current = channel;
 
     return () => {
+      // Clear any pending retries
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
+      
       if (channelRef.current) {
         console.log('🧹 Cleaning up real-time subscription for conversation:', conversationId);
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
     };
-  }, [conversationId, onNewMessage, onConversationUpdate]);
+  }, [conversationId]); // Remove onNewMessage and onConversationUpdate from dependencies
 
   // Cleanup on unmount
   useEffect(() => {
