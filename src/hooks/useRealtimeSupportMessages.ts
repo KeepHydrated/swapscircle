@@ -48,51 +48,40 @@ export const useRealtimeSupportMessages = ({
     console.log('📡 Creating channel with name:', channelName);
     
     const channel = supabase
-      .channel(channelName)
+      .channel('support_test_channel')
       .on('postgres_changes', {
-        event: 'INSERT',
+        event: '*',
         schema: 'public',
         table: 'support_messages'
       }, (payload) => {
-        console.log('🚨 REAL-TIME INSERT EVENT TRIGGERED (ANY MESSAGE)!', {
+        console.log('🚨 ANY REAL-TIME EVENT ON SUPPORT_MESSAGES!', {
           event: payload.eventType,
           table: payload.table,
           new: payload.new,
-          expectedConversationId: conversationId,
+          old: payload.old,
           timestamp: new Date().toISOString()
         });
         
-        const newMessage = payload.new as SupportMessage;
-        
-        if (newMessage.conversation_id === conversationId) {
-          console.log('🎯 Message belongs to current conversation, calling onNewMessage');
-          console.log('🎯 Message details:', newMessage);
-          callbacksRef.current.onNewMessage(newMessage);
-        } else {
-          console.log('⚠️ Message for different conversation:', {
-            messageConversationId: newMessage.conversation_id,
-            expectedConversationId: conversationId
-          });
+        if (payload.eventType === 'INSERT') {
+          const newMessage = payload.new as SupportMessage;
+          if (newMessage.conversation_id === conversationId) {
+            console.log('🎯 Message belongs to current conversation, calling onNewMessage');
+            callbacksRef.current.onNewMessage(newMessage);
+          }
         }
       })
       .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'support_conversations',
-        filter: `id=eq.${conversationId}`,
+        event: '*',
+        schema: 'public', 
+        table: 'support_conversations'
       }, (payload) => {
-        console.log('✅ Real-time conversation UPDATE received:', {
+        console.log('🚨 ANY REAL-TIME EVENT ON SUPPORT_CONVERSATIONS!', {
           event: payload.eventType,
           table: payload.table,
           new: payload.new,
-          conversationId
+          old: payload.old,
+          timestamp: new Date().toISOString()
         });
-        
-        const updatedConversation = payload.new as any;
-        if (callbacksRef.current.onConversationUpdate && updatedConversation.status) {
-          console.log('🔄 Calling onConversationUpdate with status:', updatedConversation.status);
-          callbacksRef.current.onConversationUpdate(updatedConversation.status);
-        }
       })
       .subscribe((status) => {
         console.log('📡 Real-time subscription status:', status, 'for conversation:', conversationId);
