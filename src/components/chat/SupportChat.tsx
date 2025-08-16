@@ -65,7 +65,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Real-time message subscription
   useEffect(() => {
-    if (!conversationId || !user?.id) return;
+    if (!conversationId || !user?.id) {
+      console.log('Customer: Skipping real-time setup - missing data:', { conversationId, userId: user?.id });
+      return;
+    }
 
     console.log('Customer: Setting up real-time subscription for conversation:', conversationId);
 
@@ -82,9 +85,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         
         // Check if it's a closure message
         if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
+          console.log('Customer: Detected closure message, updating status');
           setConversationStatus('closed');
         }
         
+        console.log('Customer: Current messages count before update:', messages.length);
         setMessages(prev => {
           // Avoid duplicates by checking if message already exists
           const exists = prev.some(msg => msg.id === newMessage.id);
@@ -93,7 +98,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             return prev;
           }
           console.log('Customer: Adding new message to state');
-          return [...prev, newMessage];
+          const updated = [...prev, newMessage];
+          console.log('Customer: Updated messages count:', updated.length);
+          return updated;
         });
       })
       .subscribe((status) => {
@@ -101,7 +108,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       });
 
     return () => {
-      console.log('Customer: Cleaning up real-time subscription');
+      console.log('Customer: Cleaning up real-time subscription for conversation:', conversationId);
       supabase.removeChannel(channel);
     };
   }, [conversationId, user?.id]);
