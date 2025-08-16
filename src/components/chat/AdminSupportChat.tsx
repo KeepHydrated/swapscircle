@@ -94,21 +94,36 @@ const AdminSupportChat = () => {
   useEffect(() => {
     if (!selectedConversation || !isAdmin) return;
 
+    console.log('Admin: Setting up real-time subscription for conversation:', selectedConversation.id);
+
     const messageChannel = supabase
-      .channel('admin_support_messages')
+      .channel(`support_messages_${selectedConversation.id}`)
       .on('postgres_changes', {
-        event: '*',
+        event: 'INSERT',
         schema: 'public',
         table: 'support_messages',
         filter: `conversation_id=eq.${selectedConversation.id}`,
       }, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setMessages(prev => [...prev, payload.new as SupportMessage]);
-        }
+        console.log('Admin: Real-time message received:', payload);
+        const newMessage = payload.new as SupportMessage;
+        
+        setMessages(prev => {
+          // Avoid duplicates by checking if message already exists
+          const exists = prev.some(msg => msg.id === newMessage.id);
+          if (exists) {
+            console.log('Admin: Message already exists, skipping');
+            return prev;
+          }
+          console.log('Admin: Adding new message to state');
+          return [...prev, newMessage];
+        });
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Admin: Subscription status:', status);
+      });
 
     return () => {
+      console.log('Admin: Cleaning up real-time subscription');
       supabase.removeChannel(messageChannel);
     };
   }, [selectedConversation, isAdmin]);
