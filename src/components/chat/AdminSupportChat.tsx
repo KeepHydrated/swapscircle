@@ -67,7 +67,7 @@ const AdminSupportChat = () => {
   }, [messages]);
 
   // Define functions before using them in effects
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     console.log('AdminSupportChat: loadConversations called');
     try {
       // First get conversations
@@ -99,20 +99,13 @@ const AdminSupportChat = () => {
       const conversationsList = conversationsWithProfiles as unknown as SupportConversation[];
       setConversations(conversationsList);
       
-      // Auto-select first conversation if none is selected and conversations exist
-      if (!selectedConversation && conversationsList.length > 0) {
-        const firstConversation = conversationsList[0];
-        setSelectedConversation(firstConversation);
-        loadMessages(firstConversation.id);
-        loadUserProfile(firstConversation.user_id);
-      }
     } catch (error) {
       console.error('Error loading conversations:', error);
       toast.error('Failed to load conversations');
     }
-  };
+  }, []); // Remove selectedConversation dependency to avoid circular dependency
 
-  const loadMessages = async (conversationId: string) => {
+  const loadMessages = useCallback(async (conversationId: string) => {
     console.log('🔧 ADMIN - Loading messages for conversation:', conversationId);
     try {
       const { data, error } = await supabase
@@ -128,9 +121,9 @@ const AdminSupportChat = () => {
       console.error('Error loading messages:', error);
       toast.error('Failed to load messages');
     }
-  };
+  }, []); // No dependencies needed
 
-  const loadUserProfile = async (userId: string) => {
+  const loadUserProfile = useCallback(async (userId: string) => {
     console.log('Loading profile for user:', userId);
     setUserProfile(null); // Clear previous profile
     
@@ -186,9 +179,9 @@ const AdminSupportChat = () => {
         reviewCount: 0
       });
     }
-  };
+  }, []); // No dependencies needed
 
-  // Load conversations on mount
+  // Load conversations on mount 
   useEffect(() => {
     console.log('AdminSupportChat: isAdmin check:', isAdmin, 'user email:', user?.email);
     if (isAdmin) {
@@ -197,7 +190,18 @@ const AdminSupportChat = () => {
     } else {
       console.log('AdminSupportChat: User is NOT admin, skipping conversation load');
     }
-  }, [isAdmin]);
+  }, [isAdmin, loadConversations]);
+
+  // Auto-select first conversation when conversations are loaded
+  useEffect(() => {
+    if (isAdmin && conversations.length > 0 && !selectedConversation) {
+      const firstConversation = conversations[0];
+      console.log('AdminSupportChat: Auto-selecting first conversation:', firstConversation.id);
+      setSelectedConversation(firstConversation);
+      loadMessages(firstConversation.id);
+      loadUserProfile(firstConversation.user_id);
+    }
+  }, [conversations, selectedConversation, isAdmin, loadMessages, loadUserProfile]);
 
   // Real-time conversation updates
   useEffect(() => {
@@ -249,12 +253,6 @@ const AdminSupportChat = () => {
       console.log('❌ ADMIN - Not admin, ignoring message');
       return;
     }
-    
-    // Only add message if it's for the currently selected conversation
-    if (selectedConversation && newMessage.conversation_id !== selectedConversation.id) {
-      console.log('❌ ADMIN - Message is for different conversation, ignoring');
-      return;
-    }
 
     setMessages(prev => {
       const exists = prev.some(msg => msg.id === newMessage.id);
@@ -265,7 +263,7 @@ const AdminSupportChat = () => {
       console.log('✅ ADMIN - Adding new message to state. Count:', prev.length);
       return [...prev, newMessage];
     });
-  }, [user, selectedConversation?.id]); // Include selectedConversation?.id in dependencies
+  }, [user, selectedConversation?.id]); // Keep selectedConversation?.id to track current conversation
   
   // Always call the hook, but only with conversationId when admin and conversation selected
   useRealtimeSupportMessages({
