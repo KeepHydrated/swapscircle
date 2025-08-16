@@ -232,7 +232,13 @@ const AdminSupportChat = () => {
 
   // Use real-time hook for admin support messages - stabilize conversationId
   const stableConversationId = useMemo(() => {
-    return isAdmin && selectedConversation?.id ? selectedConversation.id : null;
+    const result = isAdmin && selectedConversation?.id ? selectedConversation.id : null;
+    console.log('🔧 ADMIN stableConversationId calculated:', {
+      isAdmin,
+      selectedConversationId: selectedConversation?.id,
+      result
+    });
+    return result;
   }, [isAdmin, selectedConversation?.id]);
   
   // Stable callbacks to prevent subscription recreation
@@ -279,6 +285,7 @@ const AdminSupportChat = () => {
   }, [user, selectedConversation?.id]);
   
   // Always call the hook, but only with conversationId when admin and conversation selected
+  console.log('🔧 ADMIN calling useRealtimeSupportMessages with:', stableConversationId);
   useRealtimeSupportMessages({
     conversationId: stableConversationId,
     onNewMessage: stableHandleNewMessage
