@@ -140,8 +140,10 @@ export function useNotifications() {
         return next;
       });
 
-      // Re-fetch to ensure DB state persists across reloads
-      fetchNotifications();
+      // Only re-fetch after a short delay to allow DB updates to propagate  
+      setTimeout(() => {
+        fetchNotifications();
+      }, 500);
 
       console.log('Notification marked as read via RPC:', notificationId);
     } catch (error) {
@@ -182,8 +184,10 @@ export function useNotifications() {
         return next;
       });
 
-      // Re-fetch to ensure DB state persists across reloads
-      fetchNotifications();
+      // Only re-fetch after a short delay to allow DB updates to propagate
+      setTimeout(() => {
+        fetchNotifications();
+      }, 1000);
 
       toast({
         title: "All notifications marked as read",
@@ -226,20 +230,6 @@ export function useNotifications() {
           // Reset the viewed state when new notifications arrive
           setHasViewedDropdown(false);
           localStorage.setItem('notifications-viewed', 'false');
-          fetchNotifications();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`
-        },
-        (payload) => {
-          console.log('🔔 HOOK: Notification updated (UPDATE):', payload);
-          // Re-fetch to get the latest read status
           fetchNotifications();
         }
       )
