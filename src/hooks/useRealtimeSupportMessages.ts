@@ -77,7 +77,7 @@ export const useRealtimeSupportMessages = ({
     // Update the tracked conversation ID
     currentConversationIdRef.current = conversationId;
 
-    const channelName = `support_messages_${conversationId}`;
+    const channelName = `support_messages_${conversationId}_${Date.now()}`;
     console.log('📡 Creating channel with name:', channelName);
     
     const channel = supabase
