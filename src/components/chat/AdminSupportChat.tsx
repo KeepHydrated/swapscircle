@@ -223,8 +223,14 @@ const AdminSupportChat = () => {
     };
   }, [isAdmin, selectedConversation?.id]);
 
-  // Stable callback function to prevent unnecessary re-subscriptions
-  const handleNewMessage = useCallback((newMessage: SupportMessage) => {
+
+  // Use real-time hook for admin support messages - stabilize conversationId
+  const stableConversationId = useMemo(() => {
+    return isAdmin && selectedConversation?.id ? selectedConversation.id : null;
+  }, [isAdmin, selectedConversation?.id]);
+  
+  // Stable callbacks to prevent subscription recreation
+  const stableHandleNewMessage = useCallback((newMessage: SupportMessage) => {
     console.log('🔧 ADMIN handleNewMessage called:', {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
@@ -239,7 +245,7 @@ const AdminSupportChat = () => {
       console.log('❌ ADMIN - Not admin, ignoring message');
       return;
     }
-    
+
     setMessages(prev => {
       const exists = prev.some(msg => msg.id === newMessage.id);
       if (exists) {
@@ -249,17 +255,12 @@ const AdminSupportChat = () => {
       console.log('✅ ADMIN - Adding new message to state. Count:', prev.length);
       return [...prev, newMessage];
     });
-  }, []); // Empty dependency array to prevent re-subscriptions
-
-  // Use real-time hook for admin support messages - stabilize conversationId
-  const conversationId = useMemo(() => {
-    return isAdmin && selectedConversation?.id ? selectedConversation.id : null;
-  }, [isAdmin, selectedConversation?.id]);
+  }, [user]); // Only depend on user
   
   // Always call the hook, but only with conversationId when admin and conversation selected
   useRealtimeSupportMessages({
-    conversationId,
-    onNewMessage: handleNewMessage
+    conversationId: stableConversationId,
+    onNewMessage: stableHandleNewMessage
   });
 
   // EARLY RETURN AFTER ALL HOOKS

@@ -72,8 +72,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     initializeConversation();
   }, [user?.id]);
 
-  // Stable callback functions to prevent unnecessary re-subscriptions
-  const handleNewMessage = useCallback((newMessage: SupportMessage) => {
+
+  // Stable callbacks to prevent subscription recreation
+  const stableHandleNewMessage = useCallback((newMessage: SupportMessage) => {
     console.log('🎯 SUPPORT handleNewMessage called:', {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
@@ -84,7 +85,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
       setConversationStatus('closed');
     }
-    
+
     setMessages(prev => {
       // Avoid duplicates - check by ID and also by content + timestamp to catch any race conditions
       const existsById = prev.some(msg => msg.id === newMessage.id);
@@ -119,17 +120,17 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       console.log('✅ SUPPORT - Adding new message to history. Count:', prev.length);
       return [...prev, newMessage];
     });
-  }, []);
+  }, []); // Empty deps to prevent recreation
 
-  const handleConversationUpdate = useCallback((status: 'open' | 'closed') => {
+  const stableHandleConversationUpdate = useCallback((status: 'open' | 'closed') => {
     setConversationStatus(status);
   }, []);
 
   // Use real-time hook for support messages
   useRealtimeSupportMessages({
     conversationId,
-    onNewMessage: handleNewMessage,
-    onConversationUpdate: handleConversationUpdate
+    onNewMessage: stableHandleNewMessage,
+    onConversationUpdate: stableHandleConversationUpdate
   });
 
   // Click outside to close chat popup
