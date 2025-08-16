@@ -127,11 +127,12 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     if (!user?.id) return;
 
     try {
-      // Check if user has an existing conversation (open or closed)
+      // Check if user has an existing OPEN conversation only
       const { data: existingConversation, error: convError } = await supabase
         .from('support_conversations' as any)
         .select('id, status')
         .eq('user_id', user.id)
+        .eq('status', 'open')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -140,13 +141,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       let status: 'open' | 'closed' = 'open';
 
       if (existingConversation && !convError) {
-        // Use existing conversation (open or closed)
+        // Use existing open conversation
         conversationId = (existingConversation as any).id;
         status = (existingConversation as any).status;
-        
-        // If the existing conversation is closed, we still load it but the UI will show category selector
       } else {
-        // If no conversation exists, create new one
+        // Create new conversation if no open conversation exists
         const { data: newConversation, error: createError } = await supabase
           .from('support_conversations' as any)
           .insert({
