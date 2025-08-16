@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Send, User, Clock, Star, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -97,23 +97,26 @@ const AdminSupportChat = () => {
     };
   }, [isAdmin, selectedConversation?.id]);
 
+  // Stable callback function to prevent unnecessary re-subscriptions
+  const handleNewMessage = useCallback((newMessage: SupportMessage) => {
+    if (!isAdmin) return;
+    
+    setMessages(prev => {
+      // Avoid duplicates by checking if message already exists
+      const exists = prev.some(msg => msg.id === newMessage.id);
+      if (exists) {
+        console.log('Admin: Message already exists, skipping');
+        return prev;
+      }
+      console.log('Admin: Adding new message to state');
+      return [...prev, newMessage];
+    });
+  }, [isAdmin]);
+
   // Use real-time hook for admin support messages
   useRealtimeSupportMessages({
     conversationId: selectedConversation?.id || null,
-    onNewMessage: (newMessage) => {
-      if (!isAdmin) return;
-      
-      setMessages(prev => {
-        // Avoid duplicates by checking if message already exists
-        const exists = prev.some(msg => msg.id === newMessage.id);
-        if (exists) {
-          console.log('Admin: Message already exists, skipping');
-          return prev;
-        }
-        console.log('Admin: Adding new message to state');
-        return [...prev, newMessage];
-      });
-    }
+    onNewMessage: handleNewMessage
   });
 
   const loadConversations = async () => {

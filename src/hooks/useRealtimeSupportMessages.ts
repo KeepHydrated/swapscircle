@@ -36,32 +36,38 @@ export const useRealtimeSupportMessages = ({
   }, [onNewMessage, onConversationUpdate]);
   
   useEffect(() => {
-    console.log('🚨 useRealtimeSupportMessages useEffect triggered!', {
-      conversationId,
-      hasConversationId: !!conversationId,
-      conversationIdType: typeof conversationId
-    });
-    
-    if (!conversationId) {
-      console.log('❌ No conversationId provided for real-time subscription');
-      return;
-    }
-
-    console.log('🎬 Setting up real-time subscription for:', conversationId);
-
-    // Clean up existing subscription first
+  console.log('🚨 useRealtimeSupportMessages useEffect triggered!', {
+    conversationId,
+    hasConversationId: !!conversationId,
+    conversationIdType: typeof conversationId
+  });
+  
+  if (!conversationId) {
+    console.log('❌ No conversationId provided for real-time subscription');
+    // Clean up existing subscription if conversationId becomes null
     if (channelRef.current) {
-      console.log('🧹 Cleaning up existing subscription');
+      console.log('🧹 Cleaning up subscription due to null conversationId');
       supabase.removeChannel(channelRef.current);
       channelRef.current = null;
     }
+    return;
+  }
 
-    const channelName = `support_${Math.random().toString(36).substr(2, 9)}`;
-    console.log('📡 Creating channel with name:', channelName);
+  console.log('🎬 Setting up real-time subscription for:', conversationId);
+
+  // Clean up existing subscription first
+  if (channelRef.current) {
+    console.log('🧹 Cleaning up existing subscription');
+    supabase.removeChannel(channelRef.current);
+    channelRef.current = null;
+  }
+
+  const channelName = `support_messages_${conversationId}`;
+  console.log('📡 Creating channel with name:', channelName);
     
-    const channel = supabase
-      .channel('support_test_channel')
-      .on('postgres_changes', {
+  const channel = supabase
+    .channel(channelName)
+    .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'support_messages'
