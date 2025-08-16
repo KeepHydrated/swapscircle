@@ -15,6 +15,15 @@ interface SupportMessage {
   sender_type: 'user' | 'support';
   created_at: string;
   is_read: boolean;
+  conversation_id: string;
+}
+
+interface ConversationSeparator {
+  id: string;
+  type: 'separator';
+  conversation_id: string;
+  created_at: string;
+  status: 'open' | 'closed';
 }
 
 interface SupportChatProps {
@@ -25,6 +34,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [allHistoryItems, setAllHistoryItems] = useState<(SupportMessage | ConversationSeparator)[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversationStatus, setConversationStatus] = useState<'open' | 'closed'>('open');
@@ -48,14 +58,14 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
-  // Auto-scroll when messages change
+  // Auto-scroll when history changes
   useEffect(() => {
-    console.log('Messages changed, scrolling to bottom. Message count:', messages.length);
+    console.log('History changed, scrolling to bottom. Item count:', allHistoryItems.length);
     // Use setTimeout to ensure DOM is updated before scrolling
     setTimeout(() => {
       scrollToBottom();
     }, 100);
-  }, [messages]);
+  }, [allHistoryItems]);
 
   // Initialize conversation and load messages
   useEffect(() => {
@@ -89,10 +99,22 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           // Avoid duplicates by checking if message already exists
           const exists = prev.some(msg => msg.id === newMessage.id);
           if (exists) {
-            console.log('Message already exists, skipping');
+            console.log('Message already exists in messages, skipping');
             return prev;
           }
-          console.log('Adding new message to state');
+          console.log('Adding new message to messages state');
+          return [...prev, newMessage];
+        });
+
+        // Also add to full history
+        setAllHistoryItems(prev => {
+          // Avoid duplicates by checking if message already exists
+          const exists = prev.some(item => 'id' in item && item.id === newMessage.id);
+          if (exists) {
+            console.log('Message already exists in history, skipping');
+            return prev;
+          }
+          console.log('Adding new message to history state');
           return [...prev, newMessage];
         });
       })
@@ -127,23 +149,32 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     if (!user?.id) return;
 
     try {
-      // Check if user has an existing OPEN conversation only
-      const { data: existingConversation, error: convError } = await supabase
+      // Load ALL conversations for the user
+      const { data: allConversations, error: convError } = await supabase
         .from('support_conversations' as any)
-        .select('id, status')
+        .select('id, status, created_at')
         .eq('user_id', user.id)
-        .eq('status', 'open')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .order('created_at', { ascending: true });
 
-      let conversationId: string;
-      let status: 'open' | 'closed' = 'open';
+      if (convError) throw convError;
 
-      if (existingConversation && !convError) {
-        // Use existing open conversation
-        conversationId = (existingConversation as any).id;
-        status = (existingConversation as any).status;
+      // Load ALL messages from ALL conversations
+      const { data: allMessages, error: messagesError } = await supabase
+        .from('support_messages' as any)
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+
+      if (messagesError) throw messagesError;
+
+      // Find the current active (open) conversation or create one
+      let currentConversation = (allConversations as any)?.find((c: any) => c.status === 'open');
+      let currentConversationId: string;
+      let currentStatus: 'open' | 'closed' = 'open';
+
+      if (currentConversation) {
+        currentConversationId = currentConversation.id;
+        currentStatus = currentConversation.status;
       } else {
         // Create new conversation if no open conversation exists
         const { data: newConversation, error: createError } = await supabase
@@ -152,45 +183,61 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             user_id: user.id,
             status: 'open'
           })
-          .select('id, status')
+          .select('id, status, created_at')
           .single();
 
         if (createError) throw createError;
-        conversationId = (newConversation as any).id;
-        status = (newConversation as any).status;
-      }
-
-      setConversationId(conversationId);
-      setConversationStatus(status);
-
-      // Load messages for this conversation
-      const { data: messages, error: messagesError } = await supabase
-        .from('support_messages' as any)
-        .select('*')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true });
-
-      if (messagesError) throw messagesError;
-
-      // Clear existing messages first to avoid mixing old and new conversations
-      setMessages([]);
-
-      if (messages && messages.length === 0) {
-        // Add welcome message if no messages exist
+        
+        currentConversationId = (newConversation as any).id;
+        currentStatus = (newConversation as any).status;
+        
+        // Add new conversation to the list
+        (allConversations as any)?.push(newConversation as any);
+        
+        // Add welcome message to new conversation
         const { error: welcomeError } = await supabase
           .from('support_messages' as any)
           .insert({
-            conversation_id: conversationId,
+            conversation_id: currentConversationId,
             user_id: user.id,
             message: "Hi! How can I help you today?",
             sender_type: 'support'
           });
 
         if (welcomeError) throw welcomeError;
-      } else if (messages) {
-        console.log('Setting messages from DB:', messages.length);
-        setMessages(messages as unknown as SupportMessage[]);
       }
+
+      setConversationId(currentConversationId);
+      setConversationStatus(currentStatus);
+
+      // Create history items with conversation separators
+      const historyItems: (SupportMessage | ConversationSeparator)[] = [];
+      
+      if (allConversations && allConversations.length > 0) {
+        (allConversations as any).forEach((conversation: any, index: number) => {
+          // Add conversation separator (except for the first one)
+          if (index > 0) {
+            historyItems.push({
+              id: `separator-${conversation.id}`,
+              type: 'separator',
+              conversation_id: conversation.id,
+              created_at: conversation.created_at,
+              status: conversation.status
+            });
+          }
+          
+          // Add messages for this conversation
+          const conversationMessages = (allMessages as any)?.filter((msg: any) => msg.conversation_id === conversation.id) || [];
+          historyItems.push(...conversationMessages);
+        });
+      }
+
+      // Set the full history for display
+      setAllHistoryItems(historyItems);
+      
+      // Set current conversation messages for logic
+      const currentMessages = (allMessages as any)?.filter((msg: any) => msg.conversation_id === currentConversationId) || [];
+      setMessages(currentMessages as unknown as SupportMessage[]);
 
     } catch (error) {
       console.error('Error initializing conversation:', error);
@@ -333,6 +380,52 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     });
   };
 
+  const formatDate = (timestamp: string) => {
+    return new Date(timestamp).toLocaleDateString([], { 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
+  const renderHistoryItem = (item: SupportMessage | ConversationSeparator) => {
+    if ('type' in item && item.type === 'separator') {
+      return (
+        <div key={item.id} className="flex justify-center my-4">
+          <div className="bg-muted/50 px-3 py-1 rounded-full text-xs text-muted-foreground border">
+            New conversation • {formatDate(item.created_at)} • {item.status}
+          </div>
+        </div>
+      );
+    }
+
+    const message = item as SupportMessage;
+    return (
+      <div
+        key={message.id}
+        className={`flex ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
+      >
+        <div className="flex flex-col space-y-1">
+          <div
+            className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
+              message.sender_type === 'user'
+                ? 'bg-primary text-primary-foreground'
+                : message.message.includes('This ticket has been closed')
+                ? 'bg-muted/70 text-muted-foreground border border-border'
+                : 'bg-muted'
+            }`}
+          >
+            {message.message.includes('This ticket has been closed') 
+              ? "Your ticket has been closed. If you need further assistance, please start a new conversation."
+              : message.message}
+          </div>
+          <span className="text-xs text-muted-foreground px-1">
+            {formatTime(message.created_at)}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   // Don't render anything if user is not logged in
   if (!user) {
     return null;
@@ -363,31 +456,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         {/* Messages */}
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className="flex flex-col space-y-1">
-                  <div
-                    className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                      message.sender_type === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : message.message.includes('This ticket has been closed')
-                        ? 'bg-muted/70 text-muted-foreground border border-border'
-                        : 'bg-muted'
-                    }`}
-                  >
-                    {message.message.includes('This ticket has been closed') 
-                      ? "Your ticket has been closed. If you need further assistance, please start a new conversation."
-                      : message.message}
-                  </div>
-                  <span className="text-xs text-muted-foreground px-1">
-                    {formatTime(message.created_at)}
-                  </span>
-                </div>
-              </div>
-            ))}
+            {allHistoryItems.map(renderHistoryItem)}
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
@@ -471,31 +540,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           {/* Messages */}
           <ScrollArea className="flex-1 p-4">
             <div className="space-y-3">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className="flex flex-col space-y-1">
-                    <div
-                      className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                        message.sender_type === 'user'
-                          ? 'bg-primary text-primary-foreground'
-                          : message.message.includes('This ticket has been closed')
-                          ? 'bg-muted/70 text-muted-foreground border border-border'
-                          : 'bg-muted'
-                      }`}
-                     >
-                       {message.message.includes('This ticket has been closed') 
-                         ? "Your ticket has been closed. If you need further assistance, please start a new conversation."
-                         : message.message}
-                     </div>
-                    <span className="text-xs text-muted-foreground px-1">
-                      {formatTime(message.created_at)}
-                    </span>
-                  </div>
-                </div>
-              ))}
+              {allHistoryItems.map(renderHistoryItem)}
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
