@@ -248,12 +248,12 @@ const Messages = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">{/* Use min-height instead of fixed height */}
+    <div className="flex flex-col h-screen">{/* Use fixed screen height, not min-height */}
       {/* Header */}
       <Header />
       
       {/* Main content area */}
-      <div className="flex flex-1 min-h-0">{/* Add flex class for horizontal layout */}        
+      <div className="flex flex-1 min-h-0 overflow-hidden">{/* Add overflow-hidden to prevent page scroll */}        
         {/* Left sidebar - Conversations */}
         <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">{/* Add h-full for proper height */}
           {conversations.length > 0 ? (
