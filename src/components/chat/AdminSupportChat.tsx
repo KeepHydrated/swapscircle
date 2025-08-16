@@ -370,26 +370,28 @@ const AdminSupportChat = () => {
                 </Avatar>
                 
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg">
-                    {userProfile?.name || userProfile?.username || 'User'}
-                  </h3>
-                  
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="flex items-center">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`h-4 w-4 ${
-                            star <= Math.round(userProfile?.averageRating || 0)
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-semibold text-lg">
+                      {userProfile?.name || userProfile?.username || 'User'}
+                    </h3>
+                    
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`h-4 w-4 ${
+                              star <= Math.round(userProfile?.averageRating || 0)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        ({userProfile?.reviewCount || 0})
+                      </span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      ({userProfile?.reviewCount || 0})
-                    </span>
                   </div>
                   
                   <p className="text-xs text-muted-foreground mt-1">
