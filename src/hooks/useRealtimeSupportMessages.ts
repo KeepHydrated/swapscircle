@@ -22,6 +22,12 @@ export const useRealtimeSupportMessages = ({
   onConversationUpdate
 }: UseRealtimeSupportMessagesProps) => {
   const channelRef = useRef<any>(null);
+  const callbacksRef = useRef({ onNewMessage, onConversationUpdate });
+  
+  // Update callbacks ref without causing re-subscription
+  useEffect(() => {
+    callbacksRef.current = { onNewMessage, onConversationUpdate };
+  }, [onNewMessage, onConversationUpdate]);
   
   useEffect(() => {
     if (!conversationId) {
@@ -61,7 +67,7 @@ export const useRealtimeSupportMessages = ({
         if (newMessage.conversation_id === conversationId) {
           console.log('🎯 Message belongs to current conversation, calling onNewMessage');
           console.log('🎯 Message details:', newMessage);
-          onNewMessage(newMessage);
+          callbacksRef.current.onNewMessage(newMessage);
         } else {
           console.log('⚠️ Message for different conversation:', {
             messageConversationId: newMessage.conversation_id,
@@ -83,9 +89,9 @@ export const useRealtimeSupportMessages = ({
         });
         
         const updatedConversation = payload.new as any;
-        if (onConversationUpdate && updatedConversation.status) {
+        if (callbacksRef.current.onConversationUpdate && updatedConversation.status) {
           console.log('🔄 Calling onConversationUpdate with status:', updatedConversation.status);
-          onConversationUpdate(updatedConversation.status);
+          callbacksRef.current.onConversationUpdate(updatedConversation.status);
         }
       })
       .subscribe((status) => {
@@ -111,7 +117,7 @@ export const useRealtimeSupportMessages = ({
         channelRef.current = null;
       }
     };
-  }, [conversationId, onNewMessage, onConversationUpdate]);
+  }, [conversationId]); // Only depend on conversationId
 
   // Cleanup on unmount
   useEffect(() => {
