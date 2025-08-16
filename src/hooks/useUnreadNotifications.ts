@@ -218,6 +218,11 @@ export function useNotifications() {
   useEffect(() => {
     if (!user) return;
 
+    // Clear localStorage cache when user changes
+    localStorage.removeItem('locally-read-notifications');
+    localStorage.removeItem('notifications-viewed');
+    setLocallyReadIds(new Set());
+
     fetchNotifications();
 
     // Listen for manual refresh events (fallback in case realtime misses)

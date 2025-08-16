@@ -2559,6 +2559,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      delete_user_notifications: {
+        Args: { target_user_id?: string }
+        Returns: undefined
+      }
       get_book_discussion_counts: {
         Args: { book_ids: string[] }
         Returns: {
