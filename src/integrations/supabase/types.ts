@@ -2563,6 +2563,10 @@ export type Database = {
         Args: { target_user_id?: string }
         Returns: undefined
       }
+      delete_user_support_data: {
+        Args: { target_user_id?: string }
+        Returns: undefined
+      }
       get_book_discussion_counts: {
         Args: { book_ids: string[] }
         Returns: {
