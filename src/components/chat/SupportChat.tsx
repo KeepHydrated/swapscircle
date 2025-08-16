@@ -257,49 +257,13 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     });
 
     let currentConversationId = conversationId;
-    let isStartingNewConversation = false;
 
-    // If conversation is closed, create a new one first
+    // For closed conversations, user can continue in the same thread
     if (conversationStatus === 'closed') {
       if (!category) {
-        toast.error('Please select a category to start a new conversation');
+        toast.error('Please select a category to continue the conversation');
         return;
       }
-      console.log('Creating new conversation for closed ticket...');
-      
-      // Clear old messages and create fresh conversation
-      setMessages([]);
-      
-      // Create new conversation
-      const { data: newConversation, error: createError } = await supabase
-        .from('support_conversations' as any)
-        .insert({
-          user_id: user.id,
-          status: 'open'
-        })
-        .select('id, status')
-        .single();
-
-      if (createError) {
-        console.error('Error creating new conversation:', createError);
-        toast.error('Failed to start new conversation');
-        return;
-      }
-
-      currentConversationId = (newConversation as any).id;
-      setConversationId(currentConversationId);
-      setConversationStatus('open');
-      isStartingNewConversation = true;
-      
-      // Add welcome message to new conversation
-      await supabase
-        .from('support_messages' as any)
-        .insert({
-          conversation_id: currentConversationId,
-          user_id: user.id,
-          message: "Hi! How can I help you today?",
-          sender_type: 'support'
-        });
     }
 
     if (!currentConversationId) {
@@ -308,11 +272,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       return;
     }
 
-    // Check if this is the first user message or starting new conversation
-    const isFirstMessage = messages.length <= 1 || isStartingNewConversation; // <= 1 because welcome message exists
+    // Check if this is the first user message
+    const isFirstMessage = messages.length <= 1; // <= 1 because welcome message exists
     
-    // For ongoing conversations, check if user needs to wait for admin response
-    if (!isFirstMessage && !isStartingNewConversation) {
+    // For ongoing open conversations, check if user needs to wait for admin response
+    if (!isFirstMessage && conversationStatus === 'open') {
       // Check if last message was from user (meaning they're waiting for admin response)
       const lastMessage = messages[messages.length - 1];
       if (lastMessage && lastMessage.sender_type === 'user') {
@@ -321,14 +285,14 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       }
     }
 
-    // Only require category for first message or when starting from closed conversation
-    if ((isFirstMessage || isStartingNewConversation) && !category) {
-      toast.error('Please select a category for your first message');
+    // Only require category for first message or when conversation is closed
+    if ((isFirstMessage || conversationStatus === 'closed') && !category) {
+      toast.error('Please select a category for your message');
       return;
     }
 
-    const messageText = (isFirstMessage || isStartingNewConversation) && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
-    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, isStartingNewConversation });
+    const messageText = (isFirstMessage || conversationStatus === 'closed') && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, conversationStatus });
     
     setInputValue('');
     setCategory('');
@@ -415,7 +379,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             }`}
           >
             {message.message.includes('This ticket has been closed') 
-              ? "Your ticket has been closed. If you need further assistance, please start a new conversation."
+              ? "Ticket closed"
               : message.message}
           </div>
           <span className="text-xs text-muted-foreground px-1">
@@ -448,7 +412,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={category}
               onChange={setCategory}
               options={categories}
-              placeholder={conversationStatus === 'closed' ? "Select category for new conversation" : "Select a topic category"}
+              placeholder={conversationStatus === 'closed' ? "Select category to continue conversation" : "Select a topic category"}
             />
           </div>
         )}
@@ -472,7 +436,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 isWaitingForResponse 
                   ? "Waiting for support response..." 
                   : conversationStatus === 'closed' 
-                  ? "Start a new conversation..." 
+                  ? "Continue conversation..." 
                   : "Type your message..."
               }
               className="flex-1"
@@ -532,7 +496,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 value={category}
                 onChange={setCategory}
                 options={categories}
-                placeholder={conversationStatus === 'closed' ? "Select category for new conversation" : "Select a topic category"}
+                placeholder={conversationStatus === 'closed' ? "Select category to continue conversation" : "Select a topic category"}
               />
             </div>
           )}
@@ -558,7 +522,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                   return isWaitingForResponse 
                     ? "Waiting for support response..." 
                     : conversationStatus === 'closed' 
-                    ? "Start a new conversation..." 
+                    ? "Continue conversation..." 
                     : "Type your message...";
                 })()}
                 className="flex-1"
