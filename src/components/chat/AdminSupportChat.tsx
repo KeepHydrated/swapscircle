@@ -34,6 +34,12 @@ interface SupportConversation {
 
 const AdminSupportChat = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  // Check if user is admin (nadiachibri@gmail.com) - do this first
+  const isAdmin = user?.email === 'nadiachibri@gmail.com';
+  
+  // ALL HOOKS MUST BE CALLED FIRST - before any early returns
   const [conversations, setConversations] = useState<SupportConversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<SupportConversation | null>(null);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
@@ -47,10 +53,6 @@ const AdminSupportChat = () => {
     reviewCount?: number;
   } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-
-  // Check if user is admin (nadiachibri@gmail.com)
-  const isAdmin = user?.email === 'nadiachibri@gmail.com';
 
   // Scroll to bottom function
   const scrollToBottom = () => {
@@ -62,82 +64,7 @@ const AdminSupportChat = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Load conversations on mount
-  useEffect(() => {
-    console.log('AdminSupportChat: isAdmin check:', isAdmin, 'user email:', user?.email);
-    if (isAdmin) {
-      console.log('AdminSupportChat: Loading conversations...');
-      loadConversations();
-    }
-  }, [isAdmin]);
-
-  // Real-time conversation updates
-  useEffect(() => {
-    if (!isAdmin) return;
-
-    const conversationChannel = supabase
-      .channel('admin_support_conversations')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'support_conversations',
-      }, (payload) => {
-        console.log('Real-time conversation change:', payload);
-        loadConversations();
-        
-        // If the current conversation was updated, update its status locally
-        if (selectedConversation && payload.new && (payload.new as any).id === selectedConversation.id) {
-          setSelectedConversation(prev => prev ? { ...prev, ...(payload.new as any) } : null);
-        }
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(conversationChannel);
-    };
-  }, [isAdmin, selectedConversation?.id]);
-
-  // Stable callback function to prevent unnecessary re-subscriptions
-  const handleNewMessage = useCallback((newMessage: SupportMessage) => {
-    console.log('🔧 ADMIN - handleNewMessage called:', {
-      messageId: newMessage.id,
-      senderType: newMessage.sender_type,
-      message: newMessage.message.substring(0, 50) + '...',
-      timestamp: newMessage.created_at
-    });
-    
-    // Check admin status from current context, don't depend on it in the callback
-    const currentUser = user; // Capture current user
-    const currentIsAdmin = currentUser?.email === 'nadiachibri@gmail.com';
-    
-    if (!currentIsAdmin) {
-      console.log('❌ ADMIN - User is not admin, ignoring message');
-      return;
-    }
-    
-    setMessages(prev => {
-      // Avoid duplicates by checking if message already exists
-      const exists = prev.some(msg => msg.id === newMessage.id);
-      if (exists) {
-        console.log('⚠️ ADMIN - Message already exists, skipping');
-        return prev;
-      }
-      console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length);
-      return [...prev, newMessage];
-    });
-  }, []); // Empty dependency array to prevent re-subscriptions
-
-  // Use real-time hook for admin support messages - stabilize conversationId
-  const conversationId = useMemo(() => {
-    return isAdmin && selectedConversation?.id ? selectedConversation.id : null;
-  }, [isAdmin, selectedConversation?.id]);
-  
-  // Always call the hook, but only with conversationId when admin and conversation selected
-  useRealtimeSupportMessages({
-    conversationId,
-    onNewMessage: handleNewMessage
-  });
-
+  // Define functions before using them in effects
   const loadConversations = async () => {
     console.log('AdminSupportChat: loadConversations called');
     try {
@@ -256,6 +183,95 @@ const AdminSupportChat = () => {
       });
     }
   };
+
+  // Load conversations on mount
+  useEffect(() => {
+    console.log('AdminSupportChat: isAdmin check:', isAdmin, 'user email:', user?.email);
+    if (isAdmin) {
+      console.log('AdminSupportChat: Loading conversations...');
+      loadConversations();
+    }
+  }, [isAdmin]);
+
+  // Real-time conversation updates
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const conversationChannel = supabase
+      .channel('admin_support_conversations')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'support_conversations',
+      }, (payload) => {
+        console.log('Real-time conversation change:', payload);
+        loadConversations();
+        
+        // If the current conversation was updated, update its status locally
+        if (selectedConversation && payload.new && (payload.new as any).id === selectedConversation.id) {
+          setSelectedConversation(prev => prev ? { ...prev, ...(payload.new as any) } : null);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(conversationChannel);
+    };
+  }, [isAdmin, selectedConversation?.id]);
+
+  // Stable callback function to prevent unnecessary re-subscriptions
+  const handleNewMessage = useCallback((newMessage: SupportMessage) => {
+    console.log('🔧 ADMIN - handleNewMessage called:', {
+      messageId: newMessage.id,
+      senderType: newMessage.sender_type,
+      message: newMessage.message.substring(0, 50) + '...',
+      timestamp: newMessage.created_at
+    });
+    
+    // Check admin status from current context, don't depend on it in the callback
+    const currentUser = user; // Capture current user
+    const currentIsAdmin = currentUser?.email === 'nadiachibri@gmail.com';
+    
+    if (!currentIsAdmin) {
+      console.log('❌ ADMIN - User is not admin, ignoring message');
+      return;
+    }
+    
+    setMessages(prev => {
+      // Avoid duplicates by checking if message already exists
+      const exists = prev.some(msg => msg.id === newMessage.id);
+      if (exists) {
+        console.log('⚠️ ADMIN - Message already exists, skipping');
+        return prev;
+      }
+      console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length);
+      return [...prev, newMessage];
+    });
+  }, []); // Empty dependency array to prevent re-subscriptions
+
+  // Use real-time hook for admin support messages - stabilize conversationId
+  const conversationId = useMemo(() => {
+    return isAdmin && selectedConversation?.id ? selectedConversation.id : null;
+  }, [isAdmin, selectedConversation?.id]);
+  
+  // Always call the hook, but only with conversationId when admin and conversation selected
+  useRealtimeSupportMessages({
+    conversationId,
+    onNewMessage: handleNewMessage
+  });
+
+  // EARLY RETURN AFTER ALL HOOKS
+  if (!isAdmin) {
+    return (
+      <Card className="p-8 text-center">
+        <h2 className="text-2xl font-bold text-foreground mb-4">Access Denied</h2>
+        <p className="text-muted-foreground">
+          You don't have permission to access the admin support chat.
+        </p>
+      </Card>
+    );
+  }
+
 
   const sendMessage = async () => {
     if (!inputValue.trim() || !selectedConversation || !user?.id) return;
@@ -405,16 +421,6 @@ const AdminSupportChat = () => {
     }
   };
 
-  if (!isAdmin) {
-    return (
-      <Card className="p-8 text-center">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Access Denied</h2>
-        <p className="text-muted-foreground">
-          You don't have permission to access the admin support chat.
-        </p>
-      </Card>
-    );
-  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-fit overflow-hidden">
