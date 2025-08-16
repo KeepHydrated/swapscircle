@@ -63,6 +63,8 @@ export const useRealtimeSupportMessages = ({
     }
 
     console.log('🎬 Setting up real-time subscription for:', conversationId);
+    console.log('🔧 Supabase client available:', !!supabase);
+    console.log('🔧 User authenticated:', !!supabase.auth?.getUser());
 
     // Clean up existing subscription first
     if (channelRef.current) {
@@ -82,14 +84,15 @@ export const useRealtimeSupportMessages = ({
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'support_messages'
+        table: 'support_messages',
+        filter: `conversation_id=eq.${conversationId}`
       }, (payload) => {
         console.log('🚨 REAL-TIME MESSAGE RECEIVED!', payload.new);
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
           
-          // Only process messages for the current conversation
+          // Double check conversation ID matches
           if (newMessage.conversation_id === currentConversationIdRef.current) {
             console.log('✅ MESSAGE MATCHES - CALLING CALLBACK FOR:', newMessage.id);
             callbacksRef.current.onNewMessage(newMessage);
@@ -118,9 +121,10 @@ export const useRealtimeSupportMessages = ({
           callbacksRef.current.onConversationUpdate((payload.new as any).status);
         }
       })
-      .subscribe((status) => {
+      .subscribe((status, error) => {
         console.log('🔔 SUBSCRIPTION STATUS:', {
           status,
+          error,
           conversationId: currentConversationIdRef.current,
           timestamp: new Date().toISOString()
         });
@@ -128,7 +132,7 @@ export const useRealtimeSupportMessages = ({
         if (status === 'SUBSCRIBED') {
           console.log('🟢 SUCCESSFULLY SUBSCRIBED TO REAL-TIME!');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('🔴 REAL-TIME SUBSCRIPTION ERROR');
+          console.error('🔴 REAL-TIME SUBSCRIPTION ERROR:', error);
         } else if (status === 'TIMED_OUT') {
           console.error('🟡 REAL-TIME SUBSCRIPTION TIMED OUT');
         } else if (status === 'CLOSED') {
