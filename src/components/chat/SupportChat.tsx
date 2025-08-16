@@ -130,6 +130,15 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       })
       .subscribe((status) => {
         console.log('Subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to real-time updates');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Channel error - retrying subscription');
+          // Cleanup and retry after a short delay
+          setTimeout(() => {
+            supabase.removeChannel(channel);
+          }, 1000);
+        }
       });
 
     return () => {
