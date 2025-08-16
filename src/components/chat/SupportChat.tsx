@@ -81,6 +81,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     conversationId,
     onNewMessage: (newMessage) => {
       console.log('📨 New message callback triggered:', newMessage);
+      console.log('📨 Current messages state:', messages);
+      console.log('📨 Current allHistoryItems state:', allHistoryItems);
       
       // Check if it's a closure message and update conversation status
       if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
@@ -95,8 +97,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           console.log('⚠️ Message already exists in messages, skipping');
           return prev;
         }
-        console.log('✅ Adding new message to messages state');
-        return [...prev, newMessage];
+        console.log('✅ Adding new message to messages state. Previous count:', prev.length);
+        const newMessages = [...prev, newMessage];
+        console.log('✅ New messages state will have count:', newMessages.length);
+        return newMessages;
       });
 
       // Also add to full history
@@ -107,8 +111,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           console.log('⚠️ Message already exists in history, skipping');
           return prev;
         }
-        console.log('✅ Adding new message to history state');
-        return [...prev, newMessage];
+        console.log('✅ Adding new message to history state. Previous count:', prev.length);
+        const newHistory = [...prev, newMessage];
+        console.log('✅ New history state will have count:', newHistory.length);
+        return newHistory;
       });
     },
     onConversationUpdate: (status) => {
