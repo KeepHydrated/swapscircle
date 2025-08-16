@@ -255,7 +255,7 @@ const Messages = () => {
       {/* Main content area */}
       <div className="flex flex-1 min-h-0">{/* Add flex class for horizontal layout */}        
         {/* Left sidebar - Conversations */}
-        <div className="w-[350px] border-r border-gray-200 flex flex-col">
+        <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">{/* Add h-full for proper height */}
           {conversations.length > 0 ? (
             <div className="flex flex-col h-full">
               <div ref={leftListRef} className="flex-1 overflow-y-auto">
@@ -332,7 +332,7 @@ const Messages = () => {
         </div>
         
         {/* Middle - Chat area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full">{/* Add h-full for proper height */}
           {activeConversation ? (
             <>
               {/* Debug log for activeChat */}
@@ -431,8 +431,8 @@ const Messages = () => {
                 )}
               </div>
               
-              {/* Message input */}
-              <div className="flex-shrink-0">
+              {/* Message input - frozen at bottom */}
+              <div className="flex-shrink-0 border-t border-gray-200">{/* Add border for clear separation */}
                 <MessageInput 
                   onMarkCompleted={() => handleTradeCompleted(activeConversation)}
                   conversationId={activeConversation}
@@ -447,7 +447,7 @@ const Messages = () => {
         </div>
         
         {/* Right sidebar - Details panel with tabs */}
-        <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0">
+        <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col h-full overflow-y-auto">{/* Add flex flex-col h-full overflow-y-auto for proper scrolling */}
           {selectedPair ? (
             <TradeDetailsTabs 
               selectedPair={selectedPair}

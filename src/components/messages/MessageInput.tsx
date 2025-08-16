@@ -175,7 +175,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
   };
 
   return (
-    <div className="p-3 bg-white border-t border-gray-200 w-full">
+    <div className="p-4 bg-white w-full">{/* Remove border-t since it's handled by parent */}
       {/* Image previews */}
       {imagePreviews.length > 0 && (
         <div className="mb-2">
