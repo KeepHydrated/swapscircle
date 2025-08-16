@@ -65,12 +65,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Real-time message subscription
   useEffect(() => {
-    if (!conversationId || !user?.id) {
-      console.log('Customer: Skipping real-time setup - missing data:', { conversationId, userId: user?.id });
-      return;
-    }
+    if (!conversationId || !user?.id) return;
 
-    console.log('Customer: Setting up real-time subscription for conversation:', conversationId);
+    console.log('Setting up real-time subscription for conversation:', conversationId);
 
     const channel = supabase
       .channel(`support_messages_${conversationId}`)
@@ -80,35 +77,31 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('Customer: Real-time message received:', payload);
+        console.log('Real-time message received:', payload);
         const newMessage = payload.new as SupportMessage;
         
         // Check if it's a closure message
         if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
-          console.log('Customer: Detected closure message, updating status');
           setConversationStatus('closed');
         }
         
-        console.log('Customer: Current messages count before update:', messages.length);
         setMessages(prev => {
           // Avoid duplicates by checking if message already exists
           const exists = prev.some(msg => msg.id === newMessage.id);
           if (exists) {
-            console.log('Customer: Message already exists, skipping');
+            console.log('Message already exists, skipping');
             return prev;
           }
-          console.log('Customer: Adding new message to state');
-          const updated = [...prev, newMessage];
-          console.log('Customer: Updated messages count:', updated.length);
-          return updated;
+          console.log('Adding new message to state');
+          return [...prev, newMessage];
         });
       })
       .subscribe((status) => {
-        console.log('Customer: Subscription status:', status);
+        console.log('Subscription status:', status);
       });
 
     return () => {
-      console.log('Customer: Cleaning up real-time subscription for conversation:', conversationId);
+      console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [conversationId, user?.id]);
