@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -127,7 +127,15 @@ const Header = () => {
                        <span>Settings</span>
                      </Link>
                     </DropdownMenuItem>
-                    {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
+                     {user?.email === 'nadiachibri@gmail.com' && (
+                       <DropdownMenuItem asChild>
+                         <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
+                           <Headphones className="mr-2 h-4 w-4" />
+                           <span>Customer Support</span>
+                         </Link>
+                       </DropdownMenuItem>
+                     )}
+                     {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
                      <DropdownMenuItem asChild>
                        <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
                          <Flag className="mr-2 h-4 w-4" />
