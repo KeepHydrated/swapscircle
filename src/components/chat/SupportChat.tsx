@@ -30,6 +30,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const categories = [
     'General Question',
@@ -97,6 +98,23 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       supabase.removeChannel(channel);
     };
   }, [conversationId, user?.id]);
+
+  // Click outside to close chat popup
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && chatWindowRef.current && !chatWindowRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const initializeConversation = async () => {
     if (!user?.id) return;
@@ -309,7 +327,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 w-80 h-96 shadow-2xl z-50 flex flex-col">
+        <Card ref={chatWindowRef} className="fixed bottom-24 right-6 w-80 h-96 shadow-2xl z-50 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <div>
