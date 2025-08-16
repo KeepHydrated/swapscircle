@@ -173,6 +173,9 @@ const AdminSupportChat = () => {
   };
 
   const loadUserProfile = async (userId: string) => {
+    console.log('Loading profile for user:', userId);
+    setUserProfile(null); // Clear previous profile
+    
     try {
       // Get user profile
       const { data: profile, error: profileError } = await supabase
@@ -180,6 +183,8 @@ const AdminSupportChat = () => {
         .select('username, name, avatar_url')
         .eq('id', userId)
         .maybeSingle();
+
+      console.log('Profile query result:', { profile, profileError });
 
       if (profileError) {
         console.error('Error loading profile:', profileError);
@@ -191,6 +196,8 @@ const AdminSupportChat = () => {
         .select('rating')
         .eq('reviewee_id', userId);
 
+      console.log('Reviews query result:', { reviews, reviewsError });
+
       if (reviewsError) {
         console.error('Error loading reviews:', reviewsError);
       }
@@ -200,22 +207,19 @@ const AdminSupportChat = () => {
         ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount).toFixed(1))
         : 0;
 
-      console.log('Profile loaded:', {
-        profile,
-        reviewCount,
-        averageRating,
-        userId
-      });
-
-      setUserProfile({
+      const profileData = {
         username: profile?.username || 'Unknown User',
         name: profile?.name || profile?.username || 'Unknown User',
         avatar_url: profile?.avatar_url || '',
         averageRating,
         reviewCount
-      });
+      };
+
+      console.log('Setting profile data:', profileData);
+      setUserProfile(profileData);
+      
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error('Error in loadUserProfile:', error);
       setUserProfile({
         username: 'Unknown User',
         name: 'Unknown User',
