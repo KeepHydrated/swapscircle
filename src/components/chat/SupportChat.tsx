@@ -214,11 +214,39 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         return;
       }
       console.log('Creating new conversation for closed ticket...');
-      // Initialize new conversation but don't return - continue to send the message
-      await initializeConversation();
-      // Wait a moment for the new conversation to be set up
-      await new Promise(resolve => setTimeout(resolve, 500));
-      console.log('New conversation initialized, conversationId:', conversationId);
+      
+      // Clear old messages and create fresh conversation
+      setMessages([]);
+      
+      // Create new conversation
+      const { data: newConversation, error: createError } = await supabase
+        .from('support_conversations' as any)
+        .insert({
+          user_id: user.id,
+          status: 'open'
+        })
+        .select('id, status')
+        .single();
+
+      if (createError) {
+        console.error('Error creating new conversation:', createError);
+        toast.error('Failed to start new conversation');
+        return;
+      }
+
+      const newConversationId = (newConversation as any).id;
+      setConversationId(newConversationId);
+      setConversationStatus('open');
+      
+      // Add welcome message to new conversation
+      await supabase
+        .from('support_messages' as any)
+        .insert({
+          conversation_id: newConversationId,
+          user_id: user.id,
+          message: "Hi! How can I help you today?",
+          sender_type: 'support'
+        });
     }
 
     if (!conversationId) {
@@ -227,14 +255,14 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       return;
     }
 
-    // Only require category for the very first message (when no messages exist yet)
-    const isFirstMessage = messages.length === 0;
+    // For new conversations from closed tickets, treat as first message
+    const isFirstMessage = conversationStatus === 'closed' || messages.length === 0;
     if (isFirstMessage && !category) {
       toast.error('Please select a category for your first message');
       return;
     }
 
-    const messageText = isFirstMessage && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    const messageText = category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
     console.log('Sending message:', { messageText, conversationId, isFirstMessage });
     
     setInputValue('');
