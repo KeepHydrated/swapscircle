@@ -103,12 +103,14 @@ const AdminSupportChat = () => {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
       message: newMessage.message.substring(0, 50) + '...',
-      timestamp: newMessage.created_at,
-      isAdmin,
-      selectedConversationId: selectedConversation?.id
+      timestamp: newMessage.created_at
     });
     
-    if (!isAdmin) {
+    // Check admin status from current context, don't depend on it in the callback
+    const currentUser = user; // Capture current user
+    const currentIsAdmin = currentUser?.email === 'nadiachibri@gmail.com';
+    
+    if (!currentIsAdmin) {
       console.log('❌ ADMIN - User is not admin, ignoring message');
       return;
     }
@@ -123,17 +125,18 @@ const AdminSupportChat = () => {
       console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length);
       return [...prev, newMessage];
     });
-  }, [isAdmin, selectedConversation?.id]);
+  }, []); // Empty dependency array to prevent re-subscriptions
 
-  // Use real-time hook for admin support messages
+  // Use real-time hook for admin support messages - only re-subscribe when conversation changes
+  const conversationId = selectedConversation?.id || null;
   console.log('🔧 ADMIN - Setting up real-time subscription:', {
-    conversationId: selectedConversation?.id || null,
+    conversationId,
     isAdmin,
     selectedConversationExists: !!selectedConversation
   });
   
   useRealtimeSupportMessages({
-    conversationId: selectedConversation?.id || null,
+    conversationId,
     onNewMessage: handleNewMessage
   });
 

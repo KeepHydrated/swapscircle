@@ -80,8 +80,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
       message: newMessage.message.substring(0, 50) + '...',
-      timestamp: newMessage.created_at,
-      currentUser: user?.email
+      timestamp: newMessage.created_at
     });
     
     // Check if it's a closure message and update conversation status
