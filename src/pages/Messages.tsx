@@ -52,7 +52,10 @@ const Messages = () => {
 
   // Real-time message updates for active conversation
   useEffect(() => {
-    if (!activeConversation || !currentUserId) return;
+    if (!activeConversation || !currentUserId) {
+      console.log('Skipping real-time setup:', { activeConversation, currentUserId });
+      return;
+    }
 
     console.log('Setting up real-time subscription for trade messages:', activeConversation);
 
@@ -64,23 +67,27 @@ const Messages = () => {
         table: 'messages',
         filter: `conversation_id=eq.${activeConversation}`,
       }, (payload) => {
-        console.log('Real-time trade message received:', payload);
+        console.log('🔥 Real-time INSERT received:', payload);
         const newMessage = payload.new as any;
         
-        // Update the query cache with the new message
-        queryClient.setQueryData(['trade-messages', activeConversation], (old: any[]) => {
-          if (!old) return [newMessage];
-          
-          // Avoid duplicates by checking if message already exists
-          const exists = old.some(msg => msg.id === newMessage.id);
-          if (exists) {
-            console.log('Trade message already exists, skipping');
-            return old;
-          }
-          
-          console.log('Adding new trade message to cache');
-          return [...old, newMessage];
-        });
+        // Only add messages that are not from the current user (to avoid duplicates from optimistic updates)
+        if (newMessage.sender_id !== currentUserId) {
+          console.log('Adding new message from other user to cache');
+          queryClient.setQueryData(['trade-messages', activeConversation], (old: any[]) => {
+            if (!old) return [newMessage];
+            
+            // Avoid duplicates by checking if message already exists
+            const exists = old.some(msg => msg.id === newMessage.id);
+            if (exists) {
+              console.log('Message already exists, skipping');
+              return old;
+            }
+            
+            return [...old, newMessage];
+          });
+        } else {
+          console.log('Skipping own message to avoid duplicate');
+        }
       })
       .on('postgres_changes', {
         event: 'UPDATE',
@@ -88,7 +95,7 @@ const Messages = () => {
         table: 'messages',
         filter: `conversation_id=eq.${activeConversation}`,
       }, (payload) => {
-        console.log('Real-time trade message update received:', payload);
+        console.log('🔥 Real-time UPDATE received:', payload);
         const updatedMessage = payload.new as any;
         
         // Update the query cache with the updated message
@@ -100,12 +107,18 @@ const Messages = () => {
           );
         });
       })
-      .subscribe((status) => {
-        console.log('Trade messages subscription status:', status);
+      .subscribe((status, error) => {
+        console.log('🔥 Real-time subscription status:', status);
+        if (error) {
+          console.error('🔥 Real-time subscription error:', error);
+        }
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Successfully subscribed to real-time messages for conversation:', activeConversation);
+        }
       });
 
     return () => {
-      console.log('Cleaning up trade messages real-time subscription');
+      console.log('🧹 Cleaning up real-time subscription for conversation:', activeConversation);
       supabase.removeChannel(channel);
     };
   }, [activeConversation, currentUserId, queryClient]);
