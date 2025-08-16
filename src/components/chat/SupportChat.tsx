@@ -239,14 +239,19 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     // Check if this is the first user message (only welcome message exists)
     const isFirstMessage = messages.length <= 1;
     
-    // Only require category for the very first message
-    if (isFirstMessage && !category) {
-      toast.error('Please select a category for your first message');
+    // Require category for first message OR when conversation is closed
+    if ((isFirstMessage || conversationStatus === 'closed') && !category) {
+      const errorMsg = conversationStatus === 'closed' 
+        ? 'Please select a category to continue the conversation' 
+        : 'Please select a category for your first message';
+      toast.error(errorMsg);
       return;
     }
 
-    const messageText = isFirstMessage && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
-    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage });
+    const messageText = (isFirstMessage || conversationStatus === 'closed') && category 
+      ? `[${category}] ${inputValue.trim()}` 
+      : inputValue.trim();
+    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, conversationStatus });
     
     setInputValue('');
     setCategory('');
@@ -266,13 +271,21 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       
       console.log('Message sent successfully');
 
-      // Update conversation last_message_at
+      // Update conversation last_message_at and status (reopen if closed)
+      const updateData: any = { 
+        last_message_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      // If conversation was closed, reopen it
+      if (conversationStatus === 'closed') {
+        updateData.status = 'open';
+        setConversationStatus('open');
+      }
+
       await supabase
         .from('support_conversations' as any)
-        .update({ 
-          last_message_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', currentConversationId);
 
     } catch (error) {
@@ -342,20 +355,23 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   if (embedded) {
     const isFirstMessage = messages.length <= 1;
-    const showCategorySelector = isFirstMessage;
+    const showCategorySelector = isFirstMessage || conversationStatus === 'closed';
     
     return (
       <div className="flex flex-col h-full">
-        {/* Category Selection - Show only for first message */}
+        {/* Category Selection - Show for first message OR when conversation is closed */}
         {showCategorySelector && (
-          <div className="px-4 pt-2 pb-4 border-b">
+          <div className="px-4 pt-2 pb-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <SelectField
               id="category"
               label=""
               value={category}
               onChange={setCategory}
               options={categories}
-              placeholder="Select a topic category"
+              placeholder={conversationStatus === 'closed' 
+                ? "Select category to continue conversation" 
+                : "Select a topic category"}
+              className="z-50"
             />
           </div>
         )}
@@ -375,7 +391,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={conversationStatus === 'closed' 
+                ? "Continue conversation..." 
+                : "Type your message..."}
               className="flex-1"
               disabled={loading}
             />
@@ -424,16 +442,19 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             </Button>
           </div>
 
-          {/* Category Selection - Show only for first message */}
-          {messages.length <= 1 && (
-            <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
+          {/* Category Selection - Show for first message OR when conversation is closed */}
+          {(messages.length <= 1 || conversationStatus === 'closed') && (
+            <div className="px-4 pt-2 pb-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <SelectField
                 id="category"
                 label=""
                 value={category}
                 onChange={setCategory}
                 options={categories}
-                placeholder="Select a topic category"
+                placeholder={conversationStatus === 'closed' 
+                  ? "Select category to continue conversation" 
+                  : "Select a topic category"}
+                className="z-50"
               />
             </div>
           )}
