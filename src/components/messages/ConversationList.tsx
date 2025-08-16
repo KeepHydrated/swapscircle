@@ -29,9 +29,9 @@ const ConversationList = ({
   }, [conversations]);
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       {/* Fixed height header with consistent padding and styling */}
-      <div className="p-4 border-b border-gray-200 flex items-center bg-white z-10 h-16">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200 flex items-center bg-white z-10">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input 
@@ -41,7 +41,7 @@ const ConversationList = ({
         </div>
       </div>
       
-      <div className="h-[calc(100vh-130px)] overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">{/* Scrollable conversation list */}
         {conversations.map((conversation) => {
           // Find the exchange pair for this conversation if it exists
           const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
@@ -98,7 +98,7 @@ const ConversationList = ({
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
 

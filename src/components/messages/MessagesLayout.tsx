@@ -64,7 +64,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
 
   if (isMobile) {
     return (
-      <div className="flex flex-col h-[calc(100vh-64px)]">
+      <div className="flex flex-col h-full">{/* Use full height for mobile */}
         {/* Mobile Header */}
         {currentView === 'chat' && activeChat && (
           <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
@@ -139,34 +139,31 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
 
   // Desktop layout
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)]">
-      {/* Three columns layout */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar - Conversations */}
-        <div className="w-[350px] border-r border-gray-200 overflow-hidden flex flex-col">
-          <ConversationList 
-            conversations={conversations}
-            activeConversation={activeConversation}
-            setActiveConversation={setActiveConversation}
-            exchangePairs={exchangePairs}
-          />
-        </div>
-        
-        {/* Middle - Chat area */}
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <ChatArea 
-            activeChat={activeChat} 
-            onSendFirstMessage={onSendFirstMessage}
-            onTradeCompleted={onTradeCompleted}
-          />
-        </div>
-        
-        {/* Right sidebar - Details panel */}
-        <div className="w-80 border-l border-gray-200 overflow-hidden bg-gray-50">
-          <ScrollArea className="h-full">
-            <DetailsPanel selectedPair={selectedPair} />
-          </ScrollArea>
-        </div>
+    <div className="flex h-full overflow-hidden">
+      {/* Left sidebar - Conversations */}
+      <div className="w-[350px] border-r border-gray-200 flex flex-col min-h-0">
+        <ConversationList 
+          conversations={conversations}
+          activeConversation={activeConversation}
+          setActiveConversation={setActiveConversation}
+          exchangePairs={exchangePairs}
+        />
+      </div>
+      
+      {/* Middle - Chat area */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <ChatArea 
+          activeChat={activeChat} 
+          onSendFirstMessage={onSendFirstMessage}
+          onTradeCompleted={onTradeCompleted}
+        />
+      </div>
+      
+      {/* Right sidebar - Details panel */}
+      <div className="w-80 border-l border-gray-200 flex flex-col min-h-0 bg-gray-50">
+        <ScrollArea className="flex-1">
+          <DetailsPanel selectedPair={selectedPair} />
+        </ScrollArea>
       </div>
     </div>
   );
