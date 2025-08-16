@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Send, User, Clock, Star, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -127,14 +127,12 @@ const AdminSupportChat = () => {
     });
   }, []); // Empty dependency array to prevent re-subscriptions
 
-  // Use real-time hook for admin support messages - only re-subscribe when conversation changes
-  const conversationId = selectedConversation?.id || null;
-  console.log('🔧 ADMIN - Setting up real-time subscription:', {
-    conversationId,
-    isAdmin,
-    selectedConversationExists: !!selectedConversation
-  });
+  // Use real-time hook for admin support messages - stabilize conversationId
+  const conversationId = useMemo(() => {
+    return isAdmin && selectedConversation?.id ? selectedConversation.id : null;
+  }, [isAdmin, selectedConversation?.id]);
   
+  // Always call the hook, but only with conversationId when admin and conversation selected
   useRealtimeSupportMessages({
     conversationId,
     onNewMessage: handleNewMessage
