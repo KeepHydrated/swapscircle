@@ -82,52 +82,37 @@ export const useRealtimeSupportMessages = ({
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'support_messages'
+        table: 'support_messages',
+        filter: `conversation_id=eq.${conversationId}`
       }, (payload) => {
-        console.log('🚨 RAW REAL-TIME EVENT RECEIVED!', {
+        console.log('🚨 REAL-TIME MESSAGE RECEIVED!', {
           event: payload.eventType,
           table: payload.table,
-          new: payload.new,
-          timestamp: new Date().toISOString(),
-          currentConversationId: currentConversationIdRef.current
+          messageId: (payload.new as any)?.id,
+          senderType: (payload.new as any)?.sender_type,
+          conversationId: (payload.new as any)?.conversation_id,
+          currentConversation: currentConversationIdRef.current
         });
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
-          console.log('🎯 Processing new message:', {
-            messageId: newMessage.id,
-            senderType: newMessage.sender_type,
-            messageConversationId: newMessage.conversation_id,
-            currentConversationId: currentConversationIdRef.current,
-            messagesMatch: newMessage.conversation_id === currentConversationIdRef.current
-          });
-          
-          if (newMessage.conversation_id === currentConversationIdRef.current) {
-            console.log('✅ MESSAGE MATCHES CURRENT CONVERSATION - CALLING CALLBACK');
-            callbacksRef.current.onNewMessage(newMessage);
-          } else {
-            console.log('❌ MESSAGE FOR DIFFERENT CONVERSATION - IGNORING');
-          }
+          console.log('✅ CALLING CALLBACK FOR MESSAGE:', newMessage.id);
+          callbacksRef.current.onNewMessage(newMessage);
         }
       })
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public', 
-        table: 'support_conversations'
+        table: 'support_conversations',
+        filter: `id=eq.${conversationId}`
       }, (payload) => {
-        console.log('🚨 CONVERSATION UPDATE EVENT:', {
-          event: payload.eventType,
-          table: payload.table,
-          new: payload.new,
-          old: payload.old,
-          timestamp: new Date().toISOString()
+        console.log('🔄 Conversation status update:', {
+          status: (payload.new as any)?.status,
+          conversationId: (payload.new as any)?.id
         });
         
-        if (payload.new && (payload.new as any).id === currentConversationIdRef.current) {
-          console.log('🔄 Conversation status update for current conversation');
-          if (callbacksRef.current.onConversationUpdate) {
-            callbacksRef.current.onConversationUpdate((payload.new as any).status);
-          }
+        if (payload.new && callbacksRef.current.onConversationUpdate) {
+          callbacksRef.current.onConversationUpdate((payload.new as any).status);
         }
       })
       .subscribe((status) => {
