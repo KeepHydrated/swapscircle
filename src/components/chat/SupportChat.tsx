@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X, Send, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -457,17 +457,17 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   return (
     <>
-      {/* Chat Button */}
+      {/* Customer Support Chat Button */}
       <Button
         onClick={() => {
           setIsOpen(true);
           // Scroll to bottom when chat opens
           setTimeout(() => scrollToBottom(), 200);
         }}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 z-50"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-green-600 hover:bg-green-700 text-white z-50 border-2 border-green-400"
         size="icon"
       >
-        <MessageCircle className="h-6 w-6" />
+        <Headphones className="h-6 w-6" />
       </Button>
 
       {/* Chat Window */}
