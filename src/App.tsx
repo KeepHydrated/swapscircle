@@ -102,7 +102,7 @@ const App = () => {
                  </RequireAuth>
                  } />
                <Route path="/posting-rules" element={<PostingRules />} />
-               <Route path="/test2" element={<Test2 />} />
+               <Route path="/customer-support" element={<Test2 />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
