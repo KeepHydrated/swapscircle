@@ -185,11 +185,14 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const sendMessage = async () => {
     if (!inputValue.trim() || !conversationId || !user?.id) return;
 
-    // Only require category for new conversations (no existing messages)
-    const hasExistingMessages = messages.length > 0;
-    if (!hasExistingMessages && !category) return;
+    // Only require category for the very first message (when no messages exist yet)
+    const isFirstMessage = messages.length === 0;
+    if (isFirstMessage && !category) {
+      toast.error('Please select a category for your first message');
+      return;
+    }
 
-    const messageText = category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    const messageText = isFirstMessage && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
     setInputValue('');
     setCategory('');
     setLoading(true);
@@ -244,19 +247,23 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   }
 
   if (embedded) {
+    const isFirstMessage = messages.length === 0;
+    
     return (
       <div className="flex flex-col h-full">
-        {/* Category Selection */}
-        <div className="px-4 pt-2 pb-4 border-b">
-          <SelectField
-            id="category"
-            label=""
-            value={category}
-            onChange={setCategory}
-            options={categories}
-            placeholder="Select a topic category"
-          />
-        </div>
+        {/* Category Selection - Only for first message */}
+        {isFirstMessage && (
+          <div className="px-4 pt-2 pb-4 border-b">
+            <SelectField
+              id="category"
+              label=""
+              value={category}
+              onChange={setCategory}
+              options={categories}
+              placeholder="Select a topic category"
+            />
+          </div>
+        )}
         
         {/* Messages */}
         <ScrollArea className="flex-1 p-4">
@@ -300,7 +307,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             <Button 
               size="icon" 
               onClick={sendMessage}
-              disabled={loading || !inputValue.trim() || (messages.length === 0 && !category)}
+              disabled={loading || !inputValue.trim() || (isFirstMessage && !category)}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -331,7 +338,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <div>
-              <h3 className="font-semibold">Reach Out to Customer Support</h3>
+              <h3 className="font-semibold">Customer Support</h3>
             </div>
             <Button
               variant="ghost"
@@ -342,17 +349,22 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             </Button>
           </div>
 
-          {/* Category Selection */}
-          <div className="px-4 pt-2 pb-4 border-b">
-            <SelectField
-              id="category"
-              label=""
-              value={category}
-              onChange={setCategory}
-              options={categories}
-              placeholder="Select a topic category"
-            />
-          </div>
+          {/* Category Selection - Only for first message */}
+          {messages.length === 0 && (
+            <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
+              <SelectField
+                id="category"
+                label=""
+                value={category}
+                onChange={setCategory}
+                options={categories}
+                placeholder="Select a topic category"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Please select a category for your first message
+              </p>
+            </div>
+          )}
 
           {/* Messages */}
           <ScrollArea className="flex-1 p-4">
