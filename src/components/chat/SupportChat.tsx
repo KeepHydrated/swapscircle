@@ -172,6 +172,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
       if (messagesError) throw messagesError;
 
+      // Clear existing messages first to avoid mixing old and new conversations
+      setMessages([]);
+
       if (messages && messages.length === 0) {
         // Add welcome message if no messages exist
         const { error: welcomeError } = await supabase
