@@ -24,7 +24,8 @@ export const useRealtimeSupportMessages = ({
   console.log('🔥 useRealtimeSupportMessages HOOK CALLED!', {
     conversationId,
     hasConversationId: !!conversationId,
-    conversationIdType: typeof conversationId
+    conversationIdType: typeof conversationId,
+    timestamp: new Date().toISOString()
   });
   
   const channelRef = useRef<any>(null);
