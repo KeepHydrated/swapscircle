@@ -10,6 +10,7 @@ import { fetchUserReviews } from '@/services/authService';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import FriendsTab from '@/components/profile/FriendsTab';
+import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import ProfileItemsManager from '@/components/profile/ProfileItemsManager';
 import { MatchItem } from '@/types/item';
 import { toast } from 'sonner';
@@ -21,6 +22,7 @@ const UserProfile: React.FC = () => {
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [userFriends, setUserFriends] = useState<any[]>([]);
+  const [friendItems, setFriendItems] = useState<MatchItem[]>([]);
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -135,6 +137,9 @@ const UserProfile: React.FC = () => {
         setUserReviews([]);
       }
 
+      // Fetch friends' items
+      await fetchFriendsItems(user_id);
+
       setUserFriends([]);
 
     } catch (e) {
@@ -144,6 +149,88 @@ const UserProfile: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
+  const fetchFriendsItems = async (user_id: string) => {
+    try {
+      // Get friends first (both directions)
+      const { data: friendRequests, error: friendsError } = await supabase
+        .from('friend_requests')
+        .select('requester_id, recipient_id')
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${user_id},recipient_id.eq.${user_id}`);
+
+      if (friendsError) {
+        console.error('Error fetching friends:', friendsError);
+        return;
+      }
+
+      // Get friend IDs (excluding self)
+      const friendIds = friendRequests
+        ?.map(fr => fr.requester_id === user_id ? fr.recipient_id : fr.requester_id)
+        .filter(id => id !== user_id) || [];
+
+      if (friendIds.length === 0) {
+        setFriendItems([]);
+        return;
+      }
+
+      // Get friends' items
+      const { data: friendItemsData, error: friendItemsError } = await supabase
+        .from('items')
+        .select('*')
+        .in('user_id', friendIds)
+        .eq('status', 'published')
+        .eq('is_available', true);
+
+      if (friendItemsError) {
+        console.error('Error fetching friends items:', friendItemsError);
+        return;
+      }
+
+      // Fetch profiles for the friends
+      const { data: friendProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, name, username, avatar_url')
+        .in('id', friendIds);
+
+      if (profilesError) {
+        console.error('Error fetching friend profiles:', profilesError);
+        return;
+      }
+
+      // Create profile lookup
+      const profilesMap = new Map();
+      friendProfiles?.forEach(profile => {
+        profilesMap.set(profile.id, profile);
+      });
+
+      // Format friend items
+      const formattedFriendItems: MatchItem[] = (friendItemsData || []).map(item => ({
+        id: item.id,
+        name: item.name,
+        image: item.image_url || (item.image_urls && item.image_urls.length > 0 ? item.image_urls[0] : ''),
+        image_url: item.image_url,
+        image_urls: item.image_urls || [],
+        category: item.category,
+        condition: item.condition,
+        description: item.description,
+        tags: item.tags || [],
+        priceRangeMin: item.price_range_min,
+        priceRangeMax: item.price_range_max,
+        user_id: item.user_id,
+        liked: false,
+        userProfile: {
+          name: profilesMap.get(item.user_id)?.name || profilesMap.get(item.user_id)?.username || 'Unknown',
+          username: profilesMap.get(item.user_id)?.username,
+          avatar_url: profilesMap.get(item.user_id)?.avatar_url,
+        }
+      }));
+
+      setFriendItems(formattedFriendItems);
+    } catch (error) {
+      console.error('Error fetching friends items:', error);
+    }
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -240,20 +327,26 @@ const UserProfile: React.FC = () => {
           <TabsList className="w-full flex rounded-none h-12 bg-white dark:bg-gray-800 border-b justify-start">
             <TabsTrigger 
               value="available" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[140px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Items For Trade
             </TabsTrigger>
             <TabsTrigger 
+              value="friend-items" 
+              className="flex-1 md:flex-none md:min-w-[140px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+            >
+              Friends' Items ({friendItems.length})
+            </TabsTrigger>
+            <TabsTrigger 
               value="reviews" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[140px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               <Star className="mr-2 h-4 w-4" />
               Reviews
             </TabsTrigger>
             <TabsTrigger 
               value="friends" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[140px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               <Users className="mr-2 h-4 w-4" />
               Friends
@@ -261,6 +354,27 @@ const UserProfile: React.FC = () => {
           </TabsList>
           <TabsContent value="available" className="p-6">
             <ProfileItemsManager initialItems={userItems} userProfile={userProfile} />
+          </TabsContent>
+          <TabsContent value="friend-items" className="p-6">
+            {friendItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Users className="h-16 w-16 mb-4 opacity-50" />
+                <h3 className="text-xl font-semibold mb-2">No Friends' Items</h3>
+                <p className="text-center">Add friends to see their items available for trade!</p>
+              </div>
+            ) : (
+              <FriendItemsCarousel
+                items={friendItems}
+                onLikeItem={(itemId) => {
+                  // Update the liked status
+                  setFriendItems(prev => prev.map(item => 
+                    item.id === itemId ? { ...item, liked: !item.liked } : item
+                  ));
+                  toast.success('Item liked!');
+                }}
+                title="Your Friends' Items"
+              />
+            )}
           </TabsContent>
           <TabsContent value="reviews" className="p-6">
             <ReviewsTab reviews={userReviews} />
