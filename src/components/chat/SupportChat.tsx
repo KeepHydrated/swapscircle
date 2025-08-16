@@ -78,8 +78,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     console.log('🎯 SUPPORT handleNewMessage called:', {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
-      conversationId: newMessage.conversation_id
+      conversationId: newMessage.conversation_id,
+      currentConversationId: conversationId,
+      isMatch: newMessage.conversation_id === conversationId
     });
+    
+    // Only process messages for the current conversation
+    if (conversationId && newMessage.conversation_id !== conversationId) {
+      console.log('❌ SUPPORT - Message is for different conversation, ignoring');
+      return;
+    }
     
     // Check if it's a closure message and update conversation status
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
@@ -120,7 +128,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       console.log('✅ SUPPORT - Adding new message to history. Count:', prev.length);
       return [...prev, newMessage];
     });
-  }, []); // Empty deps to prevent recreation
+  }, [conversationId]); // Include conversationId in dependencies
 
   const stableHandleConversationUpdate = useCallback((status: 'open' | 'closed') => {
     setConversationStatus(status);

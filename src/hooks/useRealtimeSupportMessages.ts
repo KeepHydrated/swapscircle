@@ -87,7 +87,13 @@ export const useRealtimeSupportMessages = ({
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`
       }, (payload) => {
-        console.log('🚨 REAL-TIME MESSAGE RECEIVED!', payload.new);
+        console.log('🚨 REAL-TIME MESSAGE RECEIVED!', {
+          messageId: (payload.new as any).id,
+          conversationId: (payload.new as any).conversation_id,
+          filterConversationId: conversationId,
+          senderType: (payload.new as any).sender_type,
+          message: (payload.new as any).message?.substring(0, 50) + '...'
+        });
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
