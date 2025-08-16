@@ -1071,7 +1071,6 @@ export type Database = {
           chapter_title: string | null
           created_at: string | null
           id: string
-          is_read: boolean | null
           message: string
           reference_id: string
           status: Database["public"]["Enums"]["notification_status"] | null
@@ -1086,7 +1085,6 @@ export type Database = {
           chapter_title?: string | null
           created_at?: string | null
           id?: string
-          is_read?: boolean | null
           message: string
           reference_id: string
           status?: Database["public"]["Enums"]["notification_status"] | null
@@ -1101,7 +1099,6 @@ export type Database = {
           chapter_title?: string | null
           created_at?: string | null
           id?: string
-          is_read?: boolean | null
           message?: string
           reference_id?: string
           status?: Database["public"]["Enums"]["notification_status"] | null
