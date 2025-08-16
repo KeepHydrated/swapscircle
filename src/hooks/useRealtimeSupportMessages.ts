@@ -29,6 +29,7 @@ export const useRealtimeSupportMessages = ({
   
   const channelRef = useRef<any>(null);
   const callbacksRef = useRef({ onNewMessage, onConversationUpdate });
+  const currentConversationIdRef = useRef<string | null>(null);
   
   // Update callbacks ref without causing re-subscription
   useEffect(() => {
@@ -36,34 +37,45 @@ export const useRealtimeSupportMessages = ({
   }, [onNewMessage, onConversationUpdate]);
   
   useEffect(() => {
-  console.log('🚨 useRealtimeSupportMessages useEffect triggered!', {
-    conversationId,
-    hasConversationId: !!conversationId,
-    conversationIdType: typeof conversationId
-  });
-  
-  if (!conversationId) {
-    console.log('❌ No conversationId provided for real-time subscription');
-    // Clean up existing subscription if conversationId becomes null
+    console.log('🚨 useRealtimeSupportMessages useEffect triggered!', {
+      conversationId,
+      hasConversationId: !!conversationId,
+      conversationIdType: typeof conversationId,
+      currentSubscription: currentConversationIdRef.current
+    });
+    
+    // If conversation ID hasn't changed, don't recreate subscription
+    if (currentConversationIdRef.current === conversationId && channelRef.current) {
+      console.log('🎯 Conversation ID unchanged, keeping existing subscription');
+      return;
+    }
+    
+    if (!conversationId) {
+      console.log('❌ No conversationId provided for real-time subscription');
+      // Clean up existing subscription if conversationId becomes null
+      if (channelRef.current) {
+        console.log('🧹 Cleaning up subscription due to null conversationId');
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+        currentConversationIdRef.current = null;
+      }
+      return;
+    }
+
+    console.log('🎬 Setting up real-time subscription for:', conversationId);
+
+    // Clean up existing subscription first
     if (channelRef.current) {
-      console.log('🧹 Cleaning up subscription due to null conversationId');
+      console.log('🧹 Cleaning up existing subscription');
       supabase.removeChannel(channelRef.current);
       channelRef.current = null;
     }
-    return;
-  }
 
-  console.log('🎬 Setting up real-time subscription for:', conversationId);
+    // Update the tracked conversation ID
+    currentConversationIdRef.current = conversationId;
 
-  // Clean up existing subscription first
-  if (channelRef.current) {
-    console.log('🧹 Cleaning up existing subscription');
-    supabase.removeChannel(channelRef.current);
-    channelRef.current = null;
-  }
-
-  const channelName = `support_messages_${conversationId}`;
-  console.log('📡 Creating channel with name:', channelName);
+    const channelName = `support_messages_${conversationId}`;
+    console.log('📡 Creating channel with name:', channelName);
     
   const channel = supabase
     .channel(channelName)
@@ -83,7 +95,9 @@ export const useRealtimeSupportMessages = ({
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
           console.log('🎯 New message received:', newMessage);
-          if (newMessage.conversation_id === conversationId) {
+          console.log('🎯 Current conversation ID:', currentConversationIdRef.current);
+          console.log('🎯 Message conversation ID:', newMessage.conversation_id);
+          if (newMessage.conversation_id === currentConversationIdRef.current) {
             console.log('🎯 Message belongs to current conversation, calling onNewMessage');
             callbacksRef.current.onNewMessage(newMessage);
           } else {
@@ -104,7 +118,7 @@ export const useRealtimeSupportMessages = ({
           timestamp: new Date().toISOString()
         });
         
-        if (payload.new && (payload.new as any).id === conversationId) {
+        if (payload.new && (payload.new as any).id === currentConversationIdRef.current) {
           console.log('🔄 Conversation status update for current conversation');
           if (callbacksRef.current.onConversationUpdate) {
             callbacksRef.current.onConversationUpdate((payload.new as any).status);
@@ -112,7 +126,7 @@ export const useRealtimeSupportMessages = ({
         }
       })
       .subscribe((status) => {
-        console.log('📡 Real-time subscription status:', status, 'for conversation:', conversationId);
+        console.log('📡 Real-time subscription status:', status, 'for conversation:', currentConversationIdRef.current);
         
         if (status === 'SUBSCRIBED') {
           console.log('🎯 Successfully subscribed to real-time updates!');
@@ -127,18 +141,18 @@ export const useRealtimeSupportMessages = ({
 
     channelRef.current = channel;
     
-    // Don't set up cleanup here - let the main cleanup effect handle it
-    console.log('✅ Real-time subscription setup complete for:', conversationId);
+    console.log('✅ Real-time subscription setup complete for:', currentConversationIdRef.current);
   }, [conversationId]); // Only depend on conversationId
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      console.log('🧹 Final cleanup of real-time subscription');
       if (channelRef.current) {
-        console.log('🧹 Final cleanup of real-time subscription');
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
+      currentConversationIdRef.current = null;
     };
   }, []);
 };
