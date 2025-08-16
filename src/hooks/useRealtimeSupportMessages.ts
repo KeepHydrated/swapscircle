@@ -38,21 +38,21 @@ export const useRealtimeSupportMessages = ({
       channelRef.current = null;
     }
 
-    const channelName = `support_messages_${conversationId}`;
+    const channelName = `support_${Math.random().toString(36).substr(2, 9)}`;
+    console.log('📡 Creating channel with name:', channelName);
     
     const channel = supabase
       .channel(channelName)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'support_messages',
-        filter: `conversation_id=eq.${conversationId}`,
+        table: 'support_messages'
       }, (payload) => {
-        console.log('🚨 REAL-TIME INSERT EVENT TRIGGERED!', {
+        console.log('🚨 REAL-TIME INSERT EVENT TRIGGERED (ANY MESSAGE)!', {
           event: payload.eventType,
           table: payload.table,
           new: payload.new,
-          conversationId,
+          expectedConversationId: conversationId,
           timestamp: new Date().toISOString()
         });
         
@@ -62,6 +62,11 @@ export const useRealtimeSupportMessages = ({
           console.log('🎯 Message belongs to current conversation, calling onNewMessage');
           console.log('🎯 Message details:', newMessage);
           onNewMessage(newMessage);
+        } else {
+          console.log('⚠️ Message for different conversation:', {
+            messageConversationId: newMessage.conversation_id,
+            expectedConversationId: conversationId
+          });
         }
       })
       .on('postgres_changes', {
