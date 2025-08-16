@@ -21,6 +21,12 @@ export const useRealtimeSupportMessages = ({
   onNewMessage,
   onConversationUpdate
 }: UseRealtimeSupportMessagesProps) => {
+  console.log('🔥 useRealtimeSupportMessages HOOK CALLED!', {
+    conversationId,
+    hasConversationId: !!conversationId,
+    conversationIdType: typeof conversationId
+  });
+  
   const channelRef = useRef<any>(null);
   const callbacksRef = useRef({ onNewMessage, onConversationUpdate });
   
