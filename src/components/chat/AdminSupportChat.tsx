@@ -129,7 +129,7 @@ const AdminSupportChat = () => {
             .from('profiles')
             .select('username, name')
             .eq('id', conv.user_id)
-            .single();
+            .maybeSingle();
           
           return {
             ...conv,
@@ -148,6 +148,7 @@ const AdminSupportChat = () => {
         const firstConversation = conversationsList[0];
         setSelectedConversation(firstConversation);
         loadMessages(firstConversation.id);
+        loadUserProfile(firstConversation.user_id);
       }
     } catch (error) {
       console.error('Error loading conversations:', error);
@@ -178,9 +179,11 @@ const AdminSupportChat = () => {
         .from('profiles')
         .select('username, name, avatar_url')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Error loading profile:', profileError);
+      }
 
       // Get user reviews and calculate average rating
       const { data: reviews, error: reviewsError } = await supabase
@@ -188,29 +191,38 @@ const AdminSupportChat = () => {
         .select('rating')
         .eq('reviewee_id', userId);
 
-      if (reviewsError) throw reviewsError;
+      if (reviewsError) {
+        console.error('Error loading reviews:', reviewsError);
+      }
 
       const reviewCount = reviews?.length || 0;
       const averageRating = reviewCount > 0 
-        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount 
+        ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount).toFixed(1))
         : 0;
 
+      console.log('Profile loaded:', {
+        profile,
+        reviewCount,
+        averageRating,
+        userId
+      });
+
       setUserProfile({
-        ...profile,
+        username: profile?.username || 'Unknown User',
+        name: profile?.name || profile?.username || 'Unknown User',
+        avatar_url: profile?.avatar_url || '',
         averageRating,
         reviewCount
       });
     } catch (error) {
       console.error('Error loading user profile:', error);
-      // Set basic profile info even if ratings fail
-      if (selectedConversation?.profiles) {
-        setUserProfile({
-          username: selectedConversation.profiles.username,
-          name: selectedConversation.profiles.name,
-          averageRating: 0,
-          reviewCount: 0
-        });
-      }
+      setUserProfile({
+        username: 'Unknown User',
+        name: 'Unknown User',
+        avatar_url: '',
+        averageRating: 0,
+        reviewCount: 0
+      });
     }
   };
 
