@@ -247,6 +247,20 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       : inputValue.trim();
     console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, conversationStatus });
     
+    // Create optimistic message for immediate UI update
+    const optimisticMessage: SupportMessage = {
+      id: `temp-${Date.now()}`, // Temporary ID
+      message: messageText,
+      sender_type: 'user',
+      created_at: new Date().toISOString(),
+      is_read: false,
+      conversation_id: currentConversationId
+    };
+    
+    // Add message to UI immediately (optimistic update)
+    setMessages(prev => [...prev, optimisticMessage]);
+    setAllHistoryItems(prev => [...prev, optimisticMessage]);
+    
     setInputValue('');
     setCategory('');
     setLoading(true);
@@ -272,11 +286,25 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
       if (error) {
         console.error('🚨 DATABASE INSERT ERROR:', error);
+        // Remove optimistic message on error
+        setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+        setAllHistoryItems(prev => prev.filter(item => 'id' in item && item.id !== optimisticMessage.id));
         throw error;
       }
       
       console.log('🚨 MESSAGE INSERTED SUCCESSFULLY:', data);
       console.log('Message sent successfully');
+
+      // Replace optimistic message with real message from database
+      if (data && data.length > 0) {
+        const realMessage = data[0] as unknown as SupportMessage;
+        setMessages(prev => prev.map(msg => 
+          msg.id === optimisticMessage.id ? realMessage : msg
+        ));
+        setAllHistoryItems(prev => prev.map(item => 
+          'id' in item && item.id === optimisticMessage.id ? realMessage : item
+        ));
+      }
 
       // Update conversation last_message_at and status (reopen if closed)
       const updateData: any = { 
@@ -298,6 +326,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
+      // Remove optimistic message and restore input on error
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+      setAllHistoryItems(prev => prev.filter(item => 'id' in item && item.id !== optimisticMessage.id));
       setInputValue(messageText); // Restore message on error
     } finally {
       setLoading(false);

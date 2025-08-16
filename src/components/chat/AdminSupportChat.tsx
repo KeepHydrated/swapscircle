@@ -242,6 +242,19 @@ const AdminSupportChat = () => {
     if (!inputValue.trim() || !selectedConversation || !user?.id) return;
 
     const messageText = inputValue.trim();
+    
+    // Create optimistic message for immediate UI update
+    const optimisticMessage: SupportMessage = {
+      id: `temp-${Date.now()}`, // Temporary ID
+      message: messageText,
+      sender_type: 'support',
+      created_at: new Date().toISOString(),
+      is_read: false
+    };
+    
+    // Add message to UI immediately (optimistic update)
+    setMessages(prev => [...prev, optimisticMessage]);
+    
     setInputValue('');
     setLoading(true);
 
@@ -255,7 +268,14 @@ const AdminSupportChat = () => {
           sender_type: 'support'
         });
 
-      if (error) throw error;
+      if (error) {
+        // Remove optimistic message on error
+        setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+        throw error;
+      }
+
+      // Message sent successfully - the real-time subscription will handle adding the real message
+      // and replacing the optimistic one
 
       // Update conversation last_message_at
       await supabase
@@ -269,6 +289,8 @@ const AdminSupportChat = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
+      // Remove optimistic message and restore input on error
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
       setInputValue(messageText);
     } finally {
       setLoading(false);
