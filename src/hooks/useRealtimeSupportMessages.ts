@@ -30,6 +30,12 @@ export const useRealtimeSupportMessages = ({
   }, [onNewMessage, onConversationUpdate]);
   
   useEffect(() => {
+    console.log('🚨 useRealtimeSupportMessages useEffect triggered!', {
+      conversationId,
+      hasConversationId: !!conversationId,
+      conversationIdType: typeof conversationId
+    });
+    
     if (!conversationId) {
       console.log('❌ No conversationId provided for real-time subscription');
       return;
