@@ -349,6 +349,7 @@ const PostItem: React.FC = () => {
       "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Other Tools"],
       "Vehicles": ["Cars", "Motorcycles", "Bicycles", "Scooters", "Other Vehicles"],
       "Furniture": ["Living Room", "Bedroom", "Dining Room", "Office", "Outdoor", "Other Furniture"],
+      "Food": ["Beverages", "Snacks", "Specialty Foods", "Baking Supplies", "Condiments", "Health Foods", "International Foods", "Other Food Items"],
       "Other": ["Miscellaneous"]
     };
     
