@@ -24,11 +24,22 @@ export const useRealtimeSupportMessages = ({
   const channelRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId) {
+      console.log('❌ No conversationId provided for real-time subscription');
+      return;
+    }
+
+    console.log('🎬 useRealtimeSupportMessages effect triggered', {
+      conversationId,
+      hasOnNewMessage: !!onNewMessage,
+      hasOnConversationUpdate: !!onConversationUpdate
+    });
 
     // Clean up existing subscription
     if (channelRef.current) {
+      console.log('🧹 Cleaning up existing subscription before creating new one');
       supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
     }
 
     console.log('Setting up real-time subscription for conversation:', conversationId);
@@ -36,8 +47,11 @@ export const useRealtimeSupportMessages = ({
     // Create new subscription with better error handling
     console.log('🔄 Creating realtime subscription for conversation:', conversationId);
     
+    const channelName = `support_messages_${conversationId}`;
+    console.log('📡 Channel name:', channelName);
+    
     const channel = supabase
-      .channel(`support_messages_${conversationId}`, {
+      .channel(channelName, {
         config: {
           broadcast: { self: true },
           presence: { key: conversationId }
@@ -49,13 +63,28 @@ export const useRealtimeSupportMessages = ({
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('✅ Real-time message received via hook:', payload);
+        console.log('✅ Real-time INSERT received via hook:', {
+          event: payload.eventType,
+          table: payload.table,
+          new: payload.new,
+          conversationId
+        });
+        
         const newMessage = payload.new as SupportMessage;
         
-        // Add timeout to ensure state update happens
-        setTimeout(() => {
-          onNewMessage(newMessage);
-        }, 50);
+        // Verify the message belongs to this conversation
+        if (newMessage.conversation_id === conversationId) {
+          console.log('🎯 Message belongs to current conversation, calling onNewMessage');
+          // Add timeout to ensure state update happens
+          setTimeout(() => {
+            onNewMessage(newMessage);
+          }, 50);
+        } else {
+          console.warn('⚠️ Message does not belong to current conversation:', {
+            messageConversationId: newMessage.conversation_id,
+            expectedConversationId: conversationId
+          });
+        }
       })
       .on('postgres_changes', {
         event: 'UPDATE',
@@ -63,9 +92,16 @@ export const useRealtimeSupportMessages = ({
         table: 'support_conversations',
         filter: `id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('✅ Real-time conversation update via hook:', payload);
+        console.log('✅ Real-time UPDATE received via hook:', {
+          event: payload.eventType,
+          table: payload.table,
+          new: payload.new,
+          conversationId
+        });
+        
         const updatedConversation = payload.new as any;
         if (onConversationUpdate && updatedConversation.status) {
+          console.log('🔄 Calling onConversationUpdate with status:', updatedConversation.status);
           setTimeout(() => {
             onConversationUpdate(updatedConversation.status);
           }, 50);
