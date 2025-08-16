@@ -10,7 +10,7 @@ import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { likeItem, unlikeItem } from '@/services/authService';
+import { likeItem, unlikeItem, fetchItemsWhoLikedMyItem } from '@/services/authService';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import SupportChat from '@/components/chat/SupportChat';
@@ -19,6 +19,9 @@ const Messages3: React.FC = () => {
   // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
+  
+  // Selected items state - needs to be declared early
+  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   
   // Items that liked the user's items
   const [likedItems, setLikedItems] = useState([]);
@@ -30,77 +33,35 @@ const Messages3: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Fetch items that have liked the user's items (using sample data for now)
-  const fetchLikedItems = async () => {
-    if (!user) return;
+  // Fetch items that have liked the selected user item
+  const fetchLikedItems = async (itemId: string) => {
+    if (!user || !itemId) {
+      setLikedItems([]);
+      return;
+    }
     
     setLikedItemsLoading(true);
     try {
-      // For now, using sample data since likes table structure needs to be clarified
-      const sampleLikedItems = [
-        {
-          id: '1',
-          name: 'Vintage Camera',
-          image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd',
-          category: 'Electronics',
-          condition: 'Good',
-          description: 'A classic film camera from the 1970s',
-          price_range_min: 50,
-          price_range_max: 100,
-          tags: ['vintage', 'camera'],
-          liked: false,
-          ownerName: 'John Doe',
-          ownerAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
-          user_id: 'user1'
-        },
-        {
-          id: '2',
-          name: 'Bicycle',
-          image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64',
-          category: 'Sports',
-          condition: 'Excellent',
-          description: 'Mountain bike in excellent condition',
-          price_range_min: 200,
-          price_range_max: 300,
-          tags: ['bike', 'mountain'],
-          liked: false,
-          ownerName: 'Jane Smith',
-          ownerAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612c4d', 
-          user_id: 'user2'
-        },
-        {
-          id: '3',
-          name: 'Leather Jacket',
-          image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5',
-          category: 'Clothing',
-          condition: 'Good',
-          description: 'Genuine leather jacket, barely worn',
-          price_range_min: 80,
-          price_range_max: 120,
-          tags: ['leather', 'jacket'],
-          liked: false,
-          ownerName: 'Mike Johnson',
-          ownerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-          user_id: 'user3'
-        }
-      ];
-
-      setLikedItems(sampleLikedItems);
+      console.log('🔍 Fetching items that liked item:', itemId);
+      const itemsWhoLiked = await fetchItemsWhoLikedMyItem(itemId);
+      console.log('📋 Items that liked this item:', itemsWhoLiked);
+      setLikedItems(itemsWhoLiked);
     } catch (error) {
       console.error('Error fetching liked items:', error);
+      setLikedItems([]);
     } finally {
       setLikedItemsLoading(false);
     }
   };
 
-  // Fetch liked items when user changes or component mounts
+  // Fetch liked items when user or selected item changes
   useEffect(() => {
-    if (user && supabaseConfigured) {
-      fetchLikedItems();
+    if (user && supabaseConfigured && selectedUserItemId) {
+      fetchLikedItems(selectedUserItemId);
     } else {
       setLikedItems([]);
     }
-  }, [user, supabaseConfigured]);
+  }, [user, supabaseConfigured, selectedUserItemId]);
 
   // Define handler for liking items with mutual matching
   const handleLikeItem = async (itemId: string) => {
@@ -206,9 +167,6 @@ const Messages3: React.FC = () => {
 
   // User's items
   const { items: userItems, loading: userItemsLoading, error: userItemsError } = useUserItems(false);
-  
-  // Selected items state - auto-select first item
-  const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   
   // Auto-select first item when userItems are loaded
   useEffect(() => {

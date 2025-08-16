@@ -1040,3 +1040,74 @@ export const unhideItem = async (itemId: string) => {
     return false;
   }
 };
+
+// New function to fetch items that have liked a specific item
+export const fetchItemsWhoLikedMyItem = async (myItemId: string) => {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  try {
+    const session = await getCurrentSession();
+    if (!session?.user) {
+      return [];
+    }
+
+    // Get all likes for the specific item
+    const { data: likes, error: likesError } = await supabase
+      .from('liked_items')
+      .select(`
+        user_id,
+        item_id,
+        created_at,
+        items:item_id (
+          id,
+          name,
+          description,
+          image_url,
+          category,
+          condition,
+          tags,
+          price_range_min,
+          price_range_max,
+          user_id,
+          profiles:user_id (
+            username,
+            avatar_url
+          )
+        )
+      `)
+      .eq('my_item_id', myItemId) // Only get items that liked this specific item
+      .not('items.user_id', 'eq', session.user.id) // Exclude our own items
+      .eq('items.status', 'published') // Only published items
+      .eq('items.is_available', true); // Only available items
+
+    if (likesError) {
+      console.error('Error fetching liked items:', likesError);
+      return [];
+    }
+
+    // Transform the data to match the expected format
+    const transformedItems = likes?.map((like: any) => ({
+      id: like.items?.id,
+      name: like.items?.name,
+      description: like.items?.description,
+      image: like.items?.image_url,
+      category: like.items?.category,
+      condition: like.items?.condition,
+      tags: like.items?.tags,
+      price_range_min: like.items?.price_range_min,
+      price_range_max: like.items?.price_range_max,
+      user_id: like.items?.user_id,
+      liked: false, // We'll check this separately if needed
+      ownerName: like.items?.profiles?.username || 'Unknown',
+      ownerAvatar: like.items?.profiles?.avatar_url || '',
+      created_at: like.created_at
+    })).filter(item => item.id) || []; // Filter out null items
+
+    return transformedItems;
+  } catch (error) {
+    console.error('Error fetching items who liked my item:', error);
+    return [];
+  }
+};
