@@ -99,21 +99,39 @@ const AdminSupportChat = () => {
 
   // Stable callback function to prevent unnecessary re-subscriptions
   const handleNewMessage = useCallback((newMessage: SupportMessage) => {
-    if (!isAdmin) return;
+    console.log('🔧 ADMIN - handleNewMessage called:', {
+      messageId: newMessage.id,
+      senderType: newMessage.sender_type,
+      message: newMessage.message.substring(0, 50) + '...',
+      timestamp: newMessage.created_at,
+      isAdmin,
+      selectedConversationId: selectedConversation?.id
+    });
+    
+    if (!isAdmin) {
+      console.log('❌ ADMIN - User is not admin, ignoring message');
+      return;
+    }
     
     setMessages(prev => {
       // Avoid duplicates by checking if message already exists
       const exists = prev.some(msg => msg.id === newMessage.id);
       if (exists) {
-        console.log('Admin: Message already exists, skipping');
+        console.log('⚠️ ADMIN - Message already exists, skipping');
         return prev;
       }
-      console.log('Admin: Adding new message to state');
+      console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length);
       return [...prev, newMessage];
     });
-  }, [isAdmin]);
+  }, [isAdmin, selectedConversation?.id]);
 
   // Use real-time hook for admin support messages
+  console.log('🔧 ADMIN - Setting up real-time subscription:', {
+    conversationId: selectedConversation?.id || null,
+    isAdmin,
+    selectedConversationExists: !!selectedConversation
+  });
+  
   useRealtimeSupportMessages({
     conversationId: selectedConversation?.id || null,
     onNewMessage: handleNewMessage
@@ -259,23 +277,38 @@ const AdminSupportChat = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      console.log('🔧 ADMIN - Sending message:', {
+        messageText,
+        conversationId: selectedConversation.id,
+        userId: user.id
+      });
+
+      const { error, data } = await supabase
         .from('support_messages' as any)
         .insert({
           conversation_id: selectedConversation.id,
           user_id: user.id,
           message: messageText,
           sender_type: 'support'
-        });
+        })
+        .select();
 
       if (error) {
+        console.error('🔧 ADMIN - Error sending message:', error);
         // Remove optimistic message on error
         setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
         throw error;
       }
+      
+      console.log('🔧 ADMIN - Message sent successfully:', data);
 
-      // Message sent successfully - the real-time subscription will handle adding the real message
-      // and replacing the optimistic one
+      // Replace optimistic message with real message from database
+      if (data && data.length > 0) {
+        const realMessage = data[0] as unknown as SupportMessage;
+        setMessages(prev => prev.map(msg => 
+          msg.id === optimisticMessage.id ? realMessage : msg
+        ));
+      }
 
       // Update conversation last_message_at
       await supabase
