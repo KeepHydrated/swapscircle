@@ -84,25 +84,20 @@ export const useRealtimeSupportMessages = ({
         schema: 'public',
         table: 'support_messages'
       }, (payload) => {
-        console.log('🚨 REAL-TIME MESSAGE RECEIVED!', {
-          event: payload.eventType,
-          table: payload.table,
-          messageId: (payload.new as any)?.id,
-          senderType: (payload.new as any)?.sender_type,
-          messageConversationId: (payload.new as any)?.conversation_id,
-          currentConversation: currentConversationIdRef.current,
-          messagesMatch: (payload.new as any)?.conversation_id === currentConversationIdRef.current
-        });
+        console.log('🚨 REAL-TIME MESSAGE RECEIVED!', payload.new);
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
           
           // Only process messages for the current conversation
           if (newMessage.conversation_id === currentConversationIdRef.current) {
-            console.log('✅ MESSAGE MATCHES - CALLING CALLBACK:', newMessage.id);
+            console.log('✅ MESSAGE MATCHES - CALLING CALLBACK FOR:', newMessage.id);
             callbacksRef.current.onNewMessage(newMessage);
           } else {
-            console.log('❌ MESSAGE FOR DIFFERENT CONVERSATION - IGNORING');
+            console.log('❌ DIFFERENT CONVERSATION - IGNORING:', {
+              messageConversation: newMessage.conversation_id,
+              currentConversation: currentConversationIdRef.current
+            });
           }
         }
       })
