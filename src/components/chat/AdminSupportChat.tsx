@@ -243,6 +243,7 @@ const AdminSupportChat = () => {
       conversationId: newMessage.conversation_id,
       selectedConversationId: selectedConversation?.id,
       isMatch: newMessage.conversation_id === selectedConversation?.id,
+      messageText: newMessage.message?.substring(0, 50),
       timestamp: new Date().toISOString()
     });
     

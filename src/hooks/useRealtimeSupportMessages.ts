@@ -94,7 +94,8 @@ export const useRealtimeSupportMessages = ({
           filterConversationId: conversationId,
           senderType: (payload.new as any).sender_type,
           message: (payload.new as any).message?.substring(0, 50) + '...',
-          payloadType: payload.eventType
+          payloadType: payload.eventType,
+          fullPayload: payload.new
         });
         
         if (payload.eventType === 'INSERT') {
@@ -104,7 +105,8 @@ export const useRealtimeSupportMessages = ({
             newMessageId: newMessage.id,
             newMessageConversationId: newMessage.conversation_id,
             currentConversationId: currentConversationIdRef.current,
-            callbackExists: !!callbacksRef.current?.onNewMessage
+            callbackExists: !!callbacksRef.current?.onNewMessage,
+            messageText: newMessage.message?.substring(0, 100)
           });
           
           // Double check conversation ID matches
