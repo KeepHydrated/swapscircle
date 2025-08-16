@@ -77,6 +77,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   // Stable callback functions to prevent unnecessary re-subscriptions
   const handleNewMessage = useCallback((newMessage: SupportMessage) => {
     console.log('📨 New message callback triggered:', newMessage);
+    console.log('📨 Message sender_type:', newMessage.sender_type);
+    console.log('📨 Current user is:', user?.email);
     
     // Check if it's a closure message and update conversation status
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
@@ -85,10 +87,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     }
     
     setMessages(prev => {
-      // Avoid duplicates by checking if message already exists
-      const exists = prev.some(msg => msg.id === newMessage.id);
-      if (exists) {
-        console.log('⚠️ Message already exists in messages, skipping');
+      // Avoid duplicates - check by ID and also by content + timestamp to catch any race conditions
+      const existsById = prev.some(msg => msg.id === newMessage.id);
+      const existsByContent = prev.some(msg => 
+        msg.message === newMessage.message && 
+        msg.sender_type === newMessage.sender_type && 
+        Math.abs(new Date(msg.created_at).getTime() - new Date(newMessage.created_at).getTime()) < 1000
+      );
+      
+      if (existsById || existsByContent) {
+        console.log('⚠️ Message already exists in messages, skipping. ID exists:', existsById, 'Content exists:', existsByContent);
         return prev;
       }
       console.log('✅ Adding new message to messages state. Previous count:', prev.length);
@@ -97,10 +105,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
     // Also add to full history
     setAllHistoryItems(prev => {
-      // Avoid duplicates by checking if message already exists
-      const exists = prev.some(item => 'id' in item && item.id === newMessage.id);
-      if (exists) {
-        console.log('⚠️ Message already exists in history, skipping');
+      // Avoid duplicates - check by ID and also by content + timestamp
+      const existsById = prev.some(item => 'id' in item && item.id === newMessage.id);
+      const existsByContent = prev.some(item => 
+        'message' in item && item.message === newMessage.message && 
+        item.sender_type === newMessage.sender_type && 
+        Math.abs(new Date(item.created_at).getTime() - new Date(newMessage.created_at).getTime()) < 1000
+      );
+      
+      if (existsById || existsByContent) {
+        console.log('⚠️ Message already exists in history, skipping. ID exists:', existsById, 'Content exists:', existsByContent);
         return prev;
       }
       console.log('✅ Adding new message to history state. Previous count:', prev.length);

@@ -82,24 +82,34 @@ export const useRealtimeSupportMessages = ({
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
+          console.log('🎯 New message received:', newMessage);
           if (newMessage.conversation_id === conversationId) {
             console.log('🎯 Message belongs to current conversation, calling onNewMessage');
             callbacksRef.current.onNewMessage(newMessage);
+          } else {
+            console.log('🎯 Message belongs to different conversation:', newMessage.conversation_id);
           }
         }
       })
       .on('postgres_changes', {
-        event: '*',
+        event: 'UPDATE',
         schema: 'public', 
         table: 'support_conversations'
       }, (payload) => {
-        console.log('🚨 ANY REAL-TIME EVENT ON SUPPORT_CONVERSATIONS!', {
+        console.log('🚨 CONVERSATION UPDATE EVENT:', {
           event: payload.eventType,
           table: payload.table,
           new: payload.new,
           old: payload.old,
           timestamp: new Date().toISOString()
         });
+        
+        if (payload.new && (payload.new as any).id === conversationId) {
+          console.log('🔄 Conversation status update for current conversation');
+          if (callbacksRef.current.onConversationUpdate) {
+            callbacksRef.current.onConversationUpdate((payload.new as any).status);
+          }
+        }
       })
       .subscribe((status) => {
         console.log('📡 Real-time subscription status:', status, 'for conversation:', conversationId);
@@ -116,14 +126,9 @@ export const useRealtimeSupportMessages = ({
       });
 
     channelRef.current = channel;
-
-    return () => {
-      if (channelRef.current) {
-        console.log('🧹 Cleaning up real-time subscription for conversation:', conversationId);
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
-    };
+    
+    // Don't set up cleanup here - let the main cleanup effect handle it
+    console.log('✅ Real-time subscription setup complete for:', conversationId);
   }, [conversationId]); // Only depend on conversationId
 
   // Cleanup on unmount
