@@ -201,6 +201,34 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       console.error('Error fetching owner rejections:', ownerRejectedError);
     }
 
+    // Get users who have rejected ANY of the current user's items (mutual blocking)
+    // First get all current user's item IDs
+    const { data: myItems, error: myItemsError } = await supabase
+      .from('items')
+      .select('id')
+      .eq('user_id', currentUserId);
+
+    if (myItemsError) {
+      console.error('Error fetching my items for mutual blocking:', myItemsError);
+    }
+
+    const myItemIds = myItems?.map(item => item.id) || [];
+    
+    // Now get users who have rejected any of these items
+    const { data: usersWhoRejectedMyItems, error: mutualBlockError } = myItemIds.length > 0 
+      ? await supabase
+          .from('rejections')
+          .select('user_id')
+          .in('item_id', myItemIds)
+      : { data: [], error: null };
+
+    if (mutualBlockError) {
+      console.error('Error fetching mutual blocks:', mutualBlockError);
+    }
+
+    // Create set of user IDs who have rejected any of my items
+    const mutualBlockedUserIds = new Set(usersWhoRejectedMyItems?.map(r => r.user_id) || []);
+
     const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
 
     // Filter out rejected items from both sides
@@ -247,11 +275,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       // 6. Don't show items that have specifically matched with the selected item
       const hasMatchedWithSelectedItem = matchedWithSelectedItemIds.has(item.id);
 
+      // 7. Don't show items from users who have rejected ANY of my items (mutual blocking)
+      const isMutuallyBlocked = mutualBlockedUserIds.has(item.user_id);
+
       // Enhanced safety check with multiple comparison methods
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
                         (item.user_id && selectedItem.user_id && item.user_id.toString().trim() === selectedItem.user_id.toString().trim());
 
-      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMatchedWithSelectedItem;
+      return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMatchedWithSelectedItem && !isMutuallyBlocked;
     });
     
     
