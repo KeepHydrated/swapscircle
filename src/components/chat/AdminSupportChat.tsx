@@ -40,11 +40,6 @@ const AdminSupportChat = () => {
   // Check if user is admin (nadiachibri@gmail.com) - do this first
   const isAdmin = user?.email === 'nadiachibri@gmail.com';
   
-  console.log('🔧 ADMIN COMPONENT RENDERED:', {
-    userEmail: user?.email,
-    isAdmin,
-    userExists: !!user
-  });
   
   // ALL HOOKS MUST BE CALLED FIRST - before any early returns
   const [conversations, setConversations] = useState<SupportConversation[]>([]);
@@ -230,26 +225,11 @@ const AdminSupportChat = () => {
 
   // Stable callback function to prevent unnecessary re-subscriptions
   const handleNewMessage = useCallback((newMessage: SupportMessage) => {
-    console.log('🔧 ADMIN - handleNewMessage called:', {
-      messageId: newMessage.id,
-      senderType: newMessage.sender_type,
-      message: newMessage.message.substring(0, 50) + '...',
-      timestamp: newMessage.created_at,
-      conversationId: newMessage.conversation_id
-    });
-    
     // Check admin status from current context, don't depend on it in the callback
     const currentUser = user; // Capture current user
     const currentIsAdmin = currentUser?.email === 'nadiachibri@gmail.com';
     
-    console.log('🔧 ADMIN - Admin status check:', {
-      currentUserEmail: currentUser?.email,
-      currentIsAdmin,
-      willProcessMessage: currentIsAdmin
-    });
-    
     if (!currentIsAdmin) {
-      console.log('❌ ADMIN - User is not admin, ignoring message');
       return;
     }
     
@@ -257,10 +237,8 @@ const AdminSupportChat = () => {
       // Avoid duplicates by checking if message already exists
       const exists = prev.some(msg => msg.id === newMessage.id);
       if (exists) {
-        console.log('⚠️ ADMIN - Message already exists, skipping');
         return prev;
       }
-      console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length, 'New message from:', newMessage.sender_type);
       return [...prev, newMessage];
     });
   }, []); // Empty dependency array to prevent re-subscriptions

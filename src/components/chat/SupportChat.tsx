@@ -55,13 +55,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Scroll to bottom function
   const scrollToBottom = () => {
-    console.log('scrollToBottom called, messagesEndRef:', messagesEndRef.current);
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
   // Auto-scroll when history changes
   useEffect(() => {
-    console.log('History changed, scrolling to bottom. Item count:', allHistoryItems.length);
     // Use setTimeout to ensure DOM is updated before scrolling
     setTimeout(() => {
       scrollToBottom();
@@ -76,16 +74,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Stable callback functions to prevent unnecessary re-subscriptions
   const handleNewMessage = useCallback((newMessage: SupportMessage) => {
-    console.log('🎯 SUPPORT CHAT - handleNewMessage called:', {
-      messageId: newMessage.id,
-      senderType: newMessage.sender_type,
-      message: newMessage.message.substring(0, 50) + '...',
-      timestamp: newMessage.created_at
-    });
-    
     // Check if it's a closure message and update conversation status
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
-      console.log('🔒 Detected closure message, updating status to closed');
       setConversationStatus('closed');
     }
     
@@ -99,10 +89,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       );
       
       if (existsById || existsByContent) {
-        console.log('⚠️ Message already exists in messages, skipping. ID exists:', existsById, 'Content exists:', existsByContent);
         return prev;
       }
-      console.log('✅ Adding new message to messages state. Previous count:', prev.length);
       return [...prev, newMessage];
     });
 
@@ -117,22 +105,17 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       );
       
       if (existsById || existsByContent) {
-        console.log('⚠️ Message already exists in history, skipping. ID exists:', existsById, 'Content exists:', existsByContent);
         return prev;
       }
-      console.log('✅ Adding new message to history state. Previous count:', prev.length);
       return [...prev, newMessage];
     });
   }, []);
 
   const handleConversationUpdate = useCallback((status: 'open' | 'closed') => {
-    console.log('🔄 Conversation status update callback:', status);
     setConversationStatus(status);
   }, []);
 
   // Use real-time hook for support messages
-  console.log('🔌 Setting up real-time for conversation ID:', conversationId, 'user ID:', user?.id);
-  
   useRealtimeSupportMessages({
     conversationId,
     onNewMessage: handleNewMessage,
@@ -231,18 +214,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const sendMessage = async () => {
     if (!inputValue.trim() || !user?.id) return;
 
-    console.log('sendMessage called with:', { 
-      inputValue: inputValue.trim(), 
-      conversationStatus, 
-      conversationId, 
-      category,
-      messagesLength: messages.length 
-    });
 
     let currentConversationId = conversationId;
 
     if (!currentConversationId) {
-      console.error('No conversationId available');
       toast.error('Could not establish conversation. Please try again.');
       return;
     }
@@ -262,7 +237,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     const messageText = (isFirstMessage || conversationStatus === 'closed') && category 
       ? `[${category}] ${inputValue.trim()}` 
       : inputValue.trim();
-    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, conversationStatus });
+    
     
     // Create optimistic message for immediate UI update
     const optimisticMessage: SupportMessage = {
@@ -283,13 +258,6 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     setLoading(true);
 
     try {
-      console.log('🚨 ABOUT TO INSERT MESSAGE INTO DATABASE:', {
-        conversation_id: currentConversationId,
-        user_id: user.id,
-        message: messageText,
-        sender_type: 'user',
-        timestamp: new Date().toISOString()
-      });
 
       const { error, data } = await supabase
         .from('support_messages' as any)
@@ -302,15 +270,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         .select();
 
       if (error) {
-        console.error('🚨 DATABASE INSERT ERROR:', error);
         // Remove optimistic message on error
         setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
         setAllHistoryItems(prev => prev.filter(item => 'id' in item && item.id !== optimisticMessage.id));
         throw error;
       }
-      
-      console.log('🚨 MESSAGE INSERTED SUCCESSFULLY:', data);
-      console.log('Message sent successfully');
 
       // Replace optimistic message with real message from database
       if (data && data.length > 0) {
