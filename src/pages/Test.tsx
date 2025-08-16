@@ -535,22 +535,8 @@ const Test: React.FC = () => {
                 <Tabs defaultValue="matches" onValueChange={setActiveTab} className="h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <TabsList className="grid grid-cols-2 w-auto">
-                      <TabsTrigger value="matches">
-                        Matches
-                        {selectedUserItem && matches.length > 0 && (
-                          <span className="ml-2 px-1.5 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
-                            {matches.length}
-                          </span>
-                        )}
-                      </TabsTrigger>
-                      <TabsTrigger value="friends">
-                        Friends' Items
-                        {displayedFriendItems.length > 0 && (
-                          <span className="ml-2 px-1.5 py-0.5 text-xs bg-blue-100 text-blue-600 rounded-full">
-                            {displayedFriendItems.length}
-                          </span>
-                        )}
-                      </TabsTrigger>
+                      <TabsTrigger value="matches">Matches</TabsTrigger>
+                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
                     </TabsList>
                     <div className="flex items-center gap-2">
                       {activeTab === 'matches' && (
@@ -612,23 +598,6 @@ const Test: React.FC = () => {
                   
                       <TabsContent value="friends" className="flex-1 mt-0">
                         <div className="h-full flex flex-col">
-                        {/* Friends Items Header with Info */}
-                        {!friendItemsLoading && friendItems.length > 0 && (
-                          <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-sm font-medium text-blue-900">
-                                  Friends' Available Items ({displayedFriendItems.length} shown)
-                                </p>
-                                {friendItems.length !== displayedFriendItems.length && (
-                                  <p className="text-xs text-blue-700 mt-1">
-                                    {friendItems.length - displayedFriendItems.length} items hidden (already matched or rejected)
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
                         {friendItemsLoading ? (
                           <div className="overflow-x-auto overflow-y-hidden p-2">
                             <div className="flex gap-2 min-w-max">
