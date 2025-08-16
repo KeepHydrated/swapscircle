@@ -23,12 +23,5 @@ export const myFriends: Friend[] = [
     friendCount: 32,
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
     items: mockUserItems["friend3"] || []
-  },
-  {
-    id: "NadiaHibri",
-    name: "NadiaHibri", 
-    friendCount: 15,
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-    items: mockUserItems["NadiaHibri"] || []
   }
 ];
