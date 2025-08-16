@@ -214,70 +214,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         return;
       }
       console.log('Creating new conversation for closed ticket...');
-      // Create a completely new conversation
-      const { data: newConversation, error: createError } = await supabase
-        .from('support_conversations' as any)
-        .insert({
-          user_id: user.id,
-          status: 'open'
-        })
-        .select('id, status')
-        .single();
-
-      if (createError) {
-        console.error('Error creating new conversation:', createError);
-        toast.error('Failed to create new conversation');
-        return;
-      }
-
-      const newConversationId = (newConversation as any).id;
-      setConversationId(newConversationId);
-      setConversationStatus('open'); // Set status to open immediately
-      console.log('New conversation created:', newConversationId);
-      
-      // Clear old messages since this is a new conversation
-      setMessages([]);
-      
-      // Update the conversationId for the current message send
-      const isFirstMessage = true; // This is definitely the first message in new conversation
-      const messageText = category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
-      
-      setInputValue('');
-      setCategory('');
-      setLoading(true);
-
-      try {
-        const { error } = await supabase
-          .from('support_messages' as any)
-          .insert({
-            conversation_id: newConversationId,
-            user_id: user.id,
-            message: messageText,
-            sender_type: 'user'
-          });
-
-        if (error) throw error;
-        
-        console.log('First message sent to new conversation successfully');
-
-        // Update conversation last_message_at
-        await supabase
-          .from('support_conversations' as any)
-          .update({ 
-            last_message_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', newConversationId);
-
-      } catch (error) {
-        console.error('Error sending first message to new conversation:', error);
-        toast.error('Failed to send message');
-        setInputValue(messageText); // Restore message on error
-      } finally {
-        setLoading(false);
-      }
-      
-      return; // Exit here since we handled the message sending above
+      // Initialize new conversation but don't return - continue to send the message
+      await initializeConversation();
+      // Wait a moment for the new conversation to be set up
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('New conversation initialized, conversationId:', conversationId);
     }
 
     if (!conversationId) {
@@ -354,14 +295,6 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   if (embedded) {
     const isFirstMessage = messages.length === 0;
     const showCategorySelector = isFirstMessage || conversationStatus === 'closed';
-    
-    console.log('Embedded render state:', { 
-      messagesLength: messages.length, 
-      isFirstMessage, 
-      conversationStatus, 
-      showCategorySelector,
-      category 
-    });
     
     return (
       <div className="flex flex-col h-full">
