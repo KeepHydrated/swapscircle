@@ -207,6 +207,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       messagesLength: messages.length 
     });
 
+    let currentConversationId = conversationId;
+    let needsCategory = false;
+
     // If conversation is closed, create a new one first
     if (conversationStatus === 'closed') {
       if (!category) {
@@ -234,36 +237,39 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         return;
       }
 
-      const newConversationId = (newConversation as any).id;
-      setConversationId(newConversationId);
+      currentConversationId = (newConversation as any).id;
+      setConversationId(currentConversationId);
       setConversationStatus('open');
+      needsCategory = true;
       
       // Add welcome message to new conversation
       await supabase
         .from('support_messages' as any)
         .insert({
-          conversation_id: newConversationId,
+          conversation_id: currentConversationId,
           user_id: user.id,
           message: "Hi! How can I help you today?",
           sender_type: 'support'
         });
+    } else if (messages.length === 0) {
+      // This is the very first message in a new conversation
+      needsCategory = true;
     }
 
-    if (!conversationId) {
+    if (!currentConversationId) {
       console.error('No conversationId available');
       toast.error('Could not establish conversation. Please try again.');
       return;
     }
 
-    // For new conversations from closed tickets, treat as first message
-    const isFirstMessage = conversationStatus === 'closed' || messages.length === 0;
-    if (isFirstMessage && !category) {
+    // Only require category for first message or when starting from closed conversation
+    if (needsCategory && !category) {
       toast.error('Please select a category for your first message');
       return;
     }
 
-    const messageText = category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
-    console.log('Sending message:', { messageText, conversationId, isFirstMessage });
+    const messageText = needsCategory && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    console.log('Sending message:', { messageText, currentConversationId, needsCategory });
     
     setInputValue('');
     setCategory('');
@@ -273,7 +279,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       const { error } = await supabase
         .from('support_messages' as any)
         .insert({
-          conversation_id: conversationId,
+          conversation_id: currentConversationId,
           user_id: user.id,
           message: messageText,
           sender_type: 'user'
@@ -290,7 +296,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           last_message_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
-        .eq('id', conversationId);
+        .eq('id', currentConversationId);
 
     } catch (error) {
       console.error('Error sending message:', error);
