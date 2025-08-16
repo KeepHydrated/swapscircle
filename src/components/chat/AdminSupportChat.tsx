@@ -480,7 +480,7 @@ const AdminSupportChat = () => {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex ${message.sender_type === 'support' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${message.sender_type === 'support' ? 'justify-start' : 'justify-end'}`}
                   >
                     <div className="flex flex-col space-y-0.5 max-w-[70%]">
                       <div
