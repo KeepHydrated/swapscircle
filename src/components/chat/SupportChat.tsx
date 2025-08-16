@@ -165,7 +165,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || !conversationId || !user?.id || !category) return;
+    if (!inputValue.trim() || !conversationId || !user?.id) return;
+
+    // Only require category for new conversations (no existing messages)
+    const hasExistingMessages = messages.length > 0;
+    if (!hasExistingMessages && !category) return;
 
     const messageText = category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
     setInputValue('');
@@ -278,7 +282,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             <Button 
               size="icon" 
               onClick={sendMessage}
-              disabled={loading || !inputValue.trim() || !category}
+              disabled={loading || !inputValue.trim() || (messages.length === 0 && !category)}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -374,7 +378,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               <Button 
                 size="icon" 
                 onClick={sendMessage}
-                disabled={loading || !inputValue.trim() || !category}
+                disabled={loading || !inputValue.trim() || (messages.length === 0 && !category)}
               >
                 <Send className="h-4 w-4" />
               </Button>
