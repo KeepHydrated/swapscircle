@@ -331,11 +331,11 @@ const AdminSupportChat = () => {
 
       toast.success('Ticket closed successfully');
       
-      // Refresh conversations list
-      loadConversations();
+      // Update the selected conversation status locally to reflect the change immediately
+      setSelectedConversation(prev => prev ? { ...prev, status: 'closed' } : null);
       
-      // Clear selected conversation
-      setSelectedConversation(null);
+      // Refresh conversations list to update the status in the sidebar
+      loadConversations();
       
     } catch (error) {
       console.error('Error closing ticket:', error);
@@ -462,29 +462,28 @@ const AdminSupportChat = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between p-3 border-b bg-muted/30">
-                    <p className="text-xs text-muted-foreground">
-                      Started {formatDate(selectedConversation.created_at)}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      {selectedConversation.status === 'open' && (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={closeTicket}
-                          className="h-7 px-2 text-xs"
-                        >
-                          <X className="h-3 w-3 mr-1" />
-                          Close Ticket
-                        </Button>
-                      )}
-                      {selectedConversation.status === 'closed' && (
-                        <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
-                          CLOSED
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Started {formatDate(selectedConversation.created_at)}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {selectedConversation.status === 'open' && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={closeTicket}
+                      className="h-7 px-2 text-xs"
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      Close Ticket
+                    </Button>
+                  )}
+                  {selectedConversation.status === 'closed' && (
+                    <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
+                      CLOSED
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
