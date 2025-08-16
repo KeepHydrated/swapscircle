@@ -222,6 +222,43 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     }
   };
 
+  const clearConversation = async () => {
+    if (!conversationId || !user?.id) return;
+    
+    try {
+      // Delete all messages in the conversation
+      const { error: messagesError } = await supabase
+        .from('support_messages' as any)
+        .delete()
+        .eq('conversation_id', conversationId);
+        
+      if (messagesError) throw messagesError;
+      
+      // Delete the conversation
+      const { error: conversationError } = await supabase
+        .from('support_conversations' as any)
+        .delete()
+        .eq('id', conversationId);
+        
+      if (conversationError) throw conversationError;
+      
+      // Reset local state
+      setConversationId(null);
+      setMessages([]);
+      setAllHistoryItems([]);
+      setConversationStatus('open');
+      
+      // Initialize a new conversation
+      await initializeConversation();
+      
+      toast.success('Conversation cleared. Starting fresh!');
+      
+    } catch (error) {
+      console.error('Error clearing conversation:', error);
+      toast.error('Failed to clear conversation');
+    }
+  };
+
   const sendMessage = async () => {
     if (!inputValue.trim() || !user?.id) return;
 
@@ -463,13 +500,23 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             <div>
               <h3 className="font-semibold">Customer Support</h3>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearConversation}
+                className="text-xs px-2 h-7"
+              >
+                Clear Chat
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
           {/* Category Selection - Show for first message OR when conversation is closed */}
@@ -497,9 +544,19 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             </div>
           </ScrollArea>
 
-          {/* Input */}
-          <div className="p-4 border-t">
-            <div className="flex gap-2">
+        {/* Input */}
+        <div className="p-4 border-t">
+          <div className="flex gap-2 mb-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={clearConversation}
+              className="text-xs"
+            >
+              Start Fresh
+            </Button>
+          </div>
+          <div className="flex gap-2">
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
