@@ -77,8 +77,12 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   };
 
   const handleDropdownOpen = async () => {
-    // Only mark dropdown as viewed, don't auto-mark all as read
+    // Mark dropdown as viewed and mark all notifications as read
     onDropdownViewed();
+    // Automatically mark all notifications as read when user opens the dropdown
+    if (unreadCount > 0) {
+      await onMarkAllAsRead();
+    }
   };
 
   const handleViewAllClick = () => {

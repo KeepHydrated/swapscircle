@@ -58,6 +58,8 @@ export function useNotifications() {
         created_at: notification.created_at
       }));
 
+      console.log('🔔 HOOK: Mapped notifications with read status:', mappedNotifications.map(n => ({ id: n.id, is_read: n.is_read, status: n.is_read ? 'read' : 'unread' })));
+
       const withLocalOverrides = mappedNotifications.map(n => locallyReadIds.has(n.id) ? { ...n, is_read: true } : n);
       setNotifications(withLocalOverrides);
     } catch (error) {
@@ -214,17 +216,30 @@ export function useNotifications() {
       .on(
         'postgres_changes',
         {
-          event: 'INSERT', // Only listen for new notifications, not updates
+          event: 'INSERT',
           schema: 'public',
           table: 'notifications',
           filter: `user_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('New notification received:', payload);
+          console.log('🔔 HOOK: New notification received (INSERT):', payload);
           // Reset the viewed state when new notifications arrive
           setHasViewedDropdown(false);
           localStorage.setItem('notifications-viewed', 'false');
-          // Only fetch new notifications on INSERT, not on UPDATE
+          fetchNotifications();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('🔔 HOOK: Notification updated (UPDATE):', payload);
+          // Re-fetch to get the latest read status
           fetchNotifications();
         }
       )
@@ -238,6 +253,11 @@ export function useNotifications() {
 
   // Calculate unread count - always reflect real unread items
   const unreadCount = notifications.filter(n => !n.is_read).length;
+  console.log('🔔 HOOK: Unread count calculation:', { 
+    totalNotifications: notifications.length, 
+    unreadCount, 
+    notificationStatuses: notifications.map(n => ({ id: n.id, is_read: n.is_read }))
+  });
 
   // Function to mark dropdown as viewed (clears the badge)
   const markDropdownAsViewed = () => {
