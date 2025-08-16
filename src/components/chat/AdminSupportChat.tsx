@@ -80,15 +80,21 @@ const AdminSupportChat = () => {
         event: '*',
         schema: 'public',
         table: 'support_conversations',
-      }, () => {
+      }, (payload) => {
+        console.log('Real-time conversation change:', payload);
         loadConversations();
+        
+        // If the current conversation was updated, update its status locally
+        if (selectedConversation && payload.new && (payload.new as any).id === selectedConversation.id) {
+          setSelectedConversation(prev => prev ? { ...prev, ...(payload.new as any) } : null);
+        }
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(conversationChannel);
     };
-  }, [isAdmin]);
+  }, [isAdmin, selectedConversation?.id]);
 
   // Real-time message updates for selected conversation
   useEffect(() => {
@@ -118,6 +124,19 @@ const AdminSupportChat = () => {
           return [...prev, newMessage];
         });
       })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'support_messages',
+        filter: `conversation_id=eq.${selectedConversation.id}`,
+      }, (payload) => {
+        console.log('Admin: Real-time message update received:', payload);
+        const updatedMessage = payload.new as SupportMessage;
+        
+        setMessages(prev => prev.map(msg => 
+          msg.id === updatedMessage.id ? updatedMessage : msg
+        ));
+      })
       .subscribe((status) => {
         console.log('Admin: Subscription status:', status);
       });
@@ -126,7 +145,7 @@ const AdminSupportChat = () => {
       console.log('Admin: Cleaning up real-time subscription');
       supabase.removeChannel(messageChannel);
     };
-  }, [selectedConversation, isAdmin]);
+  }, [selectedConversation?.id, isAdmin]);
 
   const loadConversations = async () => {
     console.log('AdminSupportChat: loadConversations called');

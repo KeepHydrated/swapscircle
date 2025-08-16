@@ -50,6 +50,66 @@ const Messages = () => {
     getCurrentUser();
   }, []);
 
+  // Real-time message updates for active conversation
+  useEffect(() => {
+    if (!activeConversation || !currentUserId) return;
+
+    console.log('Setting up real-time subscription for trade messages:', activeConversation);
+
+    const channel = supabase
+      .channel(`trade_messages_${activeConversation}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `conversation_id=eq.${activeConversation}`,
+      }, (payload) => {
+        console.log('Real-time trade message received:', payload);
+        const newMessage = payload.new as any;
+        
+        // Update the query cache with the new message
+        queryClient.setQueryData(['trade-messages', activeConversation], (old: any[]) => {
+          if (!old) return [newMessage];
+          
+          // Avoid duplicates by checking if message already exists
+          const exists = old.some(msg => msg.id === newMessage.id);
+          if (exists) {
+            console.log('Trade message already exists, skipping');
+            return old;
+          }
+          
+          console.log('Adding new trade message to cache');
+          return [...old, newMessage];
+        });
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'messages',
+        filter: `conversation_id=eq.${activeConversation}`,
+      }, (payload) => {
+        console.log('Real-time trade message update received:', payload);
+        const updatedMessage = payload.new as any;
+        
+        // Update the query cache with the updated message
+        queryClient.setQueryData(['trade-messages', activeConversation], (old: any[]) => {
+          if (!old) return [updatedMessage];
+          
+          return old.map(msg => 
+            msg.id === updatedMessage.id ? updatedMessage : msg
+          );
+        });
+      })
+      .subscribe((status) => {
+        console.log('Trade messages subscription status:', status);
+      });
+
+    return () => {
+      console.log('Cleaning up trade messages real-time subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [activeConversation, currentUserId, queryClient]);
+
   // Fetch messages for active conversation
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
     queryKey: ['trade-messages', activeConversation],

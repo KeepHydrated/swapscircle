@@ -90,7 +90,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         console.log('Real-time message received:', payload);
         const newMessage = payload.new as SupportMessage;
         
-        // Check if it's a closure message
+        // Check if it's a closure message and update conversation status
         if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
           setConversationStatus('closed');
         }
@@ -117,6 +117,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           console.log('Adding new message to history state');
           return [...prev, newMessage];
         });
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'support_conversations',
+        filter: `id=eq.${conversationId}`,
+      }, (payload) => {
+        console.log('Real-time conversation update received:', payload);
+        const updatedConversation = payload.new as any;
+        setConversationStatus(updatedConversation.status);
       })
       .subscribe((status) => {
         console.log('Subscription status:', status);
