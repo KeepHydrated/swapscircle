@@ -281,13 +281,6 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         {/* Category Selection - Show for first message OR when conversation is closed */}
         {showCategorySelector && (
           <div className="px-4 pt-2 pb-4 border-b">
-            {conversationStatus === 'closed' && (
-              <div className="mb-3 p-3 bg-muted/50 rounded-md">
-                <p className="text-sm text-muted-foreground">
-                  Your ticket has been closed. If you need further assistance, please start a new conversation.
-                </p>
-              </div>
-            )}
             <SelectField
               id="category"
               label=""
@@ -317,7 +310,9 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                         : 'bg-muted'
                     }`}
                   >
-                    {message.message}
+                    {message.message.includes('This ticket has been closed') 
+                      ? "Your ticket has been closed. If you need further assistance, please start a new conversation."
+                      : message.message}
                   </div>
                   <span className="text-xs text-muted-foreground px-1">
                     {formatTime(message.created_at)}
@@ -388,13 +383,6 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           {/* Category Selection - Show for first message OR when conversation is closed */}
           {(messages.length === 0 || conversationStatus === 'closed') && (
             <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
-              {conversationStatus === 'closed' && (
-                <div className="mb-3 p-3 bg-muted/50 rounded-md">
-                  <p className="text-sm text-muted-foreground">
-                    Your ticket has been closed. If you need further assistance, please start a new conversation.
-                  </p>
-                </div>
-              )}
               <SelectField
                 id="category"
                 label=""
@@ -423,9 +411,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                           ? 'bg-muted/70 text-muted-foreground border border-border'
                           : 'bg-muted'
                       }`}
-                    >
-                      {message.message}
-                    </div>
+                     >
+                       {message.message.includes('This ticket has been closed') 
+                         ? "Your ticket has been closed. If you need further assistance, please start a new conversation."
+                         : message.message}
+                     </div>
                     <span className="text-xs text-muted-foreground px-1">
                       {formatTime(message.created_at)}
                     </span>
