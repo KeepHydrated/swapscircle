@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Send, User, Clock, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -45,6 +46,7 @@ const AdminSupportChat = () => {
     reviewCount?: number;
   } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Check if user is admin (nadiachibri@gmail.com)
   const isAdmin = user?.email === 'nadiachibri@gmail.com';
@@ -296,6 +298,12 @@ const AdminSupportChat = () => {
     });
   };
 
+  const handleProfileClick = () => {
+    if (selectedConversation?.user_id) {
+      navigate(`/other-person-profile?userId=${selectedConversation.user_id}`);
+    }
+  };
+
   if (!isAdmin) {
     return (
       <Card className="p-8 text-center">
@@ -362,7 +370,10 @@ const AdminSupportChat = () => {
             {/* Profile Header */}
             <div className="p-6 border-b bg-muted/30">
               <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
+                <Avatar 
+                  className="h-10 w-10 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all" 
+                  onClick={handleProfileClick}
+                >
                   <AvatarImage src={userProfile?.avatar_url} />
                   <AvatarFallback>
                     {(userProfile?.name || userProfile?.username || 'U').charAt(0).toUpperCase()}
@@ -371,7 +382,10 @@ const AdminSupportChat = () => {
                 
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-lg">
+                    <h3 
+                      className="font-semibold text-lg cursor-pointer hover:text-primary transition-colors"
+                      onClick={handleProfileClick}
+                    >
                       {userProfile?.name || userProfile?.username || 'User'}
                     </h3>
                     
