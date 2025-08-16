@@ -76,11 +76,11 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData, itemData }: It
   const stars = reviewData.rating === 0 ? '☆☆☆☆☆' : '★'.repeat(fullStars) + (hasHalfStar ? '☆' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
   
   return (
-    <div className="p-3">
+    <div className="p-3 flex-shrink-0">{/* Prevent this from expanding too much */}
       {/* Item layout: Image left, details right */}
       <div className="flex gap-4 mb-3">
-        {/* Item Image placeholder */}
-        <div className="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
+        {/* Item Image placeholder - made smaller */}
+        <div className="w-12 h-12 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">{/* Reduced from w-16 h-16 to w-12 h-12 */}
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             <span className="text-xs">No image</span>
           </div>
@@ -88,11 +88,11 @@ const ItemDetails = ({ name, showProfileInfo = true, profileData, itemData }: It
 
         {/* Title and Description on the right */}
         <div className="flex-1">
-          <h2 className="text-lg font-bold text-gray-900 mb-1 truncate">
+          <h2 className="text-base font-bold text-gray-900 mb-1 truncate">{/* Reduced from text-lg */}
             {name || "Selected Item"}
           </h2>
-          <p className="text-gray-700 text-xs leading-relaxed">
-            Like new condition. This item has been gently used and well maintained. Perfect for anyone looking for a high-quality {name?.toLowerCase() || "item"} at a great value.
+          <p className="text-gray-700 text-xs leading-relaxed line-clamp-2">{/* Added line-clamp-2 to limit height */}
+            Like new condition. This item has been gently used and well maintained.
           </p>
         </div>
       </div>

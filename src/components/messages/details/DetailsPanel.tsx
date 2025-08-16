@@ -96,7 +96,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   };
   
   return (
-    <div className="hidden lg:flex lg:flex-col w-80 border-l border-gray-200 bg-gray-50">
+    <div className="flex flex-col h-full bg-gray-50">{/* Ensure proper height containment */}
       {/* Trade Details Tabs */}
       {selectedPair && (
         <TradeDetailsTabs 
@@ -106,10 +106,10 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
         />
       )}
       
-      {/* Image Carousel - made smaller */}
-      <div className="flex-1 flex flex-col">
-        {/* Image carousel */}
-        <div className="relative h-56 bg-gray-100 overflow-hidden">
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {/* Image carousel - made much smaller */}
+        <div className="relative h-40 bg-gray-100 overflow-hidden">{/* Reduced from h-56 to h-40 */}
           <div className="overflow-hidden w-full h-full" ref={emblaRef}>
             <div className="flex h-full">
               {imageUrls.map((url, index) => (
@@ -148,14 +148,14 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
           </div>
         </div>
         
-        {/* Thumbnail strip */}
+        {/* Thumbnail strip - made smaller */}
         <div className="p-2 flex overflow-x-auto bg-white border-t border-gray-100">
           {imageUrls.map((url, index) => (
             <div 
               key={index}
               onClick={() => emblaApi?.scrollTo(index)} 
-              className={`flex-shrink-0 w-16 h-16 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
-            >
+              className={`flex-shrink-0 w-12 h-12 mx-1 cursor-pointer ${selectedIndex === index ? 'border-2 border-blue-500' : 'border border-gray-200'}`}
+            >{/* Reduced thumbnail size from w-16 h-16 to w-12 h-12 */}
               <div 
                 className="w-full h-full bg-center bg-cover flex items-center justify-center text-gray-400"
                 style={{ backgroundImage: `url(${url})` }}
