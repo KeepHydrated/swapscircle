@@ -277,11 +277,11 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       <div className="flex flex-col h-full">
         {/* Closed Conversation Notice */}
         {conversationStatus === 'closed' && (
-          <div className="px-4 pt-3 pb-2 border-b bg-red-50 border-red-200">
-            <p className="text-sm text-red-800 font-medium text-center">
+          <div className="px-4 pt-3 pb-2 border-b bg-muted/30">
+            <p className="text-sm text-muted-foreground font-medium text-center">
               🎫 Previous ticket was closed
             </p>
-            <p className="text-xs text-red-600 text-center mt-1">
+            <p className="text-xs text-muted-foreground text-center mt-1">
               Select a category to start a new conversation
             </p>
           </div>
@@ -315,7 +315,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                       message.sender_type === 'user'
                         ? 'bg-primary text-primary-foreground'
                         : message.message.includes('This ticket has been closed')
-                        ? 'bg-red-100 text-red-800 border border-red-200'
+                        ? 'bg-muted/70 text-muted-foreground border border-border'
                         : 'bg-muted'
                     }`}
                   >
@@ -406,8 +406,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
           {/* New Conversation Notice for Closed Tickets */}
           {conversationStatus === 'closed' && (
-            <div className="px-4 pt-2 pb-4 border-b bg-red-50 border-red-200">
-              <p className="text-sm text-red-800 font-medium text-center mb-2">
+            <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
+              <p className="text-sm text-muted-foreground font-medium text-center mb-2">
                 🎫 Previous ticket was closed
               </p>
               <SelectField
@@ -418,7 +418,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 options={categories}
                 placeholder="Select category for new conversation"
               />
-              <p className="text-xs text-red-600 text-center mt-1">
+              <p className="text-xs text-muted-foreground text-center mt-1">
                 Select a category to start a new conversation
               </p>
             </div>
@@ -438,7 +438,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                         message.sender_type === 'user'
                           ? 'bg-primary text-primary-foreground'
                           : message.message.includes('This ticket has been closed')
-                          ? 'bg-red-100 text-red-800 border border-red-200'
+                          ? 'bg-muted/70 text-muted-foreground border border-border'
                           : 'bg-muted'
                       }`}
                     >
