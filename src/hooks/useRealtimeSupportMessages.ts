@@ -81,11 +81,12 @@ export const useRealtimeSupportMessages = ({
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('✅ Real-time INSERT received via hook:', {
+        console.log('🚨 REAL-TIME INSERT EVENT TRIGGERED!', {
           event: payload.eventType,
           table: payload.table,
           new: payload.new,
-          conversationId
+          conversationId,
+          timestamp: new Date().toISOString()
         });
         
         const newMessage = payload.new as SupportMessage;
@@ -93,9 +94,12 @@ export const useRealtimeSupportMessages = ({
         // Verify the message belongs to this conversation
         if (newMessage.conversation_id === conversationId) {
           console.log('🎯 Message belongs to current conversation, calling onNewMessage');
+          console.log('🎯 Message details:', newMessage);
           // Add timeout to ensure state update happens
           setTimeout(() => {
+            console.log('🎯 About to call onNewMessageRef.current with:', newMessage);
             onNewMessageRef.current(newMessage);
+            console.log('🎯 Called onNewMessageRef.current successfully');
           }, 50);
         } else {
           console.warn('⚠️ Message does not belong to current conversation:', {

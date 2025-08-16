@@ -253,17 +253,30 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      console.log('🚨 ABOUT TO INSERT MESSAGE INTO DATABASE:', {
+        conversation_id: currentConversationId,
+        user_id: user.id,
+        message: messageText,
+        sender_type: 'user',
+        timestamp: new Date().toISOString()
+      });
+
+      const { error, data } = await supabase
         .from('support_messages' as any)
         .insert({
           conversation_id: currentConversationId,
           user_id: user.id,
           message: messageText,
           sender_type: 'user'
-        });
+        })
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('🚨 DATABASE INSERT ERROR:', error);
+        throw error;
+      }
       
+      console.log('🚨 MESSAGE INSERTED SUCCESSFULLY:', data);
       console.log('Message sent successfully');
 
       // Update conversation last_message_at and status (reopen if closed)
