@@ -77,9 +77,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   };
 
   const handleDropdownOpen = async () => {
-    // Mark dropdown as viewed and mark all as read so the badge count goes down when viewed
+    // Only mark dropdown as viewed, don't auto-mark all as read
     onDropdownViewed();
-    await onMarkAllAsRead();
   };
 
   const handleViewAllClick = () => {
