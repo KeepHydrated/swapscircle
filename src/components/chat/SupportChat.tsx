@@ -208,7 +208,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     });
 
     let currentConversationId = conversationId;
-    let needsCategory = false;
+    let isStartingNewConversation = false;
 
     // If conversation is closed, create a new one first
     if (conversationStatus === 'closed') {
@@ -240,7 +240,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       currentConversationId = (newConversation as any).id;
       setConversationId(currentConversationId);
       setConversationStatus('open');
-      needsCategory = true;
+      isStartingNewConversation = true;
       
       // Add welcome message to new conversation
       await supabase
@@ -251,9 +251,6 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           message: "Hi! How can I help you today?",
           sender_type: 'support'
         });
-    } else if (messages.length === 0) {
-      // This is the very first message in a new conversation
-      needsCategory = true;
     }
 
     if (!currentConversationId) {
@@ -262,14 +259,27 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       return;
     }
 
+    // Check if this is the first user message or starting new conversation
+    const isFirstMessage = messages.length <= 1 || isStartingNewConversation; // <= 1 because welcome message exists
+    
+    // For ongoing conversations, check if user needs to wait for admin response
+    if (!isFirstMessage && !isStartingNewConversation) {
+      // Check if last message was from user (meaning they're waiting for admin response)
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage && lastMessage.sender_type === 'user') {
+        toast.error('Please wait for a support response before sending another message');
+        return;
+      }
+    }
+
     // Only require category for first message or when starting from closed conversation
-    if (needsCategory && !category) {
+    if ((isFirstMessage || isStartingNewConversation) && !category) {
       toast.error('Please select a category for your first message');
       return;
     }
 
-    const messageText = needsCategory && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
-    console.log('Sending message:', { messageText, currentConversationId, needsCategory });
+    const messageText = (isFirstMessage || isStartingNewConversation) && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    console.log('Sending message:', { messageText, currentConversationId, isFirstMessage, isStartingNewConversation });
     
     setInputValue('');
     setCategory('');
@@ -327,8 +337,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   }
 
   if (embedded) {
-    const isFirstMessage = messages.length === 0;
+    const isFirstMessage = messages.length <= 1;
     const showCategorySelector = isFirstMessage || conversationStatus === 'closed';
+    const lastMessage = messages[messages.length - 1];
+    const isWaitingForResponse = lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && !isFirstMessage;
     
     return (
       <div className="flex flex-col h-full">
@@ -385,14 +397,20 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={conversationStatus === 'closed' ? "Start a new conversation..." : "Type your message..."}
+              placeholder={
+                isWaitingForResponse 
+                  ? "Waiting for support response..." 
+                  : conversationStatus === 'closed' 
+                  ? "Start a new conversation..." 
+                  : "Type your message..."
+              }
               className="flex-1"
-              disabled={loading}
+              disabled={loading || isWaitingForResponse}
             />
             <Button 
               size="icon" 
               onClick={sendMessage}
-              disabled={loading || !inputValue.trim() || (showCategorySelector && !category)}
+              disabled={loading || !inputValue.trim() || (showCategorySelector && !category) || isWaitingForResponse}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -435,7 +453,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           </div>
 
           {/* Category Selection - Show for first message OR when conversation is closed */}
-          {(messages.length === 0 || conversationStatus === 'closed') && (
+          {(messages.length <= 1 || conversationStatus === 'closed') && (
             <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
               <SelectField
                 id="category"
@@ -487,14 +505,28 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={conversationStatus === 'closed' ? "Start a new conversation..." : "Type your message..."}
+                placeholder={(() => {
+                  const lastMessage = messages[messages.length - 1];
+                  const isWaitingForResponse = lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && messages.length > 1;
+                  return isWaitingForResponse 
+                    ? "Waiting for support response..." 
+                    : conversationStatus === 'closed' 
+                    ? "Start a new conversation..." 
+                    : "Type your message...";
+                })()}
                 className="flex-1"
-                disabled={loading}
+                disabled={loading || (() => {
+                  const lastMessage = messages[messages.length - 1];
+                  return lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && messages.length > 1;
+                })()}
               />
               <Button 
                 size="icon" 
                 onClick={sendMessage}
-                disabled={loading || !inputValue.trim() || ((messages.length === 0 || conversationStatus === 'closed') && !category)}
+                disabled={loading || !inputValue.trim() || ((messages.length <= 1 || conversationStatus === 'closed') && !category) || (() => {
+                  const lastMessage = messages[messages.length - 1];
+                  return lastMessage && lastMessage.sender_type === 'user' && conversationStatus === 'open' && messages.length > 1;
+                })()}
               >
                 <Send className="h-4 w-4" />
               </Button>
