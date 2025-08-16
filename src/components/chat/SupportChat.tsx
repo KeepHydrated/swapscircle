@@ -127,7 +127,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     if (!user?.id) return;
 
     try {
-      // Check if user has an existing open conversation
+      // Check if user has an existing conversation (open or closed)
       const { data: existingConversation, error: convError } = await supabase
         .from('support_conversations' as any)
         .select('id, status')
@@ -139,24 +139,26 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       let conversationId: string;
       let status: 'open' | 'closed' = 'open';
 
-      if (existingConversation && !convError && (existingConversation as any).status === 'open') {
-        // Use existing open conversation
+      if (existingConversation && !convError) {
+        // Use existing conversation (open or closed)
         conversationId = (existingConversation as any).id;
         status = (existingConversation as any).status;
+        
+        // If the existing conversation is closed, we still load it but the UI will show category selector
       } else {
-        // Previous conversation was closed or doesn't exist, create new one
+        // If no conversation exists, create new one
         const { data: newConversation, error: createError } = await supabase
           .from('support_conversations' as any)
           .insert({
             user_id: user.id,
             status: 'open'
           })
-          .select('id')
+          .select('id, status')
           .single();
 
         if (createError) throw createError;
         conversationId = (newConversation as any).id;
-        status = 'open';
+        status = (newConversation as any).status;
       }
 
       setConversationId(conversationId);
@@ -271,12 +273,13 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   }
 
   if (embedded) {
-    const isFirstMessage = messages.length === 0 || conversationStatus === 'closed';
+    const isFirstMessage = messages.length === 0;
+    const showCategorySelector = isFirstMessage || conversationStatus === 'closed';
     
     return (
       <div className="flex flex-col h-full">
-        {/* Category Selection - Only for first message or closed conversation */}
-        {isFirstMessage && (
+        {/* Category Selection - Show for first message OR when conversation is closed */}
+        {showCategorySelector && (
           <div className="px-4 pt-2 pb-4 border-b">
             <SelectField
               id="category"
@@ -284,7 +287,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
               value={category}
               onChange={setCategory}
               options={categories}
-              placeholder="Select a topic category"
+              placeholder={conversationStatus === 'closed' ? "Select category for new conversation" : "Select a topic category"}
             />
           </div>
         )}
@@ -333,7 +336,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             <Button 
               size="icon" 
               onClick={sendMessage}
-              disabled={loading || !inputValue.trim() || (isFirstMessage && !category)}
+              disabled={loading || !inputValue.trim() || (showCategorySelector && !category)}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -375,7 +378,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
             </Button>
           </div>
 
-          {/* Category Selection - Only for first message or closed conversation */}
+          {/* Category Selection - Show for first message OR when conversation is closed */}
           {(messages.length === 0 || conversationStatus === 'closed') && (
             <div className="px-4 pt-2 pb-4 border-b bg-muted/30">
               <SelectField
