@@ -63,26 +63,40 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Real-time message subscription
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId || !user?.id) return;
+
+    console.log('Setting up real-time subscription for conversation:', conversationId);
 
     const channel = supabase
-      .channel('support_messages')
+      .channel(`support_messages_${conversationId}`)
       .on('postgres_changes', {
-        event: '*',
+        event: 'INSERT',
         schema: 'public',
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setMessages(prev => [...prev, payload.new as SupportMessage]);
-        }
+        console.log('Real-time message received:', payload);
+        const newMessage = payload.new as SupportMessage;
+        setMessages(prev => {
+          // Avoid duplicates by checking if message already exists
+          const exists = prev.some(msg => msg.id === newMessage.id);
+          if (exists) {
+            console.log('Message already exists, skipping');
+            return prev;
+          }
+          console.log('Adding new message to state');
+          return [...prev, newMessage];
+        });
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
-  }, [conversationId]);
+  }, [conversationId, user?.id]);
 
   const initializeConversation = async () => {
     if (!user?.id) return;
