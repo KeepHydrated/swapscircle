@@ -4,6 +4,7 @@ import { Heart, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import MoreActionsMenu from './matches/MatchActionSelector';
 
 // ADD prop showLikeButton to show heart in explore
@@ -180,16 +181,25 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       </button>
                       
                       {/* Simple like button for current item */}
-                      <button
-                        className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                        aria-label="Like item"
-                        onClick={(e) => handleHeartClick(e)}
-                      >
-                        <Heart 
-                          className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
-                          fill={liked ? "red" : "none"}
-                        />
-                      </button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                              aria-label="Like item"
+                              onClick={(e) => handleHeartClick(e)}
+                            >
+                              <Heart 
+                                className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
+                                fill={liked ? "red" : "none"}
+                              />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Like to initiate trading (create a match)</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                 ) : (
                   /* Fallback to simple buttons for non-match items */
@@ -206,16 +216,25 @@ const ItemCard: React.FC<ItemCardProps> = ({
                     )}
                     
                     {/* Like button (Heart) */}
-                    <button
-                      className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                      aria-label="Like item"
-                      onClick={(e) => handleHeartClick(e)}
-                    >
-                      <Heart 
-                        className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
-                        fill={liked ? "red" : "none"}
-                      />
-                    </button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                            aria-label="Like item"
+                            onClick={(e) => handleHeartClick(e)}
+                          >
+                            <Heart 
+                              className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
+                              fill={liked ? "red" : "none"}
+                            />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Like to initiate trading (create a match)</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   )}
                 </div>
