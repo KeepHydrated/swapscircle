@@ -80,17 +80,22 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       senderType: newMessage.sender_type,
       conversationId: newMessage.conversation_id,
       currentConversationId: conversationId,
-      isMatch: newMessage.conversation_id === conversationId
+      isMatch: newMessage.conversation_id === conversationId,
+      timestamp: new Date().toISOString()
     });
     
     // Only process messages for the current conversation
     if (conversationId && newMessage.conversation_id !== conversationId) {
-      console.log('❌ SUPPORT - Message is for different conversation, ignoring');
+      console.log('❌ SUPPORT - Message is for different conversation, ignoring:', {
+        messageConversation: newMessage.conversation_id,
+        currentConversation: conversationId
+      });
       return;
     }
     
     // Check if it's a closure message and update conversation status
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
+      console.log('🔒 SUPPORT - Detected closure message, updating status');
       setConversationStatus('closed');
     }
 
@@ -107,7 +112,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         console.log('⚠️ SUPPORT - Message already exists in messages, skipping');
         return prev;
       }
-      console.log('✅ SUPPORT - Adding new message to messages. Count:', prev.length);
+      console.log('✅ SUPPORT - Adding new message to messages. Count before:', prev.length, 'Message:', newMessage.message.substring(0, 30));
       return [...prev, newMessage];
     });
 
@@ -125,10 +130,12 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         console.log('⚠️ SUPPORT - Message already exists in history, skipping');
         return prev;
       }
-      console.log('✅ SUPPORT - Adding new message to history. Count:', prev.length);
+      console.log('✅ SUPPORT - Adding new message to history. Count before:', prev.length);
       return [...prev, newMessage];
     });
-  }, [conversationId]); // Include conversationId in dependencies
+    
+    console.log('🔄 SUPPORT - Message processing complete');
+  }, [conversationId]);
 
   const stableHandleConversationUpdate = useCallback((status: 'open' | 'closed') => {
     setConversationStatus(status);

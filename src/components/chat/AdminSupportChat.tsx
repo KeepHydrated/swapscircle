@@ -242,15 +242,25 @@ const AdminSupportChat = () => {
       senderType: newMessage.sender_type,
       conversationId: newMessage.conversation_id,
       selectedConversationId: selectedConversation?.id,
-      isMatch: newMessage.conversation_id === selectedConversation?.id
+      isMatch: newMessage.conversation_id === selectedConversation?.id,
+      timestamp: new Date().toISOString()
     });
     
-    // Check admin status from current context, don't depend on it in the callback
-    const currentUser = user; // Capture current user
+    // Check admin status from current context
+    const currentUser = user;
     const currentIsAdmin = currentUser?.email === 'nadiachibri@gmail.com';
     
     if (!currentIsAdmin) {
       console.log('❌ ADMIN - Not admin, ignoring message');
+      return;
+    }
+    
+    // Only process messages for the currently selected conversation
+    if (selectedConversation && newMessage.conversation_id !== selectedConversation.id) {
+      console.log('❌ ADMIN - Message is for different conversation, ignoring:', {
+        messageConversation: newMessage.conversation_id,
+        selectedConversation: selectedConversation.id
+      });
       return;
     }
 
@@ -260,10 +270,12 @@ const AdminSupportChat = () => {
         console.log('⚠️ ADMIN - Message already exists, skipping');
         return prev;
       }
-      console.log('✅ ADMIN - Adding new message to state. Count:', prev.length);
+      console.log('✅ ADMIN - Adding new message to state. Count before:', prev.length, 'Message:', newMessage.message.substring(0, 30));
       return [...prev, newMessage];
     });
-  }, [user, selectedConversation?.id]); // Keep selectedConversation?.id to track current conversation
+    
+    console.log('🔄 ADMIN - Message processing complete');
+  }, [user, selectedConversation?.id]);
   
   // Always call the hook, but only with conversationId when admin and conversation selected
   useRealtimeSupportMessages({

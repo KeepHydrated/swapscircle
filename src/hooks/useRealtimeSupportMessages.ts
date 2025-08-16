@@ -92,16 +92,29 @@ export const useRealtimeSupportMessages = ({
           conversationId: (payload.new as any).conversation_id,
           filterConversationId: conversationId,
           senderType: (payload.new as any).sender_type,
-          message: (payload.new as any).message?.substring(0, 50) + '...'
+          message: (payload.new as any).message?.substring(0, 50) + '...',
+          payloadType: payload.eventType
         });
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
           
+          console.log('🔄 Processing real-time message:', {
+            newMessageId: newMessage.id,
+            newMessageConversationId: newMessage.conversation_id,
+            currentConversationId: currentConversationIdRef.current,
+            callbackExists: !!callbacksRef.current?.onNewMessage
+          });
+          
           // Double check conversation ID matches
           if (newMessage.conversation_id === currentConversationIdRef.current) {
             console.log('✅ MESSAGE MATCHES - CALLING CALLBACK FOR:', newMessage.id);
-            callbacksRef.current.onNewMessage(newMessage);
+            if (callbacksRef.current?.onNewMessage) {
+              callbacksRef.current.onNewMessage(newMessage);
+              console.log('🎯 CALLBACK INVOKED SUCCESSFULLY');
+            } else {
+              console.error('❌ NO CALLBACK AVAILABLE');
+            }
           } else {
             console.log('❌ DIFFERENT CONVERSATION - IGNORING:', {
               messageConversation: newMessage.conversation_id,
