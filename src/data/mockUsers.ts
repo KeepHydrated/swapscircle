@@ -58,6 +58,17 @@ export const mockUsers: Record<string, ProfileUser> = {
     memberSince: "2021",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
     friendStatus: "accepted"
+  },
+  "NadiaHibri": {
+    id: "NadiaHibri",
+    name: "NadiaHibri",
+    description: "Trading enthusiast with a passion for unique items and collectibles.",
+    rating: 4.7,
+    reviewCount: 45,
+    location: "Los Angeles, CA",
+    memberSince: "2022",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+    friendStatus: "accepted"
   }
 };
 
@@ -144,6 +155,35 @@ export const mockUserItems: Record<string, MatchItem[]> = {
       name: "Rare Art Print",
       image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119",
       liked: true
+    }
+  ],
+  "NadiaHibri": [
+    {
+      id: "nadiahitem1",
+      name: "Vintage Camera Collection",
+      image: "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a",
+      liked: false,
+      category: "Electronics",
+      condition: "Good",
+      description: "Beautiful collection of vintage cameras"
+    },
+    {
+      id: "nadiahitem2", 
+      name: "Designer Handbag",
+      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3",
+      liked: false,
+      category: "Fashion",
+      condition: "Excellent", 
+      description: "Authentic designer handbag in perfect condition"
+    },
+    {
+      id: "nadiahitem3",
+      name: "Rare Book Collection",
+      image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570",
+      liked: false,
+      category: "Books",
+      condition: "Very Good",
+      description: "Collection of rare first edition books"
     }
   ]
 };
