@@ -113,6 +113,7 @@ const AdminSupportChat = () => {
   };
 
   const loadMessages = async (conversationId: string) => {
+    console.log('🔧 ADMIN - Loading messages for conversation:', conversationId);
     try {
       const { data, error } = await supabase
         .from('support_messages' as any)
@@ -121,6 +122,7 @@ const AdminSupportChat = () => {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
+      console.log('🔧 ADMIN - Loaded messages:', data?.length || 0, 'messages');
       setMessages((data || []) as unknown as SupportMessage[]);
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -234,7 +236,9 @@ const AdminSupportChat = () => {
     console.log('🔧 ADMIN handleNewMessage called:', {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
-      conversationId: newMessage.conversation_id
+      conversationId: newMessage.conversation_id,
+      selectedConversationId: selectedConversation?.id,
+      isMatch: newMessage.conversation_id === selectedConversation?.id
     });
     
     // Check admin status from current context, don't depend on it in the callback
@@ -243,6 +247,12 @@ const AdminSupportChat = () => {
     
     if (!currentIsAdmin) {
       console.log('❌ ADMIN - Not admin, ignoring message');
+      return;
+    }
+    
+    // Only add message if it's for the currently selected conversation
+    if (selectedConversation && newMessage.conversation_id !== selectedConversation.id) {
+      console.log('❌ ADMIN - Message is for different conversation, ignoring');
       return;
     }
 
@@ -255,7 +265,7 @@ const AdminSupportChat = () => {
       console.log('✅ ADMIN - Adding new message to state. Count:', prev.length);
       return [...prev, newMessage];
     });
-  }, [user]); // Only depend on user
+  }, [user, selectedConversation?.id]); // Include selectedConversation?.id in dependencies
   
   // Always call the hook, but only with conversationId when admin and conversation selected
   useRealtimeSupportMessages({
