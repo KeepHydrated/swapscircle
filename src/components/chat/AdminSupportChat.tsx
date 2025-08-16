@@ -17,6 +17,7 @@ interface SupportMessage {
   sender_type: 'user' | 'support';
   created_at: string;
   is_read: boolean;
+  conversation_id?: string;
 }
 
 interface SupportConversation {
@@ -38,6 +39,12 @@ const AdminSupportChat = () => {
   
   // Check if user is admin (nadiachibri@gmail.com) - do this first
   const isAdmin = user?.email === 'nadiachibri@gmail.com';
+  
+  console.log('🔧 ADMIN COMPONENT RENDERED:', {
+    userEmail: user?.email,
+    isAdmin,
+    userExists: !!user
+  });
   
   // ALL HOOKS MUST BE CALLED FIRST - before any early returns
   const [conversations, setConversations] = useState<SupportConversation[]>([]);
@@ -190,6 +197,8 @@ const AdminSupportChat = () => {
     if (isAdmin) {
       console.log('AdminSupportChat: Loading conversations...');
       loadConversations();
+    } else {
+      console.log('AdminSupportChat: User is NOT admin, skipping conversation load');
     }
   }, [isAdmin]);
 
@@ -225,12 +234,19 @@ const AdminSupportChat = () => {
       messageId: newMessage.id,
       senderType: newMessage.sender_type,
       message: newMessage.message.substring(0, 50) + '...',
-      timestamp: newMessage.created_at
+      timestamp: newMessage.created_at,
+      conversationId: newMessage.conversation_id
     });
     
     // Check admin status from current context, don't depend on it in the callback
     const currentUser = user; // Capture current user
     const currentIsAdmin = currentUser?.email === 'nadiachibri@gmail.com';
+    
+    console.log('🔧 ADMIN - Admin status check:', {
+      currentUserEmail: currentUser?.email,
+      currentIsAdmin,
+      willProcessMessage: currentIsAdmin
+    });
     
     if (!currentIsAdmin) {
       console.log('❌ ADMIN - User is not admin, ignoring message');
@@ -244,7 +260,7 @@ const AdminSupportChat = () => {
         console.log('⚠️ ADMIN - Message already exists, skipping');
         return prev;
       }
-      console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length);
+      console.log('✅ ADMIN - Adding new message to state. Previous count:', prev.length, 'New message from:', newMessage.sender_type);
       return [...prev, newMessage];
     });
   }, []); // Empty dependency array to prevent re-subscriptions
