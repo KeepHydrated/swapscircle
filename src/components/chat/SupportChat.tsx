@@ -76,9 +76,13 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Stable callback functions to prevent unnecessary re-subscriptions
   const handleNewMessage = useCallback((newMessage: SupportMessage) => {
-    console.log('📨 New message callback triggered:', newMessage);
-    console.log('📨 Message sender_type:', newMessage.sender_type);
-    console.log('📨 Current user is:', user?.email);
+    console.log('🎯 SUPPORT CHAT - handleNewMessage called:', {
+      messageId: newMessage.id,
+      senderType: newMessage.sender_type,
+      message: newMessage.message.substring(0, 50) + '...',
+      timestamp: newMessage.created_at,
+      currentUser: user?.email
+    });
     
     // Check if it's a closure message and update conversation status
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {

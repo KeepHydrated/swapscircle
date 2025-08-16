@@ -77,31 +77,36 @@ export const useRealtimeSupportMessages = ({
     const channelName = `support_messages_${conversationId}`;
     console.log('📡 Creating channel with name:', channelName);
     
-  const channel = supabase
-    .channel(channelName)
-    .on('postgres_changes', {
-        event: '*',
+    const channel = supabase
+      .channel(channelName)
+      .on('postgres_changes', {
+        event: 'INSERT',
         schema: 'public',
         table: 'support_messages'
       }, (payload) => {
-        console.log('🚨 ANY REAL-TIME EVENT ON SUPPORT_MESSAGES!', {
+        console.log('🚨 RAW REAL-TIME EVENT RECEIVED!', {
           event: payload.eventType,
           table: payload.table,
           new: payload.new,
-          old: payload.old,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          currentConversationId: currentConversationIdRef.current
         });
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
-          console.log('🎯 New message received:', newMessage);
-          console.log('🎯 Current conversation ID:', currentConversationIdRef.current);
-          console.log('🎯 Message conversation ID:', newMessage.conversation_id);
+          console.log('🎯 Processing new message:', {
+            messageId: newMessage.id,
+            senderType: newMessage.sender_type,
+            messageConversationId: newMessage.conversation_id,
+            currentConversationId: currentConversationIdRef.current,
+            messagesMatch: newMessage.conversation_id === currentConversationIdRef.current
+          });
+          
           if (newMessage.conversation_id === currentConversationIdRef.current) {
-            console.log('🎯 Message belongs to current conversation, calling onNewMessage');
+            console.log('✅ MESSAGE MATCHES CURRENT CONVERSATION - CALLING CALLBACK');
             callbacksRef.current.onNewMessage(newMessage);
           } else {
-            console.log('🎯 Message belongs to different conversation:', newMessage.conversation_id);
+            console.log('❌ MESSAGE FOR DIFFERENT CONVERSATION - IGNORING');
           }
         }
       })
@@ -126,16 +131,20 @@ export const useRealtimeSupportMessages = ({
         }
       })
       .subscribe((status) => {
-        console.log('📡 Real-time subscription status:', status, 'for conversation:', currentConversationIdRef.current);
+        console.log('🔔 SUBSCRIPTION STATUS CHANGE:', {
+          status,
+          conversationId: currentConversationIdRef.current,
+          timestamp: new Date().toISOString()
+        });
         
         if (status === 'SUBSCRIBED') {
-          console.log('🎯 Successfully subscribed to real-time updates!');
+          console.log('🟢 SUCCESSFULLY SUBSCRIBED TO REAL-TIME UPDATES!');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('❌ Channel error in real-time subscription');
+          console.error('🔴 CHANNEL ERROR IN REAL-TIME SUBSCRIPTION');
         } else if (status === 'TIMED_OUT') {
-          console.error('⏰ Real-time subscription timed out');
+          console.error('🟡 REAL-TIME SUBSCRIPTION TIMED OUT');
         } else if (status === 'CLOSED') {
-          console.log('🔒 Real-time subscription closed');
+          console.log('🔴 REAL-TIME SUBSCRIPTION CLOSED');
         }
       });
 
