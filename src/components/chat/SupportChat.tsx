@@ -199,17 +199,33 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const sendMessage = async () => {
     if (!inputValue.trim() || !user?.id) return;
 
-    // If conversation is closed, create a new one
+    console.log('sendMessage called with:', { 
+      inputValue: inputValue.trim(), 
+      conversationStatus, 
+      conversationId, 
+      category,
+      messagesLength: messages.length 
+    });
+
+    // If conversation is closed, create a new one first
     if (conversationStatus === 'closed') {
       if (!category) {
         toast.error('Please select a category to start a new conversation');
         return;
       }
+      console.log('Creating new conversation for closed ticket...');
+      // Initialize new conversation but don't return - continue to send the message
       await initializeConversation();
-      return;
+      // Wait a moment for the new conversation to be set up
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('New conversation initialized, conversationId:', conversationId);
     }
 
-    if (!conversationId) return;
+    if (!conversationId) {
+      console.error('No conversationId available');
+      toast.error('Could not establish conversation. Please try again.');
+      return;
+    }
 
     // Only require category for the very first message (when no messages exist yet)
     const isFirstMessage = messages.length === 0;
@@ -219,6 +235,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     }
 
     const messageText = isFirstMessage && category ? `[${category}] ${inputValue.trim()}` : inputValue.trim();
+    console.log('Sending message:', { messageText, conversationId, isFirstMessage });
+    
     setInputValue('');
     setCategory('');
     setLoading(true);
@@ -234,6 +252,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         });
 
       if (error) throw error;
+      
+      console.log('Message sent successfully');
 
       // Update conversation last_message_at
       await supabase
