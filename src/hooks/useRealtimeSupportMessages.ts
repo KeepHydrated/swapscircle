@@ -23,6 +23,17 @@ export const useRealtimeSupportMessages = ({
 }: UseRealtimeSupportMessagesProps) => {
   const channelRef = useRef<any>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const onNewMessageRef = useRef(onNewMessage);
+  const onConversationUpdateRef = useRef(onConversationUpdate);
+
+  // Update refs when callbacks change
+  useEffect(() => {
+    onNewMessageRef.current = onNewMessage;
+  }, [onNewMessage]);
+
+  useEffect(() => {
+    onConversationUpdateRef.current = onConversationUpdate;
+  }, [onConversationUpdate]);
 
   useEffect(() => {
     if (!conversationId) {
@@ -84,7 +95,7 @@ export const useRealtimeSupportMessages = ({
           console.log('🎯 Message belongs to current conversation, calling onNewMessage');
           // Add timeout to ensure state update happens
           setTimeout(() => {
-            onNewMessage(newMessage);
+            onNewMessageRef.current(newMessage);
           }, 50);
         } else {
           console.warn('⚠️ Message does not belong to current conversation:', {
@@ -107,10 +118,10 @@ export const useRealtimeSupportMessages = ({
         });
         
         const updatedConversation = payload.new as any;
-        if (onConversationUpdate && updatedConversation.status) {
+        if (onConversationUpdateRef.current && updatedConversation.status) {
           console.log('🔄 Calling onConversationUpdate with status:', updatedConversation.status);
           setTimeout(() => {
-            onConversationUpdate(updatedConversation.status);
+            onConversationUpdateRef.current(updatedConversation.status);
           }, 50);
         }
       })
@@ -162,7 +173,7 @@ export const useRealtimeSupportMessages = ({
         channelRef.current = null;
       }
     };
-  }, [conversationId]); // Remove onNewMessage and onConversationUpdate from dependencies
+  }, [conversationId]); // Only depend on conversationId, use refs for callbacks
 
   // Cleanup on unmount
   useEffect(() => {
