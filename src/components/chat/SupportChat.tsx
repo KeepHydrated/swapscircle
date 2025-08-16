@@ -74,6 +74,12 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
 
   // Stable callback functions to prevent unnecessary re-subscriptions
   const handleNewMessage = useCallback((newMessage: SupportMessage) => {
+    console.log('🎯 SUPPORT handleNewMessage called:', {
+      messageId: newMessage.id,
+      senderType: newMessage.sender_type,
+      conversationId: newMessage.conversation_id
+    });
+    
     // Check if it's a closure message and update conversation status
     if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
       setConversationStatus('closed');
@@ -89,8 +95,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       );
       
       if (existsById || existsByContent) {
+        console.log('⚠️ SUPPORT - Message already exists in messages, skipping');
         return prev;
       }
+      console.log('✅ SUPPORT - Adding new message to messages. Count:', prev.length);
       return [...prev, newMessage];
     });
 
@@ -105,8 +113,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
       );
       
       if (existsById || existsByContent) {
+        console.log('⚠️ SUPPORT - Message already exists in history, skipping');
         return prev;
       }
+      console.log('✅ SUPPORT - Adding new message to history. Count:', prev.length);
       return [...prev, newMessage];
     });
   }, []);

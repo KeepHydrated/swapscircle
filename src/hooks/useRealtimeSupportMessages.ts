@@ -82,50 +82,58 @@ export const useRealtimeSupportMessages = ({
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'support_messages',
-        filter: `conversation_id=eq.${conversationId}`
+        table: 'support_messages'
       }, (payload) => {
         console.log('🚨 REAL-TIME MESSAGE RECEIVED!', {
           event: payload.eventType,
           table: payload.table,
           messageId: (payload.new as any)?.id,
           senderType: (payload.new as any)?.sender_type,
-          conversationId: (payload.new as any)?.conversation_id,
-          currentConversation: currentConversationIdRef.current
+          messageConversationId: (payload.new as any)?.conversation_id,
+          currentConversation: currentConversationIdRef.current,
+          messagesMatch: (payload.new as any)?.conversation_id === currentConversationIdRef.current
         });
         
         if (payload.eventType === 'INSERT') {
           const newMessage = payload.new as SupportMessage;
-          console.log('✅ CALLING CALLBACK FOR MESSAGE:', newMessage.id);
-          callbacksRef.current.onNewMessage(newMessage);
+          
+          // Only process messages for the current conversation
+          if (newMessage.conversation_id === currentConversationIdRef.current) {
+            console.log('✅ MESSAGE MATCHES - CALLING CALLBACK:', newMessage.id);
+            callbacksRef.current.onNewMessage(newMessage);
+          } else {
+            console.log('❌ MESSAGE FOR DIFFERENT CONVERSATION - IGNORING');
+          }
         }
       })
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public', 
-        table: 'support_conversations',
-        filter: `id=eq.${conversationId}`
+        table: 'support_conversations'
       }, (payload) => {
         console.log('🔄 Conversation status update:', {
           status: (payload.new as any)?.status,
-          conversationId: (payload.new as any)?.id
+          conversationId: (payload.new as any)?.id,
+          currentConversation: currentConversationIdRef.current,
+          isMatch: (payload.new as any)?.id === currentConversationIdRef.current
         });
         
-        if (payload.new && callbacksRef.current.onConversationUpdate) {
+        if (payload.new && (payload.new as any).id === currentConversationIdRef.current && callbacksRef.current.onConversationUpdate) {
+          console.log('✅ UPDATING CONVERSATION STATUS');
           callbacksRef.current.onConversationUpdate((payload.new as any).status);
         }
       })
       .subscribe((status) => {
-        console.log('🔔 SUBSCRIPTION STATUS CHANGE:', {
+        console.log('🔔 SUBSCRIPTION STATUS:', {
           status,
           conversationId: currentConversationIdRef.current,
           timestamp: new Date().toISOString()
         });
         
         if (status === 'SUBSCRIBED') {
-          console.log('🟢 SUCCESSFULLY SUBSCRIBED TO REAL-TIME UPDATES!');
+          console.log('🟢 SUCCESSFULLY SUBSCRIBED TO REAL-TIME!');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('🔴 CHANNEL ERROR IN REAL-TIME SUBSCRIPTION');
+          console.error('🔴 REAL-TIME SUBSCRIPTION ERROR');
         } else if (status === 'TIMED_OUT') {
           console.error('🟡 REAL-TIME SUBSCRIPTION TIMED OUT');
         } else if (status === 'CLOSED') {
