@@ -67,7 +67,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   useEffect(() => {
     if (!conversationId || !user?.id) return;
 
-    console.log('Setting up real-time subscription for conversation:', conversationId);
+    console.log('Customer: Setting up real-time subscription for conversation:', conversationId);
 
     const channel = supabase
       .channel(`support_messages_${conversationId}`)
@@ -77,7 +77,7 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('Real-time message received:', payload);
+        console.log('Customer: Real-time message received:', payload);
         const newMessage = payload.new as SupportMessage;
         
         // Check if it's a closure message
@@ -89,19 +89,19 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
           // Avoid duplicates by checking if message already exists
           const exists = prev.some(msg => msg.id === newMessage.id);
           if (exists) {
-            console.log('Message already exists, skipping');
+            console.log('Customer: Message already exists, skipping');
             return prev;
           }
-          console.log('Adding new message to state');
+          console.log('Customer: Adding new message to state');
           return [...prev, newMessage];
         });
       })
       .subscribe((status) => {
-        console.log('Subscription status:', status);
+        console.log('Customer: Subscription status:', status);
       });
 
     return () => {
-      console.log('Cleaning up real-time subscription');
+      console.log('Customer: Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [conversationId, user?.id]);
