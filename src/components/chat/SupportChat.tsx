@@ -75,11 +75,16 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
   }, [user?.id]);
 
   // Use real-time hook for support messages
+  console.log('🔌 Setting up real-time for conversation ID:', conversationId, 'user ID:', user?.id);
+  
   useRealtimeSupportMessages({
     conversationId,
     onNewMessage: (newMessage) => {
+      console.log('📨 New message callback triggered:', newMessage);
+      
       // Check if it's a closure message and update conversation status
       if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
+        console.log('🔒 Detected closure message, updating status to closed');
         setConversationStatus('closed');
       }
       
@@ -87,10 +92,10 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         // Avoid duplicates by checking if message already exists
         const exists = prev.some(msg => msg.id === newMessage.id);
         if (exists) {
-          console.log('Message already exists in messages, skipping');
+          console.log('⚠️ Message already exists in messages, skipping');
           return prev;
         }
-        console.log('Adding new message to messages state');
+        console.log('✅ Adding new message to messages state');
         return [...prev, newMessage];
       });
 
@@ -99,14 +104,15 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
         // Avoid duplicates by checking if message already exists
         const exists = prev.some(item => 'id' in item && item.id === newMessage.id);
         if (exists) {
-          console.log('Message already exists in history, skipping');
+          console.log('⚠️ Message already exists in history, skipping');
           return prev;
         }
-        console.log('Adding new message to history state');
+        console.log('✅ Adding new message to history state');
         return [...prev, newMessage];
       });
     },
     onConversationUpdate: (status) => {
+      console.log('🔄 Conversation status update callback:', status);
       setConversationStatus(status);
     }
   });

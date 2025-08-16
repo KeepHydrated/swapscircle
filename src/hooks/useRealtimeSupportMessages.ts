@@ -34,6 +34,8 @@ export const useRealtimeSupportMessages = ({
     console.log('Setting up real-time subscription for conversation:', conversationId);
 
     // Create new subscription
+    console.log('🔄 Creating realtime subscription for conversation:', conversationId);
+    
     const channel = supabase
       .channel(`support_realtime_${conversationId}`)
       .on('postgres_changes', {
@@ -42,7 +44,7 @@ export const useRealtimeSupportMessages = ({
         table: 'support_messages',
         filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('Real-time message received:', payload);
+        console.log('✅ Real-time message received via hook:', payload);
         const newMessage = payload.new as SupportMessage;
         onNewMessage(newMessage);
       })
@@ -52,21 +54,28 @@ export const useRealtimeSupportMessages = ({
         table: 'support_conversations',
         filter: `id=eq.${conversationId}`,
       }, (payload) => {
-        console.log('Real-time conversation update:', payload);
+        console.log('✅ Real-time conversation update via hook:', payload);
         const updatedConversation = payload.new as any;
         if (onConversationUpdate && updatedConversation.status) {
           onConversationUpdate(updatedConversation.status);
         }
       })
       .subscribe((status) => {
-        console.log('Real-time subscription status:', status);
+        console.log('📡 Real-time subscription status via hook:', status, 'for conversation:', conversationId);
+        if (status === 'SUBSCRIBED') {
+          console.log('🎯 Successfully subscribed to real-time updates!');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Channel error in real-time subscription');
+        } else if (status === 'TIMED_OUT') {
+          console.error('⏰ Real-time subscription timed out');
+        }
       });
 
     channelRef.current = channel;
 
     return () => {
       if (channelRef.current) {
-        console.log('Cleaning up real-time subscription');
+        console.log('🧹 Cleaning up real-time subscription for conversation:', conversationId);
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
@@ -75,8 +84,10 @@ export const useRealtimeSupportMessages = ({
 
   // Cleanup on unmount
   useEffect(() => {
+    console.log('🏗️ useRealtimeSupportMessages hook mounted/unmounted');
     return () => {
       if (channelRef.current) {
+        console.log('🧹 Final cleanup of real-time subscription');
         supabase.removeChannel(channelRef.current);
       }
     };
