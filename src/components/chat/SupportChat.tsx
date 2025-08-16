@@ -8,6 +8,7 @@ import SelectField from '@/components/ui/select-field';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useRealtimeSupportMessages } from '@/hooks/useRealtimeSupportMessages';
 
 interface SupportMessage {
   id: string;
@@ -73,70 +74,42 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     initializeConversation();
   }, [user?.id]);
 
-  // Real-time message subscription
-  useEffect(() => {
-    if (!conversationId || !user?.id) return;
-
-    console.log('Setting up real-time subscription for conversation:', conversationId);
-
-    const channel = supabase
-      .channel(`support_messages_${conversationId}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'support_messages',
-        filter: `conversation_id=eq.${conversationId}`,
-      }, (payload) => {
-        console.log('Real-time message received:', payload);
-        const newMessage = payload.new as SupportMessage;
-        
-        // Check if it's a closure message and update conversation status
-        if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
-          setConversationStatus('closed');
+  // Use real-time hook for support messages
+  useRealtimeSupportMessages({
+    conversationId,
+    onNewMessage: (newMessage) => {
+      // Check if it's a closure message and update conversation status
+      if (newMessage.sender_type === 'support' && newMessage.message.includes('This ticket has been closed')) {
+        setConversationStatus('closed');
+      }
+      
+      setMessages(prev => {
+        // Avoid duplicates by checking if message already exists
+        const exists = prev.some(msg => msg.id === newMessage.id);
+        if (exists) {
+          console.log('Message already exists in messages, skipping');
+          return prev;
         }
-        
-        setMessages(prev => {
-          // Avoid duplicates by checking if message already exists
-          const exists = prev.some(msg => msg.id === newMessage.id);
-          if (exists) {
-            console.log('Message already exists in messages, skipping');
-            return prev;
-          }
-          console.log('Adding new message to messages state');
-          return [...prev, newMessage];
-        });
-
-        // Also add to full history
-        setAllHistoryItems(prev => {
-          // Avoid duplicates by checking if message already exists
-          const exists = prev.some(item => 'id' in item && item.id === newMessage.id);
-          if (exists) {
-            console.log('Message already exists in history, skipping');
-            return prev;
-          }
-          console.log('Adding new message to history state');
-          return [...prev, newMessage];
-        });
-      })
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'support_conversations',
-        filter: `id=eq.${conversationId}`,
-      }, (payload) => {
-        console.log('Real-time conversation update received:', payload);
-        const updatedConversation = payload.new as any;
-        setConversationStatus(updatedConversation.status);
-      })
-      .subscribe((status) => {
-        console.log('Subscription status:', status);
+        console.log('Adding new message to messages state');
+        return [...prev, newMessage];
       });
 
-    return () => {
-      console.log('Cleaning up real-time subscription');
-      supabase.removeChannel(channel);
-    };
-  }, [conversationId, user?.id]);
+      // Also add to full history
+      setAllHistoryItems(prev => {
+        // Avoid duplicates by checking if message already exists
+        const exists = prev.some(item => 'id' in item && item.id === newMessage.id);
+        if (exists) {
+          console.log('Message already exists in history, skipping');
+          return prev;
+        }
+        console.log('Adding new message to history state');
+        return [...prev, newMessage];
+      });
+    },
+    onConversationUpdate: (status) => {
+      setConversationStatus(status);
+    }
+  });
 
   // Click outside to close chat popup
   useEffect(() => {

@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useRealtimeSupportMessages } from '@/hooks/useRealtimeSupportMessages';
 
 interface SupportMessage {
   id: string;
@@ -96,56 +97,24 @@ const AdminSupportChat = () => {
     };
   }, [isAdmin, selectedConversation?.id]);
 
-  // Real-time message updates for selected conversation
-  useEffect(() => {
-    if (!selectedConversation || !isAdmin) return;
-
-    console.log('Admin: Setting up real-time subscription for conversation:', selectedConversation.id);
-
-    const messageChannel = supabase
-      .channel(`support_messages_${selectedConversation.id}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'support_messages',
-        filter: `conversation_id=eq.${selectedConversation.id}`,
-      }, (payload) => {
-        console.log('Admin: Real-time message received:', payload);
-        const newMessage = payload.new as SupportMessage;
-        
-        setMessages(prev => {
-          // Avoid duplicates by checking if message already exists
-          const exists = prev.some(msg => msg.id === newMessage.id);
-          if (exists) {
-            console.log('Admin: Message already exists, skipping');
-            return prev;
-          }
-          console.log('Admin: Adding new message to state');
-          return [...prev, newMessage];
-        });
-      })
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'support_messages',
-        filter: `conversation_id=eq.${selectedConversation.id}`,
-      }, (payload) => {
-        console.log('Admin: Real-time message update received:', payload);
-        const updatedMessage = payload.new as SupportMessage;
-        
-        setMessages(prev => prev.map(msg => 
-          msg.id === updatedMessage.id ? updatedMessage : msg
-        ));
-      })
-      .subscribe((status) => {
-        console.log('Admin: Subscription status:', status);
+  // Use real-time hook for admin support messages
+  useRealtimeSupportMessages({
+    conversationId: selectedConversation?.id || null,
+    onNewMessage: (newMessage) => {
+      if (!isAdmin) return;
+      
+      setMessages(prev => {
+        // Avoid duplicates by checking if message already exists
+        const exists = prev.some(msg => msg.id === newMessage.id);
+        if (exists) {
+          console.log('Admin: Message already exists, skipping');
+          return prev;
+        }
+        console.log('Admin: Adding new message to state');
+        return [...prev, newMessage];
       });
-
-    return () => {
-      console.log('Admin: Cleaning up real-time subscription');
-      supabase.removeChannel(messageChannel);
-    };
-  }, [selectedConversation?.id, isAdmin]);
+    }
+  });
 
   const loadConversations = async () => {
     console.log('AdminSupportChat: loadConversations called');
