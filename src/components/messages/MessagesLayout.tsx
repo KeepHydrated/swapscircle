@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Info } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsTablet } from '@/hooks/use-tablet';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatArea from '@/components/messages/ChatArea';
 import DetailsPanel from '@/components/messages/details/DetailsPanel';
@@ -35,15 +36,16 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
   onTradeCompleted
 }) => {
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [currentView, setCurrentView] = useState<'conversations' | 'chat' | 'details'>('conversations');
   const [showDetails, setShowDetails] = useState(false);
 
-  // Auto-switch to chat when conversation is selected on mobile
+  // Auto-switch to chat when conversation is selected on mobile/tablet
   React.useEffect(() => {
-    if (isMobile && activeConversation && currentView === 'conversations') {
+    if ((isMobile || isTablet) && activeConversation && currentView === 'conversations') {
       setCurrentView('chat');
     }
-  }, [activeConversation, isMobile, currentView]);
+  }, [activeConversation, isMobile, isTablet, currentView]);
 
   const handleBackToConversations = () => {
     setCurrentView('conversations');
@@ -51,7 +53,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
   };
 
   const handleShowDetails = () => {
-    if (isMobile) {
+    if (isMobile || isTablet) {
       setCurrentView('details');
     } else {
       setShowDetails(!showDetails);
@@ -62,10 +64,10 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
     setCurrentView('chat');
   };
 
-  if (isMobile) {
+  if (isMobile || isTablet) {
     return (
-      <div className="flex flex-col h-full">{/* Use full height for mobile */}
-        {/* Mobile Header */}
+      <div className="flex flex-col h-full">{/* Use full height for mobile/tablet */}
+        {/* Mobile/Tablet Header */}
         {currentView === 'chat' && activeChat && (
           <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
             <div className="flex items-center gap-3">
