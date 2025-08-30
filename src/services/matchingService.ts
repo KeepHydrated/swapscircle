@@ -35,86 +35,120 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
   }
 
   try {
-    // Get current user for authentication
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      return [];
-    }
-
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
     const effectiveUserId = perspectiveUserId || currentUserId;
     
-    // Get blocked users from the VIEWING user's perspective (not the perspective user)
-    // This ensures when you view your own matches, blocked users are filtered out
-    const { data: blockedData, error: blockedError } = await supabase
-      .from('blocked_users')
-      .select('blocked_id')
-      .eq('blocker_id', currentUserId);
-    
-    const { data: blockersData, error: blockersError } = await supabase
-      .from('blocked_users')
-      .select('blocker_id')
-      .eq('blocked_id', currentUserId);
-    
-    const blockedUsers = blockedData?.map(item => item.blocked_id) || [];
-    const usersWhoBlockedMe = blockersData?.map(item => item.blocker_id) || [];
+    // Batch all parallel queries for better performance
+    const [
+      blockedResult,
+      blockersResult,
+      mutualMatchesResult,
+      likedItemsResult,
+      rejectedItemsResult,
+      ownerRejectionsResult,
+      myItemsResult
+    ] = await Promise.all([
+      // Get blocked users
+      supabase
+        .from('blocked_users')
+        .select('blocked_id')
+        .eq('blocker_id', currentUserId),
+      
+      // Get users who blocked me
+      supabase
+        .from('blocked_users')
+        .select('blocker_id')
+        .eq('blocked_id', currentUserId),
+      
+      // Get mutual matches for this specific item
+      supabase
+        .from('mutual_matches')
+        .select('user1_item_id, user2_item_id, user1_id, user2_id')
+        .or(`user1_item_id.eq.${selectedItem.id},user2_item_id.eq.${selectedItem.id}`),
+      
+      // Get items liked by current user
+      supabase
+        .from('liked_items')
+        .select('item_id')
+        .eq('user_id', currentUserId),
+      
+      // Get items rejected by current user
+      supabase
+        .from('rejections')
+        .select('item_id')
+        .eq('user_id', currentUserId)
+        .or(`my_item_id.eq.${selectedItem.id},my_item_id.is.null`),
+      
+      // Get rejections by item owners
+      supabase
+        .from('rejections')
+        .select('user_id, my_item_id')
+        .eq('item_id', selectedItem.id),
+      
+      // Get current user's items for mutual blocking check
+      supabase
+        .from('items')
+        .select('id')
+        .eq('user_id', currentUserId)
+    ]);
+
+    console.log('🔍 FILTERING MATCHES: Selected item ID:', selectedItem.id);
+    console.log('🔍 FILTERING MATCHES: Mutual matches found:', mutualMatchesResult.data);
+
+    const blockedUsers = blockedResult.data?.map(item => item.blocked_id) || [];
+    const usersWhoBlockedMe = blockersResult.data?.map(item => item.blocker_id) || [];
     const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
 
-    // Get all available and visible items from other users - exclude the current user's items
-    
-    let itemsQuery = supabase
-      .from('items')
-      .select('*')
-      .not('user_id', 'eq', currentUserId) // ALWAYS exclude the viewing user's items
-      .eq('is_available', true) // Only show available items
-      .eq('is_hidden', false) // Only show non-hidden items
-      .eq('status', 'published'); // Only show published items (not drafts)
-    
-    // Filter out items from blocked users
-    if (allBlockedUserIds.length > 0) {
-      itemsQuery = itemsQuery.not('user_id', 'in', `(${allBlockedUserIds.join(',')})`);
+    // Extract matched item IDs to filter out
+    const matchedWithSelectedItemIds = new Set<string>();
+    if (mutualMatchesResult.data) {
+      mutualMatchesResult.data.forEach(match => {
+        if (match.user1_item_id === selectedItem.id) {
+          matchedWithSelectedItemIds.add(match.user2_item_id);
+          console.log('🔍 FILTERING MATCHES: Will exclude item:', match.user2_item_id);
+        } else if (match.user2_item_id === selectedItem.id) {
+          matchedWithSelectedItemIds.add(match.user1_item_id);
+          console.log('🔍 FILTERING MATCHES: Will exclude item:', match.user1_item_id);
+        }
+      });
     }
 
-
-    // If location is not nationwide, filter by GPS radius
+    // Handle location filtering and get user profiles in parallel if needed
     let userIdsToFilter: string[] = [];
+    let currentUserProfile: any = null;
+    
     if (location !== 'nationwide' && ['5', '10', '20', '50'].includes(location)) {
       const radiusInMiles = parseInt(location);
       
-      // Get current user's location
-      const { data: currentUserProfile, error: currentUserError } = await supabase
-        .from('profiles')
-        .select('location')
-        .eq('id', currentUserId)
-        .single();
+      const [currentUserResult, allProfilesResult] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('location')
+          .eq('id', currentUserId)
+          .single(),
+        supabase
+          .from('profiles')
+          .select('id, location')
+          .not('location', 'is', null)
+          .not('id', 'eq', currentUserId)
+      ]);
       
-      if (currentUserError || !currentUserProfile?.location) {
+      if (currentUserResult.error || !currentUserResult.data?.location) {
         return [];
       }
       
+      currentUserProfile = currentUserResult.data;
       const currentUserCoords = parseLocation(currentUserProfile.location);
       if (!currentUserCoords) {
         return [];
       }
       
-      // Get all profiles with locations to calculate distances
-      const { data: allProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, location')
-        .not('location', 'is', null)
-        .not('id', 'eq', currentUserId); // Exclude current user
-      
-      if (profilesError) {
-        console.error('Error fetching profiles for distance calculation:', profilesError);
-        return [];
-      }
-      
-      if (!allProfiles || allProfiles.length === 0) {
+      if (allProfilesResult.error || !allProfilesResult.data?.length) {
         return [];
       }
       
       // Filter profiles by distance
-      const profilesWithinRadius = allProfiles.filter(profile => {
+      const profilesWithinRadius = allProfilesResult.data.filter(profile => {
         const profileCoords = parseLocation(profile.location);
         if (!profileCoords) return false;
         
@@ -131,7 +165,23 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       if (userIdsToFilter.length === 0) {
         return [];
       }
-      
+    }
+
+    // Build items query with all filters
+    let itemsQuery = supabase
+      .from('items')
+      .select('*')
+      .not('user_id', 'eq', currentUserId)
+      .eq('is_available', true)
+      .eq('is_hidden', false)
+      .eq('status', 'published');
+    
+    // Apply all filters in the query
+    if (allBlockedUserIds.length > 0) {
+      itemsQuery = itemsQuery.not('user_id', 'in', `(${allBlockedUserIds.join(',')})`);
+    }
+    
+    if (userIdsToFilter.length > 0) {
       itemsQuery = itemsQuery.in('user_id', userIdsToFilter);
     }
 
@@ -146,97 +196,29 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return [];
     }
     
-    // Get mutual matches specifically involving the selected item  
-    const { data: mutualMatches, error: mutualMatchesError } = await supabase
-      .from('mutual_matches')
-      .select('user1_item_id, user2_item_id, user1_id, user2_id')
-      .or(`user1_item_id.eq.${selectedItem.id},user2_item_id.eq.${selectedItem.id}`);
-
-    console.log('🔍 FILTERING MATCHES: Selected item ID:', selectedItem.id);
-    console.log('🔍 FILTERING MATCHES: Mutual matches found:', mutualMatches);
-
-    // Extract item IDs that have specifically matched with the selected item
-    const matchedWithSelectedItemIds = new Set<string>();
-    if (mutualMatches) {
-      mutualMatches.forEach(match => {
-        // Only add the OTHER item that matched with our selected item
-        if (match.user1_item_id === selectedItem.id) {
-          matchedWithSelectedItemIds.add(match.user2_item_id);
-          console.log('🔍 FILTERING MATCHES: Will exclude item:', match.user2_item_id);
-        } else if (match.user2_item_id === selectedItem.id) {
-          matchedWithSelectedItemIds.add(match.user1_item_id);
-          console.log('🔍 FILTERING MATCHES: Will exclude item:', match.user1_item_id);
-        }
-      });
-    }
-
-    // Get items that the current user has already liked (for display purposes only)
-    const { data: likedItems, error: likedError } = await supabase
-      .from('liked_items')
-      .select('item_id')
-      .eq('user_id', currentUserId);
-
-    if (likedError) {
-      console.error('Error fetching liked items:', likedError);
-    }
-
-    // Get items rejected by the current user for this specific item
-    const { data: rejectedItems, error: rejectedError } = await supabase
-      .from('rejections')
-      .select('item_id')
-      .eq('user_id', user.id)
-      .or(`my_item_id.eq.${selectedItem.id},my_item_id.is.null`); // Include both item-specific and global rejections
-
-    if (rejectedError) {
-      console.error('Error fetching rejected items:', rejectedError);
-    }
-
-    // Get items where users have rejected the current user's selected item for their items
-    const { data: ownerRejections, error: ownerRejectedError } = await supabase
-      .from('rejections')
-      .select('user_id, my_item_id')
-      .eq('item_id', selectedItem.id);
-
-    if (ownerRejectedError) {
-      console.error('Error fetching owner rejections:', ownerRejectedError);
-    }
-
-    // Get users who have rejected ANY of the current user's items (mutual blocking)
-    // First get all current user's item IDs
-    const { data: myItems, error: myItemsError } = await supabase
-      .from('items')
-      .select('id')
-      .eq('user_id', currentUserId);
-
-    if (myItemsError) {
-      console.error('Error fetching my items for mutual blocking:', myItemsError);
-    }
-
-    const myItemIds = myItems?.map(item => item.id) || [];
+    // Use data from parallel queries
+    const myItemIds = myItemsResult.data?.map(item => item.id) || [];
     
-    // Now get users who have rejected any of these items
-    const { data: usersWhoRejectedMyItems, error: mutualBlockError } = myItemIds.length > 0 
+    // Get users who have rejected any of my items (mutual blocking)
+    const usersWhoRejectedMyItemsResult = myItemIds.length > 0 
       ? await supabase
           .from('rejections')
           .select('user_id')
           .in('item_id', myItemIds)
       : { data: [], error: null };
 
-    if (mutualBlockError) {
-      console.error('Error fetching mutual blocks:', mutualBlockError);
+    if (usersWhoRejectedMyItemsResult.error) {
+      console.error('Error fetching mutual blocks:', usersWhoRejectedMyItemsResult.error);
     }
 
-    // Create set of user IDs who have rejected any of my items
-    const mutualBlockedUserIds = new Set(usersWhoRejectedMyItems?.map(r => r.user_id) || []);
-
-    const likedItemIds = new Set(likedItems?.map(item => item.item_id) || []);
-
-    // Filter out rejected items from both sides
-    const rejectedItemIds = new Set(rejectedItems?.map(item => item.item_id) || []);
+    // Process all the data from parallel queries
+    const mutualBlockedUserIds = new Set(usersWhoRejectedMyItemsResult.data?.map(r => r.user_id) || []);
+    const likedItemIds = new Set(likedItemsResult.data?.map(item => item.item_id) || []);
+    const rejectedItemIds = new Set(rejectedItemsResult.data?.map(item => item.item_id) || []);
     
     // Create a map of rejections: user_id -> Set of item_ids they rejected us for
     const rejectedByOwnerMap = new Map<string, Set<string>>();
-    ownerRejections?.forEach(rejection => {
+    ownerRejectionsResult.data?.forEach(rejection => {
       if (!rejectedByOwnerMap.has(rejection.user_id)) {
         rejectedByOwnerMap.set(rejection.user_id, new Set());
       }
@@ -264,7 +246,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         (ownerRejections.has(selectedItem.id) || ownerRejections.has('__GLOBAL__'));
       
       // 3. Don't show user's own items
-      const isMyOwnItem = item.user_id === user.id;
+      const isMyOwnItem = item.user_id === currentUserId;
       
       // 4. Don't show items from the same user as selected item (but this should be rare)
       const isSameUser = item.user_id === selectedItem.user_id;

@@ -60,30 +60,40 @@ const Test: React.FC = () => {
     
     setFriendItemsLoading(true);
     try {
-      // Get blocked users to filter them out
-      const blockedUsers = await blockingService.getBlockedUsers();
-      const usersWhoBlockedMe = await blockingService.getUsersWhoBlockedMe();
-      const allBlockedUserIds = [...blockedUsers, ...usersWhoBlockedMe];
+      // Run all initial queries in parallel for better performance
+      const [
+        blockedUsersResult,
+        usersWhoBlockedMeResult,
+        friendRequestsResult,
+        mutualMatchesResult
+      ] = await Promise.all([
+        blockingService.getBlockedUsers(),
+        blockingService.getUsersWhoBlockedMe(),
+        supabase
+          .from('friend_requests')
+          .select('requester_id, recipient_id')
+          .eq('status', 'accepted')
+          .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`),
+        supabase
+          .from('mutual_matches')
+          .select('user1_item_id, user2_item_id')
+          .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+      ]);
 
-      // Get all accepted friend requests where current user is involved
-      const { data: friendRequests, error: friendsError } = await supabase
-        .from('friend_requests')
-        .select('requester_id, recipient_id')
-        .eq('status', 'accepted')
-        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+      const allBlockedUserIds = [...blockedUsersResult, ...usersWhoBlockedMeResult];
 
-      if (friendsError) {
-        console.error('Error fetching friends:', friendsError);
+      if (friendRequestsResult.error) {
+        console.error('Error fetching friends:', friendRequestsResult.error);
         return;
       }
 
-      if (!friendRequests || friendRequests.length === 0) {
+      if (!friendRequestsResult.data || friendRequestsResult.data.length === 0) {
         setFriendItems([]);
         return;
       }
 
       // Get friend user IDs (excluding current user and blocked users)
-      const friendIds = friendRequests
+      const friendIds = friendRequestsResult.data
         .map(req => req.requester_id === user.id ? req.recipient_id : req.requester_id)
         .filter(friendId => !allBlockedUserIds.includes(friendId));
 
@@ -95,60 +105,54 @@ const Test: React.FC = () => {
 
       console.log('🔥 FRIENDS DEBUG: Found friend IDs:', friendIds);
 
-      // Get all mutual matches to exclude them from friends' items
-      const { data: mutualMatches, error: mutualMatchesError } = await supabase
-        .from('mutual_matches')
-        .select('user1_item_id, user2_item_id')
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
-
-      if (mutualMatchesError) {
-        console.error('Error fetching mutual matches:', mutualMatchesError);
+      if (mutualMatchesResult.error) {
+        console.error('Error fetching mutual matches:', mutualMatchesResult.error);
       }
 
       // Extract all matched item IDs to filter out
       const matchedItemIds = new Set();
-      mutualMatches?.forEach(match => {
+      mutualMatchesResult.data?.forEach(match => {
         matchedItemIds.add(match.user1_item_id);
         matchedItemIds.add(match.user2_item_id);
       });
 
       console.log('🔥 FRIENDS DEBUG: Matched item IDs to exclude:', Array.from(matchedItemIds));
 
-      // Fetch available and visible items from all friends and their profiles separately
-      const { data: friendItemsData, error: itemsError } = await supabase
-        .from('items')
-        .select('*')
-        .in('user_id', friendIds)
-        .eq('is_available', true) // Only show available items
-        .eq('is_hidden', false) // Only show non-hidden items
-        .eq('status', 'published') // Only show published items (exclude drafts)
-        .is('removed_at', null); // Exclude removed items
+      // Fetch friend items and profiles in parallel for better performance
+      const [friendItemsResult, friendProfilesResult] = await Promise.all([
+        supabase
+          .from('items')
+          .select('*')
+          .in('user_id', friendIds)
+          .eq('is_available', true)
+          .eq('is_hidden', false)
+          .eq('status', 'published')
+          .is('removed_at', null),
+        supabase
+          .from('profiles')
+          .select('id, name, username, avatar_url')
+          .in('id', friendIds)
+      ]);
 
-      if (itemsError) {
-        console.error('Error fetching friend items:', itemsError);
+      if (friendItemsResult.error) {
+        console.error('Error fetching friend items:', friendItemsResult.error);
         return;
       }
 
+      if (friendProfilesResult.error) {
+        console.error('Error fetching friend profiles:', friendProfilesResult.error);
+      }
+
       // Filter out mutual matches from friend items
-      const unMatchedFriendItems = friendItemsData?.filter(item => 
+      const unMatchedFriendItems = friendItemsResult.data?.filter(item => 
         !matchedItemIds.has(item.id)
       ) || [];
 
-      console.log('🔥 FRIENDS DEBUG: Friend items before filtering:', friendItemsData?.length || 0);
+      console.log('🔥 FRIENDS DEBUG: Friend items before filtering:', friendItemsResult.data?.length || 0);
       console.log('🔥 FRIENDS DEBUG: Friend items after filtering out matches:', unMatchedFriendItems.length);
 
-      // Fetch profiles for the friends
-      const { data: friendProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, name, username, avatar_url')
-        .in('id', friendIds);
-
-      if (profilesError) {
-        console.error('Error fetching friend profiles:', profilesError);
-      }
-
       // Create a map of user_id to profile for quick lookup
-      const profileMap = (friendProfiles || []).reduce((acc, profile) => {
+      const profileMap = (friendProfilesResult.data || []).reduce((acc, profile) => {
         acc[profile.id] = profile;
         return acc;
       }, {} as Record<string, any>);
