@@ -7,7 +7,7 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     // Redirect to home
-    navigate('/home');
+    navigate('/');
   }, [navigate]);
 
   return (
