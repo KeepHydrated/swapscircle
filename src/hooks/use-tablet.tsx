@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const TABLET_MIN_WIDTH = 768
-const TABLET_MAX_WIDTH = 1024 // Adjusted to properly separate tablets from desktop
+const TABLET_MAX_WIDTH = 900 // More conservative tablet detection for true desktop experience
 
 export function useIsTablet() {
   const [isTablet, setIsTablet] = React.useState<boolean | undefined>(undefined)
