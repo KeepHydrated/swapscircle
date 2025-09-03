@@ -54,18 +54,44 @@ export function useNotifications() {
       const mappedNotifications = await Promise.all((data || []).map(async (notification: any) => {
         let content = notification.message || 'No message content';
         
-        // For friend requests, fetch the actual sender name if action_by is available
-        if (notification.action_taken === 'friend' && notification.action_by) {
+        // For friend requests, try to get the correct sender name
+        if (notification.action_taken === 'friend') {
           try {
-            const { data: senderProfile } = await supabase
-              .from('profiles')
-              .select('name, username')
-              .eq('id', notification.action_by)
-              .single();
-            
-            if (senderProfile) {
-              const senderName = senderProfile.name || senderProfile.username || 'Someone';
-              content = `${senderName} sent you a friend request.`;
+            // First try using action_by if it exists
+            if (notification.action_by) {
+              const { data: senderProfile } = await supabase
+                .from('profiles')
+                .select('name, username')
+                .eq('id', notification.action_by)
+                .single();
+              
+              if (senderProfile) {
+                const senderName = senderProfile.name || senderProfile.username || 'Someone';
+                content = `${senderName} sent you a friend request.`;
+              }
+            } else {
+              // Fallback: try to find the most recent friend request to this user
+              const { data: friendRequest } = await supabase
+                .from('friend_requests')
+                .select('requester_id')
+                .eq('recipient_id', user.id)
+                .eq('status', 'accepted')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+              
+              if (friendRequest) {
+                const { data: requesterProfile } = await supabase
+                  .from('profiles')
+                  .select('name, username')
+                  .eq('id', friendRequest.requester_id)
+                  .single();
+                
+                if (requesterProfile) {
+                  const senderName = requesterProfile.name || requesterProfile.username || 'Someone';
+                  content = `${senderName} sent you a friend request.`;
+                }
+              }
             }
           } catch (profileError) {
             console.error('Error fetching sender profile:', profileError);
