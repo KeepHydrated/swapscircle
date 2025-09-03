@@ -13,7 +13,7 @@ import SupportChat from '@/components/chat/SupportChat';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsTablet } from '@/hooks/use-tablet';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Info } from 'lucide-react';
 
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
@@ -47,6 +47,7 @@ const Messages = () => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const [currentView, setCurrentView] = useState<'conversations' | 'chat'>('conversations');
+  const [currentMobileView, setCurrentMobileView] = useState<'messages' | 'details'>('messages');
 
   // Get current user ID
   useEffect(() => {
@@ -358,17 +359,41 @@ const Messages = () => {
           ) : (
             /* Chat View with Back Button */
             <div className="h-full flex flex-col">
-              {/* Mobile Header with Back Button */}
-              <div className="flex items-center p-4 border-b border-gray-200 bg-white">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setCurrentView('conversations')}
-                  className="mr-3"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-                <span className="font-medium">{activeChat?.name}</span>
+              {/* Mobile Header with Back Button and Toggle */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+                <div className="flex items-center">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setCurrentView('conversations')}
+                    className="mr-3"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                  <span className="font-medium">{activeChat?.name}</span>
+                </div>
+                
+                {/* Toggle between Messages and Details */}
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  <Button
+                    variant={currentMobileView === 'messages' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setCurrentMobileView('messages')}
+                    className="px-3 py-1 text-xs"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-1" />
+                    Messages
+                  </Button>
+                  <Button
+                    variant={currentMobileView === 'details' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setCurrentMobileView('details')}
+                    className="px-3 py-1 text-xs"
+                  >
+                    <Info className="h-4 w-4 mr-1" />
+                    Details
+                  </Button>
+                </div>
               </div>
               
               {/* Mobile Chat Content with Side Panel */}
