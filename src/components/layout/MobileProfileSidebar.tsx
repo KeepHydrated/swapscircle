@@ -67,14 +67,11 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
                     <span>Settings</span>
                   </Link>
                 </Button>
-                {user?.email === 'nadiachibri@gmail.com' && (
-                  <Button variant="ghost" className="w-full justify-start h-10" asChild>
-                    <Link to="/customer-support" onClick={() => onOpenChange(false)}>
-                      <Headphones className="mr-3 h-4 w-4" />
-                      <span>Customer Support</span>
-                    </Link>
-                  </Button>
-                )}
+                <Button variant="ghost" className="w-full justify-start h-10" asChild>
+                  <Link to="/customer-support" onClick={() => onOpenChange(false)}>
+                    <span>Customer Support</span>
+                  </Link>
+                </Button>
               </CollapsibleContent>
             </Collapsible>
             

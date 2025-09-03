@@ -26,6 +26,7 @@ import Test from "./pages/Test";
 import Test2 from "./pages/Test2";
 
 import AdminReports from "./pages/AdminReports";
+import CustomerSupport from "./pages/CustomerSupport";
 import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
@@ -101,8 +102,12 @@ const App = () => {
                    <AdminReports />
                  </RequireAuth>
                  } />
-               <Route path="/posting-rules" element={<PostingRules />} />
-               <Route path="/customer-support" element={<Test2 />} />
+                <Route path="/posting-rules" element={<PostingRules />} />
+                <Route path="/customer-support" element={
+                  <RequireAuth>
+                    <CustomerSupport />
+                  </RequireAuth>
+                } />
                 <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
