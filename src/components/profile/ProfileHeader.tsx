@@ -81,7 +81,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <div className="bg-white border-b">
       <div className="flex justify-between items-start p-6">
         <div className="flex flex-col md:flex-row">
-          <div className="flex-shrink-0 mr-6 flex justify-center md:justify-start mb-4 md:mb-0">
+          <div className="flex-shrink-0 mr-6 flex justify-center md:justify-start mb-4 md:mb-0 relative">
+            {/* Tabbed Interface on top of avatar */}
+            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="flex bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                <div className="flex items-center px-3 py-2 bg-red-50 border-r border-gray-200">
+                  <span className="text-red-600 text-sm font-medium">0x</span>
+                </div>
+                <div className="flex items-center px-3 py-2 bg-blue-600 border-r border-gray-200">
+                  <span className="text-white text-sm">📱</span>
+                </div>
+                <div className="flex items-center px-3 py-2 bg-gray-50 border-r border-gray-200">
+                  <span className="text-gray-600 text-sm">👤</span>
+                </div>
+                <div className="flex items-center px-3 py-2 bg-gray-50">
+                  <span className="text-gray-700 text-sm font-medium">Friends</span>
+                </div>
+              </div>
+            </div>
+            
             <Avatar className="w-32 h-32 border-4 border-primary">
               <AvatarImage 
                 src={avatarSrc}
