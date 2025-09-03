@@ -33,24 +33,7 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-80 bg-white">
-        <SheetHeader>
-          <div className="flex items-center space-x-3 p-4">
-            <Avatar className="h-12 w-12">
-              {user?.avatar_url ? (
-                <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
-              ) : null}
-              <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
-                {user?.name ? getInitials(user.name) : <User className="h-6 w-6" />}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-medium text-gray-900">{user?.name || 'User'}</p>
-              <p className="text-sm text-gray-500">{user?.email}</p>
-            </div>
-          </div>
-        </SheetHeader>
-        
-        <div className="px-4 py-2">
+        <div className="px-4 py-6">
           <div className="space-y-2">
             <Button variant="ghost" className="w-full justify-start h-12" asChild>
               <Link to="/profile" onClick={() => onOpenChange(false)}>
