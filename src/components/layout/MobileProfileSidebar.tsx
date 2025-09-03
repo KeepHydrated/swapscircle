@@ -15,7 +15,7 @@ interface MobileProfileSidebarProps {
 
 const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps) => {
   const { user, signOut, supabaseConfigured } = useAuth();
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleLogout = async () => {
     await signOut();
@@ -37,20 +37,34 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
       <SheetContent side="right" className="w-80 bg-white">
         <div className="px-4 py-6">
           <div className="space-y-2">
-            <Collapsible open={profileOpen} onOpenChange={setProfileOpen}>
+            <Button variant="ghost" className="w-full justify-start h-12" asChild>
+              <Link to="/profile" onClick={() => onOpenChange(false)}>
+                <User className="mr-3 h-5 w-5" />
+                <span>Profile</span>
+              </Link>
+            </Button>
+            
+            <Button variant="ghost" className="w-full justify-start h-12" asChild>
+              <Link to="/trades" onClick={() => onOpenChange(false)}>
+                <Handshake className="mr-3 h-5 w-5" />
+                <span>Trades</span>
+              </Link>
+            </Button>
+            
+            <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-between h-12">
                   <div className="flex items-center">
-                    <User className="mr-3 h-5 w-5" />
-                    <span>Profile</span>
+                    <Settings className="mr-3 h-5 w-5" />
+                    <span>Settings</span>
                   </div>
-                  {profileOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  {settingsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-2 pl-8">
                 <Button variant="ghost" className="w-full justify-start h-10" asChild>
-                  <Link to="/profile" onClick={() => onOpenChange(false)}>
-                    <span>View Profile</span>
+                  <Link to="/settings" onClick={() => onOpenChange(false)}>
+                    <span>Settings</span>
                   </Link>
                 </Button>
                 {user?.email === 'nadiachibri@gmail.com' && (
@@ -63,20 +77,6 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
                 )}
               </CollapsibleContent>
             </Collapsible>
-            
-            <Button variant="ghost" className="w-full justify-start h-12" asChild>
-              <Link to="/trades" onClick={() => onOpenChange(false)}>
-                <Handshake className="mr-3 h-5 w-5" />
-                <span>Trades</span>
-              </Link>
-            </Button>
-            
-            <Button variant="ghost" className="w-full justify-start h-12" asChild>
-              <Link to="/settings" onClick={() => onOpenChange(false)}>
-                <Settings className="mr-3 h-5 w-5" />
-                <span>Settings</span>
-              </Link>
-            </Button>
             
             {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
               <Button variant="ghost" className="w-full justify-start h-12" asChild>
