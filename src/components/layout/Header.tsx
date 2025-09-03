@@ -65,7 +65,9 @@ const Header = () => {
         {/* Swipe icon - centered on mobile */}
         {isMobile && (
           <div className="absolute left-1/2 transform -translate-x-1/2">
-            <ArrowLeftRight className="h-6 w-6 text-gray-500" />
+            <Link to="/">
+              <ArrowLeftRight className="h-6 w-6 text-gray-500" />
+            </Link>
           </div>
         )}
 
