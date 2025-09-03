@@ -99,6 +99,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   const handleGoBack = () => {
     console.log('🔙 BACK BUTTON PRESSED - Current Index:', currentIndex);
+    console.trace('🔍 BACK BUTTON CALL STACK:'); // This will show what called this function
     if (currentIndex > 0) {
       const newIndex = currentIndex - 1;
       console.log('🔙 Moving back to index:', newIndex);
@@ -113,16 +114,18 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     onBackNavigation?.(currentIndex, currentIndex > 0);
   }, [currentIndex, onBackNavigation]);
 
-  // Handle external back button trigger
+  // TEMPORARILY DISABLE external triggers to debug
   useEffect(() => {
-    if (externalBackTrigger && externalBackTrigger > 0) {
-      handleGoBack();
-    }
+    console.log('🚫 EXTERNAL BACK TRIGGER DISABLED FOR DEBUGGING');
+    // if (externalBackTrigger && externalBackTrigger > 0) {
+    //   handleGoBack();
+    // }
   }, [externalBackTrigger]);
 
-  // Register the back function with parent component
+  // TEMPORARILY DISABLE parent registration to debug
   useEffect(() => {
-    onBackButtonRegister?.(handleGoBack);
+    console.log('🚫 PARENT BACK REGISTRATION DISABLED FOR DEBUGGING');
+    // onBackButtonRegister?.(handleGoBack);
   }, [onBackButtonRegister, handleGoBack]);
 
   const handleViewProfile = (userId: string) => {
