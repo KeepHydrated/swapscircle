@@ -18,6 +18,22 @@ import { ArrowLeft, MessageSquare, Info } from 'lucide-react';
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 import MessageInput from '@/components/messages/MessageInput';
+
+// Force scroll helper for tablet/mobile
+const forceScrollToBottom = () => {
+  console.log('🔍 FORCE SCROLL: Looking for message containers...');
+  const containers = document.querySelectorAll('[data-messages-container]');
+  console.log('📦 FORCE SCROLL: Found containers:', containers.length);
+  
+  containers.forEach((container, index) => {
+    if (container instanceof HTMLElement) {
+      const beforeScroll = container.scrollTop;
+      const scrollHeight = container.scrollHeight;
+      container.scrollTop = scrollHeight;
+      console.log(`📱 FORCE SCROLL Container ${index}: before=${beforeScroll}, height=${scrollHeight}, after=${container.scrollTop}`);
+    }
+  });
+};
 import TradeMessageBubble from '@/components/messages/TradeMessageBubble';
 
 const Messages = () => {
@@ -256,6 +272,21 @@ const Messages = () => {
       el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }, [activeConversation, conversations]);
+
+  // Force scroll to bottom when in chat view on tablet/mobile
+  useEffect(() => {
+    if ((isMobile || isTablet) && currentView === 'chat' && activeConversation) {
+      console.log('🚀 FORCE SCROLL EFFECT: Already in chat view on tablet/mobile');
+      
+      // Multiple aggressive attempts to scroll to bottom
+      [100, 300, 500, 800, 1200, 1800, 2500].forEach((delay) => {
+        setTimeout(() => {
+          console.log(`⏰ FORCE SCROLL after ${delay}ms`);
+          forceScrollToBottom();
+        }, delay);
+      });
+    }
+  }, [currentView, activeConversation, isMobile, isTablet]);
 
   if (loading) {
     return (
