@@ -126,11 +126,11 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     // }
   }, [externalBackTrigger]);
 
-  // TEMPORARILY DISABLE back button to test reject functionality 
+  // Re-enable back button with proper logic
   useEffect(() => {
-    console.log('🚫 TEMPORARILY DISABLING BACK BUTTON TO TEST REJECT');
-    // onBackButtonRegister?.(handleGoBack);
-  }, [onBackButtonRegister, handleGoBack]);
+    console.log('✅ BACK BUTTON RE-ENABLED WITH FIX');
+    onBackButtonRegister?.(handleGoBack);
+  }, [onBackButtonRegister]);
 
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
