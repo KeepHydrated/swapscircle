@@ -62,6 +62,15 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   const currentItem = items[currentIndex];
 
+  console.log('🎯 MOBILE CAROUSEL DEBUG:', {
+    currentIndex,
+    itemsLength: items.length,
+    currentItem,
+    currentItemExists: !!currentItem,
+    currentItemImage: currentItem?.image,
+    currentItemTitle: currentItem?.title
+  });
+
   return (
     <div className="flex flex-col h-full p-4">
       {/* Progress indicator */}
