@@ -22,28 +22,39 @@ const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatArea
   
   // Force scroll when this component renders with an activeChat on mobile/tablet
   useEffect(() => {
-    if (activeChat && (isMobile || isTablet)) {
-      console.log('🚀 ChatArea mounted with activeChat on mobile/tablet, forcing scroll...');
-      
-      const forceScroll = () => {
-        // Find any message container and force scroll
+    if (!activeChat) return;
+    
+    console.log('🚀 ChatArea effect triggered!', { 
+      chatId: activeChat.id, 
+      isMobile, 
+      isTablet, 
+      shouldScroll: isMobile || isTablet 
+    });
+    
+    if (isMobile || isTablet) {
+      const forceScrollNow = () => {
+        console.log('🔍 ChatArea: Looking for message containers...');
         const containers = document.querySelectorAll('[data-messages-container]');
-        containers.forEach((container) => {
+        console.log('📦 ChatArea: Found containers:', containers.length);
+        
+        containers.forEach((container, index) => {
           if (container instanceof HTMLElement) {
-            container.scrollTop = container.scrollHeight;
-            console.log('📱 Forced scroll on container:', container.scrollTop, '/', container.scrollHeight);
+            const beforeScroll = container.scrollTop;
+            const scrollHeight = container.scrollHeight;
+            container.scrollTop = scrollHeight;
+            console.log(`📱 ChatArea Container ${index}: before=${beforeScroll}, height=${scrollHeight}, after=${container.scrollTop}`);
           }
         });
       };
       
-      // Multiple aggressive attempts with different delays
-      setTimeout(forceScroll, 0);
-      setTimeout(forceScroll, 50);
-      setTimeout(forceScroll, 150);
-      setTimeout(forceScroll, 300);
-      setTimeout(forceScroll, 500);
-      setTimeout(forceScroll, 800);
-      setTimeout(forceScroll, 1200);
+      // Very aggressive attempts
+      console.log('🚀 ChatArea: Starting aggressive scroll attempts...');
+      [0, 10, 50, 100, 200, 300, 500, 800, 1200].forEach((delay) => {
+        setTimeout(() => {
+          console.log(`⏰ ChatArea scroll attempt after ${delay}ms`);
+          forceScrollNow();
+        }, delay);
+      });
     }
   }, [activeChat?.id, isMobile, isTablet]);
   
