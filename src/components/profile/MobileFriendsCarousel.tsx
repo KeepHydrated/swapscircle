@@ -128,7 +128,12 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             </div>
             
             <div className="p-4 flex-1 flex flex-col">
-              <h3 className="font-semibold text-lg mb-3">{currentItem.title}</h3>
+              {/* Debug info */}
+              <div className="text-xs text-red-500 mb-2">
+                DEBUG: {currentItem.title} | {currentItem.category} | {currentItem.condition}
+              </div>
+              
+              <h3 className="font-semibold text-lg mb-3 text-gray-900">{currentItem.title}</h3>
               
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
