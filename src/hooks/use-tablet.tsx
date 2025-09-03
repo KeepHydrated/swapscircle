@@ -12,7 +12,12 @@ export function useIsTablet() {
       setIsTablet(window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH)
     }
     mql.addEventListener("change", onChange)
-    console.log('TABLET DEBUG:', { width: window.innerWidth, isTablet: window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH })
+    console.log('📱 TABLET DEBUG:', { 
+      width: window.innerWidth, 
+      isTablet: window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH,
+      minWidth: TABLET_MIN_WIDTH,
+      maxWidth: TABLET_MAX_WIDTH
+    });
     setIsTablet(window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH)
     return () => mql.removeEventListener("change", onChange)
   }, [])

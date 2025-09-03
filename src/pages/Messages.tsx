@@ -10,6 +10,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import SupportChat from '@/components/chat/SupportChat';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsTablet } from '@/hooks/use-tablet';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
@@ -40,6 +44,9 @@ const Messages = () => {
   const leftListRef = useRef<HTMLDivElement>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const [currentView, setCurrentView] = useState<'conversations' | 'chat'>('conversations');
 
   // Get current user ID
   useEffect(() => {
@@ -260,15 +267,160 @@ const Messages = () => {
     );
   }
 
+  
+  console.log('🖥️ MESSAGES PAGE DEBUG:', { 
+    isMobile, 
+    isTablet, 
+    currentView, 
+    activeConversation, 
+    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'unknown',
+    shouldUseMobileLayout: isMobile || isTablet
+  });
+
   return (
-    <div className="flex flex-col h-screen">{/* Use fixed screen height, not min-height */}
-      {/* Header */}
+    <div className="flex flex-col h-screen">
       <Header />
       
-      {/* Main content area */}
-      <div className="flex flex-1 min-h-0 overflow-hidden">{/* Add overflow-hidden to prevent page scroll */}        
-        {/* Left sidebar - Conversations */}
-        <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">{/* Add h-full for proper height */}
+      {/* Mobile/Tablet Layout */}
+      {(isMobile || isTablet) ? (
+        <div className="flex-1 overflow-hidden">
+          {currentView === 'conversations' ? (
+            /* Conversations List Only */
+            <div className="h-full flex flex-col">
+              {conversations.length > 0 ? (
+                <div className="flex-1 overflow-y-auto">
+                  {conversations.map((conversation) => {
+                    const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
+                    
+                    return (
+                      <div 
+                        key={conversation.id}
+                        data-conv-id={conversation.id}
+                        className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Mobile conversation clicked:', conversation.id);
+                          setActiveConversation(conversation.id);
+                          setSelectedItem('item2');
+                          setCurrentView('chat');
+                          
+                          const matchingPair = exchangePairs.find(pair => pair.partnerId === conversation.id);
+                          if (matchingPair) {
+                            handlePairSelect(conversation.id, matchingPair.id);
+                          } else {
+                            resetSelectedPair();
+                          }
+                        }}
+                      >
+                        <div className="flex items-start gap-4">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage 
+                              src={conversation.otherUserProfile?.avatar_url || undefined} 
+                              alt={`${conversation.name}'s avatar`} 
+                            />
+                            <AvatarFallback>
+                              {conversation.name.substring(0, 1).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-center mb-1">
+                              <div className="font-medium truncate">
+                                {conversation.name}
+                              </div>
+                              <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
+                            </div>
+                            
+                            {exchangePair && (
+                              <div className="flex items-center mb-1 text-xs">
+                                <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
+                                <span className="mx-1 text-blue-600">↔</span>
+                                <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item1.name}</span>
+                              </div>
+                            )}
+                            
+                            <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <p className="text-gray-500">No conversations yet</p>
+                    <p className="text-sm text-gray-400 mt-2">Start trading to begin conversations!</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Chat View with Back Button */
+            <div className="h-full flex flex-col">
+              {/* Mobile Header with Back Button */}
+              <div className="flex items-center p-4 border-b border-gray-200 bg-white">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setCurrentView('conversations')}
+                  className="mr-3"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <span className="font-medium">{activeChat?.name}</span>
+              </div>
+              
+              {/* Chat Content */}
+              {activeConversation ? (
+                <div className="flex-1 flex flex-col">
+                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50">
+                    {messagesLoading ? (
+                      <div className="flex justify-center items-center h-full">
+                        <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
+                      </div>
+                    ) : messages.length > 0 ? (
+                      <div className="space-y-4">
+                        {messages.map((message: any) => (
+                          <TradeMessageBubble 
+                            key={message.id}
+                            message={message}
+                            senderName={message.sender_profile?.username || activeChat?.name || 'User'}
+                            onImageLoad={handleScrollToBottom}
+                            currentUserId={currentUserId}
+                          />
+                        ))}
+                        <div ref={scrollRef} />
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">Trade conversation started!</p>
+                        <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
+                        <div ref={scrollRef} />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex-shrink-0 border-t border-gray-200">
+                    <MessageInput 
+                      onMarkCompleted={() => handleTradeCompleted(activeConversation)}
+                      conversationId={activeConversation}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500">Select a conversation to start messaging</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Desktop Layout */
+        <div className="flex flex-1 min-h-0 overflow-hidden">
+          {/* Left sidebar - Conversations */}
+          <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">
           {conversations.length > 0 ? (
             <div className="flex flex-col h-full">
               <div ref={leftListRef} className="flex-1 overflow-y-auto">
@@ -287,6 +439,11 @@ const Messages = () => {
                         console.log('Conversation clicked:', conversation.id);
                         setActiveConversation(conversation.id);
                         setSelectedItem('item2'); // Reset to "Their Item" when clicking new conversation
+                        
+                        // Switch to chat view on mobile/tablet
+                        if (isMobile || isTablet) {
+                          setCurrentView('chat');
+                        }
                         
                         // Instead of resetting to null, find and set the correct pair
                         const matchingPair = exchangePairs.find(pair => pair.partnerId === conversation.id);
@@ -460,7 +617,7 @@ const Messages = () => {
         </div>
         
         {/* Right sidebar - Details panel with tabs */}
-        <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col h-full overflow-y-auto">{/* Add flex flex-col h-full overflow-y-auto for proper scrolling */}
+        <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col h-full overflow-y-auto">
           {selectedPair ? (
             <TradeDetailsTabs 
               selectedPair={selectedPair}
@@ -476,7 +633,8 @@ const Messages = () => {
             </div>
           )}
         </div>
-      </div>
+        </div>
+      )}
       <SupportChat />
     </div>
   );
