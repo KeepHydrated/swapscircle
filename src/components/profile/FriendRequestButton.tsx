@@ -147,12 +147,16 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
         }
       }
 
-      // Get requester profile for notification
-      const { data: requesterProfile } = await supabase
+      // Get requester profile for notification (refresh from database)
+      const { data: requesterProfile, error: profileError } = await supabase
         .from('profiles')
         .select('name, username')
         .eq('id', user.id)
         .single();
+
+      if (profileError) {
+        console.error('Error fetching requester profile:', profileError);
+      }
 
       const { error } = await supabase
         .from('friend_requests')
@@ -164,8 +168,9 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
 
       if (error) throw error;
       
-      // Create notification for recipient
+      // Create notification for recipient with current profile name
       const requesterName = requesterProfile?.name || requesterProfile?.username || 'Someone';
+      console.log('Creating friend request notification with name:', requesterName, 'for user:', user.id);
       try {
         await createFriendRequestNotification(userId, requesterName);
       } catch (notificationError) {
