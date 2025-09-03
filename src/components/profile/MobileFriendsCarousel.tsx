@@ -189,10 +189,10 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   console.log('🔄 COMPONENT RE-RENDER:', { currentIndex, currentItemId: currentItem?.id, timestamp: Date.now() });
 
   return (
-    <div className="flex flex-col h-full" key={`carousel-${currentIndex}-${Date.now()}`}>
-      {/* Debug header showing current item */}
-      <div className="bg-yellow-300 p-2 text-black text-center text-sm font-bold">
-        🎯 LIVE DEBUG: Item {currentIndex + 1} of {items.length} | Index: {currentIndex} | ID: {currentItem?.id?.slice(-8)} | Title: {currentItem?.title} | Time: {new Date().getSeconds()}
+    <div className="flex flex-col h-full">
+      {/* Debug header showing current item with forced update */}
+      <div className="bg-yellow-300 p-2 text-black text-center text-sm font-bold" key={currentIndex}>
+        🎯 LIVE DEBUG: Item {currentIndex + 1} of {items.length} | Index: {currentIndex} | ID: {currentItem?.id?.slice(-8) || 'NONE'} | Title: {currentItem?.title || 'NONE'} | Render: {Math.random().toString().slice(-4)}
       </div>
       
       {/* Card container */}
