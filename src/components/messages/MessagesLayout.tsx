@@ -158,11 +158,23 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
           )}
           
           {currentView === 'chat' && (
-            <ChatArea 
-              activeChat={activeChat} 
-              onSendFirstMessage={onSendFirstMessage}
-              onTradeCompleted={onTradeCompleted}
-            />
+            <>
+              {(() => {
+                console.log('🎬 RENDERING CHAT VIEW:', { 
+                  hasActiveChat: !!activeChat, 
+                  activeChatId: activeChat?.id, 
+                  activeChatName: activeChat?.name,
+                  currentView,
+                  activeConversation 
+                });
+                return null;
+              })()}
+              <ChatArea 
+                activeChat={activeChat} 
+                onSendFirstMessage={onSendFirstMessage}
+                onTradeCompleted={onTradeCompleted}
+              />
+            </>
           )}
           
           {currentView === 'details' && (
