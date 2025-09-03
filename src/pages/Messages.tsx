@@ -446,7 +446,12 @@ const Messages = () => {
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
-                  <span className="font-medium">{activeChat?.name}</span>
+                  <Link 
+                    to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
+                    className="font-medium hover:underline"
+                  >
+                    {activeChat?.name}
+                  </Link>
                 </div>
                 
                 {/* Toggle between Messages and Details - Mobile Only */}
