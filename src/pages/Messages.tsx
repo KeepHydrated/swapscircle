@@ -372,12 +372,12 @@ const Messages = () => {
               </div>
               
               {/* Mobile Chat Content with Side Panel */}
-              <div className="flex-1 flex">
+              <div className="flex-1 flex min-h-0">
                 {/* Chat Area */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col min-h-0">
                   {activeConversation ? (
                     <>
-                      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50">
+                      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
                         {messagesLoading ? (
                           <div className="flex justify-center items-center h-full">
                             <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
