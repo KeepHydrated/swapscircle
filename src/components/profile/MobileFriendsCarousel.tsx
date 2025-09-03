@@ -25,13 +25,15 @@ interface MobileFriendsCarouselProps {
   onLike?: (id: string) => void;
   onBackNavigation?: (currentIndex: number, canGoBack: boolean) => void;
   externalBackTrigger?: number; // Increment this to trigger back navigation
+  onBackButtonRegister?: (backFunction: () => void) => void; // Register the back function with parent
 }
 
 export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   items,
   onLike,
   onBackNavigation,
-  externalBackTrigger
+  externalBackTrigger,
+  onBackButtonRegister
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -104,6 +106,11 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     }
   }, [externalBackTrigger]);
 
+  // Register the back function with parent component
+  useEffect(() => {
+    onBackButtonRegister?.(handleGoBack);
+  }, [onBackButtonRegister, handleGoBack]);
+
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
   };
@@ -163,23 +170,6 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Debug and Back Button Header */}
-      <div className="flex items-center justify-between p-4 bg-gray-100 border-b">
-        <div className="text-sm text-gray-600">
-          Item {currentIndex + 1} of {items.length}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleGoBack}
-          disabled={currentIndex === 0}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </Button>
-      </div>
-      
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}

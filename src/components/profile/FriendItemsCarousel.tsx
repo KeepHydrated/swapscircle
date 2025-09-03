@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { MatchItem } from '@/types/item';
 import CarouselItemCard from './carousel/CarouselItemCard';
@@ -29,7 +29,20 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
 }) => {
   const [selectedItem, setSelectedItem] = useState<MatchItem | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [mobileBackFunction, setMobileBackFunction] = useState<(() => void) | null>(null);
   const isMobile = useIsMobile();
+
+  // Make the mobile back function available globally for the existing back button
+  useEffect(() => {
+    if (mobileBackFunction) {
+      // Make it available globally
+      (window as any).mobileCarouselGoBack = mobileBackFunction;
+      console.log('🔙 Mobile carousel back function registered globally');
+    }
+    return () => {
+      (window as any).mobileCarouselGoBack = null;
+    };
+  }, [mobileBackFunction]);
 
   const handleItemClick = (item: MatchItem) => {
     console.log("[FriendItemsCarousel] Opening modal for item:", item);
@@ -104,6 +117,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
       <MobileFriendsCarousel
         items={friendItems}
         onLike={onLikeItem}
+        onBackButtonRegister={setMobileBackFunction}
       />
     );
   }
