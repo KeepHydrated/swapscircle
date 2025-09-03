@@ -307,6 +307,32 @@ const Messages = () => {
                           setSelectedItem('item2');
                           setCurrentView('chat');
                           
+                          // Force scroll to bottom after view change
+                          console.log('🚀 MESSAGES PAGE: Starting scroll attempts after conversation click...');
+                          
+                          const forceScrollNow = () => {
+                            console.log('🔍 MESSAGES PAGE: Looking for message containers...');
+                            const containers = document.querySelectorAll('[data-messages-container]');
+                            console.log('📦 MESSAGES PAGE: Found containers:', containers.length);
+                            
+                            containers.forEach((container, index) => {
+                              if (container instanceof HTMLElement) {
+                                const beforeScroll = container.scrollTop;
+                                const scrollHeight = container.scrollHeight;
+                                container.scrollTop = scrollHeight;
+                                console.log(`📱 MESSAGES PAGE Container ${index}: before=${beforeScroll}, height=${scrollHeight}, after=${container.scrollTop}`);
+                              }
+                            });
+                          };
+                          
+                          // Multiple aggressive attempts with different delays
+                          [0, 50, 100, 200, 300, 500, 800, 1200, 1800].forEach((delay) => {
+                            setTimeout(() => {
+                              console.log(`⏰ MESSAGES PAGE scroll attempt after ${delay}ms`);
+                              forceScrollNow();
+                            }, delay);
+                          });
+                          
                           const matchingPair = exchangePairs.find(pair => pair.partnerId === conversation.id);
                           if (matchingPair) {
                             handlePairSelect(conversation.id, matchingPair.id);
