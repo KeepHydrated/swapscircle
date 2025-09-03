@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const TABLET_MIN_WIDTH = 768
-const TABLET_MAX_WIDTH = 1024
+const TABLET_MAX_WIDTH = 1366 // Increased to include iPad Pro
 
 export function useIsTablet() {
   const [isTablet, setIsTablet] = React.useState<boolean | undefined>(undefined)
@@ -12,6 +12,7 @@ export function useIsTablet() {
       setIsTablet(window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH)
     }
     mql.addEventListener("change", onChange)
+    console.log('TABLET DEBUG:', { width: window.innerWidth, isTablet: window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH })
     setIsTablet(window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth < TABLET_MAX_WIDTH)
     return () => mql.removeEventListener("change", onChange)
   }, [])
