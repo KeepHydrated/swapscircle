@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useRealtimeSupportMessages } from '@/hooks/useRealtimeSupportMessages';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SupportMessage {
   id: string;
@@ -33,6 +34,7 @@ interface SupportChatProps {
 
 const SupportChat = ({ embedded = false }: SupportChatProps) => {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [allHistoryItems, setAllHistoryItems] = useState<(SupportMessage | ConversationSeparator)[]>([]);
@@ -393,8 +395,8 @@ const SupportChat = ({ embedded = false }: SupportChatProps) => {
     );
   };
 
-  // Don't render anything if user is not logged in
-  if (!user) {
+  // Don't render anything if user is not logged in or if on mobile (since there's a dedicated page)
+  if (!user || (isMobile && !embedded)) {
     return null;
   }
 
