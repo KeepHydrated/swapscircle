@@ -40,6 +40,8 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
   const [currentView, setCurrentView] = useState<'conversations' | 'chat' | 'details'>('conversations');
   const [showDetails, setShowDetails] = useState(false);
 
+  console.log('MessagesLayout DEBUG:', { isMobile, isTablet, currentView, activeConversation });
+
   // Keep conversations view as default on mobile/tablet
   // Remove auto-switch to chat - user stays on conversation list
 
