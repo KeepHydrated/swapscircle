@@ -164,7 +164,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
       </div>
 
       {/* Item title and description */}
-      <div className="px-6 py-3 text-center bg-yellow-200">
+      <div className="px-6 py-3 text-center">
         <h3 className="text-lg font-semibold mb-2 text-black">{currentItem.title}</h3>
         <p className="text-sm text-black font-medium mb-2">{currentItem.description}</p>
         
