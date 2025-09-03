@@ -71,6 +71,9 @@ const Header = () => {
             <Link to="/">
               <ArrowLeftRight className="h-6 w-6 text-gray-500" />
             </Link>
+            <Link to="/messages">
+              <MessageCircle className="h-6 w-6 text-gray-500" />
+            </Link>
           </div>
         )}
 
