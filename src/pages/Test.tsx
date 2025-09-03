@@ -670,12 +670,18 @@ const Test: React.FC = () => {
                                 },
                                 allItems: formattedItems
                               });
-                              return (
-                                <MobileFriendsCarousel
-                                  items={formattedItems}
-                                  onLike={(id) => handleLikeFriendItem(id)}
-                                />
-                              );
+                              console.log('🔥 ABOUT TO RENDER MOBILE CAROUSEL');
+                              try {
+                                return (
+                                  <MobileFriendsCarousel
+                                    items={formattedItems}
+                                    onLike={(id) => handleLikeFriendItem(id)}
+                                  />
+                                );
+                              } catch (error) {
+                                console.error('🔥 ERROR RENDERING MOBILE CAROUSEL:', error);
+                                return <div>Error rendering mobile carousel</div>;
+                              }
                             } else {
                               return (
                                 <div className="overflow-x-auto overflow-y-hidden p-2">
