@@ -49,6 +49,12 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     }
   };
 
+  const handleGoBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
   };
@@ -108,19 +114,6 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header with back button */}
-      <div className="flex items-center p-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          className="mr-2"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <h2 className="text-lg font-semibold">Friend's Items</h2>
-      </div>
-      
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
@@ -156,7 +149,20 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
           )}
           
           {/* Action buttons overlaid on image */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3">
+            {/* Back button - only show if not on first item */}
+            {currentIndex > 0 && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleGoBack}
+                className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </Button>
+            )}
+            
+            {/* Reject button */}
             <Button
               variant="outline"
               size="icon"
@@ -165,6 +171,8 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             >
               <X className="w-6 h-6 text-gray-600" />
             </Button>
+            
+            {/* Like button */}
             <Button
               size="icon"
               onClick={handleSwipeRight}
