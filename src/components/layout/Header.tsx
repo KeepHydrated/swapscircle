@@ -71,7 +71,7 @@ const Header = () => {
 
           {/* Mobile center icons */}
           {isMobile && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-8">
               <Link to="/post-item">
                 <Plus className="h-6 w-6 text-gray-500" />
               </Link>
