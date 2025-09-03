@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SwipeCard } from '@/components/ui/swipe-card';
-import { Heart, X, ExternalLink } from 'lucide-react';
+import { Heart, X, ExternalLink, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
@@ -108,6 +108,19 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Header with back button */}
+      <div className="flex items-center p-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="mr-2"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <h2 className="text-lg font-semibold">Friend's Items</h2>
+      </div>
+      
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
