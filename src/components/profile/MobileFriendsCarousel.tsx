@@ -126,11 +126,17 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     // }
   }, [externalBackTrigger]);
 
-  // Re-enable back button with proper logic
+  // Re-enable back button with stable callback
   useEffect(() => {
-    console.log('✅ BACK BUTTON RE-ENABLED WITH FIX');
-    onBackButtonRegister?.(handleGoBack);
-  }, [onBackButtonRegister]);
+    console.log('✅ BACK BUTTON RE-ENABLED WITH STABLE CALLBACK');
+    const stableBackHandler = () => {
+      console.log('🔙 STABLE BACK HANDLER CALLED - Current Index:', currentIndex);
+      if (currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      }
+    };
+    onBackButtonRegister?.(stableBackHandler);
+  }, [onBackButtonRegister, currentIndex]);
 
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
