@@ -124,13 +124,32 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
               setActiveConversation={(id) => {
                 setActiveConversation(id);
                 setCurrentView('chat'); // Only switch to chat when user clicks a conversation
-                // Force scroll to bottom after view change with delay for mobile/tablet
-                setTimeout(() => {
+                
+                // Force scroll to bottom after view change with multiple attempts for mobile/tablet
+                const scrollToBottom = () => {
                   const messageContainer = document.querySelector('[data-messages-container]');
                   if (messageContainer) {
                     messageContainer.scrollTop = messageContainer.scrollHeight;
+                    console.log('📱 Mobile scroll forced:', messageContainer.scrollTop, '/', messageContainer.scrollHeight);
                   }
-                }, isMobile || isTablet ? 400 : 200);
+                };
+                
+                // Multiple attempts with increasing delays for mobile/tablet
+                if (isMobile || isTablet) {
+                  // Wait for view transition, then scroll multiple times
+                  setTimeout(scrollToBottom, 100);
+                  setTimeout(scrollToBottom, 300);
+                  setTimeout(scrollToBottom, 600);
+                  setTimeout(scrollToBottom, 1000);
+                  
+                  // Also use requestAnimationFrame
+                  requestAnimationFrame(() => {
+                    setTimeout(scrollToBottom, 100);
+                    requestAnimationFrame(() => {
+                      setTimeout(scrollToBottom, 200);
+                    });
+                  });
+                }
               }}
               exchangePairs={exchangePairs}
             />
