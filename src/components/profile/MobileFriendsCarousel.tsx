@@ -183,6 +183,11 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Debug header showing current item */}
+      <div className="bg-yellow-300 p-2 text-black text-center text-sm">
+        DEBUG: Item {currentIndex + 1} of {items.length} - ID: {currentItem?.id?.slice(-8)} - Title: {currentItem?.title}
+      </div>
+      
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
