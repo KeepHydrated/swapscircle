@@ -58,24 +58,12 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
               </Link>
             </Button>
             
-            <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen}>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="w-full justify-between h-12">
-                  <div className="flex items-center">
-                    <Settings className="mr-3 h-5 w-5" />
-                    <span>Settings</span>
-                  </div>
-                  {settingsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 pl-8">
-                <Button variant="ghost" className="w-full justify-start h-10" asChild>
-                  <Link to="/settings" onClick={() => onOpenChange(false)}>
-                    <span>Settings</span>
-                  </Link>
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
+            <Button variant="ghost" className="w-full justify-start h-12" asChild>
+              <Link to="/settings" onClick={() => onOpenChange(false)}>
+                <Settings className="mr-3 h-5 w-5" />
+                <span>Settings</span>
+              </Link>
+            </Button>
             
           </div>
           
