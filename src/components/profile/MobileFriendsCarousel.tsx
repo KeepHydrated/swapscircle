@@ -85,26 +85,26 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
               e.currentTarget.src = '/placeholder.svg';
             }}
           />
+          
+          {/* Action buttons overlaid on image */}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleSwipeLeft}
+              className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white"
+            >
+              <X className="w-6 h-6 text-gray-600" />
+            </Button>
+            <Button
+              size="icon"
+              onClick={handleSwipeRight}
+              className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg border-0"
+            >
+              <Heart className="w-6 h-6 text-white" />
+            </Button>
+          </div>
         </div>
-      </div>
-
-      {/* Action buttons */}
-      <div className="flex justify-center gap-4 mt-4 p-4">
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={handleSwipeLeft}
-          className="w-16 h-16 rounded-full border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-        >
-          <X className="w-6 h-6 text-gray-500" />
-        </Button>
-        <Button
-          size="lg"
-          onClick={handleSwipeRight}
-          className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600"
-        >
-          <Heart className="w-6 h-6 text-white" />
-        </Button>
       </div>
     </div>
   );
