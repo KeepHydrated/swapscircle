@@ -55,16 +55,16 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between h-16 px-4 md:px-6">
+      <div className="relative flex items-center justify-between h-16 px-4 md:px-6">
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
             {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
           </Link>
         </div>
 
-        {/* Swipe icon - only visible on mobile */}
+        {/* Swipe icon - centered on mobile */}
         {isMobile && (
-          <div className="flex items-center">
+          <div className="absolute left-1/2 transform -translate-x-1/2">
             <ArrowLeftRight className="h-6 w-6 text-gray-500" />
           </div>
         )}
