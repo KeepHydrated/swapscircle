@@ -51,6 +51,13 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
               </Link>
             </Button>
             
+            <Button variant="ghost" className="w-full justify-start h-12" asChild>
+              <Link to="/customer-support" onClick={() => onOpenChange(false)}>
+                <Headphones className="mr-3 h-5 w-5" />
+                <span>Customer Support</span>
+              </Link>
+            </Button>
+            
             <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-between h-12">
@@ -65,11 +72,6 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
                 <Button variant="ghost" className="w-full justify-start h-10" asChild>
                   <Link to="/settings" onClick={() => onOpenChange(false)}>
                     <span>Settings</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" className="w-full justify-start h-10" asChild>
-                  <Link to="/customer-support" onClick={() => onOpenChange(false)}>
-                    <span>Customer Support</span>
                   </Link>
                 </Button>
               </CollapsibleContent>
