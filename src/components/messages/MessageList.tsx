@@ -16,56 +16,37 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
-  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth', force = false) => {
-    console.log('🔽 Attempting scroll to bottom:', { behavior, force, isMobile, isTablet });
-    
-    if (containerRef.current) {
-      const container = containerRef.current;
-      const scrollHeight = container.scrollHeight;
-      const clientHeight = container.clientHeight;
-      const currentScrollTop = container.scrollTop;
-      
-      console.log('📏 Scroll metrics:', { scrollHeight, clientHeight, currentScrollTop });
-      
-      // Force scroll to bottom
-      container.scrollTop = scrollHeight;
-      
-      console.log('✅ Scroll completed, new scrollTop:', container.scrollTop);
-    }
-    
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior, block: 'end' });
-    }
+  const scrollToBottom = () => {
+    const scrollToBottomNow = () => {
+      if (containerRef.current) {
+        const container = containerRef.current;
+        container.scrollTop = container.scrollHeight;
+      }
+    };
+
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      scrollToBottomNow();
+      // Double-check after another frame for mobile/tablet
+      if (isMobile || isTablet) {
+        requestAnimationFrame(scrollToBottomNow);
+      }
+    });
   };
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    console.log('📨 Messages changed, scheduling scroll...', { messagesCount: messages.length });
-    
-    // Use longer delays for mobile/tablet and force multiple attempts
-    const delays = (isMobile || isTablet) ? [100, 300, 600, 1000] : [50, 150];
-    
-    delays.forEach((delay, index) => {
-      setTimeout(() => {
-        console.log(`🔄 Scroll attempt ${index + 1} after ${delay}ms`);
-        scrollToBottom(index === 0 ? 'auto' : 'smooth', true);
-      }, delay);
-    });
-  }, [messages, isMobile, isTablet]);
+    scrollToBottom();
+  }, [messages]);
 
-  // Ensure the entire content is visible on initial render
+  // Scroll on initial render
   useEffect(() => {
-    console.log('🎬 Initial render scroll setup');
-    
-    // More aggressive multiple attempts for mobile/tablet
-    const delays = (isMobile || isTablet) ? [200, 500, 800, 1200] : [100, 200];
-    
-    delays.forEach((delay, index) => {
-      setTimeout(() => {
-        console.log(`🚀 Initial scroll attempt ${index + 1} after ${delay}ms`);
-        scrollToBottom('auto', true);
-      }, delay);
-    });
+    // Multiple attempts with requestAnimationFrame for mobile/tablet
+    scrollToBottom();
+    if (isMobile || isTablet) {
+      setTimeout(scrollToBottom, 100);
+      setTimeout(scrollToBottom, 300);
+    }
   }, [isMobile, isTablet]);
 
   return (
