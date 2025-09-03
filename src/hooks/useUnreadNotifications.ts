@@ -42,7 +42,10 @@ export function useNotifications() {
       console.log('🔔 HOOK: Querying notifications table...');
       const { data, error } = await supabase
         .from('notifications')
-        .select('*')
+        .select(`
+          *,
+          sender_profile:profiles!action_by(name, username)
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
@@ -51,16 +54,26 @@ export function useNotifications() {
       if (error) throw error;
 
       // Map database fields to our interface
-      const mappedNotifications = (data || []).map((notification: any) => ({
-        id: notification.id,
-        type: notification.action_taken || 'message',
-        title: getNotificationTitle(notification.action_taken),
-        content: notification.message || 'No message content',
-        is_read: notification.status === 'read',
-        action_url: getActionUrl(notification.action_taken, notification.reference_id, notification.id),
-        reference_id: notification.reference_id,
-        created_at: notification.created_at
-      }));
+      const mappedNotifications = (data || []).map((notification: any) => {
+        let content = notification.message || 'No message content';
+        
+        // For friend requests, use the actual sender name if available
+        if (notification.action_taken === 'friend' && notification.sender_profile) {
+          const senderName = notification.sender_profile.name || notification.sender_profile.username || 'Someone';
+          content = `${senderName} sent you a friend request.`;
+        }
+        
+        return {
+          id: notification.id,
+          type: notification.action_taken || 'message',
+          title: getNotificationTitle(notification.action_taken),
+          content: content,
+          is_read: notification.status === 'read',
+          action_url: getActionUrl(notification.action_taken, notification.reference_id, notification.id),
+          reference_id: notification.reference_id,
+          created_at: notification.created_at
+        };
+      });
 
       console.log('🔔 HOOK: Mapped notifications with read status:', mappedNotifications.map(n => ({ id: n.id, is_read: n.is_read, status: n.is_read ? 'read' : 'unread' })));
 
