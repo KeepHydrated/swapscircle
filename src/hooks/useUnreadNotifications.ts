@@ -119,6 +119,15 @@ export function useNotifications() {
           }
         }
         
+        console.log('🔔 Processing notification:', { 
+          id: notification.id, 
+          action_taken: notification.action_taken,
+          action_by: notification.action_by,
+          reference_id: notification.reference_id,
+          content: content,
+          will_navigate_to: getActionUrl(notification.action_taken, notification.reference_id, notification.id, notification.action_by)
+        });
+        
         return {
           id: notification.id,
           type: notification.action_taken || 'message',
