@@ -72,13 +72,15 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   const handleSwipeRight = () => {
     console.log('❤️ LIKE BUTTON CLICKED - Current Index:', currentIndex, 'Total Items:', items.length);
+    console.log('❤️ LIKE: About to advance from index', currentIndex, 'to', currentIndex + 1);
     if (currentIndex < items.length) {
       const currentItem = items[currentIndex];
       console.log('❤️ Liking item:', currentItem.id, currentItem.title);
       onLike?.(currentItem.id);
       const newIndex = currentIndex + 1;
-      console.log('❤️ Advancing to next item, index:', newIndex);
+      console.log('❤️ LIKE: Setting currentIndex to:', newIndex);
       setCurrentIndex(newIndex);
+      console.log('❤️ LIKE: setCurrentIndex called with:', newIndex);
     } else {
       console.log('❤️ Cannot advance - at end of items');
     }
@@ -86,12 +88,14 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   const handleSwipeLeft = () => {
     console.log('❌ REJECT BUTTON CLICKED - Current Index:', currentIndex, 'Total Items:', items.length);
+    console.log('❌ REJECT: About to advance from index', currentIndex, 'to', currentIndex + 1);
     if (currentIndex < items.length) {
       const currentItem = items[currentIndex];
       console.log('❌ Rejecting item:', currentItem.id, currentItem.title);
       const newIndex = currentIndex + 1;
-      console.log('❌ Advancing to next item, index:', newIndex);
+      console.log('❌ REJECT: Setting currentIndex to:', newIndex);
       setCurrentIndex(newIndex);
+      console.log('❌ REJECT: setCurrentIndex called with:', newIndex);
     } else {
       console.log('❌ Cannot advance - at end of items');
     }
