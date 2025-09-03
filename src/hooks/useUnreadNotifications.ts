@@ -107,7 +107,7 @@ export function useNotifications() {
           title: getNotificationTitle(notification.action_taken),
           content: content,
           is_read: notification.status === 'read',
-          action_url: getActionUrl(notification.action_taken, notification.reference_id, notification.id),
+          action_url: getActionUrl(notification.action_taken, notification.reference_id, notification.id, notification.action_by),
           reference_id: notification.reference_id,
           created_at: notification.created_at
         };
@@ -149,7 +149,7 @@ export function useNotifications() {
     }
   };
   // Helper function to get action URL
-  const getActionUrl = (actionTaken: string, referenceId: string, notificationId: string) => {
+  const getActionUrl = (actionTaken: string, referenceId: string, notificationId: string, actionBy?: string) => {
     const isUuid = (v?: string) => !!v && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
     switch (actionTaken) {
       case 'message':
@@ -161,7 +161,8 @@ export function useNotifications() {
           ? `/messages?conversation=${referenceId}&partnerId=${referenceId}`
           : '/messages';
       case 'friend':
-        return `/other-person-profile?userId=${referenceId}`;
+        // Use action_by (requester ID) instead of reference_id (recipient ID) for friend requests
+        return actionBy ? `/other-person-profile?userId=${actionBy}` : `/other-person-profile?userId=${referenceId}`;
       case 'item_removed':
         return `/notifications/${notificationId}`; // Go to dedicated details page
       case 'trade':
