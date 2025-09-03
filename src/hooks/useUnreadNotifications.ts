@@ -42,10 +42,7 @@ export function useNotifications() {
       console.log('🔔 HOOK: Querying notifications table...');
       const { data, error } = await supabase
         .from('notifications')
-        .select(`
-          *,
-          sender_profile:profiles!action_by(name, username)
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
@@ -53,14 +50,27 @@ export function useNotifications() {
       console.log('🔔 HOOK: Query result:', { data, error, dataLength: data?.length });
       if (error) throw error;
 
-      // Map database fields to our interface
-      const mappedNotifications = (data || []).map((notification: any) => {
+      // Map database fields to our interface and fetch sender profiles for friend requests
+      const mappedNotifications = await Promise.all((data || []).map(async (notification: any) => {
         let content = notification.message || 'No message content';
         
-        // For friend requests, use the actual sender name if available
-        if (notification.action_taken === 'friend' && notification.sender_profile) {
-          const senderName = notification.sender_profile.name || notification.sender_profile.username || 'Someone';
-          content = `${senderName} sent you a friend request.`;
+        // For friend requests, fetch the actual sender name if action_by is available
+        if (notification.action_taken === 'friend' && notification.action_by) {
+          try {
+            const { data: senderProfile } = await supabase
+              .from('profiles')
+              .select('name, username')
+              .eq('id', notification.action_by)
+              .single();
+            
+            if (senderProfile) {
+              const senderName = senderProfile.name || senderProfile.username || 'Someone';
+              content = `${senderName} sent you a friend request.`;
+            }
+          } catch (profileError) {
+            console.error('Error fetching sender profile:', profileError);
+            // Keep the original message if profile fetch fails
+          }
         }
         
         return {
@@ -73,7 +83,7 @@ export function useNotifications() {
           reference_id: notification.reference_id,
           created_at: notification.created_at
         };
-      });
+      }));
 
       console.log('🔔 HOOK: Mapped notifications with read status:', mappedNotifications.map(n => ({ id: n.id, is_read: n.is_read, status: n.is_read ? 'read' : 'unread' })));
 
