@@ -473,6 +473,41 @@ export type Database = {
           },
         ]
       }
+      comment_votes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_votes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "website_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       creator_categories: {
         Row: {
           category_id: string
@@ -2485,6 +2520,117 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      website_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          updated_at: string
+          user_id: string
+          website_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id: string
+          website_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id?: string
+          website_id?: string
+        }
+        Relationships: []
+      }
+      website_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+          website_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+          website_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+          website_id?: string
+        }
+        Relationships: []
+      }
+      websites: {
+        Row: {
+          audience_rating: number | null
+          comments: number
+          created_at: string
+          description: string
+          id: string
+          likes: number
+          privacy_setting: string
+          professional_rating: number | null
+          screenshot_labels: string[] | null
+          screenshot_urls: string[] | null
+          title: string
+          updated_at: string
+          url: string
+          user_id: string
+          website_type: string
+        }
+        Insert: {
+          audience_rating?: number | null
+          comments?: number
+          created_at?: string
+          description: string
+          id?: string
+          likes?: number
+          privacy_setting?: string
+          professional_rating?: number | null
+          screenshot_labels?: string[] | null
+          screenshot_urls?: string[] | null
+          title: string
+          updated_at?: string
+          url: string
+          user_id: string
+          website_type: string
+        }
+        Update: {
+          audience_rating?: number | null
+          comments?: number
+          created_at?: string
+          description?: string
+          id?: string
+          likes?: number
+          privacy_setting?: string
+          professional_rating?: number | null
+          screenshot_labels?: string[] | null
+          screenshot_urls?: string[] | null
+          title?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+          website_type?: string
+        }
+        Relationships: []
       }
     }
     Views: {
