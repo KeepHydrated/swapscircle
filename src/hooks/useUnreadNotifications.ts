@@ -55,7 +55,7 @@ export function useNotifications() {
         let content = notification.message || 'No message content';
         
         // For friend requests, always try to get the correct sender name and override the message
-        if (notification.action_taken === 'friend') {
+        if (notification.action_taken === 'friend' || notification.action_taken === 'friend_accepted') {
           let senderName = 'Someone';
           
           console.log('🔔 Processing friend notification:', { 
@@ -112,7 +112,11 @@ export function useNotifications() {
           
           console.log('🔔 Final sender name for notification:', senderName);
           // Always override the content for friend requests with the fetched name
-          content = `${senderName} sent you a friend request.`;
+          if (notification.action_taken === 'friend') {
+            content = `${senderName} sent you a friend request.`;
+          } else if (notification.action_taken === 'friend_accepted') {
+            content = `${senderName} accepted your friend request.`;
+          }
         }
         
         return {
@@ -150,6 +154,8 @@ export function useNotifications() {
         return 'New Match!';
       case 'friend':
         return 'Friend Request';
+      case 'friend_accepted':
+        return 'Friend Request Accepted';
       case 'message':
         return 'New Message';
       case 'trade':

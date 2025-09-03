@@ -20,7 +20,7 @@ export const createNotification = async (params: CreateNotificationParams) => {
         type: 'comment', // Default to comment type since that's what the DB supports
         message: `${params.title}: ${params.content}`,
         reference_id: params.relatedId || '',
-        action_taken: params.type,
+        action_taken: params.type === 'friend' && params.title.includes('accepted') ? 'friend_accepted' : params.type,
         action_by: params.actionBy, // Add this field
         status: 'unread'
       });
@@ -46,13 +46,14 @@ export const createFriendRequestNotification = async (recipientId: string, reque
   });
 };
 
-export const createFriendRequestAcceptedNotification = async (requesterId: string, accepterName: string) => {
+export const createFriendRequestAcceptedNotification = async (requesterId: string, accepterName: string, accepterId?: string) => {
   await createNotification({
     userId: requesterId,
     type: 'friend',
     title: 'Friend request accepted',
     content: `${accepterName} accepted your friend request.`,
-    relatedId: requesterId
+    relatedId: requesterId,
+    actionBy: accepterId // Pass the accepter's ID so we can fetch their name
   });
 };
 
