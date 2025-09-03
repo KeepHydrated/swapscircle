@@ -39,6 +39,34 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   const [touchStartX, setTouchStartX] = useState(0);
   const navigate = useNavigate();
 
+  // Add browser back button detection
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      console.log('🔙 BROWSER BACK BUTTON DETECTED');
+      event.preventDefault();
+      handleGoBack();
+      // Push state back to prevent actual navigation
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    // Push initial state to enable back button detection
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentIndex]);
+
+  // Debug current state
+  useEffect(() => {
+    console.log('🎯 CAROUSEL STATE CHANGED:', { 
+      currentIndex, 
+      totalItems: items.length, 
+      canGoBack: currentIndex > 0 
+    });
+  }, [currentIndex, items.length]);
+
   const handleSwipeRight = () => {
     if (currentIndex < items.length) {
       const currentItem = items[currentIndex];
@@ -54,8 +82,13 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   };
 
   const handleGoBack = () => {
+    console.log('🔙 BACK BUTTON PRESSED - Current Index:', currentIndex);
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      const newIndex = currentIndex - 1;
+      console.log('🔙 Moving back to index:', newIndex);
+      setCurrentIndex(newIndex);
+    } else {
+      console.log('🔙 Cannot go back - already at first item');
     }
   };
 
