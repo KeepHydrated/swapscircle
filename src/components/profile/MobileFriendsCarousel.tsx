@@ -181,11 +181,14 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     currentItemTitle: currentItem?.title
   });
 
+  // Force re-render by adding key
+  console.log('🔄 COMPONENT RE-RENDER:', { currentIndex, currentItemId: currentItem?.id, timestamp: Date.now() });
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" key={`carousel-${currentIndex}-${Date.now()}`}>
       {/* Debug header showing current item */}
-      <div className="bg-yellow-300 p-2 text-black text-center text-sm">
-        DEBUG: Item {currentIndex + 1} of {items.length} - ID: {currentItem?.id?.slice(-8)} - Title: {currentItem?.title}
+      <div className="bg-yellow-300 p-2 text-black text-center text-sm font-bold">
+        🎯 LIVE DEBUG: Item {currentIndex + 1} of {items.length} | Index: {currentIndex} | ID: {currentItem?.id?.slice(-8)} | Title: {currentItem?.title} | Time: {new Date().getSeconds()}
       </div>
       
       {/* Card container */}
