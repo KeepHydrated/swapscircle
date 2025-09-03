@@ -162,6 +162,11 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Item title */}
+      <div className="px-6 py-3">
+        <h3 className="text-lg font-semibold text-center">{currentItem.title}</h3>
+      </div>
     </div>
   );
 };
