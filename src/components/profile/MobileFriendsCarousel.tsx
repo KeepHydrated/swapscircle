@@ -30,6 +30,9 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   onLike
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(0);
   const navigate = useNavigate();
 
   const handleSwipeRight = () => {
@@ -48,6 +51,38 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
+  };
+
+  // Touch/swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setTouchStartX(e.touches[0].clientX);
+    setSwipeOffset(0);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    
+    const currentX = e.touches[0].clientX;
+    const offset = currentX - touchStartX;
+    
+    setSwipeOffset(Math.max(-150, Math.min(150, offset)));
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    
+    setIsDragging(false);
+    
+    if (Math.abs(swipeOffset) > 75) {
+      if (swipeOffset > 0) {
+        handleSwipeRight(); // Swipe right for approval
+      } else {
+        handleSwipeLeft(); // Swipe left for rejection
+      }
+    }
+    
+    setSwipeOffset(0);
   };
 
   if (currentIndex >= items.length) {
@@ -76,15 +111,36 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
-        <div className="absolute inset-4 bg-white rounded-xl shadow-lg overflow-hidden">
+        <div 
+          className="absolute inset-4 bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-150"
+          style={{ 
+            transform: `translateX(${swipeOffset}px) rotate(${swipeOffset * 0.1}deg)`,
+            opacity: isDragging ? 0.9 : 1
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <img
             src={currentItem.image}
             alt={currentItem.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover pointer-events-none"
             onError={(e) => {
               e.currentTarget.src = '/placeholder.svg';
             }}
           />
+          
+          {/* Swipe indicator overlays */}
+          {isDragging && swipeOffset > 50 && (
+            <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+              <Heart className="w-16 h-16 text-green-500" />
+            </div>
+          )}
+          {isDragging && swipeOffset < -50 && (
+            <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+              <X className="w-16 h-16 text-red-500" />
+            </div>
+          )}
           
           {/* Action buttons overlaid on image */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
