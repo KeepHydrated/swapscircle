@@ -72,104 +72,24 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   });
 
   return (
-    <div className="flex flex-col h-full p-4">
-      {/* Progress indicator */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-600">
-            {currentIndex + 1} of {items.length}
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentIndex + 1) / items.length) * 100}%` }}
+    <div className="flex flex-col h-full">
+      {/* Card container */}
+      <div className="flex-1 relative">
+        {/* Current card - just the image */}
+        <div className="absolute inset-0 bg-white rounded-xl shadow-lg overflow-hidden">
+          <img
+            src={currentItem.image}
+            alt={currentItem.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = '/placeholder.svg';
+            }}
           />
         </div>
       </div>
 
-      {/* Card stack */}
-      <div className="flex-1 relative min-h-[500px] bg-purple-200 border-4 border-purple-500">
-        <div className="text-red-500 text-lg p-4 bg-yellow-300 absolute top-0 left-0 z-50">
-          CAROUSEL CONTAINER - Index: {currentIndex}, Total: {items.length}
-        </div>
-        
-        {/* Show next card behind current one */}
-        {currentIndex + 1 < items.length && (
-          <div className="absolute inset-0 transform scale-95 opacity-50 z-0">
-            <div className="bg-white rounded-xl shadow-lg h-full">
-              <img
-                src={items[currentIndex + 1].image}
-                alt={items[currentIndex + 1].title}
-                className="w-full h-48 object-cover rounded-t-xl"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Current card */}
-        <div className="absolute inset-0 z-10 bg-red-100 border-2 border-red-500 p-4">
-          <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
-            <div className="relative flex-shrink-0 bg-blue-100">
-              <img
-                src={currentItem.image}
-                alt={currentItem.title}
-                className="w-full h-48 object-cover block"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
-                style={{ display: 'block', width: '100%', height: '192px' }}
-              />
-              {currentItem.distance && (
-                <Badge className="absolute top-2 right-2 bg-white/90 text-gray-800">
-                  {currentItem.distance}
-                </Badge>
-              )}
-            </div>
-            
-            <div className="p-4 flex-1 flex flex-col bg-green-100">
-              {/* Debug info */}
-              <div className="text-xs text-red-500 mb-2 bg-yellow-200 p-2">
-                DEBUG: {currentItem.title} | {currentItem.category} | {currentItem.condition}
-              </div>
-              
-              <h3 className="font-semibold text-lg mb-3 text-gray-900 bg-white p-2">{currentItem.title}</h3>
-              
-              <div className="flex items-center justify-between mb-4 bg-white p-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-xs">
-                    {currentItem.user.name?.substring(0, 1) || 'U'}
-                  </div>
-                  <span className="text-sm text-gray-700">{currentItem.user.name}</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleViewProfile(currentItem.user.id)}
-                  className="text-blue-600 hover:text-blue-700 p-1"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </Button>
-              </div>
-
-              {/* Description and category below item details */}
-              <div className="mb-4 bg-white p-2">
-                <p className="text-gray-600 text-sm mb-2">{currentItem.description}</p>
-                <div className="text-sm text-gray-500">
-                  Condition: {currentItem.condition} • Category: {currentItem.category}
-                </div>
-              </div>
-
-              <div className="text-center text-gray-500 text-sm bg-white p-2">
-                Swipe right to like, left to pass
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Action buttons */}
-      <div className="flex justify-center gap-4 mt-4">
+      <div className="flex justify-center gap-4 mt-4 p-4">
         <Button
           variant="outline"
           size="lg"
