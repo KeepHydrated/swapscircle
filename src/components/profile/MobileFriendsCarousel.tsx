@@ -115,10 +115,9 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             </div>
             
             <div className="p-4 flex-1 flex flex-col">
-              <h3 className="font-semibold text-lg mb-1">{currentItem.title}</h3>
-              <p className="text-gray-600 text-sm mb-2">{currentItem.description}</p>
+              <h3 className="font-semibold text-lg mb-3">{currentItem.title}</h3>
               
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <img
                     src={currentItem.user.avatar_url || '/placeholder.svg'}
@@ -137,8 +136,12 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
                 </Button>
               </div>
 
-              <div className="text-sm text-gray-500 mb-4">
-                Condition: {currentItem.condition} • Category: {currentItem.category}
+              {/* Description and category below item details */}
+              <div className="mb-4">
+                <p className="text-gray-600 text-sm mb-2">{currentItem.description}</p>
+                <div className="text-sm text-gray-500">
+                  Condition: {currentItem.condition} • Category: {currentItem.category}
+                </div>
               </div>
 
               <div className="text-center text-gray-500 text-sm">
