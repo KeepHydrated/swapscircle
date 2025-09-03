@@ -8,6 +8,7 @@ interface CreateNotificationParams {
   title: string;
   content: string;
   relatedId?: string;
+  actionBy?: string; // Add this field
 }
 
 export const createNotification = async (params: CreateNotificationParams) => {
@@ -20,6 +21,7 @@ export const createNotification = async (params: CreateNotificationParams) => {
         message: `${params.title}: ${params.content}`,
         reference_id: params.relatedId || '',
         action_taken: params.type,
+        action_by: params.actionBy, // Add this field
         status: 'unread'
       });
 
@@ -33,13 +35,14 @@ export const createNotification = async (params: CreateNotificationParams) => {
 };
 
 // Friend request notifications
-export const createFriendRequestNotification = async (recipientId: string, requesterName: string) => {
+export const createFriendRequestNotification = async (recipientId: string, requesterName: string, requesterId?: string) => {
   await createNotification({
     userId: recipientId,
     type: 'friend',
     title: 'New friend request',
     content: `${requesterName} sent you a friend request.`,
-    relatedId: recipientId
+    relatedId: recipientId,
+    actionBy: requesterId // Add the requester ID
   });
 };
 

@@ -172,7 +172,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       const requesterName = requesterProfile?.name || requesterProfile?.username || 'Someone';
       console.log('Creating friend request notification with name:', requesterName, 'for user:', user.id);
       try {
-        await createFriendRequestNotification(userId, requesterName);
+        await createFriendRequestNotification(userId, requesterName, user.id);
       } catch (notificationError) {
         console.error('Error creating notification:', notificationError);
         // Don't fail the friend request if notification fails
