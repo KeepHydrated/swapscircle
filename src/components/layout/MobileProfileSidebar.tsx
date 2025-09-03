@@ -77,14 +77,6 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
               </CollapsibleContent>
             </Collapsible>
             
-            {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
-              <Button variant="ghost" className="w-full justify-start h-12" asChild>
-                <Link to="/admin/reports" onClick={() => onOpenChange(false)}>
-                  <Flag className="mr-3 h-5 w-5" />
-                  <span>Admin Reports</span>
-                </Link>
-              </Button>
-            )}
           </div>
           
           {supabaseConfigured && (
