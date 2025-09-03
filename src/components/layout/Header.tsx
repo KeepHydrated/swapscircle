@@ -1,10 +1,10 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
 import NotificationDropdown from './NotificationDropdown';
+import MobileProfileSidebar from './MobileProfileSidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,12 +18,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { toast } from 'sonner';
 import { useNotifications } from '@/hooks/useUnreadNotifications';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { SidebarProvider, useSidebar } from '@/components/ui/sidebar';
 
-const Header = () => {
+const HeaderContent = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
   const isMobile = useIsMobile();
+  const sidebarContext = isMobile ? useSidebar() : null;
 
   const handleLogout = async () => {
     await signOut();
@@ -38,7 +40,6 @@ const Header = () => {
     }
     navigate('/auth');
   };
-
 
   const getInitials = (name?: string) => {
     if (!name) return 'U';
@@ -112,72 +113,91 @@ const Header = () => {
               
               <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
               
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      {user?.avatar_url ? (
-                        <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
-                      ) : null}
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                        {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white">
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile" className="flex w-full cursor-pointer items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/trades" className="flex w-full cursor-pointer items-center">
-                      <Handshake className="mr-2 h-4 w-4" />
-                      <span>Trades</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
-                      <Heart className="mr-2 h-4 w-4" />
-                      <span>Your Likes</span>
-                    </Link>
-                  </DropdownMenuItem>
-                   <DropdownMenuItem asChild>
-                     <Link to="/settings" className="flex w-full cursor-pointer items-center">
-                       <Settings className="mr-2 h-4 w-4" />
-                       <span>Settings</span>
-                     </Link>
+              {/* Profile menu - Mobile: sidebar trigger, Desktop: dropdown */}
+              {isMobile ? (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="relative h-8 w-8 rounded-full"
+                  onClick={() => sidebarContext?.setOpenMobile(true)}
+                >
+                  <Avatar className="h-8 w-8">
+                    {user?.avatar_url ? (
+                      <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
+                    ) : null}
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                      {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              ) : (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        {user?.avatar_url ? (
+                          <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
+                        ) : null}
+                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                          {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-white">
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex w-full cursor-pointer items-center">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
                     </DropdownMenuItem>
-                     {user?.email === 'nadiachibri@gmail.com' && (
-                       <DropdownMenuItem asChild>
-                         <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
-                           <Headphones className="mr-2 h-4 w-4" />
-                           <span>Customer Support</span>
-                         </Link>
+                    <DropdownMenuItem asChild>
+                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
+                        <Handshake className="mr-2 h-4 w-4" />
+                        <span>Trades</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
+                        <Heart className="mr-2 h-4 w-4" />
+                        <span>Your Likes</span>
+                      </Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                        <Link to="/settings" className="flex w-full cursor-pointer items-center">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Settings</span>
+                        </Link>
+                       </DropdownMenuItem>
+                        {user?.email === 'nadiachibri@gmail.com' && (
+                          <DropdownMenuItem asChild>
+                            <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
+                              <Headphones className="mr-2 h-4 w-4" />
+                              <span>Customer Support</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        )}
+                        {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
+                            <Flag className="mr-2 h-4 w-4" />
+                            <span>Admin Reports</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                     {supabaseConfigured && (
+                       <DropdownMenuItem 
+                         className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
+                         onClick={handleLogout}
+                       >
+                         <LogOut className="mr-2 h-4 w-4" />
+                         <span>Log Out</span>
                        </DropdownMenuItem>
                      )}
-                     {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
-                     <DropdownMenuItem asChild>
-                       <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
-                         <Flag className="mr-2 h-4 w-4" />
-                         <span>Admin Reports</span>
-                       </Link>
-                     </DropdownMenuItem>
-                   )}
-                   <DropdownMenuSeparator />
-                  {supabaseConfigured && (
-                    <DropdownMenuItem 
-                      className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log Out</span>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </>
           ) : !isAuthPage ? (
             <Button 
@@ -195,6 +215,21 @@ const Header = () => {
         </div>
       </div>
     </header>
+  );
+};
+
+const Header = () => {
+  const isMobile = useIsMobile();
+  
+  return isMobile ? (
+    <SidebarProvider>
+      <div className="w-full">
+        <HeaderContent />
+        <MobileProfileSidebar />
+      </div>
+    </SidebarProvider>
+  ) : (
+    <HeaderContent />
   );
 };
 
