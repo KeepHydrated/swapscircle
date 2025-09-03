@@ -104,17 +104,13 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
         )}
 
         {/* Current card */}
-        <SwipeCard
-          onSwipeLeft={handleSwipeLeft}
-          onSwipeRight={handleSwipeRight}
-          className="absolute inset-0 z-10"
-        >
+        <div className="absolute inset-0 z-10 bg-red-100 border-2 border-red-500">
           <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
-            <div className="relative flex-shrink-0">
+            <div className="relative flex-shrink-0 bg-blue-100">
               <img
                 src={currentItem.image}
                 alt={currentItem.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-cover block"
                 onError={(e) => {
                   e.currentTarget.src = '/placeholder.svg';
                 }}
@@ -127,21 +123,19 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
               )}
             </div>
             
-            <div className="p-4 flex-1 flex flex-col">
+            <div className="p-4 flex-1 flex flex-col bg-green-100">
               {/* Debug info */}
-              <div className="text-xs text-red-500 mb-2">
+              <div className="text-xs text-red-500 mb-2 bg-yellow-200 p-2">
                 DEBUG: {currentItem.title} | {currentItem.category} | {currentItem.condition}
               </div>
               
-              <h3 className="font-semibold text-lg mb-3 text-gray-900">{currentItem.title}</h3>
+              <h3 className="font-semibold text-lg mb-3 text-gray-900 bg-white p-2">{currentItem.title}</h3>
               
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-4 bg-white p-2">
                 <div className="flex items-center gap-2">
-                  <img
-                    src={currentItem.user.avatar_url || '/placeholder.svg'}
-                    alt={currentItem.user.name}
-                    className="w-6 h-6 rounded-full"
-                  />
+                  <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-xs">
+                    {currentItem.user.name?.substring(0, 1) || 'U'}
+                  </div>
                   <span className="text-sm text-gray-700">{currentItem.user.name}</span>
                 </div>
                 <Button
@@ -155,19 +149,19 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
               </div>
 
               {/* Description and category below item details */}
-              <div className="mb-4">
+              <div className="mb-4 bg-white p-2">
                 <p className="text-gray-600 text-sm mb-2">{currentItem.description}</p>
                 <div className="text-sm text-gray-500">
                   Condition: {currentItem.condition} • Category: {currentItem.category}
                 </div>
               </div>
 
-              <div className="text-center text-gray-500 text-sm">
+              <div className="text-center text-gray-500 text-sm bg-white p-2">
                 Swipe right to like, left to pass
               </div>
             </div>
           </div>
-        </SwipeCard>
+        </div>
       </div>
 
       {/* Action buttons */}
