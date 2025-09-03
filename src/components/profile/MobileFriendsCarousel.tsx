@@ -100,12 +100,16 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
           onSwipeRight={handleSwipeRight}
           className="absolute inset-0 z-10"
         >
-          <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden">
-            <div className="relative">
+          <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
+            <div className="relative flex-shrink-0">
               <img
                 src={currentItem.image}
                 alt={currentItem.title}
                 className="w-full h-48 object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+                style={{ display: 'block', width: '100%', height: '192px' }}
               />
               {currentItem.distance && (
                 <Badge className="absolute top-2 right-2 bg-white/90 text-gray-800">
