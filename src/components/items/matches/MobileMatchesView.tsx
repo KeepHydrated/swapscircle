@@ -102,17 +102,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             </div>
             
             <div className="p-4 flex-1 flex flex-col">
-              <h3 className="font-semibold text-lg mb-1">{currentMatch.name}</h3>
-              <p className="text-gray-600 text-sm mb-3">{currentMatch.description}</p>
+              <h3 className="font-semibold text-lg mb-3">{currentMatch.name}</h3>
               
               {/* Item details grid */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <div>
-                  <div className="text-sm font-medium text-gray-800">{currentMatch.category || 'N/A'}</div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-800">N/A</div>
-                </div>
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
                   <div className="text-sm font-medium text-gray-800">{currentMatch.condition || 'N/A'}</div>
                 </div>
@@ -124,6 +117,12 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                     }
                   </div>
                 </div>
+              </div>
+
+              {/* Description and category below item details */}
+              <div className="mb-3">
+                <p className="text-gray-600 text-sm mb-2">{currentMatch.description}</p>
+                <div className="text-sm font-medium text-gray-800">{currentMatch.category || 'N/A'}</div>
               </div>
               
               {currentMatch.userProfile && (
