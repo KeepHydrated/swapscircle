@@ -455,7 +455,20 @@ const Messages = () => {
                     <Button
                       variant={currentMobileView === 'messages' ? 'default' : 'ghost'}
                       size="sm"
-                      onClick={() => setCurrentMobileView('messages')}
+                      onClick={() => {
+                        setCurrentMobileView('messages');
+                        
+                        // Force scroll to bottom when switching back to messages tab
+                        console.log('🔄 TAB SWITCH: Switching to messages tab, forcing scroll...');
+                        
+                        // Multiple attempts with delays to ensure content is rendered
+                        [100, 300, 500, 800].forEach((delay) => {
+                          setTimeout(() => {
+                            console.log(`⏰ TAB SCROLL after ${delay}ms`);
+                            forceScrollToBottom();
+                          }, delay);
+                        });
+                      }}
                       className="px-3 py-1 text-xs"
                     >
                       <MessageSquare className="h-4 w-4 mr-1" />
