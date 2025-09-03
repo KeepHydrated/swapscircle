@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SwipeCard } from '@/components/ui/swipe-card';
 import { Heart, X, ExternalLink, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -101,19 +101,17 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     }
   };
 
-  const handleGoBack = useCallback(() => {
+  const handleGoBack = () => {
     console.log('🔙 BACK BUTTON PRESSED - Current Index:', currentIndex);
-    console.trace('🔍 BACK BUTTON CALL STACK:');
-    setCurrentIndex(prev => {
-      if (prev > 0) {
-        console.log('🔙 Moving back from index:', prev, 'to:', prev - 1);
-        return prev - 1;
-      } else {
-        console.log('🔙 Cannot go back - already at first item');
-        return prev;
-      }
-    });
-  }, [currentIndex]);
+    console.trace('🔍 BACK BUTTON CALL STACK:'); // This will show what called this function
+    if (currentIndex > 0) {
+      const newIndex = currentIndex - 1;
+      console.log('🔙 Moving back to index:', newIndex);
+      setCurrentIndex(newIndex);
+    } else {
+      console.log('🔙 Cannot go back - already at first item');
+    }
+  };
 
   // Notify parent about navigation state changes
   useEffect(() => {
@@ -128,10 +126,10 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     // }
   }, [externalBackTrigger]);
 
-  // Register the stable back button handler
+  // TEMPORARILY DISABLE back button to test reject functionality 
   useEffect(() => {
-    console.log('✅ REGISTERING STABLE BACK BUTTON HANDLER');
-    onBackButtonRegister?.(handleGoBack);
+    console.log('🚫 TEMPORARILY DISABLING BACK BUTTON TO TEST REJECT');
+    // onBackButtonRegister?.(handleGoBack);
   }, [onBackButtonRegister, handleGoBack]);
 
   const handleViewProfile = (userId: string) => {
@@ -235,23 +233,21 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             </div>
           )}
           
-          {/* Action buttons overlaid on image with higher z-index */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4 z-50 pointer-events-auto">
+          {/* Action buttons overlaid on image */}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
             {/* Reject button */}
             <Button
               variant="outline"
               size="icon"
               onClick={(e) => {
                 console.log('❌ REJECT BUTTON ELEMENT CLICKED!');
-                console.log('❌ Event details:', e);
                 e.preventDefault();
                 e.stopPropagation();
                 handleSwipeLeft();
               }}
-              className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white pointer-events-auto"
-              style={{ zIndex: 1000 }}
+              className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white"
             >
-              <X className="w-6 h-6 text-gray-600 pointer-events-none" />
+              <X className="w-6 h-6 text-gray-600" />
             </Button>
             
             {/* Like button */}
@@ -259,15 +255,13 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
               size="icon"
               onClick={(e) => {
                 console.log('❤️ LIKE BUTTON ELEMENT CLICKED!');
-                console.log('❤️ Event details:', e);
                 e.preventDefault();
                 e.stopPropagation();
                 handleSwipeRight();
               }}
-              className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg border-0 pointer-events-auto"
-              style={{ zIndex: 1000 }}
+              className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg border-0"
             >
-              <Heart className="w-6 h-6 text-white pointer-events-none" />
+              <Heart className="w-6 h-6 text-white" />
             </Button>
           </div>
         </div>
