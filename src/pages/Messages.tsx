@@ -22,17 +22,35 @@ import MessageInput from '@/components/messages/MessageInput';
 // Force scroll helper for tablet/mobile
 const forceScrollToBottom = () => {
   console.log('🔍 FORCE SCROLL: Looking for message containers...');
-  const containers = document.querySelectorAll('[data-messages-container]');
-  console.log('📦 FORCE SCROLL: Found containers:', containers.length);
   
-  containers.forEach((container, index) => {
-    if (container instanceof HTMLElement) {
-      const beforeScroll = container.scrollTop;
-      const scrollHeight = container.scrollHeight;
-      container.scrollTop = scrollHeight;
-      console.log(`📱 FORCE SCROLL Container ${index}: before=${beforeScroll}, height=${scrollHeight}, after=${container.scrollTop}`);
-    }
+  // Try multiple selectors to find the message container
+  const selectors = [
+    '[data-messages-container]',
+    '.overflow-y-auto.p-4.bg-gray-50',  // The actual container class in Messages.tsx
+    '.flex-1.overflow-y-auto.p-4.bg-gray-50',
+    '.space-y-4'  // The messages wrapper
+  ];
+  
+  let foundContainer = false;
+  
+  selectors.forEach((selector, selectorIndex) => {
+    const containers = document.querySelectorAll(selector);
+    console.log(`📦 FORCE SCROLL: Selector ${selectorIndex} (${selector}): Found ${containers.length} containers`);
+    
+    containers.forEach((container, index) => {
+      if (container instanceof HTMLElement && container.scrollHeight > container.clientHeight) {
+        const beforeScroll = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        container.scrollTop = scrollHeight;
+        foundContainer = true;
+        console.log(`📱 FORCE SCROLL: Scrolled selector ${selectorIndex} container ${index}: before=${beforeScroll}, height=${scrollHeight}, after=${container.scrollTop}`);
+      }
+    });
   });
+  
+  if (!foundContainer) {
+    console.log('❌ FORCE SCROLL: No scrollable containers found');
+  }
 };
 import TradeMessageBubble from '@/components/messages/TradeMessageBubble';
 
