@@ -659,6 +659,15 @@ const Test: React.FC = () => {
                                 displayedFriendItemsCount: displayedFriendItems.length,
                                 formattedItemsCount: formattedItems.length,
                                 firstItem: formattedItems[0],
+                                firstItemDetails: {
+                                  id: formattedItems[0]?.id,
+                                  title: formattedItems[0]?.title,
+                                  image: formattedItems[0]?.image,
+                                  description: formattedItems[0]?.description,
+                                  condition: formattedItems[0]?.condition,
+                                  category: formattedItems[0]?.category,
+                                  userName: formattedItems[0]?.user?.name
+                                },
                                 allItems: formattedItems
                               });
                               return (
