@@ -89,7 +89,11 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
       </div>
 
       {/* Card stack */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-[500px] bg-purple-200 border-4 border-purple-500">
+        <div className="text-red-500 text-lg p-4 bg-yellow-300 absolute top-0 left-0 z-50">
+          CAROUSEL CONTAINER - Index: {currentIndex}, Total: {items.length}
+        </div>
+        
         {/* Show next card behind current one */}
         {currentIndex + 1 < items.length && (
           <div className="absolute inset-0 transform scale-95 opacity-50 z-0">
@@ -104,7 +108,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
         )}
 
         {/* Current card */}
-        <div className="absolute inset-0 z-10 bg-red-100 border-2 border-red-500">
+        <div className="absolute inset-0 z-10 bg-red-100 border-2 border-red-500 p-4">
           <div className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
             <div className="relative flex-shrink-0 bg-blue-100">
               <img
