@@ -70,16 +70,29 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   }, [currentIndex, items.length]);
 
   const handleSwipeRight = () => {
+    console.log('❤️ LIKE BUTTON CLICKED - Current Index:', currentIndex, 'Total Items:', items.length);
     if (currentIndex < items.length) {
       const currentItem = items[currentIndex];
+      console.log('❤️ Liking item:', currentItem.id, currentItem.title);
       onLike?.(currentItem.id);
-      setCurrentIndex(prev => prev + 1);
+      const newIndex = currentIndex + 1;
+      console.log('❤️ Advancing to next item, index:', newIndex);
+      setCurrentIndex(newIndex);
+    } else {
+      console.log('❤️ Cannot advance - at end of items');
     }
   };
 
   const handleSwipeLeft = () => {
+    console.log('❌ REJECT BUTTON CLICKED - Current Index:', currentIndex, 'Total Items:', items.length);
     if (currentIndex < items.length) {
-      setCurrentIndex(prev => prev + 1);
+      const currentItem = items[currentIndex];
+      console.log('❌ Rejecting item:', currentItem.id, currentItem.title);
+      const newIndex = currentIndex + 1;
+      console.log('❌ Advancing to next item, index:', newIndex);
+      setCurrentIndex(newIndex);
+    } else {
+      console.log('❌ Cannot advance - at end of items');
     }
   };
 
