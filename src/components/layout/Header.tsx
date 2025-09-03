@@ -118,17 +118,10 @@ const Header = () => {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="relative h-8 w-8 rounded-full"
+                    className="relative h-8 w-8"
                     onClick={() => setMobileMenuOpen(true)}
                   >
-                    <Avatar className="h-8 w-8">
-                      {user?.avatar_url ? (
-                        <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
-                      ) : null}
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                        {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
-                      </AvatarFallback>
-                    </Avatar>
+                    <User className="h-6 w-6 text-gray-500" />
                   </Button>
                 ) : (
                   <DropdownMenu>
