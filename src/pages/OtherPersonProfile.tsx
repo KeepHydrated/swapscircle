@@ -489,28 +489,13 @@ const OtherPersonProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* Tabs with sticky header */}
+        {/* Content without tabs header */}
         <div className="bg-white">
           <Tabs 
             value={activeTab} 
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start">
-              <TabsTrigger 
-                value="available" 
-                className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-              >
-                Items For Trade
-              </TabsTrigger>
-              <TabsTrigger 
-                value="reviews" 
-                className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
-              >
-                <Star className="mr-2 h-4 w-4" />
-                Reviews
-              </TabsTrigger>
-            </TabsList>
             
             {/* We're moving the tab content inside the Tabs component */}
             <OtherProfileTabContent 
