@@ -16,36 +16,54 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
-  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
+  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth', force = false) => {
+    console.log('🔽 Attempting scroll to bottom:', { behavior, force, isMobile, isTablet });
+    
     if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      const container = containerRef.current;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
+      const currentScrollTop = container.scrollTop;
+      
+      console.log('📏 Scroll metrics:', { scrollHeight, clientHeight, currentScrollTop });
+      
+      // Force scroll to bottom
+      container.scrollTop = scrollHeight;
+      
+      console.log('✅ Scroll completed, new scrollTop:', container.scrollTop);
     }
     
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior });
+      scrollRef.current.scrollIntoView({ behavior, block: 'end' });
     }
   };
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    // Use a longer delay for mobile/tablet to ensure layout is complete
-    const delay = (isMobile || isTablet) ? 300 : 100;
+    console.log('📨 Messages changed, scheduling scroll...', { messagesCount: messages.length });
     
-    const timeoutId = setTimeout(() => {
-      scrollToBottom('smooth');
-    }, delay);
-
-    return () => clearTimeout(timeoutId);
+    // Use longer delays for mobile/tablet and force multiple attempts
+    const delays = (isMobile || isTablet) ? [100, 300, 600, 1000] : [50, 150];
+    
+    delays.forEach((delay, index) => {
+      setTimeout(() => {
+        console.log(`🔄 Scroll attempt ${index + 1} after ${delay}ms`);
+        scrollToBottom(index === 0 ? 'auto' : 'smooth', true);
+      }, delay);
+    });
   }, [messages, isMobile, isTablet]);
 
   // Ensure the entire content is visible on initial render
   useEffect(() => {
-    // Multiple attempts with increasing delays for mobile/tablet
-    const delays = (isMobile || isTablet) ? [100, 300, 500] : [50, 100];
+    console.log('🎬 Initial render scroll setup');
+    
+    // More aggressive multiple attempts for mobile/tablet
+    const delays = (isMobile || isTablet) ? [200, 500, 800, 1200] : [100, 200];
     
     delays.forEach((delay, index) => {
       setTimeout(() => {
-        scrollToBottom(index === 0 ? 'auto' : 'smooth');
+        console.log(`🚀 Initial scroll attempt ${index + 1} after ${delay}ms`);
+        scrollToBottom('auto', true);
       }, delay);
     });
   }, [isMobile, isTablet]);
