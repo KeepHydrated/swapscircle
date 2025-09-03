@@ -52,16 +52,16 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
             </Button>
             
             <Button variant="ghost" className="w-full justify-start h-12" asChild>
-              <Link to="/customer-support" onClick={() => onOpenChange(false)}>
-                <Headphones className="mr-3 h-5 w-5" />
-                <span>Customer Support</span>
+              <Link to="/settings" onClick={() => onOpenChange(false)}>
+                <Settings className="mr-3 h-5 w-5" />
+                <span>Settings</span>
               </Link>
             </Button>
             
             <Button variant="ghost" className="w-full justify-start h-12" asChild>
-              <Link to="/settings" onClick={() => onOpenChange(false)}>
-                <Settings className="mr-3 h-5 w-5" />
-                <span>Settings</span>
+              <Link to="/customer-support" onClick={() => onOpenChange(false)}>
+                <Headphones className="mr-3 h-5 w-5" />
+                <span>Customer Support</span>
               </Link>
             </Button>
             
