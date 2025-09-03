@@ -54,8 +54,10 @@ export function useNotifications() {
       const mappedNotifications = await Promise.all((data || []).map(async (notification: any) => {
         let content = notification.message || 'No message content';
         
-        // For friend requests, try to get the correct sender name
+        // For friend requests, always try to get the correct sender name and override the message
         if (notification.action_taken === 'friend') {
+          let senderName = 'Someone';
+          
           try {
             // First try using action_by if it exists
             if (notification.action_by) {
@@ -66,8 +68,7 @@ export function useNotifications() {
                 .single();
               
               if (senderProfile) {
-                const senderName = senderProfile.name || senderProfile.username || 'Someone';
-                content = `${senderName} sent you a friend request.`;
+                senderName = senderProfile.name || senderProfile.username || 'Someone';
               }
             } else {
               // Fallback: try to find the most recent friend request to this user
@@ -88,15 +89,16 @@ export function useNotifications() {
                   .single();
                 
                 if (requesterProfile) {
-                  const senderName = requesterProfile.name || requesterProfile.username || 'Someone';
-                  content = `${senderName} sent you a friend request.`;
+                  senderName = requesterProfile.name || requesterProfile.username || 'Someone';
                 }
               }
             }
           } catch (profileError) {
             console.error('Error fetching sender profile:', profileError);
-            // Keep the original message if profile fetch fails
           }
+          
+          // Always override the content for friend requests with the fetched name
+          content = `${senderName} sent you a friend request.`;
         }
         
         return {
