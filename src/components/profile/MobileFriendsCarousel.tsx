@@ -235,8 +235,8 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             </div>
           )}
           
-          {/* Action buttons overlaid on image */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
+          {/* Action buttons overlaid on image with higher z-index */}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4 z-50 pointer-events-auto">
             {/* Reject button */}
             <Button
               variant="outline"
@@ -248,9 +248,10 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
                 e.stopPropagation();
                 handleSwipeLeft();
               }}
-              className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white"
+              className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white pointer-events-auto"
+              style={{ zIndex: 1000 }}
             >
-              <X className="w-6 h-6 text-gray-600" />
+              <X className="w-6 h-6 text-gray-600 pointer-events-none" />
             </Button>
             
             {/* Like button */}
@@ -263,9 +264,10 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
                 e.stopPropagation();
                 handleSwipeRight();
               }}
-              className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg border-0"
+              className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg border-0 pointer-events-auto"
+              style={{ zIndex: 1000 }}
             >
-              <Heart className="w-6 h-6 text-white" />
+              <Heart className="w-6 h-6 text-white pointer-events-none" />
             </Button>
           </div>
         </div>
