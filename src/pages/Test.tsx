@@ -633,8 +633,8 @@ const Test: React.FC = () => {
                              <p className="text-sm">Try updating your preferences or check back later</p>
                            </div>
                            ) : isMobile ? (
-                            <MobileFriendsCarousel
-                              items={displayedFriendItems.map(item => ({
+                            (() => {
+                              const formattedItems = displayedFriendItems.map(item => ({
                                 id: item.id,
                                 title: item.name,
                                 image: item.image,
@@ -646,9 +646,21 @@ const Test: React.FC = () => {
                                   name: item.ownerName,
                                   avatar_url: item.ownerAvatar
                                 }
-                              }))}
-                              onLike={(id) => handleLikeFriendItem(id)}
-                            />
+                              }));
+                              console.log('🔥 MOBILE FRIENDS DEBUG:', {
+                                isMobile,
+                                displayedFriendItemsCount: displayedFriendItems.length,
+                                formattedItemsCount: formattedItems.length,
+                                firstItem: formattedItems[0],
+                                allItems: formattedItems
+                              });
+                              return (
+                                <MobileFriendsCarousel
+                                  items={formattedItems}
+                                  onLike={(id) => handleLikeFriendItem(id)}
+                                />
+                              );
+                            })()
                            ) : (
                             <div className="overflow-x-auto overflow-y-hidden p-2">
                               <div className="flex gap-2 min-w-max">
