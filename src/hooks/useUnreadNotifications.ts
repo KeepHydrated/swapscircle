@@ -58,19 +58,32 @@ export function useNotifications() {
         if (notification.action_taken === 'friend') {
           let senderName = 'Someone';
           
+          console.log('🔔 Processing friend notification:', { 
+            id: notification.id, 
+            action_by: notification.action_by, 
+            reference_id: notification.reference_id 
+          });
+          
           try {
             // First try using action_by if it exists
             if (notification.action_by) {
-              const { data: senderProfile } = await supabase
+              console.log('🔔 Fetching profile for action_by:', notification.action_by);
+              const { data: senderProfile, error: profileError } = await supabase
                 .from('profiles')
                 .select('name, username')
                 .eq('id', notification.action_by)
                 .single();
               
-              if (senderProfile) {
+              console.log('🔔 Profile query result:', { data: senderProfile, error: profileError });
+              
+              if (senderProfile && !profileError) {
                 senderName = senderProfile.name || senderProfile.username || 'Someone';
+                console.log('🔔 Successfully got sender name:', senderName);
+              } else {
+                console.log('🔔 No profile found or error occurred');
               }
             } else {
+              console.log('🔔 No action_by, trying fallback method');
               // Fallback: try to find the most recent friend request to this user
               const { data: friendRequest } = await supabase
                 .from('friend_requests')
@@ -94,9 +107,10 @@ export function useNotifications() {
               }
             }
           } catch (profileError) {
-            console.error('Error fetching sender profile:', profileError);
+            console.error('🔔 Error fetching sender profile:', profileError);
           }
           
+          console.log('🔔 Final sender name for notification:', senderName);
           // Always override the content for friend requests with the fetched name
           content = `${senderName} sent you a friend request.`;
         }
