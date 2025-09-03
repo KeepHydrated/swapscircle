@@ -183,6 +183,9 @@ export function useNotifications() {
       case 'friend':
         // Use action_by (requester ID) instead of reference_id (recipient ID) for friend requests
         return actionBy ? `/other-person-profile?userId=${actionBy}` : `/other-person-profile?userId=${referenceId}`;
+      case 'friend_accepted':
+        // Use action_by (accepter ID) to go to the profile of the person who accepted the friend request
+        return actionBy ? `/other-person-profile?userId=${actionBy}` : `/other-person-profile?userId=${referenceId}`;
       case 'item_removed':
         return `/notifications/${notificationId}`; // Go to dedicated details page
       case 'trade':
