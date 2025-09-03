@@ -114,23 +114,6 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header with tabs and back button */}
-      <div className="flex items-center justify-between p-4 bg-gray-50">
-        <div className="flex space-x-4">
-          <button className="text-gray-500 font-medium">Matches</button>
-          <button className="text-black font-medium border-b-2 border-red-400 pb-1">Friends' Items</button>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleGoBack}
-          disabled={currentIndex === 0}
-          className="w-10 h-10 rounded-full bg-white shadow-sm"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </Button>
-      </div>
-      
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
