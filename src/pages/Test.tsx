@@ -632,8 +632,15 @@ const Test: React.FC = () => {
                              <p className="text-base font-medium mb-1">No matches found</p>
                              <p className="text-sm">Try updating your preferences or check back later</p>
                            </div>
-                           ) : isMobile ? (
-                            (() => {
+                           ) : (() => {
+                            console.log('🔥 MOBILE CHECK:', { 
+                              isMobile,
+                              displayedFriendItemsLength: displayedFriendItems.length,
+                              windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
+                              userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'undefined'
+                            });
+                            
+                            if (isMobile) {
                               const formattedItems = displayedFriendItems.map(item => ({
                                 id: item.id,
                                 title: item.name,
@@ -660,30 +667,33 @@ const Test: React.FC = () => {
                                   onLike={(id) => handleLikeFriendItem(id)}
                                 />
                               );
-                            })()
-                           ) : (
-                            <div className="overflow-x-auto overflow-y-hidden p-2">
-                              <div className="flex gap-2 min-w-max">
-                                 {friendItems
-                                   .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
-                                   .map((item) => (
-                               <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200">
-                                 <ItemCard
-                                   id={item.id}
-                                   name={item.name}
-                                   image={item.image}
-                                   liked={item.liked}
-                                   onSelect={() => handleOpenItemModal(item)}
-                                   onLike={(id, global) => handleLikeFriendItem(id, global)}
-                                   onReject={(id, global) => handleRejectFriendItem(id, global)}
-                                   onReport={handleReport}
-                                   showLikeButton={true}
-                                 />
+                            } else {
+                              return (
+                                <div className="overflow-x-auto overflow-y-hidden p-2">
+                                  <div className="flex gap-2 min-w-max">
+                                     {friendItems
+                                       .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
+                                       .map((item) => (
+                                   <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200">
+                                     <ItemCard
+                                       id={item.id}
+                                       name={item.name}
+                                       image={item.image}
+                                       liked={item.liked}
+                                       onSelect={() => handleOpenItemModal(item)}
+                                       onLike={(id, global) => handleLikeFriendItem(id, global)}
+                                       onReject={(id, global) => handleRejectFriendItem(id, global)}
+                                       onReport={handleReport}
+                                       showLikeButton={true}
+                                     />
+                                   </div>
+                                 ))}
                                </div>
-                             ))}
-                           </div>
-                         </div>
-                       )}
+                             </div>
+                              );
+                            }
+                           })()
+                        }
                       </div>
                    </TabsContent>
                  </Tabs>
