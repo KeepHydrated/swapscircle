@@ -4,6 +4,7 @@ import { Star, MapPin, Calendar, Users, Repeat, Link } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProfileHeaderProps {
   profile: {
@@ -30,6 +31,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   userId,
   isOwnProfile = false
 }) => {
+  const isMobile = useIsMobile();
   console.log('[ProfileHeader] Component rendered with profile:', profile);
   console.log('[ProfileHeader] Profile name:', profile?.name);
   // Render stars based on rating
@@ -134,7 +136,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <p className="mt-4 text-gray-700 leading-relaxed text-center md:text-left">{profile.description}</p>
           </div>
         </div>
-        {isOwnProfile && (
+        {isOwnProfile && !isMobile && (
           <div className="flex-shrink-0">
             <Button
               variant="outline"
