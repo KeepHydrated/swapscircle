@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SwipeCard } from '@/components/ui/swipe-card';
 import { Heart, X, ExternalLink, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -101,17 +101,19 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     }
   };
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     console.log('🔙 BACK BUTTON PRESSED - Current Index:', currentIndex);
-    console.trace('🔍 BACK BUTTON CALL STACK:'); // This will show what called this function
-    if (currentIndex > 0) {
-      const newIndex = currentIndex - 1;
-      console.log('🔙 Moving back to index:', newIndex);
-      setCurrentIndex(newIndex);
-    } else {
-      console.log('🔙 Cannot go back - already at first item');
-    }
-  };
+    console.trace('🔍 BACK BUTTON CALL STACK:');
+    setCurrentIndex(prev => {
+      if (prev > 0) {
+        console.log('🔙 Moving back from index:', prev, 'to:', prev - 1);
+        return prev - 1;
+      } else {
+        console.log('🔙 Cannot go back - already at first item');
+        return prev;
+      }
+    });
+  }, [currentIndex]);
 
   // Notify parent about navigation state changes
   useEffect(() => {
@@ -126,17 +128,11 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     // }
   }, [externalBackTrigger]);
 
-  // Re-enable back button with stable callback
+  // Register the stable back button handler
   useEffect(() => {
-    console.log('✅ BACK BUTTON RE-ENABLED WITH STABLE CALLBACK');
-    const stableBackHandler = () => {
-      console.log('🔙 STABLE BACK HANDLER CALLED - Current Index:', currentIndex);
-      if (currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-      }
-    };
-    onBackButtonRegister?.(stableBackHandler);
-  }, [onBackButtonRegister, currentIndex]);
+    console.log('✅ REGISTERING STABLE BACK BUTTON HANDLER');
+    onBackButtonRegister?.(handleGoBack);
+  }, [onBackButtonRegister, handleGoBack]);
 
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
