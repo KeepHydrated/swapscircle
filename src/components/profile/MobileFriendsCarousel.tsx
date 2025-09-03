@@ -243,6 +243,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
               size="icon"
               onClick={(e) => {
                 console.log('❌ REJECT BUTTON ELEMENT CLICKED!');
+                console.log('❌ Event details:', e);
                 e.preventDefault();
                 e.stopPropagation();
                 handleSwipeLeft();
@@ -257,6 +258,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
               size="icon"
               onClick={(e) => {
                 console.log('❤️ LIKE BUTTON ELEMENT CLICKED!');
+                console.log('❤️ Event details:', e);
                 e.preventDefault();
                 e.stopPropagation();
                 handleSwipeRight();
