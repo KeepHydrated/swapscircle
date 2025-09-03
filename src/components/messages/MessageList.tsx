@@ -16,38 +16,58 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
-  const scrollToBottom = () => {
-    const scrollToBottomNow = () => {
-      if (containerRef.current) {
-        const container = containerRef.current;
-        container.scrollTop = container.scrollHeight;
+  const forceScrollToBottom = () => {
+    if (containerRef.current) {
+      const container = containerRef.current;
+      // Set scroll position to maximum
+      container.scrollTop = container.scrollHeight;
+      console.log('🔄 Forced scroll - scrollTop:', container.scrollTop, 'scrollHeight:', container.scrollHeight);
+      
+      // For mobile/tablet, also try scrollIntoView on the last message
+      if ((isMobile || isTablet) && scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+        console.log('📱 Also used scrollIntoView for mobile/tablet');
       }
-    };
-
-    // Use requestAnimationFrame to ensure DOM is ready
-    requestAnimationFrame(() => {
-      scrollToBottomNow();
-      // Double-check after another frame for mobile/tablet
-      if (isMobile || isTablet) {
-        requestAnimationFrame(scrollToBottomNow);
-      }
-    });
+    }
   };
 
-  // Auto-scroll to bottom when messages change
+  // Scroll when component first mounts (becomes visible)
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  // Scroll on initial render
-  useEffect(() => {
-    // Multiple attempts with requestAnimationFrame for mobile/tablet
-    scrollToBottom();
-    if (isMobile || isTablet) {
-      setTimeout(scrollToBottom, 100);
-      setTimeout(scrollToBottom, 300);
+    console.log('📦 MessageList mounted for chat:', chatName);
+    
+    // Use intersection observer to detect when component is visible
+    if (containerRef.current) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            console.log('👁️ MessageList is now visible, forcing scroll...');
+            // Multiple scroll attempts when component becomes visible
+            setTimeout(forceScrollToBottom, 0);
+            setTimeout(forceScrollToBottom, 100);
+            setTimeout(forceScrollToBottom, 300);
+            if (isMobile || isTablet) {
+              setTimeout(forceScrollToBottom, 600);
+              setTimeout(forceScrollToBottom, 1000);
+            }
+          }
+        });
+      });
+      
+      observer.observe(containerRef.current);
+      
+      return () => observer.disconnect();
     }
-  }, [isMobile, isTablet]);
+  }, [chatName, isMobile, isTablet]);
+
+  // Also scroll when messages change
+  useEffect(() => {
+    console.log('📨 Messages changed, count:', messages.length);
+    setTimeout(forceScrollToBottom, 0);
+    if (isMobile || isTablet) {
+      setTimeout(forceScrollToBottom, 100);
+      setTimeout(forceScrollToBottom, 300);
+    }
+  }, [messages, isMobile, isTablet]);
 
   return (
     <div ref={containerRef} className="h-full overflow-y-auto" data-messages-container>
