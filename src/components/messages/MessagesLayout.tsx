@@ -112,7 +112,10 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
             <ConversationList 
               conversations={conversations}
               activeConversation={activeConversation}
-              setActiveConversation={setActiveConversation}
+              setActiveConversation={(id) => {
+                setActiveConversation(id);
+                setCurrentView('chat'); // Only switch to chat when user clicks a conversation
+              }}
               exchangePairs={exchangePairs}
             />
           )}
