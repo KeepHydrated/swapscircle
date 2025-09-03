@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SwipeCard } from '@/components/ui/swipe-card';
 import { Heart, X, ExternalLink, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,11 +23,15 @@ interface FriendItem {
 interface MobileFriendsCarouselProps {
   items: FriendItem[];
   onLike?: (id: string) => void;
+  onBackNavigation?: (currentIndex: number, canGoBack: boolean) => void;
+  externalBackTrigger?: number; // Increment this to trigger back navigation
 }
 
 export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   items,
-  onLike
+  onLike,
+  onBackNavigation,
+  externalBackTrigger
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -54,6 +58,18 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
       setCurrentIndex(prev => prev - 1);
     }
   };
+
+  // Notify parent about navigation state changes
+  useEffect(() => {
+    onBackNavigation?.(currentIndex, currentIndex > 0);
+  }, [currentIndex, onBackNavigation]);
+
+  // Handle external back button trigger
+  useEffect(() => {
+    if (externalBackTrigger && externalBackTrigger > 0) {
+      handleGoBack();
+    }
+  }, [externalBackTrigger]);
 
   const handleViewProfile = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
