@@ -72,45 +72,24 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   });
 
   return (
-    <div className="flex flex-col h-full bg-red-500 border-4 border-red-700">
-      <div className="text-white bg-red-700 p-2">
-        DEBUGGING: Showing item {currentIndex + 1} of {items.length}
-      </div>
-      
+    <div className="flex flex-col h-full">
       {/* Card container */}
-      <div className="flex-1 relative bg-green-500 border-4 border-green-700 min-h-[400px]">
-        <div className="text-white bg-green-700 p-2 absolute top-0 left-0 z-50">
-          IMAGE CONTAINER
-        </div>
-        
+      <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
-        <div className="absolute inset-4 bg-blue-500 border-4 border-blue-700 rounded-xl shadow-lg overflow-hidden">
-          <div className="text-white bg-blue-700 p-1 absolute top-0 left-0 z-50 text-xs">
-            IMG: {currentItem.title}
-          </div>
+        <div className="absolute inset-4 bg-white rounded-xl shadow-lg overflow-hidden">
           <img
             src={currentItem.image}
             alt={currentItem.title}
             className="w-full h-full object-cover"
             onError={(e) => {
-              console.log('IMAGE ERROR:', e);
               e.currentTarget.src = '/placeholder.svg';
-            }}
-            onLoad={() => {
-              console.log('IMAGE LOADED:', currentItem.image);
-            }}
-            style={{ 
-              display: 'block',
-              width: '100%', 
-              height: '100%',
-              backgroundColor: 'yellow'
             }}
           />
         </div>
       </div>
 
       {/* Action buttons */}
-      <div className="flex justify-center gap-4 mt-4 p-4 bg-purple-500">
+      <div className="flex justify-center gap-4 mt-4 p-4">
         <Button
           variant="outline"
           size="lg"
