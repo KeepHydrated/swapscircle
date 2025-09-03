@@ -122,10 +122,10 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     // }
   }, [externalBackTrigger]);
 
-  // TEMPORARILY DISABLE parent registration to debug
+  // Re-enable parent registration for UI back button
   useEffect(() => {
-    console.log('🚫 PARENT BACK REGISTRATION DISABLED FOR DEBUGGING');
-    // onBackButtonRegister?.(handleGoBack);
+    console.log('✅ PARENT BACK REGISTRATION RE-ENABLED');
+    onBackButtonRegister?.(handleGoBack);
   }, [onBackButtonRegister, handleGoBack]);
 
   const handleViewProfile = (userId: string) => {
