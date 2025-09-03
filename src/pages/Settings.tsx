@@ -12,28 +12,28 @@ const Settings: React.FC = () => {
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start">
+          <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start overflow-x-auto md:overflow-x-visible">
             <TabsTrigger 
               value="profile" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
             >
               Profile Settings
             </TabsTrigger>
             <TabsTrigger 
               value="notifications" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
             >
               Notifications
             </TabsTrigger>
             <TabsTrigger 
               value="privacy" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
             >
               Privacy
             </TabsTrigger>
             <TabsTrigger 
               value="account" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
             >
               Account
             </TabsTrigger>
