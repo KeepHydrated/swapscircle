@@ -166,8 +166,19 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
       {/* Item title and description */}
       <div className="px-6 py-3 text-center bg-yellow-200">
         <h3 className="text-lg font-semibold mb-2 text-black">{currentItem.title}</h3>
-        <p className="text-sm text-black font-medium">{currentItem.description}</p>
-        <p className="text-xs text-black mt-1">{currentItem.category} | {currentItem.condition}</p>
+        <p className="text-sm text-black font-medium mb-2">{currentItem.description}</p>
+        
+        {/* Categories grid */}
+        <div className="grid grid-cols-2 gap-2 text-xs text-black">
+          <div className="text-left">
+            <div className="font-medium">{currentItem.category}</div>
+            <div>{currentItem.condition}</div>
+          </div>
+          <div className="text-right">
+            <div className="font-medium">Casual Wear</div>
+            <div>$250 - $500</div>
+          </div>
+        </div>
       </div>
     </div>
   );
