@@ -30,6 +30,8 @@ import { blockingService } from '@/services/blockingService';
 import { rejectItem, undoRejectItem, getUserRejectedItems } from '@/services/rejectionService';
 
 const Test: React.FC = () => {
+  // State for mobile carousel back function
+  const [mobileBackFunction, setMobileBackFunction] = useState<(() => void) | null>(null);
   // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
@@ -490,6 +492,18 @@ const Test: React.FC = () => {
     return false;
   };
 
+  // Make the mobile back function available globally for the existing back button
+  useEffect(() => {
+    if (mobileBackFunction) {
+      // Make it available globally
+      (window as any).mobileCarouselGoBack = mobileBackFunction;
+      console.log('🔙 Mobile carousel back function registered globally');
+    }
+    return () => {
+      (window as any).mobileCarouselGoBack = null;
+    };
+  }, [mobileBackFunction]);
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
@@ -676,6 +690,7 @@ const Test: React.FC = () => {
                                   <MobileFriendsCarousel
                                     items={formattedItems}
                                     onLike={(id) => handleLikeFriendItem(id)}
+                                    onBackButtonRegister={setMobileBackFunction}
                                   />
                                 );
                               } catch (error) {
