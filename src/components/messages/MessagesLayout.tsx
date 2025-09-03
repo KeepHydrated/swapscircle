@@ -125,31 +125,33 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
                 setActiveConversation(id);
                 setCurrentView('chat'); // Only switch to chat when user clicks a conversation
                 
-                // Force scroll to bottom after view change with multiple attempts for mobile/tablet
-                const scrollToBottom = () => {
-                  const messageContainer = document.querySelector('[data-messages-container]');
-                  if (messageContainer) {
-                    messageContainer.scrollTop = messageContainer.scrollHeight;
-                    console.log('📱 Mobile scroll forced:', messageContainer.scrollTop, '/', messageContainer.scrollHeight);
-                  }
+                console.log('📱 CONVERSATION CLICKED - Switching to chat view for:', id);
+                
+                // Simple, direct scroll approach
+                const forceScrollNow = () => {
+                  console.log('🔍 Looking for message containers...');
+                  const containers = document.querySelectorAll('[data-messages-container]');
+                  console.log('📦 Found containers:', containers.length);
+                  
+                  containers.forEach((container, index) => {
+                    if (container instanceof HTMLElement) {
+                      console.log(`📱 Container ${index}: scrollHeight=${container.scrollHeight}, scrollTop=${container.scrollTop}`);
+                      container.scrollTop = container.scrollHeight;
+                      console.log(`✅ Container ${index} after scroll: scrollTop=${container.scrollTop}`);
+                    }
+                  });
                 };
                 
-                // Multiple attempts with increasing delays for mobile/tablet
-                if (isMobile || isTablet) {
-                  // Wait for view transition, then scroll multiple times
-                  setTimeout(scrollToBottom, 100);
-                  setTimeout(scrollToBottom, 300);
-                  setTimeout(scrollToBottom, 600);
-                  setTimeout(scrollToBottom, 1000);
-                  
-                  // Also use requestAnimationFrame
-                  requestAnimationFrame(() => {
-                    setTimeout(scrollToBottom, 100);
-                    requestAnimationFrame(() => {
-                      setTimeout(scrollToBottom, 200);
-                    });
-                  });
-                }
+                // Multiple attempts with very short delays
+                console.log('🚀 Starting scroll attempts...');
+                setTimeout(forceScrollNow, 0);
+                setTimeout(forceScrollNow, 10);
+                setTimeout(forceScrollNow, 50);
+                setTimeout(forceScrollNow, 100);
+                setTimeout(forceScrollNow, 200);
+                setTimeout(forceScrollNow, 300);
+                setTimeout(forceScrollNow, 500);
+                setTimeout(forceScrollNow, 800);
               }}
               exchangePairs={exchangePairs}
             />
