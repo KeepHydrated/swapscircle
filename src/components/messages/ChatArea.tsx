@@ -18,7 +18,13 @@ const ChatArea = ({ activeChat, onSendFirstMessage, onTradeCompleted }: ChatArea
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
-  console.log('ChatArea DEBUG - activeChat:', activeChat);
+  console.log('🎬 ChatArea RENDER:', { 
+    hasActiveChat: !!activeChat, 
+    chatId: activeChat?.id, 
+    isMobile, 
+    isTablet,
+    timestamp: new Date().toISOString()
+  });
   
   // Force scroll when this component renders with an activeChat on mobile/tablet
   useEffect(() => {
