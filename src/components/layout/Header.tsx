@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -61,6 +61,13 @@ const Header = () => {
             {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
           </Link>
         </div>
+
+        {/* Swipe icon - only visible on mobile */}
+        {isMobile && (
+          <div className="flex items-center">
+            <ArrowLeftRight className="h-6 w-6 text-gray-500" />
+          </div>
+        )}
 
         <div className="flex items-center space-x-2">
           {!supabaseConfigured && (
