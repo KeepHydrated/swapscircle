@@ -397,69 +397,68 @@ const Messages = () => {
               </div>
               
               {/* Mobile Chat Content with Side Panel */}
-              <div className="flex-1 flex min-h-0">
-                {/* Chat Area */}
+                {/* Mobile Chat Content */}
                 <div className="flex-1 flex flex-col min-h-0">
                   {activeConversation ? (
-                    <>
-                      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
-                        {messagesLoading ? (
-                          <div className="flex justify-center items-center h-full">
-                            <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
+                    <div className="flex-1 flex flex-col min-h-0">
+                      {currentMobileView === 'messages' ? (
+                        <>
+                          <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
+                            {messagesLoading ? (
+                              <div className="flex justify-center items-center h-full">
+                                <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
+                              </div>
+                            ) : messages.length > 0 ? (
+                              <div className="space-y-4">
+                                {messages.map((message: any) => (
+                                  <TradeMessageBubble 
+                                    key={message.id}
+                                    message={message}
+                                    senderName={message.sender_profile?.username || activeChat?.name || 'User'}
+                                    onImageLoad={handleScrollToBottom}
+                                    currentUserId={currentUserId}
+                                  />
+                                ))}
+                                <div ref={scrollRef} />
+                              </div>
+                            ) : (
+                              <div className="text-center py-8">
+                                <p className="text-gray-500">Trade conversation started!</p>
+                                <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
+                                <div ref={scrollRef} />
+                              </div>
+                            )}
                           </div>
-                        ) : messages.length > 0 ? (
-                          <div className="space-y-4">
-                            {messages.map((message: any) => (
-                              <TradeMessageBubble 
-                                key={message.id}
-                                message={message}
-                                senderName={message.sender_profile?.username || activeChat?.name || 'User'}
-                                onImageLoad={handleScrollToBottom}
-                                currentUserId={currentUserId}
-                              />
-                            ))}
-                            <div ref={scrollRef} />
+                          
+                          <div className="flex-shrink-0 border-t border-gray-200">
+                            <MessageInput 
+                              onMarkCompleted={() => handleTradeCompleted(activeConversation)}
+                              conversationId={activeConversation}
+                            />
                           </div>
-                        ) : (
-                          <div className="text-center py-8">
-                            <p className="text-gray-500">Trade conversation started!</p>
-                            <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
-                            <div ref={scrollRef} />
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="flex-shrink-0 border-t border-gray-200">
-                        <MessageInput 
-                          onMarkCompleted={() => handleTradeCompleted(activeConversation)}
-                          conversationId={activeConversation}
-                        />
-                      </div>
-                    </>
+                        </>
+                      ) : (
+                        <div className="flex-1 overflow-y-auto bg-gray-50">
+                          {selectedPair ? (
+                            <TradeDetailsTabs 
+                              selectedPair={selectedPair}
+                              selectedItem={selectedItem}
+                              onSelectItem={handleSelectItem}
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-gray-500">
+                              <p>No trade details available</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="flex items-center justify-center h-full">
                       <p className="text-gray-500">Select a conversation to start messaging</p>
                     </div>
                   )}
                 </div>
-
-                {/* Trade Details Panel - Always visible on mobile/tablet */}
-                <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col overflow-y-auto">
-                  {selectedPair ? (
-                    <TradeDetailsTabs 
-                      selectedPair={selectedPair}
-                      selectedItem={selectedItem}
-                      onSelectItem={handleSelectItem}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full p-4">
-                      <p className="text-gray-500 text-center text-sm">
-                        Trade details will appear here
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
           )}
         </div>
