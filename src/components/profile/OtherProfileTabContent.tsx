@@ -46,19 +46,38 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
           )}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {items.map((item) => (
-              <ItemCard
-                key={item.id}
-                id={item.id}
-                name={item.name}
-                image={item.image}
-                isMatch={true}
-                liked={item.liked}
-                onSelect={handleItemClick}
-                onLike={onLikeItem}
-                onReject={(id) => onRejectItem(id)}
-                disableLike={!isFriend}
-                status={item.status}
-              />
+              <div key={item.id} className="space-y-2">
+                <ItemCard
+                  id={item.id}
+                  name={item.name}
+                  image={item.image}
+                  isMatch={true}
+                  liked={item.liked}
+                  onSelect={handleItemClick}
+                  onLike={onLikeItem}
+                  onReject={(id) => onRejectItem(id)}
+                  disableLike={!isFriend}
+                  status={item.status}
+                />
+                {/* Mobile-only description and details */}
+                <div className="md:hidden space-y-2">
+                  {item.description && (
+                    <p className="text-sm text-gray-600 line-clamp-3">{item.description}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    {item.category && (
+                      <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded">{item.category}</span>
+                    )}
+                    {item.tags && item.tags.map((tag, index) => (
+                      <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded">{tag}</span>
+                    ))}
+                  </div>
+                  <div className="flex gap-4 text-xs text-gray-500">
+                    {item.condition && <span>{item.condition}</span>}
+                    {item.priceRange && <span>Up to ${item.priceRange}</span>}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
