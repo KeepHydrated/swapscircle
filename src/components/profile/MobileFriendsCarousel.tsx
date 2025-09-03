@@ -223,7 +223,12 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             <Button
               variant="outline"
               size="icon"
-              onClick={handleSwipeLeft}
+              onClick={(e) => {
+                console.log('❌ REJECT BUTTON ELEMENT CLICKED!');
+                e.preventDefault();
+                e.stopPropagation();
+                handleSwipeLeft();
+              }}
               className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:bg-white"
             >
               <X className="w-6 h-6 text-gray-600" />
@@ -232,7 +237,12 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
             {/* Like button */}
             <Button
               size="icon"
-              onClick={handleSwipeRight}
+              onClick={(e) => {
+                console.log('❤️ LIKE BUTTON ELEMENT CLICKED!');
+                e.preventDefault();
+                e.stopPropagation();
+                handleSwipeRight();
+              }}
               className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg border-0"
             >
               <Heart className="w-6 h-6 text-white" />
