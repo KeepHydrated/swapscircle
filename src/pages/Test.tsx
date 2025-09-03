@@ -5,7 +5,9 @@ import { RotateCcw } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
+import { MobileFriendsCarousel } from '@/components/profile/MobileFriendsCarousel';
 import SupportChat from '@/components/chat/SupportChat';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import { useDbItems } from '@/hooks/useDbItems';
 import { useUserItems } from '@/hooks/useUserItems';
@@ -31,6 +33,7 @@ const Test: React.FC = () => {
   // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Friend items - fetch from friends
   const [friendItems, setFriendItems] = useState([]);
@@ -600,59 +603,76 @@ const Test: React.FC = () => {
                      )}
                    </TabsContent>
                   
-                      <TabsContent value="friends" className="flex-1 mt-0">
-                        <div className="h-full flex flex-col">
-                        {friendItemsLoading ? (
-                          <div className="overflow-x-auto overflow-y-hidden p-2">
-                            <div className="flex gap-2 min-w-max">
-                              {Array.from({ length: 3 }).map((_, index) => (
-                                <div key={`friend-skeleton-${index}`} className="flex-shrink-0 w-64">
-                                  <Card className="overflow-hidden">
-                                    <Skeleton className="aspect-[4/3] w-full" />
-                                    <div className="p-3">
-                                      <Skeleton className="h-4 w-3/4 mx-auto" />
-                                    </div>
-                                  </Card>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ) : friendItems.length === 0 ? (
-                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                            <div className="text-4xl mb-3">👥</div>
-                            <p className="text-base font-medium mb-1">No friends' items</p>
-                            <p className="text-sm">Add friends to see their items here</p>
-                          </div>
-                        ) : displayedFriendItems.length === 0 ? (
-                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                            <div className="text-4xl mb-3">🔍</div>
-                            <p className="text-base font-medium mb-1">No matches found</p>
-                            <p className="text-sm">Try updating your preferences or check back later</p>
-                          </div>
-                          ) : (
+                       <TabsContent value="friends" className="flex-1 mt-0">
+                         <div className="h-full flex flex-col">
+                         {friendItemsLoading ? (
                            <div className="overflow-x-auto overflow-y-hidden p-2">
                              <div className="flex gap-2 min-w-max">
-                                {friendItems
-                                  .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
-                                  .map((item) => (
-                              <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200">
-                                <ItemCard
-                                  id={item.id}
-                                  name={item.name}
-                                  image={item.image}
-                                  liked={item.liked}
-                                  onSelect={() => handleOpenItemModal(item)}
-                                  onLike={(id, global) => handleLikeFriendItem(id, global)}
-                                  onReject={(id, global) => handleRejectFriendItem(id, global)}
-                                  onReport={handleReport}
-                                  showLikeButton={true}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                     </div>
+                               {Array.from({ length: 3 }).map((_, index) => (
+                                 <div key={`friend-skeleton-${index}`} className="flex-shrink-0 w-64">
+                                   <Card className="overflow-hidden">
+                                     <Skeleton className="aspect-[4/3] w-full" />
+                                     <div className="p-3">
+                                       <Skeleton className="h-4 w-3/4 mx-auto" />
+                                     </div>
+                                   </Card>
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                         ) : friendItems.length === 0 ? (
+                           <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                             <div className="text-4xl mb-3">👥</div>
+                             <p className="text-base font-medium mb-1">No friends' items</p>
+                             <p className="text-sm">Add friends to see their items here</p>
+                           </div>
+                         ) : displayedFriendItems.length === 0 ? (
+                           <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
+                             <div className="text-4xl mb-3">🔍</div>
+                             <p className="text-base font-medium mb-1">No matches found</p>
+                             <p className="text-sm">Try updating your preferences or check back later</p>
+                           </div>
+                           ) : isMobile ? (
+                            <MobileFriendsCarousel
+                              items={displayedFriendItems.map(item => ({
+                                id: item.id,
+                                title: item.name,
+                                image: item.image,
+                                description: item.description,
+                                condition: item.condition,
+                                category: item.category,
+                                user: {
+                                  id: item.user_id,
+                                  name: item.ownerName,
+                                  avatar_url: item.ownerAvatar
+                                }
+                              }))}
+                              onLike={(id) => handleLikeFriendItem(id)}
+                            />
+                           ) : (
+                            <div className="overflow-x-auto overflow-y-hidden p-2">
+                              <div className="flex gap-2 min-w-max">
+                                 {friendItems
+                                   .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
+                                   .map((item) => (
+                               <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200">
+                                 <ItemCard
+                                   id={item.id}
+                                   name={item.name}
+                                   image={item.image}
+                                   liked={item.liked}
+                                   onSelect={() => handleOpenItemModal(item)}
+                                   onLike={(id, global) => handleLikeFriendItem(id, global)}
+                                   onReject={(id, global) => handleRejectFriendItem(id, global)}
+                                   onReport={handleReport}
+                                   showLikeButton={true}
+                                 />
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       )}
+                      </div>
                    </TabsContent>
                  </Tabs>
               </div>
