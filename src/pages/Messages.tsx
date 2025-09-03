@@ -275,7 +275,8 @@ const Messages = () => {
     currentView, 
     activeConversation, 
     windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'unknown',
-    shouldUseMobileLayout: isMobile || isTablet
+    shouldUseMobileLayout: isMobile || isTablet,
+    isDesktop: !isMobile && !isTablet
   });
 
   return (

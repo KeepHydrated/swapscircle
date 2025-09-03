@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const TABLET_MIN_WIDTH = 768
-const TABLET_MAX_WIDTH = 1366 // Increased to include iPad Pro
+const TABLET_MAX_WIDTH = 1024 // Adjusted to properly separate tablets from desktop
 
 export function useIsTablet() {
   const [isTablet, setIsTablet] = React.useState<boolean | undefined>(undefined)
