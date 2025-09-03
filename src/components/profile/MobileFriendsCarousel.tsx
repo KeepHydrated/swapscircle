@@ -167,7 +167,7 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
       <div className="px-6 py-3 text-center bg-yellow-200">
         <h3 className="text-lg font-semibold mb-2 text-black">{currentItem.title}</h3>
         <p className="text-sm text-black font-medium">{currentItem.description}</p>
-        <p className="text-xs text-black mt-1">{currentItem.category} | Condition: {currentItem.condition}</p>
+        <p className="text-xs text-black mt-1">{currentItem.category} | {currentItem.condition}</p>
       </div>
     </div>
   );
