@@ -62,9 +62,12 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Swipe icon - centered on mobile */}
+        {/* Mobile center icons */}
         {isMobile && (
-          <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
+            <Link to="/post-item">
+              <Plus className="h-6 w-6 text-gray-500" />
+            </Link>
             <Link to="/">
               <ArrowLeftRight className="h-6 w-6 text-gray-500" />
             </Link>
