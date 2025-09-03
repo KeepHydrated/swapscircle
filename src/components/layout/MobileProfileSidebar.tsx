@@ -67,13 +67,6 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
             </Button>
             
             <Button variant="ghost" className="w-full justify-start h-12" asChild>
-              <Link to="/your-likes" onClick={() => onOpenChange(false)}>
-                <Heart className="mr-3 h-5 w-5" />
-                <span>Your Likes</span>
-              </Link>
-            </Button>
-            
-            <Button variant="ghost" className="w-full justify-start h-12" asChild>
               <Link to="/settings" onClick={() => onOpenChange(false)}>
                 <Settings className="mr-3 h-5 w-5" />
                 <span>Settings</span>
