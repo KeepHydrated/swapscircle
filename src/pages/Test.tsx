@@ -687,11 +687,12 @@ const Test: React.FC = () => {
                               console.log('🔥 ABOUT TO RENDER MOBILE CAROUSEL');
                               try {
                                 return (
-                                  <MobileFriendsCarousel
-                                    items={formattedItems}
-                                    onLike={(id) => handleLikeFriendItem(id)}
-                                    onBackButtonRegister={setMobileBackFunction}
-                                  />
+                                   <MobileFriendsCarousel
+                                     items={formattedItems}
+                                     onLike={(id) => handleLikeFriendItem(id)}
+                                     onReject={(id) => handleRejectFriendItem(id)}
+                                     onBackButtonRegister={setMobileBackFunction}
+                                   />
                                 );
                               } catch (error) {
                                 console.error('🔥 ERROR RENDERING MOBILE CAROUSEL:', error);

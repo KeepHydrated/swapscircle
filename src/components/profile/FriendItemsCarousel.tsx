@@ -17,6 +17,7 @@ import {
 interface FriendItemsCarouselProps {
   items: MatchItem[];
   onLikeItem: (itemId: string) => void;
+  onRejectItem?: (itemId: string) => void;
   title?: string;
   onReport?: (id: string) => void;
 }
@@ -24,6 +25,7 @@ interface FriendItemsCarouselProps {
 const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({ 
   items, 
   onLikeItem,
+  onRejectItem,
   title = "Your Friend's Items",
   onReport
 }) => {
@@ -117,6 +119,7 @@ const FriendItemsCarousel: React.FC<FriendItemsCarouselProps> = ({
       <MobileFriendsCarousel
         items={friendItems}
         onLike={onLikeItem}
+        onReject={onRejectItem}
         onBackButtonRegister={setMobileBackFunction}
       />
     );

@@ -23,6 +23,7 @@ interface FriendItem {
 interface MobileFriendsCarouselProps {
   items: FriendItem[];
   onLike?: (id: string) => void;
+  onReject?: (id: string) => void;
   onBackNavigation?: (currentIndex: number, canGoBack: boolean) => void;
   externalBackTrigger?: number; // Increment this to trigger back navigation
   onBackButtonRegister?: (backFunction: () => void) => void; // Register the back function with parent
@@ -31,6 +32,7 @@ interface MobileFriendsCarouselProps {
 export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
   items,
   onLike,
+  onReject,
   onBackNavigation,
   externalBackTrigger,
   onBackButtonRegister
@@ -92,6 +94,15 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
     if (currentIndex < items.length) {
       const currentItem = items[currentIndex];
       console.log('❌ Rejecting item:', currentItem.id, currentItem.title);
+      
+      // Actually call the rejection function
+      if (onReject) {
+        console.log('❌ CALLING onReject with itemId:', currentItem.id);
+        onReject(currentItem.id);
+      } else {
+        console.log('❌ WARNING: No onReject function provided!');
+      }
+      
       const newIndex = currentIndex + 1;
       console.log('❌ REJECT: Setting currentIndex to:', newIndex);
       setCurrentIndex(newIndex);
