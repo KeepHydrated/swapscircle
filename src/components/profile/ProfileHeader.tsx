@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Star, MapPin, Calendar, Users, Repeat, Link, X, Smartphone, User } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -79,9 +78,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   return (
     <div className="bg-white border-b">
-      <div className="flex justify-between items-start p-6 pt-16 md:pt-6">
-        <div className="flex flex-col md:flex-row">
-          <div className="flex-shrink-0 mr-6 flex justify-center md:justify-start mb-4 md:mb-0">
+      <div className="flex justify-between items-start p-6">
+        <div className="flex flex-col md:flex-row w-full">
+          <div className="flex-shrink-0 mr-0 md:mr-6 flex justify-center mb-4 md:mb-0">
             <Avatar className="w-32 h-32 border-4 border-primary">
               <AvatarImage 
                 src={avatarSrc}
@@ -99,8 +98,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </AvatarFallback>
             </Avatar>
           </div>
-          <div className="flex-grow">
-            <h1 className="text-2xl font-bold text-gray-800 text-center md:text-left">{profile.name}</h1>
+          <div className="flex-grow text-center md:text-left">
+            <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
             <div className="my-2 flex justify-center md:justify-start">
               {renderStars(profile.rating)}
               <Button 
@@ -133,7 +132,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 </Button>
               )}
             </div>
-            <p className="mt-4 text-gray-700 leading-relaxed text-center md:text-left">{profile.description}</p>
+            <p className="mt-4 text-gray-700 leading-relaxed">{profile.description}</p>
           </div>
         </div>
         {isOwnProfile && !isMobile && (
