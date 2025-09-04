@@ -205,11 +205,6 @@ export const MobileFriendsCarousel: React.FC<MobileFriendsCarouselProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Debug header showing current item with forced update */}
-      <div className="bg-yellow-300 p-2 text-black text-center text-sm font-bold" key={currentIndex}>
-        🎯 LIVE DEBUG: Item {currentIndex + 1} of {items.length} | Index: {currentIndex} | ID: {currentItem?.id?.slice(-8) || 'NONE'} | Title: {currentItem?.title || 'NONE'} | Render: {Math.random().toString().slice(-4)}
-      </div>
-      
       {/* Card container */}
       <div className="flex-1 relative min-h-[400px]">
         {/* Current card - just the image */}
