@@ -438,18 +438,18 @@ const Messages = () => {
             <div className="h-full flex flex-col">
               {/* Mobile Header with Back Button and Toggle */}
               <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-                <div className="flex items-center">
+                <div className="flex items-center gap-3">
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={() => setCurrentView('conversations')}
-                    className="mr-3"
+                    className="p-2"
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Link 
                     to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
-                    className="font-medium hover:underline"
+                    className="font-medium hover:underline text-lg"
                   >
                     {activeChat?.name}
                   </Link>
