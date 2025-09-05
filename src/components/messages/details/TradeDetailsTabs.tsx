@@ -221,7 +221,7 @@ React.useEffect(() => {
         {selectedItem === 'item1' ? (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Item Image with Navigation */}
-            <div className="relative aspect-square bg-gray-100 w-full h-64">
+            <div className="relative aspect-square bg-gray-100 w-full h-40 md:h-64">
               <img 
                 src={itemImages[currentImageIndex]} 
                 alt={selectedPair.item1.name} 
@@ -291,7 +291,7 @@ React.useEffect(() => {
         ) : (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Their Item Image with Navigation */}
-            <div className="relative aspect-square bg-gray-100 w-full h-64">
+            <div className="relative aspect-square bg-gray-100 w-full h-40 md:h-64">
               <img 
                 src={theirItemImages[currentImageIndex]} 
                 alt={selectedPair.item2.name} 
