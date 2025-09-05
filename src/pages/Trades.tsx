@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { fetchUserTradeConversations } from '@/services/tradeService';
 import { getReviewsForTrade, checkReviewEligibility } from '@/services/reviewService';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Star, ArrowLeftRight } from 'lucide-react';
+import { MessageCircle, Star, ArrowLeftRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import ReviewModal from '@/components/trade/ReviewModal';
@@ -20,6 +20,7 @@ const Trades = () => {
   const [selectedTradeForReview, setSelectedTradeForReview] = useState<any>(null);
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
 
   // Get current user with profile data
   const { data: currentUser } = useQuery({
@@ -102,6 +103,14 @@ const Trades = () => {
     setShowItemModal(true);
   };
 
+  const handlePrevTrade = () => {
+    setCurrentTradeIndex(prev => Math.max(0, prev - 1));
+  };
+
+  const handleNextTrade = () => {
+    setCurrentTradeIndex(prev => Math.min(completedTrades.length - 1, prev + 1));
+  };
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -140,12 +149,40 @@ const Trades = () => {
     <MainLayout>
       <div className="p-6 max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">My Trades</h1>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-2xl font-bold text-gray-900">My Trades</h1>
+            {/* Mobile navigation - only show if multiple trades */}
+            {completedTrades.length > 1 && (
+              <div className="flex items-center space-x-2 md:hidden">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePrevTrade}
+                  disabled={currentTradeIndex === 0}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm text-gray-500 min-w-[40px] text-center">
+                  {currentTradeIndex + 1}/{completedTrades.length}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNextTrade}
+                  disabled={currentTradeIndex === completedTrades.length - 1}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
           <p className="text-gray-600">Manage your trading activities and conversations</p>
         </div>
 
         <div className="space-y-6">
-          {completedTrades.map((trade: any) => {
+          {completedTrades.map((trade: any, index: number) => {
             // Determine the other user based on current user ID
             const otherUser = trade.requester_id === currentUser?.id 
               ? trade.owner_profile 
@@ -162,7 +199,12 @@ const Trades = () => {
             const yourReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id); // Review left ABOUT you
 
             return (
-              <div key={trade.id} className="flex flex-col md:flex-row gap-4">
+              <div 
+                key={trade.id} 
+                className={`flex flex-col md:flex-row gap-4 ${
+                  index === currentTradeIndex ? 'block' : 'hidden md:flex'
+                }`}
+              >
                 {/* Left side - Trade Details */}
                 <div className="w-full md:w-1/3">
                   <Card>
