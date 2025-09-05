@@ -162,9 +162,9 @@ const Trades = () => {
             const yourReview = tradeReviews.find(review => review.reviewee_id === currentUser?.id); // Review left ABOUT you
 
             return (
-              <div key={trade.id} className="flex gap-4">
+              <div key={trade.id} className="flex flex-col md:flex-row gap-4">
                 {/* Left side - Trade Details */}
-                <div className="w-1/3">
+                <div className="w-full md:w-1/3">
                   <Card>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
@@ -226,7 +226,7 @@ const Trades = () => {
                 </div>
 
                 {/* Middle - Their Review of You */}
-                <div className="w-1/3">
+                <div className="w-full md:w-1/3">
                   <Card className="h-full">
                     <CardContent className="p-6">
                       <div className="flex items-center space-x-3 mb-3">
@@ -268,7 +268,7 @@ const Trades = () => {
                 </div>
 
                 {/* Right - Your Review Section */}
-                <div className="w-1/3">
+                <div className="w-full md:w-1/3">
                   <Card className="h-full">
                     <CardContent className="p-6">
                       <div className="flex items-center space-x-3 mb-3">
