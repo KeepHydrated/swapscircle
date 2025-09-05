@@ -213,6 +213,7 @@ const OtherPersonProfile: React.FC = () => {
   const [isFriend, setIsFriend] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isUserBlocked, setIsUserBlocked] = useState(false);
+  const isMobile = useIsMobile();
 
   // Function to navigate to specific tab
   const navigateToTab = (tabValue: string) => {
@@ -449,8 +450,6 @@ const OtherPersonProfile: React.FC = () => {
       </MainLayout>
     );
   }
-
-  const isMobile = useIsMobile();
 
   return (
     <MainLayout>
