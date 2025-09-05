@@ -447,6 +447,15 @@ const Messages = () => {
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage 
+                      src={activeChat?.otherUserProfile?.avatar_url || undefined} 
+                      alt={`${activeChat?.name}'s avatar`} 
+                    />
+                    <AvatarFallback>
+                      {activeChat?.name?.substring(0, 1).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <Link 
                     to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
                     className="font-medium hover:underline text-lg"
