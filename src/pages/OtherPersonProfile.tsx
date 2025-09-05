@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -8,6 +9,7 @@ import { ReportButton } from '@/components/profile/ReportButton';
 import BlockUserButton from '@/components/profile/BlockUserButton';
 import { Star, UserX } from 'lucide-react';
 import { MatchItem } from '@/types/item';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
@@ -448,6 +450,8 @@ const OtherPersonProfile: React.FC = () => {
     );
   }
 
+  const isMobile = useIsMobile();
+
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
@@ -460,33 +464,60 @@ const OtherPersonProfile: React.FC = () => {
             userId={userId || undefined}
             isOwnProfile={false}
           />
-          <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
-            {/* Blocked status indicator */}
-            {isUserBlocked && (
-              <div className="bg-red-100 border border-red-300 text-red-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
-                <UserX className="w-4 h-4" />
-                You blocked this user
+          
+          {/* Action buttons positioned differently for mobile vs desktop */}
+          {isMobile ? (
+            /* Mobile: Center positioned as before */
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
+              {/* Blocked status indicator */}
+              {isUserBlocked && (
+                <div className="bg-red-100 border border-red-300 text-red-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+                  <UserX className="w-4 h-4" />
+                  You blocked this user
+                </div>
+              )}
+              
+              {/* Action buttons */}
+              <div className="flex gap-2">
+                <BlockUserButton 
+                  userId={userId || ""} 
+                  username={profileData.name}
+                  onBlockSuccess={() => setIsUserBlocked(!isUserBlocked)}
+                />
+                <ReportButton 
+                  reportedUserId={userId || ""} 
+                  reportedUsername={profileData.name}
+                />
+                <FriendRequestButton 
+                  userId={userId || "profile1"} 
+                  initialStatus="none" 
+                  onStatusChange={(status) => setIsFriend(status === 'accepted')}
+                />
               </div>
-            )}
-            
-            {/* Action buttons */}
-            <div className="flex gap-2">
-              <BlockUserButton 
-                userId={userId || ""} 
-                username={profileData.name}
-                onBlockSuccess={() => setIsUserBlocked(!isUserBlocked)}
-              />
-              <ReportButton 
-                reportedUserId={userId || ""} 
-                reportedUsername={profileData.name}
-              />
-              <FriendRequestButton 
-                userId={userId || "profile1"} 
-                initialStatus="none" 
-                onStatusChange={(status) => setIsFriend(status === 'accepted')}
-              />
             </div>
-          </div>
+          ) : (
+            /* Desktop/Tablet: Portal to profile header */
+            typeof document !== 'undefined' && document.getElementById('profile-action-buttons') &&
+            createPortal(
+              <div className="flex gap-2">
+                <BlockUserButton 
+                  userId={userId || ""} 
+                  username={profileData.name}
+                  onBlockSuccess={() => setIsUserBlocked(!isUserBlocked)}
+                />
+                <ReportButton 
+                  reportedUserId={userId || ""} 
+                  reportedUsername={profileData.name}
+                />
+                <FriendRequestButton 
+                  userId={userId || "profile1"} 
+                  initialStatus="none" 
+                  onStatusChange={(status) => setIsFriend(status === 'accepted')}
+                />
+              </div>,
+              document.getElementById('profile-action-buttons')!
+            )
+          )}
         </div>
 
         {/* Tabs with sticky header */}

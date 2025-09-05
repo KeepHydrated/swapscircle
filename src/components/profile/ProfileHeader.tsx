@@ -99,7 +99,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </Avatar>
           </div>
           <div className="flex-grow text-center md:text-left">
-            <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+            <div className="flex items-center justify-center md:justify-between">
+              <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+              {/* Action buttons will be rendered here by parent component */}
+              <div id="profile-action-buttons" className="hidden md:flex"></div>
+            </div>
             <div className="my-2 flex justify-center md:justify-start">
               {renderStars(profile.rating)}
               <Button 
