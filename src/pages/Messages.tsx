@@ -330,11 +330,12 @@ const Messages = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      {/* Header - conditionally rendered */}
+      {!(isTablet && currentMobileView === 'details') && <Header />}
       
       {/* Mobile/Tablet Layout */}
       {(isMobile || isTablet) ? (
-        <div className="flex-1 overflow-hidden">
+        <div className={`flex-1 overflow-hidden ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
@@ -559,7 +560,7 @@ const Messages = () => {
                 ) : (
                   /* Tablet Layout - Both panels side by side */
                   <>
-                    <div className="flex-1 flex flex-col min-h-0">
+                    <div className={`flex-1 flex flex-col min-h-0 ${isTablet ? 'mr-80' : ''}`}>
                       {activeConversation ? (
                         <>
                           <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
@@ -603,8 +604,10 @@ const Messages = () => {
                       )}
                     </div>
 
-                    {/* Trade Details Panel - Always visible on tablet */}
-                    <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col overflow-y-auto">
+                    {/* Trade Details Panel - Always visible on tablet, full height on iPad */}
+                    <div className={`w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col overflow-y-auto ${
+                      isTablet ? 'fixed right-0 top-0 h-screen z-40' : ''
+                    }`}>
                       {selectedPair ? (
                         <TradeDetailsTabs 
                           selectedPair={selectedPair}
