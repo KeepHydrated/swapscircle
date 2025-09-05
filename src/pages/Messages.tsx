@@ -424,10 +424,10 @@ const Messages = () => {
                     );
                   })}
                 </div>
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <p className="text-gray-500">No conversations yet</p>
+               ) : (
+                 <div className="flex items-center justify-center h-full">
+                   <div className="text-center">
+                     <p className="text-gray-500">No messages yet</p>
                     <p className="text-sm text-gray-400 mt-2">Start trading to begin conversations!</p>
                   </div>
                 </div>
@@ -710,13 +710,12 @@ const Messages = () => {
                 })}
               </div>
             </div>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-gray-500">No conversations yet</p>
-                <p className="text-sm text-gray-400 mt-2">Start trading to begin conversations!</p>
-              </div>
-            </div>
+           ) : (
+             <div className="flex items-center justify-center h-full">
+               <div className="text-center">
+                 <p className="text-gray-500">No messages yet</p>
+               </div>
+             </div>
           )}
         </div>
         
