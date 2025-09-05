@@ -417,7 +417,7 @@ const Messages = () => {
                               </div>
                             )}
                             
-                            <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
+                            <p className="text-sm text-gray-600 truncate">{conversation.lastMessage || "No messages yet"}</p>
                           </div>
                         </div>
                       </div>
@@ -702,7 +702,7 @@ const Messages = () => {
                             </div>
                           )}
                           
-                          <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
+                          <p className="text-sm text-gray-600 truncate">{conversation.lastMessage || "No messages yet"}</p>
                         </div>
                       </div>
                     </div>
