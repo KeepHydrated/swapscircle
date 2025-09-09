@@ -314,32 +314,31 @@ const ProfileSettings: React.FC = () => {
                 })()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col gap-2">
-              <Button size="sm" className="relative" variant="outline" disabled={uploading || !isEditing}>
-                {uploading ? (
-                  <>
-                    <Upload className="mr-2 h-4 w-4 animate-spin" />
-                    <span className="hidden md:inline">Uploading...</span>
-                  </>
-                ) : (
-                  <>
-                    <Pencil className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Change Avatar</span>
-                  </>
-                )}
-                <input 
-                  type="file" 
-                  className="absolute inset-0 opacity-0 cursor-pointer" 
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  disabled={uploading || !isEditing}
-                />
-              </Button>
-              <p className="text-sm text-muted-foreground">
-                {isEditing ? "Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB." : "Click Edit to change your avatar"}
-              </p>
-            </div>
+            <div className="flex-1" />
+            <Button size="sm" className="relative" variant="outline" disabled={uploading || !isEditing}>
+              {uploading ? (
+                <>
+                  <Upload className="mr-2 h-4 w-4 animate-spin" />
+                  <span className="hidden md:inline">Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <Pencil className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Change Avatar</span>
+                </>
+              )}
+              <input 
+                type="file" 
+                className="absolute inset-0 opacity-0 cursor-pointer" 
+                accept="image/*"
+                onChange={handleAvatarChange}
+                disabled={uploading || !isEditing}
+              />
+            </Button>
           </div>
+          <p className="text-sm text-muted-foreground mt-2 hidden md:block text-right">
+            {isEditing ? "Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB." : "Click Edit to change your avatar"}
+          </p>
         </div>
 
         {initialLoading ? (
