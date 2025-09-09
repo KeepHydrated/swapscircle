@@ -391,7 +391,7 @@ const ProfileSettings: React.FC = () => {
                         </Button>
                       </div>
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="hidden md:block">
                       Enter your zipcode for location-based matching
                     </FormDescription>
                     <FormMessage />
@@ -412,7 +412,7 @@ const ProfileSettings: React.FC = () => {
                         {...field} 
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="hidden md:block">
                       Tell others about yourself and what kinds of items you like to trade.
                     </FormDescription>
                     <FormMessage />
