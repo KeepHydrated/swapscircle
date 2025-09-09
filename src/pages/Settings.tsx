@@ -10,9 +10,8 @@ import AccountSettings from '@/components/settings/AccountSettings';
 const Settings: React.FC = () => {
   return (
     <MainLayout>
-      <div className="flex justify-start">
-        <div className="w-full max-w-2xl bg-card rounded-lg shadow-sm overflow-hidden">
-          <Tabs defaultValue="profile" className="w-full">
+      <div className="bg-card rounded-lg shadow-sm overflow-hidden">
+        <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start overflow-x-visible">
             <TabsTrigger 
               value="profile" 
@@ -61,7 +60,6 @@ const Settings: React.FC = () => {
             <AccountSettings />
           </TabsContent>
         </Tabs>
-        </div>
       </div>
     </MainLayout>
   );
