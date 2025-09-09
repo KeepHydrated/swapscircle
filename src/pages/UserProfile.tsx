@@ -16,8 +16,8 @@ import { toast } from 'sonner';
 
 const UserProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'available');
   const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || (isMobile ? 'profile' : 'available'));
   const [userProfile, setUserProfile] = useState<any>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
