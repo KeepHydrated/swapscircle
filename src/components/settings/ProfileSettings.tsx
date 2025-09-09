@@ -181,6 +181,8 @@ const ProfileSettings: React.FC = () => {
   useEffect(() => {
     if (detectedZipcode) {
       form.setValue('location', detectedZipcode);
+      // Force form to refresh by triggering a re-render
+      form.trigger('location');
     }
   }, [detectedZipcode, form]);
 

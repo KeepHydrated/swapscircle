@@ -60,6 +60,8 @@ export const useLocation = (): UseLocationReturn => {
       return;
     }
 
+    // Clear previous zipcode and error
+    setZipcodeState(null);
     setLoading(true);
     setError(null);
 
@@ -71,6 +73,7 @@ export const useLocation = (): UseLocationReturn => {
           
           if (detectedZipcode) {
             setZipcodeState(detectedZipcode);
+            console.log('Auto-detected zipcode:', detectedZipcode);
           } else {
             setError('Could not determine zipcode from your location');
           }
