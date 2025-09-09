@@ -5,8 +5,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, User, Package } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useNavigate } from 'react-router-dom';
 
 const Analytics = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState({
     totalUsers: 0,
@@ -233,6 +235,10 @@ const Analytics = () => {
     fetchAnalytics();
   }, []);
 
+  const handleUserClick = (userId: string) => {
+    navigate(`/other-person-profile?userId=${userId}`);
+  };
+
   if (loading) {
     return (
       <MainLayout>
@@ -318,7 +324,11 @@ const Analytics = () => {
                   <p className="text-sm text-muted-foreground">No recent users</p>
                 ) : (
                   analytics.recentUsers.map((user) => (
-                    <div key={user.id} className="flex items-center gap-3">
+                    <div 
+                      key={user.id} 
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => handleUserClick(user.id)}
+                    >
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={user.avatar_url || ''} alt={user.username} />
                         <AvatarFallback>
