@@ -17,7 +17,7 @@ const NotificationSettings: React.FC = () => {
   return (
     <form onSubmit={handleNotificationSubmit}>
       <Card>
-        <CardHeader>
+        <CardHeader className="hidden md:block">
           <CardTitle>Notification Preferences</CardTitle>
           <CardDescription>
             Manage how you receive notifications.
