@@ -60,12 +60,10 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             {/* Heart icon - only show on mobile */}
             {isMobile && (
-              <Button variant="ghost" size="icon" asChild>
-                <Link to="/your-likes">
-                  <Heart className="w-5 h-5" />
-                  <span className="sr-only">Your Likes</span>
-                </Link>
-              </Button>
+              <Link to="/your-likes">
+                <Heart className="h-6 w-6 text-gray-500" />
+                <span className="sr-only">Your Likes</span>
+              </Link>
             )}
             
             <Link to="/" className="flex items-center">
