@@ -346,7 +346,7 @@ const ProfileSettings: React.FC = () => {
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Location (Zipcode)</FormLabel>
+                    <FormLabel>Your Zipcode</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter zipcode (e.g., 12345)" 
