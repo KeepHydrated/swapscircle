@@ -296,45 +296,46 @@ const ProfileSettings: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-8 md:pt-6">
-        <div className="flex items-start gap-5 pb-6 mb-6 border-b">
-          <Avatar className="h-24 w-24 flex-shrink-0">
-            <AvatarImage src={avatarUrl} alt="Profile" />
-            <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
-              {(() => {
-                // Use stable displayName state, fallback to user name, then "User"
-                const nameToUse = displayName || user?.name || "User";
-                console.log("[ProfileSettings] Avatar initials using name:", nameToUse, "displayName state:", displayName, "user.name:", user?.name);
-                return nameToUse.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
-              })()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex justify-end">
-              <Button size="sm" className="relative" variant="outline" disabled={uploading}>
-                {uploading ? (
-                  <>
-                    <Upload className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Change Avatar
-                  </>
-                )}
-                <input 
-                  type="file" 
-                  className="absolute inset-0 opacity-0 cursor-pointer" 
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  disabled={uploading}
-                />
-              </Button>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2 hidden md:block text-right">
-              Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB.
-            </p>
+        <div className="pb-6 mb-6 border-b">
+          <div className="flex items-center gap-5">
+            <Avatar className="h-24 w-24 flex-shrink-0">
+              <AvatarImage src={avatarUrl} alt="Profile" />
+              <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
+                {(() => {
+                  // Use stable displayName state, fallback to user name, then "User"
+                  const nameToUse = displayName || user?.name || "User";
+                  console.log("[ProfileSettings] Avatar initials using name:", nameToUse, "displayName state:", displayName, "user.name:", user?.name);
+                  return nameToUse.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase();
+                })()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1" />
           </div>
+          <div className="flex justify-end mt-4">
+            <Button size="sm" className="relative" variant="outline" disabled={uploading}>
+              {uploading ? (
+                <>
+                  <Upload className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Change Avatar
+                </>
+              )}
+              <input 
+                type="file" 
+                className="absolute inset-0 opacity-0 cursor-pointer" 
+                accept="image/*"
+                onChange={handleAvatarChange}
+                disabled={uploading}
+              />
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2 hidden md:block text-right">
+            Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB.
+          </p>
         </div>
 
         {initialLoading ? (
