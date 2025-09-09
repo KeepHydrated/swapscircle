@@ -50,6 +50,7 @@ const ProfileSettings: React.FC = () => {
   
   const [initialLoading, setInitialLoading] = useState(true);
   const [displayName, setDisplayName] = useState(user?.name || "");
+  const { autoDetectLocation, loading: locationLoading, zipcode: detectedZipcode } = useLocation();
 
   console.log('[ProfileSettings] State initialized successfully');
 
@@ -166,10 +167,22 @@ const ProfileSettings: React.FC = () => {
     }
   }, [user?.name, displayName]);
 
-  // Location handling - no longer needed for GPS
+  // Location handling
   const handleLocationChange = (value: string) => {
     form.setValue('location', value);
   };
+
+  // Handle auto-detect zipcode
+  const handleAutoDetectZipcode = () => {
+    autoDetectLocation();
+  };
+
+  // Update form when zipcode is detected
+  useEffect(() => {
+    if (detectedZipcode) {
+      form.setValue('location', detectedZipcode);
+    }
+  }, [detectedZipcode, form]);
 
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
@@ -346,7 +359,23 @@ const ProfileSettings: React.FC = () => {
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your Zipcode</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Your Zipcode</FormLabel>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleAutoDetectZipcode}
+                        disabled={locationLoading}
+                        className="h-6 px-2"
+                      >
+                        {locationLoading ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <RefreshCw className="h-3 w-3" />
+                        )}
+                      </Button>
+                    </div>
                     <FormControl>
                       <Input 
                         placeholder="Enter zipcode (e.g., 12345)" 
