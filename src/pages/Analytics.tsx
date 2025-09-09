@@ -1,35 +1,145 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { supabase } from '@/integrations/supabase/client';
+import { Loader2 } from 'lucide-react';
 
 const Analytics = () => {
-  // Mock data for analytics
-  const userGrowthData = [
-    { month: 'Jan', users: 120 },
-    { month: 'Feb', users: 180 },
-    { month: 'Mar', users: 220 },
-    { month: 'Apr', users: 290 },
-    { month: 'May', users: 350 },
-    { month: 'Jun', users: 420 },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [analytics, setAnalytics] = useState({
+    totalUsers: 0,
+    totalItems: 0,
+    activeTrades: 0,
+    completedTrades: 0,
+    userGrowthData: [] as Array<{ month: string; users: number }>,
+    itemsData: [] as Array<{ category: string; count: number }>,
+    tradesData: [] as Array<{ month: string; trades: number }>
+  });
 
-  const itemsData = [
-    { category: 'Electronics', count: 45 },
-    { category: 'Clothing', count: 32 },
-    { category: 'Books', count: 28 },
-    { category: 'Sports', count: 22 },
-    { category: 'Home', count: 18 },
-  ];
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true);
 
-  const tradesData = [
-    { month: 'Jan', trades: 15 },
-    { month: 'Feb', trades: 23 },
-    { month: 'Mar', trades: 31 },
-    { month: 'Apr', trades: 28 },
-    { month: 'May', trades: 42 },
-    { month: 'Jun', trades: 38 },
-  ];
+        // Fetch total users (from profiles table)
+        const { count: totalUsers } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true });
+
+        // Fetch total items
+        const { count: totalItems } = await supabase
+          .from('items')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'published');
+
+        // Fetch active trades (pending status)
+        const { count: activeTrades } = await supabase
+          .from('trades')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'pending');
+
+        // Fetch completed trades
+        const { count: completedTrades } = await supabase
+          .from('trades')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed');
+
+        // Fetch user growth data (last 6 months)
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        
+        const { data: userGrowthRaw } = await supabase
+          .from('profiles')
+          .select('created_at')
+          .gte('created_at', sixMonthsAgo.toISOString());
+
+        // Process user growth data
+        const userGrowthData = [];
+        for (let i = 5; i >= 0; i--) {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          const monthName = date.toLocaleDateString('en', { month: 'short' });
+          const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+          const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+          
+          const usersInMonth = userGrowthRaw?.filter(user => {
+            const createdAt = new Date(user.created_at);
+            return createdAt >= monthStart && createdAt <= monthEnd;
+          }).length || 0;
+          
+          userGrowthData.push({ month: monthName, users: usersInMonth });
+        }
+
+        // Fetch items by category
+        const { data: itemsRaw } = await supabase
+          .from('items')
+          .select('category')
+          .eq('status', 'published');
+
+        const categoryCount = itemsRaw?.reduce((acc: Record<string, number>, item) => {
+          const category = item.category || 'Other';
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        }, {}) || {};
+
+        const itemsData = Object.entries(categoryCount)
+          .map(([category, count]) => ({ category, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 5);
+
+        // Fetch trades data (last 6 months)
+        const { data: tradesRaw } = await supabase
+          .from('trades')
+          .select('created_at, status')
+          .gte('created_at', sixMonthsAgo.toISOString());
+
+        // Process trades data
+        const tradesData = [];
+        for (let i = 5; i >= 0; i--) {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          const monthName = date.toLocaleDateString('en', { month: 'short' });
+          const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+          const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+          
+          const tradesInMonth = tradesRaw?.filter(trade => {
+            const createdAt = new Date(trade.created_at);
+            return createdAt >= monthStart && createdAt <= monthEnd;
+          }).length || 0;
+          
+          tradesData.push({ month: monthName, trades: tradesInMonth });
+        }
+
+        setAnalytics({
+          totalUsers: totalUsers || 0,
+          totalItems: totalItems || 0,
+          activeTrades: activeTrades || 0,
+          completedTrades: completedTrades || 0,
+          userGrowthData,
+          itemsData,
+          tradesData
+        });
+
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -48,7 +158,7 @@ const Analytics = () => {
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">420</div>
+              <div className="text-2xl font-bold">{analytics.totalUsers}</div>
               <p className="text-xs text-muted-foreground">
                 +20% from last month
               </p>
@@ -59,7 +169,7 @@ const Analytics = () => {
               <CardTitle className="text-sm font-medium">Total Items</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">145</div>
+              <div className="text-2xl font-bold">{analytics.totalItems}</div>
               <p className="text-xs text-muted-foreground">
                 +15% from last month
               </p>
@@ -70,7 +180,7 @@ const Analytics = () => {
               <CardTitle className="text-sm font-medium">Active Trades</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">38</div>
+              <div className="text-2xl font-bold">{analytics.activeTrades}</div>
               <p className="text-xs text-muted-foreground">
                 +8% from last month
               </p>
@@ -81,7 +191,7 @@ const Analytics = () => {
               <CardTitle className="text-sm font-medium">Completed Trades</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">127</div>
+              <div className="text-2xl font-bold">{analytics.completedTrades}</div>
               <p className="text-xs text-muted-foreground">
                 +12% from last month
               </p>
@@ -100,7 +210,7 @@ const Analytics = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={userGrowthData}>
+                <LineChart data={analytics.userGrowthData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -120,7 +230,7 @@ const Analytics = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={itemsData}>
+                <BarChart data={analytics.itemsData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="category" />
                   <YAxis />
@@ -141,7 +251,7 @@ const Analytics = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={tradesData}>
+              <BarChart data={analytics.tradesData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
