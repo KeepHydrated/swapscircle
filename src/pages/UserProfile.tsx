@@ -4,7 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileHeader from '@/components/profile/ProfileHeader';
-import { Star, Users } from 'lucide-react';
+import { Star, Users, Heart, Settings, Share2, Edit } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client'; 
 import { fetchUserReviews } from '@/services/authService';
 import ItemsForTradeTab from '@/components/profile/ItemsForTradeTab';
@@ -17,6 +18,7 @@ import { toast } from 'sonner';
 const UserProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'available');
+  const isMobile = useIsMobile();
   const [userProfile, setUserProfile] = useState<any>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
@@ -224,6 +226,23 @@ const UserProfile: React.FC = () => {
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
+        {/* Mobile Icon Bar */}
+        {isMobile && (
+          <div className="flex items-center justify-around py-4 px-6 border-b bg-background">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+              <Heart className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+              <Edit className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+              <Share2 className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+              <Settings className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+        )}
         <ProfileHeader 
           profile={profileData}
           friendCount={userFriends.length}
