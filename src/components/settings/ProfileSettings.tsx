@@ -315,7 +315,7 @@ const ProfileSettings: React.FC = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-2">
-              <Button size="sm" className="relative" variant="outline" disabled={uploading || !isEditing}>
+              <Button size="sm" className="relative w-fit" variant="outline" disabled={uploading || !isEditing}>
                 {uploading ? (
                   <>
                     <Upload className="mr-2 h-4 w-4 animate-spin" />
