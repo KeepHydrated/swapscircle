@@ -60,7 +60,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
               )}
               {/* Action Icons - Top Left - for removed items */}
               {isRemoved && (
-                <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 left-2 flex space-x-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <Button 
                     size="icon" 
                     variant="secondary" 
@@ -76,7 +76,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
               )}
               {/* Action Icons - Top Left - Hide for removed items */}
               {!isRemoved && (
-                <div className="absolute top-2 left-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 left-2 flex space-x-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                 <Button 
                   size="icon" 
                   variant="secondary" 
@@ -116,7 +116,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
               {/* Hide/Unhide Icon - Top Right - Only show for published items, not removed */}
               {!isDraft && !isRemoved && (
                 <div className={`absolute top-2 right-2 transition-opacity ${
-                  isHidden ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  isHidden ? 'opacity-100' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'
                 }`}>
                   <Button 
                     size="icon" 
