@@ -63,7 +63,7 @@ const PrivacySettings: React.FC = () => {
   if (initialLoading) {
     return (
       <Card>
-        <CardHeader>
+        <CardHeader className="hidden md:block">
           <CardTitle>Privacy Settings</CardTitle>
           <CardDescription>
             Control your privacy and visibility.
@@ -80,7 +80,7 @@ const PrivacySettings: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="hidden md:block">
         <CardTitle>Privacy Settings</CardTitle>
         <CardDescription>
           Control your privacy and visibility.
