@@ -289,7 +289,7 @@ const ProfileSettings: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="hidden md:block">
         <CardTitle>Profile Information</CardTitle>
         <CardDescription>
           Update your profile information and avatar.
