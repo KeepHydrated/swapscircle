@@ -130,7 +130,7 @@ const Trades = () => {
     return (
       <MainLayout>
         <div className="p-6 max-w-7xl mx-auto">
-          <div className="mb-6">
+          <div className="mb-6 hidden md:block">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">My Trades</h1>
             <p className="text-gray-600">Manage your trading activities and conversations</p>
           </div>
@@ -148,38 +148,39 @@ const Trades = () => {
   return (
     <MainLayout>
       <div className="p-6 max-w-7xl mx-auto">
-        <div className="mb-6">
+        <div className="mb-6 hidden md:block">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-gray-900">My Trades</h1>
-            {/* Mobile navigation - only show if multiple trades */}
-            {completedTrades.length > 1 && (
-              <div className="flex items-center space-x-2 md:hidden">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePrevTrade}
-                  disabled={currentTradeIndex === 0}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-sm text-gray-500 min-w-[40px] text-center">
-                  {currentTradeIndex + 1}/{completedTrades.length}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNextTrade}
-                  disabled={currentTradeIndex === completedTrades.length - 1}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
           </div>
           <p className="text-gray-600">Manage your trading activities and conversations</p>
         </div>
+        
+        {/* Mobile navigation - only show if multiple trades */}
+        {completedTrades.length > 1 && (
+          <div className="flex items-center justify-center space-x-2 md:hidden mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrevTrade}
+              disabled={currentTradeIndex === 0}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm text-gray-500 min-w-[40px] text-center">
+              {currentTradeIndex + 1}/{completedTrades.length}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextTrade}
+              disabled={currentTradeIndex === completedTrades.length - 1}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
 
         <div className="space-y-6">
           {completedTrades.map((trade: any, index: number) => {
