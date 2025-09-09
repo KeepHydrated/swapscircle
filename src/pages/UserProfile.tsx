@@ -261,6 +261,44 @@ const UserProfile: React.FC = () => {
     );
   }
 
+  // Mobile reviews-only view
+  if (isMobile && activeTab === 'reviews') {
+    return (
+      <MainLayout>
+        <div className="bg-card">
+          {/* Mobile Icon Bar */}
+          <div className="flex items-center justify-around py-4 px-6 border-b bg-background">
+            <button 
+              onClick={() => setActiveTab('profile')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <User className="w-5 h-5 text-primary" />
+            </button>
+            <button 
+              onClick={() => setActiveTab('available')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Package className="w-5 h-5 text-primary" />
+            </button>
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white">
+              <Star className="w-5 h-5" />
+            </div>
+            <button 
+              onClick={() => setActiveTab('friends')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Users className="w-5 h-5 text-primary" />
+            </button>
+          </div>
+          {/* Just the reviews content */}
+          <div className="p-6">
+            <ReviewsTab reviews={userReviews} />
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
