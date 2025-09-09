@@ -336,6 +336,49 @@ const UserProfile: React.FC = () => {
     );
   }
 
+  // Mobile profile-only view
+  if (isMobile && activeTab === 'profile') {
+    return (
+      <MainLayout>
+        <div className="bg-card">
+          {/* Mobile Icon Bar */}
+          <div className="flex items-center justify-around py-4 px-6 border-b bg-background">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white">
+              <User className="w-5 h-5" />
+            </div>
+            <button 
+              onClick={() => setActiveTab('available')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Package className="w-5 h-5 text-primary" />
+            </button>
+            <button 
+              onClick={() => setActiveTab('reviews')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Star className="w-5 h-5 text-primary" />
+            </button>
+            <button 
+              onClick={() => setActiveTab('friends')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Users className="w-5 h-5 text-primary" />
+            </button>
+          </div>
+          {/* Just the profile header */}
+          <ProfileHeader 
+            profile={profileData}
+            friendCount={userFriends.length}
+            onReviewsClick={() => setActiveTab('reviews')}
+            onFriendsClick={() => setActiveTab('friends')}
+            userId={userProfile?.id}
+            isOwnProfile={true}
+          />
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
