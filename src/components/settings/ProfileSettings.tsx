@@ -380,7 +380,7 @@ const ProfileSettings: React.FC = () => {
                     </div>
                     <FormControl>
                       <Input 
-                        placeholder="Enter zipcode (e.g., 12345)" 
+                        placeholder="" 
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
