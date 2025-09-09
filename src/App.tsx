@@ -26,6 +26,7 @@ import Test from "./pages/Test";
 import Test2 from "./pages/Test2";
 
 import AdminReports from "./pages/AdminReports";
+import Analytics from "./pages/Analytics";
 import CustomerSupport from "./pages/CustomerSupport";
 import RequireAuth from "./components/auth/RequireAuth";
 
@@ -102,6 +103,11 @@ const App = () => {
                    <AdminReports />
                  </RequireAuth>
                  } />
+                <Route path="/analytics" element={
+                  <RequireAuth>
+                    <Analytics />
+                  </RequireAuth>
+                } />
                 <Route path="/posting-rules" element={<PostingRules />} />
                 <Route path="/customer-support" element={
                   <RequireAuth>

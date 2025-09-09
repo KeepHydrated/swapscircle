@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight, BarChart3 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -172,12 +172,20 @@ const Header = () => {
                           </Link>
                          </DropdownMenuItem>
                           {user?.email === 'nadiachibri@gmail.com' && (
-                            <DropdownMenuItem asChild>
-                              <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
-                                <Headphones className="mr-2 h-4 w-4" />
-                                <span>Customer Support</span>
-                              </Link>
-                            </DropdownMenuItem>
+                            <>
+                              <DropdownMenuItem asChild>
+                                <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
+                                  <Headphones className="mr-2 h-4 w-4" />
+                                  <span>Customer Support</span>
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link to="/analytics" className="flex w-full cursor-pointer items-center">
+                                  <BarChart3 className="mr-2 h-4 w-4" />
+                                  <span>Analytics</span>
+                                </Link>
+                              </DropdownMenuItem>
+                            </>
                           )}
                           {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
                           <DropdownMenuItem asChild>
