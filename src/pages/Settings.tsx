@@ -12,31 +12,34 @@ const Settings: React.FC = () => {
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start overflow-x-auto md:overflow-x-visible">
+          <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start overflow-x-visible">
             <TabsTrigger 
               value="profile" 
-              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
+              className="flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-2 md:px-4 text-sm"
             >
               <span className="md:hidden">Profile</span>
               <span className="hidden md:inline">Profile Settings</span>
             </TabsTrigger>
             <TabsTrigger 
               value="notifications" 
-              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
+              className="flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-2 md:px-4 text-sm"
             >
-              Notifications
+              <span className="md:hidden">Notifications</span>
+              <span className="hidden md:inline">Notifications</span>
             </TabsTrigger>
             <TabsTrigger 
               value="privacy" 
-              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
+              className="flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-2 md:px-4 text-sm"
             >
-              Privacy
+              <span className="md:hidden">Privacy</span>
+              <span className="hidden md:inline">Privacy</span>
             </TabsTrigger>
             <TabsTrigger 
               value="account" 
-              className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
+              className="flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-2 md:px-4 text-sm"
             >
-              Account
+              <span className="md:hidden">Account</span>
+              <span className="hidden md:inline">Account</span>
             </TabsTrigger>
           </TabsList>
 
