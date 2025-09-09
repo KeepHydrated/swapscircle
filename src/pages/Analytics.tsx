@@ -3,7 +3,8 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User, Package } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Analytics = () => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,9 @@ const Analytics = () => {
     },
     userGrowthData: [] as Array<{ month: string; users: number }>,
     itemsData: [] as Array<{ category: string; count: number }>,
-    tradesData: [] as Array<{ month: string; trades: number }>
+    tradesData: [] as Array<{ month: string; trades: number }>,
+    recentUsers: [] as Array<{ id: string; username: string; avatar_url: string | null; created_at: string }>,
+    recentItems: [] as Array<{ id: string; name: string; image_url: string | null; created_at: string; owner_username: string }>
   });
 
   useEffect(() => {
@@ -166,6 +169,28 @@ const Analytics = () => {
             .lt('created_at', thisMonthStart.toISOString())
         ]);
 
+        // Fetch recent users (last 10)
+        const { data: recentUsersData } = await supabase
+          .from('profiles')
+          .select('id, username, avatar_url, created_at')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        // Fetch recent items (last 10) with owner info
+        const { data: recentItemsData } = await supabase
+          .from('items')
+          .select(`
+            id, 
+            name, 
+            image_url, 
+            created_at,
+            user_id,
+            profiles!inner(username)
+          `)
+          .eq('status', 'published')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
         setAnalytics({
           totalUsers: totalUsers || 0,
           totalItems: totalItems || 0,
@@ -182,7 +207,20 @@ const Analytics = () => {
           },
           userGrowthData,
           itemsData,
-          tradesData
+          tradesData,
+          recentUsers: recentUsersData?.map(user => ({
+            id: user.id,
+            username: user.username || 'User',
+            avatar_url: user.avatar_url,
+            created_at: user.created_at
+          })) || [],
+          recentItems: recentItemsData?.map(item => ({
+            id: item.id,
+            name: item.name,
+            image_url: item.image_url,
+            created_at: item.created_at,
+            owner_username: (item.profiles as any)?.username || 'Unknown'
+          })) || []
         });
 
       } catch (error) {
@@ -260,7 +298,96 @@ const Analytics = () => {
                 Successful trades
               </p>
             </CardContent>
+        </Card>
+
+        {/* Recent Activity Section */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Recently Joined Users
+              </CardTitle>
+              <CardDescription>
+                Latest users who signed up to the platform
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {analytics.recentUsers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No recent users</p>
+                ) : (
+                  analytics.recentUsers.map((user) => (
+                    <div key={user.id} className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user.avatar_url || ''} alt={user.username} />
+                        <AvatarFallback>
+                          {user.username.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{user.username}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(user.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5" />
+                Recently Added Items
+              </CardTitle>
+              <CardDescription>
+                Latest items posted for trade
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {analytics.recentItems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No recent items</p>
+                ) : (
+                  analytics.recentItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                        {item.image_url ? (
+                          <img 
+                            src={item.image_url} 
+                            alt={item.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center">
+                            <Package className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{item.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          by {item.owner_username} • {new Date(item.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         </div>
 
         {/* Page Views Section */}
