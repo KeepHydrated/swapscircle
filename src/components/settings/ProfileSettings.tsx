@@ -329,7 +329,7 @@ const ProfileSettings: React.FC = () => {
                 disabled={uploading}
               />
             </Button>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-2 hidden md:block">
               Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB.
             </p>
           </div>
