@@ -304,7 +304,8 @@ const Analytics = () => {
                 Successful trades
               </p>
             </CardContent>
-        </Card>
+          </Card>
+        </div>
 
         {/* Recently Joined Users - Full Width Row */}
         <Card>
@@ -396,7 +397,6 @@ const Analytics = () => {
             </div>
           </CardContent>
         </Card>
-        </div>
 
         {/* Page Views Section */}
         <Card>
