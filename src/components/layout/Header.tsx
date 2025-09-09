@@ -67,6 +67,26 @@ const Header = () => {
                 </Link>
               </Button>
             )}
+            
+            {/* Customer Support and Analytics for specific user - desktop only */}
+            {user?.email === 'nadiachibri@gmail.com' && !isMobile && (
+              <>
+                <Button variant="ghost" size="icon" asChild>
+                  <Link to="/customer-support">
+                    <Headphones className="w-5 h-5" />
+                    <span className="sr-only">Customer Support</span>
+                  </Link>
+                </Button>
+                
+                <Button variant="ghost" size="icon" asChild>
+                  <Link to="/analytics">
+                    <BarChart3 className="w-5 h-5" />
+                    <span className="sr-only">Analytics</span>
+                  </Link>
+                </Button>
+              </>
+            )}
+            
             <Link to="/" className="flex items-center">
               {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
             </Link>
@@ -119,25 +139,6 @@ const Header = () => {
                     <span className="sr-only">Messages</span>
                   </Link>
                 </Button>
-
-                {/* Customer Support and Analytics for specific user */}
-                {user?.email === 'nadiachibri@gmail.com' && (
-                  <>
-                    <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
-                      <Link to="/customer-support">
-                        <Headphones className="w-5 h-5" />
-                        <span className="sr-only">Customer Support</span>
-                      </Link>
-                    </Button>
-                    
-                    <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
-                      <Link to="/analytics">
-                        <BarChart3 className="w-5 h-5" />
-                        <span className="sr-only">Analytics</span>
-                      </Link>
-                    </Button>
-                  </>
-                )}
                 
                 <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
                 
