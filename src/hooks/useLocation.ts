@@ -7,6 +7,7 @@ interface UseLocationReturn {
   hasLocation: boolean;
   setZipcode: (zipcode: string) => void;
   validateZipcode: (zipcode: string) => boolean;
+  autoDetectLocation: () => void;
 }
 
 export const useLocation = (): UseLocationReturn => {
@@ -34,12 +35,83 @@ export const useLocation = (): UseLocationReturn => {
     }
   }, [validateZipcode]);
 
+  // Convert GPS coordinates to zipcode using free geocoding API
+  const convertCoordsToZipcode = async (lat: number, lng: number): Promise<string | null> => {
+    try {
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+      );
+      const data = await response.json();
+      
+      if (data.postcode) {
+        return data.postcode;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error converting coordinates to zipcode:', error);
+      return null;
+    }
+  };
+
+  // Auto-detect location using GPS and convert to zipcode
+  const autoDetectLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by this browser');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const detectedZipcode = await convertCoordsToZipcode(latitude, longitude);
+          
+          if (detectedZipcode) {
+            setZipcodeState(detectedZipcode);
+          } else {
+            setError('Could not determine zipcode from your location');
+          }
+        } catch (error) {
+          setError('Failed to convert location to zipcode');
+        } finally {
+          setLoading(false);
+        }
+      },
+      (error) => {
+        setLoading(false);
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setError('Please allow location access to auto-detect your zipcode');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setError('Location unavailable. Please enter your zipcode manually');
+            break;
+          case error.TIMEOUT:
+            setError('Location request timed out. Please try again');
+            break;
+          default:
+            setError('Unable to detect location. Please enter your zipcode manually');
+            break;
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  }, []);
+
   return {
     zipcode,
     error,
     loading,
     hasLocation: zipcode !== null,
     setZipcode,
-    validateZipcode
+    validateZipcode,
+    autoDetectLocation
   };
 };

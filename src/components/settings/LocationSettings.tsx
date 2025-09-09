@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Loader2 } from 'lucide-react';
+import { MapPin, Loader2, Navigation } from 'lucide-react';
 import { useLocation } from '@/hooks/useLocation';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -12,7 +12,7 @@ const LocationSettings = () => {
   const [profile, setProfile] = useState<any>(null);
   const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
   const [inputZipcode, setInputZipcode] = useState('');
-  const { zipcode, error, setZipcode, validateZipcode } = useLocation();
+  const { zipcode, error, setZipcode, validateZipcode, loading, autoDetectLocation } = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -83,6 +83,13 @@ const LocationSettings = () => {
     setZipcode(value);
   };
 
+  // Auto-update input when zipcode is auto-detected
+  useEffect(() => {
+    if (zipcode && zipcode !== inputZipcode) {
+      setInputZipcode(zipcode);
+    }
+  }, [zipcode, inputZipcode]);
+
   // Handle saving zipcode
   const handleSaveLocation = () => {
     if (zipcode && validateZipcode(zipcode)) {
@@ -112,15 +119,32 @@ const LocationSettings = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="zipcode-input">New Zipcode</Label>
-          <Input
-            id="zipcode-input"
-            type="text"
-            placeholder="Enter zipcode (e.g., 12345)"
-            value={inputZipcode}
-            onChange={(e) => handleZipcodeChange(e.target.value)}
-            maxLength={10}
-          />
+          <Label htmlFor="zipcode-input">Zipcode</Label>
+          <div className="flex gap-2">
+            <Input
+              id="zipcode-input"
+              type="text"
+              placeholder="Enter zipcode (e.g., 12345)"
+              value={inputZipcode}
+              onChange={(e) => handleZipcodeChange(e.target.value)}
+              maxLength={10}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={autoDetectLocation}
+              disabled={loading}
+              title="Auto-detect zipcode from your location"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Navigation className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
 
         {error && (

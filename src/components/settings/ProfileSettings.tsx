@@ -358,6 +358,9 @@ const ProfileSettings: React.FC = () => {
                         maxLength={10}
                       />
                     </FormControl>
+                    <FormDescription>
+                      Enter your zipcode for location-based matching
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
