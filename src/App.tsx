@@ -29,6 +29,7 @@ import AdminReports from "./pages/AdminReports";
 import Analytics from "./pages/Analytics";
 import CustomerSupport from "./pages/CustomerSupport";
 import RequireAuth from "./components/auth/RequireAuth";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Test />} />
               <Route path="/home" element={<Navigate to="/" replace />} />
