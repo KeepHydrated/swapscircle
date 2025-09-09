@@ -316,12 +316,12 @@ const ProfileSettings: React.FC = () => {
               {uploading ? (
                 <>
                   <Upload className="mr-2 h-4 w-4 animate-spin" />
-                  Uploading...
+                  <span className="hidden md:inline">Uploading...</span>
                 </>
               ) : (
                 <>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Change Avatar
+                  <Pencil className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Change Avatar</span>
                 </>
               )}
               <input 
