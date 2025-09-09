@@ -255,22 +255,9 @@ const ProfileSettings: React.FC = () => {
           setAvatarUrl(imageUrl);
           console.log("[ProfileSettings] Setting avatar URL to:", imageUrl);
 
-          // Save immediately to DB (optional)
-          if (user) {
-            const updateResult = await supabase
-              .from("profiles")
-              .update({ avatar_url: imageUrl, updated_at: new Date().toISOString() })
-              .eq("id", user.id);
-            
-            console.log("[ProfileSettings] Database update result:", updateResult);
-            
-            await updateProfile({
-              avatar_url: imageUrl,
-            });
-
-            console.log("[ProfileSettings] Profile picture uploaded and saved to db:", imageUrl);
-            toast.success('Profile picture uploaded successfully');
-          }
+          // Don't save to DB immediately - wait for form submission
+          console.log("[ProfileSettings] Profile picture uploaded, waiting for save:", imageUrl);
+          toast.success('Profile picture uploaded - click Save Changes to apply');
         } else {
           console.error("[ProfileSettings] Upload failed - no URL returned");
           toast.error('Upload failed - please try again');
