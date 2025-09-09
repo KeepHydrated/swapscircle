@@ -64,6 +64,14 @@ const ProfileSettings: React.FC = () => {
     },
   });
 
+  // Helper function to check if a location string contains GPS coordinates
+  const isGPSCoordinate = (location: string | null): boolean => {
+    if (!location) return false;
+    // Check if it contains decimal numbers that look like coordinates
+    const coordPattern = /^-?\d+\.\d+,\s*-?\d+\.\d+$/;
+    return coordPattern.test(location.trim());
+  };
+
   // ---- NEW HELPER FUNCTION TO CREATE PROFILE ROW IF MISSING ----
   const createProfileIfMissing = async () => {
     if (!user) return;
@@ -127,7 +135,7 @@ const ProfileSettings: React.FC = () => {
         form.reset({
           username: finalDisplayName,
           bio: profile.bio ?? "",
-          location: profile.location ?? "",
+          location: isGPSCoordinate(profile.location) ? "" : (profile.location ?? ""),
         });
         
         // Only set avatar URL from DB if it's in the correct bucket or if we don't have a local one
