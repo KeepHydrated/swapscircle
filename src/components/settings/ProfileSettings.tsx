@@ -295,7 +295,7 @@ const ProfileSettings: React.FC = () => {
           Update your profile information and avatar.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-8 md:pt-6">
         <div className="flex items-center gap-5 pb-6 mb-6 border-b">
           <Avatar className="h-24 w-24">
             <AvatarImage src={avatarUrl} alt="Profile" />

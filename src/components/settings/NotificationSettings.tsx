@@ -23,7 +23,7 @@ const NotificationSettings: React.FC = () => {
             Manage how you receive notifications.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pt-8 md:pt-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-medium">Push Notifications</h3>

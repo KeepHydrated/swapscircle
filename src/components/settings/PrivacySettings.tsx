@@ -69,7 +69,7 @@ const PrivacySettings: React.FC = () => {
             Control your privacy and visibility.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-8 md:pt-6">
           <div className="flex justify-center py-8">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
           </div>
@@ -86,7 +86,7 @@ const PrivacySettings: React.FC = () => {
           Control your privacy and visibility.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-8 md:pt-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-medium">Show Location</h3>
