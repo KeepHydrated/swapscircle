@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 const UserProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || (isMobile ? 'profile' : 'available'));
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'available');
   const [userProfile, setUserProfile] = useState<any>(null);
   const [userItems, setUserItems] = useState<MatchItem[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
@@ -25,6 +25,13 @@ const UserProfile: React.FC = () => {
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Set default tab based on mobile state when it's available
+  useEffect(() => {
+    if (!searchParams.get('tab')) {
+      setActiveTab(isMobile ? 'profile' : 'available');
+    }
+  }, [isMobile, searchParams]);
 
   const fetchProfile = useCallback(async () => {
     console.log('[UserProfile] fetchProfile called - start');
