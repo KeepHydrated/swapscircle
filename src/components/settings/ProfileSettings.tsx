@@ -362,33 +362,34 @@ const ProfileSettings: React.FC = () => {
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Your Zipcode</FormLabel>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleAutoDetectZipcode}
-                        disabled={locationLoading}
-                        className="h-6 px-2"
-                      >
-                        {locationLoading ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <RefreshCw className="h-3 w-3" />
-                        )}
-                      </Button>
-                    </div>
+                    <FormLabel>Your Zipcode</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="" 
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleLocationChange(e.target.value);
-                        }}
-                        maxLength={10}
-                      />
+                      <div className="relative">
+                        <Input 
+                          placeholder="" 
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleLocationChange(e.target.value);
+                          }}
+                          maxLength={10}
+                          className="pr-10"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleAutoDetectZipcode}
+                          disabled={locationLoading}
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                        >
+                          {locationLoading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormDescription>
                       Enter your zipcode for location-based matching
