@@ -350,7 +350,7 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        {/* Recent Activity Section */}
+        {/* Recently Added Items - Full Width Row */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
