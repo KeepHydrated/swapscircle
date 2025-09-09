@@ -56,7 +56,7 @@ const Settings: React.FC = () => {
           </TabsContent>
 
 
-          <TabsContent value="account" className="p-3 pt-2">
+          <TabsContent value="account" className="p-3 pt-1">
             <AccountSettings />
           </TabsContent>
         </Tabs>
