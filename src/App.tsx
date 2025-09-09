@@ -30,8 +30,90 @@ import Analytics from "./pages/Analytics";
 import CustomerSupport from "./pages/CustomerSupport";
 import RequireAuth from "./components/auth/RequireAuth";
 import ScrollToTop from "./components/ScrollToTop";
+import { usePageViewTracking } from "./hooks/usePageViewTracking";
 
 const queryClient = new QueryClient();
+
+const AppContent = () => {
+  usePageViewTracking();
+  
+  return (
+    <Routes>
+      <Route path="/" element={<Test />} />
+      <Route path="/home" element={<Navigate to="/" replace />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/trades" element={
+        <RequireAuth>
+          <Trades />
+        </RequireAuth>
+      } />
+      <Route path="/item/:itemId" element={<ItemDetails />} />
+      <Route path="/post-item" element={
+        <RequireAuth>
+          <PostItemNew />
+        </RequireAuth>
+      } />
+      <Route path="/edit-item/:itemId" element={
+        <RequireAuth>
+          <PostItemNew />
+        </RequireAuth>
+      } />
+      <Route path="/messages" element={
+        <RequireAuth>
+          <Messages />
+        </RequireAuth>
+      } />
+      <Route path="/your-likes" element={
+        <RequireAuth>
+          <Messages3 />
+        </RequireAuth>
+      } />
+      <Route path="/other-person-profile" element={
+        <RequireAuth>
+          <OtherPersonProfile />
+        </RequireAuth>
+      } />
+      
+      <Route path="/notifications" element={
+        <RequireAuth>
+          <Notifications />
+        </RequireAuth>
+      } />
+      <Route path="/notifications/:id" element={
+        <RequireAuth>
+          <NotificationDetails />
+        </RequireAuth>
+      } />
+      <Route path="/profile" element={
+        <RequireAuth>
+          <UserProfile />
+        </RequireAuth>
+      } />
+      <Route path="/settings" element={
+        <RequireAuth>
+          <Settings />
+        </RequireAuth>
+       } />
+       <Route path="/admin/reports" element={
+         <RequireAuth>
+           <AdminReports />
+         </RequireAuth>
+         } />
+        <Route path="/analytics" element={
+          <RequireAuth>
+            <Analytics />
+          </RequireAuth>
+        } />
+        <Route path="/posting-rules" element={<PostingRules />} />
+        <Route path="/customer-support" element={
+          <RequireAuth>
+            <CustomerSupport />
+          </RequireAuth>
+        } />
+         <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => {
   console.log('🚨 APP COMPONENT LOADING!');
@@ -44,80 +126,7 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Test />} />
-              <Route path="/home" element={<Navigate to="/" replace />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/trades" element={
-                <RequireAuth>
-                  <Trades />
-                </RequireAuth>
-              } />
-              <Route path="/item/:itemId" element={<ItemDetails />} />
-              <Route path="/post-item" element={
-                <RequireAuth>
-                  <PostItemNew />
-                </RequireAuth>
-              } />
-              <Route path="/edit-item/:itemId" element={
-                <RequireAuth>
-                  <PostItemNew />
-                </RequireAuth>
-              } />
-              <Route path="/messages" element={
-                <RequireAuth>
-                  <Messages />
-                </RequireAuth>
-              } />
-              <Route path="/your-likes" element={
-                <RequireAuth>
-                  <Messages3 />
-                </RequireAuth>
-              } />
-              <Route path="/other-person-profile" element={
-                <RequireAuth>
-                  <OtherPersonProfile />
-                </RequireAuth>
-              } />
-              
-              <Route path="/notifications" element={
-                <RequireAuth>
-                  <Notifications />
-                </RequireAuth>
-              } />
-              <Route path="/notifications/:id" element={
-                <RequireAuth>
-                  <NotificationDetails />
-                </RequireAuth>
-              } />
-              <Route path="/profile" element={
-                <RequireAuth>
-                  <UserProfile />
-                </RequireAuth>
-              } />
-              <Route path="/settings" element={
-                <RequireAuth>
-                  <Settings />
-                </RequireAuth>
-               } />
-               <Route path="/admin/reports" element={
-                 <RequireAuth>
-                   <AdminReports />
-                 </RequireAuth>
-                 } />
-                <Route path="/analytics" element={
-                  <RequireAuth>
-                    <Analytics />
-                  </RequireAuth>
-                } />
-                <Route path="/posting-rules" element={<PostingRules />} />
-                <Route path="/customer-support" element={
-                  <RequireAuth>
-                    <CustomerSupport />
-                  </RequireAuth>
-                } />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppContent />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>

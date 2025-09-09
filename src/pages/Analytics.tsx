@@ -12,6 +12,15 @@ const Analytics = () => {
     totalItems: 0,
     activeTrades: 0,
     completedTrades: 0,
+    pageViews: {
+      today: 0,
+      yesterday: 0,
+      thisWeek: 0,
+      lastWeek: 0,
+      thisMonth: 0,
+      lastMonth: 0,
+      total: 0
+    },
     userGrowthData: [] as Array<{ month: string; users: number }>,
     itemsData: [] as Array<{ category: string; count: number }>,
     tradesData: [] as Array<{ month: string; trades: number }>
@@ -111,11 +120,66 @@ const Analytics = () => {
           tradesData.push({ month: monthName, trades: tradesInMonth });
         }
 
+        // Fetch page view metrics
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        const thisWeekStart = new Date(today);
+        thisWeekStart.setDate(today.getDate() - today.getDay()); // Start of this week (Sunday)
+        
+        const lastWeekStart = new Date(thisWeekStart);
+        lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+        const lastWeekEnd = new Date(thisWeekStart);
+        lastWeekEnd.setDate(lastWeekEnd.getDate() - 1);
+        
+        const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+        // Get page view counts for different periods
+        const [
+          { count: totalPageViews },
+          { count: todayViews },
+          { count: yesterdayViews },
+          { count: thisWeekViews },
+          { count: lastWeekViews },
+          { count: thisMonthViews },
+          { count: lastMonthViews }
+        ] = await Promise.all([
+          supabase.from('page_views').select('*', { count: 'exact', head: true }),
+          supabase.from('page_views').select('*', { count: 'exact', head: true })
+            .gte('created_at', today.toISOString()),
+          supabase.from('page_views').select('*', { count: 'exact', head: true })
+            .gte('created_at', yesterday.toISOString())
+            .lt('created_at', today.toISOString()),
+          supabase.from('page_views').select('*', { count: 'exact', head: true })
+            .gte('created_at', thisWeekStart.toISOString()),
+          supabase.from('page_views').select('*', { count: 'exact', head: true })
+            .gte('created_at', lastWeekStart.toISOString())
+            .lt('created_at', thisWeekStart.toISOString()),
+          supabase.from('page_views').select('*', { count: 'exact', head: true })
+            .gte('created_at', thisMonthStart.toISOString()),
+          supabase.from('page_views').select('*', { count: 'exact', head: true })
+            .gte('created_at', lastMonthStart.toISOString())
+            .lt('created_at', thisMonthStart.toISOString())
+        ]);
+
         setAnalytics({
           totalUsers: totalUsers || 0,
           totalItems: totalItems || 0,
           activeTrades: activeTrades || 0,
           completedTrades: completedTrades || 0,
+          pageViews: {
+            today: todayViews || 0,
+            yesterday: yesterdayViews || 0,
+            thisWeek: thisWeekViews || 0,
+            lastWeek: lastWeekViews || 0,
+            thisMonth: thisMonthViews || 0,
+            lastMonth: lastMonthViews || 0,
+            total: totalPageViews || 0
+          },
           userGrowthData,
           itemsData,
           tradesData
@@ -160,7 +224,7 @@ const Analytics = () => {
             <CardContent>
               <div className="text-2xl font-bold">{analytics.totalUsers}</div>
               <p className="text-xs text-muted-foreground">
-                +20% from last month
+                Registered users
               </p>
             </CardContent>
           </Card>
@@ -171,7 +235,7 @@ const Analytics = () => {
             <CardContent>
               <div className="text-2xl font-bold">{analytics.totalItems}</div>
               <p className="text-xs text-muted-foreground">
-                +15% from last month
+                Published items
               </p>
             </CardContent>
           </Card>
@@ -182,7 +246,7 @@ const Analytics = () => {
             <CardContent>
               <div className="text-2xl font-bold">{analytics.activeTrades}</div>
               <p className="text-xs text-muted-foreground">
-                +8% from last month
+                Pending trades
               </p>
             </CardContent>
           </Card>
@@ -193,11 +257,53 @@ const Analytics = () => {
             <CardContent>
               <div className="text-2xl font-bold">{analytics.completedTrades}</div>
               <p className="text-xs text-muted-foreground">
-                +12% from last month
+                Successful trades
               </p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Page Views Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Page Views</CardTitle>
+            <CardDescription>
+              Track visitor engagement across different time periods
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Today</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.today}</p>
+                <p className="text-xs text-muted-foreground">
+                  vs {analytics.pageViews.yesterday} yesterday
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">This Week</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.thisWeek}</p>
+                <p className="text-xs text-muted-foreground">
+                  vs {analytics.pageViews.lastWeek} last week
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">This Month</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.thisMonth}</p>
+                <p className="text-xs text-muted-foreground">
+                  vs {analytics.pageViews.lastMonth} last month
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Total Views</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.total}</p>
+                <p className="text-xs text-muted-foreground">
+                  All time page views
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Charts */}
         <div className="grid gap-4 md:grid-cols-2">
