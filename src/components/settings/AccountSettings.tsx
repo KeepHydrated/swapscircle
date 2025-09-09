@@ -142,7 +142,7 @@ const AccountSettings: React.FC = () => {
         <CardHeader className="hidden md:block">
           <CardTitle>Account Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4 md:pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="text-sm font-medium text-muted-foreground">Account Created</Label>
@@ -167,7 +167,7 @@ const AccountSettings: React.FC = () => {
         <CardHeader className="hidden md:block">
           <CardTitle>Email Settings</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4 md:pt-6">
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <div className="flex flex-col md:flex-row gap-2">
@@ -199,7 +199,7 @@ const AccountSettings: React.FC = () => {
         <CardHeader className="hidden md:block">
           <CardTitle>Security</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4 md:pt-6">
           <div className="space-y-2">
             <Label>Password</Label>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
@@ -224,7 +224,7 @@ const AccountSettings: React.FC = () => {
         <CardHeader className="hidden md:block">
           <CardTitle className="text-destructive">Delete Account</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4 md:pt-6">
           <div className="space-y-2">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <p className="text-sm text-muted-foreground">
