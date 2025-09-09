@@ -143,6 +143,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               )}
             </div>
             <p className="mt-4 text-gray-700 leading-relaxed">{profile.description}</p>
+            {isOwnProfile && isMobile && (
+              <div className="mt-4 flex justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyProfileLink}
+                  className="flex items-center gap-2"
+                >
+                  <Link className="h-4 w-4" />
+                  Copy Profile Link
+                </Button>
+              </div>
+            )}
           </div>
         </div>
         {isOwnProfile && !isMobile && (
