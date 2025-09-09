@@ -407,7 +407,7 @@ const ProfileSettings: React.FC = () => {
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea 
-                        placeholder="Tell a bit about yourself" 
+                        placeholder="Tell others about yourself and what kinds of items you like to trade." 
                         className="min-h-[120px]" 
                         {...field} 
                       />
