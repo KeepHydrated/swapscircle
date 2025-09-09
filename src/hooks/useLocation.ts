@@ -24,35 +24,48 @@ export const useLocation = (): UseLocationReturn => {
     setLoading(true);
     setError(null);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        setLoading(false);
-      },
-      (error) => {
-        setLoading(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            setError('Location access denied by user');
-            break;
-          case error.POSITION_UNAVAILABLE:
-            setError('Location information is unavailable');
-            break;
-          case error.TIMEOUT:
-            setError('Location request timed out');
-            break;
-          default:
-            setError('An unknown error occurred');
-            break;
+    // Try high accuracy first, fallback to low accuracy if timeout
+    const tryGetLocation = (useHighAccuracy: boolean, timeoutMs: number) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setLoading(false);
+        },
+        (error) => {
+          // If high accuracy times out, try again with lower accuracy
+          if (useHighAccuracy && error.code === error.TIMEOUT) {
+            console.log('High accuracy timeout, trying with lower accuracy...');
+            tryGetLocation(false, 30000);
+            return;
+          }
+
+          setLoading(false);
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              setError('Please allow location access to set your GPS coordinates');
+              break;
+            case error.POSITION_UNAVAILABLE:
+              setError('GPS location unavailable. Try moving to an area with better signal');
+              break;
+            case error.TIMEOUT:
+              setError('Location request timed out. Please try again or check your internet connection');
+              break;
+            default:
+              setError('Unable to get location. Please try again');
+              break;
+          }
+        },
+        {
+          enableHighAccuracy: useHighAccuracy,
+          timeout: timeoutMs,
+          maximumAge: useHighAccuracy ? 300000 : 600000 // 5min for high accuracy, 10min for low
         }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000
-      }
-    );
+      );
+    };
+
+    // Start with high accuracy, 15 second timeout
+    tryGetLocation(true, 15000);
   }, []);
 
   return {
