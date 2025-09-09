@@ -232,15 +232,24 @@ const UserProfile: React.FC = () => {
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
               <User className="w-5 h-5 text-primary" />
             </div>
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+            <button 
+              onClick={() => setActiveTab('available')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
               <Package className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+            </button>
+            <button 
+              onClick={() => setActiveTab('reviews')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
               <Star className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+            </button>
+            <button 
+              onClick={() => setActiveTab('friends')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
               <Users className="w-5 h-5 text-primary" />
-            </div>
+            </button>
           </div>
         )}
         <ProfileHeader 
