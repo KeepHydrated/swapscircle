@@ -68,6 +68,10 @@ const Header = () => {
               </Button>
             )}
             
+            <Link to="/" className="flex items-center">
+              {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
+            </Link>
+            
             {/* Customer Support and Analytics for specific user - desktop only */}
             {user?.email === 'nadiachibri@gmail.com' && !isMobile && (
               <>
@@ -86,10 +90,6 @@ const Header = () => {
                 </Button>
               </>
             )}
-            
-            <Link to="/" className="flex items-center">
-              {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
-            </Link>
           </div>
 
           {/* Mobile center icons */}
