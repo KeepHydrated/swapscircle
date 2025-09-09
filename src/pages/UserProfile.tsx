@@ -223,14 +223,52 @@ const UserProfile: React.FC = () => {
     );
   }
 
+  // Mobile items-only view
+  if (isMobile && activeTab === 'available') {
+    return (
+      <MainLayout>
+        <div className="bg-card">
+          {/* Mobile Icon Bar */}
+          <div className="flex items-center justify-around py-4 px-6 border-b bg-background">
+            <button 
+              onClick={() => setActiveTab('profile')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <User className="w-5 h-5 text-primary" />
+            </button>
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white">
+              <Package className="w-5 h-5" />
+            </div>
+            <button 
+              onClick={() => setActiveTab('reviews')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Star className="w-5 h-5 text-primary" />
+            </button>
+            <button 
+              onClick={() => setActiveTab('friends')}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+            >
+              <Users className="w-5 h-5 text-primary" />
+            </button>
+          </div>
+          {/* Just the items content */}
+          <div className="p-6">
+            <ProfileItemsManager initialItems={userItems} userProfile={userProfile} />
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         {/* Mobile Icon Bar */}
         {isMobile && (
           <div className="flex items-center justify-around py-4 px-6 border-b bg-background">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-              <User className="w-5 h-5 text-primary" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white">
+              <User className="w-5 h-5" />
             </div>
             <button 
               onClick={() => setActiveTab('available')}
