@@ -61,7 +61,7 @@ const Header = () => {
             {/* Heart icon - only show on mobile */}
             {isMobile && (
               <Link to="/your-likes">
-                <Heart className="h-5 w-5 text-gray-500" />
+                <Heart className="h-4 w-4 text-gray-500" />
                 <span className="sr-only">Your Likes</span>
               </Link>
             )}
