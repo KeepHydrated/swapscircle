@@ -106,13 +106,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </div>
             <div className="my-2 flex justify-center md:justify-start">
               {renderStars(profile.rating)}
-              <Button 
-                variant="link" 
-                className="ml-2 p-0 h-auto text-gray-600 hover:text-primary"
-                onClick={onReviewsClick}
-              >
-                {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
-              </Button>
+              {isMobile ? (
+                <span className="ml-2 text-gray-600">
+                  {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
+                </span>
+              ) : (
+                <Button 
+                  variant="link" 
+                  className="ml-2 p-0 h-auto text-gray-600 hover:text-primary"
+                  onClick={onReviewsClick}
+                >
+                  {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
+                </Button>
+              )}
             </div>
             <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
               <div className="flex items-center">
