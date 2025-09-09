@@ -50,9 +50,6 @@ const ProfileSettings: React.FC = () => {
   
   const [initialLoading, setInitialLoading] = useState(true);
   const [displayName, setDisplayName] = useState(user?.name || "");
-  const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
-  const [hasUnsavedLocation, setHasUnsavedLocation] = useState(false);
-  const location = useLocation();
 
   console.log('[ProfileSettings] State initialized successfully');
 
@@ -161,24 +158,10 @@ const ProfileSettings: React.FC = () => {
     }
   }, [user?.name, displayName]);
 
-  const handleGPSClick = async () => {
-    // Get GPS coordinates (they will be automatically saved by the useEffect)
-    setIsUpdatingLocation(true);
-    location.getCurrentLocation();
+  // Location handling - no longer needed for GPS
+  const handleLocationChange = (value: string) => {
+    form.setValue('location', value);
   };
-
-  // Track when GPS location is obtained and automatically save it
-  useEffect(() => {
-    if (isUpdatingLocation && location.hasLocation) {
-      // Automatically save the coordinates when obtained
-      form.setValue('location', `${location.latitude}, ${location.longitude}`);
-      setHasUnsavedLocation(false);
-      setIsUpdatingLocation(false);
-      toast.success('Location coordinates added to your profile');
-    } else if (isUpdatingLocation && location.error) {
-      setIsUpdatingLocation(false);
-    }
-  }, [location.hasLocation, location.error, isUpdatingLocation, location.latitude, location.longitude, form]);
 
   // Handle form submission
   const onSubmit = async (data: ProfileFormValues) => {
@@ -355,48 +338,18 @@ const ProfileSettings: React.FC = () => {
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Location</FormLabel>
-                     <div className="space-y-2">
-                       <div className="relative">
-                         <FormControl>
-                           <div className="flex">
-                             <Input
-                               placeholder="GPS coordinates will appear here..."
-                               value={field.value || ""}
-                               onChange={field.onChange}
-                               className="flex-1"
-                               readOnly
-                             />
-                              <Button 
-                                type="button"
-                                onClick={handleGPSClick}
-                                variant="default"
-                                size="sm"
-                                disabled={location.loading}
-                                className="rounded-l-none border-l-0"
-                              >
-                               {location.loading ? (
-                                 <Loader2 className="h-4 w-4 animate-spin" />
-                               ) : hasUnsavedLocation ? (
-                                 <RefreshCw className="h-4 w-4" />
-                               ) : (
-                                 <RefreshCw className="h-4 w-4" />
-                               )}
-                             </Button>
-                           </div>
-                         </FormControl>
-
-                         {location.error && (
-                           <div className="text-center text-sm text-destructive">
-                             {location.error}
-                           </div>
-                         )}
-                       </div>
-                       
-                       <FormDescription>
-                         Click the button to get your current GPS coordinates.
-                       </FormDescription>
-                     </div>
+                    <FormLabel>Location (Zipcode)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter zipcode (e.g., 12345)" 
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleLocationChange(e.target.value);
+                        }}
+                        maxLength={10}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

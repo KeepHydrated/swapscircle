@@ -1,21 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { useLocation as useGeoLocation } from '@/hooks/useLocation';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MapPin, Loader2 } from 'lucide-react';
+import { useLocation } from '@/hooks/useLocation';
 import { supabase } from '@/integrations/supabase/client';
-import { RefreshCw, MapPin, Loader2, ArrowLeft, Save } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import LocationInput from '@/components/LocationInput';
+import { useToast } from '@/hooks/use-toast';
 
-export default function LocationSettings() {
+const LocationSettings = () => {
   const [profile, setProfile] = useState<any>(null);
-  const [showLocationInput, setShowLocationInput] = useState(false);
   const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
-  const [hasUnsavedLocation, setHasUnsavedLocation] = useState(false);
-  const location = useGeoLocation();
+  const [inputZipcode, setInputZipcode] = useState('');
+  const { zipcode, error, setZipcode, validateZipcode } = useLocation();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProfile();
@@ -33,107 +31,115 @@ export default function LocationSettings() {
     }
   };
 
-  const updateLocationInDatabase = async (lat: number, lng: number) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  // Update location in database
+  const updateLocationInDatabase = async (zip: string) => {
+    try {
+      setIsUpdatingLocation(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to update your location",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        location: `${lat},${lng}`,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', user.id);
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          location: zip,
+          latitude: null,
+          longitude: null
+        })
+        .eq('user_id', user.id);
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update location",
-        variant: "destructive",
-      });
-    } else {
+      if (error) throw error;
+
       toast({
         title: "Location Updated",
-        description: "Your location has been saved successfully",
+        description: "Your zipcode has been successfully updated",
       });
+      
+      // Refresh profile data
       fetchProfile();
-    }
-  };
-
-  const handleUseGPS = () => {
-    setIsUpdatingLocation(true);
-    location.getCurrentLocation();
-  };
-
-  const handleSaveLocation = async () => {
-    if (location.hasLocation) {
-      await updateLocationInDatabase(location.latitude!, location.longitude!);
-      setHasUnsavedLocation(false);
-    }
-  };
-
-  // Track when GPS location is obtained to show save button
-  useEffect(() => {
-    if (isUpdatingLocation && location.hasLocation) {
-      setHasUnsavedLocation(true);
-      setIsUpdatingLocation(false);
-    } else if (isUpdatingLocation && location.error) {
+      setInputZipcode('');
+    } catch (error) {
+      console.error('Error updating location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update location. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsUpdatingLocation(false);
     }
-  }, [location.hasLocation, location.error, isUpdatingLocation]);
+  };
+
+  // Handle zipcode input change
+  const handleZipcodeChange = (value: string) => {
+    setInputZipcode(value);
+    setZipcode(value);
+  };
+
+  // Handle saving zipcode
+  const handleSaveLocation = () => {
+    if (zipcode && validateZipcode(zipcode)) {
+      updateLocationInDatabase(zipcode);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-background p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="h-5 w-5" />
+          Location Update
+        </CardTitle>
+        <CardDescription>
+          Update your zipcode for better matching with nearby traders
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col space-y-2">
+          <div className="text-sm text-muted-foreground">
+            Current location:
+          </div>
+          <div className="text-sm font-mono bg-muted p-2 rounded">
+            {profile?.location || "No location set"}
+          </div>
+        </div>
 
-        {/* Use Current Location */}
-        <Card className="shadow-primary">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3 mb-4">
-              <RefreshCw className="h-6 w-6" />
-              <h2 className="text-xl font-semibold">Update Location</h2>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-muted-foreground min-w-fit">
-                {location.hasLocation 
-                  ? `${location.latitude?.toFixed(4)}, ${location.longitude?.toFixed(4)}` 
-                  : 'No location detected'}
-              </div>
+        <div className="space-y-2">
+          <Label htmlFor="zipcode-input">New Zipcode</Label>
+          <Input
+            id="zipcode-input"
+            type="text"
+            placeholder="Enter zipcode (e.g., 12345)"
+            value={inputZipcode}
+            onChange={(e) => handleZipcodeChange(e.target.value)}
+            maxLength={10}
+          />
+        </div>
 
-              <Button 
-                onClick={hasUnsavedLocation ? handleSaveLocation : handleUseGPS}
-                variant="default"
-                disabled={location.loading}
-              >
-                {location.loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Getting Location...
-                  </>
-                ) : hasUnsavedLocation ? (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Save New Location
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="h-4 w-4" />
-                    Update Location
-                  </>
-                )}
-              </Button>
-            </div>
+        {error && (
+          <div className="text-sm text-destructive bg-destructive/10 p-2 rounded">
+            {error}
+          </div>
+        )}
 
-            {location.error && (
-              <div className="text-center text-sm text-destructive">
-                {location.error}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-      </div>
-    </div>
+        <Button
+          onClick={handleSaveLocation}
+          disabled={!zipcode || isUpdatingLocation || !!error}
+          className="w-full"
+        >
+          {isUpdatingLocation && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Update Location
+        </Button>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default LocationSettings;
