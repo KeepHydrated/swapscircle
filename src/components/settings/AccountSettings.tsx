@@ -130,7 +130,7 @@ const AccountSettings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pt-6">
+    <div className="space-y-6">
       <div className="hidden md:block">
         <h3 className="text-lg font-medium">Account Information</h3>
         <p className="text-sm text-muted-foreground">
