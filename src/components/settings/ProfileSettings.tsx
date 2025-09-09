@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Pencil, Upload, Check, ChevronsUpDown, RefreshCw, Loader2 } from 'lucide-react';
+import { Pencil, Upload, Check, ChevronsUpDown, RefreshCw, Loader2, Edit } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { uploadAvatarImage } from '@/services/authService';
@@ -47,6 +47,7 @@ const ProfileSettings: React.FC = () => {
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
+  const [isEditing, setIsEditing] = useState(false);
   
   const [initialLoading, setInitialLoading] = useState(true);
   const [displayName, setDisplayName] = useState(user?.name || "");
@@ -216,6 +217,7 @@ const ProfileSettings: React.FC = () => {
 
       console.log("[ProfileSettings] Profile updated successfully!");
       toast.success('Profile updated successfully');
+      setIsEditing(false); // Exit edit mode after successful save
       navigate('/profile');
     } catch (error) {
       console.error('[ProfileSettings] Error updating profile:', error);
@@ -223,7 +225,23 @@ const ProfileSettings: React.FC = () => {
     }
   };
 
+  // Handle edit mode toggle
+  const handleEditToggle = () => {
+    if (isEditing) {
+      // If currently editing, treat this as form submission
+      form.handleSubmit(onSubmit)();
+    } else {
+      // Enable editing mode
+      setIsEditing(true);
+    }
+  };
+
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isEditing) {
+      toast.error('Please click Edit to make changes');
+      return;
+    }
+    
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -297,7 +315,7 @@ const ProfileSettings: React.FC = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1" />
-            <Button size="sm" className="relative" variant="outline" disabled={uploading}>
+            <Button size="sm" className="relative" variant="outline" disabled={uploading || !isEditing}>
               {uploading ? (
                 <>
                   <Upload className="mr-2 h-4 w-4 animate-spin" />
@@ -314,12 +332,12 @@ const ProfileSettings: React.FC = () => {
                 className="absolute inset-0 opacity-0 cursor-pointer" 
                 accept="image/*"
                 onChange={handleAvatarChange}
-                disabled={uploading}
+                disabled={uploading || !isEditing}
               />
             </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-2 hidden md:block text-right">
-            Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB.
+            {isEditing ? "Recommended: Square JPG or PNG, at least 400x400 pixels. Max 5MB." : "Click Edit to change your avatar"}
           </p>
         </div>
 
@@ -337,7 +355,7 @@ const ProfileSettings: React.FC = () => {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your username" {...field} />
+                      <Input placeholder="Your username" {...field} disabled={!isEditing} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -361,13 +379,14 @@ const ProfileSettings: React.FC = () => {
                           }}
                           maxLength={10}
                           className="pr-10"
+                          disabled={!isEditing}
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           onClick={handleAutoDetectZipcode}
-                          disabled={locationLoading}
+                          disabled={locationLoading || !isEditing}
                           className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
                         >
                           {locationLoading ? (
@@ -397,6 +416,7 @@ const ProfileSettings: React.FC = () => {
                         placeholder="Tell others about yourself and what kinds of items you like to trade." 
                         className="min-h-[120px]" 
                         {...field} 
+                        disabled={!isEditing}
                       />
                     </FormControl>
                     <FormDescription className="hidden md:block">
@@ -407,8 +427,8 @@ const ProfileSettings: React.FC = () => {
                 )}
               />
               
-              <Button type="submit" disabled={uploading}>
-                {uploading ? 'Uploading...' : 'Save Changes'}
+              <Button type="button" onClick={handleEditToggle} disabled={uploading}>
+                {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
               </Button>
             </form>
           </Form>
