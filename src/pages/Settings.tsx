@@ -17,7 +17,8 @@ const Settings: React.FC = () => {
               value="profile" 
               className="flex-shrink-0 md:flex-1 md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-4"
             >
-              Profile Settings
+              <span className="md:hidden">Profile</span>
+              <span className="hidden md:inline">Profile Settings</span>
             </TabsTrigger>
             <TabsTrigger 
               value="notifications" 
