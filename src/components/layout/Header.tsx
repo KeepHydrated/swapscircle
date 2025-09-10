@@ -18,12 +18,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { toast } from 'sonner';
 import { useNotifications } from '@/hooks/useUnreadNotifications';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsNativeApp } from '@/hooks/useIsNativeApp';
 
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
   const isMobile = useIsMobile();
+  const isNativeApp = useIsNativeApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
