@@ -9,9 +9,21 @@ export function useIsNativeApp() {
   const [isNativeApp, setIsNativeApp] = useState(false);
 
   useEffect(() => {
-    // Capacitor.isNativePlatform() returns true for iOS/Android apps
-    // and false for web/PWA
-    setIsNativeApp(Capacitor.isNativePlatform());
+    // Check for development override via URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceNative = urlParams.get('nativePreview') === 'true';
+    
+    // Check for localStorage override for persistent testing
+    const localStorageOverride = localStorage.getItem('nativeAppPreview') === 'true';
+    
+    if (forceNative || localStorageOverride) {
+      setIsNativeApp(true);
+      // Store in localStorage for persistence
+      localStorage.setItem('nativeAppPreview', 'true');
+    } else {
+      // Normal Capacitor detection
+      setIsNativeApp(Capacitor.isNativePlatform());
+    }
   }, []);
 
   return isNativeApp;
