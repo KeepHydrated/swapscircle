@@ -14,13 +14,6 @@ export function NativePreviewToggle() {
 
   return (
     <>
-      {/* Native Mode Indicator Banner */}
-      {isNativeApp && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-blue-600 text-white text-center py-2 text-sm font-medium">
-          📱 NATIVE APP PREVIEW MODE
-        </div>
-      )}
-      
       {/* Toggle Button */}
       <Button
         onClick={toggleNativePreview}
