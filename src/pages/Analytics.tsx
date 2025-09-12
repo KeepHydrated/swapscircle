@@ -24,6 +24,7 @@ const Analytics = () => {
       lastMonth: 0,
       total: 0
     },
+    trafficSources: [] as Array<{ source: string; visits: number; percentage: number }>,
     userGrowthData: [] as Array<{ month: string; users: number }>,
     itemsData: [] as Array<{ category: string; count: number }>,
     tradesData: [] as Array<{ month: string; trades: number }>,
@@ -193,6 +194,49 @@ const Analytics = () => {
           .order('created_at', { ascending: false })
           .limit(10);
 
+        // Fetch traffic sources data
+        const { data: trafficSourcesRaw } = await supabase
+          .from('page_views')
+          .select('referrer');
+
+        // Process traffic sources
+        const referrerCount = trafficSourcesRaw?.reduce((acc: Record<string, number>, view) => {
+          let source = 'Direct';
+          
+          if (view.referrer) {
+            const referrer = view.referrer.toLowerCase();
+            if (referrer.includes('google')) {
+              source = 'Google Search';
+            } else if (referrer.includes('facebook')) {
+              source = 'Facebook';
+            } else if (referrer.includes('twitter') || referrer.includes('t.co')) {
+              source = 'Twitter';
+            } else if (referrer.includes('instagram')) {
+              source = 'Instagram';
+            } else if (referrer.includes('linkedin')) {
+              source = 'LinkedIn';
+            } else if (referrer.includes('youtube')) {
+              source = 'YouTube';
+            } else if (referrer.includes('reddit')) {
+              source = 'Reddit';
+            } else {
+              source = 'Other Websites';
+            }
+          }
+          
+          acc[source] = (acc[source] || 0) + 1;
+          return acc;
+        }, {}) || {};
+
+        const totalTrafficViews = Object.values(referrerCount).reduce((sum: number, count) => sum + (count as number), 0);
+        const trafficSources = Object.entries(referrerCount)
+          .map(([source, visits]) => ({
+            source,
+            visits: visits as number,
+            percentage: totalTrafficViews > 0 ? Math.round(((visits as number) / totalTrafficViews) * 100) : 0
+          }))
+          .sort((a, b) => b.visits - a.visits);
+
         setAnalytics({
           totalUsers: totalUsers || 0,
           totalItems: totalItems || 0,
@@ -207,6 +251,7 @@ const Analytics = () => {
             lastMonth: lastMonthViews || 0,
             total: totalPageViews || 0
           },
+          trafficSources,
           userGrowthData,
           itemsData,
           tradesData,
@@ -436,6 +481,48 @@ const Analytics = () => {
                   All time page views
                 </p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Traffic Sources */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Traffic Sources</CardTitle>
+            <CardDescription>
+              Where your users are coming from
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {analytics.trafficSources.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No traffic data available</p>
+              ) : (
+                analytics.trafficSources.map((source) => (
+                  <div key={source.source} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-primary" 
+                           style={{ backgroundColor: `hsl(${source.source === 'Direct' ? '142' : source.source === 'Google Search' ? '27' : source.source === 'Facebook' ? '221' : source.source === 'Twitter' ? '197' : source.source === 'Instagram' ? '300' : source.source === 'LinkedIn' ? '201' : source.source === 'YouTube' ? '0' : '280'}, 70%, 50%)` }} />
+                      <div>
+                        <p className="text-sm font-medium">{source.source}</p>
+                        <p className="text-xs text-muted-foreground">{source.visits} visits</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{source.percentage}%</p>
+                      <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                        <div 
+                          className="h-full bg-primary rounded-full" 
+                          style={{ 
+                            width: `${source.percentage}%`,
+                            backgroundColor: `hsl(${source.source === 'Direct' ? '142' : source.source === 'Google Search' ? '27' : source.source === 'Facebook' ? '221' : source.source === 'Twitter' ? '197' : source.source === 'Instagram' ? '300' : source.source === 'LinkedIn' ? '201' : source.source === 'YouTube' ? '0' : '280'}, 70%, 50%)`
+                          }} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
