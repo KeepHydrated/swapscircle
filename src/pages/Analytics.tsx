@@ -6,7 +6,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, User, Package } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
-import GeographicDistribution from '@/components/analytics/GeographicDistribution';
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -527,9 +526,6 @@ const Analytics = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* Geographic Distribution */}
-        <GeographicDistribution />
 
         {/* Charts */}
         <div className="grid gap-4 md:grid-cols-2">
