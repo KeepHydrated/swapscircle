@@ -20,6 +20,8 @@ interface GeographicDistributionProps {
 }
 
 const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ className }) => {
+  const totalVisits = mockCountryData.reduce((sum, country) => sum + country.visits, 0);
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -33,18 +35,21 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Top Countries by Visits</h4>
             <div className="space-y-2">
-              {mockCountryData.map((country, index) => (
-                <div key={country.country} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: country.color }}
-                    />
-                    <span>{country.country}</span>
+              {mockCountryData.map((country, index) => {
+                const percentage = ((country.visits / totalVisits) * 100).toFixed(1);
+                return (
+                  <div key={country.country} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: country.color }}
+                      />
+                      <span>{country.country} ({percentage}%)</span>
+                    </div>
+                    <span className="font-medium">{country.visits}</span>
                   </div>
-                  <span className="font-medium">{country.visits}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
           
@@ -55,7 +60,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
             </div>
             <div className="space-y-1">
               <p className="text-2xl font-bold">
-                {mockCountryData.reduce((sum, country) => sum + country.visits, 0).toLocaleString()}
+                {totalVisits.toLocaleString()}
               </p>
               <p className="text-xs text-muted-foreground">Total Visits</p>
             </div>
