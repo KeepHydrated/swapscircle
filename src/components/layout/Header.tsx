@@ -72,16 +72,9 @@ const Header = () => {
               {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
             </Link>
             
-            {/* Customer Support and Analytics for specific user - desktop only */}
+            {/* Admin Customer Support and Analytics for specific user - desktop only */}
             {user?.email === 'nadiachibri@gmail.com' && !isMobile && (
               <>
-                <Button variant="ghost" size="icon" asChild>
-                  <Link to="/customer-support">
-                    <Headphones className="w-5 h-5" />
-                    <span className="sr-only">Customer Support</span>
-                  </Link>
-                </Button>
-                
                 <Button variant="ghost" size="icon" asChild>
                   <Link to="/admin-customer-support">
                     <Headphones className="w-5 h-5" />
