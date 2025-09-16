@@ -225,8 +225,10 @@ const Header = () => {
                 </DropdownMenu>
               )
             ) : (
-              // Show empty space when not logged in
-              <div className="w-8 h-8"></div>
+              // Show generic profile icon when not logged in
+              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="h-4 w-4 text-gray-500" />
+              </div>
             )}
           </div>
         </div>
