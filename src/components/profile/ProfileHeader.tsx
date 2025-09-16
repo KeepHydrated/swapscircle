@@ -104,7 +104,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
                 {profile.location && (
-                  <span className="text-sm text-gray-500">{profile.location}</span>
+                  <span className="text-sm text-gray-500">
+                    {profile.location.split(',')[0].trim()}
+                  </span>
                 )}
               </div>
               {/* Action buttons will be rendered here by parent component */}

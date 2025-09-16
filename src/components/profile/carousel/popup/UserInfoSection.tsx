@@ -35,7 +35,9 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold">{profileData?.username || 'Emma Wilson'}</h3>
               {profileData?.location && (
-                <span className="text-xs text-gray-500">{profileData.location}</span>
+                <span className="text-xs text-gray-500">
+                  {profileData.location.split(',')[0].trim()}
+                </span>
               )}
             </div>
             <div className="flex text-amber-400 text-xs">{stars} <span className="text-gray-500 ml-1">({reviewData.reviewCount})</span></div>
