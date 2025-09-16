@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Pencil, Upload, Check, ChevronsUpDown, RefreshCw, Loader2, Edit } from 'lucide-react';
+import { Pencil, Upload, Check, ChevronsUpDown, RefreshCw, Loader2, Edit, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { uploadAvatarImage } from '@/services/authService';
@@ -176,6 +176,13 @@ const ProfileSettings: React.FC = () => {
   // Handle auto-detect zipcode
   const handleAutoDetectZipcode = () => {
     autoDetectLocation();
+  };
+
+  // Handle delete zipcode
+  const handleDeleteZipcode = () => {
+    form.setValue('location', '');
+    form.trigger('location');
+    toast.success('Zipcode cleared');
   };
 
   // Update form when zipcode is detected
@@ -370,33 +377,47 @@ const ProfileSettings: React.FC = () => {
                   <FormItem>
                     <FormLabel>Your Zipcode</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input 
-                          placeholder="" 
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            handleLocationChange(e.target.value);
-                          }}
-                          maxLength={10}
-                          className="pr-10"
-                          disabled={!isEditing}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleAutoDetectZipcode}
-                          disabled={locationLoading || !isEditing}
-                          className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
-                        >
-                          {locationLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <RefreshCw className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
+                       <div className="relative">
+                         <Input 
+                           placeholder="" 
+                           {...field}
+                           onChange={(e) => {
+                             field.onChange(e);
+                             handleLocationChange(e.target.value);
+                           }}
+                           maxLength={10}
+                           className="pr-20"
+                           disabled={!isEditing}
+                         />
+                         <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
+                           <Button
+                             type="button"
+                             variant="ghost"
+                             size="sm"
+                             onClick={handleAutoDetectZipcode}
+                             disabled={locationLoading || !isEditing}
+                             className="h-8 w-8 p-0 hover:bg-transparent"
+                             title="Auto-detect zipcode from your location"
+                           >
+                             {locationLoading ? (
+                               <Loader2 className="h-4 w-4 animate-spin" />
+                             ) : (
+                               <RefreshCw className="h-4 w-4" />
+                             )}
+                           </Button>
+                           <Button
+                             type="button"
+                             variant="ghost"
+                             size="sm"
+                             onClick={handleDeleteZipcode}
+                             disabled={!isEditing}
+                             className="h-8 w-8 p-0 hover:bg-transparent"
+                             title="Delete zipcode (remove location requirement)"
+                           >
+                             <Trash2 className="h-4 w-4" />
+                           </Button>
+                         </div>
+                       </div>
                     </FormControl>
                     <FormDescription className="hidden md:block">
                       Enter your zipcode for location-based matching
