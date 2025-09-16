@@ -112,28 +112,40 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     // Check if location contains letters (city name)
                     const hasLetters = /[a-zA-Z]/.test(profile.location);
                     if (hasLetters) {
-                      const cityPart = profile.location.split(',')[0].trim();
-                      return (
-                        <span className="text-sm text-gray-500">
-                          {cityPart}
-                        </span>
-                      );
+                      // For "City, State" format, show both
+                      const parts = profile.location.split(',');
+                      if (parts.length >= 2) {
+                        const city = parts[0].trim();
+                        const state = parts[1].trim();
+                        return (
+                          <span className="text-sm text-gray-500">
+                            {city}, {state}
+                          </span>
+                        );
+                      } else {
+                        // Just city name
+                        return (
+                          <span className="text-sm text-gray-500">
+                            {profile.location.trim()}
+                          </span>
+                        );
+                      }
                     }
                     
-                    // For zipcode-only, map common ones to cities
-                    const zipcodeToCity: Record<string, string> = {
-                      '78212': 'San Antonio',
-                      '10001': 'New York',
-                      '90210': 'Beverly Hills',
-                      '60601': 'Chicago',
-                      '94102': 'San Francisco'
+                    // For zipcode-only, map common ones to cities and states
+                    const zipcodeToLocation: Record<string, string> = {
+                      '78212': 'San Antonio, TX',
+                      '10001': 'New York, NY',
+                      '90210': 'Beverly Hills, CA',
+                      '60601': 'Chicago, IL',
+                      '94102': 'San Francisco, CA'
                     };
                     
-                    const city = zipcodeToCity[profile.location.trim()];
-                    if (city) {
+                    const cityState = zipcodeToLocation[profile.location.trim()];
+                    if (cityState) {
                       return (
                         <span className="text-sm text-gray-500">
-                          {city}
+                          {cityState}
                         </span>
                       );
                     }
