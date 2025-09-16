@@ -293,7 +293,7 @@ const Test: React.FC = () => {
   // Define handler for liking friend items with mutual matching
   const handleLikeFriendItem = async (itemId: string, global?: boolean) => {
     if (!user) {
-      navigate('/auth');
+      navigate('/');
       return;
     }
 
@@ -363,7 +363,7 @@ const Test: React.FC = () => {
   // Handle rejecting friend items (pair-specific by default; global via menu)
   const handleRejectFriendItem = async (itemId: string, global?: boolean) => {
     if (!user) {
-      navigate('/auth');
+      navigate('/');
       return;
     }
 

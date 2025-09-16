@@ -19,7 +19,6 @@ import NotFound from "./pages/NotFound";
 import PostingRules from "./pages/PostingRules";
 
 import Settings from "./pages/Settings";
-import Auth from "./pages/Auth";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
@@ -42,7 +41,7 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Test />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
-      <Route path="/auth" element={<Auth />} />
+      <Route path="/auth" element={<Navigate to="/" replace />} />
       <Route path="/trades" element={
         <RequireAuth>
           <Trades />
