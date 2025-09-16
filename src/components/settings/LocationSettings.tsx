@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Loader2, Navigation } from 'lucide-react';
+import { MapPin, Loader2, Navigation, Trash2 } from 'lucide-react';
 import { useLocation } from '@/hooks/useLocation';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -97,6 +97,55 @@ const LocationSettings = () => {
     }
   };
 
+  // Handle deleting zipcode
+  const handleDeleteZipcode = async () => {
+    try {
+      setIsUpdatingLocation(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to delete your location",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          location: null,
+          latitude: null,
+          longitude: null
+        })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Location Deleted",
+        description: "Your zipcode has been removed",
+      });
+      
+      // Clear local state
+      setInputZipcode('');
+      setZipcode('');
+      
+      // Refresh profile data
+      fetchProfile();
+    } catch (error) {
+      console.error('Error deleting location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete location. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingLocation(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -143,6 +192,16 @@ const LocationSettings = () => {
               ) : (
                 <Navigation className="h-4 w-4" />
               )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={handleDeleteZipcode}
+              disabled={isUpdatingLocation}
+              title="Delete zipcode (remove location requirement)"
+            >
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
