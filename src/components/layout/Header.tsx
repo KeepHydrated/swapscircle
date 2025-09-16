@@ -146,9 +146,8 @@ const Header = () => {
             
             <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
             
-            {/* Profile menu or Login button */}
+            {/* Profile avatar - always show space, only show avatar when logged in */}
             {user ? (
-              /* Profile menu - Mobile: sidebar trigger, Desktop: dropdown */
               isMobile ? (
                 <Button 
                   variant="ghost" 
@@ -156,7 +155,14 @@ const Header = () => {
                   className="relative h-8 w-8"
                   onClick={() => setMobileMenuOpen(true)}
                 >
-                  <User className="h-6 w-6 text-gray-500" />
+                  <Avatar className="h-8 w-8">
+                    {user?.avatar_url ? (
+                      <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
+                    ) : null}
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                      {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
+                    </AvatarFallback>
+                  </Avatar>
                 </Button>
               ) : (
                 <DropdownMenu>
@@ -219,15 +225,8 @@ const Header = () => {
                 </DropdownMenu>
               )
             ) : (
-              <Button 
-                variant="ghost" 
-                onClick={handleLogin} 
-                size="sm"
-                className="flex items-center"
-              >
-                <LogIn className="w-4 h-4 mr-2" />
-                Log In
-              </Button>
+              // Show empty space when not logged in
+              <div className="w-8 h-8"></div>
             )}
           </div>
         </div>
