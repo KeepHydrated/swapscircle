@@ -34,7 +34,7 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
           <div>
             <div className="flex items-baseline gap-3">
               <h3 className="text-sm font-semibold">{profileData?.username || 'Emma Wilson'}</h3>
-              {profileData?.location && (
+              {profileData?.location && profileData.location.trim() && (
                 (() => {
                   // Check if it's coordinates (contains both comma and periods)
                   const isCoordinates = profileData.location.includes(',') && profileData.location.includes('.');

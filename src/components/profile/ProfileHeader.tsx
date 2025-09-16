@@ -103,7 +103,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="flex items-center justify-center md:justify-between">
               <div className="flex items-baseline gap-3">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
-                {profile.location && (
+                {profile.location && profile.location.trim() && (
                   (() => {
                     // Check if it's coordinates (contains both comma and periods)
                     const isCoordinates = profile.location.includes(',') && profile.location.includes('.');
