@@ -64,8 +64,7 @@ const Test: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
-  // Login modal state
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  // Login state
   const [activeAuthTab, setActiveAuthTab] = useState<string>("login");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -93,7 +92,6 @@ const Test: React.FC = () => {
     setIsSubmitting(true);
     try {
       await signIn(data.email, data.password);
-      setLoginModalOpen(false);
     } catch (error) {
       console.error("Login error:", error);
     } finally {
@@ -808,62 +806,17 @@ const Test: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="text-4xl mb-3">🔐</div>
-              <p className="text-base font-medium mb-1">Please log in</p>
-              <p className="text-sm mb-4">Sign in to see your items and find matches</p>
-              <Button 
-                onClick={() => setLoginModalOpen(true)} 
-                className="mt-2"
-              >
-                Sign In
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Explore Item Modal */}
-      <ExploreItemModal
-        open={modalOpen}
-        item={selectedItem}
-        onClose={handleCloseModal}
-        liked={selectedItem?.liked}
-        onLike={() => selectedItem && handleLikeFriendItem(selectedItem.id)}
-        onNavigatePrev={navigateToPrevFriendItem}
-        onNavigateNext={navigateToNextFriendItem}
-        currentIndex={currentFriendItemIndex}
-        totalItems={displayedFriendItems.length}
-        onReport={(id) => handleReport(id)}
-      />
-      
-      {/* Report Item Modal */}
-      <ReportItemModal
-        isOpen={reportModalOpen}
-        onClose={handleCloseReportModal}
-        itemId={itemToReport || ''}
-        itemName={
-          itemToReport 
-            ? (friendItems.find(item => item.id === itemToReport)?.name || 
-               userItems.find(item => item.id === itemToReport)?.name || 
-               'Unknown Item')
-            : ''
-        }
-      />
-
-      {/* Login Modal */}
-      <Dialog open={loginModalOpen} onOpenChange={setLoginModalOpen}>
-        <DialogContent className="w-full max-w-md">
-          <Card className="border-0 shadow-none">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center">SwapsCircle</CardTitle>
-              <CardDescription className="text-center">
-                {activeAuthTab === "login" 
-                  ? "Sign in to your account to continue" 
-                  : "Create an account to get started"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+            <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="text-center mb-6">
+                <div className="text-4xl mb-3">🔐</div>
+                <h2 className="text-2xl font-bold mb-2">SwapsCircle</h2>
+                <p className="text-gray-600">
+                  {activeAuthTab === "login" 
+                    ? "Sign in to your account to continue" 
+                    : "Create an account to get started"}
+                </p>
+              </div>
+              
               <Tabs
                 value={activeAuthTab}
                 onValueChange={setActiveAuthTab}
@@ -986,10 +939,38 @@ const Test: React.FC = () => {
                   </Form>
                 </TabsContent>
               </Tabs>
-            </CardContent>
-          </Card>
-        </DialogContent>
-      </Dialog>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Explore Item Modal */}
+      <ExploreItemModal
+        open={modalOpen}
+        item={selectedItem}
+        onClose={handleCloseModal}
+        liked={selectedItem?.liked}
+        onLike={() => selectedItem && handleLikeFriendItem(selectedItem.id)}
+        onNavigatePrev={navigateToPrevFriendItem}
+        onNavigateNext={navigateToNextFriendItem}
+        currentIndex={currentFriendItemIndex}
+        totalItems={displayedFriendItems.length}
+        onReport={(id) => handleReport(id)}
+      />
+      
+      {/* Report Item Modal */}
+      <ReportItemModal
+        isOpen={reportModalOpen}
+        onClose={handleCloseReportModal}
+        itemId={itemToReport || ''}
+        itemName={
+          itemToReport 
+            ? (friendItems.find(item => item.id === itemToReport)?.name || 
+               userItems.find(item => item.id === itemToReport)?.name || 
+               'Unknown Item')
+            : ''
+        }
+      />
 
       {/* Support Chat */}
       <SupportChat />
