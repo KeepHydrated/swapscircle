@@ -104,7 +104,7 @@ const Auth: React.FC = () => {
   return (
     <>
       <Header />
-      <div className="flex items-center justify-center min-h-screen bg-background p-4 pt-20">
+      <div className="flex justify-center bg-background p-4 pt-8 pb-16">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">SwapsCircle</CardTitle>
