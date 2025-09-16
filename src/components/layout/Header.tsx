@@ -130,96 +130,94 @@ const Header = () => {
               </TooltipProvider>
             )}
 
-            {(user || !supabaseConfigured) ? (
-              <>
-                
-                <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
-                  <Link to="/post-item">
-                    <Plus className="w-5 h-5" />
-                    <span className="sr-only">Post Item</span>
-                  </Link>
+            <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+              <Link to="/post-item">
+                <Plus className="w-5 h-5" />
+                <span className="sr-only">Post Item</span>
+              </Link>
+            </Button>
+            
+            <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+              <Link to="/messages">
+                <MessageCircle className="w-5 h-5" />
+                <span className="sr-only">Messages</span>
+              </Link>
+            </Button>
+            
+            <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
+            
+            {/* Profile menu or Login button */}
+            {user ? (
+              /* Profile menu - Mobile: sidebar trigger, Desktop: dropdown */
+              isMobile ? (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="relative h-8 w-8"
+                  onClick={() => setMobileMenuOpen(true)}
+                >
+                  <User className="h-6 w-6 text-gray-500" />
                 </Button>
-                
-                <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
-                  <Link to="/messages">
-                    <MessageCircle className="w-5 h-5" />
-                    <span className="sr-only">Messages</span>
-                  </Link>
-                </Button>
-                
-                <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
-                
-                {/* Profile menu - Mobile: sidebar trigger, Desktop: dropdown */}
-                {isMobile ? (
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="relative h-8 w-8"
-                    onClick={() => setMobileMenuOpen(true)}
-                  >
-                    <User className="h-6 w-6 text-gray-500" />
-                  </Button>
-                ) : (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                        <Avatar className="h-8 w-8">
-                          {user?.avatar_url ? (
-                            <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
-                          ) : null}
-                          <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                            {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 bg-white">
-                      <DropdownMenuItem asChild>
-                        <Link to="/profile" className="flex w-full cursor-pointer items-center">
-                          <User className="mr-2 h-4 w-4" />
-                          <span>Profile</span>
+              ) : (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        {user?.avatar_url ? (
+                          <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
+                        ) : null}
+                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                          {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-white">
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex w-full cursor-pointer items-center">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
+                        <Handshake className="mr-2 h-4 w-4" />
+                        <span>Trades</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
+                        <Heart className="mr-2 h-4 w-4" />
+                        <span>Your Likes</span>
+                      </Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                        <Link to="/settings" className="flex w-full cursor-pointer items-center">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Settings</span>
                         </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/trades" className="flex w-full cursor-pointer items-center">
-                          <Handshake className="mr-2 h-4 w-4" />
-                          <span>Trades</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
-                          <Heart className="mr-2 h-4 w-4" />
-                          <span>Your Likes</span>
-                        </Link>
-                      </DropdownMenuItem>
-                       <DropdownMenuItem asChild>
-                          <Link to="/settings" className="flex w-full cursor-pointer items-center">
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
+                        </DropdownMenuItem>
+                        {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
+                            <Flag className="mr-2 h-4 w-4" />
+                            <span>Admin Reports</span>
                           </Link>
-                          </DropdownMenuItem>
-                          {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
-                          <DropdownMenuItem asChild>
-                            <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
-                              <Flag className="mr-2 h-4 w-4" />
-                              <span>Admin Reports</span>
-                            </Link>
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                       {supabaseConfigured && (
-                         <DropdownMenuItem 
-                           className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
-                           onClick={handleLogout}
-                         >
-                           <LogOut className="mr-2 h-4 w-4" />
-                           <span>Log Out</span>
-                         </DropdownMenuItem>
-                       )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                     {supabaseConfigured && (
+                        <DropdownMenuItem 
+                          className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          <span>Log Out</span>
+                        </DropdownMenuItem>
+                      )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
             ) : (
               <Button 
                 variant="ghost" 
