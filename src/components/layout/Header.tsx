@@ -220,7 +220,7 @@ const Header = () => {
                   </DropdownMenu>
                 )}
               </>
-            ) : !isAuthPage ? (
+            ) : (
               <Button 
                 variant="ghost" 
                 onClick={handleLogin} 
@@ -230,7 +230,7 @@ const Header = () => {
                 <LogIn className="w-4 h-4 mr-2" />
                 Log In
               </Button>
-            ) : null}
+            )}
           </div>
         </div>
       </header>
