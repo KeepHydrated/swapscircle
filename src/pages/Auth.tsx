@@ -26,6 +26,7 @@ import { z } from "zod";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
 import SupportChat from '@/components/chat/SupportChat';
+import Header from '@/components/layout/Header';
 
 // Login form schema
 const loginSchema = z.object({
@@ -101,7 +102,9 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <>
+      <Header />
+      <div className="flex items-center justify-center min-h-screen bg-background p-4 pt-20">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">SwapsCircle</CardTitle>
@@ -243,6 +246,7 @@ const Auth: React.FC = () => {
       </Card>
       <SupportChat />
     </div>
+    </>
   );
 };
 
