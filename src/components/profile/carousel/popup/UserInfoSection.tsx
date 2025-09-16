@@ -35,9 +35,21 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold">{profileData?.username || 'Emma Wilson'}</h3>
               {profileData?.location && (
-                <span className="text-xs text-gray-500">
-                  {profileData.location.split(',')[0].trim()}
-                </span>
+                (() => {
+                  // Only show if location contains letters (city name) and not just numbers (zipcode)
+                  const hasLetters = /[a-zA-Z]/.test(profileData.location);
+                  const isCoordinates = profileData.location.includes(',') && profileData.location.includes('.');
+                  
+                  if (hasLetters && !isCoordinates) {
+                    const cityPart = profileData.location.split(',')[0].trim();
+                    return (
+                      <span className="text-xs text-gray-500">
+                        {cityPart}
+                      </span>
+                    );
+                  }
+                  return null;
+                })()
               )}
             </div>
             <div className="flex text-amber-400 text-xs">{stars} <span className="text-gray-500 ml-1">({reviewData.reviewCount})</span></div>

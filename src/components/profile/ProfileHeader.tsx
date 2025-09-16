@@ -104,9 +104,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
                 {profile.location && (
-                  <span className="text-sm text-gray-500">
-                    {profile.location.split(',')[0].trim()}
-                  </span>
+                  (() => {
+                    // Only show if location contains letters (city name) and not just numbers (zipcode)
+                    const hasLetters = /[a-zA-Z]/.test(profile.location);
+                    const isCoordinates = profile.location.includes(',') && profile.location.includes('.');
+                    
+                    if (hasLetters && !isCoordinates) {
+                      const cityPart = profile.location.split(',')[0].trim();
+                      return (
+                        <span className="text-sm text-gray-500">
+                          {cityPart}
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()
                 )}
               </div>
               {/* Action buttons will be rendered here by parent component */}
