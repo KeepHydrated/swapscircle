@@ -77,7 +77,7 @@ const UserProfile: React.FC = () => {
         name: finalName,
         avatar_url: profile.avatar_url || "/placeholder.svg",
         bio: profile.bio || 'Edit your profile in Settings to add a description.',
-        location: profile.location || 'Set your location in Settings',
+        location: profile.location || '',
         created_at: profile.created_at || new Date().toISOString(),
       });
 
