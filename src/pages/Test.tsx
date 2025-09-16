@@ -734,7 +734,13 @@ const Test: React.FC = () => {
             <div className="text-center text-gray-500 py-12 bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="text-4xl mb-3">🔐</div>
               <p className="text-base font-medium mb-1">Please log in</p>
-              <p className="text-sm">Sign in to see your items and find matches</p>
+              <p className="text-sm mb-4">Sign in to see your items and find matches</p>
+              <Button 
+                onClick={() => navigate('/auth')} 
+                className="mt-2"
+              >
+                Sign In
+              </Button>
             </div>
           )}
         </div>
