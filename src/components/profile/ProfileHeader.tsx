@@ -101,8 +101,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           <div className="flex-grow text-center md:text-left">
             <div className="flex items-center justify-center md:justify-between">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-bold text-gray-800 leading-none">{profile.name}</h1>
                 {profile.location && (
                   (() => {
                     // Check if it's coordinates (contains both comma and periods)
@@ -117,15 +117,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       if (parts.length >= 2) {
                         const city = parts[0].trim();
                         const state = parts[1].trim();
-                        return (
-                          <span className="text-sm text-gray-500">
-                            {city}, {state}
-                          </span>
-                        );
+                      return (
+                        <span className="text-sm text-gray-500 leading-none">
+                          {city}, {state}
+                        </span>
+                      );
                       } else {
                         // Just city name
                         return (
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-gray-500 leading-none">
                             {profile.location.trim()}
                           </span>
                         );
@@ -144,7 +144,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     const cityState = zipcodeToLocation[profile.location.trim()];
                     if (cityState) {
                       return (
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 leading-none">
                           {cityState}
                         </span>
                       );

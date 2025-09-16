@@ -32,8 +32,8 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
           
           {/* Name and rating to the right of image */}
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold">{profileData?.username || 'Emma Wilson'}</h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-sm font-semibold leading-none">{profileData?.username || 'Emma Wilson'}</h3>
               {profileData?.location && (
                 (() => {
                   // Check if it's coordinates (contains both comma and periods)
@@ -49,14 +49,14 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
                       const city = parts[0].trim();
                       const state = parts[1].trim();
                       return (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 leading-none">
                           {city}, {state}
                         </span>
                       );
                     } else {
                       // Just city name
                       return (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 leading-none">
                           {profileData.location.trim()}
                         </span>
                       );
@@ -75,7 +75,7 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
                   const cityState = zipcodeToLocation[profileData.location.trim()];
                   if (cityState) {
                     return (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 leading-none">
                         {cityState}
                       </span>
                     );
