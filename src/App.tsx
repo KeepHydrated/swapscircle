@@ -28,6 +28,7 @@ import Test2 from "./pages/Test2";
 import AdminReports from "./pages/AdminReports";
 import Analytics from "./pages/Analytics";
 import CustomerSupport from "./pages/CustomerSupport";
+import AdminCustomerSupport from "./pages/AdminCustomerSupport";
 import RequireAuth from "./components/auth/RequireAuth";
 import ScrollToTop from "./components/ScrollToTop";
 import { usePageViewTracking } from "./hooks/usePageViewTracking";
@@ -108,6 +109,11 @@ const AppContent = () => {
         <Route path="/customer-support" element={
           <RequireAuth>
             <CustomerSupport />
+          </RequireAuth>
+        } />
+        <Route path="/admin-customer-support" element={
+          <RequireAuth>
+            <AdminCustomerSupport />
           </RequireAuth>
         } />
          <Route path="*" element={<NotFound />} />
