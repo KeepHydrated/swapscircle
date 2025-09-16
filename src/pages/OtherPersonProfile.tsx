@@ -137,7 +137,7 @@ const OtherPersonProfile: React.FC = () => {
             description: profileData.bio || 'No bio available',
             rating: averageRating,
             reviewCount: reviews.length,
-            location: profileData.location || 'Update your location in Settings',
+            location: profileData.location || '',
             memberSince: new Date(profileData.created_at).getFullYear().toString(),
             friendCount: 0, // Show 0 friends until we implement real friends
             avatar_url: profileData.avatar_url
