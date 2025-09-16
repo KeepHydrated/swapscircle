@@ -34,7 +34,14 @@ const profileFormSchema = z.object({
   bio: z.string().max(500, {
     message: "Bio must be at most 500 characters.",
   }),
-  location: z.string().optional(),
+  location: z.string().optional().refine((val) => {
+    if (!val || val.trim() === '') return true; // Optional field
+    // Valid US zipcode formats: 12345 or 12345-1234
+    const zipcodeRegex = /^\d{5}(-\d{4})?$/;
+    return zipcodeRegex.test(val);
+  }, {
+    message: "Please enter a valid US zipcode (e.g., 12345 or 12345-1234)",
+  }),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -382,8 +389,13 @@ const ProfileSettings: React.FC = () => {
                            placeholder="" 
                            {...field}
                            onChange={(e) => {
-                             field.onChange(e);
-                             handleLocationChange(e.target.value);
+                             const value = e.target.value;
+                             // Only allow digits and hyphens, and limit length
+                             const cleanValue = value.replace(/[^\d-]/g, '');
+                             if (cleanValue.length <= 10) {
+                               field.onChange(cleanValue);
+                               handleLocationChange(cleanValue);
+                             }
                            }}
                            maxLength={10}
                            className="pr-20"
