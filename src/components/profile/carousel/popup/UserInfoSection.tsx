@@ -32,8 +32,8 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({ profileData, reviewDa
           
           {/* Name and rating to the right of image */}
           <div>
-            <div className="flex items-center gap-3">
-              <h3 className="text-sm font-semibold leading-none">{profileData?.username || 'Emma Wilson'}</h3>
+            <div className="flex items-baseline gap-3">
+              <h3 className="text-sm font-semibold">{profileData?.username || 'Emma Wilson'}</h3>
               {profileData?.location && (
                 (() => {
                   // Check if it's coordinates (contains both comma and periods)
