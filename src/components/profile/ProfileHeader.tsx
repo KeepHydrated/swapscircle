@@ -105,11 +105,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
                 {profile.location && (
                   (() => {
-                    // Only show if location contains letters (city name) and not just numbers (zipcode)
-                    const hasLetters = /[a-zA-Z]/.test(profile.location);
+                    // Check if it's coordinates (contains both comma and periods)
                     const isCoordinates = profile.location.includes(',') && profile.location.includes('.');
+                    if (isCoordinates) return null;
                     
-                    if (hasLetters && !isCoordinates) {
+                    // Check if location contains letters (city name)
+                    const hasLetters = /[a-zA-Z]/.test(profile.location);
+                    if (hasLetters) {
                       const cityPart = profile.location.split(',')[0].trim();
                       return (
                         <span className="text-sm text-gray-500">
@@ -117,6 +119,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         </span>
                       );
                     }
+                    
+                    // For zipcode-only, map common ones to cities
+                    const zipcodeToCity: Record<string, string> = {
+                      '78212': 'San Antonio',
+                      '10001': 'New York',
+                      '90210': 'Beverly Hills',
+                      '60601': 'Chicago',
+                      '94102': 'San Francisco'
+                    };
+                    
+                    const city = zipcodeToCity[profile.location.trim()];
+                    if (city) {
+                      return (
+                        <span className="text-sm text-gray-500">
+                          {city}
+                        </span>
+                      );
+                    }
+                    
                     return null;
                   })()
                 )}
