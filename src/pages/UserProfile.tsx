@@ -190,6 +190,7 @@ const UserProfile: React.FC = () => {
         : "",
       avatar_url: userProfile.avatar_url,
       tradesCompleted: tradesCompleted,
+      location: userProfile.location,
     };
   }, [userProfile, userReviews, tradesCompleted]);
 

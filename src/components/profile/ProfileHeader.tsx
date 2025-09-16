@@ -14,6 +14,7 @@ interface ProfileHeaderProps {
     memberSince: string;
     avatar_url?: string;
     tradesCompleted?: number;
+    location?: string;
   };
   onReviewsClick?: () => void;
   onFriendsClick?: () => void;
@@ -100,7 +101,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           <div className="flex-grow text-center md:text-left">
             <div className="flex items-center justify-center md:justify-between">
-              <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+                {profile.location && (
+                  <span className="text-sm text-gray-500">{profile.location}</span>
+                )}
+              </div>
               {/* Action buttons will be rendered here by parent component */}
               <div id="profile-action-buttons" className="hidden md:flex"></div>
             </div>
