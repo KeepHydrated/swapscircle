@@ -78,25 +78,46 @@ const AdminSupportChat = () => {
 
       if (convError) throw convError;
 
-      // Then get profile data for each conversation
-      const conversationsWithProfiles = await Promise.all(
+      // Filter out conversations that only have the default greeting message
+      const conversationsWithRealMessages = await Promise.all(
         (conversations || []).map(async (conv) => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('username, name')
-            .eq('id', conv.user_id)
-            .maybeSingle();
+          // Get messages for this conversation
+          const { data: messages } = await supabase
+            .from('support_messages' as any)
+            .select('*')
+            .eq('conversation_id', conv.id)
+            .order('created_at', { ascending: true });
+
+          // Check if conversation has real messages (not just the default greeting)
+          const hasRealMessages = messages && messages.some((msg: any) => 
+            msg.message !== "Hi! How can I help you today?" && 
+            msg.sender_type === 'user'
+          );
+
+          // Only return conversation if it has real user messages
+          if (hasRealMessages) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('username, name')
+              .eq('id', conv.user_id)
+              .maybeSingle();
+            
+            return {
+              ...conv,
+              profiles: profile
+            };
+          }
           
-          return {
-            ...conv,
-            profiles: profile
-          };
+          return null;
         })
       );
 
-      console.log('AdminSupportChat: Query result:', { data: conversationsWithProfiles });
+      // Filter out null values (conversations with only greeting messages)
+      const filteredConversations = conversationsWithRealMessages.filter(conv => conv !== null);
+
+      console.log('AdminSupportChat: Query result:', { data: filteredConversations });
       
-      const conversationsList = conversationsWithProfiles as unknown as SupportConversation[];
+      const conversationsList = filteredConversations as unknown as SupportConversation[];
       setConversations(conversationsList);
       
     } catch (error) {
