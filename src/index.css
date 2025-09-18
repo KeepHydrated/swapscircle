@@ -35,6 +35,22 @@
 
     --radius: 0.5rem;
 
+    /* Tinder-style colors */
+    --like: 120 75% 50%;
+    --dislike: 0 75% 55%;
+    --superlike: 220 85% 60%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(340 75% 55%), hsl(320 75% 60%));
+    --gradient-like: linear-gradient(135deg, hsl(120 75% 50%), hsl(140 75% 55%));
+    --gradient-dislike: linear-gradient(135deg, hsl(0 75% 55%), hsl(20 75% 60%));
+    --gradient-background: linear-gradient(180deg, hsl(220 15% 5%), hsl(220 15% 8%));
+
+    /* Shadows */
+    --shadow-card: 0 20px 40px -12px hsl(220 15% 0% / 0.4);
+    --shadow-like: 0 0 30px hsl(120 75% 50% / 0.3);
+    --shadow-dislike: 0 0 30px hsl(0 75% 55% / 0.3);
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5% 26%;
     --sidebar-primary: 240 6% 10%;

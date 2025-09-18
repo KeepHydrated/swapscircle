@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MatchItem } from '@/types/item';
-import { SwipeCard } from '@/components/ui/swipe-card';
-import { Heart, X, Users, Flag } from 'lucide-react';
+import { TinderSwipeCard } from '@/components/ui/tinder-swipe-card';
+import { SwipeActionButtons } from '@/components/ui/swipe-action-buttons';
+import { Heart, X, Users, Flag, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 interface MobileMatchesViewProps {
   matches: MatchItem[];
@@ -24,35 +26,60 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   onOpenModal
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const { toast } = useToast();
 
-  const handleSwipeRight = () => {
-    if (currentIndex < matches.length) {
-      onLike(matches[currentIndex].id);
-      setCurrentIndex(prev => prev + 1);
+  const handleSwipe = useCallback((direction: "left" | "right" | "up") => {
+    if (currentIndex >= matches.length || isAnimating) return;
+
+    setIsAnimating(true);
+    const currentMatch = matches[currentIndex];
+
+    if (direction === "left") {
+      onReject(currentMatch.id);
+      toast({
+        title: `Passed on ${currentMatch.name}`,
+        duration: 2000,
+      });
+    } else if (direction === "right") {
+      onLike(currentMatch.id);
+      toast({
+        title: `Liked ${currentMatch.name}! 💖`,
+        duration: 2000,
+      });
+    } else if (direction === "up") {
+      onLike(currentMatch.id);
+      toast({
+        title: `Super liked ${currentMatch.name}! ⭐`,
+        duration: 2000,
+      });
     }
-  };
 
-  const handleSwipeLeft = () => {
-    if (currentIndex < matches.length) {
-      onReject(matches[currentIndex].id);
+    setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
-    }
-  };
+      setIsAnimating(false);
+    }, 300);
+  }, [currentIndex, matches, isAnimating, onLike, onReject, toast]);
 
-  const handleLikeClick = () => {
-    handleSwipeRight();
-  };
-
-  const handleRejectClick = () => {
-    handleSwipeLeft();
+  const handleButtonAction = (action: "like" | "dislike" | "superlike") => {
+    const directionMap = {
+      like: "right" as const,
+      dislike: "left" as const,
+      superlike: "up" as const,
+    };
+    handleSwipe(directionMap[action]);
   };
 
   if (currentIndex >= matches.length) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-6">
-        <div className="text-4xl mb-4">🎉</div>
-        <h3 className="text-lg font-semibold mb-2">All caught up!</h3>
-        <p className="text-gray-600">No more matches to review right now.</p>
+        <div className="w-32 h-32 bg-gradient-primary rounded-full flex items-center justify-center mb-6 animate-bounce-in">
+          <span className="text-4xl">🎉</span>
+        </div>
+        <h2 className="text-2xl font-bold text-foreground mb-2">All caught up!</h2>
+        <p className="text-muted-foreground mb-6">
+          No more matches to review right now. Check back later for more!
+        </p>
       </div>
     );
   }
@@ -60,139 +87,118 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const currentMatch = matches[currentIndex];
 
   return (
-    <div className="flex flex-col h-full p-4">
-
-      {/* Card stack */}
-      <div className="flex-1 relative min-h-[500px]">
-        {/* Show next card behind current one */}
-        {currentIndex + 1 < matches.length && (
-          <div className="absolute inset-0 transform scale-95 opacity-50 z-0">
-            <div className="bg-white rounded-xl shadow-lg h-full">
-              <img
-                src={matches[currentIndex + 1].image}
-                alt={matches[currentIndex + 1].name}
-                className="w-full h-48 object-cover rounded-t-xl"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Current card */}
-        <SwipeCard
-          onSwipeLeft={handleSwipeLeft}
-          onSwipeRight={handleSwipeRight}
-          className="absolute inset-0 z-10"
-        >
-          <div 
-            className="bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col cursor-pointer"
-            onClick={() => {
-              onOpenModal(currentMatch.id);
+    <div className="flex flex-col h-full max-w-sm mx-auto p-4">
+      <div className="relative h-[600px] mb-6">
+        {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
+          <TinderSwipeCard
+            key={match.id}
+            onSwipe={handleSwipe}
+            isTop={index === 0}
+            style={{
+              transform: `scale(${1 - index * 0.05}) translateY(${index * 8}px)`,
+              opacity: 1 - index * 0.2,
             }}
           >
-            <div className="relative flex-shrink-0">
-              <img
-                src={currentMatch.image}
-                alt={currentMatch.name}
-                className="w-full h-64 object-cover block"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
-                style={{ display: 'block', width: '100%', height: '256px' }}
-              />
-            </div>
-            
-            <div className="p-4 flex-1 flex flex-col">
-              <h3 className="font-semibold text-lg mb-3">{currentMatch.name}</h3>
-              
-              {/* Item details grid */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                  <div className="text-sm font-medium text-gray-800">{currentMatch.condition || 'N/A'}</div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-800">
-                    {currentMatch.priceRangeMin || currentMatch.priceRangeMax 
-                      ? `$${currentMatch.priceRangeMin || 0} - $${currentMatch.priceRangeMax || 0}`
-                      : 'Not specified'
-                    }
-                  </div>
+            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden relative">
+              {/* Item Image */}
+              <div className="w-full h-2/3 relative overflow-hidden">
+                <img
+                  src={match.image}
+                  alt={match.name}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder.svg';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                
+                {/* Action Menu */}
+                <div className="absolute top-4 right-4">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm">
+                        <MoreVertical className="h-4 w-4 text-white" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => { onLike(match.id, true); setCurrentIndex(prev => prev + 1); }}>
+                        <Users className="h-4 w-4 mr-2 text-green-600" />
+                        Accept for all of my items
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { onReject(match.id, true); setCurrentIndex(prev => prev + 1); }}>
+                        <Users className="h-4 w-4 mr-2 text-red-600" />
+                        Reject for all of my items
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onReport(match.id)} className="text-red-600">
+                        <Flag className="h-4 w-4 mr-2" />
+                        Report item
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 
-              {/* Description and category below item details */}
-              <div className="mb-3">
-                <p className="text-gray-600 text-sm mb-2">{currentMatch.description}</p>
-                <div className="text-sm font-medium text-gray-800">{currentMatch.category || 'N/A'}</div>
-              </div>
-              
-              {currentMatch.userProfile && (
-                <div className="flex items-center gap-2 mt-4">
-                  <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
-                    {currentMatch.userProfile.avatar_url ? (
-                      <img
-                        src={currentMatch.userProfile.avatar_url}
-                        alt={currentMatch.userProfile.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center">
-                        {currentMatch.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-sm text-gray-700">{currentMatch.userProfile.name}</span>
-                  <div className="flex items-center gap-1 ml-2">
-                    <span className="text-yellow-500">★</span>
-                    <span className="text-sm text-gray-600">4.5</span>
-                  </div>
+              {/* Item Details */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <div className="flex items-end gap-3 mb-2">
+                  <h2 className="text-2xl font-bold">{match.name}</h2>
                 </div>
-              )}
-
+                <div className="flex gap-2 mb-2">
+                  <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs">
+                    {match.condition || 'N/A'}
+                  </span>
+                  <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs">
+                    {match.category || 'N/A'}
+                  </span>
+                </div>
+                <p className="text-white/80 mb-2 line-clamp-2 text-sm">{match.description}</p>
+                {match.userProfile && (
+                  <div className="flex items-center gap-2 text-white/60">
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
+                      {match.userProfile.avatar_url ? (
+                        <img
+                          src={match.userProfile.avatar_url}
+                          alt={match.userProfile.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-white/20 text-white text-xs font-semibold flex items-center justify-center">
+                          {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm">{match.userProfile.name}</span>
+                    <div className="flex items-center gap-1 ml-2">
+                      <span className="text-yellow-400">★</span>
+                      <span className="text-sm">4.5</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </SwipeCard>
+          </TinderSwipeCard>
+        ))}
       </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-3 justify-center mt-4">
-        {/* More options menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="lg" className="px-4">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01" />
-              </svg>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="w-64 bg-white border border-gray-200 shadow-lg z-50">
-            <DropdownMenuItem onClick={() => { onLike(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
-              <Users className="h-4 w-4 mr-2 text-green-600" />
-              Accept for all of my items
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { onReject(currentMatch.id, true); setCurrentIndex(prev => prev + 1); }} className="cursor-pointer">
-              <Users className="h-4 w-4 mr-2 text-red-600" />
-              Reject for all of my items
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onReport(currentMatch.id)} className="cursor-pointer text-red-600">
-              <Flag className="h-4 w-4 mr-2" />
-              Report item
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <SwipeActionButtons
+        onDislike={() => handleButtonAction("dislike")}
+        onSuperLike={() => handleButtonAction("superlike")}
+        onLike={() => handleButtonAction("like")}
+        disabled={isAnimating}
+      />
 
-        {/* Simple reject button */}
-        <Button variant="outline" size="lg" className="flex-1 max-w-32" onClick={() => { onReject(currentMatch.id, false); setCurrentIndex(prev => prev + 1); }}>
-          <X className="h-5 w-5 mr-2" />
-          Pass
-        </Button>
-
-        {/* Simple like button */}
-        <Button variant="default" size="lg" className="flex-1 max-w-32" onClick={() => { onLike(currentMatch.id, false); setCurrentIndex(prev => prev + 1); }}>
-          <Heart className="h-5 w-5 mr-2" />
-          Like
-        </Button>
+      <div className="text-center mt-4 px-4">
+        <button 
+          onClick={() => onOpenModal(currentMatch.id)}
+          className="text-primary hover:text-primary/80 text-sm font-medium mb-2"
+        >
+          View details
+        </button>
+        <p className="text-xs text-muted-foreground">
+          Swipe right to like • Swipe left to pass • Swipe up to super like
+        </p>
       </div>
-
     </div>
   );
 };
