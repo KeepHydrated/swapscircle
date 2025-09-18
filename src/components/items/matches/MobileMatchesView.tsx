@@ -101,7 +101,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           >
             <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden relative flex flex-col">
               {/* Item Image */}
-              <div className="w-full h-3/5 relative overflow-hidden">
+              <div className="w-full h-1/2 relative overflow-hidden">
                 <img
                   src={match.image}
                   alt={match.name}
