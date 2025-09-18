@@ -29,10 +29,51 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
   return { lat, lng };
 };
 
+// Helper function to add test match only for specific user
+const addTestMatchForSpecificUser = async (currentUserId: string): Promise<MatchItem[]> => {
+  try {
+    // Get current user's email to check if they should see the test match
+    const { data: user, error } = await supabase.auth.getUser();
+    
+    if (error || !user?.user?.email || user.user.email !== 'nadiachibri@gmail.com') {
+      return [];
+    }
+
+    // Return a sample match item
+    const testMatch: MatchItem = {
+      id: 'test-match-sample-' + Date.now(),
+      name: 'Sample Match - Vintage Camera',
+      image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80',
+      category: 'Electronics',
+      condition: 'Good',
+      description: 'A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.',
+      tags: ['vintage', 'camera', 'photography'],
+      priceRangeMin: 200,
+      priceRangeMax: 400,
+      liked: false,
+      user_id: 'test-user-sample',
+      userProfile: {
+        name: 'Sample User',
+        username: 'sample_photographer',
+        avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'
+      },
+      distance: '2.5 miles away'
+    };
+
+    return [testMatch];
+  } catch (error) {
+    console.error('Error adding test match:', error);
+    return [];
+  }
+};
+
 export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide', perspectiveUserId?: string): Promise<MatchItem[]> => {
   if (!isSupabaseConfigured()) {
     return [];
   }
+
+  // Add test match for specific user
+  const testMatches = await addTestMatchForSpecificUser(currentUserId);
 
   try {
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
@@ -448,10 +489,13 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Limit to top 50 matches
     const finalMatches = matches.slice(0, 50);
     
-    return finalMatches.map(({ matchScore, created_at, ...item }) => item);
+    // Combine test matches with real matches
+    const allMatches = [...testMatches, ...finalMatches.map(({ matchScore, created_at, ...item }) => item)];
+
+    return allMatches;
 
   } catch (error) {
     console.error('Error in findMatchingItems:', error);
-    return [];
+    return testMatches; // Return test matches even if real matching fails
   }
 };

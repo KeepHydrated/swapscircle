@@ -37,6 +37,7 @@ export interface MatchItem extends Item {
     username?: string;
     avatar_url?: string;
   };
+  distance?: string; // Add distance field for matches
 }
 
 // CompletedTrade is now imported from @/types/trade
