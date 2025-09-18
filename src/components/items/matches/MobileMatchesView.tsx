@@ -166,24 +166,11 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 {/* Item Title and Details Section */}
                 <div className="flex-1 p-4 bg-card">
                   {/* Item Title - Prominent display */}
-                  <h2 className="text-xl font-bold text-foreground mb-3 line-clamp-2">{match.name}</h2>
-                  
-                  {/* Tags/Details */}
-                  <div className="flex gap-2 mb-3">
-                    <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
-                      {match.condition || 'N/A'}
-                    </span>
-                    <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
-                      {match.category || 'N/A'}
-                    </span>
-                  </div>
-                  
-                  {/* Description */}
-                  <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{match.description}</p>
+                  <h2 className="text-xl font-bold text-foreground mb-4 line-clamp-2">{match.name}</h2>
                   
                   {/* User Info */}
                   {match.userProfile && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-auto">
                       <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
                         {match.userProfile.avatar_url ? (
                           <img
