@@ -99,9 +99,9 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               opacity: 1 - index * 0.2,
             }}
           >
-            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden relative">
+            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden relative flex flex-col">
               {/* Item Image */}
-              <div className="w-full h-2/3 relative overflow-hidden">
+              <div className="w-full h-3/5 relative overflow-hidden">
                 <img
                   src={match.image}
                   alt={match.name}
@@ -111,7 +111,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                     e.currentTarget.src = '/placeholder.svg';
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 
                 {/* Action Menu */}
                 <div className="absolute top-4 right-4">
@@ -139,22 +138,27 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
 
-              {/* Item Details */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <div className="flex items-end gap-3 mb-2">
-                  <h2 className="text-2xl font-bold">{match.name}</h2>
-                </div>
-                <div className="flex gap-2 mb-2">
-                  <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs">
+              {/* Item Title and Details Section */}
+              <div className="flex-1 p-4 bg-card">
+                {/* Item Title - Prominent display */}
+                <h2 className="text-xl font-bold text-foreground mb-3 line-clamp-2">{match.name}</h2>
+                
+                {/* Tags/Details */}
+                <div className="flex gap-2 mb-3">
+                  <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
                     {match.condition || 'N/A'}
                   </span>
-                  <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs">
+                  <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
                     {match.category || 'N/A'}
                   </span>
                 </div>
-                <p className="text-white/80 mb-2 line-clamp-2 text-sm">{match.description}</p>
+                
+                {/* Description */}
+                <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{match.description}</p>
+                
+                {/* User Info */}
                 {match.userProfile && (
-                  <div className="flex items-center gap-2 text-white/60">
+                  <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
                       {match.userProfile.avatar_url ? (
                         <img
@@ -163,16 +167,21 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-white/20 text-white text-xs font-semibold flex items-center justify-center">
+                        <div className="w-full h-full bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center">
                           {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
                         </div>
                       )}
                     </div>
-                    <span className="text-sm">{match.userProfile.name}</span>
+                    <span className="text-sm text-muted-foreground">{match.userProfile.name}</span>
                     <div className="flex items-center gap-1 ml-2">
-                      <span className="text-yellow-400">★</span>
-                      <span className="text-sm">4.5</span>
+                      <span className="text-yellow-500">★</span>
+                      <span className="text-sm text-muted-foreground">4.5</span>
                     </div>
+                    {match.distance && (
+                      <div className="ml-auto">
+                        <span className="text-xs text-muted-foreground">{match.distance}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
