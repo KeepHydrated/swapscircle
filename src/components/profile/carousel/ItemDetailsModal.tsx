@@ -258,33 +258,21 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogOverlay className="bg-black/80" />
-      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
+      <DialogOverlay className="bg-white" />
+      <DialogContent className="fixed inset-0 top-16 w-full h-[calc(100vh-4rem)] p-0 border-0 rounded-none bg-white shadow-none max-w-none">
         <DialogTitle className="sr-only">Item Details</DialogTitle>
         <DialogDescription className="sr-only">View item details and information</DialogDescription>
         
-        {/* Navigation buttons - positioned outside the content box */}
-        {canNavigatePrev && (
-          <button
-            onClick={onNavigatePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
-            aria-label="Previous item"
-          >
-            <ArrowLeft className="w-6 h-6 text-gray-700" />
-          </button>
-        )}
+        {/* Close button - positioned in top right corner */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full shadow-md flex items-center justify-center transition-colors z-50"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5 text-gray-600" />
+        </button>
 
-        {canNavigateNext && (
-          <button
-            onClick={onNavigateNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
-            aria-label="Next item"
-          >
-            <ArrowRight className="w-6 h-6 text-gray-700" />
-          </button>
-        )}
-
-        <div className={`flex flex-col w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
+        <div className={`flex flex-col w-full h-full bg-white overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
           {/* Image Row */}
           <div className="relative w-full h-1/2 flex-shrink-0 bg-black/10 overflow-auto">
             {/* Get all available images */}
@@ -359,15 +347,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               </div>
             )}
             
-            {/* Heart and Close buttons - positioned over the image */}
-            <div className="absolute top-4 right-4 flex gap-3 z-20">
-              <button
-                onClick={onClose}
-                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
+            {/* Heart button - positioned over the image */}
+            <div className="absolute top-4 right-20 flex gap-3 z-20">
               <button
                 onClick={handleLikeClick}
                 className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
