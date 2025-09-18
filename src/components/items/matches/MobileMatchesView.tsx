@@ -166,7 +166,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 {/* Item Title and Details Section */}
                 <div className="flex-1 p-4 bg-card">
                   {/* Item Title - Prominent display */}
-                  <h2 className="text-xl font-bold text-foreground mb-4 line-clamp-2">{match.name}</h2>
+                  <h2 className="text-lg font-bold text-foreground mb-4 truncate">{match.name}</h2>
                   
                   {/* User Info */}
                   {match.userProfile && (
