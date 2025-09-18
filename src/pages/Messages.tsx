@@ -83,11 +83,14 @@ const Messages = () => {
   const [currentView, setCurrentView] = useState<'conversations' | 'chat'>('conversations');
   const [currentMobileView, setCurrentMobileView] = useState<'messages' | 'details'>('messages');
 
-  // Get current user ID
+  // Get current user ID and email
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  
   useEffect(() => {
     const getCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUserId(user?.id || null);
+      setCurrentUserEmail(user?.email || null);
     };
     getCurrentUser();
   }, []);
@@ -336,6 +339,18 @@ const Messages = () => {
       {/* Mobile/Tablet Layout */}
       {(isMobile || isTablet) ? (
         <div className={`flex-1 overflow-hidden ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
+          {/* Test Message - Only visible to nadiachibri@gmail.com */}
+          {currentUserEmail === 'nadiachibri@gmail.com' && (
+            <div className="bg-blue-100 border-b border-blue-200 p-3">
+              <div className="text-sm text-blue-800 font-medium">
+                🧪 Test Message (Only you can see this)
+              </div>
+              <div className="text-xs text-blue-600 mt-1">
+                Messages system is working! This test message appears only for nadiachibri@gmail.com
+              </div>
+            </div>
+          )}
+          
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
@@ -640,6 +655,18 @@ const Messages = () => {
         <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Left sidebar - Conversations */}
           <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">
+            {/* Test Message - Only visible to nadiachibri@gmail.com */}
+            {currentUserEmail === 'nadiachibri@gmail.com' && (
+              <div className="bg-blue-100 border-b border-blue-200 p-3">
+                <div className="text-sm text-blue-800 font-medium">
+                  🧪 Test Message (Only you can see this)
+                </div>
+                <div className="text-xs text-blue-600 mt-1">
+                  Messages system is working! This test message appears only for nadiachibri@gmail.com
+                </div>
+              </div>
+            )}
+            
           {conversations.length > 0 ? (
             <div className="flex flex-col h-full">
               <div ref={leftListRef} className="flex-1 overflow-y-auto">
