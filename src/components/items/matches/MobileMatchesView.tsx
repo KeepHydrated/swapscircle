@@ -189,11 +189,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                         <span className="text-yellow-500">★</span>
                         <span className="text-sm text-muted-foreground">4.5</span>
                       </div>
-                      {match.distance && (
-                        <div className="ml-auto">
-                          <span className="text-xs text-muted-foreground">{match.distance}</span>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
