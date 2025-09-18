@@ -197,17 +197,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         disabled={isAnimating}
       />
 
-      <div className="text-center mt-4 px-4">
-        <button 
-          onClick={() => onOpenModal(currentMatch.id)}
-          className="text-primary hover:text-primary/80 text-sm font-medium mb-2"
-        >
-          View details
-        </button>
-        <p className="text-xs text-muted-foreground">
-          Swipe right to like • Swipe left to pass • Swipe up to super like
-        </p>
-      </div>
     </div>
   );
 };
