@@ -157,6 +157,72 @@ export const fetchUserTradeConversations = async () => {
 
 export const fetchTradeMessages = async (conversationId: string) => {
   try {
+    // Return test messages for test conversation (only visible to nadiachibri@gmail.com)
+    if (conversationId === 'test-conversation-123') {
+      const { data: currentUser } = await supabase.auth.getUser();
+      if (currentUser?.user?.email === 'nadiachibri@gmail.com') {
+        const testMessages = [
+          {
+            id: 'test-msg-1',
+            conversation_id: 'test-conversation-123',
+            sender_id: 'test-user-456',
+            message: 'Hey! I saw your vinyl record collection and I\'m really interested. I have a vintage Canon AE-1 camera that might be perfect for a trade.',
+            created_at: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+            image_urls: [],
+            sender_profile: {
+              id: 'test-user-456',
+              username: 'alexjohnson',
+              name: 'Alex Johnson',
+              avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+            }
+          },
+          {
+            id: 'test-msg-2',
+            conversation_id: 'test-conversation-123',
+            sender_id: 'test-user-456',
+            message: 'The camera is in excellent condition and comes with the original case and manual. What do you think?',
+            created_at: new Date(Date.now() - 3000000).toISOString(), // 50 minutes ago
+            image_urls: ['https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&h=300&fit=crop'],
+            sender_profile: {
+              id: 'test-user-456',
+              username: 'alexjohnson',
+              name: 'Alex Johnson',
+              avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+            }
+          },
+          {
+            id: 'test-msg-3',
+            conversation_id: 'test-conversation-123',
+            sender_id: currentUser.user.id,
+            message: 'That looks like an amazing camera! I\'d love to make this trade. The vinyl collection has some rare jazz albums from the 70s.',
+            created_at: new Date(Date.now() - 2400000).toISOString(), // 40 minutes ago
+            image_urls: [],
+            sender_profile: {
+              id: currentUser.user.id,
+              username: 'You',
+              name: 'You',
+              avatar_url: ''
+            }
+          },
+          {
+            id: 'test-msg-4',
+            conversation_id: 'test-conversation-123',
+            sender_id: 'test-user-456',
+            message: 'Perfect! Those jazz albums sound incredible. When would be a good time to meet up and make the exchange?',
+            created_at: new Date(Date.now() - 120000).toISOString(), // 2 minutes ago
+            image_urls: [],
+            sender_profile: {
+              id: 'test-user-456',
+              username: 'alexjohnson',
+              name: 'Alex Johnson',
+              avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+            }
+          }
+        ];
+        return testMessages;
+      }
+    }
+    
     // Fetch messages from trade_messages table
     let { data: messages, error } = await supabase
       .from('trade_messages')
