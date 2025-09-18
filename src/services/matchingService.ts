@@ -39,30 +39,108 @@ const addTestMatchForSpecificUser = async (currentUserId: string): Promise<Match
       return [];
     }
 
-    // Return a sample match item
-    const testMatch: MatchItem = {
-      id: 'test-match-sample-' + Date.now(),
-      name: 'Sample Match - Vintage Camera',
-      image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80',
-      category: 'Electronics',
-      condition: 'Good',
-      description: 'A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.',
-      tags: ['vintage', 'camera', 'photography'],
-      priceRangeMin: 200,
-      priceRangeMax: 400,
-      liked: false,
-      user_id: 'test-user-sample',
-      userProfile: {
-        name: 'Sample User',
-        username: 'sample_photographer',
-        avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'
+    // Return multiple sample match items
+    const testMatches: MatchItem[] = [
+      {
+        id: 'test-match-camera-' + Date.now(),
+        name: 'Sample Match - Vintage Camera',
+        image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80',
+        category: 'Electronics',
+        condition: 'Good',
+        description: 'A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.',
+        tags: ['vintage', 'camera', 'photography'],
+        priceRangeMin: 200,
+        priceRangeMax: 400,
+        liked: false,
+        user_id: 'test-user-photographer',
+        userProfile: {
+          name: 'Sample User',
+          username: 'sample_photographer',
+          avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '2.5 miles away'
       },
-      distance: '2.5 miles away'
-    };
+      {
+        id: 'test-match-guitar-' + Date.now(),
+        name: 'Acoustic Guitar - Taylor 814ce',
+        image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=800&q=80',
+        category: 'Musical Instruments',
+        condition: 'Excellent',
+        description: 'Professional Taylor acoustic guitar with electronics. Barely used, perfect for recording and live performances.',
+        tags: ['guitar', 'taylor', 'acoustic', 'music'],
+        priceRangeMin: 800,
+        priceRangeMax: 1200,
+        liked: false,
+        user_id: 'test-user-musician',
+        userProfile: {
+          name: 'Alex Martinez',
+          username: 'guitar_alex',
+          avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '1.2 miles away'
+      },
+      {
+        id: 'test-match-bike-' + Date.now(),
+        name: 'Mountain Bike - Trek X-Caliber',
+        image: 'https://images.unsplash.com/photo-1544191696-15693072e4a7?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Good',
+        description: 'Well-maintained mountain bike perfect for trails and city riding. Recent tune-up completed.',
+        tags: ['bike', 'mountain', 'trek', 'outdoor'],
+        priceRangeMin: 300,
+        priceRangeMax: 500,
+        liked: false,
+        user_id: 'test-user-cyclist',
+        userProfile: {
+          name: 'Sarah Chen',
+          username: 'trail_rider',
+          avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b2e5a7a5?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '3.1 miles away'
+      },
+      {
+        id: 'test-match-watch-' + Date.now(),
+        name: 'Vintage Omega Speedmaster',
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
+        category: 'Accessories',
+        condition: 'Excellent',
+        description: 'Classic Omega Speedmaster in pristine condition. Includes original box and papers.',
+        tags: ['watch', 'omega', 'vintage', 'luxury'],
+        priceRangeMin: 2000,
+        priceRangeMax: 3000,
+        liked: false,
+        user_id: 'test-user-collector',
+        userProfile: {
+          name: 'David Kim',
+          username: 'watch_collector',
+          avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '0.8 miles away'
+      },
+      {
+        id: 'test-match-book-' + Date.now(),
+        name: 'First Edition - The Great Gatsby',
+        image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=80',
+        category: 'Books',
+        condition: 'Very Good',
+        description: 'Rare first edition of The Great Gatsby in excellent condition. Perfect for collectors.',
+        tags: ['book', 'first-edition', 'classic', 'literature'],
+        priceRangeMin: 500,
+        priceRangeMax: 800,
+        liked: false,
+        user_id: 'test-user-bookworm',
+        userProfile: {
+          name: 'Emma Thompson',
+          username: 'rare_books',
+          avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '4.2 miles away'
+      }
+    ];
 
-    return [testMatch];
+    return testMatches;
   } catch (error) {
-    console.error('Error adding test match:', error);
+    console.error('Error adding test matches:', error);
     return [];
   }
 };
