@@ -196,35 +196,35 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 
               {/* Back of card */}
               <div 
-                className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden backface-hidden flex flex-col p-6"
+                className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden backface-hidden flex flex-col p-4"
                 style={{
                   transform: 'rotateY(180deg)',
                   backfaceVisibility: 'hidden'
                 }}
               >
                 {/* Header with title */}
-                <div className="mb-6">
-                  <h1 className="text-2xl font-bold text-foreground mb-4">{match.name}</h1>
-                  <p className="text-muted-foreground text-base leading-relaxed">
+                <div className="mb-4">
+                  <h1 className="text-lg font-bold text-foreground mb-2">{match.name}</h1>
+                  <p className="text-muted-foreground text-xs leading-relaxed">
                     {match.description}
                   </p>
                 </div>
 
                 {/* Details Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-3 mb-4">
                   <div>
-                    <span className="text-2xl font-bold text-foreground">{match.category || 'N/A'}</span>
+                    <span className="text-sm font-bold text-foreground">{match.category || 'N/A'}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-bold text-foreground">
+                    <span className="text-sm font-bold text-foreground">
                       {match.tags && match.tags.length > 0 ? match.tags[0] : 'N/A'}
                     </span>
                   </div>
                   <div>
-                    <span className="text-2xl font-bold text-foreground">{match.condition || 'N/A'}</span>
+                    <span className="text-sm font-bold text-foreground">{match.condition || 'N/A'}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-bold text-foreground">
+                    <span className="text-sm font-bold text-foreground">
                       {match.priceRangeMin && match.priceRangeMax 
                         ? `$${match.priceRangeMin} - $${match.priceRangeMax}`
                         : 'Price not set'
@@ -234,10 +234,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
 
                 {/* User Profile Section */}
-                <div className="mt-auto pt-4 border-t border-border">
+                <div className="mt-auto pt-3 border-t border-border">
                   {match.userProfile && (
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
                         {match.userProfile.avatar_url ? (
                           <img
                             src={match.userProfile.avatar_url}
@@ -245,20 +245,20 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
+                          <div className="w-full h-full bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center">
                             {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
                           </div>
                         )}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-semibold text-foreground">
+                          <h3 className="text-sm font-semibold text-foreground">
                             {match.userProfile.username || match.userProfile.name}
                           </h3>
-                          <span className="text-yellow-500">★</span>
-                          <span className="text-muted-foreground">No reviews</span>
+                          <span className="text-yellow-500 text-xs">★</span>
+                          <span className="text-muted-foreground text-xs">No reviews</span>
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-xs text-muted-foreground">
                           <div>Since 2024</div>
                           <div className="flex items-center gap-1">
                             <span>🔄</span>
