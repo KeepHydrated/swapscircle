@@ -202,9 +202,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   backfaceVisibility: 'hidden'
                 }}
               >
-                {/* Header with title */}
+                {/* Description */}
                 <div className="mb-4">
-                  <h1 className="text-lg font-bold text-foreground mb-2">{match.name}</h1>
                   <p className="text-muted-foreground text-xs leading-relaxed">
                     {match.description}
                   </p>
