@@ -27,6 +27,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const handleSwipe = useCallback((direction: "left" | "right" | "up") => {
@@ -70,6 +71,18 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     handleSwipe(directionMap[action]);
   };
 
+  const handleCardTap = (cardId: string) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
+
   if (currentIndex >= matches.length) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-6">
@@ -89,7 +102,9 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   return (
     <div className="flex flex-col h-full max-w-sm mx-auto p-4">
       <div className="relative h-[600px] mb-6">
-        {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
+        {matches.slice(currentIndex, currentIndex + 3).map((match, index) => {
+          const isFlipped = flippedCards.has(match.id);
+          return (
           <TinderSwipeCard
             key={match.id}
             onSwipe={handleSwipe}
@@ -99,95 +114,184 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               opacity: 1 - index * 0.2,
             }}
           >
-            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden relative flex flex-col">
-              {/* Item Image */}
-              <div className="w-full h-1/2 relative overflow-hidden">
-                <img
-                  src={match.image}
-                  alt={match.name}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                  onError={(e) => {
-                    e.currentTarget.src = '/placeholder.svg';
-                  }}
-                />
-                
-                {/* Action Menu */}
-                <div className="absolute top-4 right-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm">
-                        <MoreVertical className="h-4 w-4 text-white" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => { onLike(match.id, true); setCurrentIndex(prev => prev + 1); }}>
-                        <Users className="h-4 w-4 mr-2 text-green-600" />
-                        Accept for all of my items
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { onReject(match.id, true); setCurrentIndex(prev => prev + 1); }}>
-                        <Users className="h-4 w-4 mr-2 text-red-600" />
-                        Reject for all of my items
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onReport(match.id)} className="text-red-600">
-                        <Flag className="h-4 w-4 mr-2" />
-                        Report item
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+            <div 
+              className="w-full h-full relative preserve-3d cursor-pointer"
+              style={{
+                transformStyle: 'preserve-3d',
+                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                transition: 'transform 0.6s ease-in-out'
+              }}
+              onClick={() => handleCardTap(match.id)}
+            >
+              {/* Front of card */}
+              <div className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden backface-hidden flex flex-col">
+                {/* Item Image */}
+                <div className="w-full h-1/2 relative overflow-hidden">
+                  <img
+                    src={match.image}
+                    alt={match.name}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                    onError={(e) => {
+                      e.currentTarget.src = '/placeholder.svg';
+                    }}
+                  />
+                  
+                  {/* Action Menu */}
+                  <div className="absolute top-4 right-4">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm">
+                          <MoreVertical className="h-4 w-4 text-white" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => { onLike(match.id, true); setCurrentIndex(prev => prev + 1); }}>
+                          <Users className="h-4 w-4 mr-2 text-green-600" />
+                          Accept for all of my items
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { onReject(match.id, true); setCurrentIndex(prev => prev + 1); }}>
+                          <Users className="h-4 w-4 mr-2 text-red-600" />
+                          Reject for all of my items
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onReport(match.id)} className="text-red-600">
+                          <Flag className="h-4 w-4 mr-2" />
+                          Report item
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
-              </div>
 
-              {/* Item Title and Details Section */}
-              <div className="flex-1 p-4 bg-card">
-                {/* Item Title - Prominent display */}
-                <h2 className="text-xl font-bold text-foreground mb-3 line-clamp-2">{match.name}</h2>
-                
-                {/* Tags/Details */}
-                <div className="flex gap-2 mb-3">
-                  <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
-                    {match.condition || 'N/A'}
-                  </span>
-                  <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
-                    {match.category || 'N/A'}
-                  </span>
-                </div>
-                
-                {/* Description */}
-                <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{match.description}</p>
-                
-                {/* User Info */}
-                {match.userProfile && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
-                      {match.userProfile.avatar_url ? (
-                        <img
-                          src={match.userProfile.avatar_url}
-                          alt={match.userProfile.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center">
-                          {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                {/* Item Title and Details Section */}
+                <div className="flex-1 p-4 bg-card">
+                  {/* Item Title - Prominent display */}
+                  <h2 className="text-xl font-bold text-foreground mb-3 line-clamp-2">{match.name}</h2>
+                  
+                  {/* Tags/Details */}
+                  <div className="flex gap-2 mb-3">
+                    <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
+                      {match.condition || 'N/A'}
+                    </span>
+                    <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs">
+                      {match.category || 'N/A'}
+                    </span>
+                  </div>
+                  
+                  {/* Description */}
+                  <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{match.description}</p>
+                  
+                  {/* User Info */}
+                  {match.userProfile && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
+                        {match.userProfile.avatar_url ? (
+                          <img
+                            src={match.userProfile.avatar_url}
+                            alt={match.userProfile.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center">
+                            {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-sm text-muted-foreground">{match.userProfile.name}</span>
+                      <div className="flex items-center gap-1 ml-2">
+                        <span className="text-yellow-500">★</span>
+                        <span className="text-sm text-muted-foreground">4.5</span>
+                      </div>
+                      {match.distance && (
+                        <div className="ml-auto">
+                          <span className="text-xs text-muted-foreground">{match.distance}</span>
                         </div>
                       )}
                     </div>
-                    <span className="text-sm text-muted-foreground">{match.userProfile.name}</span>
-                    <div className="flex items-center gap-1 ml-2">
-                      <span className="text-yellow-500">★</span>
-                      <span className="text-sm text-muted-foreground">4.5</span>
-                    </div>
-                    {match.distance && (
-                      <div className="ml-auto">
-                        <span className="text-xs text-muted-foreground">{match.distance}</span>
-                      </div>
-                    )}
+                  )}
+                </div>
+              </div>
+
+              {/* Back of card */}
+              <div 
+                className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden backface-hidden flex flex-col p-6"
+                style={{
+                  transform: 'rotateY(180deg)',
+                  backfaceVisibility: 'hidden'
+                }}
+              >
+                {/* Header with title */}
+                <div className="mb-6">
+                  <h1 className="text-2xl font-bold text-foreground mb-4">{match.name}</h1>
+                  <p className="text-muted-foreground text-base leading-relaxed">
+                    {match.description}
+                  </p>
+                </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <span className="text-2xl font-bold text-foreground">{match.category || 'N/A'}</span>
                   </div>
-                )}
+                  <div className="text-right">
+                    <span className="text-2xl font-bold text-foreground">
+                      {match.tags && match.tags.length > 0 ? match.tags[0] : 'N/A'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-2xl font-bold text-foreground">{match.condition || 'N/A'}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-2xl font-bold text-foreground">
+                      {match.priceRangeMin && match.priceRangeMax 
+                        ? `$${match.priceRangeMin} - $${match.priceRangeMax}`
+                        : 'Price not set'
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                {/* User Profile Section */}
+                <div className="mt-auto pt-4 border-t border-border">
+                  {match.userProfile && (
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
+                        {match.userProfile.avatar_url ? (
+                          <img
+                            src={match.userProfile.avatar_url}
+                            alt={match.userProfile.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
+                            {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-lg font-semibold text-foreground">
+                            {match.userProfile.username || match.userProfile.name}
+                          </h3>
+                          <span className="text-yellow-500">★</span>
+                          <span className="text-muted-foreground">No reviews</span>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          <div>Since 2024</div>
+                          <div className="flex items-center gap-1">
+                            <span>🔄</span>
+                            <span>0 trades completed</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </TinderSwipeCard>
-        ))}
+        )}
+        )}
       </div>
 
       <SwipeActionButtons
