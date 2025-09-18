@@ -286,7 +286,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
         <div className={`flex flex-col w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
           {/* Image Row */}
-          <div className="relative w-full h-1/2 flex-shrink-0 bg-black/10">
+          <div className="relative w-full h-1/2 flex-shrink-0 bg-black/10 overflow-auto">
             {/* Get all available images */}
             {(() => {
               const imageUrls = displayItem?.image_urls || [];
@@ -298,7 +298,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   <img
                     src={allImages[currentSlide] || mainImage}
                     alt={displayItem.name}
-                    className="object-cover w-full h-full"
+                    className="w-full h-auto min-h-full object-contain"
                     key={`${item?.id}-${currentSlide}`}
                   />
                   
