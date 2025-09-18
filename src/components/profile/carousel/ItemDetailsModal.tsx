@@ -284,9 +284,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           </button>
         )}
 
-        <div className={`flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
-          {/* Image */}
-          <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
+        <div className={`flex flex-col w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
+          {/* Image Row */}
+          <div className="relative w-full h-1/2 flex-shrink-0 bg-black/10">
             {/* Get all available images */}
             {(() => {
               const imageUrls = displayItem?.image_urls || [];
@@ -381,7 +381,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
             </div>
           </div>
           
-          {/* Details */}
+          {/* Details Row */}
           <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
             {loading ? (
               <div className="flex justify-center items-center h-full">
