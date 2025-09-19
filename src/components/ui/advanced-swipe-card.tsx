@@ -19,28 +19,49 @@ export const AdvancedSwipeCard = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragDistance, setDragDistance] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const startPos = useRef({ x: 0, y: 0 });
+  const lastMoveTime = useRef(0);
 
   const handleStart = (clientX: number, clientY: number) => {
     if (!isTop) return;
-    setIsDragging(true);
     startPos.current = { x: clientX, y: clientY };
+    setIsScrolling(false);
+    lastMoveTime.current = Date.now();
   };
 
   const handleMove = (clientX: number, clientY: number) => {
-    if (!isDragging || !isTop) return;
+    if (!isTop || isScrolling) return;
     
     const deltaX = clientX - startPos.current.x;
     const deltaY = clientY - startPos.current.y;
-    const newRotation = deltaX * 0.1;
+    const deltaXAbs = Math.abs(deltaX);
+    const deltaYAbs = Math.abs(deltaY);
     
-    setDragDistance({ x: deltaX, y: deltaY });
-    setRotation(newRotation);
+    // If movement is primarily vertical and significant, treat as scroll
+    if (deltaYAbs > deltaXAbs && deltaYAbs > 10) {
+      setIsScrolling(true);
+      return;
+    }
+    
+    // Only start dragging if movement is primarily horizontal
+    if (deltaXAbs > 10 && deltaXAbs > deltaYAbs) {
+      setIsDragging(true);
+      const newRotation = deltaX * 0.1;
+      setDragDistance({ x: deltaX, y: deltaY });
+      setRotation(newRotation);
+    }
   };
 
   const handleEnd = () => {
-    if (!isDragging || !isTop) return;
+    if (!isDragging || !isTop || isScrolling) {
+      setIsDragging(false);
+      setIsScrolling(false);
+      setDragDistance({ x: 0, y: 0 });
+      setRotation(0);
+      return;
+    }
     
     setIsDragging(false);
     const threshold = 100;
@@ -53,19 +74,21 @@ export const AdvancedSwipeCard = ({
       setDragDistance({ x: 0, y: 0 });
       setRotation(0);
     }
+    
+    setIsScrolling(false);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    // Prevent swipe on mouse for better desktop experience
     e.preventDefault();
-    handleStart(e.clientX, e.clientY);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    handleMove(e.clientX, e.clientY);
+    // Disabled for better desktop experience
   };
 
   const handleMouseUp = () => {
-    handleEnd();
+    // Disabled for better desktop experience
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -76,6 +99,11 @@ export const AdvancedSwipeCard = ({
   const handleTouchMove = (e: React.TouchEvent) => {
     const touch = e.touches[0];
     handleMove(touch.clientX, touch.clientY);
+    
+    // Only prevent default if we're actually swiping horizontally
+    if (isDragging && !isScrolling) {
+      e.preventDefault();
+    }
   };
 
   const handleTouchEnd = () => {
@@ -83,14 +111,7 @@ export const AdvancedSwipeCard = ({
   };
 
   useEffect(() => {
-    if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      };
-    }
+    // Removed mouse event listeners for better desktop scrolling
   }, [isDragging]);
 
   const getSwipeOpacity = () => {
