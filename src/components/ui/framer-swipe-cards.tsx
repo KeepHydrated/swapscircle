@@ -40,22 +40,29 @@ export default function FramerSwipeCards({
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     const offsetY = info.offset.y;
+    const velocityY = info.velocity.y;
     
-    // Check for super like (swipe up)
-    if (offsetY < -100 && onSuperLike) {
-      controls.start({ 
-        y: -500, 
-        rotate: 0, 
-        opacity: 0,
-        scale: 0.8
-      }).then(() => {
-        onSuperLike(cards[currentIndex].id);
-        setCurrentIndex((i) => i + 1);
-        controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
-      });
+    console.log('🎯 Drag ended:', { offset, velocity, offsetY, velocityY });
+    
+    // Check for super like (swipe up) - more sensitive detection
+    if (offsetY < -80 || velocityY < -300) {
+      console.log('🌟 Super like detected!');
+      if (onSuperLike) {
+        controls.start({ 
+          y: -500, 
+          rotate: 0, 
+          opacity: 0,
+          scale: 0.8
+        }).then(() => {
+          onSuperLike(cards[currentIndex].id);
+          setCurrentIndex((i) => i + 1);
+          controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+        });
+      }
     }
     // Swipe right (like)
-    else if (offset > 100 || velocity > 500) {
+    else if (offset > 80 || velocity > 300) {
+      console.log('❤️ Like detected!');
       controls.start({ 
         x: 500, 
         rotate: 20, 
@@ -68,7 +75,8 @@ export default function FramerSwipeCards({
       });
     }
     // Swipe left (reject)
-    else if (offset < -100 || velocity < -500) {
+    else if (offset < -80 || velocity < -300) {
+      console.log('❌ Reject detected!');
       controls.start({ 
         x: -500, 
         rotate: -20, 
@@ -79,6 +87,17 @@ export default function FramerSwipeCards({
         setCurrentIndex((i) => i + 1);
         controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
       });
+    }
+    // Swipe down (could be for another action if needed)
+    else if (offsetY > 80 || velocityY > 300) {
+      console.log('⬇️ Down swipe detected!');
+      // For now, just snap back
+      controls.start({ x: 0, y: 0, rotate: 0 });
+    }
+    else {
+      console.log('🔄 Snap back');
+      // Snap back to center if no significant movement
+      controls.start({ x: 0, y: 0, rotate: 0 });
     }
   };
 
@@ -153,7 +172,8 @@ export default function FramerSwipeCards({
         {/* Current Card */}
         <motion.div
           drag
-          dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+          dragConstraints={{ left: -150, right: 150, top: -150, bottom: 150 }}
+          dragElastic={0.2}
           animate={controls}
           onDragEnd={handleDragEnd}
           className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
