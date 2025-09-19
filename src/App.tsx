@@ -23,6 +23,7 @@ import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Test from "./pages/Test";
 import Test2 from "./pages/Test2";
+import TestDuplicate from "./pages/TestDuplicate";
 
 import AdminReports from "./pages/AdminReports";
 import Analytics from "./pages/Analytics";
@@ -115,6 +116,7 @@ const AppContent = () => {
             <AdminCustomerSupport />
           </RequireAuth>
         } />
+        <Route path="/test" element={<TestDuplicate />} />
          <Route path="*" element={<NotFound />} />
     </Routes>
   );
