@@ -284,9 +284,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         <X className="w-5 h-5 text-gray-600" />
       </button>
 
-      <div className={`flex flex-col w-full h-full bg-white overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
-        {/* Image Row */}
-        <div className="relative w-full h-1/2 flex-shrink-0 bg-black/10 overflow-auto">
+      <div className={`flex flex-col w-full h-full bg-white overflow-y-auto relative ${transitionClassName || 'animate-fade-in'}`}>
+        {/* Image Section - Now scrollable */}
+        <div className="relative w-full bg-black/10">
           {/* Get all available images */}
           {(() => {
             const imageUrls = displayItem?.image_urls || [];
@@ -298,7 +298,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                 <img
                   src={allImages[currentSlide] || mainImage}
                   alt={displayItem.name}
-                  className="w-full h-auto min-h-full object-contain"
+                  className="w-full h-auto object-contain"
                   key={`${item?.id}-${currentSlide}`}
                 />
                 
@@ -375,8 +375,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           </div>
         </div>
         
-        {/* Details Row */}
-        <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
+        {/* Details Section - Now part of scrollable content */}
+        <div className="flex flex-col px-8 py-7">
           {loading ? (
             <div className="flex justify-center items-center h-full">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
