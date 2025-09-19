@@ -19,12 +19,14 @@ export const TinderSwipeCard = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragDistance, setDragDistance] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
+  const [hasMoved, setHasMoved] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const startPos = useRef({ x: 0, y: 0 });
 
   const handleStart = (clientX: number, clientY: number) => {
     if (!isTop) return;
     setIsDragging(true);
+    setHasMoved(false);
     startPos.current = { x: clientX, y: clientY };
   };
 
@@ -34,6 +36,11 @@ export const TinderSwipeCard = ({
     const deltaX = clientX - startPos.current.x;
     const deltaY = clientY - startPos.current.y;
     const newRotation = deltaX * 0.1;
+    
+    // Mark as moved if significant movement detected
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+      setHasMoved(true);
+    }
     
     setDragDistance({ x: deltaX, y: deltaY });
     setRotation(newRotation);
@@ -56,7 +63,8 @@ export const TinderSwipeCard = ({
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
+    // Only prevent default if we're actually starting to drag
+    // This allows click events to bubble through
     handleStart(e.clientX, e.clientY);
   };
 
