@@ -121,22 +121,24 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </Button>
         </div>
 
-        {/* Large image */}
-        <div className="w-full h-1/2 relative overflow-hidden">
-          <img
-            src={expandedCard.image}
-            alt={expandedCard.name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = '/placeholder.svg';
-            }}
-          />
-        </div>
+        {/* Scrollable content including image */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Large image */}
+          <div className="w-full h-80 relative overflow-hidden">
+            <img
+              src={expandedCard.image}
+              alt={expandedCard.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg';
+              }}
+            />
+          </div>
 
-        {/* Content section */}
-        <div className="flex-1 p-6 bg-card overflow-y-auto">
-          {/* Title */}
-          <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
+          {/* Content section */}
+          <div className="p-6 bg-card">
+            {/* Title */}
+            <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           
           {/* Description */}
           <p className="text-muted-foreground text-base leading-relaxed mb-6">
@@ -225,6 +227,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               <Heart className="h-4 w-4 mr-2" />
               Like
             </Button>
+          </div>
           </div>
         </div>
       </div>
