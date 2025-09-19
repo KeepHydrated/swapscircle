@@ -218,12 +218,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         ))}
       </div>
 
-      <SwipeActionButtons
-        onDislike={() => handleButtonAction("dislike")}
-        onSuperLike={() => handleButtonAction("superlike")}
-        onLike={() => handleButtonAction("like")}
-        disabled={isAnimating}
-      />
 
     </div>
   );
