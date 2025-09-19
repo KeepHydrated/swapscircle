@@ -107,9 +107,9 @@ const Header = () => {
               <Link to="/post-item">
                 <Plus className="h-6 w-6 text-gray-500" />
               </Link>
-              <button onClick={closeAllModals}>
+              <Link to="/" onClick={closeAllModals}>
                 <ArrowLeftRight className="h-6 w-6 text-gray-500" />
-              </button>
+              </Link>
               <Link to="/messages">
                 <MessageCircle className="h-6 w-6 text-gray-500" />
               </Link>
