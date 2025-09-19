@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
-import { TinderSwipeCard } from '@/components/ui/tinder-swipe-card';
 import { AdvancedSwipeCard } from '@/components/ui/advanced-swipe-card';
 import { SwipeActionButtons } from '@/components/ui/swipe-action-buttons';
 import { Heart, X, Users, Flag, MoreVertical } from 'lucide-react';
@@ -304,24 +303,19 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     <div className="flex flex-col h-full max-w-sm mx-auto p-4">
       <div className="relative h-[320px] mb-6">
         {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
-          <TinderSwipeCard
+          <div
             key={match.id}
-            onSwipe={handleSwipe}
-            isTop={index === 0}
+            className="absolute inset-0 cursor-pointer"
             style={{
               transform: `scale(${1 - index * 0.05}) translateY(${index * 8}px)`,
               opacity: 1 - index * 0.2,
+              zIndex: 10 - index,
             }}
+            onClick={() => handleCardClick(match)}
           >
             <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
               {/* Item Image */}
-              <div 
-                className="w-full h-1/2 relative overflow-hidden cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCardClick(match);
-                }}
-              >
+              <div className="w-full h-1/2 relative overflow-hidden">
                 <img
                   src={match.image}
                   alt={match.name}
@@ -401,7 +395,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
             </div>
-          </TinderSwipeCard>
+          </div>
         ))}
       </div>
     </div>
