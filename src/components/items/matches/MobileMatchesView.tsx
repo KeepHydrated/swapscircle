@@ -90,8 +90,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   return (
     <div className="flex flex-col h-full max-w-sm mx-auto p-4">
       <div className="relative h-[280px] mb-6">
-        {matches.slice(currentIndex, currentIndex + 3).map((match, index) => {
-          return (
+        {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
           <TinderSwipeCard
             key={match.id}
             onSwipe={handleSwipe}
@@ -216,8 +215,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               </div>
             </div>
           </TinderSwipeCard>
-        )}
-        )}
+        ))}
       </div>
 
       <SwipeActionButtons
