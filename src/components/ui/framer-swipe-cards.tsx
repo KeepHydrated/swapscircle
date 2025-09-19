@@ -56,7 +56,11 @@ export default function FramerSwipeCards({
         }).then(() => {
           onSuperLike(cards[currentIndex].id);
           setCurrentIndex((i) => i + 1);
+          // Reset immediately and ensure clean state
           controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+          setTimeout(() => {
+            controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+          }, 50);
         });
       }
     }
@@ -71,7 +75,11 @@ export default function FramerSwipeCards({
       }).then(() => {
         onLike(cards[currentIndex].id);
         setCurrentIndex((i) => i + 1);
+        // Reset immediately and ensure clean state
         controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+        setTimeout(() => {
+          controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+        }, 50);
       });
     }
     // Swipe left (reject)
@@ -85,7 +93,11 @@ export default function FramerSwipeCards({
       }).then(() => {
         onReject(cards[currentIndex].id);
         setCurrentIndex((i) => i + 1);
+        // Reset immediately and ensure clean state
         controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+        setTimeout(() => {
+          controls.set({ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 });
+        }, 50);
       });
     }
     // Swipe down (could be for another action if needed)
@@ -175,9 +187,11 @@ export default function FramerSwipeCards({
           dragConstraints={{ left: -150, right: 150, top: -150, bottom: 150 }}
           dragElastic={0.2}
           animate={controls}
+          initial={{ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 }}
           onDragEnd={handleDragEnd}
           className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
           whileDrag={{ scale: 1.05 }}
+          style={{ transform: 'translate3d(0, 0, 0)' }}
         >
           <Card className="w-full h-full overflow-hidden shadow-xl">
             <div className="relative h-full">
