@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
 import { TinderSwipeCard } from '@/components/ui/tinder-swipe-card';
 import { SwipeActionButtons } from '@/components/ui/swipe-action-buttons';
@@ -30,6 +30,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [expandedCard, setExpandedCard] = useState<MatchItem | null>(null);
+  const [expandedCardIndex, setExpandedCardIndex] = useState(0);
+  const swipeAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -76,12 +78,53 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   };
 
   const handleCardClick = (match: MatchItem) => {
+    const matchIndex = matches.findIndex(m => m.id === match.id);
     setExpandedCard(match);
+    setExpandedCardIndex(matchIndex);
   };
 
   const handleCloseExpanded = () => {
     setExpandedCard(null);
   };
+
+  const handlePopupSwipe = useCallback((direction: "left" | "right" | "up") => {
+    if (!expandedCard || isAnimating) return;
+
+    setIsAnimating(true);
+    
+    if (direction === "left") {
+      onReject(expandedCard.id);
+      toast({
+        title: `Passed on ${expandedCard.name}`,
+        duration: 2000,
+      });
+    } else if (direction === "right") {
+      onLike(expandedCard.id);
+      toast({
+        title: `Liked ${expandedCard.name}! 💖`,
+        duration: 2000,
+      });
+    } else if (direction === "up") {
+      onLike(expandedCard.id);
+      toast({
+        title: `Super liked ${expandedCard.name}! ⭐`,
+        duration: 2000,
+      });
+    }
+
+    // Move to next card in popup
+    setTimeout(() => {
+      const nextIndex = expandedCardIndex + 1;
+      if (nextIndex < matches.length) {
+        setExpandedCard(matches[nextIndex]);
+        setExpandedCardIndex(nextIndex);
+      } else {
+        // No more cards, close popup
+        setExpandedCard(null);
+      }
+      setIsAnimating(false);
+    }, 300);
+  }, [expandedCard, expandedCardIndex, matches, isAnimating, onLike, onReject, toast]);
 
   // Close expanded card when middle header icon is clicked on mobile home page
   useEffect(() => {
@@ -105,6 +148,82 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     }
   }, [expandedCard, location.pathname, isMobile]);
 
+  // Add touch/swipe handling for popup
+  useEffect(() => {
+    if (!expandedCard || !swipeAreaRef.current) return;
+
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!startX || !startY) return;
+      
+      currentX = e.touches[0].clientX;
+      currentY = e.touches[0].clientY;
+      
+      // Prevent scrolling when swiping horizontally
+      const deltaX = Math.abs(currentX - startX);
+      const deltaY = Math.abs(currentY - startY);
+      
+      if (deltaX > deltaY) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!startX || !startY) return;
+
+      const deltaX = currentX - startX;
+      const deltaY = currentY - startY;
+      const deltaXAbs = Math.abs(deltaX);
+      const deltaYAbs = Math.abs(deltaY);
+
+      // Minimum swipe distance
+      const minSwipeDistance = 50;
+
+      if (deltaXAbs < minSwipeDistance && deltaYAbs < minSwipeDistance) {
+        return;
+      }
+
+      if (deltaXAbs > deltaYAbs) {
+        // Horizontal swipe
+        if (deltaX > 0) {
+          handlePopupSwipe("right"); // Swipe right = like
+        } else {
+          handlePopupSwipe("left"); // Swipe left = reject
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY < 0) {
+          handlePopupSwipe("up"); // Swipe up = super like
+        }
+      }
+
+      startX = 0;
+      startY = 0;
+      currentX = 0;
+      currentY = 0;
+    };
+
+    const swipeArea = swipeAreaRef.current;
+    swipeArea.addEventListener('touchstart', handleTouchStart, { passive: false });
+    swipeArea.addEventListener('touchmove', handleTouchMove, { passive: false });
+    swipeArea.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      swipeArea.removeEventListener('touchstart', handleTouchStart);
+      swipeArea.removeEventListener('touchmove', handleTouchMove);
+      swipeArea.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [expandedCard, handlePopupSwipe]);
+
   // Full-screen card view
   if (expandedCard) {
     return (
@@ -121,8 +240,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </Button>
         </div>
 
-        {/* Scrollable content including image */}
-        <div className="flex-1 overflow-y-auto">
+        {/* Swipeable content */}
+        <div ref={swipeAreaRef} className="flex-1 overflow-y-auto">
           {/* Large image */}
           <div className="w-full h-80 relative overflow-hidden">
             <img
@@ -212,7 +331,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           {/* Action buttons */}
           <div className="flex gap-4 mt-6">
             <Button 
-              onClick={() => { onReject(expandedCard.id); handleCloseExpanded(); }}
+              onClick={() => handlePopupSwipe("left")}
               variant="outline"
               className="flex-1"
             >
@@ -220,7 +339,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               Pass
             </Button>
             <Button 
-              onClick={() => { onLike(expandedCard.id); handleCloseExpanded(); }}
+              onClick={() => handlePopupSwipe("right")}
               variant="default"
               className="flex-1"
             >
