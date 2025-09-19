@@ -313,7 +313,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               {/* Combined Content Section */}
               <div className="flex-1 p-4 bg-card overflow-y-auto">
                 {/* Item Title */}
-                <h2 className="text-lg font-bold text-foreground mb-4">{match.name}</h2>
+                <h2 className="text-base font-bold text-foreground mb-4">{match.name}</h2>
 
                 {/* User Profile Section */}
                 <div className="pt-3 border-t border-border">
