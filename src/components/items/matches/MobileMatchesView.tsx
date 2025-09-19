@@ -263,10 +263,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               opacity: 1 - index * 0.2,
             }}
           >
-            <div 
-              className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col cursor-pointer"
-              onClick={() => handleCardClick(match)}
-            >
+            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
               {/* Item Image */}
               <div 
                 className="w-full h-1/2 relative overflow-hidden cursor-pointer"
