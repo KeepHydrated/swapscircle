@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat, ArrowLeftRight } from "lucide-react";
+import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat } from "lucide-react";
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
@@ -256,15 +256,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
   return (
     <div className="fixed top-16 left-0 right-0 bottom-0 bg-white z-[9999] flex flex-col">
-      {/* Back and Close buttons - positioned in top corners */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 left-4 w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full shadow-md flex items-center justify-center transition-colors z-50"
-        aria-label="Go back"
-      >
-        <ArrowLeftRight className="w-5 h-5 text-gray-600" />
-      </button>
-      
+      {/* Close button - positioned in top right corner */}
       <button
         onClick={onClose}
         className="absolute top-4 right-4 w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full shadow-md flex items-center justify-center transition-colors z-50"
