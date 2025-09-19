@@ -27,6 +27,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<MatchItem | null>(null);
   const { toast } = useToast();
 
   const handleSwipe = useCallback((direction: "left" | "right" | "up") => {
@@ -70,6 +71,139 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     handleSwipe(directionMap[action]);
   };
 
+  const handleCardClick = (match: MatchItem) => {
+    setExpandedCard(match);
+  };
+
+  const handleCloseExpanded = () => {
+    setExpandedCard(null);
+  };
+
+  // Full-screen card view
+  if (expandedCard) {
+    return (
+      <div className="fixed inset-0 bg-background z-50 flex flex-col">
+        {/* Close button */}
+        <div className="absolute top-4 right-4 z-10">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleCloseExpanded}
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full"
+          >
+            <X className="h-6 w-6 text-white" />
+          </Button>
+        </div>
+
+        {/* Large image */}
+        <div className="w-full h-1/2 relative overflow-hidden">
+          <img
+            src={expandedCard.image}
+            alt={expandedCard.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = '/placeholder.svg';
+            }}
+          />
+        </div>
+
+        {/* Content section */}
+        <div className="flex-1 p-6 bg-card overflow-y-auto">
+          {/* Title */}
+          <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
+          
+          {/* Description */}
+          <p className="text-muted-foreground text-base leading-relaxed mb-6">
+            {expandedCard.description}
+          </p>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <span className="text-sm text-muted-foreground">Category</span>
+              <div className="text-lg font-semibold text-foreground">{expandedCard.category || 'N/A'}</div>
+            </div>
+            <div>
+              <span className="text-sm text-muted-foreground">Tag</span>
+              <div className="text-lg font-semibold text-foreground">
+                {expandedCard.tags && expandedCard.tags.length > 0 ? expandedCard.tags[0] : 'N/A'}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm text-muted-foreground">Condition</span>
+              <div className="text-lg font-semibold text-foreground">{expandedCard.condition || 'N/A'}</div>
+            </div>
+            <div>
+              <span className="text-sm text-muted-foreground">Price Range</span>
+              <div className="text-lg font-semibold text-foreground">
+                {expandedCard.priceRangeMin && expandedCard.priceRangeMax 
+                  ? `$${expandedCard.priceRangeMin} - $${expandedCard.priceRangeMax}`
+                  : 'Price not set'
+                }
+              </div>
+            </div>
+          </div>
+
+          {/* User Profile Section */}
+          <div className="pt-4 border-t border-border">
+            {expandedCard.userProfile && (
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
+                  {expandedCard.userProfile.avatar_url ? (
+                    <img
+                      src={expandedCard.userProfile.avatar_url}
+                      alt={expandedCard.userProfile.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
+                      {expandedCard.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {expandedCard.userProfile.username || expandedCard.userProfile.name}
+                    </h3>
+                    <span className="text-yellow-500">★</span>
+                    <span className="text-muted-foreground">No reviews</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    <div>Since 2024</div>
+                    <div className="flex items-center gap-1">
+                      <span>🔄</span>
+                      <span>0 trades completed</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-4 mt-6">
+            <Button 
+              onClick={() => { onReject(expandedCard.id); handleCloseExpanded(); }}
+              variant="outline"
+              className="flex-1"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Pass
+            </Button>
+            <Button 
+              onClick={() => { onLike(expandedCard.id); handleCloseExpanded(); }}
+              variant="default"
+              className="flex-1"
+            >
+              <Heart className="h-4 w-4 mr-2" />
+              Like
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (currentIndex >= matches.length) {
     return (
@@ -100,7 +234,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               opacity: 1 - index * 0.2,
             }}
           >
-            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
+            <div 
+              className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col cursor-pointer"
+              onClick={() => handleCardClick(match)}
+            >
               {/* Item Image */}
               <div className="w-full h-1/3 relative overflow-hidden">
                 <img
@@ -117,20 +254,25 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 <div className="absolute top-4 right-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="bg-white/20 hover:bg-white/30 backdrop-blur-sm"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <MoreVertical className="h-4 w-4 text-white" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => { onLike(match.id, true); setCurrentIndex(prev => prev + 1); }}>
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onLike(match.id, true); setCurrentIndex(prev => prev + 1); }}>
                         <Users className="h-4 w-4 mr-2 text-green-600" />
                         Accept for all of my items
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { onReject(match.id, true); setCurrentIndex(prev => prev + 1); }}>
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReject(match.id, true); setCurrentIndex(prev => prev + 1); }}>
                         <Users className="h-4 w-4 mr-2 text-red-600" />
                         Reject for all of my items
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onReport(match.id)} className="text-red-600">
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReport(match.id); }} className="text-red-600">
                         <Flag className="h-4 w-4 mr-2" />
                         Report item
                       </DropdownMenuItem>
@@ -217,8 +359,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </TinderSwipeCard>
         ))}
       </div>
-
-
     </div>
   );
 };
