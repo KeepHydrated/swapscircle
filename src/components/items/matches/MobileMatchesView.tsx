@@ -313,39 +313,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               {/* Combined Content Section */}
               <div className="flex-1 p-4 bg-card overflow-y-auto">
                 {/* Item Title */}
-                <h2 className="text-lg font-bold text-foreground mb-2">{match.name}</h2>
-                
-                {/* Description */}
-                <p className="text-muted-foreground text-xs leading-relaxed mb-3">
-                  {match.description}
-                </p>
-
-                {/* Details Grid */}
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <div>
-                    <span className="text-xs text-muted-foreground">Category</span>
-                    <div className="text-sm font-semibold text-foreground">{match.category || 'N/A'}</div>
-                  </div>
-                  <div>
-                    <span className="text-xs text-muted-foreground">Tag</span>
-                    <div className="text-sm font-semibold text-foreground">
-                      {match.tags && match.tags.length > 0 ? match.tags[0] : 'N/A'}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-xs text-muted-foreground">Condition</span>
-                    <div className="text-sm font-semibold text-foreground">{match.condition || 'N/A'}</div>
-                  </div>
-                  <div>
-                    <span className="text-xs text-muted-foreground">Price Range</span>
-                    <div className="text-sm font-semibold text-foreground">
-                      {match.priceRangeMin && match.priceRangeMax 
-                        ? `$${match.priceRangeMin} - $${match.priceRangeMax}`
-                        : 'Price not set'
-                      }
-                    </div>
-                  </div>
-                </div>
+                <h2 className="text-lg font-bold text-foreground mb-4">{match.name}</h2>
 
                 {/* User Profile Section */}
                 <div className="pt-3 border-t border-border">
