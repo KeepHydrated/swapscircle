@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat } from "lucide-react";
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
-import { useModal } from '@/context/ModalContext';
 import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
 
 interface UserProfile {
@@ -29,7 +30,6 @@ interface ItemDetailsModalProps {
   onRejectAll?: (id: string) => void;
   onReport?: (id: string) => void;
   transitionClassName?: string;
-  userTradeItem?: MatchItem; // The item the user is offering for trade
 }
 
 const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
@@ -48,10 +48,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   onRejectAll,
   onReport,
   transitionClassName,
-  userTradeItem,
 }) => {
   const navigate = useNavigate();
-  const { setModalOpen } = useModal();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -76,21 +74,6 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
       setIsReady(false); // Will be set to true after data fetch
     }
   }, [item?.id, skipDataFetch, preloadedUserProfile]);
-
-  // Update modal context when modal state changes
-  useEffect(() => {
-    setModalOpen(isOpen);
-  }, [isOpen, setModalOpen]);
-
-  // Listen for global close modal event
-  useEffect(() => {
-    const handleCloseAllModals = () => {
-      onClose();
-    };
-
-    window.addEventListener('closeAllModals', handleCloseAllModals);
-    return () => window.removeEventListener('closeAllModals', handleCloseAllModals);
-  }, [onClose]);
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
@@ -257,7 +240,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
     }
   };
 
-  if (!item || !isReady || !isOpen) return null;
+  if (!item || !isReady) return null;
 
   // Use fullItem or fallback to item - but when skipDataFetch is true, always use item
   const displayItem = skipDataFetch ? item : (fullItem || item);
@@ -274,209 +257,217 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const canNavigateNext = onNavigateNext && typeof currentIndex === 'number' && typeof totalItems === 'number' && currentIndex < totalItems - 1;
 
   return (
-    <div className="fixed top-16 left-0 right-0 bottom-0 bg-white z-[9999] flex flex-col">
-      {/* Close button - positioned in top right corner */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full shadow-md flex items-center justify-center transition-colors z-50"
-        aria-label="Close"
-      >
-        <X className="w-5 h-5 text-gray-600" />
-      </button>
-
-      <div className={`flex flex-col w-full h-full bg-white md:overflow-hidden overflow-y-auto relative ${transitionClassName || 'animate-fade-in'}`}>
-        {/* Image Section - Fixed on desktop, scrollable on mobile */}
-        <div className="relative w-full md:h-1/2 md:flex-shrink-0 bg-black/10 md:overflow-auto">
-          {/* Get all available images */}
-          {(() => {
-            const imageUrls = displayItem?.image_urls || [];
-            const mainImage = imageSource;
-            const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
-            
-            return (
-              <>
-                <img
-                  src={allImages[currentSlide] || mainImage}
-                  alt={displayItem.name}
-                  className="w-full h-auto md:min-h-full object-contain"
-                  key={`${item?.id}-${currentSlide}`}
-                />
-                
-                {/* Bottom center navigation arrows for multiple images */}
-                {allImages.length > 1 && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
-                    <button
-                      onClick={() =>
-                        setCurrentSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
-                      }
-                      className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all duration-200 hover:scale-105"
-                      aria-label="Previous image"
-                    >
-                      <ArrowLeft className="w-5 h-5 text-gray-800" />
-                    </button>
-                    
-                    {/* Dots indicator */}
-                    <div className="flex gap-1.5">
-                      {allImages.map((_, i) => (
-                        <button
-                          key={i}
-                          className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
-                            currentSlide === i
-                              ? "bg-white shadow-sm scale-110"
-                              : "bg-white/70 hover:bg-white/90"
-                          }`}
-                          onClick={() => setCurrentSlide(i)}
-                          aria-label={`Go to image ${i + 1}`}
-                        />
-                      ))}
-                    </div>
-                    
-                    <button
-                      onClick={() =>
-                        setCurrentSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
-                      }
-                      className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all duration-200 hover:scale-105"
-                      aria-label="Next image"
-                    >
-                      <ArrowRight className="w-5 h-5 text-gray-800" />
-                    </button>
-                  </div>
-                )}
-              </>
-            );
-          })()}
-          
-          
-          {/* 3 dots menu - positioned on the left */}
-          {(onLikeAll || onRejectAll || onReport) && item?.id && (
-            <div className="absolute top-4 left-4 z-20">
-              <MatchActionSelector
-                itemId={item.id}
-                onLikeAll={onLikeAll || (() => {})}
-                onRejectAll={onRejectAll || (() => {})}
-                onReport={onReport || (() => {})}
-                compact={false}
-              />
-            </div>
-          )}
-          
-          {/* Heart button - positioned over the image */}
-          <div className="absolute top-4 right-20 flex gap-3 z-20">
-            <button
-              onClick={handleLikeClick}
-              className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label={item.liked ? "Unlike" : "Like"}
-            >
-              <Heart
-                className={`w-5 h-5 ${item.liked ? "text-red-500" : "text-gray-400"}`}
-                fill={item.liked ? "red" : "none"}
-              />
-            </button>
-          </div>
-        </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogOverlay className="bg-black/80" />
+      <DialogContent className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none">
+        <DialogTitle className="sr-only">Item Details</DialogTitle>
+        <DialogDescription className="sr-only">View item details and information</DialogDescription>
         
-        {/* Details Section - Fixed scrollable on desktop, part of main scroll on mobile */}
-        <div className="md:flex-1 flex flex-col px-8 py-7 md:justify-start md:overflow-y-auto">
-          {loading ? (
-            <div className="flex justify-center items-center h-full">
-              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-            </div>
-          ) : (
-            <>
-              {/* Item details without thumbnail */}
-              <div className="mb-8">
-                {/* Title and Description */}
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    {displayItem.name}
-                  </h2>
-                  <p className="text-gray-700 text-base leading-relaxed mb-4">
-                    {displayItem.description || "No description provided."}
-                  </p>
-                  
-                  {/* Item Details */}
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
-                    <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
-                    <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
-                    <div className="font-medium text-gray-900">
-                      {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
-                        ? `$${displayItem.price_range_min || displayItem.priceRangeMin} - $${displayItem.price_range_max || displayItem.priceRangeMax}`
-                        : (displayItem.price_range_min || displayItem.priceRangeMin)
-                          ? `From $${displayItem.price_range_min || displayItem.priceRangeMin}`
-                          : (displayItem.price_range_max || displayItem.priceRangeMax)
-                            ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
-                            : "Up to $50"
-                       }
-                     </div>
-                   </div>
-                   
-                   {/* User's trade item thumbnail - scrolls with content */}
-                   {userTradeItem && (
-                     <div className="absolute top-4 right-4">
-                       <img
-                         src={userTradeItem.image_url || userTradeItem.image || (userTradeItem as any)?.image}
-                         alt={userTradeItem.name}
-                         className="w-16 h-16 object-cover rounded border-2 border-blue-500 shadow-lg"
-                       />
-                     </div>
-                   )}
-                 </div>
-               </div>
+        {/* Navigation buttons - positioned outside the content box */}
+        {canNavigatePrev && (
+          <button
+            onClick={onNavigatePrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            aria-label="Previous item"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+        )}
+
+        {canNavigateNext && (
+          <button
+            onClick={onNavigateNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-colors z-30"
+            aria-label="Next item"
+          >
+            <ArrowRight className="w-6 h-6 text-gray-700" />
+          </button>
+        )}
+
+        <div className={`flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
+          {/* Image */}
+          <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
+            {/* Get all available images */}
+            {(() => {
+              const imageUrls = displayItem?.image_urls || [];
+              const mainImage = imageSource;
+              const allImages = imageUrls.length > 0 ? imageUrls : (mainImage ? [mainImage] : []);
               
-              {/* User profile info - only show if showProfileInfo is true */}
-              {showProfileInfo && userProfile && (
-                <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
-                  <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden" onClick={handleProfileClick}>
-                    {userProfile.avatar_url ? (
-                      <img
-                        src={userProfile.avatar_url}
-                        alt={userProfile.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold">
-                        {userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+              return (
+                <>
+                  <img
+                    src={allImages[currentSlide] || mainImage}
+                    alt={displayItem.name}
+                    className="object-cover w-full h-full"
+                    key={`${item?.id}-${currentSlide}`}
+                  />
+                  
+                  {/* Bottom center navigation arrows for multiple images */}
+                  {allImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+                      <button
+                        onClick={() =>
+                          setCurrentSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
+                        }
+                        className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all duration-200 hover:scale-105"
+                        aria-label="Previous image"
+                      >
+                        <ArrowLeft className="w-5 h-5 text-gray-800" />
+                      </button>
+                      
+                      {/* Dots indicator */}
+                      <div className="flex gap-1.5">
+                        {allImages.map((_, i) => (
+                          <button
+                            key={i}
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
+                              currentSlide === i
+                                ? "bg-white shadow-sm scale-110"
+                                : "bg-white/70 hover:bg-white/90"
+                            }`}
+                            onClick={() => setCurrentSlide(i)}
+                            aria-label={`Go to image ${i + 1}`}
+                          />
+                        ))}
                       </div>
-                    )}
+                      
+                      <button
+                        onClick={() =>
+                          setCurrentSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
+                        }
+                        className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all duration-200 hover:scale-105"
+                        aria-label="Next image"
+                      >
+                        <ArrowRight className="w-5 h-5 text-gray-800" />
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+            
+            {/* 3 dots menu - positioned on the left */}
+            {(onLikeAll || onRejectAll || onReport) && item?.id && (
+              <div className="absolute top-4 left-4 z-20">
+                <MatchActionSelector
+                  itemId={item.id}
+                  onLikeAll={onLikeAll || (() => {})}
+                  onRejectAll={onRejectAll || (() => {})}
+                  onReport={onReport || (() => {})}
+                  compact={false}
+                />
+              </div>
+            )}
+            
+            {/* Heart and Close buttons - positioned over the image */}
+            <div className="absolute top-4 right-4 flex gap-3 z-20">
+              <button
+                onClick={onClose}
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+              <button
+                onClick={handleLikeClick}
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+                aria-label={item.liked ? "Unlike" : "Like"}
+              >
+                <Heart
+                  className={`w-5 h-5 ${item.liked ? "text-red-500" : "text-gray-400"}`}
+                  fill={item.liked ? "red" : "none"}
+                />
+              </button>
+            </div>
+          </div>
+          
+          {/* Details */}
+          <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+              </div>
+            ) : (
+              <>
+                {/* Item details without thumbnail */}
+                <div className="mb-8">
+                  {/* Title and Description */}
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      {displayItem.name}
+                    </h2>
+                    <p className="text-gray-700 text-base leading-relaxed mb-4">
+                      {displayItem.description || "No description provided."}
+                    </p>
+                    
+                    {/* Item Details */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
+                      <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
+                      <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
+                      <div className="font-medium text-gray-900">
+                        {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
+                          ? `$${displayItem.price_range_min || displayItem.priceRangeMin} - $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                          : (displayItem.price_range_min || displayItem.priceRangeMin)
+                            ? `From $${displayItem.price_range_min || displayItem.priceRangeMin}`
+                            : (displayItem.price_range_max || displayItem.priceRangeMax)
+                              ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
+                              : "Up to $50"
+                        }
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1" onClick={handleProfileClick}>
-                    <div className="flex items-center gap-2 mb-1 cursor-pointer hover:underline">
-                      <h3 className="text-sm font-semibold text-gray-900">
-                        {userProfile.username || userProfile.name}
-                      </h3>
-                      {userRating > 0 && (
-                        <>
-                          <span className="text-yellow-500 text-xs">★</span>
-                          <span className="text-gray-600 text-xs">{userRating.toFixed(1)}</span>
-                        </>
-                      )}
-                      {userRating === 0 && (
-                        <>
-                          <span className="text-gray-400 text-xs">★</span>
-                          <span className="text-gray-500 text-xs">No reviews</span>
-                        </>
+                </div>
+                
+                {/* User profile info - only show if showProfileInfo is true */}
+                {showProfileInfo && userProfile && (
+                  <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
+                    <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden" onClick={handleProfileClick}>
+                      {userProfile.avatar_url ? (
+                        <img
+                          src={userProfile.avatar_url}
+                          alt={userProfile.name || userProfile.username}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center">
+                          {(userProfile.name || userProfile.username || "U").substring(0, 1).toUpperCase()}
+                        </div>
                       )}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {memberSince && (
-                        <div>Since {memberSince}</div>
-                      )}
-                      {tradesCompleted >= 0 && (
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span 
+                          className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                          onClick={handleProfileClick}
+                        >
+                          {userProfile.username || userProfile.name || "Unknown User"}
+                        </span>
                         <div className="flex items-center gap-1">
-                          <span>🔄</span>
-                          <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
+                          <span className="text-yellow-500">★</span>
+                          <span className="text-sm text-gray-600">
+                            {userRating > 0 ? userRating.toFixed(1) : "No reviews"}
+                          </span>
+                        </div>
+                      </div>
+                      {memberSince && (
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                          <span>Since {memberSince}</span>
+                          <div className="flex items-center gap-1">
+                            <Repeat className="h-3 w-3" />
+                            <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
-import { useModal } from '@/context/ModalContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { useNotifications } from '@/hooks/useUnreadNotifications';
@@ -23,7 +22,6 @@ import { useIsNativeApp } from '@/hooks/useIsNativeApp';
 
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
-  const { closeAllModals } = useModal();
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
   const isMobile = useIsMobile();
@@ -107,7 +105,7 @@ const Header = () => {
               <Link to="/post-item">
                 <Plus className="h-6 w-6 text-gray-500" />
               </Link>
-              <Link to="/" onClick={closeAllModals}>
+              <Link to="/">
                 <ArrowLeftRight className="h-6 w-6 text-gray-500" />
               </Link>
               <Link to="/messages">

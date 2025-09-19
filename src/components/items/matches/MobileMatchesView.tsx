@@ -72,7 +72,15 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   };
 
   const handleCardTap = (cardId: string) => {
-    onOpenModal(cardId);
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
   };
 
   if (currentIndex >= matches.length) {
@@ -107,11 +115,16 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             }}
           >
             <div 
-              className="w-full h-full relative cursor-pointer"
+              className="w-full h-full relative preserve-3d cursor-pointer"
+              style={{
+                transformStyle: 'preserve-3d',
+                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                transition: 'transform 0.6s ease-in-out'
+              }}
               onClick={() => handleCardTap(match.id)}
             >
               {/* Front of card */}
-              <div className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
+              <div className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden backface-hidden flex flex-col">
                 {/* Item Image */}
                 <div className="w-full h-1/2 relative overflow-hidden">
                   <img
@@ -128,12 +141,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   <div className="absolute top-4 right-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="bg-white/20 hover:bg-white/30 backdrop-blur-sm"
-                          onClick={(e) => e.stopPropagation()}
-                        >
+                        <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm">
                           <MoreVertical className="h-4 w-4 text-white" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -186,6 +194,82 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
 
+              {/* Back of card */}
+              <div 
+                className="absolute inset-0 w-full h-full bg-card rounded-3xl shadow-card overflow-hidden backface-hidden flex flex-col p-4"
+                style={{
+                  transform: 'rotateY(180deg)',
+                  backfaceVisibility: 'hidden'
+                }}
+              >
+                {/* Header with title */}
+                <div className="mb-4">
+                  <h1 className="text-lg font-bold text-foreground mb-2">{match.name}</h1>
+                  <p className="text-muted-foreground text-xs leading-relaxed">
+                    {match.description}
+                  </p>
+                </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <span className="text-sm font-bold text-foreground">{match.category || 'N/A'}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-foreground">
+                      {match.tags && match.tags.length > 0 ? match.tags[0] : 'N/A'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-foreground">{match.condition || 'N/A'}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-foreground">
+                      {match.priceRangeMin && match.priceRangeMax 
+                        ? `$${match.priceRangeMin} - $${match.priceRangeMax}`
+                        : 'Price not set'
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                {/* User Profile Section */}
+                <div className="mt-auto pt-3 border-t border-border">
+                  {match.userProfile && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
+                        {match.userProfile.avatar_url ? (
+                          <img
+                            src={match.userProfile.avatar_url}
+                            alt={match.userProfile.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center">
+                            {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-semibold text-foreground">
+                            {match.userProfile.username || match.userProfile.name}
+                          </h3>
+                          <span className="text-yellow-500 text-xs">★</span>
+                          <span className="text-muted-foreground text-xs">No reviews</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          <div>Since 2024</div>
+                          <div className="flex items-center gap-1">
+                            <span>🔄</span>
+                            <span>0 trades completed</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </TinderSwipeCard>
         )}

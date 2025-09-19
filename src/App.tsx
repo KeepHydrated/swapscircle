@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { ModalProvider } from "@/context/ModalContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 
 import PostItemNew from "./pages/PostItemNew";
@@ -127,16 +126,14 @@ const App = () => {
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ThemeProvider>
-        <ModalProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <ScrollToTop />
-              <AppContent />
-            </BrowserRouter>
-          </TooltipProvider>
-        </ModalProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <AppContent />
+          </BrowserRouter>
+        </TooltipProvider>
       </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>

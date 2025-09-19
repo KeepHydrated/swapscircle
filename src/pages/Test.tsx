@@ -677,7 +677,6 @@ const Test: React.FC = () => {
                           matches={matches}
                           selectedItemName={selectedUserItem.name}
                           selectedItemId={selectedUserItem.id}
-                          userTradeItem={selectedUserItem}
                           onUndoAvailable={handleMatchesUndoAvailable}
                           loading={matchesLoading}
                         />
