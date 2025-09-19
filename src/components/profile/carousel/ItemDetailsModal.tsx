@@ -349,16 +349,11 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           {/* User's trade item thumbnail - bottom right */}
           {userTradeItem && (
             <div className="absolute bottom-4 right-4 z-30">
-              <div className="bg-white rounded-lg shadow-lg border-2 border-blue-500 p-2 w-20 h-20 flex flex-col items-center">
-                <img
-                  src={userTradeItem.image_url || userTradeItem.image || (userTradeItem as any)?.image}
-                  alt={userTradeItem.name}
-                  className="w-12 h-12 object-cover rounded"
-                />
-                <span className="text-xs text-gray-600 mt-1 truncate w-full text-center">
-                  Your item
-                </span>
-              </div>
+              <img
+                src={userTradeItem.image_url || userTradeItem.image || (userTradeItem as any)?.image}
+                alt={userTradeItem.name}
+                className="w-16 h-16 object-cover rounded border-2 border-blue-500 shadow-lg"
+              />
             </div>
           )}
           
