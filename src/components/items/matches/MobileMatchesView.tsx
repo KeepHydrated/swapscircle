@@ -333,12 +333,14 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-sm font-semibold text-foreground">
+                        <div>
+                          <h3 className="text-sm font-semibold text-foreground mb-1">
                             {match.userProfile.username || match.userProfile.name}
                           </h3>
-                          <span className="text-yellow-500 text-xs">★</span>
-                          <span className="text-muted-foreground text-xs">No reviews</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-yellow-500 text-xs">★</span>
+                            <span className="text-muted-foreground text-xs">No reviews</span>
+                          </div>
                         </div>
                       </div>
                     </div>
