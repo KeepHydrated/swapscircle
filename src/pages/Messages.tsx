@@ -294,18 +294,13 @@ const Messages = () => {
     }
   }, [activeConversation, conversations]);
 
-  // Force scroll to bottom when in chat view on tablet/mobile
+  // Simple scroll to bottom when switching to chat view
   useEffect(() => {
     if ((isMobile || isTablet) && currentView === 'chat' && activeConversation) {
-      console.log('🚀 FORCE SCROLL EFFECT: Already in chat view on tablet/mobile');
-      
-      // Multiple aggressive attempts to scroll to bottom
-      [100, 300, 500, 800, 1200, 1800, 2500].forEach((delay) => {
-        setTimeout(() => {
-          console.log(`⏰ FORCE SCROLL after ${delay}ms`);
-          forceScrollToBottom();
-        }, delay);
-      });
+      // Single scroll attempt with reasonable delay
+      setTimeout(() => {
+        forceScrollToBottom();
+      }, 300);
     }
   }, [currentView, activeConversation, isMobile, isTablet]);
 
@@ -360,31 +355,10 @@ const Messages = () => {
                           setSelectedItem('item2');
                           setCurrentView('chat');
                           
-                          // Force scroll to bottom after view change
-                          console.log('🚀 MESSAGES PAGE: Starting scroll attempts after conversation click...');
-                          
-                          const forceScrollNow = () => {
-                            console.log('🔍 MESSAGES PAGE: Looking for message containers...');
-                            const containers = document.querySelectorAll('[data-messages-container]');
-                            console.log('📦 MESSAGES PAGE: Found containers:', containers.length);
-                            
-                            containers.forEach((container, index) => {
-                              if (container instanceof HTMLElement) {
-                                const beforeScroll = container.scrollTop;
-                                const scrollHeight = container.scrollHeight;
-                                container.scrollTop = scrollHeight;
-                                console.log(`📱 MESSAGES PAGE Container ${index}: before=${beforeScroll}, height=${scrollHeight}, after=${container.scrollTop}`);
-                              }
-                            });
-                          };
-                          
-                          // Multiple aggressive attempts with different delays
-                          [0, 50, 100, 200, 300, 500, 800, 1200, 1800].forEach((delay) => {
-                            setTimeout(() => {
-                              console.log(`⏰ MESSAGES PAGE scroll attempt after ${delay}ms`);
-                              forceScrollNow();
-                            }, delay);
-                          });
+                          // Single scroll attempt after reasonable delay
+                          setTimeout(() => {
+                            forceScrollToBottom();
+                          }, 500);
                           
                           const matchingPair = exchangePairs.find(pair => pair.partnerId === conversation.id);
                           if (matchingPair) {

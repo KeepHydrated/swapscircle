@@ -127,31 +127,15 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
                 
                 console.log('📱 CONVERSATION CLICKED - Switching to chat view for:', id);
                 
-                // Simple, direct scroll approach
-                const forceScrollNow = () => {
-                  console.log('🔍 Looking for message containers...');
+                // Single scroll attempt with reasonable delay
+                setTimeout(() => {
                   const containers = document.querySelectorAll('[data-messages-container]');
-                  console.log('📦 Found containers:', containers.length);
-                  
-                  containers.forEach((container, index) => {
+                  containers.forEach((container) => {
                     if (container instanceof HTMLElement) {
-                      console.log(`📱 Container ${index}: scrollHeight=${container.scrollHeight}, scrollTop=${container.scrollTop}`);
                       container.scrollTop = container.scrollHeight;
-                      console.log(`✅ Container ${index} after scroll: scrollTop=${container.scrollTop}`);
                     }
                   });
-                };
-                
-                // Multiple attempts with very short delays
-                console.log('🚀 Starting scroll attempts...');
-                setTimeout(forceScrollNow, 0);
-                setTimeout(forceScrollNow, 10);
-                setTimeout(forceScrollNow, 50);
-                setTimeout(forceScrollNow, 100);
-                setTimeout(forceScrollNow, 200);
-                setTimeout(forceScrollNow, 300);
-                setTimeout(forceScrollNow, 500);
-                setTimeout(forceScrollNow, 800);
+                }, 300);
               }}
               exchangePairs={exchangePairs}
             />
