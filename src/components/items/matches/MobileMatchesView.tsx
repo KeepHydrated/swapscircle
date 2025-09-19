@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
-import { TinderSwipeCard } from '@/components/ui/tinder-swipe-card';
+import { AdvancedSwipeCard } from '@/components/ui/advanced-swipe-card';
 import { SwipeActionButtons } from '@/components/ui/swipe-action-buttons';
 import { Heart, X, Users, Flag, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -373,7 +373,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     <div className="flex flex-col h-full max-w-sm mx-auto p-4">
       <div className="relative h-[320px] mb-6">
         {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
-          <TinderSwipeCard
+          <AdvancedSwipeCard
             key={match.id}
             onSwipe={handleSwipe}
             isTop={index === 0}
@@ -470,7 +470,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
             </div>
-          </TinderSwipeCard>
+          </AdvancedSwipeCard>
         ))}
       </div>
     </div>

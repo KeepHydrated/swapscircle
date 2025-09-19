@@ -131,7 +131,9 @@ export default {
 				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 				"swipe-out-left": "swipe-out-left 0.3s ease-in-out forwards",
 				"swipe-out-right": "swipe-out-right 0.3s ease-in-out forwards",
-				"bounce-in": "bounce-in 0.5s ease-out",
+        "bounce-in": "bounce-in 0.5s ease-out",
+        "swipe-out-left": "swipe-out-left 0.3s ease-in-out forwards",
+        "swipe-out-right": "swipe-out-right 0.3s ease-in-out forwards",
 			}
 		}
 	},

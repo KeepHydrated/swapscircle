@@ -35,10 +35,10 @@
 
     --radius: 0.5rem;
 
-    /* Tinder-style colors */
-    --like: 120 75% 50%;
-    --dislike: 0 75% 55%;
-    --superlike: 220 85% 60%;
+  /* Tinder-style colors */
+  --like: 120 75% 50%;
+  --dislike: 0 75% 55%;
+  --superlike: 220 85% 60%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(340 75% 55%), hsl(320 75% 60%));
