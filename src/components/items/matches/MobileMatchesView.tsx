@@ -340,13 +340,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                           <span className="text-yellow-500 text-xs">★</span>
                           <span className="text-muted-foreground text-xs">No reviews</span>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          <div>Since 2024</div>
-                          <div className="flex items-center gap-1">
-                            <span>🔄</span>
-                            <span>0 trades completed</span>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   )}
