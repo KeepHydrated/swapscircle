@@ -82,7 +82,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   // Full-screen card view
   if (expandedCard) {
     return (
-      <div className="fixed inset-0 bg-background z-50 flex flex-col">
+      <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col">
         {/* Close button */}
         <div className="absolute top-4 right-4 z-10">
           <Button 
