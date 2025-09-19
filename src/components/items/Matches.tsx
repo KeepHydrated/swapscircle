@@ -13,6 +13,7 @@ interface MatchesProps {
   matches: MatchItem[];
   selectedItemName: string;
   selectedItemId?: string;
+  userTradeItem?: MatchItem; // The item the user is offering for trade
   onUndoAvailable?: (available: boolean, undoFn: (() => void) | null) => void;
   loading?: boolean; // Add loading prop to prevent flashing
   onRefreshMatches?: () => void;
@@ -22,6 +23,7 @@ const Matches: React.FC<MatchesProps> = ({
   matches,
   selectedItemName,
   selectedItemId,
+  userTradeItem,
   onUndoAvailable,
   loading = false,
   onRefreshMatches
@@ -164,7 +166,7 @@ const Matches: React.FC<MatchesProps> = ({
           onLikeAll={(id) => handleLike(id, true)}
           onRejectAll={(id) => handleReject(id, true)}
           onReport={handleReport}
-          
+          userTradeItem={userTradeItem}
         />
       )}
 
