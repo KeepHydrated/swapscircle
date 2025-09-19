@@ -3,6 +3,7 @@ import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repea
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
+import { useModal } from '@/context/ModalContext';
 import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
 
 interface UserProfile {
@@ -48,6 +49,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   transitionClassName,
 }) => {
   const navigate = useNavigate();
+  const { setModalOpen } = useModal();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [fullItem, setFullItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -72,6 +74,21 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
       setIsReady(false); // Will be set to true after data fetch
     }
   }, [item?.id, skipDataFetch, preloadedUserProfile]);
+
+  // Update modal context when modal state changes
+  useEffect(() => {
+    setModalOpen(isOpen);
+  }, [isOpen, setModalOpen]);
+
+  // Listen for global close modal event
+  useEffect(() => {
+    const handleCloseAllModals = () => {
+      onClose();
+    };
+
+    window.addEventListener('closeAllModals', handleCloseAllModals);
+    return () => window.removeEventListener('closeAllModals', handleCloseAllModals);
+  }, [onClose]);
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
