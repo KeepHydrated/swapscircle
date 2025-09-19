@@ -8,6 +8,7 @@ import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import { MobileFriendsCarousel } from '@/components/profile/MobileFriendsCarousel';
 import SupportChat from '@/components/chat/SupportChat';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SwipeCards from '@/components/ui/swipe-cards';
 
 
 import { useDbItems } from '@/hooks/useDbItems';
@@ -759,20 +760,13 @@ const Test: React.FC = () => {
                                 },
                                 allItems: formattedItems
                               });
-                               console.log('🔥 ABOUT TO RENDER MOBILE CAROUSEL');
-                               try {
-                                 return (
-                                    <MobileFriendsCarousel
-                                      items={formattedItems}
-                                      onLike={(id) => handleLikeFriendItem(id)}
-                                      onReject={(id) => handleRejectFriendItem(id)}
-                                      onBackButtonRegister={setMobileBackFunction}
-                                    />
-                                 );
-                               } catch (error) {
-                                 console.error('🔥 ERROR RENDERING MOBILE CAROUSEL:', error);
-                                 return <div>Error rendering mobile carousel</div>;
-                               }
+                               return (
+                                 <SwipeCards
+                                   cards={formattedItems}
+                                   onLike={(id) => handleLikeFriendItem(id)}
+                                   onReject={(id) => handleRejectFriendItem(id)}
+                                 />
+                               );
                             } else {
                               return (
                                 <div className="overflow-x-auto overflow-y-hidden p-2">
