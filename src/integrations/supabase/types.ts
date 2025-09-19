@@ -2719,6 +2719,63 @@ export type Database = {
         }
         Relationships: []
       }
+      public_markets: {
+        Row: {
+          accepts_credit_cards: boolean | null
+          additional_info: string | null
+          address: string | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          has_parking: boolean | null
+          id: string | null
+          is_outdoor: boolean | null
+          name: string | null
+          operating_days: string[] | null
+          state: string | null
+          updated_at: string | null
+          vendor_count: string | null
+          website: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          accepts_credit_cards?: boolean | null
+          additional_info?: string | null
+          address?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          has_parking?: boolean | null
+          id?: string | null
+          is_outdoor?: boolean | null
+          name?: string | null
+          operating_days?: string[] | null
+          state?: string | null
+          updated_at?: string | null
+          vendor_count?: string | null
+          website?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          accepts_credit_cards?: boolean | null
+          additional_info?: string | null
+          address?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          has_parking?: boolean | null
+          id?: string | null
+          is_outdoor?: boolean | null
+          name?: string | null
+          operating_days?: string[] | null
+          state?: string | null
+          updated_at?: string | null
+          vendor_count?: string | null
+          website?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       public_profiles: {
         Row: {
           avatar_url: string | null
@@ -2752,6 +2809,45 @@ export type Database = {
           show_location?: boolean | null
           username?: string | null
           vacation_mode?: boolean | null
+        }
+        Relationships: []
+      }
+      public_vendors: {
+        Row: {
+          additional_info: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          market_id: string | null
+          name: string | null
+          products: Json | null
+          specialties: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          additional_info?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          market_id?: string | null
+          name?: string | null
+          products?: Json | null
+          specialties?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          additional_info?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          market_id?: string | null
+          name?: string | null
+          products?: Json | null
+          specialties?: string | null
+          updated_at?: string | null
+          website?: string | null
         }
         Relationships: []
       }
