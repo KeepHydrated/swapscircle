@@ -29,6 +29,7 @@ interface ItemDetailsModalProps {
   onRejectAll?: (id: string) => void;
   onReport?: (id: string) => void;
   transitionClassName?: string;
+  userTradeItem?: MatchItem; // The item the user is offering for trade
 }
 
 const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
@@ -47,6 +48,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   onRejectAll,
   onReport,
   transitionClassName,
+  userTradeItem,
 }) => {
   const navigate = useNavigate();
   const { setModalOpen } = useModal();
@@ -343,6 +345,22 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               </>
             );
           })()}
+          
+          {/* User's trade item thumbnail - bottom right */}
+          {userTradeItem && (
+            <div className="absolute bottom-4 right-4 z-30">
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-20 h-20 flex flex-col items-center">
+                <img
+                  src={userTradeItem.image_url || userTradeItem.image || (userTradeItem as any)?.image}
+                  alt={userTradeItem.name}
+                  className="w-12 h-12 object-cover rounded"
+                />
+                <span className="text-xs text-gray-600 mt-1 truncate w-full text-center">
+                  Your item
+                </span>
+              </div>
+            </div>
+          )}
           
           {/* 3 dots menu - positioned on the left */}
           {(onLikeAll || onRejectAll || onReport) && item?.id && (
