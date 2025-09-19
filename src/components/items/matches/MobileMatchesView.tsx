@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { MatchItem } from '@/types/item';
 import { TinderSwipeCard } from '@/components/ui/tinder-swipe-card';
 import { SwipeActionButtons } from '@/components/ui/swipe-action-buttons';
@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileMatchesViewProps {
   matches: MatchItem[];
@@ -29,6 +31,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [expandedCard, setExpandedCard] = useState<MatchItem | null>(null);
   const { toast } = useToast();
+  const location = useLocation();
+  const isMobile = useIsMobile();
 
   const handleSwipe = useCallback((direction: "left" | "right" | "up") => {
     if (currentIndex >= matches.length || isAnimating) return;
@@ -78,6 +82,28 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const handleCloseExpanded = () => {
     setExpandedCard(null);
   };
+
+  // Close expanded card when middle header icon is clicked on mobile home page
+  useEffect(() => {
+    const handleHeaderIconClick = (event: Event) => {
+      // Check if we're on home page, mobile, and have an expanded card
+      if (location.pathname === '/' && isMobile && expandedCard) {
+        const target = event.target as HTMLElement;
+        // Check if the clicked element is the ArrowLeftRight icon in the header
+        if (target.closest('a[href="/"]') && target.closest('.absolute.left-1\\/2')) {
+          event.preventDefault();
+          setExpandedCard(null);
+        }
+      }
+    };
+
+    if (expandedCard && location.pathname === '/' && isMobile) {
+      document.addEventListener('click', handleHeaderIconClick, true);
+      return () => {
+        document.removeEventListener('click', handleHeaderIconClick, true);
+      };
+    }
+  }, [expandedCard, location.pathname, isMobile]);
 
   // Full-screen card view
   if (expandedCard) {
