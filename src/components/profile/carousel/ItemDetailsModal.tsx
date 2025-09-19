@@ -258,8 +258,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogOverlay className="bg-white" />
-      <DialogContent className="fixed inset-0 top-16 w-full h-[calc(100vh-4rem)] p-0 border-0 rounded-none bg-white shadow-none max-w-none">
+      <DialogOverlay className="fixed inset-0 bg-white z-[9999]" />
+      <DialogContent className="fixed inset-0 w-screen h-screen p-0 m-0 border-0 rounded-none bg-white shadow-none max-w-none z-[9999] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
         <DialogTitle className="sr-only">Item Details</DialogTitle>
         <DialogDescription className="sr-only">View item details and information</DialogDescription>
         
@@ -272,7 +272,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           <X className="w-5 h-5 text-gray-600" />
         </button>
 
-        <div className={`flex flex-col w-full h-full bg-white overflow-hidden relative ${transitionClassName || 'animate-fade-in'}`}>
+        <div className={`flex flex-col w-full h-full bg-white overflow-hidden relative pt-16 ${transitionClassName || 'animate-fade-in'}`}>
           {/* Image Row */}
           <div className="relative w-full h-1/2 flex-shrink-0 bg-black/10 overflow-auto">
             {/* Get all available images */}
