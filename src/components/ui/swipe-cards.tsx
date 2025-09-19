@@ -46,25 +46,19 @@ export default function SwipeCards({ cards, onLike, onReject }: SwipeCardsProps)
   const currentCard = cards[currentIndex];
 
   return (
-    <div className="flex justify-center items-center h-screen bg-background">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         animate={controls}
         onDragEnd={handleDragEnd}
-        className="w-72 h-96 bg-card rounded-2xl shadow-xl overflow-hidden"
+        className="w-72 h-96 bg-white rounded-2xl shadow-xl overflow-hidden"
       >
         <img
           src={currentCard.image}
           alt={currentCard.title}
-          className="w-full h-3/4 object-cover"
+          className="w-full h-full object-cover"
         />
-        <div className="p-4">
-          <h3 className="font-semibold text-foreground">{currentCard.title}</h3>
-          {currentCard.condition && (
-            <p className="text-sm text-muted-foreground">{currentCard.condition}</p>
-          )}
-        </div>
       </motion.div>
     </div>
   );
