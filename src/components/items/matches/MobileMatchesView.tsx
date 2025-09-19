@@ -268,7 +268,13 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               onClick={() => handleCardClick(match)}
             >
               {/* Item Image */}
-              <div className="w-full h-1/2 relative overflow-hidden">
+              <div 
+                className="w-full h-1/2 relative overflow-hidden cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCardClick(match);
+                }}
+              >
                 <img
                   src={match.image}
                   alt={match.name}
