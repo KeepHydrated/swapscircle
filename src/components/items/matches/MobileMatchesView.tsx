@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { MatchItem } from '@/types/item';
+import { TinderSwipeCard } from '@/components/ui/tinder-swipe-card';
 import { AdvancedSwipeCard } from '@/components/ui/advanced-swipe-card';
 import { SwipeActionButtons } from '@/components/ui/swipe-action-buttons';
 import { Heart, X, Users, Flag, MoreVertical } from 'lucide-react';
@@ -241,114 +242,120 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         </div>
 
         {/* Swipeable content */}
-        <div ref={swipeAreaRef} className="flex-1 overflow-y-auto">
-          {/* Large image */}
-          <div className="w-full h-80 relative overflow-hidden">
-            <img
-              src={expandedCard.image}
-              alt={expandedCard.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = '/placeholder.svg';
-              }}
-            />
-          </div>
+        <AdvancedSwipeCard
+          onSwipe={handlePopupSwipe}
+          isTop={true}
+          className="flex-1"
+        >
+          <div className="flex-1 overflow-y-auto">
+            {/* Large image */}
+            <div className="w-full h-80 relative overflow-hidden">
+              <img
+                src={expandedCard.image}
+                alt={expandedCard.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+              />
+            </div>
 
-          {/* Content section */}
-          <div className="p-6 bg-card">
-            {/* Title */}
-            <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
-          
-          {/* Description */}
-          <p className="text-muted-foreground text-base leading-relaxed mb-6">
-            {expandedCard.description}
-          </p>
+            {/* Content section */}
+            <div className="p-6 bg-card">
+              {/* Title */}
+              <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
+            
+              {/* Description */}
+              <p className="text-muted-foreground text-base leading-relaxed mb-6">
+                {expandedCard.description}
+              </p>
 
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div>
-              <span className="text-sm text-muted-foreground">Category</span>
-              <div className="text-lg font-semibold text-foreground">{expandedCard.category || 'N/A'}</div>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Tag</span>
-              <div className="text-lg font-semibold text-foreground">
-                {expandedCard.tags && expandedCard.tags.length > 0 ? expandedCard.tags[0] : 'N/A'}
-              </div>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Condition</span>
-              <div className="text-lg font-semibold text-foreground">{expandedCard.condition || 'N/A'}</div>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Price Range</span>
-              <div className="text-lg font-semibold text-foreground">
-                {expandedCard.priceRangeMin && expandedCard.priceRangeMax 
-                  ? `$${expandedCard.priceRangeMin} - $${expandedCard.priceRangeMax}`
-                  : 'Price not set'
-                }
-              </div>
-            </div>
-          </div>
-
-          {/* User Profile Section */}
-          <div className="pt-4 border-t border-border">
-            {expandedCard.userProfile && (
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
-                  {expandedCard.userProfile.avatar_url ? (
-                    <img
-                      src={expandedCard.userProfile.avatar_url}
-                      alt={expandedCard.userProfile.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
-                      {expandedCard.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
-                    </div>
-                  )}
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <span className="text-sm text-muted-foreground">Category</span>
+                  <div className="text-lg font-semibold text-foreground">{expandedCard.category || 'N/A'}</div>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-lg font-semibold text-foreground">
-                      {expandedCard.userProfile.username || expandedCard.userProfile.name}
-                    </h3>
-                    <span className="text-yellow-500">★</span>
-                    <span className="text-muted-foreground">No reviews</span>
+                <div>
+                  <span className="text-sm text-muted-foreground">Tag</span>
+                  <div className="text-lg font-semibold text-foreground">
+                    {expandedCard.tags && expandedCard.tags.length > 0 ? expandedCard.tags[0] : 'N/A'}
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    <div>Since 2024</div>
-                    <div className="flex items-center gap-1">
-                      <span>🔄</span>
-                      <span>0 trades completed</span>
-                    </div>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Condition</span>
+                  <div className="text-lg font-semibold text-foreground">{expandedCard.condition || 'N/A'}</div>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Price Range</span>
+                  <div className="text-lg font-semibold text-foreground">
+                    {expandedCard.priceRangeMin && expandedCard.priceRangeMax 
+                      ? `$${expandedCard.priceRangeMin} - $${expandedCard.priceRangeMax}`
+                      : 'Price not set'
+                    }
                   </div>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Action buttons */}
-          <div className="flex gap-4 mt-6">
-            <Button 
-              onClick={() => handlePopupSwipe("left")}
-              variant="outline"
-              className="flex-1"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Pass
-            </Button>
-            <Button 
-              onClick={() => handlePopupSwipe("right")}
-              variant="default"
-              className="flex-1"
-            >
-              <Heart className="h-4 w-4 mr-2" />
-              Like
-            </Button>
+              {/* User Profile Section */}
+              <div className="pt-4 border-t border-border">
+                {expandedCard.userProfile && (
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
+                      {expandedCard.userProfile.avatar_url ? (
+                        <img
+                          src={expandedCard.userProfile.avatar_url}
+                          alt={expandedCard.userProfile.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
+                          {expandedCard.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-lg font-semibold text-foreground">
+                          {expandedCard.userProfile.username || expandedCard.userProfile.name}
+                        </h3>
+                        <span className="text-yellow-500">★</span>
+                        <span className="text-muted-foreground">No reviews</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        <div>Since 2024</div>
+                        <div className="flex items-center gap-1">
+                          <span>🔄</span>
+                          <span>0 trades completed</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-4 mt-6">
+                <Button 
+                  onClick={() => handlePopupSwipe("left")}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Pass
+                </Button>
+                <Button 
+                  onClick={() => handlePopupSwipe("right")}
+                  variant="default"
+                  className="flex-1"
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  Like
+                </Button>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
+        </AdvancedSwipeCard>
       </div>
     );
   }
@@ -373,7 +380,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     <div className="flex flex-col h-full max-w-sm mx-auto p-4">
       <div className="relative h-[320px] mb-6">
         {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
-          <AdvancedSwipeCard
+          <TinderSwipeCard
             key={match.id}
             onSwipe={handleSwipe}
             isTop={index === 0}
@@ -470,7 +477,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
             </div>
-          </AdvancedSwipeCard>
+          </TinderSwipeCard>
         ))}
       </div>
     </div>
