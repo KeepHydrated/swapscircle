@@ -346,16 +346,6 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
             );
           })()}
           
-          {/* User's trade item thumbnail - bottom right */}
-          {userTradeItem && (
-            <div className="absolute bottom-4 right-4 z-30">
-              <img
-                src={userTradeItem.image_url || userTradeItem.image || (userTradeItem as any)?.image}
-                alt={userTradeItem.name}
-                className="w-16 h-16 object-cover rounded border-2 border-blue-500 shadow-lg"
-              />
-            </div>
-          )}
           
           {/* 3 dots menu - positioned on the left */}
           {(onLikeAll || onRejectAll || onReport) && item?.id && (
@@ -417,11 +407,22 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                           : (displayItem.price_range_max || displayItem.priceRangeMax)
                             ? `Up to $${displayItem.price_range_max || displayItem.priceRangeMax}`
                             : "Up to $50"
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
+                       }
+                     </div>
+                   </div>
+                   
+                   {/* User's trade item thumbnail - scrolls with content */}
+                   {userTradeItem && (
+                     <div className="absolute top-4 right-4">
+                       <img
+                         src={userTradeItem.image_url || userTradeItem.image || (userTradeItem as any)?.image}
+                         alt={userTradeItem.name}
+                         className="w-16 h-16 object-cover rounded border-2 border-blue-500 shadow-lg"
+                       />
+                     </div>
+                   )}
+                 </div>
+               </div>
               
               {/* User profile info - only show if showProfileInfo is true */}
               {showProfileInfo && userProfile && (
