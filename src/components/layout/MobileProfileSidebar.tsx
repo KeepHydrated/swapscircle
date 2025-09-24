@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, LogOut, Handshake, Flag, Headphones, Heart, ChevronDown, ChevronRight } from 'lucide-react';
+import { User, Settings, LogOut, Handshake, Flag, Headphones, Heart, ChevronDown, ChevronRight, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -66,12 +66,21 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
             </Button>
             
             {user?.email === 'nadiachibri@gmail.com' && (
-              <Button variant="ghost" className="w-full justify-start h-12" asChild>
-                <Link to="/admin-customer-support" onClick={() => onOpenChange(false)}>
-                  <Headphones className="mr-3 h-5 w-5" />
-                  <span>Admin Customer Support</span>
-                </Link>
-              </Button>
+              <>
+                <Button variant="ghost" className="w-full justify-start h-12" asChild>
+                  <Link to="/analytics" onClick={() => onOpenChange(false)}>
+                    <BarChart3 className="mr-3 h-5 w-5" />
+                    <span>Analytics</span>
+                  </Link>
+                </Button>
+                
+                <Button variant="ghost" className="w-full justify-start h-12" asChild>
+                  <Link to="/admin-customer-support" onClick={() => onOpenChange(false)}>
+                    <Headphones className="mr-3 h-5 w-5" />
+                    <span>Admin Customer Support</span>
+                  </Link>
+                </Button>
+              </>
             )}
             
           </div>
