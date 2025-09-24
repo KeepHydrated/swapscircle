@@ -305,6 +305,49 @@ const Analytics = () => {
           </p>
         </div>
 
+        
+        {/* Page Views Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Page Views</CardTitle>
+            <CardDescription>
+              Track visitor engagement across different time periods
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Today</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.today}</p>
+                <p className="text-xs text-muted-foreground">
+                  vs {analytics.pageViews.yesterday} yesterday
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">This Week</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.thisWeek}</p>
+                <p className="text-xs text-muted-foreground">
+                  vs {analytics.pageViews.lastWeek} last week
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">This Month</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.thisMonth}</p>
+                <p className="text-xs text-muted-foreground">
+                  vs {analytics.pageViews.lastMonth} last month
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Total Views</p>
+                <p className="text-2xl font-bold">{analytics.pageViews.total}</p>
+                <p className="text-xs text-muted-foreground">
+                  All time page views
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Key Metrics */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
@@ -444,47 +487,6 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        {/* Page Views Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Page Views</CardTitle>
-            <CardDescription>
-              Track visitor engagement across different time periods
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Today</p>
-                <p className="text-2xl font-bold">{analytics.pageViews.today}</p>
-                <p className="text-xs text-muted-foreground">
-                  vs {analytics.pageViews.yesterday} yesterday
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium">This Week</p>
-                <p className="text-2xl font-bold">{analytics.pageViews.thisWeek}</p>
-                <p className="text-xs text-muted-foreground">
-                  vs {analytics.pageViews.lastWeek} last week
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium">This Month</p>
-                <p className="text-2xl font-bold">{analytics.pageViews.thisMonth}</p>
-                <p className="text-xs text-muted-foreground">
-                  vs {analytics.pageViews.lastMonth} last month
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Total Views</p>
-                <p className="text-2xl font-bold">{analytics.pageViews.total}</p>
-                <p className="text-xs text-muted-foreground">
-                  All time page views
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Traffic Sources */}
         <Card>
