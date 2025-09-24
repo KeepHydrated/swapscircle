@@ -615,6 +615,21 @@ const Analytics = () => {
                     </div>
                   </div>
                 </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-pink-500" />
+                    <div>
+                      <p className="text-sm font-medium">Other Countries</p>
+                      <p className="text-xs text-muted-foreground">42 users</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">4%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-pink-500 rounded-full" style={{ width: '4%' }} />
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
