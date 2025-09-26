@@ -468,38 +468,54 @@ const Analytics = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {analytics.recentItems.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No recent items</p>
-              ) : (
-                analytics.recentItems.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
-                      {item.image_url ? (
-                        <img 
-                          src={item.image_url} 
-                          alt={item.name}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center">
-                          <Package className="h-4 w-4 text-muted-foreground" />
+            {analytics.recentItems.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No recent items</p>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {analytics.recentItems.map((item, index) => {
+                  const colors = [
+                    '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
+                    '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+                  ];
+                  const fallbackColor = colors[index % colors.length];
+                  
+                  return (
+                    <div 
+                      key={item.id} 
+                      className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                    >
+                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                        {item.image_url ? (
+                          <img 
+                            src={item.image_url} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div 
+                            className="w-full h-full flex items-center justify-center text-white font-medium text-xs"
+                            style={{ backgroundColor: fallbackColor }}
+                          >
+                            {item.name.substring(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm font-medium max-w-20 truncate">
+                          {item.name}
                         </div>
-                      )}
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(item.created_at).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        by {item.owner_username} • {new Date(item.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
 
