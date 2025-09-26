@@ -183,7 +183,7 @@ const Analytics = () => {
         // Fetch recent items (last 10) with owner info
         const { data: recentItemsData } = await supabase
           .from('items')
-          .select('id, name, image_url, created_at, user_id')
+          .select('id, name, image_url, image_urls, created_at, user_id')
           .eq('status', 'published')
           .order('created_at', { ascending: false })
           .limit(10);
@@ -267,10 +267,12 @@ const Analytics = () => {
           })) || [],
           recentItems: recentItemsData?.map(item => {
             const owner = itemOwnersData?.find(user => user.id === item.user_id);
+            // Use image_url if available, otherwise use first image from image_urls array
+            const imageUrl = item.image_url || (item.image_urls && item.image_urls.length > 0 ? item.image_urls[0] : null);
             return {
               id: item.id,
               name: item.name,
-              image_url: item.image_url,
+              image_url: imageUrl,
               created_at: item.created_at,
               owner_username: owner?.username || 'Unknown'
             };
