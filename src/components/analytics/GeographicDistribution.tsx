@@ -113,9 +113,9 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
     return (
       <Card className={className}>
         <CardHeader>
-          <CardTitle>User Locations</CardTitle>
+        <CardTitle>Visits</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Geographic distribution of users who have provided location data
+          Geographic distribution of visitor activity by location
         </p>
         </CardHeader>
         <CardContent>
@@ -130,9 +130,9 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>User Locations</CardTitle>
+        <CardTitle>Visits</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Geographic distribution of user activity by state
+          Geographic distribution of visitor activity by location
         </p>
       </CardHeader>
       <CardContent>
@@ -140,7 +140,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           {userLocationData.length > 0 ? (
             <>
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Top States by Users</h4>
+                <h4 className="text-sm font-medium">Top States by Visits</h4>
                 <div className="space-y-2">
                   {userLocationData.map((location, index) => {
                     const percentage = totalUsers > 0 ? ((location.users / totalUsers) * 100).toFixed(0) : '0';
@@ -154,7 +154,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
                            <span>{location.location}</span>
                          </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">{location.users} users</span>
+                          <span className="text-muted-foreground">{location.users} visits</span>
                           <span className="font-medium">{percentage}%</span>
                         </div>
                       </div>
@@ -179,7 +179,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
                              <span>{country.location}</span>
                            </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">{country.users} users</span>
+                            <span className="text-muted-foreground">{country.users} visits</span>
                             <span className="font-medium">{percentage}%</span>
                           </div>
                         </div>
