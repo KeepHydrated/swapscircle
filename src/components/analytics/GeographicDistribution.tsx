@@ -11,9 +11,19 @@ interface UserLocationData {
 
 interface GeographicDistributionProps {
   className?: string;
+  title?: string;
+  description?: string;
+  sectionTitle?: string;
+  countLabel?: string;
 }
 
-const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ className }) => {
+const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ 
+  className, 
+  title = "Visits",
+  description = "Geographic distribution of visitor activity by location",
+  sectionTitle = "Top States by Visits", 
+  countLabel = "visits"
+}) => {
   const [userLocationData, setUserLocationData] = useState<UserLocationData[]>([]);
   const [countryData, setCountryData] = useState<UserLocationData[]>([]);
   const [totalRegisteredUsers, setTotalRegisteredUsers] = useState(0);
@@ -113,9 +123,9 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
     return (
       <Card className={className}>
         <CardHeader>
-        <CardTitle>Visits</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Geographic distribution of visitor activity by location
+          {description}
         </p>
         </CardHeader>
         <CardContent>
@@ -130,9 +140,9 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>Visits</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Geographic distribution of visitor activity by location
+          {description}
         </p>
       </CardHeader>
       <CardContent>
@@ -140,7 +150,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           {userLocationData.length > 0 ? (
             <>
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Top States by Visits</h4>
+                <h4 className="text-sm font-medium">{sectionTitle}</h4>
                 <div className="space-y-2">
                   {userLocationData.map((location, index) => {
                     const percentage = totalUsers > 0 ? ((location.users / totalUsers) * 100).toFixed(0) : '0';
@@ -154,7 +164,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
                            <span>{location.location}</span>
                          </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">{location.users} visits</span>
+                          <span className="text-muted-foreground">{location.users} {countLabel}</span>
                           <span className="font-medium">{percentage}%</span>
                         </div>
                       </div>
@@ -179,7 +189,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
                              <span>{country.location}</span>
                            </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">{country.users} visits</span>
+                            <span className="text-muted-foreground">{country.users} {countLabel}</span>
                             <span className="font-medium">{percentage}%</span>
                           </div>
                         </div>

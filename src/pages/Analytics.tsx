@@ -575,7 +575,12 @@ const Analytics = () => {
 
         {/* Geographic Distribution */}
         <div className="grid gap-4 md:grid-cols-2">
-          <GeographicDistribution />
+          <GeographicDistribution 
+            title="Users"
+            description="Geographic distribution of registered users by location"
+            sectionTitle="Top States by Users"
+            countLabel="users"
+          />
           <GeographicDistribution />
         </div>
 
