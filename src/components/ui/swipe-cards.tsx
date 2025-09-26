@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 
+console.log('🔥 SWIPE CARDS COMPONENT LOADED');
+
 interface Card {
   id: string;
   image: string;

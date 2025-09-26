@@ -27,6 +27,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   onReport,
   onOpenModal
 }) => {
+  console.log('🔥 MOBILE MATCHES VIEW COMPONENT LOADED', { matchesCount: matches.length });
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [expandedCard, setExpandedCard] = useState<MatchItem | null>(null);
