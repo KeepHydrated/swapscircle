@@ -303,7 +303,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 
   return (
     <div className="flex flex-col h-full max-w-sm mx-auto p-4">
-      <div className="relative h-[320px] mb-6">
+      <div className="relative h-[450px] mb-6">{/* Increased height from 320px to 450px */}
         {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
           <div
             key={match.id}
@@ -316,8 +316,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             onClick={() => handleCardClick(match)}
           >
             <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
-              {/* Item Image */}
-              <div className="w-full h-1/2 relative overflow-hidden">
+               {/* Item Image - Fixed Height */}
+               <div className="w-full h-48 relative overflow-hidden">{/* Fixed height instead of h-1/2 */}
                 <img
                   src={match.image}
                   alt={match.name}
@@ -359,9 +359,9 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
 
-              {/* Combined Content Section - Scrollable */}
-              <div className="flex-1 bg-card overflow-y-auto">
-                <div className="p-4 space-y-4">
+               {/* Combined Content Section - Scrollable with visible scrollbar */}
+               <div className="flex-1 bg-card overflow-y-auto" style={{ minHeight: "200px" }}>
+                 <div className="p-4 space-y-4" style={{ paddingBottom: "80px" }}>{/* Extra padding to make scrolling obvious */}
                   {/* Item Title - with proper text wrapping */}
                   <div>
                     <h2 className="text-base font-bold text-foreground leading-tight line-clamp-2 break-words">
