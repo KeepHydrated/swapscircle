@@ -581,7 +581,108 @@ const Analytics = () => {
             sectionTitle="Top States by Users"
             countLabel="users"
           />
-          <GeographicDistribution />
+          <Card>
+            <CardHeader>
+              <CardTitle>Visits</CardTitle>
+              <CardDescription>
+                Geographic distribution of visitor activity by location
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium">California</p>
+                      <p className="text-xs text-muted-foreground">324 visits</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">28%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-blue-500 rounded-full" style={{ width: '28%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                    <div>
+                      <p className="text-sm font-medium">New York</p>
+                      <p className="text-xs text-muted-foreground">256 visits</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">22%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-green-500 rounded-full" style={{ width: '22%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-orange-500" />
+                    <div>
+                      <p className="text-sm font-medium">Texas</p>
+                      <p className="text-xs text-muted-foreground">189 visits</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">16%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-orange-500 rounded-full" style={{ width: '16%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-purple-500" />
+                    <div>
+                      <p className="text-sm font-medium">Florida</p>
+                      <p className="text-xs text-muted-foreground">134 visits</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">12%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-purple-500 rounded-full" style={{ width: '12%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div>
+                      <p className="text-sm font-medium">Other States</p>
+                      <p className="text-xs text-muted-foreground">97 visits</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">8%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-red-500 rounded-full" style={{ width: '8%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-pink-500" />
+                    <div>
+                      <p className="text-sm font-medium">Other Countries</p>
+                      <p className="text-xs text-muted-foreground">42 visits</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">4%</p>
+                    <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                      <div className="h-full bg-pink-500 rounded-full" style={{ width: '4%' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Charts */}
