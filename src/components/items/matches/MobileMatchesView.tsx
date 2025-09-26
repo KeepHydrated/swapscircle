@@ -180,8 +180,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             onTouchStart={() => console.log('🔥 POPUP: Touch start on scrollable area')}
             onScroll={() => console.log('🔥 POPUP: Scrolling detected')}
           >
-            {/* Large image that takes up initial viewport - user can scroll past it */}
-            <div className="w-full h-screen relative overflow-hidden flex-shrink-0">
+            {/* Image at the top - normal height, not full screen */}
+            <div className="w-full h-80 relative overflow-hidden">
               <img
                 src={expandedCard.image}
                 alt={expandedCard.name}
@@ -190,15 +190,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   e.currentTarget.src = '/placeholder.svg';
                 }}
               />
-              
-              {/* Pull up indicator */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/30 px-3 py-1 rounded-full text-sm">
-                ↑ Pull up for details
-              </div>
             </div>
 
-            {/* Content section that appears when scrolling up */}
-            <div className="bg-card min-h-screen p-6">
+            {/* Content section below image for normal downward scrolling */}
+            <div className="bg-card p-6">
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           
