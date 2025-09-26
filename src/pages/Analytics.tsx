@@ -315,12 +315,6 @@ const Analytics = () => {
         <header>
           <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
         </header>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">
-            Overview of platform metrics and user activity
-          </p>
-        </div>
 
         
         {/* Page Views Section */}
