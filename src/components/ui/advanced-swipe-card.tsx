@@ -48,9 +48,8 @@ export const AdvancedSwipeCard = ({
     // Only start dragging if movement is primarily horizontal
     if (deltaXAbs > 10 && deltaXAbs > deltaYAbs) {
       setIsDragging(true);
-      const newRotation = deltaX * 0.1;
       setDragDistance({ x: deltaX, y: deltaY });
-      setRotation(newRotation);
+      setRotation(0);
     }
   };
 
@@ -119,7 +118,7 @@ export const AdvancedSwipeCard = ({
     return Math.min(opacity, 0.8);
   };
 
-  const transform = `translate(${dragDistance.x}px, ${dragDistance.y}px) rotate(${rotation}deg)`;
+  const transform = `translate(${dragDistance.x}px, ${dragDistance.y}px)`;
 
   return (
     <div
