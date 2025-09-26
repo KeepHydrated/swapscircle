@@ -399,7 +399,7 @@ const Analytics = () => {
           </Card>
         </div>
 
-        {/* Recently Joined Users - Full Width Row */}
+         {/* Recently Joined Users - Full Width Row */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -414,55 +414,37 @@ const Analytics = () => {
             {analytics.recentUsers.length === 0 ? (
               <p className="text-sm text-muted-foreground">No recent users</p>
             ) : (
-              <div className="space-y-3">
+              <div className="flex gap-4 overflow-x-auto pb-2">
                 {analytics.recentUsers.map((user, index) => {
-                  // Determine location display
-                  let locationText = 'Location unknown';
-                  if (user.city && user.state) {
-                    locationText = `${user.city}, ${user.state}`;
-                  } else if (user.state) {
-                    locationText = user.state;
-                  } else if (user.city) {
-                    locationText = user.city;
-                  } else if (user.location) {
-                    locationText = user.location;
-                  }
-
-                  // Generate color for the dot
                   const colors = [
-                    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+                    '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
                     '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
                   ];
-                  const dotColor = colors[index % colors.length];
-
+                  const userColor = colors[index % colors.length];
+                  
                   return (
                     <div 
-                      key={user.id}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      key={user.id} 
+                      className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
                       onClick={() => handleUserClick(user.id)}
                     >
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-3 h-3 rounded-full flex-shrink-0" 
-                          style={{ backgroundColor: dotColor }}
-                        />
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar_url || ''} alt={user.username} />
-                          <AvatarFallback className="text-xs">
-                            {user.username.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium">{user.username}</span>
-                          <span className="text-xs text-muted-foreground">{locationText}</span>
+                      <div 
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-white font-medium" 
+                        style={{ backgroundColor: userColor }}
+                      >
+                        {user.username.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm font-medium max-w-20 truncate">
+                          {user.username}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(user.created_at).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
                         </div>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(user.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </span>
                     </div>
                   );
                 })}
