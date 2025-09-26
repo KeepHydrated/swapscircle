@@ -312,9 +312,6 @@ const Analytics = () => {
         keywords="analytics dashboard, trading platform analytics, user metrics, trade statistics"
       />
       <div className="space-y-6">
-        <header>
-          <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
-        </header>
 
         
         {/* Page Views Section */}
