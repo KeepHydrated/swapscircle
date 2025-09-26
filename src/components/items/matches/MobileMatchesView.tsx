@@ -305,7 +305,12 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             }}
             onClick={() => handleCardClick(match)}
           >
-            <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
+            <AdvancedSwipeCard
+              onSwipe={handleSwipe}
+              isTop={index === 0}
+              className="w-full h-full"
+            >
+              <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
                {/* Item Image - Fixed Height */}
                <div className="w-full h-48 relative overflow-hidden">{/* Fixed height instead of h-1/2 */}
                 <img
@@ -416,9 +421,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                     )}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+               </div>
+             </div>
+            </AdvancedSwipeCard>
+           </div>
         ))}
       </div>
     </div>
