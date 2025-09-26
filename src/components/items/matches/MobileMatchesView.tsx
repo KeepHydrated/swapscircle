@@ -357,45 +357,72 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 </div>
               </div>
 
-              {/* Combined Content Section */}
-              <div className="flex-1 p-4 bg-card flex flex-col justify-between min-h-0">
-                {/* Item Title - with proper text wrapping */}
-                <div className="mb-3">
-                  <h2 className="text-base font-bold text-foreground leading-tight line-clamp-2 break-words">
-                    {match.name}
-                  </h2>
-                </div>
+              {/* Combined Content Section - Scrollable */}
+              <div className="flex-1 bg-card overflow-y-auto">
+                <div className="p-4 space-y-4">
+                  {/* Item Title - with proper text wrapping */}
+                  <div>
+                    <h2 className="text-base font-bold text-foreground leading-tight line-clamp-2 break-words">
+                      {match.name}
+                    </h2>
+                  </div>
 
-                {/* User Profile Section */}
-                <div className="pt-3 border-t border-border">
-                  {match.userProfile && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
-                        {match.userProfile.avatar_url ? (
-                          <img
-                            src={match.userProfile.avatar_url}
-                            alt={match.userProfile.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center">
-                            {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
-                          </div>
-                        )}
+                  {/* Item Description */}
+                  {match.description && (
+                    <div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {match.description}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Item Details */}
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    {match.category && (
+                      <div>
+                        <span className="text-muted-foreground">Category</span>
+                        <div className="font-semibold text-foreground">{match.category}</div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div>
-                          <h3 className="text-sm font-semibold text-foreground mb-1 truncate">
-                            {match.userProfile.username || match.userProfile.name}
-                          </h3>
-                          <div className="flex items-center gap-2">
-                            <span className="text-yellow-500 text-xs">★</span>
-                            <span className="text-muted-foreground text-xs">No reviews</span>
+                    )}
+                    {match.condition && (
+                      <div>
+                        <span className="text-muted-foreground">Condition</span>
+                        <div className="font-semibold text-foreground">{match.condition}</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* User Profile Section */}
+                  <div className="pt-3 border-t border-border">
+                    {match.userProfile && (
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
+                          {match.userProfile.avatar_url ? (
+                            <img
+                              src={match.userProfile.avatar_url}
+                              alt={match.userProfile.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center">
+                              {match.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div>
+                            <h3 className="text-sm font-semibold text-foreground mb-1 truncate">
+                              {match.userProfile.username || match.userProfile.name}
+                            </h3>
+                            <div className="flex items-center gap-2">
+                              <span className="text-yellow-500 text-xs">★</span>
+                              <span className="text-muted-foreground text-xs">No reviews</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
