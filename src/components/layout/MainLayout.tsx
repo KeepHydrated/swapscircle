@@ -2,12 +2,16 @@
 import React from 'react';
 import Header from './Header';
 import SupportChat from '../chat/SupportChat';
+import { useAutoLocationDetection } from '@/hooks/useAutoLocationDetection';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  // Auto-detect user location for analytics
+  useAutoLocationDetection();
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
