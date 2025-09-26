@@ -187,8 +187,13 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         </div>
 
         {/* Scrollable content section */}
-        <div className="flex-1 overflow-y-scroll overscroll-contain bg-card" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <div className="p-6">
+        <div 
+          className="flex-1 overflow-y-scroll overscroll-contain bg-card" 
+          style={{ WebkitOverflowScrolling: 'touch', minHeight: '200px' }}
+          onTouchStart={() => console.log('🔥 POPUP: Touch start on scrollable area')}
+          onScroll={() => console.log('🔥 POPUP: Scrolling detected')}
+        >
+          <div className="p-6" style={{ minHeight: '800px' }}>{/* Added extra height to ensure scrolling */}
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           

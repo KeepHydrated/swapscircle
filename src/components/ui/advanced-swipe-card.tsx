@@ -45,6 +45,7 @@ export const AdvancedSwipeCard = ({
     
     // If movement is primarily vertical and significant, treat as scroll
     if (deltaYAbs > deltaXAbs && deltaYAbs > 10) {
+      console.log('🔥 SWIPE CARD: Vertical movement detected, setting isScrolling=true');
       setIsScrolling(true);
       return;
     }
