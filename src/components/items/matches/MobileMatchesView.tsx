@@ -39,6 +39,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   const isMobile = useIsMobile();
 
   const handleSwipe = useCallback((direction: "left" | "right" | "up") => {
+    console.log('🔥 MOBILE MATCHES: Swipe detected', { direction, currentIndex, isAnimating });
     if (currentIndex >= matches.length || isAnimating) return;
 
     setIsAnimating(true);
@@ -297,18 +298,18 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         {matches.slice(currentIndex, currentIndex + 3).map((match, index) => (
           <div
             key={match.id}
-            className="absolute inset-0 cursor-pointer"
+            className="absolute inset-0"
             style={{
               transform: `scale(${1 - index * 0.05}) translateY(${index * 8}px)`,
               opacity: 1 - index * 0.2,
               zIndex: 10 - index,
             }}
-            onClick={() => handleCardClick(match)}
           >
             <AdvancedSwipeCard
               onSwipe={handleSwipe}
+              onTap={() => handleCardClick(match)}
               isTop={index === 0}
-              className="w-full h-full"
+              className="w-full h-full cursor-pointer"
             >
               <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
                {/* Item Image - Fixed Height */}

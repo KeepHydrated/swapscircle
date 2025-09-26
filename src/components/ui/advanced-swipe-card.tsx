@@ -4,6 +4,7 @@ import { Heart, X, Star } from "lucide-react";
 interface AdvancedSwipeCardProps {
   children: React.ReactNode;
   onSwipe: (direction: "left" | "right" | "up") => void;
+  onTap?: () => void;
   isTop: boolean;
   style?: React.CSSProperties;
   className?: string;
@@ -12,6 +13,7 @@ interface AdvancedSwipeCardProps {
 export const AdvancedSwipeCard = ({ 
   children, 
   onSwipe, 
+  onTap,
   isTop, 
   style = {},
   className = ""
@@ -55,6 +57,10 @@ export const AdvancedSwipeCard = ({
 
   const handleEnd = () => {
     if (!isDragging || !isTop || isScrolling) {
+      // If not dragging and onTap exists, this was a tap
+      if (!isDragging && !isScrolling && onTap) {
+        onTap();
+      }
       setIsDragging(false);
       setIsScrolling(false);
       setDragDistance({ x: 0, y: 0 });
@@ -70,8 +76,13 @@ export const AdvancedSwipeCard = ({
     } else if (dragDistance.y < -threshold) {
       onSwipe("up");
     } else {
+      // Reset position if swipe wasn't strong enough
       setDragDistance({ x: 0, y: 0 });
       setRotation(0);
+      // This was a tap
+      if (onTap) {
+        onTap();
+      }
     }
     
     setIsScrolling(false);
@@ -91,6 +102,7 @@ export const AdvancedSwipeCard = ({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    console.log('🔥 SWIPE: Touch start detected', { isTop });
     const touch = e.touches[0];
     handleStart(touch.clientX, touch.clientY);
   };
