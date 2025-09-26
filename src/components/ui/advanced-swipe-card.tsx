@@ -135,10 +135,11 @@ export const AdvancedSwipeCard = ({
     const touch = e.touches[0];
     handleMove(touch.clientX, touch.clientY);
     
-    // Allow scrolling by default - only prevent if we're actually swiping horizontally
+    // Only prevent default if we're actively dragging horizontally, not scrolling
     if (isDragging && !isScrolling && Math.abs(dragDistance.x) > 20) {
       e.preventDefault();
     }
+    // Allow normal scrolling when isScrolling is true or when not dragging
   };
 
   const handleTouchEnd = () => {
