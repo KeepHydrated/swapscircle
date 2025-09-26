@@ -9,7 +9,7 @@ import { MobileFriendsCarousel } from '@/components/profile/MobileFriendsCarouse
 import SupportChat from '@/components/chat/SupportChat';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SwipeCards from '@/components/ui/swipe-cards';
-
+import SEOHelmet from '@/components/SEOHelmet';
 
 import { useDbItems } from '@/hooks/useDbItems';
 import { useUserItems } from '@/hooks/useUserItems';
@@ -582,6 +582,11 @@ const Test: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
+      <SEOHelmet 
+        title="Trade & Swap Items Locally - SwapsCircle"
+        description="Discover and trade items with friends and local community. Match with other traders, swap items you want for items you have. Join SwapsCircle today!"
+        keywords="local trading, swap items, trade marketplace, item exchange, community trading, bartering platform"
+      />
       <Header />
       <div className="flex-1 p-4 md:p-6 flex flex-col h-full">
 

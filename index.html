@@ -21,6 +21,23 @@
 
   <body>
     <div id="root"></div>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "SwapsCircle",
+      "description": "Trade and swap items with friends and local community",
+      "url": "https://halrrzkthzslqcgzsvcq.lovable.app",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://halrrzkthzslqcgzsvcq.lovable.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>

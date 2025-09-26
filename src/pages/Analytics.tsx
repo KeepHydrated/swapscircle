@@ -7,6 +7,7 @@ import { Loader2, User, Package } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import GeographicDistribution from '@/components/analytics/GeographicDistribution';
+import SEOHelmet from '@/components/SEOHelmet';
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -305,7 +306,15 @@ const Analytics = () => {
 
   return (
     <MainLayout>
+      <SEOHelmet 
+        title="Analytics Dashboard - SwapsCircle Admin"
+        description="Comprehensive analytics dashboard for SwapsCircle trading platform. Monitor user growth, trade activity, and platform performance metrics."
+        keywords="analytics dashboard, trading platform analytics, user metrics, trade statistics"
+      />
       <div className="space-y-6">
+        <header>
+          <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+        </header>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
           <p className="text-muted-foreground">
