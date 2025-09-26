@@ -166,121 +166,141 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </Button>
         </div>
 
-        {/* Swipeable content */}
-        <AdvancedSwipeCard
-          onSwipe={handlePopupSwipe}
-          isTop={true}
-          className="flex-1"
-        >
-          <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-            {/* Large image */}
-            <div className="w-full h-80 relative overflow-hidden">
-              <img
-                src={expandedCard.image}
-                alt={expandedCard.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
-              />
+        {/* Scrollable content WITHOUT AdvancedSwipeCard wrapper */}
+        <div className="flex-1 overflow-y-scroll overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+          {/* Large image */}
+          <div className="w-full h-80 relative overflow-hidden">
+            <img
+              src={expandedCard.image}
+              alt={expandedCard.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg';
+              }}
+            />
+          </div>
+
+          {/* Content section - with extra content to ensure scrolling */}
+          <div className="p-6 bg-card">
+            {/* Title */}
+            <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
+          
+            {/* Description */}
+            <p className="text-muted-foreground text-base leading-relaxed mb-6">
+              {expandedCard.description}
+            </p>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <span className="text-sm text-muted-foreground">Category</span>
+                <div className="text-lg font-semibold text-foreground">{expandedCard.category || 'N/A'}</div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Tag</span>
+                <div className="text-lg font-semibold text-foreground">
+                  {expandedCard.tags && expandedCard.tags.length > 0 ? expandedCard.tags[0] : 'N/A'}
+                </div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Condition</span>
+                <div className="text-lg font-semibold text-foreground">{expandedCard.condition || 'N/A'}</div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Price Range</span>
+                <div className="text-lg font-semibold text-foreground">
+                  {expandedCard.priceRangeMin && expandedCard.priceRangeMax 
+                    ? `$${expandedCard.priceRangeMin} - $${expandedCard.priceRangeMax}`
+                    : 'Price not set'
+                  }
+                </div>
+              </div>
             </div>
 
-            {/* Content section - with extra content to ensure scrolling */}
-            <div className="p-6 bg-card min-h-screen">
-              {/* Title */}
-              <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
-            
-              {/* Description */}
-              <p className="text-muted-foreground text-base leading-relaxed mb-6">
-                {expandedCard.description}
-              </p>
-
-              {/* Details Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <span className="text-sm text-muted-foreground">Category</span>
-                  <div className="text-lg font-semibold text-foreground">{expandedCard.category || 'N/A'}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Tag</span>
-                  <div className="text-lg font-semibold text-foreground">
-                    {expandedCard.tags && expandedCard.tags.length > 0 ? expandedCard.tags[0] : 'N/A'}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Condition</span>
-                  <div className="text-lg font-semibold text-foreground">{expandedCard.condition || 'N/A'}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Price Range</span>
-                  <div className="text-lg font-semibold text-foreground">
-                    {expandedCard.priceRangeMin && expandedCard.priceRangeMax 
-                      ? `$${expandedCard.priceRangeMin} - $${expandedCard.priceRangeMax}`
-                      : 'Price not set'
-                    }
-                  </div>
-                </div>
-              </div>
-
-              {/* User Profile Section */}
-              <div className="pt-4 border-t border-border">
-                {expandedCard.userProfile && (
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
-                      {expandedCard.userProfile.avatar_url ? (
-                        <img
-                          src={expandedCard.userProfile.avatar_url}
-                          alt={expandedCard.userProfile.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
-                          {expandedCard.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-semibold text-foreground">
-                          {expandedCard.userProfile.username || expandedCard.userProfile.name}
-                        </h3>
-                        <span className="text-yellow-500">★</span>
-                        <span className="text-muted-foreground">No reviews</span>
+            {/* User Profile Section */}
+            <div className="pt-4 border-t border-border mb-6">
+              {expandedCard.userProfile && (
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
+                    {expandedCard.userProfile.avatar_url ? (
+                      <img
+                        src={expandedCard.userProfile.avatar_url}
+                        alt={expandedCard.userProfile.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-primary text-primary-foreground text-lg font-semibold flex items-center justify-center">
+                        {expandedCard.userProfile.name?.substring(0, 1).toUpperCase() || "U"}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        <div>Since 2024</div>
-                        <div className="flex items-center gap-1">
-                          <span>🔄</span>
-                          <span>0 trades completed</span>
-                        </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        {expandedCard.userProfile.username || expandedCard.userProfile.name}
+                      </h3>
+                      <span className="text-yellow-500">★</span>
+                      <span className="text-muted-foreground">No reviews</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <div>Since 2024</div>
+                      <div className="flex items-center gap-1">
+                        <span>🔄</span>
+                        <span>0 trades completed</span>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
 
-              {/* Action buttons */}
-              <div className="flex gap-4 mt-6">
-                <Button 
-                  onClick={() => handlePopupSwipe("left")}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Pass
-                </Button>
-                <Button 
-                  onClick={() => handlePopupSwipe("right")}
-                  variant="default"
-                  className="flex-1"
-                >
-                  <Heart className="h-4 w-4 mr-2" />
-                  Like
-                </Button>
+            {/* Extra content to ensure scrolling works */}
+            <div className="space-y-4 mb-20">
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-semibold mb-2">About this item</h4>
+                <p className="text-sm text-muted-foreground">
+                  This is additional content to ensure the page has enough height to scroll. 
+                  You should be able to scroll up and down in this popup to see all content.
+                </p>
               </div>
+              
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-semibold mb-2">Trading Guidelines</h4>
+                <p className="text-sm text-muted-foreground">
+                  Meet in public places, inspect items before trading, and be respectful to other traders.
+                </p>
+              </div>
+              
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-semibold mb-2">More Information</h4>
+                <p className="text-sm text-muted-foreground">
+                  This is extra content to demonstrate scrolling functionality. 
+                  The popup should now be scrollable on mobile devices.
+                </p>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-4 mt-6 pb-8">
+              <Button 
+                onClick={() => handlePopupSwipe("left")}
+                variant="outline"
+                className="flex-1"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Pass
+              </Button>
+              <Button 
+                onClick={() => handlePopupSwipe("right")}
+                variant="default"
+                className="flex-1"
+              >
+                <Heart className="h-4 w-4 mr-2" />
+                Like
+              </Button>
             </div>
           </div>
-        </AdvancedSwipeCard>
+        </div>
       </div>
     );
   }
