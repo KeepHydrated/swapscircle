@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { extractStateFromLocation } from '@/utils/locationUtils';
 
 interface UserLocationData {
   location: string;
@@ -27,26 +28,12 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
 
         if (error) throw error;
 
-        // Count users by state/location
-        const locationCount = profiles?.reduce((acc: Record<string, number>, profile) => {
-          let locationKey = null;
+        // Count users by state using the utility function
+        const stateCount = profiles?.reduce((acc: Record<string, number>, profile) => {
+          const stateName = extractStateFromLocation(profile.location || '', profile.city || '', profile.state || '');
           
-          // Prioritize state, then try to extract state from city, then use location/zipcode
-          if (profile.state) {
-            locationKey = profile.state;
-          } else if (profile.city && profile.city.includes(',')) {
-            // Extract state from "City, State" format
-            const statePart = profile.city.split(',').pop()?.trim();
-            if (statePart && statePart.length === 2) {
-              locationKey = statePart.toUpperCase();
-            }
-          } else if (profile.location) {
-            // For zipcode, we'll need to map it to state - for now show as "ZIP: xxxxx"
-            locationKey = `ZIP: ${profile.location}`;
-          }
-          
-          if (locationKey) {
-            acc[locationKey] = (acc[locationKey] || 0) + 1;
+          if (stateName) {
+            acc[stateName] = (acc[stateName] || 0) + 1;
           }
           return acc;
         }, {}) || {};
@@ -65,9 +52,9 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           '#6366f1'  // indigo
         ];
 
-        const locationData = Object.entries(locationCount)
-          .map(([locationKey, count], index) => ({
-            location: locationKey,
+        const locationData = Object.entries(stateCount)
+          .map(([stateName, count], index) => ({
+            location: stateName,
             users: count as number,
             color: stateColors[index % stateColors.length]
           }))
@@ -110,7 +97,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
       <CardHeader>
         <CardTitle>User Locations</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Geographic distribution of user activity by location
+          Geographic distribution of user activity by state
         </p>
       </CardHeader>
       <CardContent>
@@ -118,7 +105,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           {userLocationData.length > 0 ? (
             <>
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Top Locations by Users</h4>
+                <h4 className="text-sm font-medium">Top States by Users</h4>
                 <div className="space-y-2">
                   {userLocationData.map((location, index) => {
                     const percentage = totalUsers > 0 ? ((location.users / totalUsers) * 100).toFixed(0) : '0';
@@ -144,7 +131,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                 <div className="space-y-1">
                   <p className="text-2xl font-bold">{userLocationData.length}</p>
-                  <p className="text-xs text-muted-foreground">Locations</p>
+                  <p className="text-xs text-muted-foreground">States</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-2xl font-bold">
