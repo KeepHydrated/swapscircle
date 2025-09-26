@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
-import { extractStateFromLocation } from '@/utils/locationUtils';
+import { extractStateFromLocation, extractCountryFromLocation } from '@/utils/locationUtils';
 
 interface UserLocationData {
   location: string;
@@ -15,16 +15,17 @@ interface GeographicDistributionProps {
 
 const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ className }) => {
   const [userLocationData, setUserLocationData] = useState<UserLocationData[]>([]);
+  const [countryData, setCountryData] = useState<UserLocationData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserLocations = async () => {
       try {
-        // Get all users with their location data (state, location/zipcode)
+        // Get all users with their location data (state, location/zipcode, country)
         const { data: profiles, error } = await supabase
           .from('profiles')
-          .select('state, location, city')
-          .or('state.not.is.null,location.not.is.null,city.not.is.null');
+          .select('state, location, city, country')
+          .or('state.not.is.null,location.not.is.null,city.not.is.null,country.not.is.null');
 
         if (error) throw error;
 
@@ -34,6 +35,20 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           
           if (stateName) {
             acc[stateName] = (acc[stateName] || 0) + 1;
+          }
+          return acc;
+        }, {}) || {};
+
+        // Count users by country (for non-US locations)
+        const countryCount = profiles?.reduce((acc: Record<string, number>, profile) => {
+          // Only count as international if not already counted as US state
+          const stateName = extractStateFromLocation(profile.location || '', profile.city || '', profile.state || '');
+          
+          if (!stateName) {
+            const countryName = extractCountryFromLocation(profile.location || '', profile.city || '', profile.country || '');
+            if (countryName) {
+              acc[countryName] = (acc[countryName] || 0) + 1;
+            }
           }
           return acc;
         }, {}) || {};
@@ -61,7 +76,17 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           .sort((a, b) => b.users - a.users)
           .slice(0, 6); // Show top 6 states
 
+        const countryLocationData = Object.entries(countryCount)
+          .map(([countryName, count], index) => ({
+            location: countryName,
+            users: count as number,
+            color: stateColors[(index + locationData.length) % stateColors.length]
+          }))
+          .sort((a, b) => b.users - a.users)
+          .slice(0, 4); // Show top 4 countries
+
         setUserLocationData(locationData);
+        setCountryData(countryLocationData);
       } catch (error) {
         console.error('Error fetching user locations:', error);
       } finally {
@@ -72,7 +97,7 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
     fetchUserLocations();
   }, []);
 
-  const totalUsers = userLocationData.reduce((sum, location) => sum + location.users, 0);
+  const totalUsers = userLocationData.reduce((sum, location) => sum + location.users, 0) + countryData.reduce((sum, country) => sum + country.users, 0);
 
   if (loading) {
     return (
@@ -127,6 +152,32 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
                   })}
                 </div>
               </div>
+              
+              {countryData.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium">Other Countries</h4>
+                  <div className="space-y-2">
+                    {countryData.map((country, index) => {
+                      const percentage = totalUsers > 0 ? ((country.users / totalUsers) * 100).toFixed(0) : '0';
+                      return (
+                         <div key={country.location} className="flex items-center justify-between text-sm">
+                           <div className="flex items-center gap-2">
+                             <div 
+                               className="w-3 h-3 rounded-full" 
+                               style={{ backgroundColor: country.color }}
+                             />
+                             <span>{country.location}</span>
+                           </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{country.users} users</span>
+                            <span className="font-medium">{percentage}%</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                 <div className="space-y-1">

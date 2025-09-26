@@ -82,6 +82,32 @@ export function extractStateFromLocation(location: string, city?: string, state?
   return null;
 }
 
+export function extractCountryFromLocation(location: string, city?: string, country?: string): string | null {
+  // If country is already provided, use it
+  if (country) {
+    return country;
+  }
+  
+  // Check if location looks like coordinates outside US
+  const coordMatch = location?.match(/^([-\d.]+),\s*([-\d.]+)$/);
+  if (coordMatch) {
+    const lat = parseFloat(coordMatch[1]);
+    const lng = parseFloat(coordMatch[2]);
+    
+    // Check if coordinates are outside US bounds (rough approximation)
+    if (lat < 24 || lat > 49 || lng < -125 || lng > -66) {
+      // Try to map to known countries (simplified)
+      if (lat >= 41 && lat <= 44 && lng >= 12 && lng <= 13) {
+        return 'Italy';
+      }
+      // Add more country mappings as needed
+      return 'Other Country';
+    }
+  }
+  
+  return null;
+}
+
 function getFullStateName(stateCode: string): string {
   const stateNames: Record<string, string> = {
     'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California',
