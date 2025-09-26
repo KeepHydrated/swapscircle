@@ -414,51 +414,58 @@ const Analytics = () => {
             {analytics.recentUsers.length === 0 ? (
               <p className="text-sm text-muted-foreground">No recent users</p>
             ) : (
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                {analytics.recentUsers.map((user) => (
-                  <div 
-                    key={user.id} 
-                    className="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors min-w-[100px]"
-                    onClick={() => handleUserClick(user.id)}
-                  >
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={user.avatar_url || ''} alt={user.username} />
-                      <AvatarFallback className="text-lg">
-                        {user.username.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="text-center">
-                      <p className="text-sm font-medium truncate max-w-[80px]">{user.username}</p>
-                      <p className="text-xs text-muted-foreground">
+              <div className="space-y-3">
+                {analytics.recentUsers.map((user, index) => {
+                  // Determine location display
+                  let locationText = 'Location unknown';
+                  if (user.city && user.state) {
+                    locationText = `${user.city}, ${user.state}`;
+                  } else if (user.state) {
+                    locationText = user.state;
+                  } else if (user.city) {
+                    locationText = user.city;
+                  } else if (user.location) {
+                    locationText = user.location;
+                  }
+
+                  // Generate color for the dot
+                  const colors = [
+                    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+                    '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+                  ];
+                  const dotColor = colors[index % colors.length];
+
+                  return (
+                    <div 
+                      key={user.id}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => handleUserClick(user.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-3 h-3 rounded-full flex-shrink-0" 
+                          style={{ backgroundColor: dotColor }}
+                        />
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.avatar_url || ''} alt={user.username} />
+                          <AvatarFallback className="text-xs">
+                            {user.username.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{user.username}</span>
+                          <span className="text-xs text-muted-foreground">{locationText}</span>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
                         {new Date(user.created_at).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric'
                         })}
-                      </p>
-                      {(user.city && user.state) ? (
-                        <p className="text-xs text-muted-foreground truncate max-w-[80px]">
-                          {user.city}, {user.state}
-                        </p>
-                      ) : user.state ? (
-                        <p className="text-xs text-muted-foreground">
-                          {user.state}
-                        </p>
-                      ) : user.city ? (
-                        <p className="text-xs text-muted-foreground truncate max-w-[80px]">
-                          {user.city}
-                        </p>
-                      ) : user.location ? (
-                        <p className="text-xs text-muted-foreground truncate max-w-[80px]">
-                          {user.location}
-                        </p>
-                      ) : (
-                        <p className="text-xs text-muted-foreground">
-                          Location unknown
-                        </p>
-                      )}
+                      </span>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>
