@@ -235,7 +235,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        {expandedCard.userProfile.username || expandedCard.userProfile.name}
+                      </h3>
                       <span className="text-yellow-500">★</span>
                       <span className="text-muted-foreground">No reviews</span>
                     </div>
