@@ -52,13 +52,44 @@ export default function SwipeCards({ cards, onLike, onReject }: SwipeCardsProps)
         dragConstraints={{ left: 0, right: 0 }}
         animate={controls}
         onDragEnd={handleDragEnd}
-        className="w-72 h-96 bg-white rounded-2xl shadow-xl overflow-hidden"
+        className="w-72 h-96 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col"
       >
-        <img
-          src={currentCard.image}
-          alt={currentCard.title}
-          className="w-full h-full object-cover"
-        />
+        {/* Image Section */}
+        <div className="w-full h-48 overflow-hidden">
+          <img
+            src={currentCard.image}
+            alt={currentCard.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        {/* Scrollable Content Section */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <h3 className="text-lg font-bold text-foreground mb-2 line-clamp-2 break-words">
+            {currentCard.title}
+          </h3>
+          
+          {currentCard.description && (
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              {currentCard.description}
+            </p>
+          )}
+          
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {currentCard.category && (
+              <div>
+                <span className="text-muted-foreground">Category</span>
+                <div className="font-semibold text-foreground">{currentCard.category}</div>
+              </div>
+            )}
+            {currentCard.condition && (
+              <div>
+                <span className="text-muted-foreground">Condition</span>
+                <div className="font-semibold text-foreground">{currentCard.condition}</div>
+              </div>
+            )}
+          </div>
+        </div>
       </motion.div>
     </div>
   );
