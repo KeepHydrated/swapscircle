@@ -358,15 +358,19 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               </div>
 
               {/* Combined Content Section */}
-              <div className="flex-1 p-4 bg-card overflow-y-auto">
-                {/* Item Title */}
-                <h2 className="text-base font-bold text-foreground mb-4">{match.name}</h2>
+              <div className="flex-1 p-4 bg-card flex flex-col justify-between min-h-0">
+                {/* Item Title - with proper text wrapping */}
+                <div className="mb-3">
+                  <h2 className="text-base font-bold text-foreground leading-tight line-clamp-2 break-words">
+                    {match.name}
+                  </h2>
+                </div>
 
                 {/* User Profile Section */}
                 <div className="pt-3 border-t border-border">
                   {match.userProfile && (
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
                         {match.userProfile.avatar_url ? (
                           <img
                             src={match.userProfile.avatar_url}
@@ -379,9 +383,9 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                           </div>
                         )}
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div>
-                          <h3 className="text-sm font-semibold text-foreground mb-1">
+                          <h3 className="text-sm font-semibold text-foreground mb-1 truncate">
                             {match.userProfile.username || match.userProfile.name}
                           </h3>
                           <div className="flex items-center gap-2">
