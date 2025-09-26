@@ -16,11 +16,19 @@ interface GeographicDistributionProps {
 const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ className }) => {
   const [userLocationData, setUserLocationData] = useState<UserLocationData[]>([]);
   const [countryData, setCountryData] = useState<UserLocationData[]>([]);
+  const [totalRegisteredUsers, setTotalRegisteredUsers] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserLocations = async () => {
       try {
+        // Get total user count and users with location data
+        const { data: totalCount, error: countError } = await supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true });
+        
+        if (countError) throw countError;
+        
         // Get all users with their location data (state, location/zipcode, country)
         const { data: profiles, error } = await supabase
           .from('profiles')
@@ -28,6 +36,8 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
           .or('state.not.is.null,location.not.is.null,city.not.is.null,country.not.is.null');
 
         if (error) throw error;
+        
+        setTotalRegisteredUsers(totalCount?.length || 0);
 
         // Count users by state using the utility function
         const stateCount = profiles?.reduce((acc: Record<string, number>, profile) => {
@@ -104,9 +114,9 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
       <Card className={className}>
         <CardHeader>
           <CardTitle>User Locations</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Geographic distribution of user activity by state
-          </p>
+        <p className="text-sm text-muted-foreground">
+          Geographic distribution of users who have provided location data
+        </p>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center items-center h-32">
@@ -179,16 +189,22 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({ classNa
                 </div>
               )}
               
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t">
                 <div className="space-y-1">
-                  <p className="text-2xl font-bold">{userLocationData.length}</p>
-                  <p className="text-xs text-muted-foreground">States</p>
+                  <p className="text-2xl font-bold">{userLocationData.length + countryData.length}</p>
+                  <p className="text-xs text-muted-foreground">Locations</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-2xl font-bold">
                     {totalUsers.toLocaleString()}
                   </p>
-                  <p className="text-xs text-muted-foreground">Total Users</p>
+                  <p className="text-xs text-muted-foreground">With Location</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-2xl font-bold text-muted-foreground">
+                    {(totalRegisteredUsers - totalUsers).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground">No Location</p>
                 </div>
               </div>
             </>
