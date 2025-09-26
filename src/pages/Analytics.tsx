@@ -29,7 +29,7 @@ const Analytics = () => {
     userGrowthData: [] as Array<{ month: string; users: number }>,
     itemsData: [] as Array<{ category: string; count: number }>,
     tradesData: [] as Array<{ month: string; trades: number }>,
-    recentUsers: [] as Array<{ id: string; username: string; avatar_url: string | null; created_at: string }>,
+    recentUsers: [] as Array<{ id: string; username: string; avatar_url: string | null; created_at: string; city: string | null; state: string | null; location: string | null }>,
     recentItems: [] as Array<{ id: string; name: string; image_url: string | null; created_at: string; owner_username: string }>
   });
 
@@ -173,10 +173,10 @@ const Analytics = () => {
             .lt('created_at', thisMonthStart.toISOString())
         ]);
 
-        // Fetch recent users (last 10)
+        // Fetch recent users (last 10) with location data
         const { data: recentUsersData } = await supabase
           .from('profiles')
-          .select('id, username, avatar_url, created_at')
+          .select('id, username, avatar_url, created_at, city, state, location')
           .order('created_at', { ascending: false })
           .limit(10);
 
@@ -260,7 +260,10 @@ const Analytics = () => {
             id: user.id,
             username: user.username || 'User',
             avatar_url: user.avatar_url,
-            created_at: user.created_at
+            created_at: user.created_at,
+            city: user.city,
+            state: user.state,
+            location: user.location
           })) || [],
           recentItems: recentItemsData?.map(item => ({
             id: item.id,
@@ -432,6 +435,19 @@ const Analytics = () => {
                           day: 'numeric'
                         })}
                       </p>
+                      {(user.city && user.state) ? (
+                        <p className="text-xs text-muted-foreground truncate max-w-[80px]">
+                          {user.city}, {user.state}
+                        </p>
+                      ) : user.state ? (
+                        <p className="text-xs text-muted-foreground">
+                          {user.state}
+                        </p>
+                      ) : user.location ? (
+                        <p className="text-xs text-muted-foreground">
+                          {user.location}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                 ))}
