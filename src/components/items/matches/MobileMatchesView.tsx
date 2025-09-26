@@ -254,31 +254,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               )}
             </div>
 
-            {/* Extra content to ensure scrolling works */}
-            <div className="space-y-4 mb-20">
-              <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-2">About this item</h4>
-                <p className="text-sm text-muted-foreground">
-                  This is additional content to ensure the page has enough height to scroll. 
-                  You should be able to scroll up and down in this popup to see all content.
-                </p>
-              </div>
-              
-              <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-2">Trading Guidelines</h4>
-                <p className="text-sm text-muted-foreground">
-                  Meet in public places, inspect items before trading, and be respectful to other traders.
-                </p>
-              </div>
-              
-              <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-2">More Information</h4>
-                <p className="text-sm text-muted-foreground">
-                  This is extra content to demonstrate scrolling functionality. 
-                  The popup should now be scrollable on mobile devices.
-                </p>
-              </div>
-            </div>
 
             {/* Action buttons */}
             <div className="flex gap-4 mt-6 pb-8">
