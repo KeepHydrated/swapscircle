@@ -172,7 +172,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           isTop={true}
           className="flex-1"
         >
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
             {/* Large image */}
             <div className="w-full h-80 relative overflow-hidden">
               <img
@@ -185,8 +185,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               />
             </div>
 
-            {/* Content section */}
-            <div className="p-6 bg-card">
+            {/* Content section - with extra content to ensure scrolling */}
+            <div className="p-6 bg-card min-h-screen">
               {/* Title */}
               <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
             
