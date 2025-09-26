@@ -115,7 +115,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
       });
     }
 
-    // Move to next card in popup
+    // Move to next card in popup - increased timeout to match exit animation
     setTimeout(() => {
       const nextIndex = expandedCardIndex + 1;
       if (nextIndex < matches.length) {
@@ -126,7 +126,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         setExpandedCard(null);
       }
       setIsAnimating(false);
-    }, 300);
+    }, 200); // Increased from 300ms to allow for exit animation
   }, [expandedCard, expandedCardIndex, matches, isAnimating, onLike, onReject, toast]);
 
   // Close expanded card when middle header icon is clicked on mobile home page
@@ -158,6 +158,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         <AdvancedSwipeCard
           onSwipe={handlePopupSwipe}
           isTop={true}
+          resetKey={expandedCard.id}
           className="flex flex-col h-full"
         >
           {/* Close button */}

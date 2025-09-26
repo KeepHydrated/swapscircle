@@ -6,6 +6,7 @@ interface AdvancedSwipeCardProps {
   onSwipe: (direction: "left" | "right" | "up") => void;
   onTap?: () => void;
   isTop: boolean;
+  resetKey?: string | number; // Add a key to trigger reset
   style?: React.CSSProperties;
   className?: string;
 }
@@ -15,6 +16,7 @@ export const AdvancedSwipeCard = ({
   onSwipe, 
   onTap,
   isTop, 
+  resetKey,
   style = {},
   className = ""
 }: AdvancedSwipeCardProps) => {
@@ -72,9 +74,23 @@ export const AdvancedSwipeCard = ({
     const threshold = 100;
     
     if (Math.abs(dragDistance.x) > threshold) {
-      onSwipe(dragDistance.x > 0 ? "right" : "left");
+      // Animate out completely before calling onSwipe
+      const direction = dragDistance.x > 0 ? "right" : "left";
+      const exitDistance = direction === "right" ? 500 : -500;
+      setDragDistance({ x: exitDistance, y: dragDistance.y });
+      
+      setTimeout(() => {
+        onSwipe(direction);
+        // Reset will happen via resetKey change
+      }, 150);
     } else if (dragDistance.y < -threshold) {
-      onSwipe("up");
+      // Animate up and out
+      setDragDistance({ x: dragDistance.x, y: -500 });
+      
+      setTimeout(() => {
+        onSwipe("up");
+        // Reset will happen via resetKey change
+      }, 150);
     } else {
       // Reset position if swipe wasn't strong enough
       setDragDistance({ x: 0, y: 0 });
@@ -87,6 +103,14 @@ export const AdvancedSwipeCard = ({
     
     setIsScrolling(false);
   };
+
+  // Reset card position when resetKey changes
+  useEffect(() => {
+    setDragDistance({ x: 0, y: 0 });
+    setRotation(0);
+    setIsDragging(false);
+    setIsScrolling(false);
+  }, [resetKey]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     // Prevent swipe on mouse for better desktop experience
