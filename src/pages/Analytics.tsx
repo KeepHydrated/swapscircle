@@ -443,11 +443,19 @@ const Analytics = () => {
                         <p className="text-xs text-muted-foreground">
                           {user.state}
                         </p>
+                      ) : user.city ? (
+                        <p className="text-xs text-muted-foreground truncate max-w-[80px]">
+                          {user.city}
+                        </p>
                       ) : user.location ? (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground truncate max-w-[80px]">
                           {user.location}
                         </p>
-                      ) : null}
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Location unknown
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
