@@ -183,17 +183,17 @@ const Analytics = () => {
         // Fetch recent items (last 10) with owner info
         const { data: recentItemsData } = await supabase
           .from('items')
-          .select(`
-            id, 
-            name, 
-            image_url, 
-            created_at,
-            user_id,
-            profiles!inner(username)
-          `)
+          .select('id, name, image_url, created_at, user_id')
           .eq('status', 'published')
           .order('created_at', { ascending: false })
           .limit(10);
+
+        // Fetch user data for recent items
+        const userIds = recentItemsData?.map(item => item.user_id) || [];
+        const { data: itemOwnersData } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', userIds);
 
         // Fetch traffic sources data
         const { data: trafficSourcesRaw } = await supabase
@@ -265,13 +265,16 @@ const Analytics = () => {
             state: user.state,
             location: user.location
           })) || [],
-          recentItems: recentItemsData?.map(item => ({
-            id: item.id,
-            name: item.name,
-            image_url: item.image_url,
-            created_at: item.created_at,
-            owner_username: (item.profiles as any)?.username || 'Unknown'
-          })) || []
+          recentItems: recentItemsData?.map(item => {
+            const owner = itemOwnersData?.find(user => user.id === item.user_id);
+            return {
+              id: item.id,
+              name: item.name,
+              image_url: item.image_url,
+              created_at: item.created_at,
+              owner_username: owner?.username || 'Unknown'
+            };
+          }) || []
         });
 
       } catch (error) {
