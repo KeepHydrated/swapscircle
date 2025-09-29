@@ -333,7 +333,7 @@ const Messages = () => {
       
       {/* Mobile/Tablet Layout */}
       {(isMobile || isTablet) ? (
-        <div className={`flex-1 overflow-hidden pt-20 ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
+        <div className={`flex-1 overflow-hidden pt-16 ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
@@ -614,7 +614,7 @@ const Messages = () => {
         </div>
       ) : (
         /* Desktop Layout */
-        <div className="flex flex-1 min-h-0 overflow-hidden pt-20">
+        <div className="flex flex-1 min-h-0 overflow-hidden pt-16">
           {/* Left sidebar - Conversations */}
           <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">
             
