@@ -228,10 +228,10 @@ const Messages3: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="flex-1 p-4 md:p-6 flex flex-col h-full pt-80">{/* Add 80 top padding for fixed header */}
+      <div className="flex-1 p-4 md:p-6 flex flex-col h-full">{/* Container without top padding */}
 
         {/* Main Content */}
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 mt-20">{/* Add margin-top for spacing */}
           {user && supabaseConfigured ? (
             <div className="grid grid-cols-1 gap-6 h-full">
               {/* Your Items Section */}
