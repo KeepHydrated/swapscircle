@@ -327,13 +327,13 @@ const Messages = () => {
   });
 
   return (
-    <div className="flex flex-col h-screen pt-20">
+    <div className="flex flex-col h-screen">
       {/* Header - conditionally rendered */}
       {!(isTablet && currentMobileView === 'details') && <Header />}
       
       {/* Mobile/Tablet Layout */}
       {(isMobile || isTablet) ? (
-        <div className={`flex-1 overflow-hidden ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
+        <div className={`flex-1 overflow-hidden pt-20 ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
@@ -614,7 +614,7 @@ const Messages = () => {
         </div>
       ) : (
         /* Desktop Layout */
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-1 min-h-0 overflow-hidden pt-20">
           {/* Left sidebar - Conversations */}
           <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">
             
