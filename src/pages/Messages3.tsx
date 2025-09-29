@@ -228,7 +228,7 @@ const Messages3: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="flex-1 p-4 md:p-6 flex flex-col h-full pt-44">{/* Add maximum top padding for fixed header */}
+      <div className="flex-1 p-4 md:p-6 flex flex-col h-full pt-52">{/* Add maximum top padding for fixed header */}
 
         {/* Main Content */}
         <div className="flex-1 min-h-0">
