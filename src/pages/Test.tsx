@@ -588,7 +588,7 @@ const Test: React.FC = () => {
         keywords="local trading, swap items, trade marketplace, item exchange, community trading, bartering platform"
       />
       <Header />
-      <div className="flex-1 pt-20 p-4 md:p-6 flex flex-col h-full">
+      <div className="flex-1 pt-20 px-4 pb-4 md:px-6 md:pb-6 flex flex-col h-full">
 
         {/* Main Two-Column Layout */}
         <div className="flex-1 min-h-0">
