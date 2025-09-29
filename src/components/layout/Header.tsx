@@ -57,7 +57,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="fixed top-0 z-[9999] w-full bg-white border-b border-gray-200 shadow-sm pointer-events-auto">
+      <header className="fixed top-0 z-[9999] w-full bg-white border-b border-gray-200 shadow-sm pointer-events-auto overflow-visible">
         <div className="relative flex items-center justify-between h-16 px-4 md:px-6">
           <div className="flex items-center space-x-3">
             {/* Heart icon - only show on mobile */}
