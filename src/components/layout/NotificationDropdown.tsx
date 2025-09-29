@@ -149,7 +149,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
           <span className="sr-only">Notifications</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={16} className="w-80 p-0 bg-white border border-gray-200 shadow-lg z-50">{/* Increased sideOffset to prevent top cutoff */}
+      <DropdownMenuContent align="end" sideOffset={24} className="w-80 p-0 bg-white border border-gray-200 shadow-lg z-50">{/* Increased sideOffset to prevent top cutoff */}
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-sm">Notifications</h3>
