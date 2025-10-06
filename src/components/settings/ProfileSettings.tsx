@@ -377,67 +377,6 @@ const ProfileSettings: React.FC = () => {
                 )}
               />
               
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Your Zipcode</FormLabel>
-                    <FormControl>
-                       <div className="relative">
-                         <Input 
-                           placeholder="" 
-                           {...field}
-                           onChange={(e) => {
-                             const value = e.target.value;
-                             // Only allow digits and hyphens, and limit length
-                             const cleanValue = value.replace(/[^\d-]/g, '');
-                             if (cleanValue.length <= 10) {
-                               field.onChange(cleanValue);
-                               handleLocationChange(cleanValue);
-                             }
-                           }}
-                           maxLength={10}
-                           className="pr-20"
-                           disabled={!isEditing}
-                         />
-                         <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
-                           <Button
-                             type="button"
-                             variant="ghost"
-                             size="sm"
-                             onClick={handleAutoDetectZipcode}
-                             disabled={locationLoading || !isEditing}
-                             className="h-8 w-8 p-0 hover:bg-transparent"
-                             title="Auto-detect zipcode from your location"
-                           >
-                             {locationLoading ? (
-                               <Loader2 className="h-4 w-4 animate-spin" />
-                             ) : (
-                               <RefreshCw className="h-4 w-4" />
-                             )}
-                           </Button>
-                           <Button
-                             type="button"
-                             variant="ghost"
-                             size="sm"
-                             onClick={handleDeleteZipcode}
-                             disabled={!isEditing}
-                             className="h-8 w-8 p-0 hover:bg-transparent"
-                             title="Delete zipcode (remove location requirement)"
-                           >
-                             <Trash2 className="h-4 w-4" />
-                           </Button>
-                         </div>
-                       </div>
-                    </FormControl>
-                    <FormDescription className="hidden md:block">
-                      Enter your zipcode for location-based matching
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               
               <FormField
                 control={form.control}
