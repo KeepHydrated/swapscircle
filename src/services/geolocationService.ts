@@ -75,6 +75,9 @@ export async function detectAndStoreUserLocation(userId: string, skipIfExists: b
     if (locationResult.success && locationResult.data) {
       const location = locationResult.data;
       
+      // Store coordinates in lat,lng format for distance calculations
+      const coordinateString = `${location.latitude}, ${location.longitude}`;
+      
       // Update user profile with detected location
       const { error } = await supabase
         .from('profiles')
@@ -82,7 +85,7 @@ export async function detectAndStoreUserLocation(userId: string, skipIfExists: b
           country: location.country,
           state: location.regionCode === 'US' ? location.region : null,
           city: location.city,
-          location: location.zipCode || `${location.latitude}, ${location.longitude}`,
+          location: coordinateString, // Store as coordinates for distance filtering
           updated_at: new Date().toISOString()
         })
         .eq('id', userId);
