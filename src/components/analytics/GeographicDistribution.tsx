@@ -32,43 +32,37 @@ const GeographicDistribution: React.FC<GeographicDistributionProps> = ({
   useEffect(() => {
     const fetchUserLocations = async () => {
       try {
-        // Get total user count and users with location data
-        const { data: totalCount, error: countError } = await supabase
+        // Get total user count
+        const { count: totalCount, error: countError } = await supabase
           .from('profiles')
-          .select('id', { count: 'exact', head: true });
+          .select('*', { count: 'exact', head: true });
         
         if (countError) throw countError;
         
-        // Get all users with their location data (state, location/zipcode, country)
+        setTotalRegisteredUsers(totalCount || 0);
+        
+        // Get all users with their location data
         const { data: profiles, error } = await supabase
           .from('profiles')
-          .select('state, location, city, country')
-          .or('state.not.is.null,location.not.is.null,city.not.is.null,country.not.is.null');
+          .select('state, city, country, location')
+          .or('state.not.is.null,city.not.is.null,country.not.is.null,location.not.is.null');
 
         if (error) throw error;
-        
-        setTotalRegisteredUsers(totalCount?.length || 0);
 
-        // Count users by state using the utility function
+        // Count users by state (prioritize direct state field)
         const stateCount = profiles?.reduce((acc: Record<string, number>, profile) => {
-          const stateName = extractStateFromLocation(profile.location || '', profile.city || '', profile.state || '');
-          
-          if (stateName) {
-            acc[stateName] = (acc[stateName] || 0) + 1;
+          // Use state field directly if available
+          if (profile.state) {
+            acc[profile.state] = (acc[profile.state] || 0) + 1;
           }
           return acc;
         }, {}) || {};
 
         // Count users by country (for non-US locations)
         const countryCount = profiles?.reduce((acc: Record<string, number>, profile) => {
-          // Only count as international if not already counted as US state
-          const stateName = extractStateFromLocation(profile.location || '', profile.city || '', profile.state || '');
-          
-          if (!stateName) {
-            const countryName = extractCountryFromLocation(profile.location || '', profile.city || '', profile.country || '');
-            if (countryName) {
-              acc[countryName] = (acc[countryName] || 0) + 1;
-            }
+          // Only count as international if no US state
+          if (!profile.state && profile.country) {
+            acc[profile.country] = (acc[profile.country] || 0) + 1;
           }
           return acc;
         }, {}) || {};
