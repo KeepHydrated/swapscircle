@@ -155,96 +155,85 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   if (expandedCard) {
     return (
       <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col">
+        {/* Action Menu - Outside of swipe card to avoid touch conflicts */}
+        <div className="absolute top-4 right-4 z-50 pointer-events-auto">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="flex items-center justify-center w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+              >
+                <MoreVertical className="h-6 w-6 text-gray-700" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg z-[100]">
+              <DropdownMenuItem 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  onLike(expandedCard.id, true);
+                  setTimeout(() => {
+                    const nextIndex = expandedCardIndex + 1;
+                    if (nextIndex < matches.length) {
+                      setExpandedCard(matches[nextIndex]);
+                      setExpandedCardIndex(nextIndex);
+                    } else {
+                      setExpandedCard(null);
+                    }
+                  }, 100);
+                }}
+                className="cursor-pointer"
+              >
+                <Users className="h-4 w-4 mr-2 text-green-600" />
+                Accept for all of my items
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  onReject(expandedCard.id, true);
+                  setTimeout(() => {
+                    const nextIndex = expandedCardIndex + 1;
+                    if (nextIndex < matches.length) {
+                      setExpandedCard(matches[nextIndex]);
+                      setExpandedCardIndex(nextIndex);
+                    } else {
+                      setExpandedCard(null);
+                    }
+                  }, 100);
+                }}
+                className="cursor-pointer"
+              >
+                <Users className="h-4 w-4 mr-2 text-red-600" />
+                Reject for all of my items
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  onReport(expandedCard.id); 
+                }} 
+                className="cursor-pointer text-red-600"
+              >
+                <Flag className="h-4 w-4 mr-2" />
+                Report item
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  handleCloseExpanded();
+                }} 
+                className="cursor-pointer"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         <AdvancedSwipeCard
           onSwipe={handlePopupSwipe}
           isTop={true}
           resetKey={expandedCard.id}
           className="flex flex-col h-full relative"
         >
-          {/* Action Menu */}
-          <div className="absolute top-4 right-4 z-50">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className="flex items-center justify-center w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation();
-                  }}
-                  onTouchEnd={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
-                >
-                  <MoreVertical className="h-6 w-6 text-gray-700" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg z-[100]">
-                <DropdownMenuItem 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    onLike(expandedCard.id, true);
-                    setTimeout(() => {
-                      const nextIndex = expandedCardIndex + 1;
-                      if (nextIndex < matches.length) {
-                        setExpandedCard(matches[nextIndex]);
-                        setExpandedCardIndex(nextIndex);
-                      } else {
-                        setExpandedCard(null);
-                      }
-                    }, 100);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Users className="h-4 w-4 mr-2 text-green-600" />
-                  Accept for all of my items
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    onReject(expandedCard.id, true);
-                    setTimeout(() => {
-                      const nextIndex = expandedCardIndex + 1;
-                      if (nextIndex < matches.length) {
-                        setExpandedCard(matches[nextIndex]);
-                        setExpandedCardIndex(nextIndex);
-                      } else {
-                        setExpandedCard(null);
-                      }
-                    }, 100);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Users className="h-4 w-4 mr-2 text-red-600" />
-                  Reject for all of my items
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    onReport(expandedCard.id); 
-                  }} 
-                  className="cursor-pointer text-red-600"
-                >
-                  <Flag className="h-4 w-4 mr-2" />
-                  Report item
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    handleCloseExpanded();
-                  }} 
-                  className="cursor-pointer"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Close
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
           {/* Full-height scrollable container */}
           <div 
             className="flex-1 overflow-y-scroll overscroll-contain" 
