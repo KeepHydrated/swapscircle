@@ -241,7 +241,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             style={{ WebkitOverflowScrolling: 'touch' }}
           >
             {/* Image at the top - normal height, not full screen */}
-            <div className="w-full h-80 relative overflow-hidden">
+            <div className="w-full h-80 relative overflow-hidden pointer-events-none">
               <img
                 src={expandedCard.image}
                 alt={expandedCard.name}
@@ -322,7 +322,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             </div>
 
             {/* Action buttons */}
-            <div className="flex gap-4 mt-6 pb-8">
+            <div className="flex gap-4 mt-6 pb-32">
               <Button 
                 onClick={() => handlePopupSwipe("left")}
                 variant="outline"
