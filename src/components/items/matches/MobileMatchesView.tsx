@@ -161,16 +161,68 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           resetKey={expandedCard.id}
           className="flex flex-col h-full relative"
         >
-          {/* Close button */}
+          {/* Action Menu */}
           <div className="absolute top-4 right-4 z-10">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={handleCloseExpanded}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full"
-            >
-              <X className="h-6 w-6 text-white" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <MoreVertical className="h-5 w-5 text-gray-700" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg z-[100]">
+                <DropdownMenuItem 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    onLike(expandedCard.id, true); 
+                    handlePopupSwipe("right");
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Users className="h-4 w-4 mr-2 text-green-600" />
+                  Accept for all of my items
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    onReject(expandedCard.id, true); 
+                    handlePopupSwipe("left");
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Users className="h-4 w-4 mr-2 text-red-600" />
+                  Reject for all of my items
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    onReport(expandedCard.id); 
+                  }} 
+                  className="cursor-pointer text-red-600"
+                >
+                  <Flag className="h-4 w-4 mr-2" />
+                  Report item
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    handleCloseExpanded();
+                  }} 
+                  className="cursor-pointer"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Close
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Full-height scrollable container */}
