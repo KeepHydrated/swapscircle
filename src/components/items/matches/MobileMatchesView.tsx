@@ -252,9 +252,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               data-scrollable="true"
               className="flex-1 overflow-y-auto overscroll-contain bg-card" 
               style={{ WebkitOverflowScrolling: 'touch' }}
-              onTouchStart={(e) => e.stopPropagation()}
-              onTouchMove={(e) => e.stopPropagation()}
-              onTouchEnd={(e) => e.stopPropagation()}
             >
               <div className="p-6">
             {/* Title */}
