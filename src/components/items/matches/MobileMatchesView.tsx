@@ -154,7 +154,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   // Full-screen card view
   if (expandedCard) {
     return (
-      <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col overflow-y-auto">
+      <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col">
         {/* Action Menu - Outside of swipe card to avoid touch conflicts */}
         <div className="absolute top-4 right-4 z-50 pointer-events-auto">
           <DropdownMenu>
@@ -228,21 +228,22 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </DropdownMenu>
         </div>
 
-        {/* Image at the top - swipeable */}
-        <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
-          <img
-            src={expandedCard.image}
-            alt={expandedCard.name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = '/placeholder.svg';
-            }}
-          />
-        </div>
+        {/* Single scrollable container for entire content */}
+        <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+          {/* Image at the top */}
+          <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
+            <img
+              src={expandedCard.image}
+              alt={expandedCard.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg';
+              }}
+            />
+          </div>
 
-        {/* Scrollable content section */}
-        <div className="flex-1 bg-card overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <div className="p-6">
+          {/* Content section */}
+          <div className="bg-card p-6">
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           
