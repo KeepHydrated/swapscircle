@@ -312,7 +312,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             </div>
 
             {/* Action buttons */}
-            <div className="flex gap-4 mt-6 pb-32">
+            <div className="flex gap-4 mt-6 pb-8">
               <Button 
                 onClick={() => handlePopupSwipe("left")}
                 variant="outline"
