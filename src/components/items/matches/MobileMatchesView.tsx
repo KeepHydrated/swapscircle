@@ -334,36 +334,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                     e.currentTarget.src = '/placeholder.svg';
                   }}
                 />
-                
-                {/* Action Menu */}
-                <div className="absolute top-4 right-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="bg-white/20 hover:bg-white/30 backdrop-blur-sm"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreVertical className="h-4 w-4 text-white" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onLike(match.id, true); setCurrentIndex(prev => prev + 1); }}>
-                        <Users className="h-4 w-4 mr-2 text-green-600" />
-                        Accept for all of my items
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReject(match.id, true); setCurrentIndex(prev => prev + 1); }}>
-                        <Users className="h-4 w-4 mr-2 text-red-600" />
-                        Reject for all of my items
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReport(match.id); }} className="text-red-600">
-                        <Flag className="h-4 w-4 mr-2" />
-                        Report item
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
               </div>
 
                {/* Combined Content Section - Scrollable with visible scrollbar */}
