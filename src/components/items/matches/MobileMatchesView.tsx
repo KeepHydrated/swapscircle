@@ -333,8 +333,62 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   onError={(e) => {
                     e.currentTarget.src = '/placeholder.svg';
                   }}
-                />
-              </div>
+                 />
+                 
+                 {/* Action Menu - Mobile Optimized */}
+                 <div className="absolute top-4 left-4 z-20">
+                   <DropdownMenu>
+                     <DropdownMenuTrigger asChild>
+                       <button
+                         className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           e.preventDefault();
+                         }}
+                         onTouchEnd={(e) => {
+                           e.stopPropagation();
+                         }}
+                       >
+                         <MoreVertical className="h-5 w-5 text-gray-700" />
+                       </button>
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent align="start" className="w-56 bg-white border border-gray-200 shadow-lg z-[100]">
+                       <DropdownMenuItem 
+                         onClick={(e) => { 
+                           e.stopPropagation(); 
+                           onLike(match.id, true); 
+                           setTimeout(() => setCurrentIndex(prev => prev + 1), 100);
+                         }}
+                         className="cursor-pointer"
+                       >
+                         <Users className="h-4 w-4 mr-2 text-green-600" />
+                         Accept for all of my items
+                       </DropdownMenuItem>
+                       <DropdownMenuItem 
+                         onClick={(e) => { 
+                           e.stopPropagation(); 
+                           onReject(match.id, true); 
+                           setTimeout(() => setCurrentIndex(prev => prev + 1), 100);
+                         }}
+                         className="cursor-pointer"
+                       >
+                         <Users className="h-4 w-4 mr-2 text-red-600" />
+                         Reject for all of my items
+                       </DropdownMenuItem>
+                       <DropdownMenuItem 
+                         onClick={(e) => { 
+                           e.stopPropagation(); 
+                           onReport(match.id); 
+                         }} 
+                         className="cursor-pointer text-red-600"
+                       >
+                         <Flag className="h-4 w-4 mr-2" />
+                         Report item
+                       </DropdownMenuItem>
+                     </DropdownMenuContent>
+                   </DropdownMenu>
+                 </div>
+               </div>
 
                {/* Combined Content Section - Scrollable with visible scrollbar */}
                <div className="flex-1 bg-card overflow-y-auto" style={{ minHeight: "200px" }}>
