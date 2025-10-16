@@ -75,16 +75,10 @@ export const AdvancedSwipeCard = ({
     const absDeltaX = Math.abs(deltaX);
     const absDeltaY = Math.abs(deltaY);
     
-    // Check for downward swipe
-    if (deltaY > 50 && absDeltaY > absDeltaX) {
-      console.log('Swiped down!');
-      // Animate down and trigger up action (super like)
-      setTimeout(() => {
-        onSwipe("up");
-      }, 150);
-    }
-    // Check for horizontal swipe
-    else if (absDeltaX > 80 && absDeltaX > absDeltaY * 1.2) {
+    // Disable downward swipe (super like) - removed this feature
+    
+    // Check for horizontal swipe only
+    if (absDeltaX > 80 && absDeltaX > absDeltaY * 1.2) {
       if (deltaX > 0) {
         console.log('Swiped right!');
         setTimeout(() => {

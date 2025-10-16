@@ -154,7 +154,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   // Full-screen card view
   if (expandedCard) {
     return (
-      <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col">
+      <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col overflow-y-auto">
         {/* Action Menu - Outside of swipe card to avoid touch conflicts */}
         <div className="absolute top-4 right-4 z-50 pointer-events-auto">
           <DropdownMenu>
@@ -228,32 +228,21 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </DropdownMenu>
         </div>
 
-        <AdvancedSwipeCard
-          onSwipe={handlePopupSwipe}
-          isTop={true}
-          resetKey={expandedCard.id}
-          className="flex flex-col h-full relative"
-        >
-          {/* Full-height scrollable container */}
-          <div 
-            data-scrollable="true"
-            className="flex-1 overflow-y-scroll overscroll-contain" 
-            style={{ WebkitOverflowScrolling: 'touch' }}
-          >
-            {/* Image at the top - normal height, not full screen */}
-            <div className="w-full h-80 relative overflow-hidden pointer-events-none">
-              <img
-                src={expandedCard.image}
-                alt={expandedCard.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
-              />
-            </div>
+        {/* Image at the top - swipeable */}
+        <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
+          <img
+            src={expandedCard.image}
+            alt={expandedCard.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = '/placeholder.svg';
+            }}
+          />
+        </div>
 
-            {/* Content section below image for normal downward scrolling */}
-            <div className="bg-card p-6">
+        {/* Scrollable content section */}
+        <div className="flex-1 bg-card overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="p-6">
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           
@@ -340,9 +329,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 Like
               </Button>
             </div>
-           </div>
-         </div>
-        </AdvancedSwipeCard>
+          </div>
+        </div>
       </div>
     );
   }
