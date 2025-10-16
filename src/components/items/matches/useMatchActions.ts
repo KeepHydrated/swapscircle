@@ -158,16 +158,6 @@ export const useMatchActions = (
                 },
               });
             }, 2000); // Give user time to see the success message
-          } else {
-            // Show like message since no match occurred
-            const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
-            toast.success(likeMessage);
-          }
-        } else {
-          // Show like message if no match occurred
-          if (!isCurrentlyLiked) {
-            const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
-            toast.success(likeMessage);
           }
         }
       } catch (error) {
@@ -184,7 +174,6 @@ export const useMatchActions = (
     updateCurrentState({ 
       likedItems: { ...currentState.likedItems, [id]: !isCurrentlyLiked } 
     });
-    toast.info('Like/unlike works only for real items (not demo items)!');
   };
 
   // Handle rejecting an item (removing it from matches)
@@ -209,8 +198,6 @@ export const useMatchActions = (
         const result = await rejectItem(id, global ? undefined : selectedItemId);
         
         if (result) {
-          const message = global ? 'Item rejected for all your items' : 'Item removed from matches';
-          toast.success(message);
           // Refresh matches to apply bidirectional filtering
           if (onRefreshMatches) {
             setTimeout(() => onRefreshMatches(), 500); // Small delay to ensure DB is updated
@@ -220,7 +207,6 @@ export const useMatchActions = (
           updateCurrentState({ 
             removedItems: currentState.removedItems.filter(itemId => itemId !== id) 
           });
-          toast.error('Failed to reject item');
         }
       } catch (error) {
         console.error('DB reject error:', error);
@@ -228,10 +214,7 @@ export const useMatchActions = (
         updateCurrentState({ 
           removedItems: currentState.removedItems.filter(itemId => itemId !== id) 
         });
-        toast.error('Failed to reject item');
       }
-    } else {
-      toast.success('Item removed from matches');
     }
   };
 
