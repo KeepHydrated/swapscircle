@@ -178,7 +178,7 @@ export const AdvancedSwipeCard = ({
         ...getSwipeTransform(),
         zIndex: isTop ? 10 : 5,
       }}
-      className={`absolute inset-0 touch-none select-none ${className}`}
+      className={`absolute inset-0 select-none ${className}`}
     >
       <div className="w-full h-full relative">
         {/* Overlay feedback for left swipe */}
