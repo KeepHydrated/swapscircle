@@ -29,6 +29,13 @@ export const AdvancedSwipeCard = ({
   // ==================== TOUCH HANDLERS ====================
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isTop) return;
+    
+    // Don't handle swipe if touch started on a scrollable element
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-scrollable="true"]')) {
+      return;
+    }
+    
     const touch = e.touches[0];
     setTouchStart({ x: touch.clientX, y: touch.clientY });
     setTouchCurrent({ x: touch.clientX, y: touch.clientY });
