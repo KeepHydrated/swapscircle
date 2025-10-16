@@ -228,22 +228,30 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </DropdownMenu>
         </div>
 
-        {/* Single scrollable container for entire content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-          {/* Image at the top */}
-          <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
-            <img
-              src={expandedCard.image}
-              alt={expandedCard.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = '/placeholder.svg';
-              }}
-            />
-          </div>
+        {/* Swipeable Image Section - Fixed at top */}
+        <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
+          <AdvancedSwipeCard
+            onSwipe={handlePopupSwipe}
+            isTop={true}
+            resetKey={expandedCard.id}
+            className="w-full h-full"
+          >
+            <div className="w-full h-full">
+              <img
+                src={expandedCard.image}
+                alt={expandedCard.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+              />
+            </div>
+          </AdvancedSwipeCard>
+        </div>
 
-          {/* Content section */}
-          <div className="bg-card p-6">
+        {/* Scrollable Content Section */}
+        <div className="flex-1 overflow-y-auto overscroll-contain bg-card" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="p-6">
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           
@@ -312,7 +320,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
             </div>
 
             {/* Action buttons */}
-            <div className="flex gap-4 mt-6 pb-32">
+            <div className="flex gap-4 mt-6 pb-8">
               <Button 
                 onClick={() => handlePopupSwipe("left")}
                 variant="outline"
