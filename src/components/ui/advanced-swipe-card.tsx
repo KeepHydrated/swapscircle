@@ -20,192 +20,196 @@ export const AdvancedSwipeCard = ({
   style = {},
   className = ""
 }: AdvancedSwipeCardProps) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragDistance, setDragDistance] = useState({ x: 0, y: 0 });
-  const [rotation, setRotation] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
+  // ==================== STATE ====================
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [touchCurrent, setTouchCurrent] = useState<{ x: number; y: number } | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const startPos = useRef({ x: 0, y: 0 });
-  const lastMoveTime = useRef(0);
 
-  const handleStart = (clientX: number, clientY: number) => {
+  // ==================== TOUCH HANDLERS ====================
+  const handleTouchStart = (e: React.TouchEvent) => {
     if (!isTop) return;
-    startPos.current = { x: clientX, y: clientY };
-    setIsScrolling(false);
-    lastMoveTime.current = Date.now();
+    const touch = e.touches[0];
+    setTouchStart({ x: touch.clientX, y: touch.clientY });
+    setTouchCurrent({ x: touch.clientX, y: touch.clientY });
+    setIsSwiping(true);
   };
 
-  const handleMove = (clientX: number, clientY: number) => {
-    if (!isTop || isScrolling) return;
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart || !isTop) return;
     
-    const deltaX = clientX - startPos.current.x;
-    const deltaY = clientY - startPos.current.y;
-    const deltaXAbs = Math.abs(deltaX);
-    const deltaYAbs = Math.abs(deltaY);
+    const touch = e.touches[0];
+    setTouchCurrent({ x: touch.clientX, y: touch.clientY });
     
-    // If movement is primarily vertical and significant, treat as scroll
-    if (deltaYAbs > deltaXAbs && deltaYAbs > 10) {
-      console.log('🔥 SWIPE CARD: Vertical movement detected, setting isScrolling=true');
-      setIsScrolling(true);
-      return;
-    }
+    const deltaX = Math.abs(touch.clientX - touchStart.x);
+    const deltaY = Math.abs(touch.clientY - touchStart.y);
     
-    // Only start dragging if movement is primarily horizontal
-    if (deltaXAbs > 10 && deltaXAbs > deltaYAbs) {
-      setIsDragging(true);
-      setDragDistance({ x: deltaX, y: deltaY });
-      setRotation(0);
+    // Prevent default for horizontal swipes OR downward swipes
+    if ((deltaX > deltaY && deltaX > 20) || (touch.clientY > touchStart.y && deltaY > 20)) {
+      e.preventDefault();
     }
   };
 
-  const handleEnd = () => {
-    if (!isDragging || !isTop || isScrolling) {
-      // If not dragging and onTap exists, this was a tap
-      if (!isDragging && !isScrolling && onTap) {
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchCurrent || !isTop) {
+      setIsSwiping(false);
+      setTouchStart(null);
+      setTouchCurrent(null);
+      
+      // If not swiping and onTap exists, this was a tap
+      if (!isSwiping && onTap) {
         onTap();
       }
-      setIsDragging(false);
-      setIsScrolling(false);
-      setDragDistance({ x: 0, y: 0 });
-      setRotation(0);
       return;
     }
+
+    const deltaX = touchCurrent.x - touchStart.x;
+    const deltaY = touchCurrent.y - touchStart.y;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
     
-    setIsDragging(false);
-    const threshold = 100;
-    
-    if (Math.abs(dragDistance.x) > threshold) {
-      // Animate out completely before calling onSwipe
-      const direction = dragDistance.x > 0 ? "right" : "left";
-      const exitDistance = direction === "right" ? 500 : -500;
-      setDragDistance({ x: exitDistance, y: dragDistance.y });
-      
-      setTimeout(() => {
-        onSwipe(direction);
-        // Reset will happen via resetKey change
-      }, 150);
-    } else if (dragDistance.y < -threshold) {
-      // Animate up and out
-      setDragDistance({ x: dragDistance.x, y: -500 });
-      
+    // Check for downward swipe
+    if (deltaY > 50 && absDeltaY > absDeltaX) {
+      console.log('Swiped down!');
+      // Animate down and trigger up action (super like)
       setTimeout(() => {
         onSwipe("up");
-        // Reset will happen via resetKey change
       }, 150);
+    }
+    // Check for horizontal swipe
+    else if (absDeltaX > 80 && absDeltaX > absDeltaY * 1.2) {
+      if (deltaX > 0) {
+        console.log('Swiped right!');
+        setTimeout(() => {
+          onSwipe("right");
+        }, 150);
+      } else {
+        console.log('Swiped left!');
+        setTimeout(() => {
+          onSwipe("left");
+        }, 150);
+      }
     } else {
-      // Reset position if swipe wasn't strong enough
-      setDragDistance({ x: 0, y: 0 });
-      setRotation(0);
-      // This was a tap
+      // Not a strong enough swipe, check for tap
       if (onTap) {
         onTap();
       }
     }
-    
-    setIsScrolling(false);
+
+    // Reset swipe state
+    setIsSwiping(false);
+    setTouchStart(null);
+    setTouchCurrent(null);
   };
 
   // Reset card position when resetKey changes
   useEffect(() => {
-    setDragDistance({ x: 0, y: 0 });
-    setRotation(0);
-    setIsDragging(false);
-    setIsScrolling(false);
+    setTouchStart(null);
+    setTouchCurrent(null);
+    setIsSwiping(false);
   }, [resetKey]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Prevent swipe on mouse for better desktop experience
-    e.preventDefault();
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    // Disabled for better desktop experience
-  };
-
-  const handleMouseUp = () => {
-    // Disabled for better desktop experience
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    console.log('🔥 SWIPE: Touch start detected', { isTop });
-    const touch = e.touches[0];
-    handleStart(touch.clientX, touch.clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    handleMove(touch.clientX, touch.clientY);
-    
-    // Only prevent default if we're actively dragging horizontally, not scrolling
-    if (isDragging && !isScrolling && Math.abs(dragDistance.x) > 20) {
-      e.preventDefault();
+  // ==================== VISUAL FEEDBACK ====================
+  // Calculate transform for swipe animation
+  const getSwipeTransform = () => {
+    if (!touchStart || !touchCurrent || !isSwiping) {
+      return {
+        transform: 'translate(0px, 0px) rotate(0deg)',
+        transition: 'transform 0.3s ease-out',
+      };
     }
-    // Allow normal scrolling when isScrolling is true or when not dragging
+    
+    const deltaX = touchCurrent.x - touchStart.x;
+    const deltaY = touchCurrent.y - touchStart.y;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
+    
+    // Check if this is a downward swipe
+    if (deltaY > 20 && absDeltaY > absDeltaX * 1.5) {
+      return {
+        transform: `translate(0px, ${deltaY}px) scale(${Math.max(0.8, 1 - deltaY / 500)})`,
+        transition: 'none',
+      };
+    }
+    
+    // Only apply horizontal transform if this is clearly a horizontal swipe
+    if (absDeltaX < 20 || absDeltaX <= absDeltaY * 1.5) {
+      return {
+        transform: 'translate(0px, 0px) rotate(0deg)',
+        transition: 'transform 0.3s ease-out',
+      };
+    }
+    
+    const rotation = deltaX / 20; // Subtle rotation based on swipe
+
+    return {
+      transform: `translate(${deltaX}px, 0px) rotate(${rotation}deg)`,
+      transition: 'none',
+    };
   };
 
-  const handleTouchEnd = () => {
-    handleEnd();
+  // Calculate overlay opacity for visual feedback
+  const getOverlayOpacity = () => {
+    if (!touchStart || !touchCurrent || !isSwiping) return 0;
+    const deltaX = touchCurrent.x - touchStart.x;
+    const deltaY = touchCurrent.y - touchStart.y;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
+    
+    // Check for downward swipe
+    if (deltaY > 20 && absDeltaY > absDeltaX * 1.5) {
+      return Math.min(deltaY / 150, 1);
+    }
+    
+    // Only show overlay for clear horizontal swipes
+    if (absDeltaX < 20 || absDeltaX <= absDeltaY * 1.5) return 0;
+    
+    return Math.min(absDeltaX / 150, 1);
   };
-
-  useEffect(() => {
-    // Removed mouse event listeners for better desktop scrolling
-  }, [isDragging]);
-
-  const getSwipeOpacity = () => {
-    const opacity = Math.abs(dragDistance.x) / 150;
-    return Math.min(opacity, 0.8);
-  };
-
-  const transform = `translate(${dragDistance.x}px, ${dragDistance.y}px)`;
 
   return (
     <div
       ref={cardRef}
-      className={`absolute inset-0 select-none cursor-grab ${isDragging ? "cursor-grabbing" : ""} ${className}`}
-      style={{
-        ...style,
-        transform,
-        zIndex: isTop ? 10 : 5,
-      }}
-      onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={{
+        ...style,
+        ...getSwipeTransform(),
+        zIndex: isTop ? 10 : 5,
+      }}
+      className={`absolute inset-0 touch-none select-none ${className}`}
     >
       <div className="w-full h-full relative">
-        {/* Swipe Indicators */}
-        {isDragging && (
-          <>
-            <div
-              className="absolute top-8 left-8 z-20 border-4 border-like rounded-xl px-4 py-2 bg-like/10 backdrop-blur-sm"
-              style={{
-                opacity: dragDistance.x > 50 ? getSwipeOpacity() : 0,
-                transform: `rotate(-20deg)`,
-              }}
-            >
-              <span className="text-like font-bold text-xl">LIKE</span>
-            </div>
+        {/* Overlay feedback for left swipe */}
+        <div 
+          className="absolute inset-0 bg-dislike flex items-center justify-center rounded-lg z-20"
+          style={{ 
+            opacity: touchCurrent && touchStart && touchCurrent.x < touchStart.x ? getOverlayOpacity() : 0 
+          }}
+        >
+          <span className="text-white text-4xl font-bold">✕</span>
+        </div>
+        
+        {/* Overlay feedback for right swipe */}
+        <div 
+          className="absolute inset-0 bg-like flex items-center justify-center rounded-lg z-20"
+          style={{ 
+            opacity: touchCurrent && touchStart && touchCurrent.x > touchStart.x ? getOverlayOpacity() : 0 
+          }}
+        >
+          <span className="text-white text-4xl font-bold">✓</span>
+        </div>
 
-            <div
-              className="absolute top-8 right-8 z-20 border-4 border-dislike rounded-xl px-4 py-2 bg-dislike/10 backdrop-blur-sm"
-              style={{
-                opacity: dragDistance.x < -50 ? getSwipeOpacity() : 0,
-                transform: `rotate(20deg)`,
-              }}
-            >
-              <span className="text-dislike font-bold text-xl">NOPE</span>
-            </div>
-
-            <div
-              className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 border-4 border-superlike rounded-xl px-4 py-2 bg-superlike/10 backdrop-blur-sm"
-              style={{
-                opacity: dragDistance.y < -50 ? getSwipeOpacity() : 0,
-              }}
-            >
-              <span className="text-superlike font-bold text-xl">SUPER LIKE</span>
-            </div>
-          </>
-        )}
+        {/* Overlay feedback for down swipe (super like) */}
+        <div 
+          className="absolute inset-0 bg-superlike flex items-center justify-center rounded-lg z-20"
+          style={{ 
+            opacity: touchCurrent && touchStart && touchCurrent.y > touchStart.y ? getOverlayOpacity() : 0 
+          }}
+        >
+          <span className="text-white text-4xl font-bold">⭐</span>
+        </div>
 
         {children}
       </div>
