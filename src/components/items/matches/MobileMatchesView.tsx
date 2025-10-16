@@ -236,10 +236,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         >
           {/* Full-height scrollable container */}
           <div 
-            className="flex-1 overflow-y-scroll overscroll-contain" 
+            className="flex-1 overflow-y-scroll overscroll-contain pointer-events-auto" 
             style={{ WebkitOverflowScrolling: 'touch' }}
-            onTouchStart={() => console.log('🔥 POPUP: Touch start on scrollable area')}
-            onScroll={() => console.log('🔥 POPUP: Scrolling detected')}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
           >
             {/* Image at the top - normal height, not full screen */}
             <div className="w-full h-80 relative overflow-hidden">
