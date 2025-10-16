@@ -214,16 +214,6 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 <Flag className="h-4 w-4 mr-2" />
                 Report item
               </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={(e) => { 
-                  e.stopPropagation(); 
-                  handleCloseExpanded();
-                }} 
-                className="cursor-pointer"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Close
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
