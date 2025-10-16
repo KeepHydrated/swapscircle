@@ -228,15 +228,15 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </DropdownMenu>
         </div>
 
-        <AdvancedSwipeCard
-          onSwipe={handlePopupSwipe}
-          isTop={true}
-          resetKey={expandedCard.id}
-          className="flex flex-col h-full"
-        >
-          <div className="flex flex-col h-full">
-            {/* Image Section */}
-            <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
+        {/* Swipeable Image Section - Fixed */}
+        <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
+          <AdvancedSwipeCard
+            onSwipe={handlePopupSwipe}
+            isTop={true}
+            resetKey={expandedCard.id}
+            className="w-full h-full"
+          >
+            <div className="w-full h-full">
               <img
                 src={expandedCard.image}
                 alt={expandedCard.name}
@@ -246,13 +246,14 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 }}
               />
             </div>
+          </AdvancedSwipeCard>
+        </div>
 
-            {/* Scrollable Content Section */}
-            <div 
-              data-scrollable="true"
-              className="flex-1 overflow-y-auto overscroll-contain bg-card" 
-              style={{ WebkitOverflowScrolling: 'touch' }}
-            >
+        {/* Scrollable Content Section - Independent */}
+        <div 
+          className="flex-1 overflow-y-auto overscroll-contain bg-card" 
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
               <div className="p-6">
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
@@ -340,10 +341,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 Like
               </Button>
             </div>
-              </div>
-            </div>
           </div>
-        </AdvancedSwipeCard>
+        </div>
       </div>
     );
   }
