@@ -231,7 +231,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
         {/* Single scrollable container for entire content */}
         <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
           {/* Image at the top */}
-          <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
+          <div className="w-full h-80 relative overflow-hidden">
             <img
               src={expandedCard.image}
               alt={expandedCard.name}
