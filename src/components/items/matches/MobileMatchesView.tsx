@@ -162,28 +162,40 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           className="flex flex-col h-full relative"
         >
           {/* Action Menu */}
-          <div className="absolute top-4 right-4 z-10">
+          <div className="absolute top-4 right-4 z-50">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+                  className="flex items-center justify-center w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                   }}
-                  onTouchEnd={(e) => {
+                  onTouchStart={(e) => {
                     e.stopPropagation();
                   }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
                 >
-                  <MoreVertical className="h-5 w-5 text-gray-700" />
+                  <MoreVertical className="h-6 w-6 text-gray-700" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg z-[100]">
                 <DropdownMenuItem 
                   onClick={(e) => { 
                     e.stopPropagation(); 
-                    onLike(expandedCard.id, true); 
-                    handlePopupSwipe("right");
+                    onLike(expandedCard.id, true);
+                    setTimeout(() => {
+                      const nextIndex = expandedCardIndex + 1;
+                      if (nextIndex < matches.length) {
+                        setExpandedCard(matches[nextIndex]);
+                        setExpandedCardIndex(nextIndex);
+                      } else {
+                        setExpandedCard(null);
+                      }
+                    }, 100);
                   }}
                   className="cursor-pointer"
                 >
@@ -193,8 +205,16 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 <DropdownMenuItem 
                   onClick={(e) => { 
                     e.stopPropagation(); 
-                    onReject(expandedCard.id, true); 
-                    handlePopupSwipe("left");
+                    onReject(expandedCard.id, true);
+                    setTimeout(() => {
+                      const nextIndex = expandedCardIndex + 1;
+                      if (nextIndex < matches.length) {
+                        setExpandedCard(matches[nextIndex]);
+                        setExpandedCardIndex(nextIndex);
+                      } else {
+                        setExpandedCard(null);
+                      }
+                    }, 100);
                   }}
                   className="cursor-pointer"
                 >
