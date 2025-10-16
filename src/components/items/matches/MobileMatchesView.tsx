@@ -230,16 +230,23 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 
         {/* Single scrollable container for entire content */}
         <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-          {/* Image at the top */}
+          {/* Image at the top with swipe functionality */}
           <div className="w-full h-80 relative overflow-hidden">
-            <img
-              src={expandedCard.image}
-              alt={expandedCard.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = '/placeholder.svg';
-              }}
-            />
+            <AdvancedSwipeCard
+              onSwipe={handlePopupSwipe}
+              isTop={true}
+              resetKey={expandedCard.id}
+              className="w-full h-full"
+            >
+              <img
+                src={expandedCard.image}
+                alt={expandedCard.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+              />
+            </AdvancedSwipeCard>
           </div>
 
           {/* Content section */}
