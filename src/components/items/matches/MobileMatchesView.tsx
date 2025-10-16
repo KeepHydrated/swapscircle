@@ -155,7 +155,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   if (expandedCard) {
     return (
       <div className="fixed top-16 left-0 right-0 bottom-0 bg-background z-40 flex flex-col">
-        {/* Action Menu - Outside of swipe card to avoid touch conflicts */}
+        {/* Action Menu */}
         <div className="absolute top-4 right-4 z-50 pointer-events-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -228,15 +228,15 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
           </DropdownMenu>
         </div>
 
-        {/* Swipeable Image Section - Fixed at top */}
-        <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
-          <AdvancedSwipeCard
-            onSwipe={handlePopupSwipe}
-            isTop={true}
-            resetKey={expandedCard.id}
-            className="w-full h-full"
-          >
-            <div className="w-full h-full">
+        <AdvancedSwipeCard
+          onSwipe={handlePopupSwipe}
+          isTop={true}
+          resetKey={expandedCard.id}
+          className="flex flex-col h-full"
+        >
+          <div className="flex flex-col h-full">
+            {/* Image Section */}
+            <div className="w-full h-80 relative overflow-hidden flex-shrink-0">
               <img
                 src={expandedCard.image}
                 alt={expandedCard.name}
@@ -246,12 +246,14 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 }}
               />
             </div>
-          </AdvancedSwipeCard>
-        </div>
 
-        {/* Scrollable Content Section */}
-        <div className="flex-1 overflow-y-auto overscroll-contain bg-card" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <div className="p-6">
+            {/* Scrollable Content Section */}
+            <div 
+              data-scrollable="true"
+              className="flex-1 overflow-y-auto overscroll-contain bg-card" 
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
+              <div className="p-6">
             {/* Title */}
             <h1 className="text-2xl font-bold text-foreground mb-2">{expandedCard.name}</h1>
           
@@ -338,8 +340,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 Like
               </Button>
             </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </AdvancedSwipeCard>
       </div>
     );
   }
