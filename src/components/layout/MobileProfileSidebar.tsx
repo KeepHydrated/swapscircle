@@ -34,8 +34,8 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-80 bg-white pt-20">
-        <div className="px-4 py-2">
+      <SheetContent side="right" className="w-80 bg-white">
+        <div className="px-4 py-6">
           <div className="space-y-2">
             <Button variant="ghost" className="w-full justify-start h-12" asChild>
               <Link to="/profile" onClick={() => onOpenChange(false)}>
