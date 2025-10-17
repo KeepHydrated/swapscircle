@@ -287,10 +287,19 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   if (!item) return null;
 
   return (
-    <Dialog open={open} onOpenChange={v => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) onClose();
+    }}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent
         className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none"
+        onPointerDownOutside={(e) => {
+          // Only allow closing when clicking the dark overlay, not during scrolling
+          const target = e.target as HTMLElement;
+          if (target.closest('.overflow-x-auto, .overflow-y-auto, [data-radix-dialog-content]')) {
+            e.preventDefault();
+          }
+        }}
         onInteractOutside={(e) => {
           // Prevent closing when interacting with scrollable content
           const target = e.target as HTMLElement;
