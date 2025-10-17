@@ -336,7 +336,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 
   if (currentIndex >= matches.length) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center p-6 mt-32">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center p-6 mt-48">
         <div className="w-32 h-32 bg-gradient-primary rounded-full flex items-center justify-center mb-6 animate-bounce-in">
           <span className="text-4xl">🎉</span>
         </div>
