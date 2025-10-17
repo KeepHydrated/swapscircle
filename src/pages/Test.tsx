@@ -617,6 +617,7 @@ const Test: React.FC = () => {
                       onTouchStart={(e) => e.stopPropagation()}
                       onTouchMove={(e) => e.stopPropagation()}
                       onTouchEnd={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
                     >
                       <div className="flex gap-2 min-w-max">
                         {userItems.map((item) => (
@@ -786,6 +787,7 @@ const Test: React.FC = () => {
                                   onTouchStart={(e) => e.stopPropagation()}
                                   onTouchMove={(e) => e.stopPropagation()}
                                   onTouchEnd={(e) => e.stopPropagation()}
+                                  onPointerDown={(e) => e.stopPropagation()}
                                 >
                                   <div className="flex gap-2 min-w-max">
                                      {friendItems

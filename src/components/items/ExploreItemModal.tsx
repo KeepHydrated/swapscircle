@@ -291,6 +291,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
       <DialogOverlay className="bg-black/80" />
       <DialogContent
         className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none"
+        onInteractOutside={(e) => {
+          // Prevent closing when interacting with scrollable content
+          const target = e.target as HTMLElement;
+          if (target.closest('.overflow-x-auto, .overflow-y-auto')) {
+            e.preventDefault();
+          }
+        }}
       >
         <VisuallyHidden>
           <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
