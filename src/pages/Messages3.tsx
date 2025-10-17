@@ -14,11 +14,13 @@ import { likeItem, unlikeItem, fetchItemsWhoLikedMyItem } from '@/services/authS
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import SupportChat from '@/components/chat/SupportChat';
+import { useFirstTimeSwipes } from '@/hooks/useFirstTimeSwipes';
 
 const Messages3: React.FC = () => {
   // User's authentication and navigation
   const { user, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
+  const { shouldShowToast, incrementSwipeCount } = useFirstTimeSwipes();
   
   // Selected items state - needs to be declared early
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
@@ -93,9 +95,13 @@ const Messages3: React.FC = () => {
       
       if (isCurrentlyLiked) {
         result = await unlikeItem(itemId);
-        toast.success("Item unliked");
+        if (shouldShowToast) {
+          toast.success("Item unliked");
+        }
+        incrementSwipeCount();
       } else {
         result = await likeItem(itemId);
+        incrementSwipeCount();
         
         // Check for mutual match result
         if (result && typeof result === 'object' && 'success' in result && result.success) {
@@ -111,7 +117,9 @@ const Messages3: React.FC = () => {
               });
             }, 2000);
           } else {
-            toast.success("Item liked");
+            if (shouldShowToast) {
+              toast.success("Item liked");
+            }
           }
         }
       }
@@ -136,7 +144,10 @@ const Messages3: React.FC = () => {
       return updated.slice(0, 3); // Keep only last 3 actions
     });
     setRejectedLikedItems(prev => [...prev, itemId]);
-    toast.success('Item removed');
+    incrementSwipeCount();
+    if (shouldShowToast) {
+      toast.success('Item removed');
+    }
   };
 
   // Handle undo for items
