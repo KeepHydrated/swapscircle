@@ -79,28 +79,29 @@ export const AdvancedSwipeCard = ({
     
     // Check for horizontal swipe only
     if (absDeltaX > 80 && absDeltaX > absDeltaY * 1.2) {
+      // Reset swipe state BEFORE triggering callback to prevent double-swipes
+      setIsSwiping(false);
+      setTouchStart(null);
+      setTouchCurrent(null);
+      
       if (deltaX > 0) {
-        console.log('Swiped right!');
-        setTimeout(() => {
-          onSwipe("right");
-        }, 150);
+        console.log('🔥 SWIPE CARD: Swiped right!');
+        onSwipe("right");
       } else {
-        console.log('Swiped left!');
-        setTimeout(() => {
-          onSwipe("left");
-        }, 150);
+        console.log('🔥 SWIPE CARD: Swiped left!');
+        onSwipe("left");
       }
     } else {
+      // Reset swipe state
+      setIsSwiping(false);
+      setTouchStart(null);
+      setTouchCurrent(null);
+      
       // Not a strong enough swipe, check for tap
       if (onTap) {
         onTap();
       }
     }
-
-    // Reset swipe state
-    setIsSwiping(false);
-    setTouchStart(null);
-    setTouchCurrent(null);
   };
 
   // Reset card position when resetKey changes

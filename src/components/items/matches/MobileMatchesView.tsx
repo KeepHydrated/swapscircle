@@ -40,8 +40,12 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
 
   const handleSwipe = useCallback((direction: "left" | "right" | "up") => {
     console.log('🔥 MOBILE MATCHES: Swipe detected', { direction, currentIndex, isAnimating });
-    if (currentIndex >= matches.length || isAnimating) return;
+    if (currentIndex >= matches.length || isAnimating) {
+      console.log('🔥 MOBILE MATCHES: Swipe blocked - already animating or out of cards');
+      return;
+    }
 
+    console.log('🔥 MOBILE MATCHES: Processing swipe - setting isAnimating to true');
     setIsAnimating(true);
     const currentMatch = matches[currentIndex];
 
@@ -66,9 +70,10 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
     }
 
     setTimeout(() => {
+      console.log('🔥 MOBILE MATCHES: Advancing to next card');
       setCurrentIndex(prev => prev + 1);
       setIsAnimating(false);
-    }, 300);
+    }, 400);
   }, [currentIndex, matches, isAnimating, onLike, onReject, toast]);
 
   const handleButtonAction = (action: "like" | "dislike" | "superlike") => {
