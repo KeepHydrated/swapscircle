@@ -611,7 +611,13 @@ const Test: React.FC = () => {
                   </div>
                 ) : (
                   <div className="h-auto">
-                    <div className="overflow-x-auto overflow-y-hidden p-2">
+                    <div 
+                      className="overflow-x-auto overflow-y-hidden p-2"
+                      style={{ touchAction: 'pan-x' }}
+                      onTouchStart={(e) => e.stopPropagation()}
+                      onTouchMove={(e) => e.stopPropagation()}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                    >
                       <div className="flex gap-2 min-w-max">
                         {userItems.map((item) => (
                           <div key={item.id} className="flex-shrink-0 w-32 transform transition-all duration-200 hover:scale-105">
@@ -774,7 +780,13 @@ const Test: React.FC = () => {
                                );
                             } else {
                               return (
-                                <div className="overflow-x-auto overflow-y-hidden p-2">
+                                <div 
+                                  className="overflow-x-auto overflow-y-hidden p-2"
+                                  style={{ touchAction: 'pan-x' }}
+                                  onTouchStart={(e) => e.stopPropagation()}
+                                  onTouchMove={(e) => e.stopPropagation()}
+                                  onTouchEnd={(e) => e.stopPropagation()}
+                                >
                                   <div className="flex gap-2 min-w-max">
                                      {friendItems
                                        .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
