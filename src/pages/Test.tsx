@@ -10,6 +10,7 @@ import SupportChat from '@/components/chat/SupportChat';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SwipeCards from '@/components/ui/swipe-cards';
 import SEOHelmet from '@/components/SEOHelmet';
+import { TrendingItems } from '@/components/trending/TrendingItems';
 
 import { useDbItems } from '@/hooks/useDbItems';
 import { useUserItems } from '@/hooks/useUserItems';
@@ -818,11 +819,7 @@ const Test: React.FC = () => {
                    </TabsContent>
 
                    <TabsContent value="trending" className="flex-1 mt-0">
-                     <div className="h-full flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                       <div className="text-4xl mb-3">🔥</div>
-                       <p className="text-base font-medium mb-1">Trending Items</p>
-                       <p className="text-sm">Discover what's popular in your area</p>
-                     </div>
+                     <TrendingItems />
                    </TabsContent>
                  </Tabs>
               </div>
