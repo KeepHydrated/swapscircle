@@ -61,7 +61,7 @@ const TestPage = () => {
               A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.
             </p>
             
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b">
               <div>
                 <p className="text-sm font-semibold">Electronics</p>
               </div>
