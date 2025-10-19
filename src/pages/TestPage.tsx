@@ -55,25 +55,25 @@ const TestPage = () => {
               <X className="w-6 h-6" />
             </Button>
             
-            <h1 className="text-4xl font-bold mb-4">Sample Match - Vintage Camera</h1>
+            <h1 className="text-2xl font-bold mb-3">Sample Match - Vintage Camera</h1>
             
-            <p className="text-muted-foreground text-lg mb-8">
+            <p className="text-muted-foreground text-sm mb-6">
               A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.
             </p>
             
-            <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <p className="text-lg font-semibold">Electronics</p>
+                <p className="text-sm font-semibold">Electronics</p>
               </div>
               <div>
-                <p className="text-lg font-semibold">vintage</p>
+                <p className="text-sm font-semibold">vintage</p>
               </div>
               
               <div>
-                <p className="text-lg font-semibold">Good</p>
+                <p className="text-sm font-semibold">Good</p>
               </div>
               <div>
-                <p className="text-lg font-semibold">$200 - $400</p>
+                <p className="text-sm font-semibold">$200 - $400</p>
               </div>
             </div>
             
@@ -93,7 +93,7 @@ const TestPage = () => {
               
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold text-lg">sample_photographer</p>
+                  <p className="font-semibold text-base">sample_photographer</p>
                   <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
                   <span className="text-muted-foreground">No reviews</span>
                 </div>
