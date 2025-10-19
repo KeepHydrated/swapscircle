@@ -1,108 +1,135 @@
+import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import { X, Heart, ChevronRight, Star, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { X, Heart, ArrowLeft, ArrowRight, MoreVertical, Repeat } from "lucide-react";
 
 const TestPage = () => {
+  const allImages = [
+    "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=500&fit=crop"
+  ];
+  const [slide, setSlide] = useState(0);
+
   return (
     <MainLayout>
-      <div className="container mx-auto p-6 flex items-center justify-center min-h-screen">
-        <div className="w-full max-w-5xl bg-card rounded-3xl shadow-2xl flex overflow-hidden">
-          {/* Left Side - Image */}
-          <div className="w-1/2 bg-muted p-12 flex items-center justify-center relative">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-6 left-6 bg-background rounded-full w-12 h-12"
-            >
-              <div className="flex flex-col gap-1">
-                <div className="w-1 h-1 rounded-full bg-foreground"></div>
-                <div className="w-1 h-1 rounded-full bg-foreground"></div>
-                <div className="w-1 h-1 rounded-full bg-foreground"></div>
-              </div>
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-6 left-1/2 -translate-x-1/2 bg-background rounded-full w-14 h-14"
-            >
-              <X className="w-6 h-6" />
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-6 right-1/2 translate-x-1/2 bg-background rounded-full w-14 h-14 ml-20"
-            >
-              <Heart className="w-6 h-6" />
-            </Button>
-            
-            <img 
-              src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=500&fit=crop" 
-              alt="Vintage Camera" 
-              className="w-full h-auto object-contain max-h-96"
+      <div className="container mx-auto p-6 flex items-center justify-center min-h-screen bg-black/80">
+        <div className="max-w-4xl w-[97vw] max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative flex">
+          
+          {/* Image Section */}
+          <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
+            <img
+              src={allImages[slide]}
+              alt="Sample Match - Vintage Camera"
+              className="object-cover w-full h-full"
+              style={{ minHeight: 320 }}
             />
+            
+            {/* Bottom navigation for multiple images */}
+            {allImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+                <button
+                  onClick={() => setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))}
+                  className="bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition"
+                  aria-label="Previous"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                
+                <div className="flex items-center gap-1.5">
+                  {allImages.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        slide === i ? "bg-white" : "bg-white/60"
+                      }`}
+                      onClick={() => setSlide(i)}
+                      aria-label={`Go to image ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() => setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))}
+                  className="bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition"
+                  aria-label="Next"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+            
+            {/* Left 3-dots menu */}
+            <div className="absolute top-4 left-4 z-30">
+              <button
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center"
+                aria-label="More actions"
+              >
+                <MoreVertical className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            
+            {/* Top-right buttons */}
+            <div className="absolute top-4 right-4 flex gap-3 z-20">
+              <button
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 cursor-pointer transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+              <button
+                className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 cursor-pointer transition-colors"
+                aria-label="Like"
+              >
+                <Heart className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
           </div>
           
-          {/* Right Side - Details */}
-          <div className="w-1/2 p-12 flex flex-col relative">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-6 right-6 rounded-full"
-            >
-              <X className="w-6 h-6" />
-            </Button>
-            
-            <h1 className="text-2xl font-bold mb-3">Sample Match - Vintage Camera</h1>
-            
-            <p className="text-muted-foreground text-sm mb-6">
-              A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b">
+          {/* Details Section */}
+          <div className="flex-1 flex flex-col px-8 py-7 justify-start overflow-y-auto">
+            {/* Item details */}
+            <div className="mb-8">
               <div>
-                <p className="text-sm font-semibold">Electronics</p>
-              </div>
-              <div>
-                <p className="text-sm font-semibold">vintage</p>
-              </div>
-              
-              <div>
-                <p className="text-sm font-semibold">Good</p>
-              </div>
-              <div>
-                <p className="text-sm font-semibold">$200 - $400</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Sample Match - Vintage Camera
+                </h2>
+                <p className="text-gray-700 text-base leading-relaxed mb-4">
+                  A beautiful vintage camera in excellent working condition. Perfect for photography enthusiasts or collectors.
+                </p>
+                
+                {/* Item Details Grid */}
+                <div className="grid grid-cols-2 gap-4 text-sm pb-6 border-b">
+                  <div className="font-medium text-gray-900">Electronics</div>
+                  <div className="font-medium text-gray-900">vintage</div>
+                  <div className="font-medium text-gray-900">Good</div>
+                  <div className="font-medium text-gray-900">$200 - $400</div>
+                </div>
               </div>
             </div>
             
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute bottom-12 right-12 rounded-full w-14 h-14"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </Button>
-            
-            <div className="mt-auto pt-8 border-t flex items-center gap-4">
-              <Avatar className="w-12 h-12">
-                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=sample" />
-                <AvatarFallback>SP</AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1">
+            {/* User profile info */}
+            <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
+              <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden">
+                <img
+                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=sample"
+                  alt="sample_photographer"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold text-base">sample_photographer</p>
-                  <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                  <span className="text-muted-foreground">No reviews</span>
-                </div>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>Since 2024</span>
-                  <span className="flex items-center gap-1">
-                    <RefreshCw className="w-4 h-4" />
-                    0 trades completed
+                  <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer">
+                    sample_photographer
                   </span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-500">★</span>
+                    <span className="text-sm text-gray-600">No reviews</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                  <span>Since 2024</span>
+                  <div className="flex items-center gap-1">
+                    <Repeat className="h-3 w-3" />
+                    <span>0 trades completed</span>
+                  </div>
                 </div>
               </div>
             </div>
