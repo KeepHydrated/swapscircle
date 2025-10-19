@@ -10,8 +10,8 @@ const TestPage = () => {
 
   return (
     <MainLayout>
-      <div className="container mx-auto p-6 flex items-center justify-center min-h-screen bg-black/80">
-        <div className="max-w-4xl w-[97vw] max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative flex">
+      <div className="container mx-auto p-6">
+        <div className="max-w-4xl mx-auto h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden shadow-lg relative flex">
           
           {/* Image Section */}
           <div className="relative w-1/2 h-full flex-shrink-0 bg-black/10">
