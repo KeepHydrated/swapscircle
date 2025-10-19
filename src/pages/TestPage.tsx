@@ -103,6 +103,39 @@ const TestPage = () => {
                   <div className="font-medium text-gray-900">$200 - $400</div>
                 </div>
               </div>
+              
+              {/* What They're Looking For Section */}
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">What They&apos;re Looking For</h3>
+                
+                {/* Categories interested in */}
+                <div className="mb-4">
+                  <p className="text-xs text-gray-600 mb-2">Categories interested in</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">Electronics</span>
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">Home & Garden</span>
+                  </div>
+                </div>
+                
+                {/* Acceptable conditions */}
+                <div className="mb-4">
+                  <p className="text-xs text-gray-600 mb-2">Acceptable conditions</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">New</span>
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">Like New</span>
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">Good</span>
+                  </div>
+                </div>
+                
+                {/* Price ranges interested in */}
+                <div>
+                  <p className="text-xs text-gray-600 mb-2">Price ranges interested in</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">$0 - $50</span>
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">$50 - $100</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* User profile info */}
