@@ -644,10 +644,9 @@ const Test: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
                 <Tabs defaultValue="matches" onValueChange={setActiveTab} className="h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
-                    <TabsList className="grid grid-cols-3 w-auto">
+                    <TabsList className="grid grid-cols-2 w-auto">
                       <TabsTrigger value="matches">Matches</TabsTrigger>
                       <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                      <TabsTrigger value="trending">Trending</TabsTrigger>
                     </TabsList>
                     <div className="flex items-center gap-2">
                       {activeTab === 'matches' && (
@@ -818,9 +817,6 @@ const Test: React.FC = () => {
                        </div>
                    </TabsContent>
 
-                   <TabsContent value="trending" className="flex-1 mt-0">
-                     <TrendingItems />
-                   </TabsContent>
                  </Tabs>
               </div>
             </div>
