@@ -104,8 +104,7 @@ const TestPage = () => {
                 </div>
               </div>
               
-              {/* What They're Looking For Section */}
-              <div className="mt-6 pt-6 border-t">
+              <div className="mt-6">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">What They&apos;re Looking For</h3>
                 
                 {/* Categories interested in */}
