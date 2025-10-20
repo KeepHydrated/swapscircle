@@ -16,6 +16,7 @@ interface MatchesProps {
   onUndoAvailable?: (available: boolean, undoFn: (() => void) | null) => void;
   loading?: boolean; // Add loading prop to prevent flashing
   onRefreshMatches?: () => void;
+  viewMode?: 'slider' | 'grid';
 }
 
 const Matches: React.FC<MatchesProps> = ({
@@ -24,7 +25,8 @@ const Matches: React.FC<MatchesProps> = ({
   selectedItemId,
   onUndoAvailable,
   loading = false,
-  onRefreshMatches
+  onRefreshMatches,
+  viewMode = 'slider'
 }) => {
   // Force loading state on any selectedItemId change until data syncs
   const [isItemChanging, setIsItemChanging] = useState(false);
@@ -139,6 +141,7 @@ const Matches: React.FC<MatchesProps> = ({
             onLike={handleLike}
             onReject={handleReject}
             onReport={handleReport}
+            viewMode={viewMode}
           />
         </div>
       ) : null}

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Grid3x3, LayoutList } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
@@ -126,6 +126,7 @@ const Test: React.FC = () => {
   const [selectedUserItemId, setSelectedUserItemId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('matches');
   const [selectedLocation, setSelectedLocation] = useState('nationwide');
+  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   // Matches undo state - will be set by the Matches component
   const [matchesUndoAvailable, setMatchesUndoAvailable] = useState(false);
   const [matchesUndoFn, setMatchesUndoFn] = useState<(() => void) | null>(null);
@@ -650,14 +651,29 @@ const Test: React.FC = () => {
                     </TabsList>
                     <div className="flex items-center gap-2">
                       {activeTab === 'matches' && (
-                        <HeaderLocationSelector 
-                          onLocationChange={(value) => {
-                            console.log('Location changed to:', value);
-                            setSelectedLocation(value);
-                          }}
-                          initialValue={selectedLocation}
-                          className="hidden md:block"
-                        />
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setViewMode(viewMode === 'slider' ? 'grid' : 'slider')}
+                            className="flex items-center gap-2"
+                          >
+                            {viewMode === 'slider' ? (
+                              <Grid3x3 className="h-4 w-4" />
+                            ) : (
+                              <LayoutList className="h-4 w-4" />
+                            )}
+                            <span className="hidden md:inline">{viewMode === 'slider' ? 'Grid' : 'Slider'}</span>
+                          </Button>
+                          <HeaderLocationSelector 
+                            onLocationChange={(value) => {
+                              console.log('Location changed to:', value);
+                              setSelectedLocation(value);
+                            }}
+                            initialValue={selectedLocation}
+                            className="hidden md:block"
+                          />
+                        </>
                       )}
                       <Button
                         variant="outline"
@@ -686,16 +702,17 @@ const Test: React.FC = () => {
                   )}
                   
                   
-                 <TabsContent value="matches" className="flex-1 mt-0">
-                     {selectedUserItem ? (
+                  <TabsContent value="matches" className="flex-1 mt-0">
+                      {selectedUserItem ? (
                         <Matches
                           matches={matches}
                           selectedItemName={selectedUserItem.name}
                           selectedItemId={selectedUserItem.id}
                           onUndoAvailable={handleMatchesUndoAvailable}
                           loading={matchesLoading}
+                          viewMode={viewMode}
                         />
-                     ) : (
+                      ) : (
                        <div className="h-full flex flex-col">
                          <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
                            <div className="text-4xl mb-3">🔍</div>
