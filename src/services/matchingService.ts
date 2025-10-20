@@ -150,6 +150,160 @@ const addTestMatchForSpecificUser = async (currentUserId: string): Promise<Match
           avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80'
         },
         distance: '4.2 miles away'
+      },
+      {
+        id: 'test-match-hiking-' + Date.now(),
+        name: 'Hiking Backpack - Osprey 65L',
+        image: 'https://images.unsplash.com/photo-1622260614927-17f2ec53c15f?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Excellent',
+        description: 'Premium hiking backpack with 65L capacity. Perfect for multi-day treks and camping trips.',
+        tags: ['hiking', 'backpack', 'osprey', 'outdoor'],
+        priceRangeMin: 150,
+        priceRangeMax: 300,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$100-$500'],
+        liked: false,
+        user_id: 'test-user-hiker',
+        userProfile: {
+          name: 'Mike Johnson',
+          username: 'trail_explorer',
+          avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '2.8 miles away'
+      },
+      {
+        id: 'test-match-snowboard-' + Date.now(),
+        name: 'Snowboard - Burton Custom 158',
+        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Good',
+        description: 'Burton Custom snowboard with bindings. Great all-mountain board for intermediate to advanced riders.',
+        tags: ['snowboard', 'burton', 'winter', 'snow'],
+        priceRangeMin: 250,
+        priceRangeMax: 450,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$100-$500'],
+        liked: false,
+        user_id: 'test-user-shredder',
+        userProfile: {
+          name: 'Jake Williams',
+          username: 'snow_rider',
+          avatar_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '5.3 miles away'
+      },
+      {
+        id: 'test-match-kayak-' + Date.now(),
+        name: 'Kayak - Ocean Touring',
+        image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Good',
+        description: 'Stable ocean touring kayak with storage compartments. Includes paddle and life jacket.',
+        tags: ['kayak', 'water', 'touring', 'ocean'],
+        priceRangeMin: 400,
+        priceRangeMax: 700,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$100-$500', '$500-$1000'],
+        liked: false,
+        user_id: 'test-user-paddler',
+        userProfile: {
+          name: 'Lisa Park',
+          username: 'kayak_adventures',
+          avatar_url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '1.9 miles away'
+      },
+      {
+        id: 'test-match-climbing-' + Date.now(),
+        name: 'Rock Climbing Gear Set',
+        image: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Excellent',
+        description: 'Complete climbing gear including harness, carabiners, and chalk bag. Safety certified.',
+        tags: ['climbing', 'rock', 'gear', 'safety'],
+        priceRangeMin: 180,
+        priceRangeMax: 350,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$100-$500'],
+        liked: false,
+        user_id: 'test-user-climber',
+        userProfile: {
+          name: 'Tom Anderson',
+          username: 'vertical_life',
+          avatar_url: 'https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '3.7 miles away'
+      },
+      {
+        id: 'test-match-golf-' + Date.now(),
+        name: 'Golf Club Set - Callaway',
+        image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Very Good',
+        description: 'Premium Callaway golf club set with bag. Includes driver, irons, wedges, and putter.',
+        tags: ['golf', 'callaway', 'clubs', 'sports'],
+        priceRangeMin: 300,
+        priceRangeMax: 550,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$100-$500', '$500-$1000'],
+        liked: false,
+        user_id: 'test-user-golfer',
+        userProfile: {
+          name: 'Robert Lee',
+          username: 'golf_pro',
+          avatar_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '6.1 miles away'
+      },
+      {
+        id: 'test-match-surf-' + Date.now(),
+        name: 'Surfboard - Shortboard 6\'2"',
+        image: 'https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Good',
+        description: 'High-performance shortboard perfect for intermediate surfers. Minor dings repaired.',
+        tags: ['surfboard', 'surf', 'water', 'beach'],
+        priceRangeMin: 200,
+        priceRangeMax: 400,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$100-$500'],
+        liked: false,
+        user_id: 'test-user-surfer',
+        userProfile: {
+          name: 'Maria Santos',
+          username: 'wave_rider',
+          avatar_url: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '4.5 miles away'
+      },
+      {
+        id: 'test-match-running-' + Date.now(),
+        name: 'Treadmill - NordicTrack',
+        image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?auto=format&fit=crop&w=800&q=80',
+        category: 'Sports & Outdoors',
+        condition: 'Excellent',
+        description: 'Professional NordicTrack treadmill with incline. Barely used, like new condition.',
+        tags: ['treadmill', 'running', 'fitness', 'gym'],
+        priceRangeMin: 500,
+        priceRangeMax: 800,
+        looking_for_categories: ['Sports & Outdoors'],
+        looking_for_conditions: ['Good', 'Excellent', 'Like New'],
+        looking_for_price_ranges: ['$500-$1000'],
+        liked: false,
+        user_id: 'test-user-runner',
+        userProfile: {
+          name: 'Chris Taylor',
+          username: 'marathon_trainer',
+          avatar_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80'
+        },
+        distance: '2.2 miles away'
       }
     ];
 
