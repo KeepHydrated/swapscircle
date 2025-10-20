@@ -95,7 +95,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
           <Button
             onClick={scrollToTop}
             size="icon"
-            className="fixed bottom-20 right-6 z-40 rounded-full shadow-lg"
+            className="fixed bottom-20 left-6 z-40 rounded-full shadow-lg"
             aria-label="Scroll to top"
           >
             <ArrowUp className="h-5 w-5" />
