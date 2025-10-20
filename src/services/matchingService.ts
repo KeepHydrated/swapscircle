@@ -312,8 +312,12 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     }
 
     if (!allItems || allItems.length === 0) {
+      console.log('🔍 NO ITEMS FOUND in initial query');
       return [];
     }
+    
+    console.log('🔍 INITIAL ITEMS FOUND:', allItems.length, 'items before filtering');
+    console.log('🔍 FIRST 3 ITEMS:', allItems.slice(0, 3).map(i => ({ name: i.name, user_id: i.user_id, category: i.category })));
     
     // Use data from parallel queries
     const myItemIds = myItemsResult.data?.map(item => item.id) || [];
@@ -383,8 +387,26 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       const isSameUserAsSelected = item.user_id === selectedItem.user_id || 
                         (item.user_id && selectedItem.user_id && item.user_id.toString().trim() === selectedItem.user_id.toString().trim());
 
+      if (item.name === 'Trek Mountain Bike' || item.name === 'Camping Tent - 4 Person') {
+        console.log('🔍 FILTERING SPORTS ITEM:', {
+          name: item.name,
+          isRejectedByCurrentUser,
+          ownerRejectedCurrentItem,
+          isMyOwnItem,
+          isSameUser,
+          isBlockedUser,
+          hasMatchedWithSelectedItem,
+          isMutuallyBlocked,
+          isSameUserAsSelected,
+          willBeFiltered: isRejectedByCurrentUser || ownerRejectedCurrentItem || isMyOwnItem || isSameUserAsSelected || isBlockedUser || hasMatchedWithSelectedItem || isMutuallyBlocked
+        });
+      }
+
       return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMatchedWithSelectedItem && !isMutuallyBlocked;
     });
+    
+    console.log('🔍 AVAILABLE ITEMS AFTER FILTERING:', availableItems.length, 'items');
+    console.log('🔍 FIRST 3 AVAILABLE:', availableItems.slice(0, 3).map(i => ({ name: i.name, category: i.category })));
     
     
 
