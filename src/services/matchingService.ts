@@ -454,8 +454,20 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       return { gatePass: matched, matched };
     };
 
+    console.log('🔍 MATCHING: Processing', availableItems.length, 'available items for selected item:', selectedItem.name);
+    
     for (const otherItem of availableItems) {
       let matchScore = 0;
+
+      console.log('🔍 MATCHING ITEM:', {
+        itemName: otherItem.name,
+        itemCategory: otherItem.category,
+        itemCondition: otherItem.condition,
+        itemLookingFor: otherItem.looking_for_categories,
+        selectedItemCategory: selectedItem.category,
+        selectedItemLookingFor: selectedItem.looking_for_categories,
+        selectedItemConditions: selectedItem.looking_for_conditions
+      });
 
       // Build per-criterion gates (bi-directional). Each side must satisfy all criteria that the other specified.
       // A = selectedItem (current user), B = otherItem (owner)
@@ -527,6 +539,21 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       const currentUserAllGates = aCategoryGate && aConditionGate && aDescriptionGate && aPriceGate;
       const otherUserAllGates = bCategoryGate && bConditionGate && bDescriptionGate && bPriceGate;
       const isMatch = currentUserAllGates && otherUserAllGates;
+
+      console.log('🔍 GATE CHECK:', {
+        itemName: otherItem.name,
+        aCategoryGate,
+        aConditionGate,
+        aDescriptionGate,
+        aPriceGate,
+        bCategoryGate,
+        bConditionGate,
+        bDescriptionGate,
+        bPriceGate,
+        currentUserAllGates,
+        otherUserAllGates,
+        isMatch
+      });
 
       if (isMatch) {
         // Bonus for mutual confirmed match
