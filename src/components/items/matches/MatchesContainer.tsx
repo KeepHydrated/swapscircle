@@ -1,11 +1,13 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { MatchItem } from '@/types/item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import MatchesGrid from './MatchesGrid';
 import { MobileMatchesView } from './MobileMatchesView';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ItemCard from '../ItemCard';
+import { Button } from '@/components/ui/button';
+import { ArrowUp } from 'lucide-react';
 
 interface MatchesContainerProps {
   displayedMatches: MatchItem[];
@@ -28,7 +30,26 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
 }) => {
   const detailsRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const gridScrollRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Handle scroll for back-to-top button
+  useEffect(() => {
+    const scrollContainer = gridScrollRef.current;
+    if (!scrollContainer || viewMode !== 'grid') return;
+
+    const handleScroll = () => {
+      setShowScrollTop(scrollContainer.scrollTop > 300);
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [viewMode]);
+
+  const scrollToTop = () => {
+    gridScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
 
   if (isMobile) {
@@ -47,7 +68,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   // Grid view layout
   if (viewMode === 'grid') {
     return (
-      <div className="relative h-full overflow-y-auto">
+      <div ref={gridScrollRef} className="relative h-full overflow-y-auto">
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2">
           {displayedMatches.map(match => (
             <div key={match.id} className="w-full">
@@ -68,6 +89,18 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
             </div>
           ))}
         </div>
+        
+        {/* Back to top button */}
+        {showScrollTop && (
+          <Button
+            onClick={scrollToTop}
+            size="icon"
+            className="fixed bottom-20 right-6 z-40 rounded-full shadow-lg"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="h-5 w-5" />
+          </Button>
+        )}
       </div>
     );
   }
