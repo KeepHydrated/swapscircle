@@ -317,7 +317,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     }
     
     console.log('🔍 INITIAL ITEMS FOUND:', allItems.length, 'items before filtering');
-    console.log('🔍 FIRST 3 ITEMS:', allItems.slice(0, 3).map(i => ({ name: i.name, user_id: i.user_id, category: i.category })));
+    console.log('🔍 SAMPLE ITEMS:', JSON.stringify(allItems.slice(0, 3).map(i => ({ name: i.name, user_id: i.user_id, category: i.category })), null, 2));
     
     // Use data from parallel queries
     const myItemIds = myItemsResult.data?.map(item => item.id) || [];
@@ -388,8 +388,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
                         (item.user_id && selectedItem.user_id && item.user_id.toString().trim() === selectedItem.user_id.toString().trim());
 
       if (item.name === 'Trek Mountain Bike' || item.name === 'Camping Tent - 4 Person') {
-        console.log('🔍 FILTERING SPORTS ITEM:', {
-          name: item.name,
+        console.log('🔍 FILTERING SPORTS ITEM:', item.name, JSON.stringify({
           isRejectedByCurrentUser,
           ownerRejectedCurrentItem,
           isMyOwnItem,
@@ -399,14 +398,14 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           isMutuallyBlocked,
           isSameUserAsSelected,
           willBeFiltered: isRejectedByCurrentUser || ownerRejectedCurrentItem || isMyOwnItem || isSameUserAsSelected || isBlockedUser || hasMatchedWithSelectedItem || isMutuallyBlocked
-        });
+        }, null, 2));
       }
 
       return !isRejectedByCurrentUser && !ownerRejectedCurrentItem && !isMyOwnItem && !isSameUserAsSelected && !isBlockedUser && !hasMatchedWithSelectedItem && !isMutuallyBlocked;
     });
     
     console.log('🔍 AVAILABLE ITEMS AFTER FILTERING:', availableItems.length, 'items');
-    console.log('🔍 FIRST 3 AVAILABLE:', availableItems.slice(0, 3).map(i => ({ name: i.name, category: i.category })));
+    console.log('🔍 AVAILABLE ITEMS:', JSON.stringify(availableItems.slice(0, 5).map(i => ({ name: i.name, category: i.category })), null, 2));
     
     
 
