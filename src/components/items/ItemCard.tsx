@@ -7,7 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import MoreActionsMenu from './matches/MatchActionSelector';
 
-// ADD prop showLikeButton to show heart in explore
 interface ItemCardProps {
   id: string;
   name: string;
@@ -26,6 +25,7 @@ interface ItemCardProps {
   category?: string;
   tags?: string[];
   status?: 'draft' | 'published' | 'removed'; // Add status prop
+  distance?: string; // Add distance prop
   userProfile?: {
     name: string;
     username?: string;
@@ -51,6 +51,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   category,
   tags,
   status,
+  distance,
   userProfile,
 }) => {
   const isRemoved = status === 'removed';
@@ -152,6 +153,14 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 </div>
               </div>
             )}
+            
+            {/* Distance badge at bottom of image when available */}
+            {distance && !isRemoved && (
+              <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full shadow-lg">
+                {distance}
+              </div>
+            )}
+            
             {(showLikeButton || isMatch) && !disableLike && !isRemoved && (
               <>
                 {/* Three-dots menu on the left side for items with report functionality */}

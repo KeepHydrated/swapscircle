@@ -240,6 +240,13 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   e.currentTarget.src = '/placeholder.svg';
                 }}
               />
+              
+              {/* Distance badge */}
+              {expandedCard.distance && (
+                <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm text-white text-sm font-medium px-3 py-1.5 rounded-full shadow-lg z-10">
+                  {expandedCard.distance}
+                </div>
+              )}
             </div>
           </AdvancedSwipeCard>
         </div>
@@ -375,20 +382,27 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               className="w-full h-full cursor-pointer"
             >
               <div className="w-full h-full bg-card rounded-3xl shadow-card overflow-hidden flex flex-col">
-               {/* Item Image - Fixed Height */}
-               <div className="w-full h-48 relative overflow-hidden">{/* Fixed height instead of h-1/2 */}
-                <img
-                  src={match.image}
-                  alt={match.name}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                  onError={(e) => {
-                    e.currentTarget.src = '/placeholder.svg';
-                  }}
-                 />
-                 
-                 {/* Action Menu - Mobile Optimized */}
-                 <div className="absolute top-4 right-4 z-20">
+                {/* Item Image - Fixed Height */}
+                <div className="w-full h-48 relative overflow-hidden">{/* Fixed height instead of h-1/2 */}
+                 <img
+                   src={match.image}
+                   alt={match.name}
+                   className="w-full h-full object-cover"
+                   draggable={false}
+                   onError={(e) => {
+                     e.currentTarget.src = '/placeholder.svg';
+                   }}
+                  />
+                  
+                  {/* Distance badge */}
+                  {match.distance && (
+                    <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full shadow-lg z-10">
+                      {match.distance}
+                    </div>
+                  )}
+                  
+                  {/* Action Menu - Mobile Optimized */}
+                  <div className="absolute top-4 right-4 z-20">
                    <DropdownMenu>
                      <DropdownMenuTrigger asChild>
                        <button

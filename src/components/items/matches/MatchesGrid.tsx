@@ -27,7 +27,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
       <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'thin' }}>
          {displayedMatches.map(match => (
             <div key={match.id} className="flex-shrink-0 w-64">
-              <ItemCard
+               <ItemCard
                 id={match.id}
                 name={match.name}
                 image={match.image}
@@ -39,6 +39,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 onReport={onReport}
                 category={match.category}
                 tags={match.tags}
+                distance={match.distance}
                 userProfile={match.userProfile}
               />
             </div>
