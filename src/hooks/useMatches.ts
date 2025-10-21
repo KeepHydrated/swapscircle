@@ -52,8 +52,11 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
       try {
         const matchingItems = await findMatchingItems(selectedItem, user.id, location, perspectiveUserId);
+        console.log('🎯 useMatches: Received matches:', matchingItems.length, matchingItems.slice(0, 3).map(m => m.name));
         setMatches(matchingItems);
+        console.log('🎯 useMatches: State updated with matches');
       } catch (e: any) {
+        console.error('❌ useMatches: Error fetching matches:', e);
         setError(e.message || "Failed to fetch matches.");
         setMatches([]);
       }
