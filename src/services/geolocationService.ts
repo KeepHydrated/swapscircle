@@ -19,9 +19,11 @@ export interface GeolocationResponse {
 
 export async function detectUserLocation(): Promise<GeolocationResponse> {
   try {
+    console.log('🌍 Detecting location via IP...');
     // Using ip-api.com (free tier allows 1000 requests per month)
-    const response = await fetch('http://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone');
+    const response = await fetch('https://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone');
     const data = await response.json();
+    console.log('🌍 Location detection response:', data);
     
     if (data.status === 'success') {
       return {

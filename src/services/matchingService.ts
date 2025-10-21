@@ -320,8 +320,11 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     return [];
   }
 
+  console.log('🔍 MATCHING: Starting with location filter:', location);
+
   // Add test match for specific user
   const testMatches = await addTestMatchForSpecificUser(currentUserId);
+  console.log('🔍 MATCHING: Test matches count:', testMatches.length);
 
   try {
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
