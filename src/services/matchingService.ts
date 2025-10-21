@@ -465,13 +465,16 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       
       const currentUserCoords = parseLocation(currentUserProfile.location);
       if (!currentUserCoords) {
-        return [];
+        console.log('⚠️ Failed to parse location coordinates, returning test matches only');
+        return testMatches;
       }
       
       if (allProfilesResult.error || !allProfilesResult.data?.length) {
         console.log('⚠️ No other users with location data, returning test matches only');
         return testMatches;
       }
+      
+      console.log('✅ Found profiles with location:', allProfilesResult.data.length);
       
       // Calculate distances for all profiles
       allProfilesWithDistance = allProfilesResult.data
@@ -503,6 +506,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         console.log('⚠️ No users within range, returning test matches only');
         return testMatches;
       }
+      
+      console.log('✅ Found users within range:', userIdsToFilter.length);
     }
 
     // Build items query with all filters
