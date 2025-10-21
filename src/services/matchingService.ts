@@ -31,17 +31,36 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
 };
 
 // Helper function to add test match only for specific user
-const addTestMatchForSpecificUser = async (currentUserId: string): Promise<MatchItem[]> => {
+const addTestMatchForSpecificUser = async (currentUserId: string, location?: string): Promise<MatchItem[]> => {
   try {
+    // For "local" mode, always show test matches for testing
+    const showTestMatches = location === 'local';
+    
     // Get current user's email to check if they should see the test match
     const { data: user, error } = await supabase.auth.getUser();
     
-    if (error || !user?.user?.email || user.user.email !== 'nadiachibri@gmail.com') {
+    if (error || !user?.user?.email) {
+      console.log('⚠️ Could not get user email for test matches');
+      return showTestMatches ? getSampleLocalMatches() : [];
+    }
+    
+    console.log('📧 User email:', user.user.email);
+    
+    if (user.user.email !== 'nadiachibri@gmail.com' && !showTestMatches) {
+      console.log('⚠️ User not authorized for test matches (non-local mode)');
       return [];
     }
 
-    // Return multiple sample match items - all Sports & Outdoors with bidirectional preferences
-    const testMatches: MatchItem[] = [
+    return getSampleLocalMatches();
+  } catch (error) {
+    console.error('Error adding test matches:', error);
+    return [];
+  }
+};
+
+// Helper to get sample matches
+const getSampleLocalMatches = (): MatchItem[] => {
+  return [
       {
         id: 'test-match-camera-' + Date.now(),
         name: 'Sample Match - Camping Gear Set',
@@ -307,12 +326,6 @@ const addTestMatchForSpecificUser = async (currentUserId: string): Promise<Match
         distance: '2.2 miles away'
       }
     ];
-
-    return testMatches;
-  } catch (error) {
-    console.error('Error adding test matches:', error);
-    return [];
-  }
 };
 
 export const findMatchingItems = async (selectedItem: Item, currentUserId: string, location: string = 'nationwide', perspectiveUserId?: string): Promise<MatchItem[]> => {
@@ -323,8 +336,12 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
   console.log('🔍 MATCHING: Starting with location filter:', location);
 
   // Add test match for specific user
-  const testMatches = await addTestMatchForSpecificUser(currentUserId);
+  const testMatches = await addTestMatchForSpecificUser(currentUserId, location);
   console.log('🔍 MATCHING: Test matches count:', testMatches.length);
+  
+  if (testMatches.length > 0) {
+    console.log('✅ Test matches available:', testMatches.map(m => m.name).join(', '));
+  }
 
   try {
     // Use perspectiveUserId if provided (for viewing other's profiles) or currentUserId (default)
