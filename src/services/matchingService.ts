@@ -404,10 +404,9 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     // Handle location filtering and get user profiles in parallel if needed
     let userIdsToFilter: string[] = [];
     let currentUserProfile: any = null;
+    let allProfilesWithDistance: Array<{ id: string; location: string; distance: number }> = [];
     
-    if (location !== 'nationwide' && ['5', '10', '20', '50'].includes(location)) {
-      const radiusInMiles = parseInt(location);
-      
+    if (location !== 'nationwide' && ['local', '10', '20', '50'].includes(location)) {
       const [currentUserResult, allProfilesResult] = await Promise.all([
         supabase
           .from('profiles')
@@ -435,20 +434,31 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         return [];
       }
       
-      // Filter profiles by distance
-      const profilesWithinRadius = allProfilesResult.data.filter(profile => {
-        const profileCoords = parseLocation(profile.location);
-        if (!profileCoords) return false;
-        
-        const distance = calculateDistance(
-          currentUserCoords.lat, currentUserCoords.lng,
-          profileCoords.lat, profileCoords.lng
-        );
-        
-        return distance <= radiusInMiles;
-      });
+      // Calculate distances for all profiles
+      allProfilesWithDistance = allProfilesResult.data
+        .map(profile => {
+          const profileCoords = parseLocation(profile.location);
+          if (!profileCoords) return null;
+          
+          const distance = calculateDistance(
+            currentUserCoords.lat, currentUserCoords.lng,
+            profileCoords.lat, profileCoords.lng
+          );
+          
+          return { id: profile.id, location: profile.location, distance };
+        })
+        .filter((p): p is { id: string; location: string; distance: number } => p !== null);
       
-      userIdsToFilter = profilesWithinRadius.map(p => p.id);
+      // For "local", include all users sorted by distance
+      // For specific miles, filter by radius
+      if (location === 'local') {
+        allProfilesWithDistance.sort((a, b) => a.distance - b.distance);
+        userIdsToFilter = allProfilesWithDistance.map(p => p.id);
+      } else {
+        const radiusInMiles = parseInt(location);
+        const profilesWithinRadius = allProfilesWithDistance.filter(p => p.distance <= radiusInMiles);
+        userIdsToFilter = profilesWithinRadius.map(p => p.id);
+      }
       
       if (userIdsToFilter.length === 0) {
         return [];
@@ -773,19 +783,47 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       }
     }
 
-    // Sort by date created, then by match score
-    matches.sort((a, b) => {
-      const dateA = new Date(a.created_at || '').getTime();
-      const dateB = new Date(b.created_at || '').getTime();
-      if (dateB !== dateA) return dateB - dateA;
-      return (b.matchScore || 0) - (a.matchScore || 0);
-    });
+    // Sort by distance if "local" mode, otherwise by date created then match score
+    if (location === 'local' && allProfilesWithDistance.length > 0) {
+      const distanceMap = new Map(allProfilesWithDistance.map(p => [p.id, p.distance]));
+      matches.sort((a, b) => {
+        const distA = distanceMap.get(a.user_id) ?? Infinity;
+        const distB = distanceMap.get(b.user_id) ?? Infinity;
+        if (distA !== distB) return distA - distB;
+        return (b.matchScore || 0) - (a.matchScore || 0);
+      });
+      
+      // Add distance to match display
+      matches.forEach(match => {
+        const dist = distanceMap.get(match.user_id);
+        if (dist !== undefined) {
+          match.distance = `${dist.toFixed(1)} miles away`;
+        }
+      });
+    } else {
+      matches.sort((a, b) => {
+        const dateA = new Date(a.created_at || '').getTime();
+        const dateB = new Date(b.created_at || '').getTime();
+        if (dateB !== dateA) return dateB - dateA;
+        return (b.matchScore || 0) - (a.matchScore || 0);
+      });
+    }
 
     // Limit to top 50 matches
     const finalMatches = matches.slice(0, 50);
     
+    // Sort test matches by distance if in local mode
+    let sortedTestMatches = testMatches;
+    if (location === 'local') {
+      sortedTestMatches = [...testMatches].sort((a, b) => {
+        const distA = parseFloat(a.distance?.split(' ')[0] || '999');
+        const distB = parseFloat(b.distance?.split(' ')[0] || '999');
+        return distA - distB;
+      });
+    }
+    
     // Combine test matches with real matches
-    const allMatches = [...testMatches, ...finalMatches.map(({ matchScore, created_at, ...item }) => item)];
+    const allMatches = [...sortedTestMatches, ...finalMatches.map(({ matchScore, created_at, ...item }) => item)];
 
     return allMatches;
 

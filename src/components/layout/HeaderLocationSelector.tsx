@@ -48,9 +48,9 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   }, []);
 
   const handleLocationSelect = (location: string) => {
-    // Check if user is selecting a mile-based option and doesn't have location set
-    if (['5', '10', '20', '50'].includes(location) && !hasUserLocation) {
-      toast.error('Please set your location in settings to use mile-based search');
+    // Check if user is selecting a location-based option and doesn't have location set
+    if (['local', '10', '20', '50'].includes(location) && !hasUserLocation) {
+      toast.error('Please set your location in settings to use location-based search');
       navigate('/settings');
       setIsOpen(false);
       return;
@@ -83,7 +83,8 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
 
   const getDisplayText = () => {
     if (selectedLocation === 'nationwide') return 'All of US';
-    if (['5', '10', '20', '50'].includes(selectedLocation)) return `${selectedLocation} miles`;
+    if (selectedLocation === 'local') return 'Local';
+    if (['10', '20', '50'].includes(selectedLocation)) return `${selectedLocation} miles`;
     return selectedLocation;
   };
 
@@ -115,12 +116,12 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
             <div className="border-t border-border my-1" />
             
             <button
-              onClick={() => handleLocationSelect('5')}
+              onClick={() => handleLocationSelect('local')}
               className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                selectedLocation === '5' ? 'bg-muted text-primary font-medium' : 'text-foreground'
+                selectedLocation === 'local' ? 'bg-muted text-primary font-medium' : 'text-foreground'
               }`}
             >
-              5 miles
+              Local
             </button>
             
             <button
