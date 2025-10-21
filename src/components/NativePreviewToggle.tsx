@@ -2,15 +2,20 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Smartphone, Globe } from 'lucide-react';
 import { useIsNativeApp } from '@/hooks/useIsNativeApp';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function NativePreviewToggle() {
   const isNativeApp = useIsNativeApp();
+  const isMobile = useIsMobile();
 
   const toggleNativePreview = () => {
     const current = localStorage.getItem('nativeAppPreview') === 'true';
     localStorage.setItem('nativeAppPreview', (!current).toString());
     window.location.reload();
   };
+
+  // Hide on mobile
+  if (isMobile) return null;
 
   return (
     <>
