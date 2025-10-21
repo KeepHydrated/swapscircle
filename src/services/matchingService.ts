@@ -421,7 +421,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       ]);
       
       if (currentUserResult.error || !currentUserResult.data?.location) {
-        return [];
+        console.log('⚠️ No location data for current user, returning test matches only');
+        return testMatches;
       }
       
       currentUserProfile = currentUserResult.data;
@@ -431,7 +432,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       }
       
       if (allProfilesResult.error || !allProfilesResult.data?.length) {
-        return [];
+        console.log('⚠️ No other users with location data, returning test matches only');
+        return testMatches;
       }
       
       // Calculate distances for all profiles
@@ -461,7 +463,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       }
       
       if (userIdsToFilter.length === 0) {
-        return [];
+        console.log('⚠️ No users within range, returning test matches only');
+        return testMatches;
       }
     }
 
