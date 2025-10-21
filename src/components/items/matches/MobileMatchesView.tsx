@@ -17,6 +17,7 @@ interface MobileMatchesViewProps {
   onReject: (id: string, global?: boolean) => void;
   onReport: (id: string) => void;
   onOpenModal: (id: string) => void;
+  location?: string;
 }
 
 export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
@@ -25,7 +26,8 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
   onLike,
   onReject,
   onReport,
-  onOpenModal
+  onOpenModal,
+  location: locationFilter = 'nationwide'
 }) => {
   console.log('🔥 MOBILE MATCHES VIEW COMPONENT LOADED', { matchesCount: matches.length });
   
@@ -242,7 +244,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
               />
               
               {/* Distance badge */}
-              {expandedCard.distance && (
+              {locationFilter === 'local' && expandedCard.distance && (
                 <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm text-white text-sm font-medium px-3 py-1.5 rounded-full shadow-lg z-10">
                   {expandedCard.distance}
                 </div>
@@ -395,7 +397,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                   />
                   
                   {/* Distance badge */}
-                  {match.distance && (
+                  {locationFilter === 'local' && match.distance && (
                     <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full shadow-lg z-10">
                       {match.distance}
                     </div>

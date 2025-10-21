@@ -11,6 +11,7 @@ interface MatchesGridProps {
   onReport: (id: string) => void;
   likedItems: Record<string, boolean>;
   detailsRef: React.RefObject<HTMLDivElement>;
+  location?: string;
 }
 
 const MatchesGrid: React.FC<MatchesGridProps> = ({
@@ -20,7 +21,8 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
   onReject,
   onReport,
   likedItems,
-  detailsRef
+  detailsRef,
+  location = 'nationwide'
 }) => {
   return (
     <div className="relative w-full" ref={detailsRef}>
@@ -39,7 +41,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 onReport={onReport}
                 category={match.category}
                 tags={match.tags}
-                distance={match.distance}
+                distance={location === 'local' ? match.distance : undefined}
                 userProfile={match.userProfile}
               />
             </div>

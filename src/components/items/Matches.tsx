@@ -17,6 +17,7 @@ interface MatchesProps {
   loading?: boolean; // Add loading prop to prevent flashing
   onRefreshMatches?: () => void;
   viewMode?: 'slider' | 'grid';
+  location?: string;
 }
 
 const Matches: React.FC<MatchesProps> = ({
@@ -26,7 +27,8 @@ const Matches: React.FC<MatchesProps> = ({
   onUndoAvailable,
   loading = false,
   onRefreshMatches,
-  viewMode = 'slider'
+  viewMode = 'slider',
+  location = 'nationwide'
 }) => {
   // Force loading state on any selectedItemId change until data syncs
   const [isItemChanging, setIsItemChanging] = useState(false);
@@ -142,6 +144,7 @@ const Matches: React.FC<MatchesProps> = ({
             onReject={handleReject}
             onReport={handleReport}
             viewMode={viewMode}
+            location={location}
           />
         </div>
       ) : null}

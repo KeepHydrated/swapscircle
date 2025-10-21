@@ -711,6 +711,7 @@ const Test: React.FC = () => {
                           onUndoAvailable={handleMatchesUndoAvailable}
                           loading={matchesLoading}
                           viewMode={viewMode}
+                          location={selectedLocation}
                         />
                       ) : (
                        <div className="h-full flex flex-col">

@@ -17,6 +17,7 @@ interface MatchesContainerProps {
   onReject: (id: string, global?: boolean) => void;
   onReport: (id: string) => void;
   viewMode?: 'slider' | 'grid';
+  location?: string;
 }
 
 const MatchesContainer: React.FC<MatchesContainerProps> = ({
@@ -26,7 +27,8 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
   onLike,
   onReject,
   onReport,
-  viewMode = 'slider'
+  viewMode = 'slider',
+  location = 'nationwide'
 }) => {
   const detailsRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -61,6 +63,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
         onReject={onReject}
         onReport={onReport}
         onOpenModal={onOpenModal}
+        location={location}
       />
     );
   }
@@ -84,6 +87,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
                 onReport={onReport}
                 category={match.category}
                 tags={match.tags}
+                distance={location === 'local' ? match.distance : undefined}
                 userProfile={match.userProfile}
               />
             </div>
@@ -117,6 +121,7 @@ const MatchesContainer: React.FC<MatchesContainerProps> = ({
           onReport={onReport}
           likedItems={likedItems}
           detailsRef={detailsRef}
+          location={location}
         />
       </div>
     </div>
