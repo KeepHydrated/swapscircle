@@ -30,6 +30,15 @@ const parseLocation = (locationString: string): { lat: number; lng: number } | n
   return { lat, lng };
 };
 
+// Helper to sort matches by distance
+const sortMatchesByDistance = (matches: MatchItem[]): MatchItem[] => {
+  return [...matches].sort((a, b) => {
+    const distA = parseFloat(a.distance?.split(' ')[0] || '999');
+    const distB = parseFloat(b.distance?.split(' ')[0] || '999');
+    return distA - distB;
+  });
+};
+
 // Helper function to add test match only for specific user
 const addTestMatchForSpecificUser = async (currentUserId: string, location?: string): Promise<MatchItem[]> => {
   try {
@@ -41,7 +50,8 @@ const addTestMatchForSpecificUser = async (currentUserId: string, location?: str
     
     if (error || !user?.user?.email) {
       console.log('⚠️ Could not get user email for test matches');
-      return showTestMatches ? getSampleLocalMatches() : [];
+      const matches = showTestMatches ? getSampleLocalMatches() : [];
+      return location === 'local' ? sortMatchesByDistance(matches) : matches;
     }
     
     console.log('📧 User email:', user.user.email);
@@ -51,7 +61,8 @@ const addTestMatchForSpecificUser = async (currentUserId: string, location?: str
       return [];
     }
 
-    return getSampleLocalMatches();
+    const matches = getSampleLocalMatches();
+    return location === 'local' ? sortMatchesByDistance(matches) : matches;
   } catch (error) {
     console.error('Error adding test matches:', error);
     return [];
@@ -447,7 +458,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         const locationDetected = await detectAndStoreUserLocation(currentUserId, false);
         if (!locationDetected) {
           console.log('⚠️ Failed to detect location, returning test matches only');
-          return testMatches;
+          return location === 'local' ? sortMatchesByDistance(testMatches) : testMatches;
         }
         // Retry fetching profile after detection
         const { data: retryProfile, error: retryError } = await supabase
@@ -456,7 +467,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
           .eq('id', currentUserId)
           .single();
         if (retryError || !retryProfile?.location) {
-          return testMatches;
+          return location === 'local' ? sortMatchesByDistance(testMatches) : testMatches;
         }
         currentUserProfile = retryProfile;
       } else {
@@ -466,12 +477,12 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       const currentUserCoords = parseLocation(currentUserProfile.location);
       if (!currentUserCoords) {
         console.log('⚠️ Failed to parse location coordinates, returning test matches only');
-        return testMatches;
+        return location === 'local' ? sortMatchesByDistance(testMatches) : testMatches;
       }
       
       if (allProfilesResult.error || !allProfilesResult.data?.length) {
         console.log('⚠️ No other users with location data, returning test matches only');
-        return testMatches;
+        return location === 'local' ? sortMatchesByDistance(testMatches) : testMatches;
       }
       
       console.log('✅ Found profiles with location:', allProfilesResult.data.length);
@@ -497,7 +508,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       
       if (userIdsToFilter.length === 0) {
         console.log('⚠️ No users within range, returning test matches only');
-        return testMatches;
+        return location === 'local' ? sortMatchesByDistance(testMatches) : testMatches;
       }
       
       console.log('✅ Found users within range:', userIdsToFilter.length);
@@ -851,14 +862,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     const finalMatches = matches.slice(0, 50);
     
     // Sort test matches by distance if in local mode
-    let sortedTestMatches = testMatches;
-    if (location === 'local') {
-      sortedTestMatches = [...testMatches].sort((a, b) => {
-        const distA = parseFloat(a.distance?.split(' ')[0] || '999');
-        const distB = parseFloat(b.distance?.split(' ')[0] || '999');
-        return distA - distB;
-      });
-    }
+    const sortedTestMatches = location === 'local' ? sortMatchesByDistance(testMatches) : testMatches;
     
     // Combine test matches with real matches
     const allMatches = [...sortedTestMatches, ...finalMatches.map(({ matchScore, created_at, ...item }) => item)];
@@ -867,6 +871,6 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
 
   } catch (error) {
     console.error('Error in findMatchingItems:', error);
-    return testMatches; // Return test matches even if real matching fails
+    return location === 'local' ? sortMatchesByDistance(testMatches) : testMatches; // Return sorted test matches even if real matching fails
   }
 };
