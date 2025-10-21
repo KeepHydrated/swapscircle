@@ -1,6 +1,7 @@
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { Item, MatchItem } from '@/types/item';
 import { blockingService } from './blockingService';
+import { detectAndStoreUserLocation } from './geolocationService';
 
 // Helper function to calculate distance between two coordinates using Haversine formula
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -421,11 +422,27 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
       ]);
       
       if (currentUserResult.error || !currentUserResult.data?.location) {
-        console.log('⚠️ No location data for current user, returning test matches only');
-        return testMatches;
+        console.log('⚠️ No location data for current user, detecting via IP...');
+        // Auto-detect location using IP address
+        const locationDetected = await detectAndStoreUserLocation(currentUserId, false);
+        if (!locationDetected) {
+          console.log('⚠️ Failed to detect location, returning test matches only');
+          return testMatches;
+        }
+        // Retry fetching profile after detection
+        const { data: retryProfile, error: retryError } = await supabase
+          .from('profiles')
+          .select('location')
+          .eq('id', currentUserId)
+          .single();
+        if (retryError || !retryProfile?.location) {
+          return testMatches;
+        }
+        currentUserProfile = retryProfile;
+      } else {
+        currentUserProfile = currentUserResult.data;
       }
       
-      currentUserProfile = currentUserResult.data;
       const currentUserCoords = parseLocation(currentUserProfile.location);
       if (!currentUserCoords) {
         return [];
