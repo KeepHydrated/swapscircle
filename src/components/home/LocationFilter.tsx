@@ -32,9 +32,6 @@ const LocationFilter: React.FC<LocationFilterProps> = ({ onLocationChange }) => 
             <SelectContent>
               <SelectItem value="nationwide">All of US</SelectItem>
               <SelectItem value="local">Local</SelectItem>
-              <SelectItem value="10">10 miles</SelectItem>
-              <SelectItem value="20">20 miles</SelectItem>
-              <SelectItem value="50">50 miles</SelectItem>
             </SelectContent>
           </Select>
         </div>

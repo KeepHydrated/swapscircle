@@ -427,7 +427,7 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
     let currentUserProfile: any = null;
     let allProfilesWithDistance: Array<{ id: string; location: string; distance: number }> = [];
     
-    if (location !== 'nationwide' && ['local', '10', '20', '50'].includes(location)) {
+    if (location !== 'nationwide' && location === 'local') {
       const [currentUserResult, allProfilesResult] = await Promise.all([
         supabase
           .from('profiles')
@@ -492,15 +492,8 @@ export const findMatchingItems = async (selectedItem: Item, currentUserId: strin
         .filter((p): p is { id: string; location: string; distance: number } => p !== null);
       
       // For "local", include all users sorted by distance
-      // For specific miles, filter by radius
-      if (location === 'local') {
-        allProfilesWithDistance.sort((a, b) => a.distance - b.distance);
-        userIdsToFilter = allProfilesWithDistance.map(p => p.id);
-      } else {
-        const radiusInMiles = parseInt(location);
-        const profilesWithinRadius = allProfilesWithDistance.filter(p => p.distance <= radiusInMiles);
-        userIdsToFilter = profilesWithinRadius.map(p => p.id);
-      }
+      allProfilesWithDistance.sort((a, b) => a.distance - b.distance);
+      userIdsToFilter = allProfilesWithDistance.map(p => p.id);
       
       if (userIdsToFilter.length === 0) {
         console.log('⚠️ No users within range, returning test matches only');

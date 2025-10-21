@@ -49,7 +49,7 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
 
   const handleLocationSelect = (location: string) => {
     // Check if user is selecting a location-based option and doesn't have location set
-    if (['local', '10', '20', '50'].includes(location) && !hasUserLocation) {
+    if (location === 'local' && !hasUserLocation) {
       toast.error('Please set your location in settings to use location-based search');
       navigate('/settings');
       setIsOpen(false);
@@ -84,7 +84,6 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
   const getDisplayText = () => {
     if (selectedLocation === 'nationwide') return 'All of US';
     if (selectedLocation === 'local') return 'Local';
-    if (['10', '20', '50'].includes(selectedLocation)) return `${selectedLocation} miles`;
     return selectedLocation;
   };
 
@@ -122,33 +121,6 @@ const HeaderLocationSelector: React.FC<HeaderLocationSelectorProps> = ({
               }`}
             >
               Local
-            </button>
-            
-            <button
-              onClick={() => handleLocationSelect('10')}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                selectedLocation === '10' ? 'bg-muted text-primary font-medium' : 'text-foreground'
-              }`}
-            >
-              10 miles
-            </button>
-            
-            <button
-              onClick={() => handleLocationSelect('20')}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                selectedLocation === '20' ? 'bg-muted text-primary font-medium' : 'text-foreground'
-              }`}
-            >
-              20 miles
-            </button>
-            
-            <button
-              onClick={() => handleLocationSelect('50')}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-muted ${
-                selectedLocation === '50' ? 'bg-muted text-primary font-medium' : 'text-foreground'
-              }`}
-            >
-              50 miles
             </button>
 
             
