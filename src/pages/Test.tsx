@@ -650,7 +650,7 @@ const Test: React.FC = () => {
                       <TabsTrigger value="friends">Friends' Items</TabsTrigger>
                     </TabsList>
                     <div className="flex items-center gap-2">
-                      {activeTab === 'matches' && (
+                      {activeTab === 'matches' && !isMobile && (
                         <>
                           <Button
                             variant="outline"
