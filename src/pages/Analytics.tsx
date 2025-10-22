@@ -182,13 +182,12 @@ const Analytics = () => {
           .order('created_at', { ascending: false })
           .limit(10);
 
-        // Fetch recent items (last 10) with owner info
+        // Fetch all recent items with owner info
         const { data: recentItemsData } = await supabase
           .from('items')
           .select('id, name, image_url, image_urls, created_at, user_id')
           .eq('status', 'published')
-          .order('created_at', { ascending: false })
-          .limit(10);
+          .order('created_at', { ascending: false });
 
         // Fetch user data for recent items
         const userIds = recentItemsData?.map(item => item.user_id) || [];
@@ -486,7 +485,7 @@ const Analytics = () => {
             {analytics.recentItems.length === 0 ? (
               <p className="text-sm text-muted-foreground">No recent items</p>
             ) : (
-              <div className="flex gap-4 overflow-x-auto pb-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                 {analytics.recentItems.map((item, index) => {
                   const colors = [
                     '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
@@ -497,10 +496,10 @@ const Analytics = () => {
                   return (
                     <div 
                       key={item.id} 
-                      className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                      className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => handleUserClick(item.user_id)}
                     >
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
                         {item.image_url ? (
                           <img 
                             src={item.image_url} 
@@ -516,8 +515,8 @@ const Analytics = () => {
                           </div>
                         )}
                       </div>
-                      <div className="text-center">
-                        <div className="text-sm font-medium max-w-20 truncate">
+                      <div className="text-center w-full">
+                        <div className="text-sm font-medium truncate px-1">
                           {item.name}
                         </div>
                         <div className="text-xs text-muted-foreground">
