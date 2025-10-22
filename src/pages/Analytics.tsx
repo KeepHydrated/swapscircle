@@ -31,7 +31,7 @@ const Analytics = () => {
     itemsData: [] as Array<{ category: string; count: number }>,
     tradesData: [] as Array<{ month: string; trades: number }>,
     recentUsers: [] as Array<{ id: string; username: string; avatar_url: string | null; created_at: string; city: string | null; state: string | null; location: string | null }>,
-    recentItems: [] as Array<{ id: string; name: string; image_url: string | null; created_at: string; owner_username: string }>
+    recentItems: [] as Array<{ id: string; name: string; image_url: string | null; created_at: string; owner_username: string; user_id: string }>
   });
 
   useEffect(() => {
@@ -275,7 +275,8 @@ const Analytics = () => {
               name: item.name,
               image_url: imageUrl,
               created_at: item.created_at,
-              owner_username: owner?.username || 'Unknown'
+              owner_username: owner?.username || 'Unknown',
+              user_id: item.user_id
             };
           }) || []
         });
@@ -485,6 +486,7 @@ const Analytics = () => {
                     <div 
                       key={item.id} 
                       className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                      onClick={() => handleUserClick(item.user_id)}
                     >
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
                         {item.image_url ? (
