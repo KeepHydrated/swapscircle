@@ -4,7 +4,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Upload, X } from 'lucide-react';
+import { ImagePlus, Upload, X, AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { 
   Select, 
   SelectContent, 
@@ -90,14 +102,87 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
 }) => {
   const totalImages = existingImageUrls.length + images.length;
   const MAX_IMAGES = 5;
+  const [isCheckingImage, setIsCheckingImage] = useState(false);
+  const [showWarningDialog, setShowWarningDialog] = useState(false);
+  const [pendingImages, setPendingImages] = useState<File[]>([]);
+  const [warningMessage, setWarningMessage] = useState('');
   
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const checkImageOriginality = async (file: File) => {
+    try {
+      // Upload image temporarily to check it
+      const fileExt = file.name.split('.').pop();
+      const fileName = `temp-check-${Math.random()}.${fileExt}`;
+      const filePath = `temp/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('items')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        return { isOriginal: true }; // Fail open
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('items')
+        .getPublicUrl(filePath);
+
+      // Call edge function to check image
+      const { data, error } = await supabase.functions.invoke('check-image-originality', {
+        body: { imageUrl: urlData.publicUrl }
+      });
+
+      // Clean up temp file
+      await supabase.storage.from('items').remove([filePath]);
+
+      if (error) {
+        console.error('Check error:', error);
+        return { isOriginal: true }; // Fail open
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error checking image:', error);
+      return { isOriginal: true }; // Fail open
+    }
+  };
+  
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newImages = Array.from(e.target.files);
       const remainingSlots = MAX_IMAGES - totalImages;
       const imagesToAdd = newImages.slice(0, remainingSlots);
-      setImages([...images, ...imagesToAdd]);
+      
+      // Check first image for originality
+      if (imagesToAdd.length > 0) {
+        setIsCheckingImage(true);
+        toast.info('Checking image originality...');
+        
+        const checkResult = await checkImageOriginality(imagesToAdd[0]);
+        setIsCheckingImage(false);
+        
+        if (!checkResult.isOriginal) {
+          setPendingImages(imagesToAdd);
+          setWarningMessage(checkResult.warning || 'This image appears on multiple websites. Please ensure you own the rights to this photo.');
+          setShowWarningDialog(true);
+        } else {
+          setImages([...images, ...imagesToAdd]);
+          toast.success('Images added successfully');
+        }
+      }
     }
+  };
+  
+  const handleProceedWithImages = () => {
+    setImages([...images, ...pendingImages]);
+    setPendingImages([]);
+    setShowWarningDialog(false);
+    toast.info('Please ensure you have the rights to use these images');
+  };
+  
+  const handleCancelImages = () => {
+    setPendingImages([]);
+    setShowWarningDialog(false);
   };
 
   const removeImage = (index: number) => {
@@ -126,8 +211,34 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
-      <div className="space-y-6">
+    <>
+      <AlertDialog open={showWarningDialog} onOpenChange={setShowWarningDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-orange-500" />
+              Possible Non-Original Image Detected
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p className="text-base">{warningMessage}</p>
+              <p className="text-sm text-muted-foreground">
+                Using images you don't own may violate our terms of service and could result in your item being removed.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelImages}>
+              Choose Different Image
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleProceedWithImages}>
+              I Own This Image
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+        <div className="space-y-6">
         {/* Image Upload */}
         <div>
           <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Add Images <span className="text-red-500">*</span></Label>
@@ -147,10 +258,10 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               variant="outline" 
               className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2"
               onClick={() => document.getElementById('images')?.click()}
-              disabled={totalImages >= MAX_IMAGES}
+              disabled={totalImages >= MAX_IMAGES || isCheckingImage}
             >
               <ImagePlus className="mr-2 h-4 w-4" />
-              {totalImages >= MAX_IMAGES ? 'Maximum Images Reached' : 'Choose Images'}
+              {isCheckingImage ? 'Checking Image...' : totalImages >= MAX_IMAGES ? 'Maximum Images Reached' : 'Choose Images'}
             </Button>
             
             {/* Show existing images if available */}
@@ -322,7 +433,8 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           </Select>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
