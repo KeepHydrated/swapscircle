@@ -369,7 +369,6 @@ const PostItemNew: React.FC = () => {
 
     // Check image originality before proceeding (unless user already confirmed or editing)
     if (!proceedWithSubmit && !isEditing && images.length > 0) {
-      toast.info('Checking image originality...');
       const checkResult = await checkImageOriginality(images[0]);
       
       if (!checkResult.isOriginal) {
