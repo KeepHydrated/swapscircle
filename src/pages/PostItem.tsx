@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle } from 'lucide-react';
+import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage, createItem } from '@/services/authService';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isProfileComplete } from '@/utils/profileUtils';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   AlertDialog, 
   AlertDialogAction, 
@@ -62,6 +63,9 @@ const PostItem: React.FC = () => {
   const [savedPreferences, setSavedPreferences] = useState<SavedPreference[]>([]);
   const [showExitConfirmation, setShowExitConfirmation] = useState<boolean>(false);
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+  const [showImageWarning, setShowImageWarning] = useState<boolean>(false);
+  const [imageWarningMessage, setImageWarningMessage] = useState<string>('');
+  const [proceedWithSubmit, setProceedWithSubmit] = useState<boolean>(false);
 
   // Check if profile is complete before allowing posting
   useEffect(() => {
@@ -313,8 +317,59 @@ const PostItem: React.FC = () => {
     toast.success("Preference has been removed");
   };
 
+  // Check image originality before posting
+  const checkImageOriginality = async (file: File): Promise<{ isOriginal: boolean; warning?: string }> => {
+    try {
+      console.log('🔍 Checking image originality before posting');
+      
+      // Upload image temporarily to check it
+      const fileExt = file.name.split('.').pop();
+      const fileName = `temp-check-${Math.random()}.${fileExt}`;
+      const filePath = `temp/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('items')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError);
+        return { isOriginal: true }; // Fail open
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('items')
+        .getPublicUrl(filePath);
+
+      console.log('🚀 Calling edge function with URL:', urlData.publicUrl);
+
+      // Call edge function to check image
+      const { data, error } = await supabase.functions.invoke('check-image-originality', {
+        body: { imageUrl: urlData.publicUrl }
+      });
+
+      // Clean up temp file
+      await supabase.storage.from('items').remove([filePath]);
+
+      if (error) {
+        console.error('❌ Edge function error:', error);
+        return { isOriginal: true }; // Fail open
+      }
+
+      console.log('✅ Image check result:', data);
+      return data;
+    } catch (error) {
+      console.error('❌ Error checking image:', error);
+      return { isOriginal: true }; // Fail open
+    }
+  };
+
 
   const handleSubmit = async () => {
+    // If we're waiting for user confirmation about image, don't proceed
+    if (showImageWarning && !proceedWithSubmit) {
+      return;
+    }
+
     // Validation - all fields are now mandatory
     if (!title.trim()) {
       toast.error('Please enter a title for your item');
@@ -396,6 +451,18 @@ const PostItem: React.FC = () => {
       return;
     }
 
+    // Check image originality before proceeding (unless user already confirmed)
+    if (!proceedWithSubmit) {
+      toast.info('Checking image originality...');
+      const checkResult = await checkImageOriginality(images[0]);
+      
+      if (!checkResult.isOriginal) {
+        setImageWarningMessage(checkResult.warning || 'This image appears on multiple websites. Please ensure you own the rights to this photo.');
+        setShowImageWarning(true);
+        return; // Stop here and wait for user decision
+      }
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -438,6 +505,7 @@ const PostItem: React.FC = () => {
       toast.error('There was an error posting your item. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setProceedWithSubmit(false); // Reset for next submission
     }
   };
 
@@ -651,6 +719,40 @@ const PostItem: React.FC = () => {
             >
               <Save className="mr-2 h-4 w-4" />
               Save & Leave
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Image Warning Dialog */}
+      <AlertDialog open={showImageWarning} onOpenChange={setShowImageWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-orange-500" />
+              Possible Non-Original Image Detected
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p className="text-base">{imageWarningMessage}</p>
+              <p className="text-sm text-muted-foreground">
+                Using images you don't own may violate our terms of service and could result in your item being removed.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowImageWarning(false);
+              setProceedWithSubmit(false);
+            }}>
+              Cancel Posting
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              setShowImageWarning(false);
+              setProceedWithSubmit(true);
+              // Trigger submit again now that user confirmed
+              setTimeout(() => handleSubmit(), 100);
+            }}>
+              I Own This Image - Continue
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
