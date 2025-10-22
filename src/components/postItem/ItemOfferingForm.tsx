@@ -109,40 +109,52 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
   
   const checkImageOriginality = async (file: File) => {
     try {
+      console.log('🔍 Starting image originality check for:', file.name);
+      
       // Upload image temporarily to check it
       const fileExt = file.name.split('.').pop();
       const fileName = `temp-check-${Math.random()}.${fileExt}`;
       const filePath = `temp/${fileName}`;
 
+      console.log('📤 Uploading to storage:', filePath);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('items')
         .upload(filePath, file);
 
       if (uploadError) {
-        console.error('Upload error:', uploadError);
+        console.error('❌ Upload error:', uploadError);
+        toast.error('Failed to check image. Please try again.');
         return { isOriginal: true }; // Fail open
       }
 
+      console.log('✅ Upload successful, getting public URL');
       const { data: urlData } = supabase.storage
         .from('items')
         .getPublicUrl(filePath);
 
+      console.log('🔗 Public URL:', urlData.publicUrl);
+
       // Call edge function to check image
+      console.log('🚀 Calling edge function to check image');
       const { data, error } = await supabase.functions.invoke('check-image-originality', {
         body: { imageUrl: urlData.publicUrl }
       });
 
       // Clean up temp file
+      console.log('🧹 Cleaning up temp file');
       await supabase.storage.from('items').remove([filePath]);
 
       if (error) {
-        console.error('Check error:', error);
+        console.error('❌ Edge function error:', error);
+        toast.error('Failed to verify image. Proceeding anyway.');
         return { isOriginal: true }; // Fail open
       }
 
+      console.log('✅ Image check result:', data);
       return data;
     } catch (error) {
-      console.error('Error checking image:', error);
+      console.error('❌ Error checking image:', error);
+      toast.error('Image check failed. Please try again.');
       return { isOriginal: true }; // Fail open
     }
   };
