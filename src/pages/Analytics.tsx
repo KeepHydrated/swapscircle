@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import GeographicDistribution from '@/components/analytics/GeographicDistribution';
 import SEOHelmet from '@/components/SEOHelmet';
+import { Button } from '@/components/ui/button';
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -459,16 +460,27 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        {/* Recently Added Items - Full Width Row */}
+         {/* Recently Added Items - Full Width Row */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Recently Added Items
-            </CardTitle>
-            <CardDescription>
-              Latest items posted for trade
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Recently Added Items
+                </CardTitle>
+                <CardDescription>
+                  Latest items posted for trade
+                </CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/search')}
+              >
+                View All
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {analytics.recentItems.length === 0 ? (
