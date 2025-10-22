@@ -39,7 +39,7 @@ serve(async (req) => {
         body: JSON.stringify({
           requests: [{
             image: { source: { imageUri: imageUrl } },
-            features: [{ type: 'WEB_DETECTION', maxResults: 10 }]
+            features: [{ type: 'WEB_DETECTION', maxResults: 3 }]
           }]
         })
       }
