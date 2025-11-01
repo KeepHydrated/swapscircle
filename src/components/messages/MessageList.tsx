@@ -20,45 +20,11 @@ const MessageList = ({ messages, chatName }: MessageListProps) => {
     const container = containerRef.current;
     if (!container) return;
 
-    console.log('🚀 MessageList effect triggered for:', chatName, 'messages:', messages.length);
-
-    const scrollToBottom = () => {
-      console.log('📱 SCROLL ATTEMPT - Current scrollTop:', container.scrollTop, 'scrollHeight:', container.scrollHeight);
+    // Set initial position at bottom instantly (no animation)
+    requestAnimationFrame(() => {
       container.scrollTop = container.scrollHeight;
-      console.log('📱 SCROLL RESULT - New scrollTop:', container.scrollTop);
-    };
-
-    // Immediate scroll
-    scrollToBottom();
-
-    // Use MutationObserver to watch for DOM changes
-    const observer = new MutationObserver(() => {
-      console.log('🔄 DOM mutation detected, scrolling...');
-      scrollToBottom();
     });
-
-    observer.observe(container, {
-      childList: true,
-      subtree: true,
-      attributes: false
-    });
-
-    // Also use setTimeout for mobile/tablet
-    if (isMobile || isTablet) {
-      console.log('📱 Setting up mobile scroll timeouts...');
-      const timeouts = [0, 50, 100, 200, 300, 500, 800];
-      timeouts.forEach((delay) => {
-        setTimeout(() => {
-          console.log(`📱 Timeout scroll attempt after ${delay}ms`);
-          scrollToBottom();
-        }, delay);
-      });
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [messages, chatName, isMobile, isTablet]);
+  }, [messages, chatName]);
 
   return (
     <div ref={containerRef} className="h-full overflow-y-auto" data-messages-container>
