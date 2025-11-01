@@ -65,7 +65,7 @@ const AppContent = () => {
           <Messages />
         </RequireAuth>
       } />
-      <Route path="/your-likes" element={
+      <Route path="/whos-liked-you" element={
         <RequireAuth>
           <Messages3 />
         </RequireAuth>

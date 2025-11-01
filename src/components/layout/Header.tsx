@@ -62,7 +62,7 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             {/* Heart icon - only show on mobile */}
             {isMobile && (
-              <Link to="/your-likes">
+              <Link to="/whos-liked-you">
                 <Heart className="h-4 w-4 text-gray-500" />
                 <span className="sr-only">Who's Liked You</span>
               </Link>
@@ -192,7 +192,7 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
+                      <Link to="/whos-liked-you" className="flex w-full cursor-pointer items-center">
                         <Heart className="mr-2 h-4 w-4" />
                         <span>Who's Liked You</span>
                       </Link>
@@ -260,7 +260,7 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
+                      <Link to="/whos-liked-you" className="flex w-full cursor-pointer items-center">
                         <Heart className="mr-2 h-4 w-4" />
                         <span>Who's Liked You</span>
                       </Link>
