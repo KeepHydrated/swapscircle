@@ -64,7 +64,7 @@ const Header = () => {
             {isMobile && (
               <Link to="/your-likes">
                 <Heart className="h-4 w-4 text-gray-500" />
-                <span className="sr-only">Your Likes</span>
+                <span className="sr-only">Who's Liked You</span>
               </Link>
             )}
             
@@ -194,7 +194,7 @@ const Header = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
                         <Heart className="mr-2 h-4 w-4" />
-                        <span>Your Likes</span>
+                        <span>Who's Liked You</span>
                       </Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
@@ -262,7 +262,7 @@ const Header = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/your-likes" className="flex w-full cursor-pointer items-center">
                         <Heart className="mr-2 h-4 w-4" />
-                        <span>Your Likes</span>
+                        <span>Who's Liked You</span>
                       </Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
