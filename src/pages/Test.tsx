@@ -956,7 +956,7 @@ const Test: React.FC = () => {
                           { name: "Mountain Bike - Trek X-Caliber", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e" },
                           { name: "Fist...", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
                         ].map((item, idx) => (
-                          <div key={idx} className="flex-shrink-0 w-64 sm:w-80 md:w-96">
+                          <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
                             <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
                               <div className="relative aspect-[4/3]">
                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -999,7 +999,7 @@ const Test: React.FC = () => {
                           { name: "Coffee Machine - Espresso", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6" },
                           { name: "Running Shoes - Nike Air", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff" },
                         ].map((item, idx) => (
-                          <div key={idx} className="flex-shrink-0 w-64 sm:w-80 md:w-96">
+                          <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
                             <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
                               <div className="relative aspect-[4/3]">
                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />

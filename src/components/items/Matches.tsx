@@ -137,7 +137,7 @@ const Matches: React.FC<MatchesProps> = ({
               { name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d" },
               { name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
             ].map((item, idx) => (
-              <div key={idx} className="flex-shrink-0 w-64 sm:w-80 md:w-96">
+              <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
                 <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
                   <div className="relative aspect-[4/3]">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
