@@ -39,7 +39,7 @@ const Header = () => {
       });
       return;
     }
-    navigate('/');
+    navigate('/auth');
   };
 
   const getInitials = (name?: string) => {
