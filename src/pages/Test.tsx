@@ -859,10 +859,10 @@ const Test: React.FC = () => {
                   <div className="flex gap-2 min-w-max">
                     {[
                       { name: "Kayak with Paddle", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
-                      { name: "Apple MacBook Pro", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8" },
-                      { name: "Office Desk with Chair", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
+                      { name: "Apple MacBook ...", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8" },
+                      { name: "Office Desk with...", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
                       { name: "Yamaha Keyboard", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4" },
-                      { name: "Abstract Canvas Art", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262" },
+                      { name: "Abstract Canvas...", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262" },
                       { name: "Vintage Camera", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
                     ].map((item, idx) => (
                       <div key={idx} className="flex-shrink-0 w-32">
