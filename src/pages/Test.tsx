@@ -6,7 +6,7 @@ import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
 import { MobileFriendsCarousel } from '@/components/profile/MobileFriendsCarousel';
-import SupportChat from '@/components/chat/SupportChat';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import SwipeCards from '@/components/ui/swipe-cards';
 import SEOHelmet from '@/components/SEOHelmet';
@@ -1067,8 +1067,6 @@ const Test: React.FC = () => {
         }
       />
 
-      {/* Support Chat */}
-      <SupportChat />
     </div>
   );
 };
