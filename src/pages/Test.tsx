@@ -956,8 +956,45 @@ const Test: React.FC = () => {
                   </TabsContent>
                   
                   <TabsContent value="friends" className="flex-1 mt-0">
-                    <div className="text-center text-gray-500 py-8">
-                      <p>Friends' items will appear here</p>
+                    <div className="overflow-x-auto overflow-y-hidden">
+                      <div className="flex gap-4 pb-4">
+                        {[
+                          { name: "Wireless Headphones - Sony", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
+                          { name: "Gaming Console - PlayStation 5", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3" },
+                          { name: "Coffee Machine - Espresso", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6" },
+                          { name: "Running Shoes - Nike Air", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff" },
+                        ].map((item, idx) => (
+                          <div key={idx} className="flex-shrink-0 w-64 sm:w-80 md:w-96">
+                            <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
+                              <div className="relative aspect-[4/3]">
+                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                <div className="absolute top-2 left-2">
+                                  <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                                    <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                    </svg>
+                                  </button>
+                                </div>
+                                <div className="absolute top-2 right-2 flex gap-2">
+                                  <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                  </button>
+                                  <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                              <CardContent className="p-4">
+                                <p className="text-sm font-semibold truncate">{item.name}</p>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </TabsContent>
                 </Tabs>
