@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RotateCcw, Grid3x3, LayoutList } from 'lucide-react';
+import { RotateCcw, Grid3x3, LayoutList, LogIn } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
@@ -112,6 +112,18 @@ const Test: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Handle login redirect
+  const handleLogin = () => {
+    if (!supabaseConfigured) {
+      toast.error("Supabase is not configured. Please add environment variables to enable authentication.", {
+        duration: 5000,
+      });
+      return;
+    }
+    // Scroll to top to show login/register form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   // Friend items - fetch from friends
@@ -839,139 +851,91 @@ const Test: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="text-center mb-6">
-                <div className="text-4xl mb-3">🔐</div>
-                <h2 className="text-2xl font-bold mb-2">SwapsCircle</h2>
-                <p className="text-gray-600">
-                  {activeAuthTab === "login" 
-                    ? "Sign in to your account to continue" 
-                    : "Create an account to get started"}
-                </p>
+            // Preview content for non-logged in users
+            <div className="grid grid-cols-1 gap-6 h-full">
+              {/* Left Column - Placeholder Items */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold mb-2">Your Items</h3>
+                  <p className="text-sm text-gray-500">Post items you want to trade</p>
+                </div>
+                <div className="overflow-x-auto overflow-y-hidden p-2">
+                  <div className="flex gap-2 min-w-max">
+                    {[
+                      { name: "Vintage Camera", image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f" },
+                      { name: "Designer Watch", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30" },
+                      { name: "Gaming Console", image: "https://images.unsplash.com/photo-1486401899868-0e435ed85128" },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex-shrink-0 w-32 relative">
+                        <div className="bg-gray-200 rounded-lg overflow-hidden opacity-50">
+                          <div className="aspect-square bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                            <div className="text-4xl">📦</div>
+                          </div>
+                          <div className="p-2 text-center">
+                            <p className="text-xs font-medium truncate text-gray-600">{item.name}</p>
+                          </div>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold">
+                            Preview
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              
-              <Tabs
-                value={activeAuthTab}
-                onValueChange={setActiveAuthTab}
-                className="w-full"
-              >
-                <TabsList className="grid grid-cols-2 mb-6">
-                  <TabsTrigger value="login">Login</TabsTrigger>
-                  <TabsTrigger value="register">Register</TabsTrigger>
-                </TabsList>
 
-                <TabsContent value="login">
-                  <Form {...loginForm}>
-                    <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                      <FormField
-                        control={loginForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input placeholder="email@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={loginForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="••••••••" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit" className="w-full" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Signing in...
-                          </>
-                        ) : (
-                          "Sign in"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </TabsContent>
-
-                <TabsContent value="register">
-                  <Form {...registerForm}>
-                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                      <FormField
-                        control={registerForm.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="John Smith" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input placeholder="email@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="••••••••" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="••••••••" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit" className="w-full" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating account...
-                          </>
-                        ) : (
-                          "Create account"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </TabsContent>
-              </Tabs>
+              {/* Right Column - Placeholder Matches */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold mb-2">Potential Matches</h3>
+                  <p className="text-sm text-gray-500">Find items you'd like to trade for</p>
+                </div>
+                <div className="overflow-x-auto overflow-y-hidden p-2">
+                  <div className="flex gap-2 min-w-max">
+                    {[
+                      { name: "Laptop", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853" },
+                      { name: "Headphones", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
+                      { name: "Bike", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e" },
+                      { name: "Books", image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d" },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex-shrink-0 w-64 relative">
+                        <div className="bg-gray-200 rounded-lg overflow-hidden opacity-50">
+                          <div className="aspect-[4/3] bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                            <div className="text-5xl">🎁</div>
+                          </div>
+                          <div className="p-3 text-center">
+                            <p className="text-sm font-medium truncate text-gray-600">{item.name}</p>
+                          </div>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold">
+                            Preview
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Call to action */}
+                <div className="mt-8 text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
+                  <div className="text-4xl mb-3">🔄</div>
+                  <h3 className="text-xl font-bold mb-2">Start Trading Today</h3>
+                  <p className="text-gray-600 mb-4 text-sm">
+                    Join SwapsCircle to trade items with friends and local community
+                  </p>
+                  <Button 
+                    size="lg"
+                    onClick={handleLogin}
+                    className="font-semibold"
+                  >
+                    <LogIn className="mr-2 h-5 w-5" />
+                    Log In to Get Started
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </div>

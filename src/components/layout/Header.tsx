@@ -146,7 +146,7 @@ const Header = () => {
             
             <NotificationDropdown notifications={notifications} unreadCount={unreadCount} onNotificationRead={markAsRead} onDropdownViewed={markDropdownAsViewed} onMarkAllAsRead={markAllAsRead} />
             
-            {/* Profile avatar - always show space, only show avatar when logged in */}
+            {/* Profile avatar - show different UI for logged in vs logged out */}
             {user ? (
               isMobile ? (
                 <Button 
@@ -225,63 +225,16 @@ const Header = () => {
                 </DropdownMenu>
               )
             ) : (
-              // Show generic profile icon when not logged in - still clickable with dropdown
-              isMobile ? (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="relative h-8 w-8"
-                  onClick={() => setMobileMenuOpen(true)}
-                >
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <User className="h-4 w-4 text-gray-500" />
-                  </div>
-                </Button>
-              ) : (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                        <User className="h-4 w-4 text-gray-500" />
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={-8} className="w-56 bg-white z-[10000]">
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex w-full cursor-pointer items-center">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
-                        <Handshake className="mr-2 h-4 w-4" />
-                        <span>Trades</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/whos-liked-you" className="flex w-full cursor-pointer items-center">
-                        <Heart className="mr-2 h-4 w-4" />
-                        <span>Who's Liked You</span>
-                      </Link>
-                    </DropdownMenuItem>
-                     <DropdownMenuItem asChild>
-                        <Link to="/settings" className="flex w-full cursor-pointer items-center">
-                          <Settings className="mr-2 h-4 w-4" />
-                          <span>Settings</span>
-                        </Link>
-                        </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
-                        onClick={handleLogin}
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log Out</span>
-                      </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )
+              // Show Log In button when not logged in
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={handleLogin}
+                className="flex items-center gap-2"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Log In</span>
+              </Button>
             )}
           </div>
         </div>
