@@ -863,7 +863,7 @@ const Test: React.FC = () => {
                       { name: "Office Desk with Chair", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
                       { name: "Yamaha Keyboard", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4" },
                       { name: "Abstract Canvas Art", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262" },
-                      { name: "Test", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
+                      { name: "Vintage Camera", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
                     ].map((item, idx) => (
                       <div key={idx} className="flex-shrink-0 w-32">
                         <div className={`bg-white rounded-lg border-2 overflow-hidden transition-all ${idx === 0 ? 'border-blue-500' : 'border-gray-200'}`}>
