@@ -863,10 +863,10 @@ const Test: React.FC = () => {
                       { name: "Office Desk with Chair", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
                       { name: "Yamaha Keyboard", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4" },
                       { name: "Abstract Canvas Art", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262" },
-                      { name: "Vintage Camera", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
+                      { name: "Test", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
                     ].map((item, idx) => (
-                      <div key={idx} className="flex-shrink-0 w-32 relative">
-                        <div className={`bg-white rounded-lg border-2 overflow-hidden ${idx === 0 ? 'border-blue-500' : 'border-gray-200'}`}>
+                      <div key={idx} className="flex-shrink-0 w-32">
+                        <div className={`bg-white rounded-lg border-2 overflow-hidden transition-all ${idx === 0 ? 'border-blue-500' : 'border-gray-200'}`}>
                           <div className="aspect-square relative">
                             <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                             {idx === 0 && (
@@ -916,62 +916,41 @@ const Test: React.FC = () => {
                     <div className="overflow-x-auto overflow-y-hidden">
                       <div className="flex gap-4 pb-4">
                         {[
-                          { name: "Sample Match - Camping Gear Set", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4" },
+                          { name: "Sample Match - Camping Gear ...", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4" },
                           { name: "Paddleboard - Inflatable SUP", image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19" },
                           { name: "Mountain Bike - Trek X-Caliber", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e" },
-                          { name: "Fishing Rod & Reel Combo", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
-                          { name: "Camping Tent - 4 Person", image: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d" },
+                          { name: "Fist...", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
                         ].map((item, idx) => (
-                          <div key={idx} className="flex-shrink-0 w-64 relative group">
-                            <Card className="overflow-hidden border-2 border-gray-200 hover:border-blue-300 transition-all">
+                          <div key={idx} className="flex-shrink-0 w-64 sm:w-80 md:w-96">
+                            <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
                               <div className="relative aspect-[4/3]">
                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                <div className="absolute top-2 left-2 flex gap-2">
-                                  <button className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <circle cx="12" cy="12" r="10" strokeWidth="2"/>
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v8m-4-4h8"/>
-                                    </svg>
-                                  </button>
-                                </div>
-                                <div className="absolute top-2 right-2 flex gap-2">
-                                  <button className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                      <path d="M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z"/>
-                                    </svg>
-                                  </button>
-                                  <button className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                <div className="absolute top-2 left-2">
+                                  <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                                    <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
                                       <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                                     </svg>
                                   </button>
                                 </div>
+                                <div className="absolute top-2 right-2 flex gap-2">
+                                  <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                  </button>
+                                  <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                  </button>
+                                </div>
                               </div>
-                              <CardContent className="p-3">
-                                <p className="text-sm font-semibold text-center truncate">{item.name}</p>
+                              <CardContent className="p-4">
+                                <p className="text-sm font-semibold truncate">{item.name}</p>
                               </CardContent>
                             </Card>
                           </div>
                         ))}
-                      </div>
-                    </div>
-                    
-                    {/* Call to action overlay */}
-                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
-                      <div className="text-center bg-white rounded-lg shadow-xl p-8 max-w-md mx-4">
-                        <div className="text-5xl mb-4">🔄</div>
-                        <h3 className="text-2xl font-bold mb-2">Start Trading Today</h3>
-                        <p className="text-gray-600 mb-6">
-                          Join SwapsCircle to trade items with friends and local community
-                        </p>
-                        <Button 
-                          size="lg"
-                          onClick={handleLogin}
-                          className="font-semibold"
-                        >
-                          <LogIn className="mr-2 h-5 w-5" />
-                          Log In to Get Started
-                        </Button>
                       </div>
                     </div>
                   </TabsContent>
