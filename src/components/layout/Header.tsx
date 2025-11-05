@@ -71,32 +71,6 @@ const Header = () => {
             <Link to="/" className="flex items-center">
               {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
             </Link>
-            
-            {/* Admin Customer Support, Reports and Analytics for specific user - desktop only */}
-            {user?.email === 'nadiachibri@gmail.com' && !isMobile && (
-              <>
-                <Button variant="ghost" size="icon" asChild>
-                  <Link to="/admin-customer-support">
-                    <Headphones className="w-5 h-5" />
-                    <span className="sr-only">Admin Customer Support</span>
-                  </Link>
-                </Button>
-                
-                <Button variant="ghost" size="icon" asChild>
-                  <Link to="/admin/reports">
-                    <Flag className="w-5 h-5" />
-                    <span className="sr-only">Admin Reports</span>
-                  </Link>
-                </Button>
-                
-                <Button variant="ghost" size="icon" asChild>
-                  <Link to="/analytics">
-                    <BarChart3 className="w-5 h-5" />
-                    <span className="sr-only">Analytics</span>
-                  </Link>
-                </Button>
-              </>
-            )}
           </div>
 
           {/* Mobile center icons */}
