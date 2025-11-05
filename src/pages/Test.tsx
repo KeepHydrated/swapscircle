@@ -851,33 +851,34 @@ const Test: React.FC = () => {
               </div>
             </div>
           ) : (
-            // Preview content for non-logged in users
+            // Preview content for non-logged in users - matches logged-in layout
             <div className="grid grid-cols-1 gap-6 h-full">
-              {/* Left Column - Placeholder Items */}
+              {/* Your Items Section */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">Your Items</h3>
-                  <p className="text-sm text-gray-500">Post items you want to trade</p>
-                </div>
                 <div className="overflow-x-auto overflow-y-hidden p-2">
                   <div className="flex gap-2 min-w-max">
                     {[
-                      { name: "Vintage Camera", image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f" },
-                      { name: "Designer Watch", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30" },
-                      { name: "Gaming Console", image: "https://images.unsplash.com/photo-1486401899868-0e435ed85128" },
+                      { name: "Kayak with Paddle", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
+                      { name: "Apple MacBook Pro", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8" },
+                      { name: "Office Desk with Chair", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
+                      { name: "Yamaha Keyboard", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4" },
+                      { name: "Abstract Canvas Art", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262" },
+                      { name: "Vintage Camera", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
                     ].map((item, idx) => (
                       <div key={idx} className="flex-shrink-0 w-32 relative">
-                        <div className="bg-gray-200 rounded-lg overflow-hidden opacity-50">
-                          <div className="aspect-square bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                            <div className="text-4xl">📦</div>
+                        <div className={`bg-white rounded-lg border-2 overflow-hidden ${idx === 0 ? 'border-blue-500' : 'border-gray-200'}`}>
+                          <div className="aspect-square relative">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            {idx === 0 && (
+                              <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1">
+                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                                </svg>
+                              </div>
+                            )}
                           </div>
                           <div className="p-2 text-center">
-                            <p className="text-xs font-medium truncate text-gray-600">{item.name}</p>
-                          </div>
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
-                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold">
-                            Preview
+                            <p className="text-xs font-medium truncate">{item.name}</p>
                           </div>
                         </div>
                       </div>
@@ -886,55 +887,101 @@ const Test: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right Column - Placeholder Matches */}
+              {/* Matches Section */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">Potential Matches</h3>
-                  <p className="text-sm text-gray-500">Find items you'd like to trade for</p>
-                </div>
-                <div className="overflow-x-auto overflow-y-hidden p-2">
-                  <div className="flex gap-2 min-w-max">
-                    {[
-                      { name: "Laptop", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853" },
-                      { name: "Headphones", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
-                      { name: "Bike", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e" },
-                      { name: "Books", image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d" },
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex-shrink-0 w-64 relative">
-                        <div className="bg-gray-200 rounded-lg overflow-hidden opacity-50">
-                          <div className="aspect-[4/3] bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                            <div className="text-5xl">🎁</div>
-                          </div>
-                          <div className="p-3 text-center">
-                            <p className="text-sm font-medium truncate text-gray-600">{item.name}</p>
-                          </div>
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
-                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold">
-                            Preview
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                <Tabs defaultValue="matches" className="h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <TabsList className="grid grid-cols-2 w-auto">
+                      <TabsTrigger value="matches">Matches</TabsTrigger>
+                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
+                    </TabsList>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" className="flex items-center gap-2">
+                        <Grid3x3 className="h-4 w-4" />
+                        <span className="hidden md:inline">Grid</span>
+                      </Button>
+                      <HeaderLocationSelector 
+                        onLocationChange={() => {}}
+                        initialValue="nationwide"
+                        className="hidden md:block"
+                      />
+                      <Button variant="outline" size="sm" disabled className="flex items-center gap-2">
+                        <RotateCcw className="h-4 w-4" />
+                        <span className="hidden md:inline">Undo</span>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                
-                {/* Call to action */}
-                <div className="mt-8 text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
-                  <div className="text-4xl mb-3">🔄</div>
-                  <h3 className="text-xl font-bold mb-2">Start Trading Today</h3>
-                  <p className="text-gray-600 mb-4 text-sm">
-                    Join SwapsCircle to trade items with friends and local community
-                  </p>
-                  <Button 
-                    size="lg"
-                    onClick={handleLogin}
-                    className="font-semibold"
-                  >
-                    <LogIn className="mr-2 h-5 w-5" />
-                    Log In to Get Started
-                  </Button>
-                </div>
+                  
+                  <TabsContent value="matches" className="flex-1 mt-0">
+                    <div className="overflow-x-auto overflow-y-hidden">
+                      <div className="flex gap-4 pb-4">
+                        {[
+                          { name: "Sample Match - Camping Gear Set", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4" },
+                          { name: "Paddleboard - Inflatable SUP", image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19" },
+                          { name: "Mountain Bike - Trek X-Caliber", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e" },
+                          { name: "Fishing Rod & Reel Combo", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
+                          { name: "Camping Tent - 4 Person", image: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d" },
+                        ].map((item, idx) => (
+                          <div key={idx} className="flex-shrink-0 w-64 relative group">
+                            <Card className="overflow-hidden border-2 border-gray-200 hover:border-blue-300 transition-all">
+                              <div className="relative aspect-[4/3]">
+                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                <div className="absolute top-2 left-2 flex gap-2">
+                                  <button className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v8m-4-4h8"/>
+                                    </svg>
+                                  </button>
+                                </div>
+                                <div className="absolute top-2 right-2 flex gap-2">
+                                  <button className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z"/>
+                                    </svg>
+                                  </button>
+                                  <button className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                              <CardContent className="p-3">
+                                <p className="text-sm font-semibold text-center truncate">{item.name}</p>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Call to action overlay */}
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
+                      <div className="text-center bg-white rounded-lg shadow-xl p-8 max-w-md mx-4">
+                        <div className="text-5xl mb-4">🔄</div>
+                        <h3 className="text-2xl font-bold mb-2">Start Trading Today</h3>
+                        <p className="text-gray-600 mb-6">
+                          Join SwapsCircle to trade items with friends and local community
+                        </p>
+                        <Button 
+                          size="lg"
+                          onClick={handleLogin}
+                          className="font-semibold"
+                        >
+                          <LogIn className="mr-2 h-5 w-5" />
+                          Log In to Get Started
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="friends" className="flex-1 mt-0">
+                    <div className="text-center text-gray-500 py-8">
+                      <p>Friends' items will appear here</p>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
           )}
