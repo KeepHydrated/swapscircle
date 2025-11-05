@@ -17,6 +17,7 @@ import Notifications from "./pages/Notifications";
 import NotificationDetails from "./pages/NotificationDetails";
 import NotFound from "./pages/NotFound";
 import PostingRules from "./pages/PostingRules";
+import Auth from "./pages/Auth";
 
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
@@ -43,7 +44,7 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Test />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
-      <Route path="/auth" element={<Navigate to="/" replace />} />
+      <Route path="/auth" element={<Auth />} />
       <Route path="/trades" element={
         <RequireAuth>
           <Trades />
