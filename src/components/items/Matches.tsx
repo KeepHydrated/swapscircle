@@ -129,10 +129,45 @@ const Matches: React.FC<MatchesProps> = ({
     <div className="w-full flex flex-col h-full">
       
       {(displayedMatches.length === 0 && !isTransitioning) ? (
-        <div className="text-center text-gray-500 py-8 flex-1 flex flex-col justify-center">
-          <div className="text-4xl mb-3">🔍</div>
-          <p className="text-base font-medium mb-1">No matches found</p>
-          <p className="text-sm">Try updating your preferences or check back later</p>
+        <div className="overflow-x-auto overflow-y-hidden p-2">
+          <div className="flex gap-2 min-w-max">
+            {[
+              { name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91" },
+              { name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b" },
+              { name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d" },
+              { name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
+            ].map((item, idx) => (
+              <div key={idx} className="flex-shrink-0 w-64 sm:w-80 md:w-96">
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                  <div className="relative aspect-[4/3]">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <div className="absolute top-2 left-2">
+                      <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                        <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      </button>
+                      <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
+                        <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm font-semibold truncate">{item.name}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : displayedMatches.length > 0 ? (
         <div className="flex-grow">
