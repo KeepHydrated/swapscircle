@@ -329,7 +329,7 @@ const ProfileSettings: React.FC = () => {
             </Button>
           )}
           <Button onClick={handleEditToggle} disabled={uploading}>
-            {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
+            {uploading ? 'Uploading...' : (isEditing ? 'Save' : 'Edit')}
           </Button>
         </div>
       </CardHeader>
@@ -426,7 +426,7 @@ const ProfileSettings: React.FC = () => {
                   </Button>
                 )}
                 <Button type="button" onClick={handleEditToggle} disabled={uploading}>
-                  {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
+                  {uploading ? 'Uploading...' : (isEditing ? 'Save' : 'Edit')}
                 </Button>
               </div>
             </form>
