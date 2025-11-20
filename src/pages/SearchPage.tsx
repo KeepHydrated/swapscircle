@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParam = searchParams.get('q') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
 
   // Update search query when URL param changes
   useEffect(() => {
@@ -22,6 +28,15 @@ const SearchPage = () => {
       setSearchParams({});
     }
   };
+
+  const categories = [
+    'Electronics', 'Home & Garden', 'Sports & Outdoors', 'Clothing',
+    'Business', 'Entertainment', 'Collectibles', 'Books & Media',
+    'Tools & Equipment', 'Food'
+  ];
+
+  const conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
+  const priceRanges = ['$0-50', '$50-100', '$100-250', '$250-500', '$500+'];
 
   const mockResults = [
     { id: 1, name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", category: "Sports" },
@@ -43,6 +58,118 @@ const SearchPage = () => {
     <MainLayout>
       <div className="bg-background min-h-screen p-6">
         <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-foreground mb-6">Search Items</h1>
+          
+          {/* Search Input */}
+          <div className="relative mb-8">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search for items, categories, or users..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-12 pr-4 py-6 text-lg border-2 border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          {/* Filter Toggle Button */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 text-sm font-medium text-foreground mb-4 hover:text-primary transition-colors"
+          >
+            {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </button>
+
+          {/* Filters Section */}
+          {showFilters && (
+            <div className="bg-card border border-border rounded-lg p-6 mb-8">
+              {/* Categories */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Categories you're interested in</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {categories.map((category) => (
+                    <div key={category} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`category-${category}`}
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedCategories([...selectedCategories, category]);
+                          } else {
+                            setSelectedCategories(selectedCategories.filter(c => c !== category));
+                          }
+                        }}
+                      />
+                      <Label
+                        htmlFor={`category-${category}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        {category}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Conditions */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Acceptable conditions</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {conditions.map((condition) => (
+                    <div key={condition} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`condition-${condition}`}
+                        checked={selectedConditions.includes(condition)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedConditions([...selectedConditions, condition]);
+                          } else {
+                            setSelectedConditions(selectedConditions.filter(c => c !== condition));
+                          }
+                        }}
+                      />
+                      <Label
+                        htmlFor={`condition-${condition}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        {condition}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Ranges */}
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Price ranges you're interested in</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {priceRanges.map((range) => (
+                    <div key={range} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`price-${range}`}
+                        checked={selectedPriceRanges.includes(range)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedPriceRanges([...selectedPriceRanges, range]);
+                          } else {
+                            setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
+                          }
+                        }}
+                      />
+                      <Label
+                        htmlFor={`price-${range}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        {range}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Results Count */}
           <div className="mb-4">
             <p className="text-sm text-muted-foreground">
