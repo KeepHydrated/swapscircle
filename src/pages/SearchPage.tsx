@@ -58,8 +58,6 @@ const SearchPage = () => {
     <MainLayout>
       <div className="bg-background min-h-screen p-6">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-foreground mb-6">Search Items</h1>
-          
           {/* Search Input */}
           <div className="relative mb-8">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
