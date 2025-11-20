@@ -69,7 +69,7 @@ const SearchPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Categories Dropdown */}
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Categories</h3>
+                <h3 className="text-sm font-semibold text-foreground mb-4">Categories</h3>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-between">
@@ -109,7 +109,7 @@ const SearchPage = () => {
 
               {/* Conditions Dropdown */}
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Conditions</h3>
+                <h3 className="text-sm font-semibold text-foreground mb-4">Conditions</h3>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-between">
@@ -149,7 +149,7 @@ const SearchPage = () => {
 
               {/* Price Ranges Dropdown */}
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Price Ranges</h3>
+                <h3 className="text-sm font-semibold text-foreground mb-4">Price Ranges</h3>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-between">
