@@ -27,6 +27,7 @@ const Header = () => {
   const isMobile = useIsMobile();
   const isNativeApp = useIsNativeApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = async () => {
     await signOut();
@@ -52,6 +53,13 @@ const Header = () => {
       .toUpperCase();
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   // Check if we're on the auth page to avoid showing login button there
   const isAuthPage = window.location.pathname === '/auth';
 
@@ -74,14 +82,16 @@ const Header = () => {
             
             {/* Search bar - desktop only */}
             {!isMobile && (
-              <div className="relative ml-6">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <form onSubmit={handleSearch} className="relative ml-6">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Search items..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-2 w-64 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-              </div>
+              </form>
             )}
           </div>
 
