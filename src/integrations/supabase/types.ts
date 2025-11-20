@@ -758,6 +758,27 @@ export type Database = {
           },
         ]
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       friend_requests: {
         Row: {
           created_at: string | null
@@ -1204,7 +1225,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           page_path: string
           referrer: string | null
           user_agent: string | null
@@ -1213,7 +1234,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           page_path: string
           referrer?: string | null
           user_agent?: string | null
@@ -1222,7 +1243,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           page_path?: string
           referrer?: string | null
           user_agent?: string | null
@@ -2856,20 +2877,17 @@ export type Database = {
       }
     }
     Functions: {
-      add_first_admin: {
-        Args: { admin_email: string }
-        Returns: undefined
-      }
+      add_first_admin: { Args: { admin_email: string }; Returns: undefined }
       add_moderator_by_email: {
         Args: { admin_user_id: string; moderator_email: string }
         Returns: undefined
       }
-      admin_remove_item: {
-        Args:
-          | { item_id_param: string }
-          | { item_id_param: string; reason_param?: string }
-        Returns: Json
-      }
+      admin_remove_item:
+        | { Args: { item_id_param: string }; Returns: Json }
+        | {
+            Args: { item_id_param: string; reason_param?: string }
+            Returns: Json
+          }
       ban_user_progressive: {
         Args: {
           admin_user_id: string
@@ -2891,14 +2909,8 @@ export type Database = {
         Args: { username_to_check: string }
         Returns: boolean
       }
-      cleanup_all_data: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_expired_requests: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_all_data: { Args: never; Returns: undefined }
+      cleanup_expired_requests: { Args: never; Returns: undefined }
       cleanup_user_data: {
         Args: { target_user_id?: string }
         Returns: undefined
@@ -2926,14 +2938,8 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: undefined
       }
-      delete_item_cascade: {
-        Args: { p_item_id: string }
-        Returns: undefined
-      }
-      delete_user_account: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      delete_item_cascade: { Args: { p_item_id: string }; Returns: undefined }
+      delete_user_account: { Args: never; Returns: undefined }
       delete_user_notifications: {
         Args: { target_user_id?: string }
         Returns: undefined
@@ -2950,7 +2956,7 @@ export type Database = {
         }[]
       }
       get_book_requests: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           author: string
           cover_url: string
@@ -2981,7 +2987,7 @@ export type Database = {
         }[]
       }
       get_moderators: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           created_by: string
@@ -3062,10 +3068,7 @@ export type Database = {
           view_count: number
         }[]
       }
-      get_user_ban_count: {
-        Args: { target_user_id: string }
-        Returns: number
-      }
+      get_user_ban_count: { Args: { target_user_id: string }; Returns: number }
       get_user_discussions_paginated: {
         Args: { p_limit: number; p_offset: number; p_user_id: string }
         Returns: Json[]
@@ -3123,22 +3126,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      is_current_user_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_moderator: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      is_user_banned: {
-        Args: { check_user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { user_id: string }; Returns: boolean }
+      is_current_user_admin: { Args: never; Returns: boolean }
+      is_moderator: { Args: { user_id: string }; Returns: boolean }
+      is_user_banned: { Args: { check_user_id: string }; Returns: boolean }
       is_user_blocked: {
         Args: { blocked_user_id: string; blocker_user_id: string }
         Returns: boolean
@@ -3165,45 +3156,48 @@ export type Database = {
           title: string
         }[]
       }
-      search_books_ai: {
-        Args: { query: string }
-        Returns: Json
-      }
-      send_violation_notification: {
-        Args:
-          | {
+      search_books_ai: { Args: { query: string }; Returns: Json }
+      send_violation_notification:
+        | {
+            Args: {
               item_id: string
               item_name: string
               strike_count: number
               target_user_id: string
               violation_reason: string
             }
-          | {
+            Returns: string
+          }
+        | {
+            Args: {
               item_name: string
               strike_count: number
               target_user_id: string
               violation_reason: string
             }
-        Returns: string
-      }
+            Returns: string
+          }
       toggle_moderator_status: {
         Args: { admin_user_id: string; moderator_id: string }
         Returns: undefined
       }
-      update_report_status: {
-        Args:
-          | {
+      update_report_status:
+        | {
+            Args: {
+              p_report_id: string
+              p_status: Database["public"]["Enums"]["report_status"]
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
               p_action_taken?: string
               p_report_id: string
               p_status: Database["public"]["Enums"]["report_status"]
               p_user_id: string
             }
-          | {
-              p_report_id: string
-              p_status: Database["public"]["Enums"]["report_status"]
-            }
-        Returns: undefined
-      }
+            Returns: undefined
+          }
       update_submission_admin: {
         Args: {
           new_status: string
