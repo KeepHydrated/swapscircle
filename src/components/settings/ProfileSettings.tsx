@@ -308,11 +308,16 @@ const ProfileSettings: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader className="hidden md:block">
-        <CardTitle>Profile Information</CardTitle>
-        <CardDescription>
-          Update your profile information and avatar.
-        </CardDescription>
+      <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0">
+        <div>
+          <CardTitle>Profile Information</CardTitle>
+          <CardDescription>
+            Update your profile information and avatar.
+          </CardDescription>
+        </div>
+        <Button onClick={handleEditToggle} disabled={uploading}>
+          {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
+        </Button>
       </CardHeader>
       <CardContent className="pt-8 md:pt-6">
         <div className="pb-6 mb-6 border-b">
@@ -400,7 +405,7 @@ const ProfileSettings: React.FC = () => {
                 )}
               />
               
-              <Button type="button" onClick={handleEditToggle} disabled={uploading}>
+              <Button type="button" onClick={handleEditToggle} disabled={uploading} className="md:hidden">
                 {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
               </Button>
             </form>
