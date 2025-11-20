@@ -117,60 +117,84 @@ const SearchPage = () => {
                 </Popover>
               </div>
 
-              {/* Conditions */}
+              {/* Conditions Dropdown */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Acceptable conditions</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                  {conditions.map((condition) => (
-                    <div key={condition} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`condition-${condition}`}
-                        checked={selectedConditions.includes(condition)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedConditions([...selectedConditions, condition]);
-                          } else {
-                            setSelectedConditions(selectedConditions.filter(c => c !== condition));
-                          }
-                        }}
-                      />
-                      <Label
-                        htmlFor={`condition-${condition}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                      >
-                        {condition}
-                      </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {selectedConditions.length > 0
+                        ? `${selectedConditions.length} selected`
+                        : 'Select conditions'}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
+                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                      {conditions.map((condition) => (
+                        <div key={condition} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`condition-${condition}`}
+                            checked={selectedConditions.includes(condition)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedConditions([...selectedConditions, condition]);
+                              } else {
+                                setSelectedConditions(selectedConditions.filter(c => c !== condition));
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={`condition-${condition}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            {condition}
+                          </Label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
-              {/* Price Ranges */}
+              {/* Price Ranges Dropdown */}
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-4">Price ranges you're interested in</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                  {priceRanges.map((range) => (
-                    <div key={range} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`price-${range}`}
-                        checked={selectedPriceRanges.includes(range)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedPriceRanges([...selectedPriceRanges, range]);
-                          } else {
-                            setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
-                          }
-                        }}
-                      />
-                      <Label
-                        htmlFor={`price-${range}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                      >
-                        {range}
-                      </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {selectedPriceRanges.length > 0
+                        ? `${selectedPriceRanges.length} selected`
+                        : 'Select price ranges'}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
+                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                      {priceRanges.map((range) => (
+                        <div key={range} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`price-${range}`}
+                            checked={selectedPriceRanges.includes(range)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedPriceRanges([...selectedPriceRanges, range]);
+                              } else {
+                                setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={`price-${range}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            {range}
+                          </Label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           )}
