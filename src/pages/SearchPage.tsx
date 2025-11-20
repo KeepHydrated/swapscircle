@@ -208,9 +208,9 @@ const SearchPage = () => {
 
             {/* Subcategory Dropdowns for Selected Categories */}
             {selectedCategories.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
                 {selectedCategories.map((category) => (
-                  <div key={category}>
+                  <div key={category} className="min-w-[250px]">
                     <h3 className="text-sm font-semibold text-foreground mb-4">{category}</h3>
                     <Popover>
                       <PopoverTrigger asChild>
