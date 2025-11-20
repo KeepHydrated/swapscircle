@@ -66,8 +66,9 @@ const SearchPage = () => {
         <div className="max-w-6xl mx-auto">
           {/* Filters Section */}
           <div className="bg-card border border-border rounded-lg p-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Categories Dropdown */}
-              <div className="mb-6">
+              <div>
                 <h3 className="text-lg font-semibold text-foreground mb-4">Categories you're interested in</h3>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -107,7 +108,7 @@ const SearchPage = () => {
               </div>
 
               {/* Conditions Dropdown */}
-              <div className="mb-6">
+              <div>
                 <h3 className="text-lg font-semibold text-foreground mb-4">Acceptable conditions</h3>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -186,6 +187,7 @@ const SearchPage = () => {
                 </Popover>
               </div>
             </div>
+          </div>
 
           {/* Results Count and Active Filters */}
           <div className="mb-6 flex items-center gap-3 flex-wrap">
