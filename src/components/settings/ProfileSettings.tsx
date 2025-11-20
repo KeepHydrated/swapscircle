@@ -250,6 +250,13 @@ const ProfileSettings: React.FC = () => {
     }
   };
 
+  // Handle cancel
+  const handleCancel = () => {
+    // Reset form to original values
+    form.reset();
+    setIsEditing(false);
+  };
+
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isEditing) {
       toast.error('Please click Edit to make changes');
@@ -315,9 +322,16 @@ const ProfileSettings: React.FC = () => {
             Update your profile information and avatar.
           </CardDescription>
         </div>
-        <Button onClick={handleEditToggle} disabled={uploading}>
-          {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
-        </Button>
+        <div className="flex gap-2">
+          {isEditing && (
+            <Button variant="outline" onClick={handleCancel} disabled={uploading}>
+              Cancel
+            </Button>
+          )}
+          <Button onClick={handleEditToggle} disabled={uploading}>
+            {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="pt-8 md:pt-6">
         <div className="pb-6 mb-6 border-b">
@@ -405,9 +419,16 @@ const ProfileSettings: React.FC = () => {
                 )}
               />
               
-              <Button type="button" onClick={handleEditToggle} disabled={uploading} className="md:hidden">
-                {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
-              </Button>
+              <div className="flex gap-2 md:hidden">
+                {isEditing && (
+                  <Button type="button" variant="outline" onClick={handleCancel} disabled={uploading}>
+                    Cancel
+                  </Button>
+                )}
+                <Button type="button" onClick={handleEditToggle} disabled={uploading}>
+                  {uploading ? 'Uploading...' : (isEditing ? 'Save Changes' : 'Edit')}
+                </Button>
+              </div>
             </form>
           </Form>
         )}
