@@ -24,6 +24,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import CategoryCircles from './CategoryCircles';
 
 interface ItemOfferingFormProps {
   title: string;
@@ -355,6 +356,15 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
             required
           />
         </div>
+        
+        {/* Category Circles */}
+        <CategoryCircles 
+          selectedCategory={category}
+          onSelectCategory={(cat) => {
+            setCategory(cat);
+            setSubcategory(""); // Reset subcategory when category changes
+          }}
+        />
         
         {/* Category and Subcategory stacked vertically */}
         <div className="space-y-4">
