@@ -7,21 +7,48 @@ import { toast } from 'sonner';
 
 const NotificationSettings: React.FC = () => {
   const [notifications, setNotifications] = React.useState(true);
+  const [emailNotifications, setEmailNotifications] = React.useState(true);
+  const [tradeConfirmations, setTradeConfirmations] = React.useState(true);
+  const [newMessages, setNewMessages] = React.useState(true);
+  const [isEditing, setIsEditing] = React.useState(false);
 
   // Handle notification settings
   const handleNotificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success('Notification settings updated');
+    setIsEditing(false);
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
   };
 
   return (
     <form onSubmit={handleNotificationSubmit}>
       <Card>
-        <CardHeader className="hidden md:block">
-          <CardTitle>Notification Preferences</CardTitle>
-          <CardDescription>
-            Manage how you receive notifications.
-          </CardDescription>
+        <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0">
+          <div>
+            <CardTitle>Notification Preferences</CardTitle>
+            <CardDescription>
+              Manage how you receive notifications.
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            {isEditing ? (
+              <>
+                <Button type="button" variant="outline" onClick={handleCancel}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </>
+            ) : (
+              <Button type="button" onClick={handleEdit}>Edit</Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-6 pt-8 md:pt-6">
           <div className="flex items-center justify-between">
@@ -33,7 +60,8 @@ const NotificationSettings: React.FC = () => {
             </div>
             <Switch 
               checked={notifications} 
-              onCheckedChange={setNotifications} 
+              onCheckedChange={setNotifications}
+              disabled={!isEditing}
             />
           </div>
           <div className="flex items-center justify-between">
@@ -43,7 +71,11 @@ const NotificationSettings: React.FC = () => {
                 Receive email updates about your account.
               </p>
             </div>
-            <Switch defaultChecked />
+            <Switch 
+              checked={emailNotifications}
+              onCheckedChange={setEmailNotifications}
+              disabled={!isEditing}
+            />
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -52,7 +84,11 @@ const NotificationSettings: React.FC = () => {
                 Receive notifications when a trade is confirmed.
               </p>
             </div>
-            <Switch defaultChecked />
+            <Switch 
+              checked={tradeConfirmations}
+              onCheckedChange={setTradeConfirmations}
+              disabled={!isEditing}
+            />
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -61,9 +97,24 @@ const NotificationSettings: React.FC = () => {
                 Receive notifications for new messages.
               </p>
             </div>
-            <Switch defaultChecked />
+            <Switch 
+              checked={newMessages}
+              onCheckedChange={setNewMessages}
+              disabled={!isEditing}
+            />
           </div>
-          <Button type="submit">Save</Button>
+          <div className="flex gap-2 md:hidden">
+            {isEditing ? (
+              <>
+                <Button type="button" variant="outline" onClick={handleCancel}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </>
+            ) : (
+              <Button type="button" onClick={handleEdit}>Edit</Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     </form>
