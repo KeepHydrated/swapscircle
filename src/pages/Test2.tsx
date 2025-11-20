@@ -3,6 +3,7 @@ import { RecommendedTradesSlider } from '@/components/trade/RecommendedTradesSli
 import { RecommendedFriendsSection } from '@/components/friends/RecommendedFriendsSection';
 import RecommendedCategoriesSection from '@/components/categories/RecommendedCategoriesSection';
 import TradeOptionsSection from '@/components/trade/TradeOptionsSection';
+import RecommendedLocalTradesSection from '@/components/trade/RecommendedLocalTradesSection';
 
 const Test2 = () => {
   return (
@@ -10,6 +11,7 @@ const Test2 = () => {
       <div className="bg-background min-h-screen space-y-8 p-6">
         <RecommendedTradesSlider />
         <TradeOptionsSection />
+        <RecommendedLocalTradesSection />
         <RecommendedCategoriesSection />
         <RecommendedFriendsSection />
       </div>
