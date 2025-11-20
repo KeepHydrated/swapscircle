@@ -17,7 +17,6 @@ const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParam = searchParams.get('q') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
-  const [showFilters, setShowFilters] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
@@ -65,18 +64,8 @@ const SearchPage = () => {
     <MainLayout>
       <div className="bg-background min-h-screen p-6">
         <div className="max-w-6xl mx-auto">
-          {/* Filter Toggle Button */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-sm font-medium text-foreground mb-4 hover:text-primary transition-colors"
-          >
-            {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
-          </button>
-
           {/* Filters Section */}
-          {showFilters && (
-            <div className="bg-card border border-border rounded-lg p-6 mb-8">
+          <div className="bg-card border border-border rounded-lg p-6 mb-8">
               {/* Categories Dropdown */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Categories you're interested in</h3>
@@ -197,7 +186,6 @@ const SearchPage = () => {
                 </Popover>
               </div>
             </div>
-          )}
 
           {/* Results Count and Active Filters */}
           <div className="mb-6 flex items-center gap-3 flex-wrap">
