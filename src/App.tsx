@@ -119,6 +119,7 @@ const AppContent = () => {
           </RequireAuth>
         } />
         <Route path="/test" element={<TestPage />} />
+        <Route path="/test2" element={<Test2 />} />
         
          <Route path="*" element={<NotFound />} />
     </Routes>
