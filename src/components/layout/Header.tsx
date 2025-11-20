@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight, BarChart3 } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight, BarChart3, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -71,6 +71,18 @@ const Header = () => {
             <Link to="/" className="flex items-center">
               {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
             </Link>
+            
+            {/* Search bar - desktop only */}
+            {!isMobile && (
+              <div className="relative ml-6">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search items..."
+                  className="pl-10 pr-4 py-2 w-64 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            )}
           </div>
 
           {/* Mobile center icons */}
