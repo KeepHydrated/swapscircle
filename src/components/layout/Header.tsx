@@ -111,10 +111,10 @@ const Header = () => {
               </Link>
             </Button>
             
-            <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
-              <Link to="/trades">
-                <Handshake className="w-5 h-5" />
-                <span className="sr-only">Matches</span>
+            <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+              <Link to="/trades" className="flex items-center gap-2">
+                <Handshake className="w-4 h-4" />
+                <span>Matches</span>
               </Link>
             </Button>
             
