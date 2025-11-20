@@ -6,6 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -71,32 +77,44 @@ const SearchPage = () => {
           {/* Filters Section */}
           {showFilters && (
             <div className="bg-card border border-border rounded-lg p-6 mb-8">
-              {/* Categories */}
+              {/* Categories Dropdown */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Categories you're interested in</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {categories.map((category) => (
-                    <div key={category} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`category-${category}`}
-                        checked={selectedCategories.includes(category)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedCategories([...selectedCategories, category]);
-                          } else {
-                            setSelectedCategories(selectedCategories.filter(c => c !== category));
-                          }
-                        }}
-                      />
-                      <Label
-                        htmlFor={`category-${category}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                      >
-                        {category}
-                      </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {selectedCategories.length > 0
+                        ? `${selectedCategories.length} selected`
+                        : 'Select categories'}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
+                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                      {categories.map((category) => (
+                        <div key={category} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`category-${category}`}
+                            checked={selectedCategories.includes(category)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedCategories([...selectedCategories, category]);
+                              } else {
+                                setSelectedCategories(selectedCategories.filter(c => c !== category));
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={`category-${category}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            {category}
+                          </Label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Conditions */}
