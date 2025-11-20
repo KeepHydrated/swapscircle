@@ -18,6 +18,7 @@ const SearchPage = () => {
   const queryParam = searchParams.get('q') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
 
@@ -40,6 +41,19 @@ const SearchPage = () => {
     'Business', 'Entertainment', 'Collectibles', 'Books & Media',
     'Tools & Equipment', 'Food'
   ];
+
+  const subcategories: Record<string, string[]> = {
+    'Electronics': ['Phones', 'Laptops', 'Tablets', 'Cameras', 'Audio', 'Gaming', 'Wearables'],
+    'Home & Garden': ['Furniture', 'Decor', 'Kitchen', 'Bedding', 'Garden Tools', 'Outdoor'],
+    'Sports & Outdoors': ['Exercise', 'Camping', 'Cycling', 'Water Sports', 'Winter Sports'],
+    'Clothing': ['Men', 'Women', 'Kids', 'Shoes', 'Accessories', 'Jewelry'],
+    'Business': ['Office Supplies', 'Equipment', 'Software', 'Services'],
+    'Entertainment': ['Movies', 'Music', 'Games', 'Books', 'Toys'],
+    'Collectibles': ['Art', 'Antiques', 'Cards', 'Coins', 'Memorabilia'],
+    'Books & Media': ['Books', 'Magazines', 'CDs', 'DVDs', 'Vinyl'],
+    'Tools & Equipment': ['Power Tools', 'Hand Tools', 'Machinery', 'Safety Equipment'],
+    'Food': ['Fresh Produce', 'Packaged Goods', 'Beverages', 'Snacks', 'Specialty']
+  };
 
   const conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
   const priceRanges = ['$0-50', '$50-100', '$100-250', '$250-500', '$500+'];
@@ -169,8 +183,12 @@ const SearchPage = () => {
                             onCheckedChange={(checked) => {
                               if (checked) {
                                 setSelectedCategories([...selectedCategories, category]);
+                                setSelectedSubcategories({ ...selectedSubcategories, [category]: [] });
                               } else {
                                 setSelectedCategories(selectedCategories.filter(c => c !== category));
+                                const newSubcategories = { ...selectedSubcategories };
+                                delete newSubcategories[category];
+                                setSelectedSubcategories(newSubcategories);
                               }
                             }}
                           />
@@ -187,6 +205,59 @@ const SearchPage = () => {
                 </Popover>
               </div>
             </div>
+
+            {/* Subcategory Dropdowns for Selected Categories */}
+            {selectedCategories.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                {selectedCategories.map((category) => (
+                  <div key={category}>
+                    <h3 className="text-sm font-semibold text-foreground mb-4">{category}</h3>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-between">
+                          {selectedSubcategories[category]?.length > 0
+                            ? `${selectedSubcategories[category].length} selected`
+                            : 'Select subcategories'}
+                          <ChevronDown className="ml-2 h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
+                        <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                          {subcategories[category]?.map((subcategory) => (
+                            <div key={subcategory} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`subcategory-${category}-${subcategory}`}
+                                checked={selectedSubcategories[category]?.includes(subcategory) || false}
+                                onCheckedChange={(checked) => {
+                                  const currentSubs = selectedSubcategories[category] || [];
+                                  if (checked) {
+                                    setSelectedSubcategories({
+                                      ...selectedSubcategories,
+                                      [category]: [...currentSubs, subcategory]
+                                    });
+                                  } else {
+                                    setSelectedSubcategories({
+                                      ...selectedSubcategories,
+                                      [category]: currentSubs.filter(s => s !== subcategory)
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label
+                                htmlFor={`subcategory-${category}-${subcategory}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                              >
+                                {subcategory}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Results Count and Active Filters */}
