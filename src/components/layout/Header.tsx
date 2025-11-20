@@ -112,6 +112,13 @@ const Header = () => {
             </Button>
             
             <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+              <Link to="/trades">
+                <Handshake className="w-5 h-5" />
+                <span className="sr-only">Matches</span>
+              </Link>
+            </Button>
+            
+            <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
               <Link to="/messages">
                 <MessageCircle className="w-5 h-5" />
                 <span className="sr-only">Messages</span>
