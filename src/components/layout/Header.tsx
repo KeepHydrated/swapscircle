@@ -112,7 +112,7 @@ const Header = () => {
             </Button>
             
             <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
-              <Link to="/trades" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <Handshake className="w-4 h-4" />
                 <span>Matches</span>
               </Link>
