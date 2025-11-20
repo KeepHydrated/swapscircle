@@ -43,20 +43,6 @@ const SearchPage = () => {
     <MainLayout>
       <div className="bg-background min-h-screen p-6">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-foreground mb-6">Search Items</h1>
-          
-          {/* Search Input */}
-          <div className="relative mb-8">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search for items, categories, or users..."
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-12 pr-4 py-6 text-lg border-2 border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
           {/* Results Count */}
           <div className="mb-4">
             <p className="text-sm text-muted-foreground">
