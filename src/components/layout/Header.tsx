@@ -68,7 +68,7 @@ const Header = () => {
               </Link>
             )}
             
-            <Link to="/test2" className="flex items-center">
+            <Link to="/" className="flex items-center">
               {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
             </Link>
           </div>

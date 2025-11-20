@@ -42,7 +42,7 @@ const AppContent = () => {
   
   return (
     <Routes>
-      <Route path="/" element={<Test />} />
+      <Route path="/" element={<Test2 />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/trades" element={
