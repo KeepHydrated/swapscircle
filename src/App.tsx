@@ -120,6 +120,7 @@ const AppContent = () => {
         } />
         <Route path="/test" element={<TestPage />} />
         <Route path="/test2" element={<Test2 />} />
+        <Route path="/matches" element={<Test />} />
         
          <Route path="*" element={<NotFound />} />
     </Routes>
