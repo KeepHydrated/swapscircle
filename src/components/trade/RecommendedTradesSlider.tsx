@@ -26,7 +26,7 @@ export const RecommendedTradesSlider = () => {
         .from('items')
         .select('id, name, image_url, category, user_id')
         .eq('is_available', true)
-        .eq('status', 'active')
+        .eq('status', 'published')
         .limit(10);
 
       if (error) throw error;
