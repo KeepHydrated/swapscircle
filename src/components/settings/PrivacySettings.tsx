@@ -13,6 +13,7 @@ const PrivacySettings: React.FC = () => {
   const [vacationMode, setVacationMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
 
   // Load current settings
   useEffect(() => {
@@ -53,6 +54,7 @@ const PrivacySettings: React.FC = () => {
         toast.error('Failed to save privacy settings');
       } else {
         toast.success('Privacy settings saved successfully');
+        setIsEditing(false);
       }
     } else {
       navigate('/auth');
@@ -60,14 +62,38 @@ const PrivacySettings: React.FC = () => {
     setLoading(false);
   };
 
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
   if (initialLoading) {
     return (
       <Card>
-        <CardHeader className="hidden md:block">
-          <CardTitle>Privacy Settings</CardTitle>
-          <CardDescription>
-            Control your privacy and visibility.
-          </CardDescription>
+        <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0">
+          <div>
+            <CardTitle>Privacy Settings</CardTitle>
+            <CardDescription>
+              Control your privacy and visibility.
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            {isEditing ? (
+              <>
+                <Button type="button" variant="outline" onClick={handleCancel} disabled={loading}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSave} disabled={loading}>
+                  {loading ? 'Saving...' : 'Save'}
+                </Button>
+              </>
+            ) : (
+              <Button type="button" onClick={handleEdit}>Edit</Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="pt-8 md:pt-6">
           <div className="flex justify-center py-8">
@@ -80,11 +106,27 @@ const PrivacySettings: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader className="hidden md:block">
-        <CardTitle>Privacy Settings</CardTitle>
-        <CardDescription>
-          Control your privacy and visibility.
-        </CardDescription>
+      <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0">
+        <div>
+          <CardTitle>Privacy Settings</CardTitle>
+          <CardDescription>
+            Control your privacy and visibility.
+          </CardDescription>
+        </div>
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <Button type="button" variant="outline" onClick={handleCancel} disabled={loading}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </Button>
+            </>
+          ) : (
+            <Button type="button" onClick={handleEdit}>Edit</Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-6 pt-8 md:pt-6">
         <div className="flex items-center justify-between">
@@ -97,7 +139,7 @@ const PrivacySettings: React.FC = () => {
           <Switch 
             checked={showLocation} 
             onCheckedChange={setShowLocation}
-            disabled={loading}
+            disabled={!isEditing || loading}
           />
         </div>
         
@@ -111,13 +153,24 @@ const PrivacySettings: React.FC = () => {
           <Switch 
             checked={vacationMode} 
             onCheckedChange={setVacationMode}
-            disabled={loading}
+            disabled={!isEditing || loading}
           />
         </div>
         
-        <Button onClick={handleSave} disabled={loading}>
-          {loading ? 'Saving...' : 'Save Changes'}
-        </Button>
+        <div className="flex gap-2 md:hidden">
+          {isEditing ? (
+            <>
+              <Button type="button" variant="outline" onClick={handleCancel} disabled={loading}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </Button>
+            </>
+          ) : (
+            <Button type="button" onClick={handleEdit}>Edit</Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
