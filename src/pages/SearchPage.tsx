@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -156,11 +157,30 @@ const SearchPage = () => {
             </div>
           )}
 
-          {/* Results Count */}
-          <div className="mb-4">
+          {/* Results Count and Active Filters */}
+          <div className="mb-6 flex items-center gap-3 flex-wrap">
             <p className="text-sm text-muted-foreground">
-              {filteredResults.length} {filteredResults.length === 1 ? 'result' : 'results'} found
+              Showing {filteredResults.length} {filteredResults.length === 1 ? 'result' : 'results'}
             </p>
+            {searchQuery && (
+              <>
+                <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                  Search: "{searchQuery}"
+                  <button
+                    onClick={() => handleSearchChange('')}
+                    className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+                <button
+                  onClick={() => handleSearchChange('')}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Clear all
+                </button>
+              </>
+            )}
           </div>
 
           {/* Results Grid */}
