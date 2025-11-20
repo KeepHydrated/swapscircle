@@ -63,7 +63,7 @@ const NotificationSettings: React.FC = () => {
             </div>
             <Switch defaultChecked />
           </div>
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit">Save</Button>
         </CardContent>
       </Card>
     </form>
