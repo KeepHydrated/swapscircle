@@ -18,6 +18,7 @@ import NotificationDetails from "./pages/NotificationDetails";
 import NotFound from "./pages/NotFound";
 import PostingRules from "./pages/PostingRules";
 import Auth from "./pages/Auth";
+import SearchPage from "./pages/SearchPage";
 
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
@@ -121,6 +122,7 @@ const AppContent = () => {
         <Route path="/test" element={<TestPage />} />
         <Route path="/test2" element={<Test2 />} />
         <Route path="/matches" element={<Test />} />
+        <Route path="/search" element={<SearchPage />} />
         
          <Route path="*" element={<NotFound />} />
     </Routes>
