@@ -112,7 +112,7 @@ const Header = () => {
             </Button>
             
             <Button variant="default" size="sm" className="hidden md:flex bg-gray-900 hover:bg-gray-800 text-white" asChild>
-              <Link to="/" className="flex items-center gap-2">
+              <Link to="/matches" className="flex items-center gap-2">
                 <Handshake className="w-4 h-4" />
                 <span>Matches</span>
               </Link>
