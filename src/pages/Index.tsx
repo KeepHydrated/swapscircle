@@ -6,8 +6,8 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect to home
-    navigate('/');
+    // Redirect to test2
+    navigate('/test2');
   }, [navigate]);
 
   return (
