@@ -67,7 +67,7 @@ export const RecommendedTradesSlider = () => {
       >
         <CarouselContent className="-ml-4">
           {items.map((item) => (
-            <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
+            <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
               <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative aspect-square">
                   <img
@@ -76,12 +76,12 @@ export const RecommendedTradesSlider = () => {
                     className="w-full h-full object-cover"
                   />
                   <button className="absolute top-2 right-2 bg-background/80 rounded-full p-2 hover:bg-background transition-colors">
-                    <Heart className="w-4 h-4 text-foreground" />
+                    <Heart className="w-5 h-5 text-foreground" />
                   </button>
                 </div>
-                <div className="p-3">
-                  <h3 className="font-semibold text-base mb-1 truncate text-foreground">{item.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-2">{item.category}</p>
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg mb-1 truncate text-foreground">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-2">{item.category}</p>
                 </div>
               </Card>
             </CarouselItem>
