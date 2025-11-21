@@ -79,180 +79,160 @@ const SearchPage = () => {
       <div className="bg-background min-h-screen p-6">
         <div className="max-w-6xl mx-auto">
           {/* Filters Section */}
-          <div className="bg-card border border-border rounded-lg p-6 mb-8">
-            <div className="flex gap-4 overflow-x-auto pb-2">
+          <div className="mb-8">
+            <div className="flex gap-3 overflow-x-auto pb-2">
               {/* Conditions Dropdown */}
-              <div className="min-w-[250px]">
-                <h3 className="text-sm font-semibold text-foreground mb-4">Conditions</h3>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                      {selectedConditions.length > 0
-                        ? `${selectedConditions.length} selected`
-                        : 'Select conditions'}
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
-                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
-                      {conditions.map((condition) => (
-                        <div key={condition} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`condition-${condition}`}
-                            checked={selectedConditions.includes(condition)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedConditions([...selectedConditions, condition]);
-                              } else {
-                                setSelectedConditions(selectedConditions.filter(c => c !== condition));
-                              }
-                            }}
-                          />
-                          <Label
-                            htmlFor={`condition-${condition}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                          >
-                            {condition}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Price Ranges Dropdown */}
-              <div className="min-w-[250px]">
-                <h3 className="text-sm font-semibold text-foreground mb-4">Price Ranges</h3>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                      {selectedPriceRanges.length > 0
-                        ? `${selectedPriceRanges.length} selected`
-                        : 'Select price ranges'}
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
-                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
-                      {priceRanges.map((range) => (
-                        <div key={range} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`price-${range}`}
-                            checked={selectedPriceRanges.includes(range)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedPriceRanges([...selectedPriceRanges, range]);
-                              } else {
-                                setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
-                              }
-                            }}
-                          />
-                          <Label
-                            htmlFor={`price-${range}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                          >
-                            {range}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Condition
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
+                  <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                    {conditions.map((condition) => (
+                      <div key={condition} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`condition-${condition}`}
+                          checked={selectedConditions.includes(condition)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedConditions([...selectedConditions, condition]);
+                            } else {
+                              setSelectedConditions(selectedConditions.filter(c => c !== condition));
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={`condition-${condition}`}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        >
+                          {condition}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
 
               {/* Categories Dropdown */}
-              <div className="min-w-[250px]">
-                <h3 className="text-sm font-semibold text-foreground mb-4">Categories</h3>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                      {selectedCategories.length > 0
-                        ? `${selectedCategories.length} selected`
-                        : 'Select categories'}
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
-                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
-                      {categories.map((category) => (
-                        <div key={category} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`category-${category}`}
-                            checked={selectedCategories.includes(category)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedCategories([...selectedCategories, category]);
-                                setSelectedSubcategories({ ...selectedSubcategories, [category]: [] });
-                              } else {
-                                setSelectedCategories(selectedCategories.filter(c => c !== category));
-                                const newSubcategories = { ...selectedSubcategories };
-                                delete newSubcategories[category];
-                                setSelectedSubcategories(newSubcategories);
-                              }
-                            }}
-                          />
-                          <Label
-                            htmlFor={`category-${category}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                          >
-                            {category}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Category
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
+                  <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                    {categories.map((category) => (
+                      <div key={category} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`category-${category}`}
+                          checked={selectedCategories.includes(category)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedCategories([...selectedCategories, category]);
+                              setSelectedSubcategories({ ...selectedSubcategories, [category]: [] });
+                            } else {
+                              setSelectedCategories(selectedCategories.filter(c => c !== category));
+                              const newSubcategories = { ...selectedSubcategories };
+                              delete newSubcategories[category];
+                              setSelectedSubcategories(newSubcategories);
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={`category-${category}`}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        >
+                          {category}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
 
               {/* Subcategory Dropdowns for Selected Categories */}
               {selectedCategories.map((category) => (
-                <div key={category} className="min-w-[250px]">
-                  <h3 className="text-sm font-semibold text-foreground mb-4">{category}</h3>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-full justify-between">
-                        {selectedSubcategories[category]?.length > 0
-                          ? `${selectedSubcategories[category].length} selected`
-                          : 'Select subcategories'}
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
-                      <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
-                        {subcategories[category]?.map((subcategory) => (
-                          <div key={subcategory} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`subcategory-${category}-${subcategory}`}
-                              checked={selectedSubcategories[category]?.includes(subcategory) || false}
-                              onCheckedChange={(checked) => {
-                                const currentSubs = selectedSubcategories[category] || [];
-                                if (checked) {
-                                  setSelectedSubcategories({
-                                    ...selectedSubcategories,
-                                    [category]: [...currentSubs, subcategory]
-                                  });
-                                } else {
-                                  setSelectedSubcategories({
-                                    ...selectedSubcategories,
-                                    [category]: currentSubs.filter(s => s !== subcategory)
-                                  });
-                                }
-                              }}
-                            />
-                            <Label
-                              htmlFor={`subcategory-${category}-${subcategory}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                              {subcategory}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
+                <Popover key={category}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                      {category}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
+                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                      {subcategories[category]?.map((subcategory) => (
+                        <div key={subcategory} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`subcategory-${category}-${subcategory}`}
+                            checked={selectedSubcategories[category]?.includes(subcategory) || false}
+                            onCheckedChange={(checked) => {
+                              const currentSubs = selectedSubcategories[category] || [];
+                              if (checked) {
+                                setSelectedSubcategories({
+                                  ...selectedSubcategories,
+                                  [category]: [...currentSubs, subcategory]
+                                });
+                              } else {
+                                setSelectedSubcategories({
+                                  ...selectedSubcategories,
+                                  [category]: currentSubs.filter(s => s !== subcategory)
+                                });
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={`subcategory-${category}-${subcategory}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            {subcategory}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               ))}
+
+              {/* Price Ranges Dropdown */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Price
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
+                  <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                    {priceRanges.map((range) => (
+                      <div key={range} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`price-${range}`}
+                          checked={selectedPriceRanges.includes(range)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedPriceRanges([...selectedPriceRanges, range]);
+                            } else {
+                              setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={`price-${range}`}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        >
+                          {range}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
