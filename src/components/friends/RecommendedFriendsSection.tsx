@@ -128,11 +128,11 @@ export const RecommendedFriendsSection = () => {
         </div>
       </div>
       
-      <div className="overflow-x-auto pb-4 -mr-4 pr-4">
-        <div className="flex gap-3 min-w-max">
-          {profiles.map((profile) => (
+      <div className="overflow-x-auto pb-4">
+        <div className="flex gap-3">
+          {profiles.map((profile, index) => (
             <div key={profile.id} className="w-64 flex-shrink-0">
-              <div className="p-6">
+              <div className={index === 0 ? "p-6 pl-0" : "p-6"}>
               <div className="flex flex-col items-center mb-4">
                 <div className="relative">
                   <Avatar 
