@@ -97,23 +97,25 @@ export const RecommendedFriendsSection = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {profiles.map((profile) => (
-          <div key={profile.id} className="relative">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="absolute top-2 right-2 z-10"
-              onClick={() => handleAddFriend(profile.id)}
-            >
-              <UserPlus className="w-4 h-4" />
-            </Button>
+          <div key={profile.id}>
             <div className="p-6">
               <div className="flex flex-col items-center mb-4">
-                <Avatar className="w-24 h-24 border-4 border-background mb-3">
-                  <AvatarImage src={profile.avatar_url} alt={profile.name} />
-                  <AvatarFallback className="text-2xl">
-                    {profile.name?.charAt(0) || profile.username?.charAt(0) || '?'}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="w-24 h-24 border-4 border-background mb-3">
+                    <AvatarImage src={profile.avatar_url} alt={profile.name} />
+                    <AvatarFallback className="text-2xl">
+                      {profile.name?.charAt(0) || profile.username?.charAt(0) || '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent"
+                    onClick={() => handleAddFriend(profile.id)}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                  </Button>
+                </div>
                 <h3 className="font-semibold text-xl text-foreground text-center">
                   {profile.name || profile.username}
                 </h3>
