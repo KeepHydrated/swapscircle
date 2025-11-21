@@ -85,15 +85,14 @@ const SearchPage = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <Button 
-                    variant={selectedConditions.length > 0 ? "default" : "outline"} 
-                    className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                    variant="outline"
+                    className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
+                      selectedConditions.length > 0 
+                        ? 'border-primary text-primary border-2' 
+                        : 'border-border hover:bg-accent'
+                    }`}
                   >
-                    Condition
-                    {selectedConditions.length > 0 && (
-                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
-                        {selectedConditions.length}
-                      </Badge>
-                    )}
+                    Condition{selectedConditions.length > 0 ? ` (${selectedConditions.length})` : ''}
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -128,15 +127,14 @@ const SearchPage = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <Button 
-                    variant={selectedPriceRanges.length > 0 ? "default" : "outline"} 
-                    className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                    variant="outline"
+                    className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
+                      selectedPriceRanges.length > 0 
+                        ? 'border-primary text-primary border-2' 
+                        : 'border-border hover:bg-accent'
+                    }`}
                   >
-                    Price
-                    {selectedPriceRanges.length > 0 && (
-                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
-                        {selectedPriceRanges.length}
-                      </Badge>
-                    )}
+                    Price{selectedPriceRanges.length > 0 ? ` (${selectedPriceRanges.length})` : ''}
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -171,15 +169,14 @@ const SearchPage = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <Button 
-                    variant={selectedCategories.length > 0 ? "default" : "outline"} 
-                    className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                    variant="outline"
+                    className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
+                      selectedCategories.length > 0 
+                        ? 'border-primary text-primary border-2' 
+                        : 'border-border hover:bg-accent'
+                    }`}
                   >
-                    Category
-                    {selectedCategories.length > 0 && (
-                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
-                        {selectedCategories.length}
-                      </Badge>
-                    )}
+                    Category{selectedCategories.length > 0 ? ` (${selectedCategories.length})` : ''}
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -219,15 +216,14 @@ const SearchPage = () => {
                 <Popover key={category}>
                   <PopoverTrigger asChild>
                     <Button 
-                      variant={selectedSubcategories[category]?.length > 0 ? "default" : "outline"} 
-                      className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                      variant="outline"
+                      className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
+                        selectedSubcategories[category]?.length > 0 
+                          ? 'border-primary text-primary border-2' 
+                          : 'border-border hover:bg-accent'
+                      }`}
                     >
-                      {category}
-                      {selectedSubcategories[category]?.length > 0 && (
-                        <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
-                          {selectedSubcategories[category].length}
-                        </Badge>
-                      )}
+                      {category}{selectedSubcategories[category]?.length > 0 ? ` (${selectedSubcategories[category].length})` : ''}
                       <ChevronDown className="ml-2 h-4 w-4" />
                     </Button>
                   </PopoverTrigger>
