@@ -124,8 +124,7 @@ export const RecommendedFriendsSection = () => {
                     size="icon"
                     variant="ghost"
                     className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent border-2 border-border"
-                    onClick={() => handleAddFriend(profile.id)}
-                    disabled={sentRequests.has(profile.id)}
+                    onClick={() => !sentRequests.has(profile.id) && handleAddFriend(profile.id)}
                   >
                     {sentRequests.has(profile.id) ? (
                       <Check className="w-4 h-4" />
