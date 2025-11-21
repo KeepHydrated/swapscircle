@@ -84,8 +84,16 @@ const SearchPage = () => {
               {/* Conditions Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                  <Button 
+                    variant={selectedConditions.length > 0 ? "default" : "outline"} 
+                    className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                  >
                     Condition
+                    {selectedConditions.length > 0 && (
+                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
+                        {selectedConditions.length}
+                      </Badge>
+                    )}
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -119,8 +127,16 @@ const SearchPage = () => {
               {/* Price Ranges Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                  <Button 
+                    variant={selectedPriceRanges.length > 0 ? "default" : "outline"} 
+                    className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                  >
                     Price
+                    {selectedPriceRanges.length > 0 && (
+                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
+                        {selectedPriceRanges.length}
+                      </Badge>
+                    )}
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -154,8 +170,16 @@ const SearchPage = () => {
               {/* Categories Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                  <Button 
+                    variant={selectedCategories.length > 0 ? "default" : "outline"} 
+                    className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                  >
                     Category
+                    {selectedCategories.length > 0 && (
+                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
+                        {selectedCategories.length}
+                      </Badge>
+                    )}
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -194,8 +218,16 @@ const SearchPage = () => {
               {selectedCategories.map((category) => (
                 <Popover key={category}>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    <Button 
+                      variant={selectedSubcategories[category]?.length > 0 ? "default" : "outline"} 
+                      className="rounded-full px-6 py-5 text-base font-normal whitespace-nowrap gap-2"
+                    >
                       {category}
+                      {selectedSubcategories[category]?.length > 0 && (
+                        <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs">
+                          {selectedSubcategories[category].length}
+                        </Badge>
+                      )}
                       <ChevronDown className="ml-2 h-4 w-4" />
                     </Button>
                   </PopoverTrigger>
