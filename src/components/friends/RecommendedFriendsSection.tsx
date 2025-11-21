@@ -123,12 +123,16 @@ export const RecommendedFriendsSection = () => {
                   <Button
                     size="icon"
                     variant={sentRequests.has(profile.id) ? "default" : "ghost"}
-                    className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent border-2 border-border"
+                    className={`absolute -top-1 -right-1 h-8 w-8 shadow-md border-2 ${
+                      sentRequests.has(profile.id) 
+                        ? 'bg-green-600 border-green-600 hover:bg-green-700' 
+                        : 'bg-background border-border hover:bg-accent'
+                    }`}
                     onClick={() => handleAddFriend(profile.id)}
                     disabled={sentRequests.has(profile.id)}
                   >
                     {sentRequests.has(profile.id) ? (
-                      <Check className="w-4 h-4" />
+                      <Check className="w-4 h-4 text-white" />
                     ) : (
                       <UserPlus className="w-4 h-4" />
                     )}
