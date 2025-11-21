@@ -128,10 +128,11 @@ export const RecommendedFriendsSection = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {profiles.map((profile) => (
-          <div key={profile.id}>
-            <div className="p-6">
+      <div className="overflow-x-auto pb-4 -mx-4 px-4">
+        <div className="flex gap-6 min-w-max">
+          {profiles.map((profile) => (
+            <div key={profile.id} className="w-64 flex-shrink-0">
+              <div className="p-6">
               <div className="flex flex-col items-center mb-4">
                 <div className="relative">
                   <Avatar 
@@ -183,9 +184,10 @@ export const RecommendedFriendsSection = () => {
                   {profile.bio}
                 </p>
               )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
