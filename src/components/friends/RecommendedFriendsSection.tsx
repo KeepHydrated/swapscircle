@@ -103,7 +103,7 @@ export const RecommendedFriendsSection = () => {
           {profiles.map((profile) => (
             <Card 
               key={profile.id} 
-              className="overflow-hidden hover:shadow-lg transition-all border-0"
+              className="overflow-hidden hover:shadow-lg transition-all"
             >
               <div className="relative h-24 bg-gradient-to-r from-primary/20 to-primary/10" />
               <div className="p-6 -mt-12">
