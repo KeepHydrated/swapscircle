@@ -97,7 +97,15 @@ export const RecommendedFriendsSection = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {profiles.map((profile) => (
-          <div key={profile.id}>
+          <div key={profile.id} className="relative">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="absolute top-2 right-2 z-10"
+              onClick={() => handleAddFriend(profile.id)}
+            >
+              <UserPlus className="w-4 h-4" />
+            </Button>
             <div className="p-6">
               <div className="flex flex-col items-center mb-4">
                 <Avatar className="w-24 h-24 border-4 border-background mb-3">
