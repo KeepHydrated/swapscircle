@@ -20,6 +20,7 @@ export const RecommendedFriendsSection = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
+  const [existingFriends, setExistingFriends] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -38,6 +39,25 @@ export const RecommendedFriendsSection = () => {
 
       if (error) throw error;
       setProfiles(data || []);
+
+      // Check for existing friendships
+      if (user && data) {
+        const profileIds = data.map(p => p.id);
+        const { data: friendships } = await supabase
+          .from('friend_requests')
+          .select('requester_id, recipient_id')
+          .eq('status', 'accepted')
+          .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+
+        if (friendships) {
+          const friendIds = new Set(
+            friendships.map(f => 
+              f.requester_id === user.id ? f.recipient_id : f.requester_id
+            ).filter(id => profileIds.includes(id))
+          );
+          setExistingFriends(friendIds);
+        }
+      }
     } catch (error) {
       console.error('Error fetching recommended friends:', error);
     } finally {
@@ -122,14 +142,18 @@ export const RecommendedFriendsSection = () => {
                   </Avatar>
                   <Button
                     size="icon"
-                    variant="ghost"
-                    className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent border-2 border-border"
-                    onClick={() => !sentRequests.has(profile.id) && handleAddFriend(profile.id)}
+                    variant={existingFriends.has(profile.id) ? "default" : "ghost"}
+                    className={`absolute -top-1 -right-1 h-8 w-8 shadow-md border-2 ${
+                      existingFriends.has(profile.id)
+                        ? 'bg-green-600 border-green-600 hover:bg-green-700'
+                        : 'bg-background border-border hover:bg-accent'
+                    }`}
+                    onClick={() => !sentRequests.has(profile.id) && !existingFriends.has(profile.id) && handleAddFriend(profile.id)}
                   >
                     {sentRequests.has(profile.id) ? (
                       <Check className="w-4 h-4" />
                     ) : (
-                      <UserPlus className="w-4 h-4" />
+                      <UserPlus className={existingFriends.has(profile.id) ? "w-4 h-4 text-white" : "w-4 h-4"} />
                     )}
                   </Button>
                 </div>
