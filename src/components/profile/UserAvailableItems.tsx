@@ -26,6 +26,7 @@ const UserAvailableItems: React.FC<UserAvailableItemsProps> = ({
           liked={item.liked}
           onSelect={onSelectItem}
           onLike={onLikeItem}
+          myItemImage={item.myItemImage}
         />
       ))}
     </div>

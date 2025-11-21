@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 
 const MatchesSection = () => {
   const matches = [
-    { id: 1, name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M." },
-    { id: 2, name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K." },
-    { id: 3, name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T." },
-    { id: 4, name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L." },
-    { id: 5, name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P." },
+    { id: 1, name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7" },
+    { id: 2, name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b" },
+    { id: 3, name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c" },
+    { id: 4, name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817" },
+    { id: 5, name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092" },
   ];
 
   return (
@@ -37,6 +37,12 @@ const MatchesSection = () => {
                     <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors">
                       <Heart className="w-5 h-5 text-red-500" />
                     </button>
+                  </div>
+                  {/* My Item Thumbnail in Bottom Right */}
+                  <div className="absolute bottom-2 right-2">
+                    <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                      <img src={item.myItemImage} alt="Your item" className="w-full h-full object-cover" />
+                    </div>
                   </div>
                 </div>
                 <div className="p-4">
