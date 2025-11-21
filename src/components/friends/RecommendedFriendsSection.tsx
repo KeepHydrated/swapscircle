@@ -131,23 +131,23 @@ export const RecommendedFriendsSection = () => {
       <div className="overflow-x-auto pb-4">
         <div className="flex gap-3">
           {profiles.map((profile, index) => (
-            <div key={profile.id} className={`flex-shrink-0 ${index === 0 ? 'w-64' : 'w-64'}`}>
-              <div className={index === 0 ? "py-4 pr-4" : "p-4"}>
+            <div key={profile.id} className={`flex-shrink-0 ${index === 0 ? 'w-48' : 'w-48'}`}>
+              <div className={index === 0 ? "py-2 pr-2" : "p-2"}>
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <Avatar 
-                    className="w-24 h-24 border-4 border-background mb-2 cursor-pointer"
+                    className="w-20 h-20 border-2 border-background mb-1 cursor-pointer"
                     onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
                   >
                     <AvatarImage src={profile.avatar_url} alt={profile.name} />
-                    <AvatarFallback className="text-2xl">
+                    <AvatarFallback className="text-xl">
                       {profile.name?.charAt(0) || profile.username?.charAt(0) || '?'}
                     </AvatarFallback>
                   </Avatar>
                   <Button
                     size="icon"
                     variant={existingFriends.has(profile.id) ? "default" : "ghost"}
-                    className={`absolute -top-1 -right-1 h-8 w-8 shadow-md border-2 ${
+                    className={`absolute -top-0.5 -right-0.5 h-7 w-7 shadow-md border-2 ${
                       existingFriends.has(profile.id)
                         ? 'bg-green-600 border-green-600 hover:bg-green-700'
                         : 'bg-background border-border hover:bg-accent'
@@ -162,13 +162,13 @@ export const RecommendedFriendsSection = () => {
                   </Button>
                 </div>
                 <h3 
-                  className="font-semibold text-xl text-foreground text-center cursor-pointer"
+                  className="font-semibold text-lg text-foreground text-center cursor-pointer"
                   onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
                 >
                   {profile.name || profile.username}
                 </h3>
                 {profile.username && profile.name !== profile.username && (
-                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                  <p className="text-xs text-muted-foreground">@{profile.username}</p>
                 )}
               </div>
 
