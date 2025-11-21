@@ -84,15 +84,8 @@ const SearchPage = () => {
               {/* Conditions Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
-                      selectedConditions.length > 0 
-                        ? 'border-2 border-primary text-primary hover:bg-primary/10' 
-                        : 'border-border hover:bg-accent'
-                    }`}
-                  >
-                    Condition {selectedConditions.length > 0 && `(${selectedConditions.length})`}
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Condition
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -126,15 +119,8 @@ const SearchPage = () => {
               {/* Price Ranges Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
-                      selectedPriceRanges.length > 0 
-                        ? 'border-2 border-primary text-primary hover:bg-primary/10' 
-                        : 'border-border hover:bg-accent'
-                    }`}
-                  >
-                    Price {selectedPriceRanges.length > 0 && `(${selectedPriceRanges.length})`}
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Price
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -168,15 +154,8 @@ const SearchPage = () => {
               {/* Categories Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
-                      selectedCategories.length > 0 
-                        ? 'border-2 border-primary text-primary hover:bg-primary/10' 
-                        : 'border-border hover:bg-accent'
-                    }`}
-                  >
-                    Category {selectedCategories.length > 0 && `(${selectedCategories.length})`}
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Category
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
@@ -212,23 +191,14 @@ const SearchPage = () => {
               </Popover>
 
               {/* Subcategory Dropdowns for Selected Categories */}
-              {selectedCategories.map((category) => {
-                const subCount = selectedSubcategories[category]?.length || 0;
-                return (
-                  <Popover key={category}>
-                    <PopoverTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
-                          subCount > 0 
-                            ? 'border-2 border-primary text-primary hover:bg-primary/10' 
-                            : 'border-border hover:bg-accent'
-                        }`}
-                      >
-                        {category} {subCount > 0 && `(${subCount})`}
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
+              {selectedCategories.map((category) => (
+                <Popover key={category}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                      {category}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
                   <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
                     <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
                       {subcategories[category]?.map((subcategory) => (
@@ -262,101 +232,10 @@ const SearchPage = () => {
                     </div>
                   </PopoverContent>
                 </Popover>
-              );
-            })}
+              ))}
 
             </div>
           </div>
-
-          {/* Active Filter Badges */}
-          {(selectedConditions.length > 0 || selectedPriceRanges.length > 0 || selectedCategories.length > 0 || Object.values(selectedSubcategories).some(arr => arr.length > 0)) && (
-            <div className="mb-6 flex items-center gap-2 flex-wrap">
-              {selectedConditions.map((condition) => (
-                <Badge 
-                  key={condition} 
-                  variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
-                >
-                  {condition}
-                  <button
-                    onClick={() => setSelectedConditions(selectedConditions.filter(c => c !== condition))}
-                    className="hover:bg-accent rounded-full p-0.5 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-              {selectedPriceRanges.map((range) => (
-                <Badge 
-                  key={range} 
-                  variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
-                >
-                  {range}
-                  <button
-                    onClick={() => setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range))}
-                    className="hover:bg-accent rounded-full p-0.5 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-              {selectedCategories.map((category) => (
-                <Badge 
-                  key={category} 
-                  variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
-                >
-                  {category}
-                  <button
-                    onClick={() => {
-                      setSelectedCategories(selectedCategories.filter(c => c !== category));
-                      const newSubcategories = { ...selectedSubcategories };
-                      delete newSubcategories[category];
-                      setSelectedSubcategories(newSubcategories);
-                    }}
-                    className="hover:bg-accent rounded-full p-0.5 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-              {Object.entries(selectedSubcategories).map(([category, subs]) =>
-                subs.map((sub) => (
-                  <Badge 
-                    key={`${category}-${sub}`} 
-                    variant="secondary" 
-                    className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
-                  >
-                    {sub}
-                    <button
-                      onClick={() => {
-                        setSelectedSubcategories({
-                          ...selectedSubcategories,
-                          [category]: subs.filter(s => s !== sub)
-                        });
-                      }}
-                      className="hover:bg-accent rounded-full p-0.5 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))
-              )}
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setSelectedConditions([]);
-                  setSelectedPriceRanges([]);
-                  setSelectedCategories([]);
-                  setSelectedSubcategories({});
-                }}
-                className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-full px-4"
-              >
-                Clear All
-              </Button>
-            </div>
-          )}
 
           {/* Results Count and Active Filters */}
           <div className="mb-6 flex items-center gap-3 flex-wrap">
