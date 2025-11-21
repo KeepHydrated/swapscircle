@@ -116,6 +116,41 @@ const SearchPage = () => {
                 </PopoverContent>
               </Popover>
 
+              {/* Price Ranges Dropdown */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
+                    Price
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
+                  <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
+                    {priceRanges.map((range) => (
+                      <div key={range} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`price-${range}`}
+                          checked={selectedPriceRanges.includes(range)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedPriceRanges([...selectedPriceRanges, range]);
+                            } else {
+                              setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={`price-${range}`}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        >
+                          {range}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+
               {/* Categories Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
@@ -199,40 +234,6 @@ const SearchPage = () => {
                 </Popover>
               ))}
 
-              {/* Price Ranges Dropdown */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="rounded-full px-6 py-5 text-base font-normal border-border hover:bg-accent whitespace-nowrap">
-                    Price
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-64 p-4 bg-background border border-border z-50" align="start">
-                  <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
-                    {priceRanges.map((range) => (
-                      <div key={range} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`price-${range}`}
-                          checked={selectedPriceRanges.includes(range)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setSelectedPriceRanges([...selectedPriceRanges, range]);
-                            } else {
-                              setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
-                            }
-                          }}
-                        />
-                        <Label
-                          htmlFor={`price-${range}`}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                        >
-                          {range}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
             </div>
           </div>
 
