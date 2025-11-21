@@ -79,8 +79,8 @@ const SearchPage = () => {
       <div className="bg-background min-h-screen p-6">
         <div className="max-w-6xl mx-auto">
           {/* Filters Section */}
-          <div className="mb-8">
-            <div className="flex gap-3 overflow-x-auto pb-2 items-center">
+          <div className="mb-8 border-b border-border">
+            <div className="flex gap-3 overflow-x-auto pb-4 items-center">
               {/* Menu Icon */}
               <Button variant="ghost" size="icon" className="shrink-0">
                 <Menu className="h-5 w-5" />
