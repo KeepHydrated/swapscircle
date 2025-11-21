@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
@@ -98,10 +97,7 @@ export const RecommendedFriendsSection = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {profiles.map((profile) => (
-          <Card 
-            key={profile.id} 
-            className="overflow-hidden hover:shadow-lg transition-all"
-          >
+          <div key={profile.id}>
             <div className="relative h-24 bg-gradient-to-r from-primary/20 to-primary/10" />
             <div className="p-6 -mt-12">
               <div className="flex flex-col items-center mb-4">
@@ -149,7 +145,7 @@ export const RecommendedFriendsSection = () => {
                 </Button>
               </div>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     </div>
