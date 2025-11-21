@@ -42,14 +42,14 @@ const RecommendedCategoriesSection: React.FC = () => {
               >
                 <div
                   className={cn(
-                    "w-20 h-20 rounded-full flex items-center justify-center text-3xl",
+                    "w-28 h-28 rounded-full flex items-center justify-center text-4xl",
                     "border-2 border-border shadow-sm",
                     category.color
                   )}
                 >
                   {category.icon}
                 </div>
-                <span className="text-sm text-center font-medium max-w-[90px] text-muted-foreground">
+                <span className="text-sm text-center font-medium max-w-[110px] text-muted-foreground">
                   {category.name}
                 </span>
               </button>
