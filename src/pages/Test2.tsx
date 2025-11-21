@@ -2,7 +2,6 @@ import MainLayout from '@/components/layout/MainLayout';
 import { RecommendedTradesSlider } from '@/components/trade/RecommendedTradesSlider';
 import { RecommendedFriendsSection } from '@/components/friends/RecommendedFriendsSection';
 import RecommendedCategoriesSection from '@/components/categories/RecommendedCategoriesSection';
-import TradeOptionsSection from '@/components/trade/TradeOptionsSection';
 import RecommendedLocalTradesSection from '@/components/trade/RecommendedLocalTradesSection';
 import MatchesSection from '@/components/items/MatchesSection';
 import HeroBanner from '@/components/home/HeroBanner';
@@ -14,7 +13,6 @@ const Test2 = () => {
         <HeroBanner />
         <MatchesSection />
         <RecommendedTradesSlider />
-        <TradeOptionsSection />
         <RecommendedLocalTradesSection />
         <RecommendedCategoriesSection />
         <RecommendedFriendsSection />
