@@ -76,11 +76,11 @@ const SearchPage = () => {
 
   return (
     <MainLayout>
-      <div className="bg-background min-h-screen p-6">
+      <div className="bg-background min-h-screen">
         <div className="max-w-6xl mx-auto">
           {/* Filters Section */}
-          <div className="mb-8 border-b border-border">
-            <div className="flex gap-3 overflow-x-auto pb-4">
+          <div className="mb-8 border-b border-border -mx-6">
+            <div className="flex gap-3 overflow-x-auto pb-4 px-6">
               {/* Conditions Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
