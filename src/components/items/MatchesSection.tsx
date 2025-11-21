@@ -47,7 +47,6 @@ const MatchesSection = () => {
                 </div>
                 <div className="p-4">
                   <p className="text-sm font-semibold truncate text-foreground">{item.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{item.user}</p>
                 </div>
               </div>
             </div>
