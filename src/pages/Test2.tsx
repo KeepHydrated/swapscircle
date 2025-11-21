@@ -5,11 +5,13 @@ import RecommendedCategoriesSection from '@/components/categories/RecommendedCat
 import TradeOptionsSection from '@/components/trade/TradeOptionsSection';
 import RecommendedLocalTradesSection from '@/components/trade/RecommendedLocalTradesSection';
 import MatchesSection from '@/components/items/MatchesSection';
+import HeroBanner from '@/components/home/HeroBanner';
 
 const Test2 = () => {
   return (
     <MainLayout>
       <div className="bg-background min-h-screen space-y-8 p-6">
+        <HeroBanner />
         <MatchesSection />
         <RecommendedTradesSlider />
         <TradeOptionsSection />
