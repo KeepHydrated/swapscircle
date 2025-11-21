@@ -102,8 +102,12 @@ const ItemCard: React.FC<ItemCardProps> = ({
     if (disableClick) {
       return;
     }
-    // Navigate to item details page
-    navigate(`/item/${id}`);
+    // For matches, use the modal (onSelect). For non-matches, navigate to details page
+    if (isMatch) {
+      onSelect(id);
+    } else {
+      navigate(`/item/${id}`);
+    }
   };
 
   const handleMouseDown = () => {
