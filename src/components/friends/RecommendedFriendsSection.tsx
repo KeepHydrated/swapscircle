@@ -172,13 +172,6 @@ export const RecommendedFriendsSection = () => {
                 )}
               </div>
 
-              {profile.location && (
-                <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mb-3">
-                  <MapPin className="w-4 h-4" />
-                  <span>{profile.location}</span>
-                </div>
-              )}
-
               {profile.bio && (
                 <p className="text-sm text-muted-foreground text-center mb-4 line-clamp-2">
                   {profile.bio}
