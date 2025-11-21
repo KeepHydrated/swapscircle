@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const categories = [
   { name: "Electronics", icon: "📱", color: "bg-blue-100 hover:bg-blue-200" },
@@ -25,32 +26,43 @@ const RecommendedCategoriesSection: React.FC = () => {
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border p-6">
       <h2 className="text-2xl font-bold text-foreground mb-6">Recommended Categories</h2>
-      <div className="flex flex-wrap gap-6 justify-center">
-        {categories.map((category) => (
-          <button
-            key={category.name}
-            onClick={() => handleCategoryClick(category.name)}
-            className={cn(
-              "flex flex-col items-center gap-2 transition-all group",
-              "hover:scale-110"
-            )}
-          >
-            <div
-              className={cn(
-                "w-20 h-20 rounded-full flex items-center justify-center text-3xl",
-                "border-2 border-border transition-all shadow-sm",
-                category.color,
-                "group-hover:shadow-lg"
-              )}
-            >
-              {category.icon}
-            </div>
-            <span className="text-sm text-center font-medium max-w-[90px] text-muted-foreground group-hover:text-foreground transition-colors">
-              {category.name}
-            </span>
-          </button>
-        ))}
-      </div>
+      <Carousel
+        opts={{
+          align: "start",
+          loop: false,
+        }}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-4">
+          {categories.map((category) => (
+            <CarouselItem key={category.name} className="pl-4 basis-auto">
+              <button
+                onClick={() => handleCategoryClick(category.name)}
+                className={cn(
+                  "flex flex-col items-center gap-2 transition-all group",
+                  "hover:scale-110"
+                )}
+              >
+                <div
+                  className={cn(
+                    "w-20 h-20 rounded-full flex items-center justify-center text-3xl",
+                    "border-2 border-border transition-all shadow-sm",
+                    category.color,
+                    "group-hover:shadow-lg"
+                  )}
+                >
+                  {category.icon}
+                </div>
+                <span className="text-sm text-center font-medium max-w-[90px] text-muted-foreground group-hover:text-foreground transition-colors">
+                  {category.name}
+                </span>
+              </button>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="left-0" />
+        <CarouselNext className="right-0" />
+      </Carousel>
     </div>
   );
 };
