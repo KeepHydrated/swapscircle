@@ -254,59 +254,6 @@ const SearchPage = () => {
                 </div>
               ))}
             </div>
-
-            {/* Subcategory Dropdowns for Selected Categories */}
-            {selectedCategories.length > 0 && (
-              <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
-                {selectedCategories.map((category) => (
-                  <div key={category} className="min-w-[250px]">
-                    <h3 className="text-sm font-semibold text-foreground mb-4">{category}</h3>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between">
-                          {selectedSubcategories[category]?.length > 0
-                            ? `${selectedSubcategories[category].length} selected`
-                            : 'Select subcategories'}
-                          <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-4 bg-background border border-border z-50" align="start">
-                        <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto">
-                          {subcategories[category]?.map((subcategory) => (
-                            <div key={subcategory} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`subcategory-${category}-${subcategory}`}
-                                checked={selectedSubcategories[category]?.includes(subcategory) || false}
-                                onCheckedChange={(checked) => {
-                                  const currentSubs = selectedSubcategories[category] || [];
-                                  if (checked) {
-                                    setSelectedSubcategories({
-                                      ...selectedSubcategories,
-                                      [category]: [...currentSubs, subcategory]
-                                    });
-                                  } else {
-                                    setSelectedSubcategories({
-                                      ...selectedSubcategories,
-                                      [category]: currentSubs.filter(s => s !== subcategory)
-                                    });
-                                  }
-                                }}
-                              />
-                              <Label
-                                htmlFor={`subcategory-${category}-${subcategory}`}
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                              >
-                                {subcategory}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Results Count and Active Filters */}
