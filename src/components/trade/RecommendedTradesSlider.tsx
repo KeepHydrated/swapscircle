@@ -69,7 +69,7 @@ export const RecommendedTradesSlider = () => {
           {items.map((item) => (
             <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
               <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="relative aspect-square">
+                <div className="relative aspect-[4/3]">
                   <img
                     src={item.image_url || '/placeholder.svg'}
                     alt={item.name}
