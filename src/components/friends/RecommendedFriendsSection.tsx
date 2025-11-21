@@ -129,7 +129,7 @@ export const RecommendedFriendsSection = () => {
       </div>
       
       <div className="overflow-x-auto pb-4 -mx-4 px-4">
-        <div className="flex gap-6 min-w-max">
+        <div className="flex gap-3 min-w-max">
           {profiles.map((profile) => (
             <div key={profile.id} className="w-64 flex-shrink-0">
               <div className="p-6">
