@@ -135,7 +135,7 @@ export const RecommendedFriendsSection = () => {
               <div className="flex flex-col items-center mb-4">
                 <div className="relative">
                   <Avatar 
-                    className="w-24 h-24 border-4 border-background mb-3 cursor-pointer hover:opacity-80 transition-opacity"
+                    className="w-24 h-24 border-4 border-background mb-3 cursor-pointer"
                     onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
                   >
                     <AvatarImage src={profile.avatar_url} alt={profile.name} />
@@ -161,7 +161,7 @@ export const RecommendedFriendsSection = () => {
                   </Button>
                 </div>
                 <h3 
-                  className="font-semibold text-xl text-foreground text-center cursor-pointer hover:text-primary transition-colors"
+                  className="font-semibold text-xl text-foreground text-center cursor-pointer"
                   onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
                 >
                   {profile.name || profile.username}
