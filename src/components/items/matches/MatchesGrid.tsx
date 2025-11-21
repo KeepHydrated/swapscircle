@@ -42,6 +42,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 category={match.category}
                 tags={match.tags}
                 distance={location === 'local' ? match.distance : undefined}
+                myItemImage={match.myItemImage}
                 userProfile={match.userProfile}
               />
             </div>

@@ -26,6 +26,7 @@ interface ItemCardProps {
   tags?: string[];
   status?: 'draft' | 'published' | 'removed'; // Add status prop
   distance?: string; // Add distance prop
+  myItemImage?: string; // Add my item thumbnail
   userProfile?: {
     name: string;
     username?: string;
@@ -52,6 +53,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   tags,
   status,
   distance,
+  myItemImage,
   userProfile,
 }) => {
   const isRemoved = status === 'removed';
@@ -158,6 +160,15 @@ const ItemCard: React.FC<ItemCardProps> = ({
             {distance && !isRemoved && (
               <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full shadow-lg">
                 {distance}
+              </div>
+            )}
+            
+            {/* My Item Thumbnail in Bottom Right */}
+            {myItemImage && !isRemoved && (
+              <div className={`absolute ${compact ? 'bottom-1.5 right-1.5' : 'bottom-2 right-2'}`}>
+                <div className={`${compact ? 'w-10 h-10' : 'w-12 h-12'} rounded-full border-2 border-background shadow-lg overflow-hidden bg-background`}>
+                  <img src={myItemImage} alt="Your item" className="w-full h-full object-cover" />
+                </div>
               </div>
             )}
             
