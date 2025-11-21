@@ -275,7 +275,7 @@ const SearchPage = () => {
                 <Badge 
                   key={condition} 
                   variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
+                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
                 >
                   {condition}
                   <button
@@ -290,7 +290,7 @@ const SearchPage = () => {
                 <Badge 
                   key={range} 
                   variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
+                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
                 >
                   {range}
                   <button
@@ -305,7 +305,7 @@ const SearchPage = () => {
                 <Badge 
                   key={category} 
                   variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
+                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
                 >
                   {category}
                   <button
@@ -326,7 +326,7 @@ const SearchPage = () => {
                   <Badge 
                     key={`${category}-${sub}`} 
                     variant="secondary" 
-                    className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
+                    className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full border border-border/60"
                   >
                     {sub}
                     <button
