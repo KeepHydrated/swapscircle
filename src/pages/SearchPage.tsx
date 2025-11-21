@@ -270,7 +270,7 @@ const SearchPage = () => {
 
           {/* Active Filter Badges */}
           {(selectedConditions.length > 0 || selectedPriceRanges.length > 0 || selectedCategories.length > 0 || Object.values(selectedSubcategories).some(arr => arr.length > 0)) && (
-            <div className="mb-6 flex items-center gap-2 flex-wrap px-6">
+            <div className="mb-6 flex items-center gap-2 flex-wrap">
               {selectedConditions.map((condition) => (
                 <Badge 
                   key={condition} 
