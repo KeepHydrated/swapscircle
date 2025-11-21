@@ -110,7 +110,7 @@ export const RecommendedFriendsSection = () => {
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent"
+                    className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent border-2 border-border"
                     onClick={() => handleAddFriend(profile.id)}
                   >
                     <UserPlus className="w-4 h-4" />
