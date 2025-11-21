@@ -132,11 +132,11 @@ export const RecommendedFriendsSection = () => {
         <div className="flex gap-3">
           {profiles.map((profile, index) => (
             <div key={profile.id} className={`flex-shrink-0 ${index === 0 ? 'w-64' : 'w-64'}`}>
-              <div className={index === 0 ? "py-6 pr-6" : "p-6"}>
-              <div className="flex flex-col items-center mb-4">
+              <div className={index === 0 ? "py-4 pr-4" : "p-4"}>
+              <div className="flex flex-col items-center">
                 <div className="relative">
                   <Avatar 
-                    className="w-24 h-24 border-4 border-background mb-3 cursor-pointer"
+                    className="w-24 h-24 border-4 border-background mb-2 cursor-pointer"
                     onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
                   >
                     <AvatarImage src={profile.avatar_url} alt={profile.name} />
@@ -173,7 +173,7 @@ export const RecommendedFriendsSection = () => {
               </div>
 
               {profile.bio && (
-                <p className="text-sm text-muted-foreground text-center mb-4 line-clamp-2">
+                <p className="text-sm text-muted-foreground text-center line-clamp-2">
                   {profile.bio}
                 </p>
               )}
