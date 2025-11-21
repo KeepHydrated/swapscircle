@@ -183,23 +183,6 @@ export const RecommendedFriendsSection = () => {
                   {profile.bio}
                 </p>
               )}
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
-                >
-                  View Profile
-                </Button>
-                <Button
-                  className="flex-1"
-                  onClick={() => handleAddFriend(profile.id)}
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Add Friend
-                </Button>
-              </div>
             </div>
           </div>
         ))}
