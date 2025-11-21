@@ -4,19 +4,29 @@ import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MapPin, Calendar, User } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { blockingService } from '@/services/blockingService';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface ItemData {
   id: string;
   name: string;
   description: string;
   image_url: string;
+  image_urls: string[];
   category: string;
   condition: string;
   tags: string[];
+  price_range_min: number;
+  price_range_max: number;
+  looking_for_description: string;
+  looking_for_categories: string[];
+  looking_for_conditions: string[];
+  looking_for_price_ranges: string[];
   created_at: string;
   user_id: string;
 }
@@ -121,88 +131,204 @@ const ItemDetails: React.FC = () => {
     );
   }
 
+  // Categories for subcategory lookup
+  const categories = {
+    "Electronics": ["Cameras", "Computers", "Audio Equipment", "TVs", "Gaming Consoles", "Mobile Devices", "Other Electronics"],
+    "Home & Garden": ["Power Tools", "Furniture", "Party Supplies", "Kitchen Appliances", "Gardening Equipment", "Home Decor", "Other Home Items"],
+    "Sports & Outdoors": ["Camping Gear", "Bikes", "Winter Sports", "Water Sports", "Fitness Equipment", "Team Sports", "Other Sports Gear"],
+    "Clothing": ["Formal Wear", "Costumes", "Accessories", "Designer Items", "Special Occasion", "Casual Wear", "Other Clothing"],
+    "Business": ["Office Equipment", "Event Spaces", "Projectors", "Conference Equipment", "Office Furniture", "Business Services", "Other Business Items"],
+    "Entertainment": ["Musical Instruments", "Party Equipment", "Board Games", "Video Games", "Movies & Music", "Books", "Other Entertainment Items"],
+    "Collectibles": ["Trading Cards", "Toys", "Vintage Items", "Memorabilia", "Comics", "Stamps", "Coins", "Vinyl Records", "Antiques", "Other Collectibles"],
+    "Books & Media": ["Books", "Movies", "Music", "Magazines", "E-books", "Audiobooks", "Other Media"],
+    "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Measuring Tools", "Safety Equipment", "Other Tools"],
+    "Food": ["Beverages", "Snacks", "Specialty Foods", "Baking Supplies", "Condiments", "Health Foods", "International Foods", "Other Food Items"]
+  };
+
+  const conditions = ["New", "Like New", "Good", "Fair", "Poor"];
+  const priceRanges = ["0-50", "50-100", "100-250", "250-500", "500+"];
+
+  // Get subcategories for looking_for categories
+  const getSubcategoriesForCategory = (category: string): string[] => {
+    const allSubcats = categories[category as keyof typeof categories] || [];
+    return item.tags?.filter(tag => allSubcats.includes(tag)) || [];
+  };
+
   return (
     <MainLayout>
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
         <Button 
           variant="ghost" 
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
 
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="md:flex">
-            {/* Item Image */}
-            <div className="md:w-1/2">
-              <img
-                src={item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f'}
-                alt={item.name}
-                className="w-full h-64 md:h-96 object-cover"
-              />
-            </div>
-
-            {/* Item Details */}
-            <div className="md:w-1/2 p-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {item.name}
-              </h1>
-
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium mr-2">Category:</span>
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    {item.category}
-                  </span>
-                </div>
-
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium mr-2">Condition:</span>
-                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                    {item.condition}
-                  </span>
-                </div>
-
-                {item.tags && item.tags.length > 0 && (
-                  <div className="text-sm text-gray-600">
-                    <span className="font-medium mr-2">Tags:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {item.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center text-sm text-gray-600">
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>Posted {new Date(item.created_at).toLocaleDateString()}</span>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* LEFT COLUMN - What You're Offering */}
+          <Card>
+            <CardHeader>
+              <CardTitle>What You're Offering</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Title */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Title</label>
+                <div className="p-3 bg-muted rounded-md">
+                  {item.name}
                 </div>
               </div>
 
-              {item.description && (
-                <div className="mb-6">
-                  <h3 className="font-medium text-gray-900 mb-2">Description</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {item.description}
-                  </p>
+              {/* Description */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Description</label>
+                <div className="p-3 bg-muted rounded-md min-h-[100px]">
+                  {item.description}
+                </div>
+              </div>
+
+              {/* Images */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Images</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {(item.image_urls || [item.image_url]).filter(Boolean).map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-md overflow-hidden bg-muted">
+                      <img 
+                        src={url} 
+                        alt={`${item.name} ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Category</label>
+                <div className="p-3 bg-muted rounded-md">
+                  {item.category}
+                </div>
+              </div>
+
+              {/* Subcategory */}
+              {item.tags?.[0] && (
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Subcategory</label>
+                  <div className="p-3 bg-muted rounded-md">
+                    {item.tags[0]}
+                  </div>
                 </div>
               )}
 
-              <div className="border-t pt-6">
-                <Button className="w-full" onClick={() => toast.info('Trading functionality coming soon!')}>
-                  Interested in Trading
-                </Button>
+              {/* Condition */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Condition</label>
+                <div className="p-3 bg-muted rounded-md">
+                  {item.condition}
+                </div>
               </div>
-            </div>
-          </div>
+
+              {/* Price Range */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Estimated Value</label>
+                <div className="p-3 bg-muted rounded-md">
+                  ${item.price_range_min}-${item.price_range_max}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* RIGHT COLUMN - What You're Looking For */}
+          <Card>
+            <CardHeader>
+              <CardTitle>What You're Looking For</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Description */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Description (optional)</label>
+                <div className="p-3 bg-muted rounded-md min-h-[100px]">
+                  {item.looking_for_description || 'No specific description provided'}
+                </div>
+              </div>
+
+              {/* Categories & Subcategories */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Categories</label>
+                <div className="space-y-4">
+                  {(item.looking_for_categories || []).map((category) => {
+                    const subcats = getSubcategoriesForCategory(category);
+                    return (
+                      <div key={category} className="border rounded-md p-3 bg-muted/50">
+                        <div className="font-medium mb-2">{category}</div>
+                        {subcats.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {subcats.map((sub) => (
+                              <Badge key={sub} variant="secondary">
+                                {sub}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {(!item.looking_for_categories || item.looking_for_categories.length === 0) && (
+                    <div className="p-3 bg-muted rounded-md text-muted-foreground">
+                      No categories specified
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Conditions */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Condition</label>
+                <div className="flex flex-wrap gap-2">
+                  {(item.looking_for_conditions || []).map((condition) => (
+                    <Badge key={condition} variant="outline">
+                      {condition}
+                    </Badge>
+                  ))}
+                  {(!item.looking_for_conditions || item.looking_for_conditions.length === 0) && (
+                    <div className="p-3 bg-muted rounded-md text-muted-foreground w-full">
+                      No conditions specified
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Price Ranges */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Price Range</label>
+                <div className="flex flex-wrap gap-2">
+                  {(item.looking_for_price_ranges || []).map((range) => (
+                    <Badge key={range} variant="outline">
+                      ${range}
+                    </Badge>
+                  ))}
+                  {(!item.looking_for_price_ranges || item.looking_for_price_ranges.length === 0) && (
+                    <div className="p-3 bg-muted rounded-md text-muted-foreground w-full">
+                      No price ranges specified
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Button */}
+        <div className="mt-6 flex justify-center">
+          <Button 
+            size="lg"
+            onClick={() => toast.info('Trading functionality coming soon!')}
+          >
+            Interested in Trading
+          </Button>
         </div>
       </div>
     </MainLayout>
