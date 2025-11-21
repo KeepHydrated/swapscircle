@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { supabase } from '@/integrations/supabase/client';
 import { Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface TradeItem {
   id: string;
@@ -40,12 +39,16 @@ export const RecommendedTradesSlider = () => {
 
   if (loading) {
     return (
-      <div className="w-full px-4 py-8">
-        <h2 className="text-2xl font-bold mb-6">Recommended Trades</h2>
-        <div className="flex gap-4 overflow-hidden">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-64 h-80 bg-muted animate-pulse rounded-lg" />
-          ))}
+      <div className="w-full">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground">Recommended Items</h2>
+        </div>
+        <div className="overflow-x-auto overflow-y-hidden pb-2">
+          <div className="flex gap-3 min-w-max">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-64 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -56,40 +59,37 @@ export const RecommendedTradesSlider = () => {
   }
 
   return (
-    <div className="w-full px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6 text-foreground">Recommended Items</h2>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-4">
+    <div className="w-full">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-foreground">Recommended Items</h2>
+        <Link to="/" className="text-sm text-primary hover:underline">View all</Link>
+      </div>
+      
+      <div className="overflow-x-auto overflow-y-hidden pb-2">
+        <div className="flex gap-3 min-w-max">
           {items.map((item) => (
-            <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="relative aspect-square">
+            <div key={item.id} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
+              <div className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all">
+                <div className="relative aspect-[4/3]">
                   <img
                     src={item.image_url || '/placeholder.svg'}
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
-                  <button className="absolute top-2 right-2 bg-background/80 rounded-full p-2 hover:bg-background transition-colors">
-                    <Heart className="w-5 h-5 text-foreground" />
-                  </button>
+                  <div className="absolute top-2 right-2">
+                    <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors">
+                      <Heart className="w-5 h-5 text-red-500" />
+                    </button>
+                  </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-1 truncate text-foreground">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{item.category}</p>
+                  <p className="text-sm font-semibold truncate text-foreground">{item.name}</p>
                 </div>
-              </Card>
-            </CarouselItem>
+              </div>
+            </div>
           ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-0" />
-        <CarouselNext className="right-0" />
-      </Carousel>
+        </div>
+      </div>
     </div>
   );
 };
