@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Search, ChevronDown, ChevronUp, X, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import {
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const queryParam = searchParams.get('q') || '';
   const categoryParam = searchParams.get('category') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
@@ -306,6 +307,7 @@ const SearchPage = () => {
               <div
                 key={item.id}
                 className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                onClick={() => navigate(`/item/${item.id}`)}
               >
                 <div className="relative aspect-[4/3]">
                   <img
