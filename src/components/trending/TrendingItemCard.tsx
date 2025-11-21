@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
@@ -19,10 +20,20 @@ interface TrendingItemCardProps {
 }
 
 export const TrendingItemCard: React.FC<TrendingItemCardProps> = ({ item, onClick }) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate(`/item/${item.id}`);
+    }
+  };
+  
   return (
     <Card 
       className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div className="grid md:grid-cols-2 gap-4 p-4">
         {/* Left Side - Item Offering */}
