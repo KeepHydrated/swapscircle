@@ -57,7 +57,7 @@ export const RecommendedTradesSlider = () => {
 
   return (
     <div className="w-full px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6 text-foreground">Recommended Trades</h2>
+      <h2 className="text-2xl font-bold mb-6 text-foreground">Recommended Items</h2>
       <Carousel
         opts={{
           align: "start",
