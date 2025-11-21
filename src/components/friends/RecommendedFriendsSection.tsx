@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
-import { UserPlus, MapPin } from 'lucide-react';
+import { UserPlus, MapPin, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface UserProfile {
   id: string;
@@ -18,8 +19,10 @@ interface UserProfile {
 export const RecommendedFriendsSection = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchRecommendedFriends();
@@ -55,9 +58,19 @@ export const RecommendedFriendsSection = () => {
         });
 
       if (error) throw error;
-      // You could show a toast notification here
+      
+      setSentRequests(prev => new Set(prev).add(profileId));
+      toast({
+        title: "Friend request sent",
+        description: "Your friend request has been sent successfully.",
+      });
     } catch (error) {
       console.error('Error sending friend request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send friend request. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -109,11 +122,16 @@ export const RecommendedFriendsSection = () => {
                   </Avatar>
                   <Button
                     size="icon"
-                    variant="ghost"
+                    variant={sentRequests.has(profile.id) ? "default" : "ghost"}
                     className="absolute -top-1 -right-1 h-8 w-8 bg-background shadow-md hover:bg-accent border-2 border-border"
                     onClick={() => handleAddFriend(profile.id)}
+                    disabled={sentRequests.has(profile.id)}
                   >
-                    <UserPlus className="w-4 h-4" />
+                    {sentRequests.has(profile.id) ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <UserPlus className="w-4 h-4" />
+                    )}
                   </Button>
                 </div>
                 <h3 className="font-semibold text-xl text-foreground text-center">
