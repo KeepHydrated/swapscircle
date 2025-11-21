@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, X, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -80,7 +80,12 @@ const SearchPage = () => {
         <div className="max-w-6xl mx-auto">
           {/* Filters Section */}
           <div className="mb-8">
-            <div className="flex gap-3 overflow-x-auto pb-2">
+            <div className="flex gap-3 overflow-x-auto pb-2 items-center">
+              {/* Menu Icon */}
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <Menu className="h-5 w-5" />
+              </Button>
+
               {/* Conditions Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
