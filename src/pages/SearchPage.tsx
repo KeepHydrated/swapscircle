@@ -16,6 +16,7 @@ import {
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParam = searchParams.get('q') || '';
+  const categoryParam = searchParams.get('category') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
@@ -26,6 +27,14 @@ const SearchPage = () => {
   useEffect(() => {
     setSearchQuery(queryParam);
   }, [queryParam]);
+
+  // Pre-select category from URL param
+  useEffect(() => {
+    if (categoryParam && !selectedCategories.includes(categoryParam)) {
+      setSelectedCategories([categoryParam]);
+      setSelectedSubcategories({ [categoryParam]: [] });
+    }
+  }, [categoryParam]);
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);

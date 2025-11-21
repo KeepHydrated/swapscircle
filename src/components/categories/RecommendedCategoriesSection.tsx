@@ -20,7 +20,7 @@ const RecommendedCategoriesSection: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCategoryClick = (categoryName: string) => {
-    navigate(`/?category=${encodeURIComponent(categoryName)}`);
+    navigate(`/search?category=${encodeURIComponent(categoryName)}`);
   };
 
   return (
