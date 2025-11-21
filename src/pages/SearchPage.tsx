@@ -275,12 +275,12 @@ const SearchPage = () => {
                 <Badge 
                   key={condition} 
                   variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-rose-100 text-rose-700 hover:bg-rose-100 rounded-full"
+                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
                 >
                   {condition}
                   <button
                     onClick={() => setSelectedConditions(selectedConditions.filter(c => c !== condition))}
-                    className="hover:bg-rose-200 rounded-full p-0.5 transition-colors"
+                    className="hover:bg-accent rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -290,12 +290,12 @@ const SearchPage = () => {
                 <Badge 
                   key={range} 
                   variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-rose-100 text-rose-700 hover:bg-rose-100 rounded-full"
+                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
                 >
                   {range}
                   <button
                     onClick={() => setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range))}
-                    className="hover:bg-rose-200 rounded-full p-0.5 transition-colors"
+                    className="hover:bg-accent rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -305,7 +305,7 @@ const SearchPage = () => {
                 <Badge 
                   key={category} 
                   variant="secondary" 
-                  className="gap-2 py-2 px-4 bg-rose-100 text-rose-700 hover:bg-rose-100 rounded-full"
+                  className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
                 >
                   {category}
                   <button
@@ -315,7 +315,7 @@ const SearchPage = () => {
                       delete newSubcategories[category];
                       setSelectedSubcategories(newSubcategories);
                     }}
-                    className="hover:bg-rose-200 rounded-full p-0.5 transition-colors"
+                    className="hover:bg-accent rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -326,7 +326,7 @@ const SearchPage = () => {
                   <Badge 
                     key={`${category}-${sub}`} 
                     variant="secondary" 
-                    className="gap-2 py-2 px-4 bg-rose-100 text-rose-700 hover:bg-rose-100 rounded-full"
+                    className="gap-2 py-2 px-4 bg-muted text-foreground hover:bg-muted/80 rounded-full"
                   >
                     {sub}
                     <button
@@ -336,7 +336,7 @@ const SearchPage = () => {
                           [category]: subs.filter(s => s !== sub)
                         });
                       }}
-                      className="hover:bg-rose-200 rounded-full p-0.5 transition-colors"
+                      className="hover:bg-accent rounded-full p-0.5 transition-colors"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -351,7 +351,7 @@ const SearchPage = () => {
                   setSelectedCategories([]);
                   setSelectedSubcategories({});
                 }}
-                className="text-rose-700 hover:text-rose-800 hover:bg-rose-50 rounded-full px-4"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-full px-4"
               >
                 Clear All
               </Button>
