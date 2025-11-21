@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -56,6 +57,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   myItemImage,
   userProfile,
 }) => {
+  const navigate = useNavigate();
   const isRemoved = status === 'removed';
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -100,7 +102,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
     if (disableClick) {
       return;
     }
-    onSelect(id);
+    // Navigate to item details page
+    navigate(`/item/${id}`);
   };
 
   const handleMouseDown = () => {
