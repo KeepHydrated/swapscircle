@@ -167,17 +167,17 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] flex flex-col p-0 overflow-hidden">
         <DialogTitle className="sr-only">Select Item to Trade</DialogTitle>
         <DialogDescription className="sr-only">
           Choose which of your items you want to trade for {targetItem?.name}
         </DialogDescription>
 
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 bg-white">
+        <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+            className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors z-10"
             aria-label="Close"
           >
             <X className="w-4 h-4 text-gray-600" />
@@ -189,8 +189,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           </p>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-6 min-h-0">
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -247,7 +247,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
         {/* Footer */}
         {myItems.length > 0 && (
-          <div className="p-6 border-t border-gray-200 bg-gray-50">
+          <div className="p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
             <div className="flex justify-between items-center">
               <div>
                 {selectedItem && (
