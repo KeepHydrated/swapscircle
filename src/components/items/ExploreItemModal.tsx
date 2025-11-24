@@ -1,12 +1,13 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, RefreshCw } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useNavigate } from "react-router-dom";
 import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
+import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
 
 interface ExploreItemModalProps {
   open: boolean;
@@ -58,6 +59,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [userRating, setUserRating] = useState<number>(0);
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
+  const [showTradeModal, setShowTradeModal] = useState(false);
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
@@ -492,6 +494,19 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </div>
                 </div>
                 
+                {/* Suggest Trade Button - only show if not own item */}
+                {!disableActions && fullItem?.user_id && (
+                  <div className="mt-6">
+                    <button
+                      onClick={() => setShowTradeModal(true)}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                      Suggest a Trade
+                    </button>
+                  </div>
+                )}
+                
                 {/* User profile info */}
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
                 {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}
@@ -545,6 +560,14 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           </div>
         </div>
       </DialogContent>
+      
+      {/* Trade Item Selection Modal */}
+      <TradeItemSelectionModal
+        isOpen={showTradeModal}
+        onClose={() => setShowTradeModal(false)}
+        targetItem={fullItem || item}
+        targetItemOwnerId={fullItem?.user_id}
+      />
     </Dialog>
   );
 };
