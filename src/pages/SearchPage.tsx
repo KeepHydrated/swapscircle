@@ -12,6 +12,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { Item } from '@/types/item';
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +25,8 @@ const SearchPage = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState<Record<string, string[]>>({});
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Update search query when URL param changes
   useEffect(() => {
@@ -68,14 +72,14 @@ const SearchPage = () => {
   const conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
   const priceRanges = ['$0-50', '$50-100', '$100-250', '$250-500', '$500+'];
 
-  const mockResults = [
-    { id: 1, name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", category: "Sports" },
-    { id: 2, name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", category: "Electronics" },
-    { id: 3, name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", category: "Music" },
-    { id: 4, name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", category: "Furniture" },
-    { id: 5, name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", category: "Kitchen" },
-    { id: 6, name: "Running Shoes - Nike", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", user: "Lisa W.", category: "Fashion" },
-  ];
+  const mockResults: Item[] = [
+    { id: '1', name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", category: "Sports & Outdoors", description: "High-quality mountain bike perfect for trails.", condition: "Good", priceRangeMin: 300, priceRangeMax: 500 },
+    { id: '2', name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", category: "Electronics", description: "Professional camera with multiple lenses.", condition: "Like New", priceRangeMin: 500, priceRangeMax: 800 },
+    { id: '3', name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", category: "Entertainment", description: "Classic electric guitar in excellent condition.", condition: "Excellent", priceRangeMin: 400, priceRangeMax: 600 },
+    { id: '4', name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", category: "Home & Garden", description: "Ergonomic standing desk with height adjustment.", condition: "New", priceRangeMin: 200, priceRangeMax: 350 },
+    { id: '5', name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", category: "Home & Garden", description: "Premium coffee machine with espresso maker.", condition: "Good", priceRangeMin: 150, priceRangeMax: 250 },
+    { id: '6', name: "Running Shoes - Nike", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", category: "Clothing", description: "Comfortable running shoes, barely used.", condition: "Like New", priceRangeMin: 50, priceRangeMax: 100 },
+  ] as Item[];
 
   const filteredResults = searchQuery
     ? mockResults.filter(item =>
@@ -307,7 +311,10 @@ const SearchPage = () => {
               <div
                 key={item.id}
                 className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                onClick={() => navigate(`/item/${item.id}`)}
+                onClick={() => {
+                  setSelectedItem(item);
+                  setIsModalOpen(true);
+                }}
               >
                 <div className="relative aspect-[4/3]">
                   <img
@@ -323,7 +330,7 @@ const SearchPage = () => {
                 </div>
                 <div className="p-4">
                   <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground">by {item.user}</p>
+                  <p className="text-sm text-muted-foreground">{item.category}</p>
                 </div>
               </div>
             ))}
@@ -339,6 +346,16 @@ const SearchPage = () => {
           )}
         </div>
       </div>
+
+      {/* Item Details Modal */}
+      <ExploreItemModal
+        open={isModalOpen}
+        item={selectedItem}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedItem(null);
+        }}
+      />
     </MainLayout>
   );
 };
