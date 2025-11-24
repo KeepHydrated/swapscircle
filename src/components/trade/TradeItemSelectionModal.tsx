@@ -190,7 +190,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         </div>
 
         {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 min-h-0">
+        <div className="flex-1 overflow-y-auto p-6 pt-8 min-h-0">
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -201,7 +201,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
               <p className="text-sm text-gray-400 mt-2">Post some items first to start trading!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
               {myItems.map((item) => (
                 <div
                   key={item.id}
