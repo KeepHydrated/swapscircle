@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat } from "lucide-react";
+import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat, RefreshCw } from "lucide-react";
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
 import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
+import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
 
 interface UserProfile {
   name: string;
@@ -57,6 +58,8 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [userRating, setUserRating] = useState<number>(0);
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [isOwnItem, setIsOwnItem] = useState(false);
 
   // Reset slide when item changes
   useEffect(() => {
@@ -197,6 +200,20 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
       refreshTradesCount();
     }
   }, [isOpen]);
+
+  // Check if this is the user's own item
+  useEffect(() => {
+    const checkOwnership = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const currentUserId = user?.id;
+      const userId = skipDataFetch ? (item as any)?.user_id : fullItem?.user_id;
+      setIsOwnItem(currentUserId === userId);
+    };
+    
+    if (isOpen && (fullItem || item)) {
+      checkOwnership();
+    }
+  }, [isOpen, fullItem, item, skipDataFetch]);
 
   // Calculate user stats - only show if we have actual data
   const memberSince = userProfile?.created_at 
@@ -419,6 +436,19 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   </div>
                 </div>
                 
+                {/* Suggest Trade Button - only show if not own item */}
+                {!isOwnItem && showProfileInfo && (
+                  <div className="mt-6">
+                    <button
+                      onClick={() => setShowTradeModal(true)}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                      Suggest a Trade
+                    </button>
+                  </div>
+                )}
+                
                 {/* User profile info - only show if showProfileInfo is true */}
                 {showProfileInfo && userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
@@ -467,6 +497,14 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           </div>
         </div>
       </DialogContent>
+      
+      {/* Trade Item Selection Modal */}
+      <TradeItemSelectionModal
+        isOpen={showTradeModal}
+        onClose={() => setShowTradeModal(false)}
+        targetItem={displayItem}
+        targetItemOwnerId={skipDataFetch ? (item as any)?.user_id : fullItem?.user_id}
+      />
     </Dialog>
   );
 };
