@@ -345,7 +345,20 @@ const SearchPage = () => {
                 </div>
                 <div className="p-4">
                   <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground">{item.category}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      {item.priceRangeMin && item.priceRangeMax 
+                        ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
+                        : item.priceRangeMin 
+                          ? `$${item.priceRangeMin}+`
+                          : 'Price not set'}
+                    </p>
+                    {item.condition && (
+                      <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                        {item.condition}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
