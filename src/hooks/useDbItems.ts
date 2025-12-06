@@ -37,7 +37,7 @@ export function useDbItems() {
         // Build the query
         let query = supabase
           .from('items')
-          .select('id, name, image_url, category, condition, description, tags, user_id')
+          .select('id, name, image_url, category, condition, description, tags, user_id, price_range_min, price_range_max')
           .eq('is_available', true) // Only show available items
           .eq('is_hidden', false) // Only show non-hidden items
           .eq('status', 'published'); // Only show published items (exclude drafts and removed items)
@@ -70,6 +70,8 @@ export function useDbItems() {
             description: item.description,
             tags: item.tags,
             user_id: item.user_id,
+            priceRangeMin: item.price_range_min,
+            priceRangeMax: item.price_range_max,
           }))
         );
       } catch (e: any) {
