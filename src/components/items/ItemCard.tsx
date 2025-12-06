@@ -187,14 +187,13 @@ const ItemCard: React.FC<ItemCardProps> = ({
             
             {(showLikeButton || isMatch) && !disableLike && !isRemoved && (
               <>
-                {/* Three-dots menu on the left side for items with report functionality */}
-                {(isMatch || onReport) && !isRemoved && (
+                {/* Three-dots menu on the left side for match items */}
+                {isMatch && !isRemoved && (
                   <div className="absolute top-1.5 left-1.5 z-10">
                     <MoreActionsMenu
                       itemId={id}
                       onLikeAll={handleLikeAll}
                       onRejectAll={handleRejectAll}
-                      onReport={handleReport}
                       compact={compact}
                     />
                   </div>

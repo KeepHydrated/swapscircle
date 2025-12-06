@@ -1,12 +1,11 @@
 import React from 'react';
-import { MoreVertical, Users, Flag } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreVertical, Users } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface MoreActionsMenuProps {
   itemId: string;
   onLikeAll: (id: string) => void;
   onRejectAll: (id: string) => void;
-  onReport: (id: string) => void;
   compact?: boolean;
   className?: string;
 }
@@ -15,7 +14,6 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
   itemId,
   onLikeAll,
   onRejectAll,
-  onReport,
   compact = false,
   className = ""
 }) => {
@@ -32,11 +30,6 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
     onRejectAll(itemId);
   };
 
-  const handleReportClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onReport(itemId);
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,7 +41,7 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
           <MoreVertical className={`${iconSize} text-gray-400 group-hover:text-gray-600 transition-colors`} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56 bg-white border border-gray-200 shadow-lg z-50">
+      <DropdownMenuContent align="start" className="w-56 bg-background border border-border shadow-lg z-50">
         <DropdownMenuItem onClick={handleLikeAllClick} className="cursor-pointer">
           <Users className="h-4 w-4 mr-2 text-green-600" />
           Accept for all of my items
@@ -56,11 +49,6 @@ const MoreActionsMenu: React.FC<MoreActionsMenuProps> = ({
         <DropdownMenuItem onClick={handleRejectAllClick} className="cursor-pointer">
           <Users className="h-4 w-4 mr-2 text-red-600" />
           Reject for all of my items
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleReportClick} className="cursor-pointer text-red-600">
-          <Flag className="h-4 w-4 mr-2" />
-          Report item
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

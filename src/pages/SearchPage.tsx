@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, ChevronUp, X, Menu, MoreVertical, Heart, Users, Flag } from 'lucide-react';
+import { Search, ChevronDown, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -12,20 +12,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { Item } from '@/types/item';
 import { useDbItems } from '@/hooks/useDbItems';
-import { useToast } from '@/hooks/use-toast';
+
+
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const queryParam = searchParams.get('q') || '';
   const categoryParam = searchParams.get('category') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
@@ -349,76 +343,10 @@ const SearchPage = () => {
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
-                  {/* Three-dots menu on the left */}
-                  <div className="absolute top-2 left-2 z-10">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button 
-                          className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreVertical className="w-4 h-4 text-foreground" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="w-56 bg-background border border-border shadow-lg z-50">
-                        <DropdownMenuItem 
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            toast({ title: `Liked ${item.name} for all items!`, duration: 2000 });
-                          }}
-                          className="cursor-pointer"
-                        >
-                          <Users className="h-4 w-4 mr-2 text-green-600" />
-                          Accept for all of my items
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            toast({ title: `Rejected ${item.name} for all items`, duration: 2000 });
-                          }}
-                          className="cursor-pointer"
-                        >
-                          <Users className="h-4 w-4 mr-2 text-red-600" />
-                          Reject for all of my items
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            toast({ title: "Report submitted", duration: 2000 });
-                          }} 
-                          className="cursor-pointer text-red-600"
-                        >
-                          <Flag className="h-4 w-4 mr-2" />
-                          Report item
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  {/* Action buttons on the right */}
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <button 
-                      className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast({ title: "Item rejected", duration: 2000 });
-                      }}
-                    >
-                      <X className="w-4 h-4 text-foreground" />
-                    </button>
-                    <button 
-                      className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast({ title: "Item liked!", duration: 2000 });
-                      }}
-                    >
-                      <Heart className="w-5 h-5 text-red-500" />
-                    </button>
-                  </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
-                  <div className="flex items-center justify-between">
+                  <h3 className="text-base font-semibold text-foreground mb-2">{item.name}</h3>
+                  <div className="flex items-center justify-between mb-3">
                     <p className="text-sm text-muted-foreground">
                       {item.priceRangeMin && item.priceRangeMax 
                         ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
@@ -432,6 +360,18 @@ const SearchPage = () => {
                       </span>
                     )}
                   </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedItem(item);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Suggest a Trade
+                  </Button>
                 </div>
               </div>
             ))}
