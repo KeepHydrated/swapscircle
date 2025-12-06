@@ -44,6 +44,9 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 distance={location === 'local' ? match.distance : undefined}
                 myItemImage={match.myItemImage}
                 userProfile={match.userProfile}
+                priceRangeMin={match.priceRangeMin}
+                priceRangeMax={match.priceRangeMax}
+                condition={match.condition}
               />
             </div>
           ))}
