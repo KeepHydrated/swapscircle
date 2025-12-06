@@ -144,8 +144,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
       onClose();
       
-      // Navigate to trade suggestions page
-      navigate('/trade-suggestions');
+      // Navigate to trade requests page
+      navigate('/trade-requests');
 
     } catch (error) {
       console.error('Error creating trade:', error);
