@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Input } from '@/components/ui/input';
@@ -9,6 +8,7 @@ import ItemCard from '@/components/items/ItemCard';
 import { useDbItems } from '@/hooks/useDbItems';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
 const Search: React.FC = () => {
@@ -17,7 +17,20 @@ const Search: React.FC = () => {
   const { items, loading: itemsLoading } = useDbItems();
   const [users, setUsers] = useState<any[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
+  const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleLike = (id: string, global?: boolean) => {
+    toast({ title: global ? `Liked item for all your items!` : "Item liked!", duration: 2000 });
+  };
+
+  const handleReject = (id: string, global?: boolean) => {
+    toast({ title: global ? `Rejected item for all your items` : "Item rejected", duration: 2000 });
+  };
+
+  const handleReport = (id: string) => {
+    toast({ title: "Report submitted", duration: 2000 });
+  };
 
   // Filter items based on search query
   const filteredItems = items.filter(item => {
@@ -114,8 +127,15 @@ const Search: React.FC = () => {
                     image={item.image}
                     isMatch={true}
                     onSelect={(id) => navigate(`/item/${id}`)}
+                    onLike={handleLike}
+                    onReject={handleReject}
+                    onReport={handleReport}
+                    showLikeButton={true}
                     category={item.category}
                     tags={item.tags}
+                    priceRangeMin={item.priceRangeMin}
+                    priceRangeMax={item.priceRangeMax}
+                    condition={item.condition}
                   />
                 ))}
               </div>
