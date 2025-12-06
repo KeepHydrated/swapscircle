@@ -138,19 +138,14 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       }
 
       toast({
-        title: "Trade request sent!",
-        description: "Your trade request has been sent successfully.",
+        title: "Trade suggestion sent!",
+        description: "Your trade suggestion has been sent successfully.",
       });
 
       onClose();
       
-      // Navigate to messages page with the trade conversation
-      navigate('/messages', { 
-        state: { 
-          tradeConversationId: tradeConversation.id,
-          newTrade: true 
-        } 
-      });
+      // Navigate to trade suggestions page
+      navigate('/trade-suggestions');
 
     } catch (error) {
       console.error('Error creating trade:', error);
