@@ -13,6 +13,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
+import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
 import { useDbItems } from '@/hooks/useDbItems';
 
@@ -29,6 +30,8 @@ const SearchPage = () => {
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
 
   // Fetch real items from database
   const { items: dbItems, loading: itemsLoading } = useDbItems();
@@ -348,8 +351,8 @@ const SearchPage = () => {
                     className="absolute top-2 right-2 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedItem(item);
-                      setIsModalOpen(true);
+                      setTradeTargetItem(item);
+                      setIsTradeModalOpen(true);
                     }}
                     title="Suggest a Trade"
                   >
@@ -397,6 +400,17 @@ const SearchPage = () => {
           setIsModalOpen(false);
           setSelectedItem(null);
         }}
+      />
+
+      {/* Trade Item Selection Modal */}
+      <TradeItemSelectionModal
+        isOpen={isTradeModalOpen}
+        onClose={() => {
+          setIsTradeModalOpen(false);
+          setTradeTargetItem(null);
+        }}
+        targetItem={tradeTargetItem}
+        targetItemOwnerId={tradeTargetItem?.user_id}
       />
     </MainLayout>
   );
