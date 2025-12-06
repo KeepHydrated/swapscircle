@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X } from 'lucide-react';
+import { Search, ChevronDown, X, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -343,10 +343,22 @@ const SearchPage = () => {
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
+                  {/* Suggest Trade button */}
+                  <button 
+                    className="absolute top-2 right-2 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedItem(item);
+                      setIsModalOpen(true);
+                    }}
+                    title="Suggest a Trade"
+                  >
+                    <RefreshCw className="w-5 h-5 text-white" />
+                  </button>
                 </div>
                 <div className="p-4">
-                  <h3 className="text-base font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
+                  <div className="flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
                       {item.priceRangeMin && item.priceRangeMax 
                         ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
@@ -360,18 +372,6 @@ const SearchPage = () => {
                       </span>
                     )}
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedItem(item);
-                      setIsModalOpen(true);
-                    }}
-                  >
-                    Suggest a Trade
-                  </Button>
                 </div>
               </div>
             ))}
