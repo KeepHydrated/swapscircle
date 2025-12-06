@@ -21,7 +21,7 @@ const MatchesSection = () => {
       <div className="overflow-x-auto overflow-y-hidden pb-2">
         <div className="flex gap-3 min-w-max">
           {matches.map((item) => (
-            <div key={item.id} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
+            <div key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
               <div className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all">
                 <div className="relative aspect-[4/3]">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
