@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Heart, X, MoreVertical } from 'lucide-react';
+import { Heart, X, MoreVertical, Users, Flag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { Item } from '@/types/item';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 const MatchesSection = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
 
   const matches = [
     { id: "1", name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good", category: "Sports & Outdoors", description: "Reliable mountain bike perfect for trails. Recently serviced with new brakes and tires.", user_id: "demo-user-1" },
@@ -48,13 +56,49 @@ const MatchesSection = () => {
               >
                 <div className="relative aspect-[4/3]">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                  <div className="absolute top-2 left-2">
-                    <button 
-                      className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <MoreVertical className="w-4 h-4 text-foreground" />
-                    </button>
+                  <div className="absolute top-2 left-2 z-10">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button 
+                          className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreVertical className="w-4 h-4 text-foreground" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-56 bg-background border border-border shadow-lg z-50">
+                        <DropdownMenuItem 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            toast({ title: `Liked ${item.name} for all items!`, duration: 2000 });
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <Users className="h-4 w-4 mr-2 text-green-600" />
+                          Accept for all of my items
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            toast({ title: `Rejected ${item.name} for all items`, duration: 2000 });
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <Users className="h-4 w-4 mr-2 text-red-600" />
+                          Reject for all of my items
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            toast({ title: "Report submitted", duration: 2000 });
+                          }} 
+                          className="cursor-pointer text-red-600"
+                        >
+                          <Flag className="h-4 w-4 mr-2" />
+                          Report item
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                   <div className="absolute top-2 right-2 flex gap-2">
                     <button 
