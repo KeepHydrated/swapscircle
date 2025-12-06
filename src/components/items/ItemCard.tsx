@@ -25,9 +25,12 @@ interface ItemCardProps {
   disableLike?: boolean;
   category?: string;
   tags?: string[];
-  status?: 'draft' | 'published' | 'removed'; // Add status prop
-  distance?: string; // Add distance prop
-  myItemImage?: string; // Add my item thumbnail
+  status?: 'draft' | 'published' | 'removed';
+  distance?: string;
+  myItemImage?: string;
+  priceRangeMin?: number;
+  priceRangeMax?: number;
+  condition?: string;
   userProfile?: {
     name: string;
     username?: string;
@@ -55,6 +58,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
   status,
   distance,
   myItemImage,
+  priceRangeMin,
+  priceRangeMax,
+  condition,
   userProfile,
 }) => {
   const navigate = useNavigate();
@@ -274,10 +280,24 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </div>
           )}
         </div>
-        <CardContent className={`${compact ? 'p-2' : 'p-3'}`}>
-          <h3 className={`font-semibold text-center text-gray-800 ${compact ? 'text-xs' : 'text-sm'} leading-tight truncate`} title={name}>
+        <CardContent className={`${compact ? 'p-2' : 'p-4'}`}>
+          <h3 className={`font-semibold text-foreground ${compact ? 'text-xs' : 'text-base'} leading-tight truncate mb-1`} title={name}>
             {name}
           </h3>
+          <div className="flex items-center justify-between">
+            <p className={`text-muted-foreground ${compact ? 'text-xs' : 'text-sm'}`}>
+              {priceRangeMin && priceRangeMax 
+                ? `$${priceRangeMin} - $${priceRangeMax}`
+                : priceRangeMin 
+                  ? `$${priceRangeMin}+`
+                  : 'Price not set'}
+            </p>
+            {condition && (
+              <span className={`bg-muted px-2 py-0.5 rounded-full text-muted-foreground ${compact ? 'text-xs' : 'text-xs'}`}>
+                {condition}
+              </span>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
