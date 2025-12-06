@@ -69,6 +69,7 @@ export function useDbItems() {
             condition: item.condition,
             description: item.description,
             tags: item.tags,
+            user_id: item.user_id,
           }))
         );
       } catch (e: any) {
