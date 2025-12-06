@@ -178,10 +178,24 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
             <X className="w-4 h-4 text-gray-600" />
           </button>
           
-          <h2 className="text-xl font-semibold mb-2">Select Item to Trade</h2>
-          <p className="text-gray-600">
-            Choose which of your items you want to trade for <span className="font-medium">{targetItem?.name}</span>
-          </p>
+          <div className="flex items-start gap-4">
+            {/* Target item thumbnail */}
+            {targetItem?.image && (
+              <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                <img 
+                  src={targetItem.image} 
+                  alt={targetItem.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <div>
+              <h2 className="text-xl font-semibold mb-1">Select Item to Trade</h2>
+              <p className="text-gray-600">
+                Choose which of your items you want to trade for <span className="font-medium">{targetItem?.name}</span>
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Content - Scrollable */}
