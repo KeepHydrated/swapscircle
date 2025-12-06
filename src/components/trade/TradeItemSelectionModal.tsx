@@ -237,16 +237,6 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                   
                   <div className="p-3">
                     <h3 className="font-medium text-sm truncate">{item.name}</h3>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                      {item.description || 'No description'}
-                    </p>
-                    {item.condition && (
-                      <div className="mt-2">
-                        <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
-                          {item.condition}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
