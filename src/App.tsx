@@ -23,7 +23,7 @@ import SearchPage from "./pages/SearchPage";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
-import TradeSuggestions from "./pages/TradeSuggestions";
+import TradeRequests from "./pages/TradeRequests";
 import Test from "./pages/Test";
 import Test2 from "./pages/Test2";
 import TestPage from "./pages/TestPage";
@@ -52,9 +52,9 @@ const AppContent = () => {
           <Trades />
         </RequireAuth>
       } />
-      <Route path="/trade-suggestions" element={
+      <Route path="/trade-requests" element={
         <RequireAuth>
-          <TradeSuggestions />
+          <TradeRequests />
         </RequireAuth>
       } />
       <Route path="/item/:itemId" element={<ItemDetails />} />
