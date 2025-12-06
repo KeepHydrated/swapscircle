@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/popover';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { Item } from '@/types/item';
+import { useDbItems } from '@/hooks/useDbItems';
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,6 +28,9 @@ const SearchPage = () => {
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Fetch real items from database
+  const { items: dbItems, loading: itemsLoading } = useDbItems();
 
   // Update search query when URL param changes
   useEffect(() => {
@@ -72,24 +76,31 @@ const SearchPage = () => {
   const conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
   const priceRanges = ['$0-50', '$50-100', '$100-250', '$250-500', '$500+'];
 
-  // Use a sample user_id for mock items - this should be replaced with actual DB items in production
-  const sampleUserId = "00000000-0000-0000-0000-000000000001";
-  
-  const mockResults: Item[] = [
-    { id: '1', name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", category: "Sports & Outdoors", description: "High-quality mountain bike perfect for trails.", condition: "Good", priceRangeMin: 300, priceRangeMax: 500, user_id: sampleUserId },
-    { id: '2', name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", category: "Electronics", description: "Professional camera with multiple lenses.", condition: "Like New", priceRangeMin: 500, priceRangeMax: 800, user_id: sampleUserId },
-    { id: '3', name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", category: "Entertainment", description: "Classic electric guitar in excellent condition.", condition: "Excellent", priceRangeMin: 400, priceRangeMax: 600, user_id: sampleUserId },
-    { id: '4', name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", category: "Home & Garden", description: "Ergonomic standing desk with height adjustment.", condition: "New", priceRangeMin: 200, priceRangeMax: 350, user_id: sampleUserId },
-    { id: '5', name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", category: "Home & Garden", description: "Premium coffee machine with espresso maker.", condition: "Good", priceRangeMin: 150, priceRangeMax: 250, user_id: sampleUserId },
-    { id: '6', name: "Running Shoes - Nike", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", category: "Clothing", description: "Comfortable running shoes, barely used.", condition: "Like New", priceRangeMin: 50, priceRangeMax: 100, user_id: sampleUserId },
-  ] as Item[];
-
-  const filteredResults = searchQuery
-    ? mockResults.filter(item =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : mockResults;
+  // Filter items based on search query and filters
+  const filteredResults = dbItems.filter(item => {
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesSearch = 
+        item.name?.toLowerCase().includes(query) ||
+        item.category?.toLowerCase().includes(query) ||
+        item.description?.toLowerCase().includes(query) ||
+        item.tags?.some(tag => tag.toLowerCase().includes(query));
+      if (!matchesSearch) return false;
+    }
+    
+    // Filter by selected categories
+    if (selectedCategories.length > 0) {
+      if (!item.category || !selectedCategories.includes(item.category)) return false;
+    }
+    
+    // Filter by selected conditions
+    if (selectedConditions.length > 0) {
+      if (!item.condition || !selectedConditions.includes(item.condition)) return false;
+    }
+    
+    return true;
+  });
 
   return (
     <MainLayout>
@@ -309,8 +320,14 @@ const SearchPage = () => {
           </div>
 
           {/* Results Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredResults.map((item) => (
+          {itemsLoading ? (
+            <div className="text-center py-16">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading items...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredResults.map((item) => (
               <div
                 key={item.id}
                 className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
@@ -337,10 +354,11 @@ const SearchPage = () => {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          )}
 
           {/* No Results */}
-          {filteredResults.length === 0 && (
+          {!itemsLoading && filteredResults.length === 0 && (
             <div className="text-center py-16">
               <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-foreground mb-2">No results found</h3>
