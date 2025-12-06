@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, X, MoreVertical, Users, Flag } from 'lucide-react';
+import { Heart, X, MoreVertical, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { Item } from '@/types/item';
@@ -86,16 +86,6 @@ const MatchesSection = () => {
                         >
                           <Users className="h-4 w-4 mr-2 text-red-600" />
                           Reject for all of my items
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            toast({ title: "Report submitted", duration: 2000 });
-                          }} 
-                          className="cursor-pointer text-red-600"
-                        >
-                          <Flag className="h-4 w-4 mr-2" />
-                          Report item
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

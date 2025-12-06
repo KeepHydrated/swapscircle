@@ -370,7 +370,6 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   itemId={item.id}
                   onLikeAll={onLikeAll || (() => {})}
                   onRejectAll={onRejectAll || (() => {})}
-                  onReport={onReport || (() => {})}
                   compact={false}
                 />
               </div>

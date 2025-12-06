@@ -404,13 +404,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             )}
             {/* Left 3-dots menu (larger) */}
             {item?.id && (
-              (onLikeAll || onRejectAll || onReport) ? (
+              (onLikeAll || onRejectAll) ? (
                 <div className="absolute top-4 left-4 z-30">
                   <MatchActionSelector
                     itemId={item.id}
                     onLikeAll={onLikeAll || (() => {})}
                     onRejectAll={onRejectAll || (() => {})}
-                    onReport={onReport || (() => {})}
                     compact={false}
                     className="w-12 h-12"
                   />
