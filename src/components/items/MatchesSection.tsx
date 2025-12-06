@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, X, MoreVertical } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { Item } from '@/types/item';
 
 const MatchesSection = () => {
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const matches = [
-    { id: 1, name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good" },
-    { id: 2, name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b", priceRangeMin: 450, priceRangeMax: 600, condition: "Excellent" },
-    { id: 3, name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c", priceRangeMin: 500, priceRangeMax: 700, condition: "Good" },
-    { id: 4, name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817", priceRangeMin: 200, priceRangeMax: 350, condition: "Like New" },
-    { id: 5, name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092", priceRangeMin: 150, priceRangeMax: 250, condition: "Good" },
+    { id: "1", name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good", category: "Sports & Outdoors", description: "Reliable mountain bike perfect for trails. Recently serviced with new brakes and tires.", user_id: "demo-user-1" },
+    { id: "2", name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b", priceRangeMin: 450, priceRangeMax: 600, condition: "Excellent", category: "Electronics", description: "Professional DSLR camera with multiple lenses included. Perfect for photography enthusiasts.", user_id: "demo-user-2" },
+    { id: "3", name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c", priceRangeMin: 500, priceRangeMax: 700, condition: "Good", category: "Entertainment", description: "Classic Fender electric guitar with rich tone. Includes hard case and amp.", user_id: "demo-user-3" },
+    { id: "4", name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817", priceRangeMin: 200, priceRangeMax: 350, condition: "Like New", category: "Home & Garden", description: "Electric height-adjustable standing desk. Barely used, in excellent condition.", user_id: "demo-user-4" },
+    { id: "5", name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092", priceRangeMin: 150, priceRangeMax: 250, condition: "Good", category: "Home & Garden", description: "Premium espresso machine with milk frother. Makes cafe-quality coffee at home.", user_id: "demo-user-5" },
   ];
+
+  const handleCardClick = (item: typeof matches[0]) => {
+    setSelectedItem({
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      category: item.category,
+      condition: item.condition,
+      description: item.description,
+      priceRangeMin: item.priceRangeMin,
+      priceRangeMax: item.priceRangeMax,
+      user_id: item.user_id,
+    });
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="w-full">
@@ -22,19 +42,31 @@ const MatchesSection = () => {
         <div className="flex gap-3 min-w-max">
           {matches.map((item) => (
             <div key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
-              <div className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all">
+              <div 
+                className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                onClick={() => handleCardClick(item)}
+              >
                 <div className="relative aspect-[4/3]">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                   <div className="absolute top-2 left-2">
-                    <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors">
+                    <button 
+                      className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <MoreVertical className="w-4 h-4 text-foreground" />
                     </button>
                   </div>
                   <div className="absolute top-2 right-2 flex gap-2">
-                    <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors">
+                    <button 
+                      className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <X className="w-4 h-4 text-foreground" />
                     </button>
-                    <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors">
+                    <button 
+                      className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-background transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Heart className="w-5 h-5 text-red-500" />
                     </button>
                   </div>
@@ -61,6 +93,15 @@ const MatchesSection = () => {
           ))}
         </div>
       </div>
+
+      <ExploreItemModal
+        open={isModalOpen}
+        item={selectedItem}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedItem(null);
+        }}
+      />
     </div>
   );
 };
