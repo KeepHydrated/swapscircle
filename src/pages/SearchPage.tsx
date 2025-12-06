@@ -72,13 +72,16 @@ const SearchPage = () => {
   const conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
   const priceRanges = ['$0-50', '$50-100', '$100-250', '$250-500', '$500+'];
 
+  // Use a sample user_id for mock items - this should be replaced with actual DB items in production
+  const sampleUserId = "00000000-0000-0000-0000-000000000001";
+  
   const mockResults: Item[] = [
-    { id: '1', name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", category: "Sports & Outdoors", description: "High-quality mountain bike perfect for trails.", condition: "Good", priceRangeMin: 300, priceRangeMax: 500 },
-    { id: '2', name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", category: "Electronics", description: "Professional camera with multiple lenses.", condition: "Like New", priceRangeMin: 500, priceRangeMax: 800 },
-    { id: '3', name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", category: "Entertainment", description: "Classic electric guitar in excellent condition.", condition: "Excellent", priceRangeMin: 400, priceRangeMax: 600 },
-    { id: '4', name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", category: "Home & Garden", description: "Ergonomic standing desk with height adjustment.", condition: "New", priceRangeMin: 200, priceRangeMax: 350 },
-    { id: '5', name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", category: "Home & Garden", description: "Premium coffee machine with espresso maker.", condition: "Good", priceRangeMin: 150, priceRangeMax: 250 },
-    { id: '6', name: "Running Shoes - Nike", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", category: "Clothing", description: "Comfortable running shoes, barely used.", condition: "Like New", priceRangeMin: 50, priceRangeMax: 100 },
+    { id: '1', name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", category: "Sports & Outdoors", description: "High-quality mountain bike perfect for trails.", condition: "Good", priceRangeMin: 300, priceRangeMax: 500, user_id: sampleUserId },
+    { id: '2', name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", category: "Electronics", description: "Professional camera with multiple lenses.", condition: "Like New", priceRangeMin: 500, priceRangeMax: 800, user_id: sampleUserId },
+    { id: '3', name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", category: "Entertainment", description: "Classic electric guitar in excellent condition.", condition: "Excellent", priceRangeMin: 400, priceRangeMax: 600, user_id: sampleUserId },
+    { id: '4', name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", category: "Home & Garden", description: "Ergonomic standing desk with height adjustment.", condition: "New", priceRangeMin: 200, priceRangeMax: 350, user_id: sampleUserId },
+    { id: '5', name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", category: "Home & Garden", description: "Premium coffee machine with espresso maker.", condition: "Good", priceRangeMin: 150, priceRangeMax: 250, user_id: sampleUserId },
+    { id: '6', name: "Running Shoes - Nike", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", category: "Clothing", description: "Comfortable running shoes, barely used.", condition: "Like New", priceRangeMin: 50, priceRangeMax: 100, user_id: sampleUserId },
   ] as Item[];
 
   const filteredResults = searchQuery

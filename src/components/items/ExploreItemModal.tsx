@@ -142,9 +142,16 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         console.log('MODAL DEBUG: Item data received:', itemData);
         console.log('MODAL DEBUG: Item error:', itemError);
 
-        if (itemError) {
-          console.error('Error fetching item:', itemError);
-          setFullItem(item);
+        if (itemError || !itemData) {
+          console.error('Error fetching item or item not found:', itemError);
+          // For mock items not in DB, use the item directly with its user_id
+          setFullItem({
+            ...item,
+            user_id: (item as any)?.user_id,
+            image: item.image || (item as any)?.image_url,
+            price_range_min: (item as any)?.price_range_min || (item as any)?.priceRangeMin,
+            price_range_max: (item as any)?.price_range_max || (item as any)?.priceRangeMax
+          });
         } else {
           setFullItem({
             ...itemData,
@@ -152,11 +159,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           });
         }
 
-        // Fetch user profile
+        // Fetch user profile - check multiple sources for user_id
         const userIdToFetch = itemData?.user_id || (item as any)?.user_id;
         console.log('MODAL DEBUG: User ID to fetch:', userIdToFetch);
         console.log('MODAL DEBUG: From itemData.user_id:', itemData?.user_id);
         console.log('MODAL DEBUG: From item.user_id:', (item as any)?.user_id);
+        
+        // If we have a user_id, try to fetch profile
         
         if (userIdToFetch) {
           console.log('MODAL DEBUG: Fetching profile for user:', userIdToFetch);
