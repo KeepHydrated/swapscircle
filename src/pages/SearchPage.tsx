@@ -342,11 +342,6 @@ const SearchPage = () => {
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 right-2">
-                    <span className="bg-background/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium text-foreground">
-                      {item.category}
-                    </span>
-                  </div>
                 </div>
                 <div className="p-4">
                   <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
