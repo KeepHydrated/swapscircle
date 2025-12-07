@@ -340,39 +340,86 @@ const TradeSuggestions = () => {
       );
     }
 
-    // Sent: single card with cancel button
+    // Sent: show both cards side by side with cancel button
     return (
-      <div key={suggestion.id} className="flex flex-col">
-        <Card className="overflow-hidden">
-          <div className="relative">
-            <img 
-              src={getItemImage(theirItem)} 
-              alt={theirItem?.name || 'Item'}
-              loading="lazy"
-              className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => handleItemClick(theirItem)}
-            />
-            <div className="absolute top-3 right-3">
-              <Button 
-                size="icon"
-                variant="outline"
-                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
-                onClick={() => handleCancelTrade(suggestion.id)}
-                disabled={processingId === suggestion.id}
+      <div key={suggestion.id} className="col-span-2 md:col-span-3 lg:col-span-4 flex items-start gap-4">
+        {/* My item (what I'm offering) */}
+        <div className="flex flex-col w-40">
+          <Card className="overflow-hidden">
+            <div className="relative">
+              <img 
+                src={getItemImage(myItem)} 
+                alt={myItem?.name || 'Item'}
+                loading="lazy"
+                className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => handleItemClick(myItem)}
+              />
+            </div>
+            <CardContent className="p-3">
+              <h3 
+                className="font-medium text-foreground truncate cursor-pointer hover:text-primary text-sm"
+                onClick={() => handleItemClick(myItem)}
               >
-                <X className="w-4 h-4 text-red-500" />
-              </Button>
+                {myItem?.name || 'Unknown Item'}
+              </h3>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Their item (what I want) */}
+        <div className="flex flex-col w-40">
+          <Card className="overflow-hidden">
+            <div className="relative">
+              <img 
+                src={getItemImage(theirItem)} 
+                alt={theirItem?.name || 'Item'}
+                loading="lazy"
+                className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => handleItemClick(theirItem)}
+              />
+            </div>
+            <CardContent className="p-3">
+              <h3 
+                className="font-medium text-foreground truncate cursor-pointer hover:text-primary text-sm"
+                onClick={() => handleItemClick(theirItem)}
+              >
+                {theirItem?.name || 'Unknown Item'}
+              </h3>
+            </CardContent>
+          </Card>
+          {/* Owner profile info below their item */}
+          <div 
+            className="flex items-center gap-2 mt-2 px-1 cursor-pointer"
+            onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+          >
+            <Avatar className="h-5 w-5">
+              <AvatarImage src={otherUser?.avatar_url} />
+              <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
+                {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-muted-foreground hover:text-foreground">
+              {otherUser?.username || 'Unknown'}
+            </span>
+            <div className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm text-muted-foreground">4.8</span>
             </div>
           </div>
-          <CardContent className="p-3">
-            <h3 
-              className="font-medium text-foreground truncate cursor-pointer hover:text-primary"
-              onClick={() => handleItemClick(theirItem)}
-            >
-              {theirItem?.name || 'Unknown Item'}
-            </h3>
-          </CardContent>
-        </Card>
+        </div>
+
+        {/* Cancel button to the far right */}
+        <div className="flex flex-col gap-2 pt-8">
+          <Button 
+            size="sm"
+            variant="outline"
+            className="h-8 px-4 text-xs"
+            onClick={() => handleCancelTrade(suggestion.id)}
+            disabled={processingId === suggestion.id}
+          >
+            Cancel
+          </Button>
+        </div>
       </div>
     );
   };
