@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight, BarChart3, Search } from 'lucide-react';
+import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight, BarChart3, Search, Lightbulb } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
@@ -197,6 +197,12 @@ const Header = () => {
                       <Link to="/whos-liked-you" className="flex w-full cursor-pointer items-center">
                         <Heart className="mr-2 h-4 w-4" />
                         <span>Who's Liked You</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/trade-suggestions" className="flex w-full cursor-pointer items-center">
+                        <Lightbulb className="mr-2 h-4 w-4" />
+                        <span>Suggestions</span>
                       </Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
