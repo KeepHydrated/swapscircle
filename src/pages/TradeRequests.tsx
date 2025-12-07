@@ -252,7 +252,7 @@ const TradeSuggestions = () => {
       return (
         <div key={suggestion.id} className="col-span-2 md:col-span-3 lg:col-span-4 flex items-start gap-4">
           {/* Their item (what they're offering) */}
-          <div className="flex flex-col w-40">
+          <div className="flex flex-col w-48 md:w-56">
             <Card className="overflow-hidden">
               <div className="relative">
                 <img 
@@ -294,7 +294,7 @@ const TradeSuggestions = () => {
           </div>
 
           {/* My item (what they want from me) */}
-          <div className="flex flex-col w-40">
+          <div className="flex flex-col w-48 md:w-56">
             <Card className="overflow-hidden">
               <div className="relative">
                 <img 
@@ -344,7 +344,7 @@ const TradeSuggestions = () => {
     return (
       <div key={suggestion.id} className="col-span-2 md:col-span-3 lg:col-span-4 flex items-start gap-4">
         {/* My item (what I'm offering) */}
-        <div className="flex flex-col w-40">
+        <div className="flex flex-col w-48 md:w-56">
           <Card className="overflow-hidden">
             <div className="relative">
               <img 
@@ -367,7 +367,7 @@ const TradeSuggestions = () => {
         </div>
 
         {/* Their item (what I want) */}
-        <div className="flex flex-col w-40">
+        <div className="flex flex-col w-48 md:w-56">
           <Card className="overflow-hidden">
             <div className="relative">
               <img 
