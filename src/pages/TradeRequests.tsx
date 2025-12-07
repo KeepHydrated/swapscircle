@@ -325,10 +325,6 @@ const TradeSuggestions = () => {
   return (
     <MainLayout>
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Trade Suggestions</h1>
-          <p className="text-muted-foreground">Manage your pending trade requests</p>
-        </div>
 
         <Tabs defaultValue="received" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
