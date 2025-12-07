@@ -400,6 +400,20 @@ const SearchPage = () => {
           setIsModalOpen(false);
           setSelectedItem(null);
         }}
+        currentIndex={selectedItem ? filteredResults.findIndex(i => i.id === selectedItem.id) : 0}
+        totalItems={filteredResults.length}
+        onNavigatePrev={() => {
+          const currentIdx = filteredResults.findIndex(i => i.id === selectedItem?.id);
+          if (currentIdx > 0) {
+            setSelectedItem(filteredResults[currentIdx - 1]);
+          }
+        }}
+        onNavigateNext={() => {
+          const currentIdx = filteredResults.findIndex(i => i.id === selectedItem?.id);
+          if (currentIdx < filteredResults.length - 1) {
+            setSelectedItem(filteredResults[currentIdx + 1]);
+          }
+        }}
       />
 
       {/* Trade Item Selection Modal */}
