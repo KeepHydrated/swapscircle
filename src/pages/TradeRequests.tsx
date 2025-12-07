@@ -259,7 +259,7 @@ const TradeSuggestions = () => {
                   src={getItemImage(theirItem)} 
                   alt={theirItem?.name || 'Item'}
                   loading="lazy"
-                  className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  className="w-full aspect-[4/3] object-cover cursor-pointer hover:opacity-90 transition-opacity"
                   onClick={() => handleItemClick(theirItem)}
                 />
               </div>
@@ -301,7 +301,7 @@ const TradeSuggestions = () => {
                   src={getItemImage(myItem)} 
                   alt={myItem?.name || 'Item'}
                   loading="lazy"
-                  className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  className="w-full aspect-[4/3] object-cover cursor-pointer hover:opacity-90 transition-opacity"
                   onClick={() => handleItemClick(myItem)}
                 />
               </div>
@@ -351,7 +351,7 @@ const TradeSuggestions = () => {
                 src={getItemImage(myItem)} 
                 alt={myItem?.name || 'Item'}
                 loading="lazy"
-                className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                className="w-full aspect-[4/3] object-cover cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => handleItemClick(myItem)}
               />
             </div>
@@ -374,7 +374,7 @@ const TradeSuggestions = () => {
                 src={getItemImage(theirItem)} 
                 alt={theirItem?.name || 'Item'}
                 loading="lazy"
-                className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                className="w-full aspect-[4/3] object-cover cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => handleItemClick(theirItem)}
               />
             </div>
