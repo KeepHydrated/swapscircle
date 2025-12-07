@@ -105,8 +105,8 @@ const TradeSuggestions = () => {
     },
     {
       id: 'mock-2',
-      requester_id: currentUser?.id || '',
-      owner_id: 'other-user-2',
+      requester_id: 'other-user-2',
+      owner_id: currentUser?.id || '',
       requester_item_id: 'mock-item-3',
       owner_item_id: 'mock-item-4',
       status: 'pending',
@@ -122,13 +122,13 @@ const TradeSuggestions = () => {
         image_url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
       },
       requester_profile: {
-        id: currentUser?.id,
-        username: 'You',
-      },
-      owner_profile: {
         id: 'other-user-2',
         username: 'AudioPhile',
         avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+      },
+      owner_profile: {
+        id: currentUser?.id,
+        username: 'You',
       },
     },
   ];
