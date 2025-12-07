@@ -39,11 +39,6 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
       {/* Available Items Tab Content */}
       {activeTab === 'available' && (
         <div className="p-6 space-y-6">
-          {!isFriend && (
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-muted-foreground">You must be friends to like items from this profile</p>
-            </div>
-          )}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {items.map((item) => (
               <div key={item.id} className="space-y-2">
@@ -56,7 +51,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                   onSelect={handleItemClick}
                   onLike={onLikeItem}
                   onReject={(id) => onRejectItem(id)}
-                  disableLike={!isFriend}
+                  disableLike={false}
                   status={item.status}
                 />
                 {/* Mobile-only description and details */}

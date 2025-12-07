@@ -299,11 +299,6 @@ const OtherPersonProfile: React.FC = () => {
       return;
     }
 
-    if (!isFriend) {
-      toast.error('You must be friends to like items from this profile');
-      return;
-    }
-
     const currentLikedStatus = likedItems[id] || false;
 
     try {
