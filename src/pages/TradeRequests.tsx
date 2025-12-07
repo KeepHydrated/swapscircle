@@ -247,83 +247,85 @@ const TradeSuggestions = () => {
     const theirItem = type === 'sent' ? suggestion.owner_item : suggestion.requester_item;
 
     return (
-      <Card key={suggestion.id} className="overflow-hidden">
-        <div className="relative">
-          <img 
-            src={getItemImage(theirItem)} 
-            alt={theirItem?.name || 'Item'}
-            loading="lazy"
-            className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={() => handleItemClick(theirItem)}
-          />
-          {/* Action buttons overlay */}
-          <div className="absolute top-3 right-3 flex gap-2">
-            {type === 'received' ? (
-              <>
+      <div key={suggestion.id} className="flex flex-col">
+        <Card className="overflow-hidden">
+          <div className="relative">
+            <img 
+              src={getItemImage(theirItem)} 
+              alt={theirItem?.name || 'Item'}
+              loading="lazy"
+              className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={() => handleItemClick(theirItem)}
+            />
+            {/* Action buttons overlay */}
+            <div className="absolute top-3 right-3 flex gap-2">
+              {type === 'received' ? (
+                <>
+                  <Button 
+                    size="icon"
+                    variant="outline"
+                    className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
+                    onClick={() => handleDeclineTrade(suggestion.id)}
+                    disabled={processingId === suggestion.id}
+                  >
+                    <X className="w-4 h-4 text-red-500" />
+                  </Button>
+                  <Button 
+                    size="icon"
+                    className="h-9 w-9 rounded-full bg-green-500 hover:bg-green-600 border-0"
+                    onClick={() => handleAcceptTrade(suggestion.id)}
+                    disabled={processingId === suggestion.id}
+                  >
+                    <Check className="w-4 h-4 text-white" />
+                  </Button>
+                </>
+              ) : (
                 <Button 
                   size="icon"
                   variant="outline"
                   className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
-                  onClick={() => handleDeclineTrade(suggestion.id)}
+                  onClick={() => handleCancelTrade(suggestion.id)}
                   disabled={processingId === suggestion.id}
                 >
                   <X className="w-4 h-4 text-red-500" />
                 </Button>
-                <Button 
-                  size="icon"
-                  className="h-9 w-9 rounded-full bg-green-500 hover:bg-green-600 border-0"
-                  onClick={() => handleAcceptTrade(suggestion.id)}
-                  disabled={processingId === suggestion.id}
-                >
-                  <Check className="w-4 h-4 text-white" />
-                </Button>
-              </>
-            ) : (
-              <Button 
-                size="icon"
-                variant="outline"
-                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
-                onClick={() => handleCancelTrade(suggestion.id)}
-                disabled={processingId === suggestion.id}
-              >
-                <X className="w-4 h-4 text-red-500" />
-              </Button>
-            )}
-          </div>
-        </div>
-        <CardContent className="p-3">
-          <h3 
-            className="font-medium text-foreground truncate cursor-pointer hover:text-primary"
-            onClick={() => handleItemClick(theirItem)}
-          >
-            {theirItem?.name || 'Unknown Item'}
-          </h3>
-          {type === 'received' && (
-            <div 
-              className="flex items-center justify-between mt-1"
-            >
-              <div 
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
-              >
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={otherUser?.avatar_url} />
-                  <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
-                    {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm text-muted-foreground hover:text-foreground">
-                  {otherUser?.username || 'Unknown'}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm text-muted-foreground">4.8</span>
-              </div>
+              )}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+          <CardContent className="p-3">
+            <h3 
+              className="font-medium text-foreground truncate cursor-pointer hover:text-primary"
+              onClick={() => handleItemClick(theirItem)}
+            >
+              {theirItem?.name || 'Unknown Item'}
+            </h3>
+          </CardContent>
+        </Card>
+        {type === 'received' && (
+          <div 
+            className="flex items-center justify-between mt-2 px-1"
+          >
+            <div 
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+            >
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={otherUser?.avatar_url} />
+                <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
+                  {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm text-muted-foreground hover:text-foreground">
+                {otherUser?.username || 'Unknown'}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm text-muted-foreground">4.8</span>
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
