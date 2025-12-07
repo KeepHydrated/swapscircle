@@ -192,6 +192,11 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
+                      <Link to="/likes" className="flex w-full cursor-pointer items-center">
+                        <span>Likes</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link to="/whos-liked-you" className="flex w-full cursor-pointer items-center">
                         <span>Who's Liked You</span>
                       </Link>
