@@ -327,7 +327,7 @@ const TradeSuggestions = () => {
     <MainLayout>
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
 
-        <div className="mb-6">
+        <div className="mb-6 flex justify-end">
           <Select value={filter} onValueChange={(value: 'all' | 'received' | 'sent') => setFilter(value)}>
             <SelectTrigger className="w-40 bg-background">
               <SelectValue />
