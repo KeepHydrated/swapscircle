@@ -293,6 +293,13 @@ const TradeSuggestions = () => {
             </div>
           </div>
 
+          {/* Swap icon between cards */}
+          <div className="flex items-center justify-center self-center -mx-2">
+            <div className="bg-muted rounded-full p-2">
+              <ArrowLeftRight className="h-5 w-5 text-muted-foreground" />
+            </div>
+          </div>
+
           {/* My item (what they want from me) */}
           <div className="flex flex-col w-56 md:w-72">
             <Card className="overflow-hidden">
