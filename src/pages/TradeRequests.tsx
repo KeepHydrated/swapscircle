@@ -184,124 +184,72 @@ const TradeSuggestions = () => {
   const renderSuggestionCard = (suggestion: TradeSuggestion, type: 'sent' | 'received') => {
     const otherUser = type === 'sent' ? suggestion.owner_profile : suggestion.requester_profile;
     const theirItem = type === 'sent' ? suggestion.owner_item : suggestion.requester_item;
-    const yourItem = type === 'sent' ? suggestion.requester_item : suggestion.owner_item;
 
     return (
       <Card key={suggestion.id} className="overflow-hidden">
-        <CardContent className="p-4 md:p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <Avatar 
-                className="h-10 w-10 cursor-pointer hover:opacity-80"
-                onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
-              >
-                <AvatarImage src={otherUser?.avatar_url} />
-                <AvatarFallback className="bg-gray-200 text-gray-600">
-                  {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <span 
-                  className="font-medium text-foreground cursor-pointer hover:text-primary"
-                  onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
-                >
-                  {otherUser?.username || 'Unknown User'}
-                </span>
-                <p className="text-sm text-muted-foreground">
-                  {format(new Date(suggestion.created_at), 'MMM d, yyyy')}
-                </p>
-              </div>
-            </div>
-            <Badge variant="secondary" className="bg-amber-100 text-amber-800">
-              Pending
-            </Badge>
-          </div>
-
-          {/* Trade Items */}
-          <div className="flex items-center justify-center gap-4 md:gap-6 mb-4">
-            {/* Their Item */}
-            <div className="flex flex-col items-center">
-              <div className="text-xs text-muted-foreground mb-1">
-                {type === 'sent' ? 'They have' : 'They offer'}
-              </div>
-              <img 
-                src={getItemImage(theirItem)} 
-                alt={theirItem?.name || 'Item'}
-                loading="lazy"
-                className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => handleItemClick(theirItem)}
-              />
-              <span className="text-sm font-medium text-foreground text-center max-w-20 md:max-w-24 truncate mt-2">
-                {theirItem?.name || 'Unknown Item'}
-              </span>
-            </div>
-            
-            {/* Exchange Arrow */}
-            <div className="flex items-center justify-center">
-              <ArrowLeftRight className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
-            </div>
-            
-            {/* Your Item */}
-            <div className="flex flex-col items-center">
-              <div className="text-xs text-muted-foreground mb-1">
-                {type === 'sent' ? 'You offer' : 'They want'}
-              </div>
-              <img 
-                src={getItemImage(yourItem)} 
-                alt={yourItem?.name || 'Item'}
-                loading="lazy"
-                className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => handleItemClick(yourItem)}
-              />
-              <span className="text-sm font-medium text-foreground text-center max-w-20 md:max-w-24 truncate mt-2">
-                {yourItem?.name || 'Unknown Item'}
-              </span>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-2 mt-4">
+        <div className="relative">
+          <img 
+            src={getItemImage(theirItem)} 
+            alt={theirItem?.name || 'Item'}
+            loading="lazy"
+            className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={() => handleItemClick(theirItem)}
+          />
+          {/* Action buttons overlay */}
+          <div className="absolute top-3 right-3 flex gap-2">
             {type === 'received' ? (
               <>
                 <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex-1"
+                  size="icon"
+                  variant="outline"
+                  className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
                   onClick={() => handleDeclineTrade(suggestion.id)}
                   disabled={processingId === suggestion.id}
                 >
-                  <X className="w-4 h-4 mr-1" />
-                  Decline
+                  <X className="w-4 h-4 text-red-500" />
                 </Button>
                 <Button 
-                  size="sm"
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  size="icon"
+                  className="h-9 w-9 rounded-full bg-green-500 hover:bg-green-600 border-0"
                   onClick={() => handleAcceptTrade(suggestion.id)}
                   disabled={processingId === suggestion.id}
                 >
-                  <Check className="w-4 h-4 mr-1" />
-                  Accept
+                  <Check className="w-4 h-4 text-white" />
                 </Button>
               </>
             ) : (
               <Button 
-                variant="outline" 
-                size="sm"
-                className="flex-1"
+                size="icon"
+                variant="outline"
+                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
                 onClick={() => handleCancelTrade(suggestion.id)}
                 disabled={processingId === suggestion.id}
               >
-                <X className="w-4 h-4 mr-1" />
-                Cancel
+                <X className="w-4 h-4 text-red-500" />
               </Button>
             )}
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleOpenChat(suggestion.id)}
-            >
-              <MessageCircle className="w-4 h-4" />
-            </Button>
+          </div>
+        </div>
+        <CardContent className="p-3">
+          <h3 
+            className="font-medium text-foreground truncate cursor-pointer hover:text-primary"
+            onClick={() => handleItemClick(theirItem)}
+          >
+            {theirItem?.name || 'Unknown Item'}
+          </h3>
+          <div 
+            className="flex items-center gap-2 mt-1 cursor-pointer"
+            onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+          >
+            <Avatar className="h-5 w-5">
+              <AvatarImage src={otherUser?.avatar_url} />
+              <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
+                {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-muted-foreground hover:text-foreground">
+              {otherUser?.username || 'Unknown'}
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -365,7 +313,7 @@ const TradeSuggestions = () => {
           }
           
           return (
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {displaySuggestions.map(suggestion => 
                 renderSuggestionCard(
                   suggestion, 
