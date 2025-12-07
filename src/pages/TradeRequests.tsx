@@ -73,8 +73,69 @@ const TradeSuggestions = () => {
     enabled: !!currentUser?.id,
   });
 
-  const sentSuggestions = suggestions.filter(s => s.requester_id === currentUser?.id);
-  const receivedSuggestions = suggestions.filter(s => s.owner_id === currentUser?.id);
+  // Mock data for preview
+  const mockSuggestions: TradeSuggestion[] = [
+    {
+      id: 'mock-1',
+      requester_id: 'other-user',
+      owner_id: currentUser?.id || '',
+      requester_item_id: 'mock-item-1',
+      owner_item_id: 'mock-item-2',
+      status: 'pending',
+      created_at: new Date().toISOString(),
+      requester_item: {
+        id: 'mock-item-1',
+        name: 'Vintage Camera',
+        image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400',
+      },
+      owner_item: {
+        id: 'mock-item-2',
+        name: 'Leather Jacket',
+        image_url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
+      },
+      requester_profile: {
+        id: 'other-user',
+        username: 'CameraCollector',
+        avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+      },
+      owner_profile: {
+        id: currentUser?.id,
+        username: 'You',
+      },
+    },
+    {
+      id: 'mock-2',
+      requester_id: currentUser?.id || '',
+      owner_id: 'other-user-2',
+      requester_item_id: 'mock-item-3',
+      owner_item_id: 'mock-item-4',
+      status: 'pending',
+      created_at: new Date().toISOString(),
+      requester_item: {
+        id: 'mock-item-3',
+        name: 'Mechanical Keyboard',
+        image_url: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=400',
+      },
+      owner_item: {
+        id: 'mock-item-4',
+        name: 'Wireless Headphones',
+        image_url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+      },
+      requester_profile: {
+        id: currentUser?.id,
+        username: 'You',
+      },
+      owner_profile: {
+        id: 'other-user-2',
+        username: 'AudioPhile',
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+      },
+    },
+  ];
+
+  const allSuggestions = suggestions.length > 0 ? suggestions : mockSuggestions;
+  const sentSuggestions = allSuggestions.filter(s => s.requester_id === currentUser?.id);
+  const receivedSuggestions = allSuggestions.filter(s => s.owner_id === currentUser?.id);
 
   const getItemImage = (item: any) => {
     const urls = item?.image_urls as string[] | undefined;
@@ -281,7 +342,7 @@ const TradeSuggestions = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-background">
-              <SelectItem value="all">All ({suggestions.length})</SelectItem>
+              <SelectItem value="all">All ({allSuggestions.length})</SelectItem>
               <SelectItem value="received">Received ({receivedSuggestions.length})</SelectItem>
               <SelectItem value="sent">Sent ({sentSuggestions.length})</SelectItem>
             </SelectContent>
@@ -290,7 +351,7 @@ const TradeSuggestions = () => {
 
         {(() => {
           const displaySuggestions = filter === 'all' 
-            ? suggestions 
+            ? allSuggestions 
             : filter === 'received' 
               ? receivedSuggestions 
               : sentSuggestions;
