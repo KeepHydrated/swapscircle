@@ -298,6 +298,22 @@ const TradeSuggestions = () => {
           >
             {theirItem?.name || 'Unknown Item'}
           </h3>
+          {type === 'received' && (
+            <div 
+              className="flex items-center gap-2 mt-1 cursor-pointer"
+              onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+            >
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={otherUser?.avatar_url} />
+                <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
+                  {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm text-muted-foreground hover:text-foreground">
+                {otherUser?.username || 'Unknown'}
+              </span>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
