@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, ArrowLeftRight, Check, X } from 'lucide-react';
+import { MessageCircle, ArrowLeftRight, Check, X, Star } from 'lucide-react';
 import { format } from 'date-fns';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { toast } from '@/hooks/use-toast';
@@ -300,18 +300,26 @@ const TradeSuggestions = () => {
           </h3>
           {type === 'received' && (
             <div 
-              className="flex items-center gap-2 mt-1 cursor-pointer"
-              onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+              className="flex items-center justify-between mt-1"
             >
-              <Avatar className="h-5 w-5">
-                <AvatarImage src={otherUser?.avatar_url} />
-                <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
-                  {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm text-muted-foreground hover:text-foreground">
-                {otherUser?.username || 'Unknown'}
-              </span>
+              <div 
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+              >
+                <Avatar className="h-5 w-5">
+                  <AvatarImage src={otherUser?.avatar_url} />
+                  <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
+                    {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm text-muted-foreground hover:text-foreground">
+                  {otherUser?.username || 'Unknown'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm text-muted-foreground">4.8</span>
+              </div>
             </div>
           )}
         </CardContent>
