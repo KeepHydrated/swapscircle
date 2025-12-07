@@ -4,11 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, ArrowLeftRight, Check, X, Send, Inbox } from 'lucide-react';
+import { MessageCircle, ArrowLeftRight, Check, X } from 'lucide-react';
 import { format } from 'date-fns';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { toast } from '@/hooks/use-toast';
@@ -33,6 +33,7 @@ const TradeSuggestions = () => {
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'received' | 'sent'>('all');
 
   // Get current user
   const { data: currentUser } = useQuery({
@@ -326,50 +327,54 @@ const TradeSuggestions = () => {
     <MainLayout>
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
 
-        <Tabs defaultValue="received" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="received" className="flex items-center gap-2">
-              <Inbox className="w-4 h-4" />
-              Received ({receivedSuggestions.length})
-            </TabsTrigger>
-            <TabsTrigger value="sent" className="flex items-center gap-2">
-              <Send className="w-4 h-4" />
-              Sent ({sentSuggestions.length})
-            </TabsTrigger>
-          </TabsList>
+        <div className="mb-6">
+          <Select value={filter} onValueChange={(value: 'all' | 'received' | 'sent') => setFilter(value)}>
+            <SelectTrigger className="w-40 bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-background">
+              <SelectItem value="all">All ({suggestions.length})</SelectItem>
+              <SelectItem value="received">Received ({receivedSuggestions.length})</SelectItem>
+              <SelectItem value="sent">Sent ({sentSuggestions.length})</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          <TabsContent value="received">
-            {receivedSuggestions.length === 0 ? (
+        {(() => {
+          const displaySuggestions = filter === 'all' 
+            ? suggestions 
+            : filter === 'received' 
+              ? receivedSuggestions 
+              : sentSuggestions;
+          
+          if (displaySuggestions.length === 0) {
+            return (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Inbox className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">No received suggestions</h3>
-                  <p className="text-muted-foreground">When someone suggests a trade with you, it will appear here.</p>
+                  <h3 className="text-lg font-medium text-foreground mb-2">No trade requests</h3>
+                  <p className="text-muted-foreground">
+                    {filter === 'received' 
+                      ? "When someone suggests a trade with you, it will appear here."
+                      : filter === 'sent'
+                        ? "Trade suggestions you send will appear here."
+                        : "No pending trade requests."}
+                  </p>
                 </CardContent>
               </Card>
-            ) : (
-              <div className="grid gap-4">
-                {receivedSuggestions.map(suggestion => renderSuggestionCard(suggestion, 'received'))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="sent">
-            {sentSuggestions.length === 0 ? (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Send className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">No sent suggestions</h3>
-                  <p className="text-muted-foreground">Trade suggestions you send will appear here.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4">
-                {sentSuggestions.map(suggestion => renderSuggestionCard(suggestion, 'sent'))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+            );
+          }
+          
+          return (
+            <div className="grid gap-4">
+              {displaySuggestions.map(suggestion => 
+                renderSuggestionCard(
+                  suggestion, 
+                  suggestion.requester_id === currentUser?.id ? 'sent' : 'received'
+                )
+              )}
+            </div>
+          );
+        })()}
 
         {/* Item Modal */}
         {showItemModal && selectedItem && (
