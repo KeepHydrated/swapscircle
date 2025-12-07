@@ -325,25 +325,31 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         </VisuallyHidden>
         <div className="flex w-full max-h-[92vh] h-[540px] md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
           
-          {/* Navigation arrows positioned on sides of entire modal */}
+          {/* Navigation arrows positioned outside the modal on dark overlay */}
           {(onNavigatePrev || onNavigateNext) && totalItems && totalItems > 1 && (
             <>
               {currentIndex !== undefined && currentIndex > 0 && onNavigatePrev && (
                 <button
-                  onClick={onNavigatePrev}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigatePrev();
+                  }}
+                  className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 hover:scale-110 transition z-[60]"
                   aria-label="Previous item"
                 >
-                  <ArrowLeft className="w-6 h-6" />
+                  <ArrowLeft className="w-6 h-6 text-gray-700" />
                 </button>
               )}
               {currentIndex !== undefined && currentIndex < totalItems - 1 && onNavigateNext && (
                 <button
-                  onClick={onNavigateNext}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow-lg p-3 hover:scale-105 transition z-30"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigateNext();
+                  }}
+                  className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 hover:scale-110 transition z-[60]"
                   aria-label="Next item"
                 >
-                  <ArrowRight className="w-6 h-6" />
+                  <ArrowRight className="w-6 h-6 text-gray-700" />
                 </button>
               )}
             </>
