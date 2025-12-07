@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Check, X } from 'lucide-react';
+import { Heart, Check, X, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import MoreActionsMenu from './matches/MatchActionSelector';
+import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
+import { Item } from '@/types/item';
 
 interface ItemCardProps {
   id: string;
@@ -26,6 +28,7 @@ interface ItemCardProps {
   category?: string;
   tags?: string[];
   status?: 'draft' | 'published' | 'removed';
+  ownerId?: string;
   distance?: string;
   myItemImage?: string;
   priceRangeMin?: number;
@@ -62,11 +65,27 @@ const ItemCard: React.FC<ItemCardProps> = ({
   priceRangeMax,
   condition,
   userProfile,
+  ownerId,
 }) => {
   const navigate = useNavigate();
   const isRemoved = status === 'removed';
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [tradeModalOpen, setTradeModalOpen] = useState(false);
+
+  const handleSwapClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTradeModalOpen(true);
+  };
+
+  const targetItem: Item = {
+    id,
+    name,
+    image,
+    priceRangeMin,
+    priceRangeMax,
+    condition,
+  };
   const handleHeartClick = (e: React.MouseEvent, global?: boolean) => {
     console.log('💖 ItemCard: Heart button clicked!', { id, onLike: !!onLike, global });
     e.stopPropagation();
@@ -211,6 +230,24 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       >
                         <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
                       </button>
+
+                      {/* Swap/Trade button */}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                              aria-label="Suggest trade"
+                              onClick={handleSwapClick}
+                            >
+                              <RefreshCw className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-primary transition-colors`} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Suggest a trade</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       
                       {/* Simple like button for current item */}
                       <TooltipProvider>
@@ -299,6 +336,14 @@ const ItemCard: React.FC<ItemCardProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* Trade Item Selection Modal */}
+      <TradeItemSelectionModal
+        isOpen={tradeModalOpen}
+        onClose={() => setTradeModalOpen(false)}
+        targetItem={targetItem}
+        targetItemOwnerId={ownerId || ''}
+      />
     </div>
   );
 };

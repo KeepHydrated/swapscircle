@@ -47,6 +47,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 priceRangeMin={match.priceRangeMin}
                 priceRangeMax={match.priceRangeMax}
                 condition={match.condition}
+                ownerId={match.user_id}
               />
             </div>
           ))}
