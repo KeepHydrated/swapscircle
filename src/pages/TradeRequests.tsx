@@ -245,46 +245,36 @@ const TradeSuggestions = () => {
   const renderSuggestionCard = (suggestion: TradeSuggestion, type: 'sent' | 'received') => {
     const otherUser = type === 'sent' ? suggestion.owner_profile : suggestion.requester_profile;
     const theirItem = type === 'sent' ? suggestion.owner_item : suggestion.requester_item;
+    const myItem = type === 'sent' ? suggestion.requester_item : suggestion.owner_item;
 
-    return (
-      <div key={suggestion.id} className="flex flex-col">
-        <Card className="overflow-hidden">
-          <div className="relative">
-            <img 
-              src={getItemImage(theirItem)} 
-              alt={theirItem?.name || 'Item'}
-              loading="lazy"
-              className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => handleItemClick(theirItem)}
-            />
-            {/* Cancel button overlay for sent items */}
-            {type === 'sent' && (
-              <div className="absolute top-3 right-3">
-                <Button 
-                  size="icon"
-                  variant="outline"
-                  className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
-                  onClick={() => handleCancelTrade(suggestion.id)}
-                  disabled={processingId === suggestion.id}
-                >
-                  <X className="w-4 h-4 text-red-500" />
-                </Button>
+    if (type === 'received') {
+      // Received: show both cards side by side with buttons on far right
+      return (
+        <div key={suggestion.id} className="col-span-2 md:col-span-3 lg:col-span-4 flex items-start gap-4">
+          {/* Their item (what they're offering) */}
+          <div className="flex flex-col w-40">
+            <Card className="overflow-hidden">
+              <div className="relative">
+                <img 
+                  src={getItemImage(theirItem)} 
+                  alt={theirItem?.name || 'Item'}
+                  loading="lazy"
+                  className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => handleItemClick(theirItem)}
+                />
               </div>
-            )}
-          </div>
-          <CardContent className="p-3">
-            <h3 
-              className="font-medium text-foreground truncate cursor-pointer hover:text-primary"
-              onClick={() => handleItemClick(theirItem)}
-            >
-              {theirItem?.name || 'Unknown Item'}
-            </h3>
-          </CardContent>
-        </Card>
-        {type === 'received' && (
-          <div className="flex items-center justify-between mt-2 px-1">
+              <CardContent className="p-3">
+                <h3 
+                  className="font-medium text-foreground truncate cursor-pointer hover:text-primary text-sm"
+                  onClick={() => handleItemClick(theirItem)}
+                >
+                  {theirItem?.name || 'Unknown Item'}
+                </h3>
+              </CardContent>
+            </Card>
+            {/* Profile info below their item */}
             <div 
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 mt-2 px-1 cursor-pointer"
               onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
             >
               <Avatar className="h-5 w-5">
@@ -296,32 +286,93 @@ const TradeSuggestions = () => {
               <span className="text-sm text-muted-foreground hover:text-foreground">
                 {otherUser?.username || 'Unknown'}
               </span>
-              <div className="flex items-center gap-1 ml-1">
+              <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm text-muted-foreground">4.8</span>
               </div>
             </div>
-            <div className="flex flex-col gap-1">
+          </div>
+
+          {/* My item (what they want from me) */}
+          <div className="flex flex-col w-40">
+            <Card className="overflow-hidden">
+              <div className="relative">
+                <img 
+                  src={getItemImage(myItem)} 
+                  alt={myItem?.name || 'Item'}
+                  loading="lazy"
+                  className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => handleItemClick(myItem)}
+                />
+              </div>
+              <CardContent className="p-3">
+                <h3 
+                  className="font-medium text-foreground truncate cursor-pointer hover:text-primary text-sm"
+                  onClick={() => handleItemClick(myItem)}
+                >
+                  {myItem?.name || 'Unknown Item'}
+                </h3>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Accept/Reject buttons to the far right */}
+          <div className="flex flex-col gap-2 pt-8">
+            <Button 
+              size="sm"
+              className="h-8 px-4 text-xs bg-green-500 hover:bg-green-600"
+              onClick={() => handleAcceptTrade(suggestion.id)}
+              disabled={processingId === suggestion.id}
+            >
+              Accept
+            </Button>
+            <Button 
+              size="sm"
+              variant="outline"
+              className="h-8 px-4 text-xs"
+              onClick={() => handleDeclineTrade(suggestion.id)}
+              disabled={processingId === suggestion.id}
+            >
+              Reject
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    // Sent: single card with cancel button
+    return (
+      <div key={suggestion.id} className="flex flex-col">
+        <Card className="overflow-hidden">
+          <div className="relative">
+            <img 
+              src={getItemImage(theirItem)} 
+              alt={theirItem?.name || 'Item'}
+              loading="lazy"
+              className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={() => handleItemClick(theirItem)}
+            />
+            <div className="absolute top-3 right-3">
               <Button 
-                size="sm"
-                className="h-7 px-3 text-xs bg-green-500 hover:bg-green-600"
-                onClick={() => handleAcceptTrade(suggestion.id)}
-                disabled={processingId === suggestion.id}
-              >
-                Accept
-              </Button>
-              <Button 
-                size="sm"
+                size="icon"
                 variant="outline"
-                className="h-7 px-3 text-xs"
-                onClick={() => handleDeclineTrade(suggestion.id)}
+                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
+                onClick={() => handleCancelTrade(suggestion.id)}
                 disabled={processingId === suggestion.id}
               >
-                Reject
+                <X className="w-4 h-4 text-red-500" />
               </Button>
             </div>
           </div>
-        )}
+          <CardContent className="p-3">
+            <h3 
+              className="font-medium text-foreground truncate cursor-pointer hover:text-primary"
+              onClick={() => handleItemClick(theirItem)}
+            >
+              {theirItem?.name || 'Unknown Item'}
+            </h3>
+          </CardContent>
+        </Card>
       </div>
     );
   };
