@@ -546,6 +546,7 @@ const OtherPersonProfile: React.FC = () => {
               onLikeItem={handleLikeItem}
               onRejectItem={handleRejectItemForSelected}
               isFriend={isFriend}
+              profileUserId={userId || undefined}
             />
           </Tabs>
         </div>
