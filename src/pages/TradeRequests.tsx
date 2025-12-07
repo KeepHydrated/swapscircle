@@ -257,29 +257,9 @@ const TradeSuggestions = () => {
               className="w-full aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
               onClick={() => handleItemClick(theirItem)}
             />
-            {/* Action buttons overlay */}
-            <div className="absolute top-3 right-3 flex gap-2">
-              {type === 'received' ? (
-                <>
-                  <Button 
-                    size="icon"
-                    variant="outline"
-                    className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border-0"
-                    onClick={() => handleDeclineTrade(suggestion.id)}
-                    disabled={processingId === suggestion.id}
-                  >
-                    <X className="w-4 h-4 text-red-500" />
-                  </Button>
-                  <Button 
-                    size="icon"
-                    className="h-9 w-9 rounded-full bg-green-500 hover:bg-green-600 border-0"
-                    onClick={() => handleAcceptTrade(suggestion.id)}
-                    disabled={processingId === suggestion.id}
-                  >
-                    <Check className="w-4 h-4 text-white" />
-                  </Button>
-                </>
-              ) : (
+            {/* Cancel button overlay for sent items */}
+            {type === 'sent' && (
+              <div className="absolute top-3 right-3">
                 <Button 
                   size="icon"
                   variant="outline"
@@ -289,8 +269,8 @@ const TradeSuggestions = () => {
                 >
                   <X className="w-4 h-4 text-red-500" />
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
           <CardContent className="p-3">
             <h3 
@@ -302,9 +282,7 @@ const TradeSuggestions = () => {
           </CardContent>
         </Card>
         {type === 'received' && (
-          <div 
-            className="flex items-center justify-between mt-2 px-1"
-          >
+          <div className="flex items-center justify-between mt-2 px-1">
             <div 
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
@@ -318,10 +296,29 @@ const TradeSuggestions = () => {
               <span className="text-sm text-muted-foreground hover:text-foreground">
                 {otherUser?.username || 'Unknown'}
               </span>
+              <div className="flex items-center gap-1 ml-1">
+                <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm text-muted-foreground">4.8</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm text-muted-foreground">4.8</span>
+            <div className="flex flex-col gap-1">
+              <Button 
+                size="sm"
+                className="h-7 px-3 text-xs bg-green-500 hover:bg-green-600"
+                onClick={() => handleAcceptTrade(suggestion.id)}
+                disabled={processingId === suggestion.id}
+              >
+                Accept
+              </Button>
+              <Button 
+                size="sm"
+                variant="outline"
+                className="h-7 px-3 text-xs"
+                onClick={() => handleDeclineTrade(suggestion.id)}
+                disabled={processingId === suggestion.id}
+              >
+                Reject
+              </Button>
             </div>
           </div>
         )}
