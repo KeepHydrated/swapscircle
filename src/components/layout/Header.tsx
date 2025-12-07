@@ -183,31 +183,26 @@ const Header = () => {
                   <DropdownMenuContent align="end" sideOffset={-8} className="w-56 bg-white z-[10000]">
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex w-full cursor-pointer items-center">
-                        <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/trades" className="flex w-full cursor-pointer items-center">
-                        <Handshake className="mr-2 h-4 w-4" />
                         <span>Trades</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/whos-liked-you" className="flex w-full cursor-pointer items-center">
-                        <Heart className="mr-2 h-4 w-4" />
                         <span>Who's Liked You</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/trade-requests" className="flex w-full cursor-pointer items-center">
-                        <Lightbulb className="mr-2 h-4 w-4" />
                         <span>Requests</span>
                       </Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
                         <Link to="/settings" className="flex w-full cursor-pointer items-center">
-                          <Settings className="mr-2 h-4 w-4" />
                           <span>Settings</span>
                         </Link>
                         </DropdownMenuItem>
