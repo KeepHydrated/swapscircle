@@ -200,9 +200,9 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/trade-suggestions" className="flex w-full cursor-pointer items-center">
+                      <Link to="/trade-requests" className="flex w-full cursor-pointer items-center">
                         <Lightbulb className="mr-2 h-4 w-4" />
-                        <span>Suggestions</span>
+                        <span>Requests</span>
                       </Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
