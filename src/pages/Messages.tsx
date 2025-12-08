@@ -848,7 +848,7 @@ const Messages = () => {
         {/* Middle - Chat area */}
         <div className="flex-1 flex flex-col h-full">{/* Add h-full for proper height */}
           {isDemoTrade && demoTradeData ? (
-            /* Demo trade view - PRIORITIZED FIRST */
+            /* Demo trade view - messages only in middle */
             <div className="flex flex-col h-full">
               {/* Demo Partner Header */}
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
@@ -883,25 +883,12 @@ const Messages = () => {
                 </div>
               </div>
 
-              {/* Demo Trade Request Message */}
-              <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                <div className="max-w-md mx-auto">
-                  <TradeRequestMessage
-                    partnerProfile={demoTradeData.partnerProfile}
-                    theirItem={demoTradeData.theirItem}
-                    yourItem={demoTradeData.myItem}
-                    conversationTime="Just now"
-                    isPending={true}
-                    isRequester={true}
-                    onCancel={() => {
-                      setIsDemoTrade(false);
-                      setDemoTradeData(null);
-                      toast({
-                        title: "Trade Cancelled",
-                        description: "This was a demo trade request.",
-                      });
-                    }}
-                  />
+              {/* Empty messages area - no messages yet for demo */}
+              <div className="flex-1 overflow-y-auto p-4 bg-muted/50 flex items-center justify-center">
+                <div className="text-center text-muted-foreground">
+                  <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No messages yet</p>
+                  <p className="text-xs mt-1">Send a message to start the conversation</p>
                 </div>
               </div>
 
@@ -1104,26 +1091,25 @@ const Messages = () => {
               onSelectItem={handleSelectItem}
             />
           ) : isDemoTrade && demoTradeData ? (
-            /* Demo trade details */
-            <div className="p-4">
-              <h3 className="font-semibold mb-4">Trade Details (Demo)</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Their Item</p>
-                  <div className="bg-white rounded-lg p-3 border">
-                    <img src={demoTradeData.theirItem?.image} alt={demoTradeData.theirItem?.name} className="w-full aspect-square object-cover rounded mb-2" />
-                    <p className="font-medium text-sm">{demoTradeData.theirItem?.name}</p>
-                    <p className="text-xs text-muted-foreground">{demoTradeData.theirItem?.condition}</p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Your Item</p>
-                  <div className="bg-white rounded-lg p-3 border">
-                    <img src={demoTradeData.myItem?.image} alt={demoTradeData.myItem?.name} className="w-full aspect-square object-cover rounded mb-2" />
-                    <p className="font-medium text-sm">{demoTradeData.myItem?.name}</p>
-                  </div>
-                </div>
-              </div>
+            /* Demo trade details with trade request */
+            <div className="p-4 space-y-4">
+              {/* Trade Request Card */}
+              <TradeRequestMessage
+                partnerProfile={demoTradeData.partnerProfile}
+                theirItem={demoTradeData.theirItem}
+                yourItem={demoTradeData.myItem}
+                conversationTime="Just now"
+                isPending={true}
+                isRequester={true}
+                onCancel={() => {
+                  setIsDemoTrade(false);
+                  setDemoTradeData(null);
+                  toast({
+                    title: "Trade Cancelled",
+                    description: "This was a demo trade request.",
+                  });
+                }}
+              />
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">
