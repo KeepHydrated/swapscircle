@@ -2287,6 +2287,7 @@ export type Database = {
           requester_accepted: boolean | null
           requester_id: string
           requester_item_id: string
+          requester_item_ids: string[] | null
           status: string | null
           updated_at: string | null
         }
@@ -2300,6 +2301,7 @@ export type Database = {
           requester_accepted?: boolean | null
           requester_id: string
           requester_item_id: string
+          requester_item_ids?: string[] | null
           status?: string | null
           updated_at?: string | null
         }
@@ -2313,6 +2315,7 @@ export type Database = {
           requester_accepted?: boolean | null
           requester_id?: string
           requester_item_id?: string
+          requester_item_ids?: string[] | null
           status?: string | null
           updated_at?: string | null
         }
