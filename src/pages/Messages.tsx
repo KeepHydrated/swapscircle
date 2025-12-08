@@ -84,6 +84,22 @@ const Messages = () => {
   const isTablet = useIsTablet();
   const [currentView, setCurrentView] = useState<'conversations' | 'chat'>('conversations');
   const [currentMobileView, setCurrentMobileView] = useState<'messages' | 'details'>('messages');
+  
+  // Demo trade mode state
+  const [isDemoTrade, setIsDemoTrade] = useState(false);
+  const [demoTradeData, setDemoTradeData] = useState<any>(null);
+  
+  // Handle demo trade from navigation state
+  useEffect(() => {
+    if (location.state?.demoTrade && location.state?.demoData) {
+      setIsDemoTrade(true);
+      setDemoTradeData(location.state.demoData);
+      // Switch to chat view on mobile/tablet
+      if (isMobile || isTablet) {
+        setCurrentView('chat');
+      }
+    }
+  }, [location.state, isMobile, isTablet]);
 
   // Get current user ID and email
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
@@ -429,26 +445,36 @@ const Messages = () => {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    onClick={() => setCurrentView('conversations')}
+                    onClick={() => {
+                      if (isDemoTrade) {
+                        setIsDemoTrade(false);
+                        setDemoTradeData(null);
+                      }
+                      setCurrentView('conversations');
+                    }}
                     className="p-2"
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Avatar className="h-8 w-8">
                     <AvatarImage 
-                      src={activeChat?.otherUserProfile?.avatar_url || undefined} 
-                      alt={`${activeChat?.name}'s avatar`} 
+                      src={isDemoTrade ? demoTradeData?.partnerProfile?.avatar_url : activeChat?.otherUserProfile?.avatar_url || undefined} 
+                      alt={`${isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name}'s avatar`} 
                     />
                     <AvatarFallback>
-                      {activeChat?.name?.substring(0, 1).toUpperCase()}
+                      {(isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name)?.substring(0, 1).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <Link 
-                    to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
-                    className="font-medium hover:underline text-lg"
-                  >
-                    {activeChat?.name}
-                  </Link>
+                  {isDemoTrade ? (
+                    <span className="font-medium text-lg">{demoTradeData?.partnerProfile?.username || 'Demo User'}</span>
+                  ) : (
+                    <Link 
+                      to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
+                      className="font-medium hover:underline text-lg"
+                    >
+                      {activeChat?.name}
+                    </Link>
+                  )}
                 </div>
                 
                 {/* Toggle between Messages and Details - Mobile Only */}
@@ -528,6 +554,36 @@ const Messages = () => {
                           />
                         </div>
                       </>
+                    ) : isDemoTrade && demoTradeData ? (
+                      /* Demo trade on mobile */
+                      <div className="flex flex-col h-full">
+                        <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
+                          <div className="max-w-sm mx-auto">
+                            <TradeRequestMessage
+                              partnerProfile={demoTradeData.partnerProfile}
+                              theirItem={demoTradeData.theirItem}
+                              yourItem={demoTradeData.myItem}
+                              conversationTime="Just now"
+                              isPending={true}
+                              isRequester={true}
+                              onCancel={() => {
+                                setIsDemoTrade(false);
+                                setDemoTradeData(null);
+                                setCurrentView('conversations');
+                                toast({
+                                  title: "Trade Cancelled",
+                                  description: "This was a demo trade request.",
+                                });
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
+                          <p className="text-center text-sm text-muted-foreground">
+                            This is a demo trade.
+                          </p>
+                        </div>
+                      </div>
                     ) : (
                       <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500">Select a conversation to start messaging</p>
@@ -816,6 +872,71 @@ const Messages = () => {
                 />
               </div>
             </>
+          ) : isDemoTrade && demoTradeData ? (
+            /* Demo trade view */
+            <div className="flex flex-col h-full">
+              {/* Demo Partner Header */}
+              <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                <div className="flex items-center">
+                  <Avatar className="h-8 w-8 mr-3">
+                    <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
+                    <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
+                        <div className="flex items-center text-amber-400 text-xs">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className={`h-3 w-3 ${star <= 4 ? 'fill-current' : ''}`} />
+                          ))}
+                          <span className="ml-1 text-gray-600">(12)</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-gray-600">
+                        <div className="flex items-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          <span>Since 2023</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
+                          <span>~1 hour</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Demo Trade Request Message */}
+              <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
+                <div className="max-w-md mx-auto">
+                  <TradeRequestMessage
+                    partnerProfile={demoTradeData.partnerProfile}
+                    theirItem={demoTradeData.theirItem}
+                    yourItem={demoTradeData.myItem}
+                    conversationTime="Just now"
+                    isPending={true}
+                    isRequester={true}
+                    onCancel={() => {
+                      setIsDemoTrade(false);
+                      setDemoTradeData(null);
+                      toast({
+                        title: "Trade Cancelled",
+                        description: "This was a demo trade request.",
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Demo Message Input */}
+              <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
+                <p className="text-center text-sm text-muted-foreground">
+                  This is a demo trade. Sign up to start real trades!
+                </p>
+              </div>
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500">Select a conversation to start messaging</p>
@@ -831,6 +952,28 @@ const Messages = () => {
               selectedItem={selectedItem}
               onSelectItem={handleSelectItem}
             />
+          ) : isDemoTrade && demoTradeData ? (
+            /* Demo trade details */
+            <div className="p-4">
+              <h3 className="font-semibold mb-4">Trade Details (Demo)</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Their Item</p>
+                  <div className="bg-white rounded-lg p-3 border">
+                    <img src={demoTradeData.theirItem?.image} alt={demoTradeData.theirItem?.name} className="w-full aspect-square object-cover rounded mb-2" />
+                    <p className="font-medium text-sm">{demoTradeData.theirItem?.name}</p>
+                    <p className="text-xs text-muted-foreground">{demoTradeData.theirItem?.condition}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Your Item</p>
+                  <div className="bg-white rounded-lg p-3 border">
+                    <img src={demoTradeData.myItem?.image} alt={demoTradeData.myItem?.name} className="w-full aspect-square object-cover rounded mb-2" />
+                    <p className="font-medium text-sm">{demoTradeData.myItem?.name}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500 text-center">
