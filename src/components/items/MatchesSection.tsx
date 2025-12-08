@@ -122,7 +122,7 @@ const MatchesSection = () => {
 
       if (existing) {
         // Navigate to existing conversation
-        navigate(`/messages?conversationId=${existing.id}`);
+        navigate(`/messages?conversation=${existing.id}`);
         return;
       }
 
@@ -157,8 +157,13 @@ const MatchesSection = () => {
           message: message
         });
 
-      // Navigate to messages with the new conversation
-      navigate(`/messages?conversationId=${conversation.id}`);
+      // Navigate to messages with the new conversation using state for proper handling
+      navigate('/messages', { 
+        state: { 
+          tradeConversationId: conversation.id, 
+          newTrade: true 
+        } 
+      });
     } catch (error) {
       console.error('Error requesting trade:', error);
       toast.error('Failed to start trade chat');
