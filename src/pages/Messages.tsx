@@ -277,15 +277,23 @@ const Messages = () => {
       setActiveConversation(convId);
       const pair = exchangePairs.find(p => p.partnerId === convId);
       if (pair) handlePairSelect(convId, pair.id);
+      // Switch to chat view on mobile/tablet when navigating via URL
+      if (isMobile || isTablet) {
+        setCurrentView('chat');
+      }
     } else if (partnerId) {
       const byPartner = conversations.find(c => c.otherUserProfile?.id === partnerId);
       if (byPartner) {
         setActiveConversation(byPartner.id);
         const pair = exchangePairs.find(p => p.partnerId === byPartner.id);
         if (pair) handlePairSelect(byPartner.id, pair.id);
+        // Switch to chat view on mobile/tablet when navigating via URL
+        if (isMobile || isTablet) {
+          setCurrentView('chat');
+        }
       }
     }
-  }, [location.search, conversations, exchangePairs]);
+  }, [location.search, conversations, exchangePairs, isMobile, isTablet]);
 
   // Ensure the selected conversation is scrolled into view in the left list
   useEffect(() => {
