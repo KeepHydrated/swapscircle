@@ -499,44 +499,22 @@ const OtherPersonProfile: React.FC = () => {
                 </div>
               )}
               
-              {/* Action buttons */}
-              <div className="flex gap-2">
-                <BlockUserButton 
-                  userId={userId || ""} 
-                  username={profileData.name}
-                  onBlockSuccess={() => setIsUserBlocked(!isUserBlocked)}
-                />
-                <ReportButton 
-                  reportedUserId={userId || ""} 
-                  reportedUsername={profileData.name}
-                />
-                <FriendRequestButton 
-                  userId={userId || "profile1"} 
-                  initialStatus="none" 
-                  onStatusChange={(status) => setIsFriend(status === 'accepted')}
-                />
-              </div>
+              {/* Friend Request button only */}
+              <FriendRequestButton 
+                userId={userId || "profile1"} 
+                initialStatus="none" 
+                onStatusChange={(status) => setIsFriend(status === 'accepted')}
+              />
             </div>
           ) : (
             /* Desktop/Tablet: Portal to profile header */
             typeof document !== 'undefined' && document.getElementById('profile-action-buttons') &&
             createPortal(
-              <div className="flex gap-2">
-                <BlockUserButton 
-                  userId={userId || ""} 
-                  username={profileData.name}
-                  onBlockSuccess={() => setIsUserBlocked(!isUserBlocked)}
-                />
-                <ReportButton 
-                  reportedUserId={userId || ""} 
-                  reportedUsername={profileData.name}
-                />
-                <FriendRequestButton 
-                  userId={userId || "profile1"} 
-                  initialStatus="none" 
-                  onStatusChange={(status) => setIsFriend(status === 'accepted')}
-                />
-              </div>,
+              <FriendRequestButton 
+                userId={userId || "profile1"} 
+                initialStatus="none" 
+                onStatusChange={(status) => setIsFriend(status === 'accepted')}
+              />,
               document.getElementById('profile-action-buttons')!
             )
           )}
