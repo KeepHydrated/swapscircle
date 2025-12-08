@@ -785,6 +785,16 @@ const Messages = () => {
                   <div className="space-y-4">
                     {/* Trade Request Card - First message in conversation */}
                     {selectedPair && currentUserId && (
+                      <>
+                      {console.log('TradeRequestMessage props:', {
+                        status: activeChat?.status,
+                        isPending: activeChat?.status === 'pending',
+                        isAccepted: activeChat?.status === 'completed',
+                        isRejected: activeChat?.status === 'rejected',
+                        requesterId: activeChat?.requesterId,
+                        currentUserId,
+                        isRequester: activeChat?.requesterId === currentUserId
+                      })}
                       <TradeRequestMessage
                         partnerProfile={selectedPair.partnerProfile}
                         theirItem={selectedPair.item2}
@@ -835,6 +845,7 @@ const Messages = () => {
                           }
                         }}
                       />
+                      </>
                     )}
                     
                     {/* Regular messages */}
