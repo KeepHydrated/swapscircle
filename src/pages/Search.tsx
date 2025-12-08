@@ -125,7 +125,7 @@ const Search: React.FC = () => {
                     id={item.id}
                     name={item.name}
                     image={item.image}
-                    isMatch={true}
+                    isMatch={false}
                     onSelect={(id) => navigate(`/item/${id}`)}
                     onLike={handleLike}
                     onReject={handleReject}
