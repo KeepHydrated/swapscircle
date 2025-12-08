@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X, RefreshCw } from 'lucide-react';
+import { Search, ChevronDown, X, RefreshCw, Heart } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -346,18 +346,32 @@ const SearchPage = () => {
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
-                  {/* Suggest Trade button */}
-                  <button 
-                    className="absolute top-2 right-2 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTradeTargetItem(item);
-                      setIsTradeModalOpen(true);
-                    }}
-                    title="Suggest a Trade"
-                  >
-                    <RefreshCw className="w-5 h-5 text-white" />
-                  </button>
+                  {/* Action buttons */}
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    {/* Suggest Trade button */}
+                    <button 
+                      className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTradeTargetItem(item);
+                        setIsTradeModalOpen(true);
+                      }}
+                      title="Suggest a Trade"
+                    >
+                      <RefreshCw className="w-5 h-5 text-white" />
+                    </button>
+                    {/* Like button */}
+                    <button 
+                      className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // TODO: Implement like functionality
+                      }}
+                      title="Like item"
+                    >
+                      <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
+                    </button>
+                  </div>
                 </div>
                 <div className="p-4">
                   <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
