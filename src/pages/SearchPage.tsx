@@ -37,38 +37,87 @@ const SearchPage = () => {
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [friendsOnly, setFriendsOnly] = useState(false);
   const [friendUserIds, setFriendUserIds] = useState<string[]>([]);
+  const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
 
   // Fetch real items from database
   const { items: dbItems, loading: itemsLoading } = useDbItems();
 
-  // Fetch friend user IDs
+  // Fetch friend user IDs and liked items
   useEffect(() => {
-    const fetchFriends = async () => {
+    const fetchFriendsAndLikes = async () => {
       if (!user) {
         setFriendUserIds([]);
+        setLikedItemIds(new Set());
         return;
       }
 
-      const { data, error } = await supabase
+      // Fetch friends
+      const { data: friendData, error: friendError } = await supabase
         .from('friend_requests')
         .select('requester_id, recipient_id')
         .eq('status', 'accepted')
         .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
-      if (error) {
-        console.error('Error fetching friends:', error);
-        return;
+      if (friendError) {
+        console.error('Error fetching friends:', friendError);
+      } else {
+        const ids = friendData.map(fr => 
+          fr.requester_id === user.id ? fr.recipient_id : fr.requester_id
+        ).filter((id): id is string => id !== null);
+        setFriendUserIds(ids);
       }
 
-      const ids = data.map(fr => 
-        fr.requester_id === user.id ? fr.recipient_id : fr.requester_id
-      ).filter((id): id is string => id !== null);
-      
-      setFriendUserIds(ids);
+      // Fetch liked items
+      const { data: likedData, error: likedError } = await supabase
+        .from('liked_items')
+        .select('item_id')
+        .eq('user_id', user.id);
+
+      if (likedError) {
+        console.error('Error fetching liked items:', likedError);
+      } else {
+        setLikedItemIds(new Set(likedData.map(l => l.item_id)));
+      }
     };
 
-    fetchFriends();
+    fetchFriendsAndLikes();
   }, [user]);
+
+  const handleLikeItem = async (itemId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    const isLiked = likedItemIds.has(itemId);
+
+    if (isLiked) {
+      // Unlike
+      const { error } = await supabase
+        .from('liked_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('item_id', itemId);
+
+      if (!error) {
+        setLikedItemIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(itemId);
+          return newSet;
+        });
+      }
+    } else {
+      // Like
+      const { error } = await supabase
+        .from('liked_items')
+        .insert({ user_id: user.id, item_id: itemId });
+
+      if (!error) {
+        setLikedItemIds(prev => new Set(prev).add(itemId));
+      }
+    }
+  };
 
   // Update search query when URL param changes
   useEffect(() => {
@@ -416,13 +465,16 @@ const SearchPage = () => {
                     {/* Like button */}
                     <button 
                       className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // TODO: Implement like functionality
-                      }}
-                      title="Like item"
+                      onClick={(e) => handleLikeItem(item.id, e)}
+                      title={likedItemIds.has(item.id) ? "Unlike item" : "Like item"}
                     >
-                      <Heart className="w-5 h-5 text-muted-foreground hover:text-red-500 transition-colors" />
+                      <Heart 
+                        className={`w-5 h-5 transition-colors ${
+                          likedItemIds.has(item.id) 
+                            ? 'text-red-500 fill-red-500' 
+                            : 'text-muted-foreground hover:text-red-500'
+                        }`} 
+                      />
                     </button>
                   </div>
                 </div>
