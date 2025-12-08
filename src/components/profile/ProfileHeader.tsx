@@ -1,10 +1,15 @@
 import React, { useMemo } from 'react';
-import { Star, MapPin, Calendar, Users, Repeat, Link, X, Smartphone, User } from 'lucide-react';
+import { Star, MapPin, Calendar, Users, Repeat, Link, X, Smartphone, User, MoreVertical } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 interface ProfileHeaderProps {
   profile: {
     name: string;
@@ -21,6 +26,7 @@ interface ProfileHeaderProps {
   friendCount?: number;
   userId?: string; // Add userId prop for shareable profile links
   isOwnProfile?: boolean; // Add prop to determine if this is the user's own profile
+  menuItems?: { label: string; onClick: () => void; variant?: 'default' | 'destructive' }[];
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ 
@@ -29,7 +35,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onFriendsClick,
   friendCount = 0,
   userId,
-  isOwnProfile = false
+  isOwnProfile = false,
+  menuItems = []
 }) => {
   const isMobile = useIsMobile();
   console.log('[ProfileHeader] Component rendered with profile:', profile);
@@ -101,8 +108,28 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           <div className="flex-grow text-center md:text-left">
             <div className="flex items-center justify-center md:justify-between">
-              <div className="flex items-baseline gap-3">
+              <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+                {menuItems.length > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreVertical className="h-5 w-5 text-muted-foreground" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="bg-background border shadow-md z-50">
+                      {menuItems.map((item, index) => (
+                        <DropdownMenuItem
+                          key={index}
+                          onClick={item.onClick}
+                          className={item.variant === 'destructive' ? 'text-destructive focus:text-destructive' : ''}
+                        >
+                          {item.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
                 {profile.location && profile.location.trim() && (
                   (() => {
                     // Check if it's coordinates (contains both comma and periods)

@@ -13,6 +13,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem, isItemLiked, fetchUserReviews } from '@/services/authService';
@@ -20,6 +21,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { blockingService } from '@/services/blockingService';
 import { ReportItemModal } from '@/components/items/ReportItemModal';
+import { ReportModal } from '@/components/profile/ReportModal';
 import { rejectItem, getUserRejectedItems } from '@/services/rejectionService';
 
 const OtherPersonProfile: React.FC = () => {
@@ -186,6 +188,8 @@ const OtherPersonProfile: React.FC = () => {
   // State for popup
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
   const [reportModal, setReportModal] = useState<{ id: string; name: string } | null>(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
   // Track index of the popup item among visible items for navigation arrows
   const [currentPopupIndex, setCurrentPopupIndex] = useState<number>(0);
 
@@ -457,6 +461,18 @@ const OtherPersonProfile: React.FC = () => {
             onReviewsClick={() => navigateToTab('reviews')}
             userId={userId || undefined}
             isOwnProfile={false}
+            menuItems={[
+              { 
+                label: isUserBlocked ? 'Unblock User' : 'Block User', 
+                onClick: () => setShowBlockDialog(true),
+                variant: 'destructive' as const
+              },
+              { 
+                label: 'Report User', 
+                onClick: () => setShowReportModal(true),
+                variant: 'destructive' as const
+              }
+            ]}
           />
           
           {/* Action buttons positioned differently for mobile vs desktop */}
@@ -583,6 +599,92 @@ const OtherPersonProfile: React.FC = () => {
           itemName={reportModal.name}
         />
       )}
+
+      {/* Report Modal triggered from 3-dots menu */}
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        reportedUserId={userId || ""}
+        reportedUsername={profileData.name}
+      />
+
+      {/* Block Dialog triggered from 3-dots menu */}
+      <AlertDialog open={showBlockDialog} onOpenChange={setShowBlockDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {isUserBlocked ? `Unblock ${profileData.name}?` : `Block ${profileData.name}?`}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isUserBlocked ? (
+                <>
+                  This user will be able to:
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>Send you friend requests again</li>
+                    <li>See your items and profile</li>
+                    <li>Contact you through the app</li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  This user will no longer be able to:
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>Send you friend requests</li>
+                    <li>See your items or profile</li>
+                    <li>Contact you through the app</li>
+                  </ul>
+                  <div className="mt-3 text-sm text-muted-foreground">
+                    You can unblock them later from your settings.
+                  </div>
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={async () => {
+                try {
+                  const { data: { user: currentUser } } = await supabase.auth.getUser();
+                  if (!currentUser) {
+                    toast.error('You must be logged in');
+                    return;
+                  }
+
+                  if (isUserBlocked) {
+                    // Unblock
+                    const { error } = await supabase
+                      .from('blocked_users')
+                      .delete()
+                      .eq('blocker_id', currentUser.id)
+                      .eq('blocked_id', userId);
+                    if (error) throw error;
+                    setIsUserBlocked(false);
+                    toast.success(`${profileData.name} has been unblocked`);
+                  } else {
+                    // Block
+                    const { error } = await supabase
+                      .from('blocked_users')
+                      .insert({
+                        blocker_id: currentUser.id,
+                        blocked_id: userId
+                      });
+                    if (error) throw error;
+                    setIsUserBlocked(true);
+                    toast.success(`${profileData.name} has been blocked`);
+                  }
+                } catch (error) {
+                  console.error('Error toggling block status:', error);
+                  toast.error('Failed to update block status');
+                }
+              }}
+              className={isUserBlocked ? "bg-green-600 hover:bg-green-700" : "bg-destructive hover:bg-destructive/90"}
+            >
+              {isUserBlocked ? 'Unblock User' : 'Block User'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MainLayout>
   );
 };
