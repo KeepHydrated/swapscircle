@@ -40,9 +40,11 @@ interface TradeRequestMessageProps {
   conversationTime?: string;
   onAccept?: () => void;
   onReject?: () => void;
+  onCancel?: () => void;
   isAccepted?: boolean;
   isRejected?: boolean;
   isPending?: boolean;
+  isRequester?: boolean; // true if current user initiated the trade
 }
 
 const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
@@ -52,9 +54,11 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
   conversationTime,
   onAccept,
   onReject,
+  onCancel,
   isAccepted,
   isRejected,
-  isPending = true
+  isPending = true,
+  isRequester = false
 }) => {
   const [selectedTab, setSelectedTab] = useState<'their' | 'your'>('their');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -251,23 +255,36 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
       {/* Action Buttons */}
       {isPending && !isAccepted && !isRejected && (
         <div className="p-4 pt-0">
-          <div className="grid grid-cols-2 gap-3">
+          {isRequester ? (
+            // Requester sees Cancel Request button
             <Button
               variant="outline"
-              className="text-destructive border-destructive/30 hover:bg-destructive/10"
-              onClick={onReject}
+              className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+              onClick={onCancel}
             >
               <X className="w-4 h-4 mr-2" />
-              Reject
+              Cancel Request
             </Button>
-            <Button
-              className="bg-green-600 hover:bg-green-700 text-white"
-              onClick={onAccept}
-            >
-              <Check className="w-4 h-4 mr-2" />
-              Accept
-            </Button>
-          </div>
+          ) : (
+            // Receiver sees Reject/Accept buttons
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                variant="outline"
+                className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                onClick={onReject}
+              >
+                <X className="w-4 h-4 mr-2" />
+                Reject
+              </Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={onAccept}
+              >
+                <Check className="w-4 h-4 mr-2" />
+                Accept
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
