@@ -6,6 +6,7 @@ export interface TradeConversation {
   requester_id: string;
   owner_id: string;
   requester_item_id: string;
+  requester_item_ids?: string[] | null;
   owner_item_id: string;
   status: string;
   created_at: string;
@@ -28,6 +29,21 @@ export interface TradeConversation {
     created_at: string;
     updated_at: string;
   };
+  requester_items?: Array<{
+    id: string;
+    name: string;
+    image_url: string;
+    image_urls?: string[];
+    category: string;
+    condition: string;
+    description: string;
+    tags: string[];
+    price_range_min?: number;
+    price_range_max?: number;
+    user_id: string;
+    created_at: string;
+    updated_at: string;
+  }>;
   owner_item?: {
     id: string;
     name: string;
@@ -108,6 +124,29 @@ export const fetchUserTradeConversations = async () => {
       return [];
     }
 
+    // Collect all requester_item_ids that need to be fetched for multiple-item trades
+    const allRequesterItemIds: string[] = [];
+    conversations.forEach((c: any) => {
+      if (c.requester_item_ids && Array.isArray(c.requester_item_ids)) {
+        allRequesterItemIds.push(...c.requester_item_ids);
+      }
+    });
+
+    // Fetch all additional items if there are multiple-item trades
+    let additionalItemsMap: Record<string, any> = {};
+    if (allRequesterItemIds.length > 0) {
+      const { data: additionalItems, error: itemsError } = await supabase
+        .from('items')
+        .select('id, name, image_url, image_urls, category, condition, description, tags, price_range_min, price_range_max, user_id, created_at, updated_at')
+        .in('id', allRequesterItemIds);
+      
+      if (!itemsError && additionalItems) {
+        additionalItems.forEach(item => {
+          additionalItemsMap[item.id] = item;
+        });
+      }
+    }
+
     // Get unique user IDs from conversations
     const userIds = [...new Set([
       ...conversations.map(c => c.requester_id),
@@ -125,15 +164,28 @@ export const fetchUserTradeConversations = async () => {
       // Continue without profiles if there's an error
     }
 
-    // Add profile data to conversations
-    const conversationsWithProfiles = conversations.map(conversation => {
+    // Add profile data and requester_items array to conversations
+    const conversationsWithProfiles = conversations.map((conversation: any) => {
       const requesterProfile = profiles?.find(p => p.id === conversation.requester_id);
       const ownerProfile = profiles?.find(p => p.id === conversation.owner_id);
+      
+      // Build requester_items array from requester_item_ids
+      let requester_items: any[] = [];
+      if (conversation.requester_item_ids && Array.isArray(conversation.requester_item_ids)) {
+        requester_items = conversation.requester_item_ids
+          .map((id: string) => additionalItemsMap[id])
+          .filter(Boolean);
+      }
+      // If no requester_item_ids but has requester_item, use that as the single item
+      if (requester_items.length === 0 && conversation.requester_item) {
+        requester_items = [conversation.requester_item];
+      }
       
       return {
         ...conversation,
         requester_profile: requesterProfile,
-        owner_profile: ownerProfile
+        owner_profile: ownerProfile,
+        requester_items
       };
     });
 
@@ -146,7 +198,8 @@ export const fetchUserTradeConversations = async () => {
       owner_item_price: { 
         min: conversationsWithProfiles[0].owner_item?.price_range_min, 
         max: conversationsWithProfiles[0].owner_item?.price_range_max 
-      }
+      },
+      requester_items_count: conversationsWithProfiles[0].requester_items?.length
     } : 'No conversations');
     return conversationsWithProfiles || [];
   } catch (error) {

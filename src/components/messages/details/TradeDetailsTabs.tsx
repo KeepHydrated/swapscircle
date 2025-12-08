@@ -9,33 +9,25 @@ import { toast } from 'sonner';
 import ReviewModal from '@/components/trade/ReviewModal';
 import { supabase } from '@/integrations/supabase/client';
 
+interface ItemDisplay {
+  name: string; 
+  image: string;
+  image_url?: string;
+  image_urls?: string[];
+  description?: string;
+  category?: string;
+  condition?: string;
+  price_range_min?: number;
+  price_range_max?: number;
+  tags?: string[];
+}
+
 interface TradeDetailsTabsProps {
   selectedPair: {
     id: number;
-    item1: { 
-      name: string; 
-      image: string;
-      image_url?: string;
-      image_urls?: string[];
-      description?: string;
-      category?: string;
-      condition?: string;
-      price_range_min?: number;
-      price_range_max?: number;
-      tags?: string[];
-    };
-    item2: { 
-      name: string; 
-      image: string;
-      image_url?: string;
-      image_urls?: string[];
-      description?: string;
-      category?: string;
-      condition?: string;
-      price_range_min?: number;
-      price_range_max?: number;
-      tags?: string[];
-    };
+    item1: ItemDisplay;
+    item1Items?: ItemDisplay[]; // Array of all requester items when multiple
+    item2: ItemDisplay;
     partnerId: string;
     partnerProfile?: {
       id: string;
@@ -56,6 +48,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentItemIndex, setCurrentItemIndex] = useState(0); // For navigating between multiple offered items
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
 
@@ -80,13 +73,30 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     return [];
   };
 
-const itemImages = getItemImages(selectedPair.item1);
+// Get the current item to display (either single item or from array of items)
+const myItems = selectedPair.item1Items || [selectedPair.item1];
+const currentMyItem = myItems[currentItemIndex] || selectedPair.item1;
+const hasMultipleItems = myItems.length > 1;
+
+const itemImages = getItemImages(currentMyItem);
 const theirItemImages = getItemImages(selectedPair.item2);
 
 // Always start from the first image when switching items or pairs
 React.useEffect(() => {
   setCurrentImageIndex(0);
+  setCurrentItemIndex(0);
 }, [selectedItem, selectedPair]);
+
+// Navigate between multiple offered items
+const handlePrevItem = () => {
+  setCurrentItemIndex((prev) => (prev === 0 ? myItems.length - 1 : prev - 1));
+  setCurrentImageIndex(0);
+};
+
+const handleNextItem = () => {
+  setCurrentItemIndex((prev) => (prev === myItems.length - 1 ? 0 : prev + 1));
+  setCurrentImageIndex(0);
+};
 
   // Fetch trade status to check acceptance status
   const { data: tradeConversations = [] } = useQuery({
@@ -220,11 +230,34 @@ React.useEffect(() => {
       <div className="flex-1 flex flex-col">
         {selectedItem === 'item1' ? (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            {/* Item Navigation Header (for multiple items) */}
+            {hasMultipleItems && (
+              <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b">
+                <button
+                  onClick={handlePrevItem}
+                  className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 shadow-sm flex items-center justify-center transition-colors border"
+                  aria-label="Previous item"
+                >
+                  <ChevronLeft className="w-4 h-4 text-gray-700" />
+                </button>
+                <span className="text-sm font-medium text-gray-600">
+                  Item {currentItemIndex + 1} of {myItems.length}
+                </span>
+                <button
+                  onClick={handleNextItem}
+                  className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 shadow-sm flex items-center justify-center transition-colors border"
+                  aria-label="Next item"
+                >
+                  <ChevronRight className="w-4 h-4 text-gray-700" />
+                </button>
+              </div>
+            )}
+            
             {/* Item Image with Navigation */}
             <div className="relative aspect-square bg-gray-100 w-full h-52 md:h-64">
               <img 
                 src={itemImages[currentImageIndex]} 
-                alt={selectedPair.item1.name} 
+                alt={currentMyItem.name} 
                 className="w-full h-full object-cover"
               />
               
@@ -257,32 +290,32 @@ React.useEffect(() => {
             
             {/* Item Details */}
             <div className="p-4">
-              <h3 className="font-semibold text-lg mb-2">{selectedPair.item1.name}</h3>
+              <h3 className="font-semibold text-lg mb-2">{currentMyItem.name}</h3>
               <p className="text-gray-600 text-sm mb-3">
-                {selectedPair.item1.description || 
-                `${selectedPair.item1.condition || 'Good'} condition. This ${selectedPair.item1.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`}
+                {currentMyItem.description || 
+                `${currentMyItem.condition || 'Good'} condition. This ${currentMyItem.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`}
               </p>
               
               {/* Property Tags */}
               <div className="grid grid-cols-2 gap-1.5 text-sm">
-                {selectedPair.item1.category && (
+                {currentMyItem.category && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item1.category}</span>
+                    <span>{currentMyItem.category}</span>
                   </div>
                 )}
-                {selectedPair.item1.tags && selectedPair.item1.tags.length > 0 && (
+                {currentMyItem.tags && currentMyItem.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item1.tags[0]}</span>
+                    <span>{currentMyItem.tags[0]}</span>
                   </div>
                 )}
-                {selectedPair.item1.condition && (
+                {currentMyItem.condition && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item1.condition}</span>
+                    <span>{currentMyItem.condition}</span>
                   </div>
                 )}
-                {(selectedPair.item1.price_range_min || selectedPair.item1.price_range_max) && (
+                {(currentMyItem.price_range_min || currentMyItem.price_range_max) && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item1.price_range_min || 0} - {selectedPair.item1.price_range_max || '∞'}</span>
+                    <span>{currentMyItem.price_range_min || 0} - {currentMyItem.price_range_max || '∞'}</span>
                   </div>
                 )}
               </div>

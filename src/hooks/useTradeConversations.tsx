@@ -31,32 +31,24 @@ export interface ConversationDisplay {
   };
 }
 
+interface ItemDisplay {
+  name: string; 
+  image: string;
+  image_url?: string;
+  image_urls?: string[];
+  description?: string;
+  category?: string;
+  condition?: string;
+  price_range_min?: number;
+  price_range_max?: number;
+  tags?: string[];
+}
+
 export interface ExchangePairDisplay {
   id: number;
-  item1: { 
-    name: string; 
-    image: string;
-    image_url?: string;
-    image_urls?: string[];
-    description?: string;
-    category?: string;
-    condition?: string;
-    price_range_min?: number;
-    price_range_max?: number;
-    tags?: string[];
-  };
-  item2: { 
-    name: string; 
-    image: string;
-    image_url?: string;
-    image_urls?: string[];
-    description?: string;
-    category?: string;
-    condition?: string;
-    price_range_min?: number;
-    price_range_max?: number;
-    tags?: string[];
-  };
+  item1: ItemDisplay;
+  item1Items?: ItemDisplay[]; // Array of all requester items when multiple
+  item2: ItemDisplay;
   partnerId: string;
   partnerProfile?: {
     id: string;
@@ -125,10 +117,25 @@ export const useTradeConversations = () => {
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
           const myItem = isRequester ? tc.requester_item : tc.owner_item;
+          const myItems = isRequester ? tc.requester_items : [tc.owner_item].filter(Boolean);
           const theirItem = isRequester ? tc.owner_item : tc.requester_item;
           const otherUserId = isRequester ? tc.owner_id : tc.requester_id;
           const otherUserProfile = isRequester ? tc.owner_profile : tc.requester_profile;
           
+
+          // Create item1Items array with all my items
+          const item1Items: ItemDisplay[] = (myItems || []).map((item: any) => ({
+            name: item?.name || 'Your Item',
+            image: item?.image_url || (item?.image_urls && item?.image_urls.length > 0 ? item?.image_urls[0] : '/placeholder.svg'),
+            image_url: item?.image_url,
+            image_urls: item?.image_urls,
+            description: item?.description,
+            category: item?.category,
+            condition: item?.condition,
+            price_range_min: item?.price_range_min,
+            price_range_max: item?.price_range_max,
+            tags: item?.tags
+          }));
 
           // Create exchange pair
           const exchangePair: ExchangePairDisplay = {
@@ -146,6 +153,7 @@ export const useTradeConversations = () => {
               price_range_max: myItem?.price_range_max,
               tags: myItem?.tags
             },
+            item1Items: item1Items.length > 1 ? item1Items : undefined, // Only include if multiple items
             item2: {
               name: theirItem?.name || 'Their Item', 
               image: theirItem?.image_url || (theirItem?.image_urls && theirItem?.image_urls.length > 0 ? theirItem?.image_urls[0] : '/placeholder.svg'),
