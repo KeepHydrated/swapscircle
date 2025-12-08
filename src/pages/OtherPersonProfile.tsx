@@ -463,6 +463,18 @@ const OtherPersonProfile: React.FC = () => {
             isOwnProfile={false}
             menuItems={[
               { 
+                label: 'Copy Profile Link', 
+                onClick: async () => {
+                  try {
+                    const profileUrl = `${window.location.origin}/other-person-profile?userId=${userId}`;
+                    await navigator.clipboard.writeText(profileUrl);
+                    toast.success('Profile link copied to clipboard!');
+                  } catch (error) {
+                    toast.error('Failed to copy profile link');
+                  }
+                }
+              },
+              { 
                 label: isUserBlocked ? 'Unblock User' : 'Block User', 
                 onClick: () => setShowBlockDialog(true),
                 variant: 'destructive' as const
