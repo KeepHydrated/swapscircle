@@ -140,7 +140,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         return;
       }
 
-      // Create initial message
+      // Create initial message in trade_messages table
       const selectedItemNames = myItems
         .filter(item => selectedItemIds.includes(item.id))
         .map(item => item.name)
@@ -150,12 +150,11 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       const messageContent = `Hi! I'm interested in trading my ${itemWord} (${selectedItemNames}) for your ${targetItem.name}. Let me know if you're interested!`;
 
       const { error: messageError } = await supabase
-        .from('messages')
+        .from('trade_messages')
         .insert({
           conversation_id: tradeConversation.id,
           sender_id: session.session.user.id,
-          content: messageContent,
-          message_type: 'text'
+          message: messageContent
         });
 
       if (messageError) {
