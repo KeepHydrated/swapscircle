@@ -363,8 +363,45 @@ const Messages = () => {
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
-              {conversations.length > 0 ? (
+              {(conversations.length > 0 || isDemoTrade) ? (
                 <div className="flex-1 overflow-y-auto">
+                  {/* Demo Trade Entry */}
+                  {isDemoTrade && demoTradeData && (
+                    <div 
+                      className="p-4 border-b border-gray-200 cursor-pointer bg-blue-50 border-l-4 border-l-blue-500"
+                      onClick={() => {
+                        setCurrentView('chat');
+                      }}
+                    >
+                      <div className="flex items-start gap-4">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage 
+                            src={demoTradeData.partnerProfile?.avatar_url || undefined} 
+                            alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
+                          />
+                          <AvatarFallback>
+                            {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-center mb-1">
+                            <div className="font-medium truncate">
+                              {demoTradeData.partnerProfile?.username || 'Demo User'}
+                            </div>
+                            <span className="text-xs text-gray-500 flex-shrink-0">Just now</span>
+                          </div>
+                          
+                          <div className="flex items-center mb-1 text-xs">
+                            <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.myItem?.name}</span>
+                            <span className="mx-1 text-blue-600">↔</span>
+                            <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.theirItem?.name}</span>
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 truncate">Demo trade request</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {conversations.map((conversation) => {
                     const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
                     
@@ -684,9 +721,47 @@ const Messages = () => {
           {/* Left sidebar - Conversations */}
           <div className="w-[350px] border-r border-gray-200 flex flex-col h-full">
             
-          {conversations.length > 0 ? (
+          {(conversations.length > 0 || isDemoTrade) ? (
             <div className="flex flex-col h-full">
               <div ref={leftListRef} className="flex-1 overflow-y-auto">
+                {/* Demo Trade Entry */}
+                {isDemoTrade && demoTradeData && (
+                  <div 
+                    className="p-4 border-b border-gray-200 cursor-pointer bg-blue-50 border-l-4 border-l-blue-500"
+                    onClick={() => {
+                      // Clear any active real conversation to show demo
+                      setActiveConversation(null as any);
+                    }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage 
+                          src={demoTradeData.partnerProfile?.avatar_url || undefined} 
+                          alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
+                        />
+                        <AvatarFallback>
+                          {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center mb-1">
+                          <div className="font-medium truncate">
+                            {demoTradeData.partnerProfile?.username || 'Demo User'}
+                          </div>
+                          <span className="text-xs text-gray-500 flex-shrink-0">Just now</span>
+                        </div>
+                        
+                        <div className="flex items-center mb-1 text-xs">
+                          <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.myItem?.name}</span>
+                          <span className="mx-1 text-blue-600">↔</span>
+                          <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.theirItem?.name}</span>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600 truncate">Demo trade request</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {conversations.map((conversation) => {
                   const exchangePair = exchangePairs.find(pair => pair.partnerId === conversation.id);
                   
@@ -758,6 +833,7 @@ const Messages = () => {
              <div className="flex items-center justify-center h-full">
                <div className="text-center">
                  <p className="text-gray-500">No messages yet</p>
+                 <p className="text-sm text-gray-400 mt-2">Start trading to begin conversations!</p>
                </div>
              </div>
           )}
