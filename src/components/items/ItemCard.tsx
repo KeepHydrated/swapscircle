@@ -236,11 +236,11 @@ const ItemCard: React.FC<ItemCardProps> = ({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button
-                              className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                              className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
                               aria-label="Suggest trade"
                               onClick={handleSwapClick}
                             >
-                              <RefreshCw className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-primary transition-colors`} />
+                              <RefreshCw className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
