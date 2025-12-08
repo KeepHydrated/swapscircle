@@ -101,10 +101,9 @@ const MatchesSection = () => {
       return;
     }
 
-    // For demo items, show a toast message
+    // For demo items, navigate to messages with the match
     if (item.isDemo) {
-      toast.success('Trade request sent! (Demo)');
-      navigate('/trade-requests');
+      navigate(`/messages?matchId=${item.id}`);
       return;
     }
 
