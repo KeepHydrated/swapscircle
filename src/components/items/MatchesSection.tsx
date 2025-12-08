@@ -6,123 +6,23 @@ import { Item } from '@/types/item';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Skeleton } from '@/components/ui/skeleton';
-
-interface MutualMatch {
-  id: string;
-  theirItemId: string;
-  theirItemName: string;
-  theirItemImage: string;
-  theirItemCategory: string;
-  theirItemCondition: string;
-  theirItemDescription: string;
-  theirItemPriceMin: number;
-  theirItemPriceMax: number;
-  theirUserId: string;
-  myItemId: string;
-  myItemName: string;
-  myItemImage: string;
-}
 
 const MatchesSection = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
   const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
-  const [matches, setMatches] = useState<MutualMatch[]>([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Fetch mutual matches from database
-  useEffect(() => {
-    const fetchMutualMatches = async () => {
-      if (!user) {
-        setMatches([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        // Fetch mutual matches where the user is involved
-        const { data: mutualMatchesData, error } = await supabase
-          .from('mutual_matches')
-          .select('*')
-          .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
-
-        if (error) {
-          console.error('Error fetching mutual matches:', error);
-          setMatches([]);
-          setLoading(false);
-          return;
-        }
-
-        if (!mutualMatchesData || mutualMatchesData.length === 0) {
-          setMatches([]);
-          setLoading(false);
-          return;
-        }
-
-        // Collect all item IDs we need to fetch
-        const itemIds = new Set<string>();
-        mutualMatchesData.forEach(match => {
-          itemIds.add(match.user1_item_id);
-          itemIds.add(match.user2_item_id);
-        });
-
-        // Fetch all items in one query
-        const { data: items, error: itemsError } = await supabase
-          .from('items')
-          .select('id, name, image_url, category, condition, description, price_range_min, price_range_max, user_id')
-          .in('id', Array.from(itemIds));
-
-        if (itemsError) {
-          console.error('Error fetching items:', itemsError);
-          setMatches([]);
-          setLoading(false);
-          return;
-        }
-
-        const itemsMap = new Map(items?.map(item => [item.id, item]) || []);
-
-        // Build matches array
-        const processedMatches: MutualMatch[] = mutualMatchesData.map(match => {
-          const isUser1 = match.user1_id === user.id;
-          const myItemId = isUser1 ? match.user1_item_id : match.user2_item_id;
-          const theirItemId = isUser1 ? match.user2_item_id : match.user1_item_id;
-          const theirUserId = isUser1 ? match.user2_id : match.user1_id;
-
-          const myItem = itemsMap.get(myItemId);
-          const theirItem = itemsMap.get(theirItemId);
-
-          return {
-            id: match.id,
-            theirItemId: theirItemId,
-            theirItemName: theirItem?.name || 'Unknown Item',
-            theirItemImage: theirItem?.image_url || '',
-            theirItemCategory: theirItem?.category || '',
-            theirItemCondition: theirItem?.condition || '',
-            theirItemDescription: theirItem?.description || '',
-            theirItemPriceMin: theirItem?.price_range_min || 0,
-            theirItemPriceMax: theirItem?.price_range_max || 0,
-            theirUserId: theirUserId,
-            myItemId: myItemId,
-            myItemName: myItem?.name || 'Your Item',
-            myItemImage: myItem?.image_url || '',
-          };
-        }).filter(match => match.theirItemImage); // Filter out matches with missing items
-
-        setMatches(processedMatches);
-      } catch (error) {
-        console.error('Error processing matches:', error);
-        setMatches([]);
-      }
-      setLoading(false);
-    };
-
-    fetchMutualMatches();
-  }, [user]);
+  // Mock match data for testing
+  const matches = [
+    { id: "1", name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemId: "my-item-1", myItemName: "Vintage Camera", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good", category: "Sports & Outdoors", description: "Reliable mountain bike perfect for trails. Recently serviced with new brakes and tires.", user_id: "demo-user-1", isDemo: true },
+    { id: "2", name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemId: "my-item-2", myItemName: "Leather Jacket", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b", priceRangeMin: 450, priceRangeMax: 600, condition: "Excellent", category: "Electronics", description: "Professional DSLR camera with multiple lenses included. Perfect for photography enthusiasts.", user_id: "demo-user-2", isDemo: true },
+    { id: "3", name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemId: "my-item-3", myItemName: "Headphones", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c", priceRangeMin: 500, priceRangeMax: 700, condition: "Good", category: "Entertainment", description: "Classic Fender electric guitar with rich tone. Includes hard case and amp.", user_id: "demo-user-3", isDemo: true },
+    { id: "4", name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemId: "my-item-4", myItemName: "Office Chair", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817", priceRangeMin: 200, priceRangeMax: 350, condition: "Like New", category: "Home & Garden", description: "Electric height-adjustable standing desk. Barely used, in excellent condition.", user_id: "demo-user-4", isDemo: true },
+    { id: "5", name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemId: "my-item-5", myItemName: "Blender", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092", priceRangeMin: 150, priceRangeMax: 250, condition: "Good", category: "Home & Garden", description: "Premium espresso machine with milk frother. Makes cafe-quality coffee at home.", user_id: "demo-user-5", isDemo: true },
+  ];
 
   // Fetch liked items on mount
   useEffect(() => {
@@ -145,10 +45,24 @@ const MatchesSection = () => {
     fetchLikedItems();
   }, [user]);
 
-  const handleLikeItem = async (itemId: string, e: React.MouseEvent) => {
+  const handleLikeItem = async (itemId: string, isDemo: boolean, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
       navigate('/auth');
+      return;
+    }
+
+    // For demo items, just toggle visual state
+    if (isDemo) {
+      setLikedItemIds(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(itemId)) {
+          newSet.delete(itemId);
+        } else {
+          newSet.add(itemId);
+        }
+        return newSet;
+      });
       return;
     }
 
@@ -179,7 +93,7 @@ const MatchesSection = () => {
     }
   };
 
-  const handleRequestTrade = async (match: MutualMatch, e: React.MouseEvent) => {
+  const handleRequestTrade = async (item: typeof matches[0], e: React.MouseEvent) => {
     e.stopPropagation();
     
     if (!user) {
@@ -187,18 +101,24 @@ const MatchesSection = () => {
       return;
     }
 
-    setIsCreatingTrade(match.id);
+    // For demo items, show a toast message
+    if (item.isDemo) {
+      toast.success('Trade request sent! (Demo)');
+      navigate('/trade-requests');
+      return;
+    }
+
+    setIsCreatingTrade(item.id);
 
     try {
-      // Create trade conversation directly with the matched items
       const { data: conversation, error } = await supabase
         .from('trade_conversations')
         .insert({
           requester_id: user.id,
-          owner_id: match.theirUserId,
-          requester_item_id: match.myItemId,
-          requester_item_ids: [match.myItemId],
-          owner_item_id: match.theirItemId,
+          owner_id: item.user_id,
+          requester_item_id: item.myItemId,
+          requester_item_ids: [item.myItemId],
+          owner_item_id: item.id,
           status: 'pending'
         })
         .select('*')
@@ -210,8 +130,7 @@ const MatchesSection = () => {
         return;
       }
 
-      // Send initial trade message
-      const message = `Hi! I'm interested in trading my item (${match.myItemName}) for your ${match.theirItemName}. Let me know if you're interested!`;
+      const message = `Hi! I'm interested in trading my item (${item.myItemName}) for your ${item.name}. Let me know if you're interested!`;
 
       await supabase
         .from('trade_messages')
@@ -231,25 +150,20 @@ const MatchesSection = () => {
     }
   };
 
-  const handleCardClick = (match: MutualMatch) => {
+  const handleCardClick = (item: typeof matches[0]) => {
     setSelectedItem({
-      id: match.theirItemId,
-      name: match.theirItemName,
-      image: match.theirItemImage,
-      category: match.theirItemCategory,
-      condition: match.theirItemCondition,
-      description: match.theirItemDescription,
-      priceRangeMin: match.theirItemPriceMin,
-      priceRangeMax: match.theirItemPriceMax,
-      user_id: match.theirUserId,
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      category: item.category,
+      condition: item.condition,
+      description: item.description,
+      priceRangeMin: item.priceRangeMin,
+      priceRangeMax: item.priceRangeMax,
+      user_id: item.user_id,
     });
     setIsModalOpen(true);
   };
-
-  // Don't show section if no matches and not loading
-  if (!loading && matches.length === 0) {
-    return null;
-  }
 
   return (
     <div className="w-full">
@@ -258,81 +172,65 @@ const MatchesSection = () => {
         <Link to="/" className="text-sm text-primary hover:underline">View all</Link>
       </div>
       
-      {loading ? (
-        <div className="flex gap-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
-              <Skeleton className="aspect-[4/3] rounded-lg" />
-              <div className="p-4 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
+      <div className="overflow-x-auto overflow-y-hidden pb-2">
+        <div className="flex gap-3 min-w-max">
+          {matches.map((item) => (
+            <div key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
+              <div 
+                className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                onClick={() => handleCardClick(item)}
+              >
+                <div className="relative aspect-[4/3]">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  
+                  {/* Action buttons */}
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button 
+                      className={`w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 ${isCreatingTrade === item.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={(e) => handleRequestTrade(item, e)}
+                      disabled={isCreatingTrade === item.id}
+                      title="Request Trade"
+                    >
+                      <RefreshCw className={`w-5 h-5 text-white ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
+                    </button>
+                    <button 
+                      className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                      onClick={(e) => handleLikeItem(item.id, item.isDemo, e)}
+                      title={likedItemIds.has(item.id) ? "Unlike item" : "Like item"}
+                    >
+                      <Heart 
+                        className={`w-5 h-5 transition-colors ${
+                          likedItemIds.has(item.id) 
+                            ? 'text-red-500 fill-red-500' 
+                            : 'text-muted-foreground hover:text-red-500'
+                        }`} 
+                      />
+                    </button>
+                  </div>
+
+                  {/* My Item Thumbnail */}
+                  <div className="absolute bottom-2 right-2">
+                    <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                      <img src={item.myItemImage} alt="Your item" className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="text-base font-semibold text-foreground mb-1 truncate">{item.name}</h3>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      ${item.priceRangeMin} - ${item.priceRangeMax}
+                    </p>
+                    <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                      {item.condition}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <div className="overflow-x-auto overflow-y-hidden pb-2">
-          <div className="flex gap-3 min-w-max">
-            {matches.map((match) => (
-              <div key={match.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
-                <div 
-                  className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => handleCardClick(match)}
-                >
-                  <div className="relative aspect-[4/3]">
-                    <img src={match.theirItemImage} alt={match.theirItemName} className="w-full h-full object-cover" />
-                    
-                    {/* Action buttons - matches search page style */}
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      {/* Request Trade button - directly initiates trade with matched items */}
-                      <button 
-                        className={`w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 ${isCreatingTrade === match.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        onClick={(e) => handleRequestTrade(match, e)}
-                        disabled={isCreatingTrade === match.id}
-                        title="Request Trade"
-                      >
-                        <RefreshCw className={`w-5 h-5 text-white ${isCreatingTrade === match.id ? 'animate-spin' : ''}`} />
-                      </button>
-                      {/* Like button */}
-                      <button 
-                        className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                        onClick={(e) => handleLikeItem(match.theirItemId, e)}
-                        title={likedItemIds.has(match.theirItemId) ? "Unlike item" : "Like item"}
-                      >
-                        <Heart 
-                          className={`w-5 h-5 transition-colors ${
-                            likedItemIds.has(match.theirItemId) 
-                              ? 'text-red-500 fill-red-500' 
-                              : 'text-muted-foreground hover:text-red-500'
-                          }`} 
-                        />
-                      </button>
-                    </div>
-
-                    {/* My Item Thumbnail in Bottom Right */}
-                    <div className="absolute bottom-2 right-2">
-                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
-                        <img src={match.myItemImage} alt="Your item" className="w-full h-full object-cover" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-base font-semibold text-foreground mb-1 truncate">{match.theirItemName}</h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        ${match.theirItemPriceMin} - ${match.theirItemPriceMax}
-                      </p>
-                      <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
-                        {match.theirItemCondition}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      </div>
 
       <ExploreItemModal
         open={isModalOpen}
@@ -342,7 +240,6 @@ const MatchesSection = () => {
           setSelectedItem(null);
         }}
       />
-
     </div>
   );
 };
