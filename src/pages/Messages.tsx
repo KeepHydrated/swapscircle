@@ -793,6 +793,7 @@ const Messages = () => {
                         isAccepted={activeChat?.status === 'completed'}
                         isRejected={activeChat?.status === 'rejected'}
                         isPending={activeChat?.status === 'pending'}
+                        isRequester={activeChat?.requesterId === currentUserId}
                         onAccept={async () => {
                           try {
                             const isRequester = activeChat?.requesterId === currentUserId;
@@ -821,6 +822,16 @@ const Messages = () => {
                           } catch (error) {
                             console.error('Error rejecting trade:', error);
                             toast({ title: "Error", description: "Failed to reject trade." });
+                          }
+                        }}
+                        onCancel={async () => {
+                          try {
+                            await rejectTrade(activeConversation);
+                            queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+                            toast({ title: "Request cancelled" });
+                          } catch (error) {
+                            console.error('Error cancelling trade:', error);
+                            toast({ title: "Error", description: "Failed to cancel request." });
                           }
                         }}
                       />
