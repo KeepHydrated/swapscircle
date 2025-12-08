@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X, RefreshCw, Heart, MoreHorizontal } from 'lucide-react';
+import { Search, ChevronDown, X, RefreshCw, Heart, MoreHorizontal, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -16,11 +16,14 @@ import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
 import { useDbItems } from '@/hooks/useDbItems';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const queryParam = searchParams.get('q') || '';
   const categoryParam = searchParams.get('category') || '';
   const [searchQuery, setSearchQuery] = useState(queryParam);
@@ -32,9 +35,40 @@ const SearchPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
+  const [friendsOnly, setFriendsOnly] = useState(false);
+  const [friendUserIds, setFriendUserIds] = useState<string[]>([]);
 
   // Fetch real items from database
   const { items: dbItems, loading: itemsLoading } = useDbItems();
+
+  // Fetch friend user IDs
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (!user) {
+        setFriendUserIds([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('friend_requests')
+        .select('requester_id, recipient_id')
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+
+      if (error) {
+        console.error('Error fetching friends:', error);
+        return;
+      }
+
+      const ids = data.map(fr => 
+        fr.requester_id === user.id ? fr.recipient_id : fr.requester_id
+      ).filter((id): id is string => id !== null);
+      
+      setFriendUserIds(ids);
+    };
+
+    fetchFriends();
+  }, [user]);
 
   // Update search query when URL param changes
   useEffect(() => {
@@ -82,6 +116,11 @@ const SearchPage = () => {
 
   // Filter items based on search query and filters
   const filteredResults = dbItems.filter(item => {
+    // Filter by friends only
+    if (friendsOnly) {
+      if (!item.user_id || !friendUserIds.includes(item.user_id)) return false;
+    }
+
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -113,6 +152,20 @@ const SearchPage = () => {
           {/* Filters Section */}
           <div className="mb-8 border-b border-border -mx-6">
             <div className="flex gap-3 overflow-x-auto pb-4 px-6">
+              {/* Friends Only Toggle */}
+              <Button 
+                variant="outline"
+                onClick={() => setFriendsOnly(!friendsOnly)}
+                className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
+                  friendsOnly 
+                    ? 'border-primary text-primary border-2 bg-primary/10' 
+                    : 'border-border hover:bg-accent'
+                }`}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                Friends Only
+              </Button>
+
               {/* Conditions Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
