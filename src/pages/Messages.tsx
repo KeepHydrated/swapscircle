@@ -409,11 +409,14 @@ const Messages = () => {
                       <div 
                         key={conversation.id}
                         data-conv-id={conversation.id}
-                        className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                        className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id && !isDemoTrade ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           console.log('Mobile conversation clicked:', conversation.id);
+                          // Clear demo trade when clicking a real conversation
+                          setIsDemoTrade(false);
+                          setDemoTradeData(null);
                           setActiveConversation(conversation.id);
                           setSelectedItem('item2');
                           setCurrentView('chat');
@@ -770,11 +773,14 @@ const Messages = () => {
                       key={conversation.id}
                       data-conv-id={conversation.id}
                       id={`conv-${conversation.id}`}
-                      className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                      className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id && !isDemoTrade ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Conversation clicked:', conversation.id);
+                        // Clear demo trade when clicking a real conversation
+                        setIsDemoTrade(false);
+                        setDemoTradeData(null);
                         setActiveConversation(conversation.id);
                         setSelectedItem('item2'); // Reset to "Their Item" when clicking new conversation
                         
