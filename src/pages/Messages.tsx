@@ -784,16 +784,24 @@ const Messages = () => {
                 ) : (
                   <div className="space-y-4">
                     
-                    {/* Regular messages */}
-                    {messages.map((message: any) => (
-                      <TradeMessageBubble 
-                        key={message.id}
-                        message={message}
-                        senderName={message.sender_profile?.username || activeChat?.name || 'User'}
-                        onImageLoad={handleScrollToBottom}
-                        currentUserId={currentUserId}
-                      />
-                    ))}
+                    {/* Regular messages - filter out auto-generated first message */}
+                    {messages
+                      .filter((message: any, index: number) => {
+                        // Skip the first message if it's the auto-generated trade request message
+                        if (index === 0 && message.message?.startsWith("Hi! I'm interested in trading")) {
+                          return false;
+                        }
+                        return true;
+                      })
+                      .map((message: any) => (
+                        <TradeMessageBubble 
+                          key={message.id}
+                          message={message}
+                          senderName={message.sender_profile?.username || activeChat?.name || 'User'}
+                          onImageLoad={handleScrollToBottom}
+                          currentUserId={currentUserId}
+                        />
+                      ))}
                     {/* Anchor for auto-scrolling */}
                     <div ref={scrollRef} />
                   </div>
