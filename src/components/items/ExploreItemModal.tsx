@@ -6,7 +6,6 @@ import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useNavigate } from "react-router-dom";
-import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
 import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
 
 interface ExploreItemModalProps {
@@ -407,33 +406,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
-            )}
-            {/* Left 3-dots menu (larger) */}
-            {item?.id && (
-              (onLikeAll || onRejectAll) ? (
-                <div className="absolute top-4 left-4 z-30">
-                  <MatchActionSelector
-                    itemId={item.id}
-                    onLikeAll={onLikeAll || (() => {})}
-                    onRejectAll={onRejectAll || (() => {})}
-                    compact={false}
-                    className="w-12 h-12"
-                  />
-                </div>
-              ) : (
-                disableActions && (
-                  <div className="absolute top-4 left-4 z-30">
-                    <button
-                      className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center cursor-not-allowed opacity-60"
-                      aria-label="More actions (disabled)"
-                      disabled
-                      title="Actions unavailable on your profile"
-                    >
-                      <MoreVertical className="w-5 h-5 text-gray-400" />
-                    </button>
-                  </div>
-                )
-              )
             )}
 
             {/* Top-right buttons positioned over the image */}

@@ -4,7 +4,7 @@ import { Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MatchItem } from '@/types/item';
-import MoreActionsMenu from '@/components/items/matches/MatchActionSelector';
+
 
 interface CarouselItemCardProps {
   item: MatchItem;
@@ -52,16 +52,6 @@ const CarouselItemCard: React.FC<CarouselItemCardProps> = ({
             />
           </div>
 
-          {onLikeClick && (
-            <div className="absolute top-1 right-1">
-              <MoreActionsMenu
-                itemId={item.id}
-                onLikeAll={(id) => onLikeClick({} as React.MouseEvent, item)}
-                onRejectAll={() => {}}
-                compact={true}
-              />
-            </div>
-          )}
         </div>
         <CardContent className="p-2">
           <h3 className="font-medium text-center truncate text-sm" title={item.name}>{item.name}</h3>

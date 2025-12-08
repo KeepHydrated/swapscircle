@@ -5,7 +5,6 @@ import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repea
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
-import MatchActionSelector from "@/components/items/matches/MatchActionSelector";
 import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
 
 interface UserProfile {
@@ -363,17 +362,6 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               );
             })()}
             
-            {/* 3 dots menu - positioned on the left */}
-            {(onLikeAll || onRejectAll || onReport) && item?.id && (
-              <div className="absolute top-4 left-4 z-20">
-                <MatchActionSelector
-                  itemId={item.id}
-                  onLikeAll={onLikeAll || (() => {})}
-                  onRejectAll={onRejectAll || (() => {})}
-                  compact={false}
-                />
-              </div>
-            )}
             
             {/* Heart and Close buttons - positioned over the image */}
             <div className="absolute top-4 right-4 flex gap-3 z-20">
