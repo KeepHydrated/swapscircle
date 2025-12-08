@@ -418,7 +418,19 @@ React.useEffect(() => {
                 </Button>
               </div>
             </div>
+          ) : isCurrentUserRequester ? (
+            // Requester sees Cancel Request button
+            <Button 
+              variant="outline" 
+              className="w-full text-red-600 border-red-200 hover:bg-red-50"
+              onClick={handleRejectTrade}
+              disabled={rejectTradeMutation.isPending}
+            >
+              <X className="w-4 h-4 mr-2" />
+              {rejectTradeMutation.isPending ? 'Cancelling...' : 'Cancel Request'}
+            </Button>
           ) : (
+            // Receiver sees Reject/Accept buttons
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
