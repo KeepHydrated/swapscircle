@@ -839,6 +839,75 @@ const Messages = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
+                    {/* Trade Request Message Card - shown for pending trades */}
+                    {selectedPair && activeChat && (
+                      <div className="max-w-md mx-auto">
+                        <TradeRequestMessage
+                          partnerProfile={{
+                            id: activeChat.otherUserProfile?.id || '',
+                            username: activeChat.otherUserProfile?.username || activeChat.name || 'User',
+                            avatar_url: activeChat.otherUserProfile?.avatar_url || undefined,
+                            created_at: activeChat.otherUserProfile?.created_at || undefined
+                          }}
+                          theirItem={{
+                            name: selectedPair.item1.name,
+                            image: selectedPair.item1.image,
+                            image_url: selectedPair.item1.image_url || selectedPair.item1.image,
+                            description: selectedPair.item1.description,
+                            category: selectedPair.item1.category,
+                            condition: selectedPair.item1.condition,
+                            price_range_min: selectedPair.item1.price_range_min,
+                            price_range_max: selectedPair.item1.price_range_max
+                          }}
+                          yourItem={{
+                            name: selectedPair.item2.name,
+                            image: selectedPair.item2.image,
+                            image_url: selectedPair.item2.image_url || selectedPair.item2.image,
+                            description: selectedPair.item2.description,
+                            category: selectedPair.item2.category,
+                            condition: selectedPair.item2.condition,
+                            price_range_min: selectedPair.item2.price_range_min,
+                            price_range_max: selectedPair.item2.price_range_max
+                          }}
+                          conversationTime={activeChat.time}
+                          isPending={activeChat.status === 'pending'}
+                          isAccepted={activeChat.status === 'accepted' || (activeChat.requesterAccepted && activeChat.ownerAccepted)}
+                          isRejected={activeChat.status === 'rejected'}
+                          isRequester={activeChat.requesterId === currentUserId}
+                          onAccept={async () => {
+                            if (!activeConversation || !currentUserId) return;
+                            try {
+                              const userRole = activeChat.requesterId === currentUserId ? 'requester' : 'owner';
+                              await updateTradeAcceptance(activeConversation, userRole, true);
+                              queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+                              toast({ title: "Trade accepted!" });
+                            } catch (err) {
+                              toast({ title: "Failed to accept trade", variant: "destructive" });
+                            }
+                          }}
+                          onReject={async () => {
+                            if (!activeConversation) return;
+                            try {
+                              await rejectTrade(activeConversation);
+                              queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+                              toast({ title: "Trade rejected" });
+                            } catch (err) {
+                              toast({ title: "Failed to reject trade", variant: "destructive" });
+                            }
+                          }}
+                          onCancel={async () => {
+                            if (!activeConversation) return;
+                            try {
+                              await rejectTrade(activeConversation);
+                              queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+                              toast({ title: "Trade request cancelled" });
+                            } catch (err) {
+                              toast({ title: "Failed to cancel trade", variant: "destructive" });
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
                     
                     {/* Regular messages - filter out auto-generated first message */}
                     {messages
