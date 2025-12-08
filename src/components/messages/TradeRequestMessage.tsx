@@ -60,6 +60,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
   isPending = true,
   isRequester = false
 }) => {
+  console.log('TradeRequestMessage INSIDE:', { isPending, isRequester, isAccepted, isRejected });
   const [selectedTab, setSelectedTab] = useState<'their' | 'your'>('their');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [reviewData, setReviewData] = useState({ rating: 0, reviewCount: 0 });
