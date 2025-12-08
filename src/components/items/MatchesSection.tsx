@@ -107,6 +107,7 @@ const MatchesSection = () => {
         state: { 
           demoTrade: true,
           demoData: {
+            // Their item = the match item (what they're offering)
             theirItem: {
               name: item.name,
               image: item.image,
@@ -118,6 +119,7 @@ const MatchesSection = () => {
               price_range_min: item.priceRangeMin,
               price_range_max: item.priceRangeMax
             },
+            // My item = what I'm offering in exchange
             myItem: {
               name: item.myItemName,
               image: item.myItemImage,
@@ -130,7 +132,7 @@ const MatchesSection = () => {
             partnerProfile: {
               id: item.user_id,
               username: item.user,
-              avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+              avatar_url: null, // Use fallback avatar
               created_at: '2023-06-15T10:30:00Z'
             }
           }
