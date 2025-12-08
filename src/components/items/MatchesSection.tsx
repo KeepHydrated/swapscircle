@@ -2,26 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Heart, RefreshCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
-import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const MatchesSection = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tradeModalOpen, setTradeModalOpen] = useState(false);
-  const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
+  const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Match items include both their item and my item info for direct trade
   const matches = [
-    { id: "1", name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good", category: "Sports & Outdoors", description: "Reliable mountain bike perfect for trails. Recently serviced with new brakes and tires.", user_id: "demo-user-1" },
-    { id: "2", name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b", priceRangeMin: 450, priceRangeMax: 600, condition: "Excellent", category: "Electronics", description: "Professional DSLR camera with multiple lenses included. Perfect for photography enthusiasts.", user_id: "demo-user-2" },
-    { id: "3", name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c", priceRangeMin: 500, priceRangeMax: 700, condition: "Good", category: "Entertainment", description: "Classic Fender electric guitar with rich tone. Includes hard case and amp.", user_id: "demo-user-3" },
-    { id: "4", name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817", priceRangeMin: 200, priceRangeMax: 350, condition: "Like New", category: "Home & Garden", description: "Electric height-adjustable standing desk. Barely used, in excellent condition.", user_id: "demo-user-4" },
-    { id: "5", name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092", priceRangeMin: 150, priceRangeMax: 250, condition: "Good", category: "Home & Garden", description: "Premium espresso machine with milk frother. Makes cafe-quality coffee at home.", user_id: "demo-user-5" },
+    { id: "1", name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemId: "my-item-1", myItemName: "Vintage Camera", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good", category: "Sports & Outdoors", description: "Reliable mountain bike perfect for trails. Recently serviced with new brakes and tires.", user_id: "demo-user-1" },
+    { id: "2", name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemId: "my-item-2", myItemName: "Leather Jacket", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b", priceRangeMin: 450, priceRangeMax: 600, condition: "Excellent", category: "Electronics", description: "Professional DSLR camera with multiple lenses included. Perfect for photography enthusiasts.", user_id: "demo-user-2" },
+    { id: "3", name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemId: "my-item-3", myItemName: "Headphones", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c", priceRangeMin: 500, priceRangeMax: 700, condition: "Good", category: "Entertainment", description: "Classic Fender electric guitar with rich tone. Includes hard case and amp.", user_id: "demo-user-3" },
+    { id: "4", name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemId: "my-item-4", myItemName: "Office Chair", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817", priceRangeMin: 200, priceRangeMax: 350, condition: "Like New", category: "Home & Garden", description: "Electric height-adjustable standing desk. Barely used, in excellent condition.", user_id: "demo-user-4" },
+    { id: "5", name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemId: "my-item-5", myItemName: "Blender", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092", priceRangeMin: 150, priceRangeMax: 250, condition: "Good", category: "Home & Garden", description: "Premium espresso machine with milk frother. Makes cafe-quality coffee at home.", user_id: "demo-user-5" },
   ];
 
   // Fetch liked items on mount
@@ -79,18 +79,57 @@ const MatchesSection = () => {
     }
   };
 
-  const handleSwapClick = (item: typeof matches[0], e: React.MouseEvent) => {
+  const handleRequestTrade = async (item: typeof matches[0], e: React.MouseEvent) => {
     e.stopPropagation();
-    setTradeTargetItem({
-      id: item.id,
-      name: item.name,
-      image: item.image,
-      priceRangeMin: item.priceRangeMin,
-      priceRangeMax: item.priceRangeMax,
-      condition: item.condition,
-      user_id: item.user_id,
-    });
-    setTradeModalOpen(true);
+    
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    setIsCreatingTrade(item.id);
+
+    try {
+      // Create trade conversation directly with the matched items
+      const { data: conversation, error } = await supabase
+        .from('trade_conversations')
+        .insert({
+          requester_id: user.id,
+          owner_id: item.user_id,
+          requester_item_id: item.myItemId,
+          requester_item_ids: [item.myItemId],
+          owner_item_id: item.id,
+          status: 'pending'
+        })
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Error creating trade:', error);
+        toast.error('Failed to request trade');
+        return;
+      }
+
+      // Send initial trade message
+      const myItemNames = item.myItemName;
+      const message = `Hi! I'm interested in trading my item (${myItemNames}) for your ${item.name}. Let me know if you're interested!`;
+
+      await supabase
+        .from('trade_messages')
+        .insert({
+          conversation_id: conversation.id,
+          sender_id: user.id,
+          message: message
+        });
+
+      toast.success('Trade request sent!');
+      navigate('/trade-requests');
+    } catch (error) {
+      console.error('Error requesting trade:', error);
+      toast.error('Failed to request trade');
+    } finally {
+      setIsCreatingTrade(null);
+    }
   };
 
   const handleCardClick = (item: typeof matches[0]) => {
@@ -128,13 +167,14 @@ const MatchesSection = () => {
                   
                   {/* Action buttons - matches search page style */}
                   <div className="absolute top-2 right-2 flex gap-1">
-                    {/* Suggest Trade button */}
+                    {/* Request Trade button - directly initiates trade with matched items */}
                     <button 
-                      className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => handleSwapClick(item, e)}
-                      title="Suggest a Trade"
+                      className={`w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 ${isCreatingTrade === item.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={(e) => handleRequestTrade(item, e)}
+                      disabled={isCreatingTrade === item.id}
+                      title="Request Trade"
                     >
-                      <RefreshCw className="w-5 h-5 text-white" />
+                      <RefreshCw className={`w-5 h-5 text-white ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
                     </button>
                     {/* Like button */}
                     <button 
@@ -185,15 +225,6 @@ const MatchesSection = () => {
         }}
       />
 
-      <TradeItemSelectionModal
-        isOpen={tradeModalOpen}
-        onClose={() => {
-          setTradeModalOpen(false);
-          setTradeTargetItem(null);
-        }}
-        targetItem={tradeTargetItem}
-        targetItemOwnerId={tradeTargetItem?.user_id}
-      />
     </div>
   );
 };
