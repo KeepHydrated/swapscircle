@@ -784,7 +784,7 @@ const Messages = () => {
                 ) : (
                   <div className="space-y-4">
                     {/* Trade Request Card - First message in conversation */}
-                    {selectedPair && (
+                    {selectedPair && currentUserId && (
                       <TradeRequestMessage
                         partnerProfile={selectedPair.partnerProfile}
                         theirItem={selectedPair.item2}
