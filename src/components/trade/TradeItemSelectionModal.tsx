@@ -167,7 +167,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       });
 
       onClose();
-      navigate('/trade-requests');
+      // Navigate to messages page with the new conversation selected
+      navigate(`/messages?conversation=${tradeConversation.id}`);
 
     } catch (error) {
       console.error('Error creating trade:', error);
