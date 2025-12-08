@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X, RefreshCw, Heart, MoreHorizontal, Users } from 'lucide-react';
+import { Search, ChevronDown, X, RefreshCw, Heart, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -399,20 +399,7 @@ const SearchPage = () => {
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
-                  {/* Action buttons - matching match card layout */}
-                  {/* 3-dots menu - top left */}
-                  <button 
-                    className="absolute top-2 left-2 w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // TODO: Implement dropdown menu
-                    }}
-                    title="More options"
-                  >
-                    <MoreHorizontal className="w-5 h-5 text-muted-foreground" />
-                  </button>
-                  
-                  {/* Right side buttons */}
+                  {/* Action buttons */}
                   <div className="absolute top-2 right-2 flex gap-1">
                     {/* Suggest Trade button */}
                     <button 
@@ -425,17 +412,6 @@ const SearchPage = () => {
                       title="Suggest a Trade"
                     >
                       <RefreshCw className="w-5 h-5 text-white" />
-                    </button>
-                    {/* Reject button */}
-                    <button 
-                      className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // TODO: Implement reject/hide functionality
-                      }}
-                      title="Not interested"
-                    >
-                      <X className="w-5 h-5 text-muted-foreground" />
                     </button>
                     {/* Like button */}
                     <button 
