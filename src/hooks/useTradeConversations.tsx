@@ -14,6 +14,11 @@ export interface ConversationDisplay {
   distance?: string;
   isNew?: boolean;
   isCompleted?: boolean;
+  status?: string;
+  requesterId?: string;
+  ownerId?: string;
+  requesterAccepted?: boolean;
+  ownerAccepted?: boolean;
   otherUserProfile?: {
     id: string;
     username: string;
@@ -194,6 +199,11 @@ export const useTradeConversations = () => {
             distance: '2.3 mi away',
             isNew: tc.status === 'pending',
             isCompleted: tc.status === 'completed',
+            status: tc.status,
+            requesterId: tc.requester_id,
+            ownerId: tc.owner_id,
+            requesterAccepted: tc.requester_accepted,
+            ownerAccepted: tc.owner_accepted,
             otherUserProfile: otherUserProfile || {
               id: otherUserId,
               username: 'Trading Partner',

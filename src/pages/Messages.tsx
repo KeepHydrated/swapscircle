@@ -53,6 +53,8 @@ const forceScrollToBottom = () => {
   }
 };
 import TradeMessageBubble from '@/components/messages/TradeMessageBubble';
+import TradeRequestMessage from '@/components/messages/TradeRequestMessage';
+import { updateTradeAcceptance, rejectTrade, updateTradeStatus, fetchUserTradeConversations } from '@/services/tradeService';
 
 const Messages = () => {
   const {
@@ -766,13 +768,57 @@ const Messages = () => {
               </div>
               
               {/* Messages area */}
-              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
+              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
                 {messagesLoading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
                   </div>
-                ) : messages.length > 0 ? (
+                ) : (
                   <div className="space-y-4">
+                    {/* Trade Request Card - First message in conversation */}
+                    {selectedPair && (
+                      <TradeRequestMessage
+                        partnerProfile={selectedPair.partnerProfile}
+                        theirItem={selectedPair.item2}
+                        yourItem={selectedPair.item1}
+                        conversationTime={activeChat?.time}
+                        isAccepted={activeChat?.status === 'completed'}
+                        isRejected={activeChat?.status === 'rejected'}
+                        isPending={activeChat?.status === 'pending'}
+                        onAccept={async () => {
+                          try {
+                            const isRequester = activeChat?.requesterId === currentUserId;
+                            await updateTradeAcceptance(activeConversation, isRequester ? 'requester' : 'owner', true);
+                            queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+                            
+                            // Check if both accepted
+                            const trades = await fetchUserTradeConversations();
+                            const trade = trades.find((t: any) => t.id === activeConversation);
+                            if (trade?.requester_accepted && trade?.owner_accepted) {
+                              await updateTradeStatus(activeConversation, 'completed');
+                              toast({ title: "Trade completed!", description: "Both parties have accepted." });
+                            } else {
+                              toast({ title: "Trade accepted", description: "Waiting for the other party." });
+                            }
+                          } catch (error) {
+                            console.error('Error accepting trade:', error);
+                            toast({ title: "Error", description: "Failed to accept trade." });
+                          }
+                        }}
+                        onReject={async () => {
+                          try {
+                            await rejectTrade(activeConversation);
+                            queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
+                            toast({ title: "Trade rejected" });
+                          } catch (error) {
+                            console.error('Error rejecting trade:', error);
+                            toast({ title: "Error", description: "Failed to reject trade." });
+                          }
+                        }}
+                      />
+                    )}
+                    
+                    {/* Regular messages */}
                     {messages.map((message: any) => (
                       <TradeMessageBubble 
                         key={message.id}
@@ -782,15 +828,6 @@ const Messages = () => {
                         currentUserId={currentUserId}
                       />
                     ))}
-                    {/* Anchor for auto-scrolling */}
-                    <div ref={scrollRef} />
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">Trade conversation started!</p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Send a message to start the conversation.
-                    </p>
                     {/* Anchor for auto-scrolling */}
                     <div ref={scrollRef} />
                   </div>
