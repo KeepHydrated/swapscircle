@@ -222,15 +222,6 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 <div className="absolute top-1.5 right-1.5 z-10">
                   {isMatch ? (
                     <div className="flex gap-1">
-                      {/* Simple reject button for current item */}
-                      <button
-                        className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                        aria-label="Reject item"
-                        onClick={(e) => handleRejectClick(e)}
-                      >
-                        <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
-                      </button>
-
                       {/* Swap/Trade button */}
                       <TooltipProvider>
                         <Tooltip>
@@ -248,6 +239,15 @@ const ItemCard: React.FC<ItemCardProps> = ({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
+
+                      {/* Simple reject button for current item */}
+                      <button
+                        className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                        aria-label="Reject item"
+                        onClick={(e) => handleRejectClick(e)}
+                      >
+                        <X className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 hover:text-red-500 transition-colors`} />
+                      </button>
                       
                       {/* Simple like button for current item */}
                       <TooltipProvider>
