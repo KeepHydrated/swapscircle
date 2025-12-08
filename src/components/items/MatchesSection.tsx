@@ -101,10 +101,36 @@ const MatchesSection = () => {
       return;
     }
 
-    // For demo items, navigate to messages with demo conversation
+    // For demo items, navigate to messages with demo trade data via state
     if (item.isDemo) {
-      // Navigate to messages with demo trade info
-      navigate(`/messages?demo=true&matchId=${item.id}&theirItem=${encodeURIComponent(item.name)}&myItem=${encodeURIComponent(item.myItemName)}`);
+      navigate('/messages', { 
+        state: { 
+          demoTrade: true,
+          demoData: {
+            theirItem: {
+              name: item.name,
+              image: item.image,
+              image_url: item.image,
+              description: item.description,
+              category: item.category,
+              condition: item.condition,
+              price_range_min: item.priceRangeMin,
+              price_range_max: item.priceRangeMax
+            },
+            myItem: {
+              name: item.myItemName,
+              image: item.myItemImage,
+              image_url: item.myItemImage
+            },
+            partnerProfile: {
+              id: item.user_id,
+              username: item.user,
+              avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+              created_at: '2023-06-15T10:30:00Z'
+            }
+          }
+        } 
+      });
       return;
     }
 
