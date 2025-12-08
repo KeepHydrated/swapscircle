@@ -101,15 +101,32 @@ const MatchesSection = () => {
       return;
     }
 
-    // For demo items, navigate to messages with the match
+    // For demo items, navigate to messages with demo conversation
     if (item.isDemo) {
-      navigate(`/messages?matchId=${item.id}`);
+      // Navigate to messages with demo trade info
+      navigate(`/messages?demo=true&matchId=${item.id}&theirItem=${encodeURIComponent(item.name)}&myItem=${encodeURIComponent(item.myItemName)}`);
       return;
     }
 
     setIsCreatingTrade(item.id);
 
     try {
+      // Check if a conversation already exists
+      const { data: existing } = await supabase
+        .from('trade_conversations')
+        .select('id')
+        .eq('requester_id', user.id)
+        .eq('owner_id', item.user_id)
+        .eq('owner_item_id', item.id)
+        .maybeSingle();
+
+      if (existing) {
+        // Navigate to existing conversation
+        navigate(`/messages?conversationId=${existing.id}`);
+        return;
+      }
+
+      // Create new trade conversation
       const { data: conversation, error } = await supabase
         .from('trade_conversations')
         .insert({
@@ -125,11 +142,12 @@ const MatchesSection = () => {
 
       if (error) {
         console.error('Error creating trade:', error);
-        toast.error('Failed to request trade');
+        toast.error('Failed to start trade chat');
         return;
       }
 
-      const message = `Hi! I'm interested in trading my item (${item.myItemName}) for your ${item.name}. Let me know if you're interested!`;
+      // Send initial trade message
+      const message = `Hi! I'd like to trade my ${item.myItemName} for your ${item.name}. Let me know if you're interested!`;
 
       await supabase
         .from('trade_messages')
@@ -139,11 +157,11 @@ const MatchesSection = () => {
           message: message
         });
 
-      toast.success('Trade request sent!');
-      navigate('/trade-requests');
+      // Navigate to messages with the new conversation
+      navigate(`/messages?conversationId=${conversation.id}`);
     } catch (error) {
       console.error('Error requesting trade:', error);
-      toast.error('Failed to request trade');
+      toast.error('Failed to start trade chat');
     } finally {
       setIsCreatingTrade(null);
     }
