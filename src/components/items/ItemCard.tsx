@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import MoreActionsMenu from './matches/MatchActionSelector';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
 
@@ -206,17 +205,6 @@ const ItemCard: React.FC<ItemCardProps> = ({
             
             {(showLikeButton || isMatch) && !disableLike && !isRemoved && (
               <>
-                {/* Three-dots menu on the left side for match items */}
-                {isMatch && !isRemoved && (
-                  <div className="absolute top-1.5 left-1.5 z-10">
-                    <MoreActionsMenu
-                      itemId={id}
-                      onLikeAll={handleLikeAll}
-                      onRejectAll={handleRejectAll}
-                      compact={compact}
-                    />
-                  </div>
-                )}
                 
                 {/* Action buttons on the right side */}
                 <div className="absolute top-1.5 right-1.5 z-10">
