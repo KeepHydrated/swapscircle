@@ -111,6 +111,7 @@ const MatchesSection = () => {
               name: item.name,
               image: item.image,
               image_url: item.image,
+              image_urls: [item.image],
               description: item.description,
               category: item.category,
               condition: item.condition,
@@ -120,7 +121,11 @@ const MatchesSection = () => {
             myItem: {
               name: item.myItemName,
               image: item.myItemImage,
-              image_url: item.myItemImage
+              image_url: item.myItemImage,
+              image_urls: [item.myItemImage],
+              description: 'Your item for trade',
+              category: 'Your Items',
+              condition: 'Good'
             },
             partnerProfile: {
               id: item.user_id,
