@@ -378,7 +378,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
               }}
             >
               <SelectTrigger id="category" className="h-12 text-base border-gray-300 focus:border-blue-500">
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder="" />
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(categories).map((cat) => (
@@ -405,7 +405,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
                 }}
                >
                 <SelectTrigger id="subcategory" className="h-12 text-base border-gray-300 focus:border-blue-500">
-                  <SelectValue placeholder="Select a subcategory" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
                   {getSubcategories().map((subcat) => (
@@ -422,7 +422,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
           <Label htmlFor="condition" className="text-lg font-semibold text-gray-900">Condition <span className="text-red-500">*</span></Label>
           <Select value={condition} onValueChange={setCondition}>
             <SelectTrigger id="condition" className="h-12 text-base border-gray-300 focus:border-blue-500">
-              <SelectValue placeholder="Select condition" />
+              <SelectValue placeholder="" />
             </SelectTrigger>
             <SelectContent>
               {conditions.map((cond) => (
@@ -443,7 +443,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
             }}
           >
             <SelectTrigger id="price-range" className="h-12 text-base border-gray-300 focus:border-blue-500">
-              <SelectValue placeholder="Select value range" />
+              <SelectValue placeholder="" />
             </SelectTrigger>
             <SelectContent>
               {priceRanges.map((range) => (
