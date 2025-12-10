@@ -32,6 +32,7 @@ export interface ConversationDisplay {
 }
 
 interface ItemDisplay {
+  id?: string;
   name: string; 
   image: string;
   image_url?: string;
@@ -125,6 +126,7 @@ export const useTradeConversations = () => {
 
           // Create item1Items array with all my items
           const item1Items: ItemDisplay[] = (myItems || []).map((item: any) => ({
+            id: item?.id,
             name: item?.name || 'Your Item',
             image: item?.image_url || (item?.image_urls && item?.image_urls.length > 0 ? item?.image_urls[0] : '/placeholder.svg'),
             image_url: item?.image_url,
@@ -142,6 +144,7 @@ export const useTradeConversations = () => {
             id: index + 1,
             partnerId: tc.id,
             item1: {
+              id: myItem?.id,
               name: myItem?.name || 'Your Item',
               image: myItem?.image_url || (myItem?.image_urls && myItem?.image_urls.length > 0 ? myItem?.image_urls[0] : '/placeholder.svg'),
               image_url: myItem?.image_url,
@@ -155,6 +158,7 @@ export const useTradeConversations = () => {
             },
             item1Items: item1Items.length > 1 ? item1Items : undefined, // Only include if multiple items
             item2: {
+              id: theirItem?.id,
               name: theirItem?.name || 'Their Item', 
               image: theirItem?.image_url || (theirItem?.image_urls && theirItem?.image_urls.length > 0 ? theirItem?.image_urls[0] : '/placeholder.svg'),
               image_url: theirItem?.image_url,
