@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Check, X } from 'lucide-react';
+import { Heart, Check, X, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -250,8 +250,27 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       </TooltipProvider>
                     </div>
                 ) : (
-                  /* Only heart button for non-match items (search page) - click card to open modal for trade */
+                  /* Arrow button + heart for non-match items (search page) */
                   <div className="flex gap-1">
+                    {/* Swap/Trade button with arrow */}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
+                            aria-label="Suggest trade"
+                            onClick={handleSwapClick}
+                          >
+                            <RefreshCw className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Suggest a trade</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    
+                    {/* Like button (Heart) */}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -272,7 +291,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  )}
+                )}
                 </div>
               </>
             )}
