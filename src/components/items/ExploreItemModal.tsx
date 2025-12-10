@@ -62,7 +62,14 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [isLiked, setIsLiked] = useState(liked ?? false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Fetch current user and liked status
+  // Sync isLiked with liked prop from parent
+  useEffect(() => {
+    if (liked !== undefined) {
+      setIsLiked(liked);
+    }
+  }, [liked]);
+
+  // Fetch current user and liked status (only if liked prop not provided)
   useEffect(() => {
     const fetchLikedStatus = async () => {
       if (!item?.id || !open) return;
@@ -76,19 +83,21 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
       
       setCurrentUserId(user.id);
 
-      // Check if item is liked
-      const { data: likedData } = await supabase
-        .from('liked_items')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('item_id', item.id)
-        .maybeSingle();
+      // Only fetch from DB if liked prop is not provided
+      if (liked === undefined) {
+        const { data: likedData } = await supabase
+          .from('liked_items')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('item_id', item.id)
+          .maybeSingle();
 
-      setIsLiked(!!likedData);
+        setIsLiked(!!likedData);
+      }
     };
 
     fetchLikedStatus();
-  }, [item?.id, open]);
+  }, [item?.id, open, liked]);
 
   // Handle like/unlike
   const handleLikeClick = async () => {
