@@ -48,7 +48,7 @@ interface DetailsPanelProps {
 }
 
 const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
-  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item1');
+  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
 
   const handleSelectItem = (item: 'item1' | 'item2') => {
     setSelectedItem(item);
