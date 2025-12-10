@@ -208,6 +208,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   return null;
                 })()
               )}
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 mr-1" />
+                <span>{profile.memberSince}</span>
+              </div>
               {(profile.tradesCompleted || profile.tradesCompleted === 0) && (
                 <div className="flex items-center">
                   <Repeat className="h-4 w-4 mr-1" />
