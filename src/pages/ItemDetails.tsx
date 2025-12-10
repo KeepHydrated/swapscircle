@@ -303,16 +303,6 @@ const ItemDetails: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Action Button */}
-        <div className="mt-6 flex justify-center">
-          <Button 
-            size="lg"
-            onClick={() => toast.info('Trading functionality coming soon!')}
-          >
-            Interested in Trading
-          </Button>
-        </div>
       </div>
     </MainLayout>
   );
