@@ -151,61 +151,63 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
-                {profile.location && profile.location.trim() && (
-                  (() => {
-                    // Check if it's coordinates (contains both comma and periods)
-                    const isCoordinates = profile.location.includes(',') && profile.location.includes('.');
-                    if (isCoordinates) return null;
-                    
-                    // Check if location contains letters (city name)
-                    const hasLetters = /[a-zA-Z]/.test(profile.location);
-                    if (hasLetters) {
-                      // For "City, State" format, show both
-                      const parts = profile.location.split(',');
-                      if (parts.length >= 2) {
-                        const city = parts[0].trim();
-                        const state = parts[1].trim();
-                      return (
-                        <span className="text-sm text-gray-500 -mt-1">
-                          {city}, {state}
-                        </span>
-                      );
-                      } else {
-                        // Just city name
-                        return (
-                          <span className="text-sm text-gray-500 -mt-1">
-                            {profile.location.trim()}
-                          </span>
-                        );
-                      }
-                    }
-                    
-                    // For zipcode-only, map common ones to cities and states
-                    const zipcodeToLocation: Record<string, string> = {
-                      '78212': 'San Antonio, TX',
-                      '10001': 'New York, NY',
-                      '90210': 'Beverly Hills, CA',
-                      '60601': 'Chicago, IL',
-                      '94102': 'San Francisco, CA'
-                    };
-                    
-                    const cityState = zipcodeToLocation[profile.location.trim()];
-                    if (cityState) {
-                      return (
-                        <span className="text-sm text-gray-500 -mt-1">
-                          {cityState}
-                        </span>
-                      );
-                    }
-                    
-                    return null;
-                  })()
-                )}
               </div>
               {/* Action buttons will be rendered here by parent component */}
               <div id="profile-action-buttons" className="hidden md:flex"></div>
             </div>
             <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
+              {profile.location && profile.location.trim() && (
+                (() => {
+                  // Check if it's coordinates (contains both comma and periods)
+                  const isCoordinates = profile.location.includes(',') && profile.location.includes('.');
+                  if (isCoordinates) return null;
+                  
+                  // Check if location contains letters (city name)
+                  const hasLetters = /[a-zA-Z]/.test(profile.location);
+                  if (hasLetters) {
+                    // For "City, State" format, show both
+                    const parts = profile.location.split(',');
+                    if (parts.length >= 2) {
+                      const city = parts[0].trim();
+                      const state = parts[1].trim();
+                      return (
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          <span>{city}, {state}</span>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          <span>{profile.location.trim()}</span>
+                        </div>
+                      );
+                    }
+                  }
+                  
+                  // For zipcode-only, map common ones to cities and states
+                  const zipcodeToLocation: Record<string, string> = {
+                    '78212': 'San Antonio, TX',
+                    '10001': 'New York, NY',
+                    '90210': 'Beverly Hills, CA',
+                    '60601': 'Chicago, IL',
+                    '94102': 'San Francisco, CA'
+                  };
+                  
+                  const cityState = zipcodeToLocation[profile.location.trim()];
+                  if (cityState) {
+                    return (
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-1" />
+                        <span>{cityState}</span>
+                      </div>
+                    );
+                  }
+                  
+                  return null;
+                })()
+              )}
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
                 <span>Member since {profile.memberSince}</span>
