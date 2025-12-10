@@ -473,7 +473,7 @@ const PostItemNew: React.FC = () => {
           <CardContent className="space-y-6">
             {/* Images */}
             <div className="space-y-2">
-              <Label>Images * ({images.length} uploaded)</Label>
+              <Label>Images ({images.length} uploaded)</Label>
               <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors" onClick={handleImageClick}>
                 <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload" />
@@ -517,19 +517,19 @@ const PostItemNew: React.FC = () => {
 
             {/* Title */}
             <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">Title</Label>
               <Input id="title" placeholder="Enter item title" value={formData.title} onChange={e => handleInputChange('title', e.target.value)} />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea id="description" placeholder="Describe your item, its condition, and what you're looking to trade for." value={formData.description} onChange={e => handleInputChange('description', e.target.value)} rows={4} />
             </div>
 
             {/* Category */}
             <div className="space-y-2">
-              <Label>Category *</Label>
+              <Label>Category</Label>
               <Select value={formData.category} onValueChange={value => handleInputChange('category', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="" />
@@ -555,7 +555,7 @@ const PostItemNew: React.FC = () => {
 
             {/* Condition */}
             <div className="space-y-2">
-              <Label>Condition *</Label>
+              <Label>Condition</Label>
               <Select value={formData.condition} onValueChange={value => handleInputChange('condition', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="" />
@@ -568,7 +568,7 @@ const PostItemNew: React.FC = () => {
 
             {/* Price Range */}
             <div className="space-y-2">
-              <Label>Price Range *</Label>
+              <Label>Price Range</Label>
               <Select value={formData.priceRange} onValueChange={value => handleInputChange('priceRange', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="" />
