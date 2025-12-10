@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useNavigate } from "react-router-dom";
 import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
+import { toast } from "@/hooks/use-toast";
 
 interface ExploreItemModalProps {
   open: boolean;
@@ -65,6 +66,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [isLiked, setIsLiked] = useState(liked ?? false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [creatingTrade, setCreatingTrade] = useState(false);
 
   // Sync isLiked with liked prop from parent
   useEffect(() => {
@@ -135,7 +137,72 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     }
   };
 
-  // Fetch complete item details and user profile from database
+  // Handle direct trade with matched item
+  const handleQuickTrade = async () => {
+    if (!matchedItemId || !fullItem?.user_id || creatingTrade) return;
+    
+    setCreatingTrade(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.user) {
+        navigate('/auth');
+        onClose();
+        return;
+      }
+
+      // Create trade conversation directly with the matched item
+      const { data: tradeConversation, error: tradeError } = await supabase
+        .from('trade_conversations')
+        .insert({
+          requester_id: session.session.user.id,
+          owner_id: fullItem.user_id,
+          requester_item_id: matchedItemId,
+          requester_item_ids: [matchedItemId],
+          owner_item_id: fullItem.id || item?.id,
+          status: 'pending'
+        })
+        .select('*')
+        .single();
+
+      if (tradeError) {
+        console.error('Error creating trade conversation:', tradeError);
+        toast({
+          title: "Error",
+          description: "Failed to create trade request.",
+        });
+        return;
+      }
+
+      // Create initial message
+      const targetItemName = fullItem?.name || item?.name || 'your item';
+      const messageContent = `Hi! I'm interested in trading for your ${targetItemName}. Let me know if you're interested!`;
+
+      await supabase
+        .from('trade_messages')
+        .insert({
+          conversation_id: tradeConversation.id,
+          sender_id: session.session.user.id,
+          message: messageContent
+        });
+
+      toast({
+        title: "Trade suggestion sent!",
+        description: "Your trade suggestion has been sent successfully.",
+      });
+
+      onClose();
+      navigate(`/messages?conversation=${tradeConversation.id}`);
+
+    } catch (error) {
+      console.error('Error creating trade:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create trade request.",
+      });
+    } finally {
+      setCreatingTrade(false);
+    }
+  };
   useEffect(() => {
     if (!item?.id || !open) {
       console.log('MODAL DEBUG: Skipping fetch - item.id:', item?.id, 'open:', open);
@@ -509,13 +576,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {/* Quick Accept button - only show if there's a matched item */}
                 {!disableActions && fullItem?.user_id && matchedItemId && (
                   <button
-                    onClick={() => {
-                      // Pre-select matched item and open modal for quick confirm
-                      setShowTradeModal(true);
-                    }}
-                    className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
-                    aria-label="Accept with matched item"
-                    title="Accept with matched item"
+                    onClick={handleQuickTrade}
+                    disabled={creatingTrade}
+                    className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
+                      creatingTrade ? 'cursor-wait opacity-70' : 'hover:bg-gray-50 cursor-pointer'
+                    }`}
+                    aria-label="Suggest trade with matched item"
+                    title="Suggest trade with matched item"
                   >
                     <Check className="w-5 h-5 text-green-500" />
                   </button>
