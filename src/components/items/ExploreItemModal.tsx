@@ -26,6 +26,7 @@ interface ExploreItemModalProps {
   onRejectAll?: (id: string) => void;
   onReport?: (id: string) => void;
   matchedItemImage?: string; // Image of user's matched item to display
+  matchedItemId?: string; // ID of user's matched item to pre-select in trade modal
 }
 
 interface UserProfile {
@@ -53,6 +54,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   onRejectAll,
   onReport,
   matchedItemImage,
+  matchedItemId,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -633,6 +635,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         onClose={() => setShowTradeModal(false)}
         targetItem={fullItem || item}
         targetItemOwnerId={fullItem?.user_id}
+        preSelectedItemId={matchedItemId}
       />
     </Dialog>
   );
