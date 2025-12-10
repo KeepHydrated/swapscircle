@@ -67,7 +67,6 @@ const Settings: React.FC = () => {
         <div className="flex min-h-[600px]">
           {/* Sidebar */}
           <div className="w-56 border-r bg-muted/30 p-4">
-            <h2 className="text-lg font-semibold text-foreground mb-4 px-3">Settings</h2>
             <nav className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
