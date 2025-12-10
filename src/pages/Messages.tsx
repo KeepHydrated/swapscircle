@@ -94,9 +94,6 @@ const Messages = () => {
     if (location.state?.demoTrade && location.state?.demoData) {
       setIsDemoTrade(true);
       setDemoTradeData(location.state.demoData);
-      // Clear any existing selectedPair to prevent showing wrong items
-      resetSelectedPair();
-      setActiveConversation(null as any);
       // Switch to chat view on mobile/tablet
       if (isMobile || isTablet) {
         setCurrentView('chat');
@@ -1018,14 +1015,8 @@ const Messages = () => {
         
         {/* Right sidebar - Details panel with tabs */}
         <div className="w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col h-full overflow-y-auto">
-          {selectedPair ? (
-            <TradeDetailsTabs 
-              selectedPair={selectedPair}
-              selectedItem={selectedItem}
-              onSelectItem={handleSelectItem}
-            />
-          ) : isDemoTrade && demoTradeData ? (
-            /* Demo trade details with trade request */
+          {isDemoTrade && demoTradeData ? (
+            /* Demo trade details with trade request - takes precedence over selectedPair */
             <div className="p-4 space-y-4">
               {/* Trade Request Card */}
               <TradeRequestMessage
@@ -1045,6 +1036,12 @@ const Messages = () => {
                 }}
               />
             </div>
+          ) : selectedPair ? (
+            <TradeDetailsTabs 
+              selectedPair={selectedPair}
+              selectedItem={selectedItem}
+              onSelectItem={handleSelectItem}
+            />
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500 text-center">
