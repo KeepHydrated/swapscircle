@@ -10,31 +10,27 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Package, X, AlertCircle } from 'lucide-react';
+import { Upload, X, AlertCircle } from 'lucide-react';
 import SupportChat from '@/components/chat/SupportChat';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 const PostItemNew: React.FC = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  const { itemId } = useParams<{ itemId: string }>();
-  
+  const {
+    itemId
+  } = useParams<{
+    itemId: string;
+  }>();
+
   // Determine if we're editing or creating
   const isEditing = !!itemId;
-  
+
   // Loading and existing data state
   const [loading, setLoading] = useState(isEditing);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
-  
+
   // Simple form state
   const [formData, setFormData] = useState({
     title: '',
@@ -49,7 +45,6 @@ const PostItemNew: React.FC = () => {
     lookingForConditions: [] as string[],
     lookingForPriceRanges: [] as string[]
   });
-  
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showImageWarning, setShowImageWarning] = useState(false);
@@ -69,7 +64,6 @@ const PostItemNew: React.FC = () => {
     "Tools & Equipment": ["Power Tools", "Hand Tools", "Construction Equipment", "Workshop Tools", "Measuring Tools", "Safety Equipment", "Other Tools"],
     "Food": ["Beverages", "Snacks", "Specialty Foods", "Baking Supplies", "Condiments", "Health Foods", "International Foods", "Other Food Items"]
   };
-
   const conditions = ["New", "Like New", "Good", "Fair", "Poor"];
   const priceRanges = ["0-50", "50-100", "100-250", "250-500", "500+"];
 
@@ -77,42 +71,36 @@ const PostItemNew: React.FC = () => {
   useEffect(() => {
     const loadItemData = async () => {
       if (!isEditing || !itemId) return;
-      
       setLoading(true);
       try {
         console.log('📝 Loading item for editing:', itemId);
-        const { data, error } = await supabase
-          .from('items')
-          .select('*')
-          .eq('id', itemId)
-          .eq('user_id', user!.id) // Ensure user owns this item
-          .single();
-        
+        const {
+          data,
+          error
+        } = await supabase.from('items').select('*').eq('id', itemId).eq('user_id', user!.id) // Ensure user owns this item
+        .single();
         if (error) {
           console.error('❌ Failed to load item:', error);
           toast.error('Failed to load item data');
           navigate('/home');
           return;
         }
-        
         console.log('✅ Loaded item data:', data);
         console.log('🔍 Looking for categories:', data.looking_for_categories);
         console.log('🔍 Looking for conditions:', data.looking_for_conditions);
         console.log('🔍 Looking for price ranges:', data.looking_for_price_ranges);
         console.log('🔍 Looking for description:', data.looking_for_description);
-        
+
         // Parse subcategories from stored tags
         const storedTags = data.tags || [];
         const lookingForCategories = data.looking_for_categories || [];
         const parsedSubcategories: Record<string, string[]> = {};
-        
+
         // For each "looking for" category, find which stored tags are subcategories of that category
         lookingForCategories.forEach(category => {
           if (categories[category as keyof typeof categories]) {
             const categorySubcategories = categories[category as keyof typeof categories];
-            const matchingSubcategories = storedTags.filter(tag => 
-              categorySubcategories.includes(tag)
-            );
+            const matchingSubcategories = storedTags.filter(tag => categorySubcategories.includes(tag));
             if (matchingSubcategories.length > 0) {
               parsedSubcategories[category] = matchingSubcategories;
             }
@@ -124,7 +112,8 @@ const PostItemNew: React.FC = () => {
           title: data.name || '',
           description: data.description || '',
           category: data.category || '',
-          subcategory: data.tags?.[0] || '', // First tag as subcategory
+          subcategory: data.tags?.[0] || '',
+          // First tag as subcategory
           condition: data.condition || '',
           priceRange: `${data.price_range_min}-${data.price_range_max}`,
           lookingForDescription: data.looking_for_description || '',
@@ -133,9 +122,7 @@ const PostItemNew: React.FC = () => {
           lookingForConditions: data.looking_for_conditions || [],
           lookingForPriceRanges: data.looking_for_price_ranges || []
         });
-        
         setExistingImageUrls(data.image_urls || []);
-        
       } catch (error) {
         console.error('❌ Error loading item:', error);
         toast.error('Failed to load item data');
@@ -144,22 +131,25 @@ const PostItemNew: React.FC = () => {
         setLoading(false);
       }
     };
-    
     if (user) {
       loadItemData();
     }
   }, [isEditing, itemId, user, navigate]);
-
   const handleInputChange = (field: string, value: string) => {
     console.log(`🔍 Field ${field} changed to:`, value);
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
     // Reset subcategory if category changes
     if (field === 'category') {
-      setFormData(prev => ({ ...prev, subcategory: '' }));
+      setFormData(prev => ({
+        ...prev,
+        subcategory: ''
+      }));
     }
   };
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('📸 File input triggered');
     if (e.target.files && e.target.files.length > 0) {
@@ -174,12 +164,10 @@ const PostItemNew: React.FC = () => {
       console.log('❌ No files selected');
     }
   };
-
   const removeImage = (indexToRemove: number) => {
     setImages(prev => prev.filter((_, index) => index !== indexToRemove));
     console.log('🗑️ Image removed at index:', indexToRemove);
   };
-
   const handleImageClick = () => {
     console.log('🖱️ Upload area clicked');
     const fileInput = document.getElementById('image-upload') as HTMLInputElement;
@@ -190,33 +178,34 @@ const PostItemNew: React.FC = () => {
       console.error('❌ File input not found');
     }
   };
-
   const handleArrayToggle = (field: string, value: string) => {
     setFormData(prev => {
       const currentArray = prev[field as keyof typeof prev] as string[];
-      const newArray = currentArray.includes(value)
-        ? currentArray.filter(item => item !== value)
-        : [...currentArray, value];
-      
+      const newArray = currentArray.includes(value) ? currentArray.filter(item => item !== value) : [...currentArray, value];
+
       // If removing a category, also remove its subcategories
       if (field === 'lookingForCategories' && currentArray.includes(value)) {
-        const newSubcategories = { ...prev.lookingForSubcategories };
+        const newSubcategories = {
+          ...prev.lookingForSubcategories
+        };
         delete newSubcategories[value];
-        return { ...prev, [field]: newArray, lookingForSubcategories: newSubcategories };
+        return {
+          ...prev,
+          [field]: newArray,
+          lookingForSubcategories: newSubcategories
+        };
       }
-      
-      return { ...prev, [field]: newArray };
+      return {
+        ...prev,
+        [field]: newArray
+      };
     });
     console.log(`🔍 Array field ${field} toggled:`, value);
   };
-
   const handleSubcategoryToggle = (category: string, subcategory: string) => {
     setFormData(prev => {
       const currentSubs = prev.lookingForSubcategories[category] || [];
-      const newSubs = currentSubs.includes(subcategory)
-        ? currentSubs.filter(sub => sub !== subcategory)
-        : [...currentSubs, subcategory];
-      
+      const newSubs = currentSubs.includes(subcategory) ? currentSubs.filter(sub => sub !== subcategory) : [...currentSubs, subcategory];
       return {
         ...prev,
         lookingForSubcategories: {
@@ -227,113 +216,113 @@ const PostItemNew: React.FC = () => {
     });
     console.log(`🔍 Subcategory ${subcategory} toggled for ${category}`);
   };
-
   const removeExistingImage = (urlToRemove: string) => {
     setExistingImageUrls(prev => prev.filter(url => url !== urlToRemove));
     console.log('🗑️ Existing image removed:', urlToRemove);
   };
-
   const uploadImages = async (): Promise<string[]> => {
     const uploadPromises = images.map(async (image, index) => {
       const fileExt = image.name.split('.').pop();
       const fileName = `${user!.id}/${Date.now()}_${index}.${fileExt}`;
-      
       console.log('📸 Uploading image:', fileName);
-      const { data, error } = await supabase.storage
-        .from('item-images')
-        .upload(fileName, image);
-      
+      const {
+        data,
+        error
+      } = await supabase.storage.from('item-images').upload(fileName, image);
       if (error) {
         console.error('❌ Upload error:', error);
         throw new Error(`Failed to upload ${image.name}: ${error.message}`);
       }
-      
+
       // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('item-images')
-        .getPublicUrl(fileName);
-      
+      const {
+        data: urlData
+      } = supabase.storage.from('item-images').getPublicUrl(fileName);
       console.log('✅ Image uploaded:', urlData.publicUrl);
       return urlData.publicUrl;
     });
-    
     return Promise.all(uploadPromises);
   };
 
   // Check image originality before posting
-  const checkImageOriginality = async (file: File): Promise<{ isOriginal: boolean; warning?: string }> => {
+  const checkImageOriginality = async (file: File): Promise<{
+    isOriginal: boolean;
+    warning?: string;
+  }> => {
     try {
       console.log('🔍 Checking image originality before posting');
-      
+
       // Upload image temporarily to check it
       const fileExt = file.name.split('.').pop();
       const fileName = `temp-check-${Math.random()}.${fileExt}`;
       const filePath = `temp/${fileName}`;
-
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('items')
-        .upload(filePath, file);
-
+      const {
+        data: uploadData,
+        error: uploadError
+      } = await supabase.storage.from('items').upload(filePath, file);
       if (uploadError) {
         console.error('❌ Upload error:', uploadError);
-        return { isOriginal: true }; // Fail open
+        return {
+          isOriginal: true
+        }; // Fail open
       }
-
-      const { data: urlData } = supabase.storage
-        .from('items')
-        .getPublicUrl(filePath);
-
+      const {
+        data: urlData
+      } = supabase.storage.from('items').getPublicUrl(filePath);
       console.log('🚀 Calling edge function with URL:', urlData.publicUrl);
 
       // Call edge function to check image
-      const { data, error } = await supabase.functions.invoke('check-image-originality', {
-        body: { imageUrl: urlData.publicUrl }
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('check-image-originality', {
+        body: {
+          imageUrl: urlData.publicUrl
+        }
       });
 
       // Clean up temp file
       await supabase.storage.from('items').remove([filePath]);
-
       if (error) {
         console.error('❌ Edge function error:', error);
-        return { isOriginal: true }; // Fail open
+        return {
+          isOriginal: true
+        }; // Fail open
       }
-
       console.log('✅ Image check result:', data);
       return data;
     } catch (error) {
       console.error('❌ Error checking image:', error);
-      return { isOriginal: true }; // Fail open
+      return {
+        isOriginal: true
+      }; // Fail open
     }
   };
-
   const handleSubmit = async () => {
     // If we're waiting for user confirmation about image, don't proceed
     if (showImageWarning && !proceedWithSubmit) {
       return;
     }
-
     console.log(isEditing ? '✏️ EDIT CLICKED!' : '🚀 SUBMIT CLICKED!');
     console.log('📋 Form Data:', formData);
     console.log('📸 New Images:', images.length);
     console.log('🖼️ Existing Images:', existingImageUrls.length);
-    
+
     // Validation
     const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
     if (missingFields.length > 0) {
       console.log('❌ Missing fields:', missingFields);
       toast.error(`Please fill in: ${missingFields.join(', ')}`);
       return;
     }
-    
+
     // For editing, images are optional if there are existing ones
     if (!isEditing && images.length === 0) {
       console.log('❌ No images');
       toast.error('Please add at least one image');
       return;
     }
-    
     if (isEditing && images.length === 0 && existingImageUrls.length === 0) {
       console.log('❌ No images in edit mode');
       toast.error('Please add at least one image');
@@ -348,20 +337,15 @@ const PostItemNew: React.FC = () => {
     }
 
     // Require at least one subcategory across the selected categories
-    const totalSelectedSubcats = Object.values(formData.lookingForSubcategories || {}).reduce(
-      (sum, arr) => sum + ((arr as string[] | undefined)?.length || 0),
-      0
-    );
+    const totalSelectedSubcats = Object.values(formData.lookingForSubcategories || {}).reduce((sum, arr) => sum + ((arr as string[] | undefined)?.length || 0), 0);
     if (totalSelectedSubcats === 0) {
       toast.error("Please select at least one subcategory you're looking for");
       return;
     }
-
     if (formData.lookingForConditions.length === 0) {
       toast.error("Please select at least one condition you're looking for");
       return;
     }
-
     if (formData.lookingForPriceRanges.length === 0) {
       toast.error("Please select at least one price range you're looking for");
       return;
@@ -370,17 +354,14 @@ const PostItemNew: React.FC = () => {
     // Check image originality before proceeding (unless user already confirmed)
     if (!proceedWithSubmit && images.length > 0) {
       const checkResult = await checkImageOriginality(images[0]);
-      
       if (!checkResult.isOriginal) {
         setImageWarningMessage(checkResult.warning || 'This image appears on multiple websites. Please ensure you own the rights to this photo.');
         setShowImageWarning(true);
         return; // Stop here and wait for user decision
       }
     }
-
     console.log('✅ Validation passed, submitting...');
     setIsSubmitting(true);
-    
     try {
       // Upload new images if any
       let newImageUrls: string[] = [];
@@ -389,18 +370,16 @@ const PostItemNew: React.FC = () => {
         newImageUrls = await uploadImages();
         console.log('✅ New images uploaded:', newImageUrls);
       }
-      
+
       // Combine existing and new image URLs
       const allImageUrls = [...existingImageUrls, ...newImageUrls];
-      
+
       // Parse price range
       const [minPrice, maxPrice] = formData.priceRange.split('-').map(p => parseFloat(p.trim()));
-      
+
       // Flatten subcategories for tags
       const subcategoryTags = Object.values(formData.lookingForSubcategories).flat();
       const allTags = formData.subcategory ? [formData.subcategory, ...subcategoryTags] : subcategoryTags;
-      
-      
       console.log('💾 SUBMISSION DEBUG: Form data before save:');
       console.log('🔍 lookingForDescription:', formData.lookingForDescription);
       console.log('🔍 lookingForCategories:', formData.lookingForCategories);
@@ -408,7 +387,7 @@ const PostItemNew: React.FC = () => {
       console.log('🔍 lookingForPriceRanges:', formData.lookingForPriceRanges);
       console.log('🔍 lookingForSubcategories:', formData.lookingForSubcategories);
       const lookingForPriceRanges = formData.lookingForPriceRanges.map(range => range.replace('$', ''));
-      
+
       // Prepare item data
       const itemData = {
         user_id: user!.id,
@@ -429,44 +408,33 @@ const PostItemNew: React.FC = () => {
         is_hidden: false,
         updated_at: new Date().toISOString()
       };
-      
       console.log('💾 Saving to database:', itemData);
-      
       if (isEditing) {
         // Update existing item
-        const { data, error } = await supabase
-          .from('items')
-          .update(itemData)
-          .eq('id', itemId)
-          .eq('user_id', user!.id)
-          .select()
-          .single();
-        
+        const {
+          data,
+          error
+        } = await supabase.from('items').update(itemData).eq('id', itemId).eq('user_id', user!.id).select().single();
         if (error) {
           console.error('❌ Update error:', error);
           throw new Error(`Failed to update item: ${error.message}`);
         }
-        
         console.log('✅ Item updated successfully:', data);
         toast.success('Item updated successfully!');
       } else {
         // Insert new item
-        const { data, error } = await supabase
-          .from('items')
-          .insert(itemData)
-          .select()
-          .single();
-        
+        const {
+          data,
+          error
+        } = await supabase.from('items').insert(itemData).select().single();
         if (error) {
           console.error('❌ Insert error:', error);
           throw new Error(`Failed to save item: ${error.message}`);
         }
-        
         console.log('✅ Item created successfully:', data);
         toast.success('Item posted successfully!');
       }
       navigate('/home');
-      
     } catch (error) {
       console.error('❌ Submission error:', error);
       toast.error(error instanceof Error ? error.message : `Failed to ${isEditing ? 'update' : 'post'} item. Please try again.`);
@@ -475,24 +443,18 @@ const PostItemNew: React.FC = () => {
       setProceedWithSubmit(false); // Reset for next submission
     }
   };
-
   if (!user) {
     return <div>Please log in to {isEditing ? 'edit' : 'post'} an item.</div>;
   }
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Loading item data...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       <div className="container mx-auto px-4 pt-24 pb-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -500,7 +462,7 @@ const PostItemNew: React.FC = () => {
           <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Package className="h-6 w-6" />
+              
               {isEditing ? 'Edit Your Item' : 'What You\'re Offering'}
             </CardTitle>
             <p className="text-muted-foreground mt-2">{isEditing ? 'Update your item details' : 'Tell us about the item you want to trade'}</p>
@@ -512,19 +474,9 @@ const PostItemNew: React.FC = () => {
             {/* Images */}
             <div className="space-y-2">
               <Label>Images * ({images.length} uploaded)</Label>
-              <div 
-                className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors"
-                onClick={handleImageClick}
-              >
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors" onClick={handleImageClick}>
                 <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="image-upload"
-                />
+                <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload" />
                 <div className="text-sm text-muted-foreground hover:text-foreground">
                   Click to upload images or drag and drop
                 </div>
@@ -534,125 +486,82 @@ const PostItemNew: React.FC = () => {
               </div>
               
               {/* Existing Images Display */}
-              {existingImageUrls.length > 0 && (
-                <div className="space-y-2">
+              {existingImageUrls.length > 0 && <div className="space-y-2">
                   <Label>Current Images ({existingImageUrls.length})</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {existingImageUrls.map((url, idx) => (
-                      <div key={idx} className="relative group">
-                        <img
-                          src={url}
-                          alt={`Current ${idx + 1}`}
-                          className="w-full h-32 object-cover rounded-lg border"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeExistingImage(url)}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                        >
+                    {existingImageUrls.map((url, idx) => <div key={idx} className="relative group">
+                        <img src={url} alt={`Current ${idx + 1}`} className="w-full h-32 object-cover rounded-lg border" />
+                        <button type="button" onClick={() => removeExistingImage(url)} className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600">
                           <X className="w-4 h-4" />
                         </button>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
-                </div>
-              )}
+                </div>}
               
               {/* New Images Display */}
-              {images.length > 0 && (
-                <div className="space-y-2">
+              {images.length > 0 && <div className="space-y-2">
                   <Label>New Images ({images.length})</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-                  {images.map((img, idx) => (
-                    <div key={idx} className="relative group">
-                      <img
-                        src={URL.createObjectURL(img)}
-                        alt={`Preview ${idx + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(idx)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                      >
+                  {images.map((img, idx) => <div key={idx} className="relative group">
+                      <img src={URL.createObjectURL(img)} alt={`Preview ${idx + 1}`} className="w-full h-32 object-cover rounded-lg border" />
+                      <button type="button" onClick={() => removeImage(idx)} className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600">
                         <X className="w-4 h-4" />
                       </button>
                       <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 rounded-b-lg truncate">
                         {img.name}
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                   </div>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                placeholder="Enter item title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-              />
+              <Input id="title" placeholder="Enter item title" value={formData.title} onChange={e => handleInputChange('title', e.target.value)} />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe your item, its condition, and what you're looking to trade for."
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                rows={4}
-              />
+              <Textarea id="description" placeholder="Describe your item, its condition, and what you're looking to trade for." value={formData.description} onChange={e => handleInputChange('description', e.target.value)} rows={4} />
             </div>
 
             {/* Category */}
             <div className="space-y-2">
               <Label>Category *</Label>
-              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+              <Select value={formData.category} onValueChange={value => handleInputChange('category', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.keys(categories).map((cat) => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                  ))}
+                  {Object.keys(categories).map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
 
             {/* Subcategory */}
-            {formData.category && (
-              <div className="space-y-2">
+            {formData.category && <div className="space-y-2">
                 <Label>Subcategory</Label>
-                <Select value={formData.subcategory} onValueChange={(value) => handleInputChange('subcategory', value)}>
+                <Select value={formData.subcategory} onValueChange={value => handleInputChange('subcategory', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a subcategory" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories[formData.category as keyof typeof categories]?.map((subcat) => (
-                      <SelectItem key={subcat} value={subcat}>{subcat}</SelectItem>
-                    ))}
+                    {categories[formData.category as keyof typeof categories]?.map(subcat => <SelectItem key={subcat} value={subcat}>{subcat}</SelectItem>)}
                   </SelectContent>
                 </Select>
-              </div>
-            )}
+              </div>}
 
             {/* Condition */}
             <div className="space-y-2">
               <Label>Condition *</Label>
-              <Select value={formData.condition} onValueChange={(value) => handleInputChange('condition', value)}>
+              <Select value={formData.condition} onValueChange={value => handleInputChange('condition', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select condition" />
                 </SelectTrigger>
                 <SelectContent>
-                  {conditions.map((condition) => (
-                    <SelectItem key={condition} value={condition}>{condition}</SelectItem>
-                  ))}
+                  {conditions.map(condition => <SelectItem key={condition} value={condition}>{condition}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
@@ -660,14 +569,12 @@ const PostItemNew: React.FC = () => {
             {/* Price Range */}
             <div className="space-y-2">
               <Label>Price Range *</Label>
-              <Select value={formData.priceRange} onValueChange={(value) => handleInputChange('priceRange', value)}>
+              <Select value={formData.priceRange} onValueChange={value => handleInputChange('priceRange', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select price range" />
                 </SelectTrigger>
                 <SelectContent>
-                  {priceRanges.map((range) => (
-                    <SelectItem key={range} value={range}>${range}</SelectItem>
-                  ))}
+                  {priceRanges.map(range => <SelectItem key={range} value={range}>${range}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
@@ -679,7 +586,7 @@ const PostItemNew: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Package className="h-6 w-6" />
+                
                 What You're Looking For
               </CardTitle>
               <p className="text-muted-foreground mt-2">Describe what you'd like to receive in return</p>
@@ -690,36 +597,20 @@ const PostItemNew: React.FC = () => {
               <div className="space-y-2">
                 <Label>Categories you're interested in</Label>
                 <div className="space-y-3">
-                  {Object.keys(categories).map((cat) => (
-                    <div key={cat} className="space-y-2">
+                  {Object.keys(categories).map(cat => <div key={cat} className="space-y-2">
                       <label className="flex items-center space-x-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={formData.lookingForCategories.includes(cat)}
-                          onChange={() => handleArrayToggle('lookingForCategories', cat)}
-                          className="rounded"
-                        />
+                        <input type="checkbox" checked={formData.lookingForCategories.includes(cat)} onChange={() => handleArrayToggle('lookingForCategories', cat)} className="rounded" />
                         <span className="text-sm font-medium">{cat}</span>
                       </label>
                       
                       {/* Subcategories - Show when category is selected */}
-                      {formData.lookingForCategories.includes(cat) && (
-                        <div className="ml-6 grid grid-cols-1 gap-1 bg-muted/30 p-3 rounded-lg">
-                          {categories[cat as keyof typeof categories].map((subcat) => (
-                            <label key={subcat} className="flex items-center space-x-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={formData.lookingForSubcategories[cat]?.includes(subcat) || false}
-                                onChange={() => handleSubcategoryToggle(cat, subcat)}
-                                className="rounded text-xs"
-                              />
+                      {formData.lookingForCategories.includes(cat) && <div className="ml-6 grid grid-cols-1 gap-1 bg-muted/30 p-3 rounded-lg">
+                          {categories[cat as keyof typeof categories].map(subcat => <label key={subcat} className="flex items-center space-x-2 cursor-pointer">
+                              <input type="checkbox" checked={formData.lookingForSubcategories[cat]?.includes(subcat) || false} onChange={() => handleSubcategoryToggle(cat, subcat)} className="rounded text-xs" />
                               <span className="text-xs text-muted-foreground">{subcat}</span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                            </label>)}
+                        </div>}
+                    </div>)}
                 </div>
               </div>
 
@@ -727,17 +618,10 @@ const PostItemNew: React.FC = () => {
               <div className="space-y-2">
                 <Label>Acceptable conditions</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {conditions.map((condition) => (
-                    <label key={condition} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.lookingForConditions.includes(condition)}
-                        onChange={() => handleArrayToggle('lookingForConditions', condition)}
-                        className="rounded"
-                      />
+                  {conditions.map(condition => <label key={condition} className="flex items-center space-x-2 cursor-pointer">
+                      <input type="checkbox" checked={formData.lookingForConditions.includes(condition)} onChange={() => handleArrayToggle('lookingForConditions', condition)} className="rounded" />
                       <span className="text-sm">{condition}</span>
-                    </label>
-                  ))}
+                    </label>)}
                 </div>
               </div>
 
@@ -745,17 +629,10 @@ const PostItemNew: React.FC = () => {
               <div className="space-y-2">
                 <Label>Price ranges you're interested in</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {priceRanges.map((range) => (
-                    <label key={range} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.lookingForPriceRanges.includes(range)}
-                        onChange={() => handleArrayToggle('lookingForPriceRanges', range)}
-                        className="rounded"
-                      />
+                  {priceRanges.map(range => <label key={range} className="flex items-center space-x-2 cursor-pointer">
+                      <input type="checkbox" checked={formData.lookingForPriceRanges.includes(range)} onChange={() => handleArrayToggle('lookingForPriceRanges', range)} className="rounded" />
                       <span className="text-sm">${range}</span>
-                    </label>
-                  ))}
+                    </label>)}
                 </div>
               </div>
             </CardContent>
@@ -764,13 +641,8 @@ const PostItemNew: React.FC = () => {
 
         {/* Submit Button - Full Width Below Both Columns */}
         <div className="mt-8">
-          <Button 
-            onClick={handleSubmit} 
-            disabled={isSubmitting}
-            className="w-full"
-            size="lg"
-          >
-            {isSubmitting ? (isEditing ? 'Updating...' : 'Posting...') : (isEditing ? 'Update Item' : 'Post Item')}
+          <Button onClick={handleSubmit} disabled={isSubmitting} className="w-full" size="lg">
+            {isSubmitting ? isEditing ? 'Updating...' : 'Posting...' : isEditing ? 'Update Item' : 'Post Item'}
           </Button>
         </div>
       </div>
@@ -792,17 +664,17 @@ const PostItemNew: React.FC = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => {
-              setShowImageWarning(false);
-              setProceedWithSubmit(false);
-            }}>
+            setShowImageWarning(false);
+            setProceedWithSubmit(false);
+          }}>
               Cancel Posting
             </AlertDialogCancel>
             <AlertDialogAction onClick={() => {
-              setShowImageWarning(false);
-              setProceedWithSubmit(true);
-              // Trigger submit again now that user confirmed
-              setTimeout(() => handleSubmit(), 100);
-            }}>
+            setShowImageWarning(false);
+            setProceedWithSubmit(true);
+            // Trigger submit again now that user confirmed
+            setTimeout(() => handleSubmit(), 100);
+          }}>
               I Own This Image - Continue
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -810,8 +682,6 @@ const PostItemNew: React.FC = () => {
       </AlertDialog>
       
       <SupportChat />
-    </div>
-  );
+    </div>;
 };
-
 export default PostItemNew;
