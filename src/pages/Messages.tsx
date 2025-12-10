@@ -94,6 +94,9 @@ const Messages = () => {
     if (location.state?.demoTrade && location.state?.demoData) {
       setIsDemoTrade(true);
       setDemoTradeData(location.state.demoData);
+      // Clear any existing selectedPair to prevent showing wrong items
+      resetSelectedPair();
+      setActiveConversation(null as any);
       // Switch to chat view on mobile/tablet
       if (isMobile || isTablet) {
         setCurrentView('chat');
