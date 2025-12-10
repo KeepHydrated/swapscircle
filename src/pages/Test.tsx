@@ -238,7 +238,7 @@ const Test: React.FC = () => {
               {/* Matched item thumbnail */}
               {match.myItemImage && match.myItemImage !== '/placeholder.svg' && (
                 <div className="absolute top-3 left-3 z-10">
-                  <div className="w-10 h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-background">
+                  <div className="w-14 h-14 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
                     <img 
                       src={match.myItemImage} 
                       alt="Your matched item" 
