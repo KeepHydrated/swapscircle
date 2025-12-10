@@ -193,13 +193,6 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
         {/* Header */}
         <div className="p-6 border-b border-border bg-background flex-shrink-0">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/80 transition-colors z-10"
-            aria-label="Close"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
           
           <div className="flex items-start gap-4">
             {targetItem?.image && (
