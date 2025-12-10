@@ -110,7 +110,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="flex items-center justify-center md:justify-between">
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
-                {menuItems.length > 0 && (isOwnProfile || !isMobile) && (
+                {menuItems.length > 0 && isOwnProfile && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-8 w-8">
