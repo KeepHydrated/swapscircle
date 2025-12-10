@@ -41,7 +41,7 @@ export const RecommendedTradesSlider = () => {
     return (
       <div className="w-full">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-foreground">Recommended Items</h2>
+          <h2 className="text-xl font-bold text-foreground">Trending Items</h2>
         </div>
         <div className="overflow-x-auto overflow-y-hidden pb-2">
           <div className="flex gap-3 min-w-max">
@@ -61,7 +61,7 @@ export const RecommendedTradesSlider = () => {
   return (
     <div className="w-full">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">Recommended Items</h2>
+        <h2 className="text-xl font-bold text-foreground">Trending Items</h2>
         <Link to="/" className="text-sm text-primary hover:underline">View all</Link>
       </div>
       
