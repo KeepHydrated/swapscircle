@@ -204,9 +204,9 @@ const handleNextItem = () => {
       <div className="mb-4">
         <div className="flex gap-3">
           <button
-            onClick={() => onSelectItem('item2')}
+            onClick={() => onSelectItem('item1')}
             className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
-              selectedItem === 'item2' 
+              selectedItem === 'item1' 
                 ? 'bg-blue-50 border-blue-200 text-blue-700' 
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
@@ -214,9 +214,9 @@ const handleNextItem = () => {
             Their Item
           </button>
           <button
-            onClick={() => onSelectItem('item1')}
+            onClick={() => onSelectItem('item2')}
             className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
-              selectedItem === 'item1' 
+              selectedItem === 'item2' 
                 ? 'bg-blue-50 border-blue-200 text-blue-700' 
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
