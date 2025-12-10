@@ -184,16 +184,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {/* Action buttons will be rendered here by parent component */}
               <div id="profile-action-buttons" className="hidden md:flex"></div>
             </div>
-            <div className="my-2 flex justify-center md:justify-start">
-              {renderStars(profile.rating)}
+            <div className="my-2 flex items-center justify-center md:justify-start">
+              <Star
+                size={20}
+                fill="#FFD700"
+                color="#FFD700"
+                className="inline-block"
+              />
               {isMobile ? (
-                <span className="ml-2 text-gray-600">
+                <span className="ml-1 text-gray-600">
                   {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
                 </span>
               ) : (
                 <Button 
                   variant="link" 
-                  className="ml-2 p-0 h-auto text-gray-600 hover:text-primary"
+                  className="ml-1 p-0 h-auto text-gray-600 hover:text-primary"
                   onClick={onReviewsClick}
                 >
                   {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
