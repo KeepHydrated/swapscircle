@@ -416,11 +416,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     onClose();
                     navigate(`/item/${item.id}`);
                   }}
-                  className="w-12 h-12 bg-green-500 rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-green-600 cursor-pointer"
+                  className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
                   aria-label="View item page"
                   title="View item page"
                 >
-                  <ExternalLink className="w-5 h-5 text-white" />
+                  <ExternalLink className="w-5 h-5 text-gray-500" />
                 </button>
                 {/* Suggest Trade button - only show if not own item */}
                 {!disableActions && fullItem?.user_id && (
