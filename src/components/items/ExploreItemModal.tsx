@@ -25,6 +25,7 @@ interface ExploreItemModalProps {
   onLikeAll?: (id: string) => void;
   onRejectAll?: (id: string) => void;
   onReport?: (id: string) => void;
+  matchedItemImage?: string; // Image of user's matched item to display
 }
 
 interface UserProfile {
@@ -51,6 +52,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   onLikeAll,
   onRejectAll,
   onReport,
+  matchedItemImage,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -476,6 +478,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>
+              </div>
+            )}
+
+            {/* Matched item thumbnail */}
+            {matchedItemImage && (
+              <div className="absolute bottom-4 right-4 z-20">
+                <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-background">
+                  <img src={matchedItemImage} alt="Your matched item" className="w-full h-full object-cover" />
+                </div>
               </div>
             )}
 

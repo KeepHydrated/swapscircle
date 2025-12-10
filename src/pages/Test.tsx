@@ -290,6 +290,7 @@ const Test: React.FC = () => {
         onNavigateNext={handleNavigateNext}
         currentIndex={selectedIndex}
         totalItems={mockMatches.length}
+        matchedItemImage={mockMatches[selectedIndex]?.myItemImage}
       />
     </MainLayout>
   );
