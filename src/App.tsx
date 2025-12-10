@@ -24,7 +24,7 @@ import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Likes from "./pages/Likes";
-import Test from "./pages/Test";
+
 import Test2 from "./pages/Test2";
 import TestPage from "./pages/TestPage";
 
@@ -127,7 +127,7 @@ const AppContent = () => {
         } />
         <Route path="/test" element={<TestPage />} />
         <Route path="/test2" element={<Test2 />} />
-        <Route path="/matches" element={<Test />} />
+        <Route path="/matches" element={<Test2 />} />
         <Route path="/search" element={<SearchPage />} />
         
          <Route path="*" element={<NotFound />} />
