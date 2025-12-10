@@ -215,7 +215,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {(profile.tradesCompleted || profile.tradesCompleted === 0) && (
                 <div className="flex items-center">
                   <Repeat className="h-4 w-4 mr-1" />
-                  <span>{profile.tradesCompleted} trade{profile.tradesCompleted !== 1 ? 's' : ''} completed</span>
+                  <span>{profile.tradesCompleted} trade{profile.tradesCompleted !== 1 ? 's' : ''}</span>
                 </div>
               )}
               {friendCount > 0 && (
