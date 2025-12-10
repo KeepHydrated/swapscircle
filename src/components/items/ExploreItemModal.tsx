@@ -513,18 +513,18 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       // Pre-select matched item and open modal for quick confirm
                       setShowTradeModal(true);
                     }}
-                    className="w-12 h-12 bg-green-500 rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-green-600 cursor-pointer"
+                    className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
                     aria-label="Accept with matched item"
                     title="Accept with matched item"
                   >
-                    <Check className="w-5 h-5 text-white" />
+                    <Check className="w-5 h-5 text-green-500" />
                   </button>
                 )}
                 {/* Suggest Trade button - only show if not own item */}
                 {!disableActions && fullItem?.user_id && (
                   <button
                     onClick={() => setShowTradeModal(true)}
-                    className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer border border-green-500"
+                    className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
                     aria-label="Suggest a Trade"
                     title="Suggest a Trade"
                   >
