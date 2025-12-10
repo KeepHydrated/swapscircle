@@ -7,7 +7,14 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { ReportButton } from '@/components/profile/ReportButton';
 import BlockUserButton from '@/components/profile/BlockUserButton';
-import { Star, UserX } from 'lucide-react';
+import { Star, UserX, MoreVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { MatchItem } from '@/types/item';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
@@ -499,12 +506,46 @@ const OtherPersonProfile: React.FC = () => {
                 </div>
               )}
               
-              {/* Friend Request button only */}
-              <FriendRequestButton 
-                userId={userId || "profile1"} 
-                initialStatus="none" 
-                onStatusChange={(status) => setIsFriend(status === 'accepted')}
-              />
+              {/* 3-dot menu and Friend Request button together */}
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9">
+                      <MoreVertical className="h-5 w-5 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="center" className="bg-background border shadow-md z-50">
+                    <DropdownMenuItem onClick={async () => {
+                      try {
+                        const profileUrl = `${window.location.origin}/other-person-profile?userId=${userId}`;
+                        await navigator.clipboard.writeText(profileUrl);
+                        toast.success('Profile link copied to clipboard!');
+                      } catch (error) {
+                        toast.error('Failed to copy profile link');
+                      }
+                    }}>
+                      Copy Profile Link
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => setShowBlockDialog(true)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      {isUserBlocked ? 'Unblock User' : 'Block User'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => setShowReportModal(true)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      Report User
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <FriendRequestButton 
+                  userId={userId || "profile1"} 
+                  initialStatus="none" 
+                  onStatusChange={(status) => setIsFriend(status === 'accepted')}
+                />
+              </div>
             </div>
           ) : (
             /* Desktop/Tablet: Portal to profile header */
