@@ -33,6 +33,7 @@ const MatchesGrid: React.FC<MatchesGridProps> = ({
                 id={match.id}
                 name={match.name}
                 image={match.image}
+                image_urls={match.image_urls}
                 isMatch={true}
                 liked={likedItems[match.id] || match.liked}
                 onSelect={onOpenModal}
