@@ -518,13 +518,13 @@ const PostItemNew: React.FC = () => {
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" placeholder="Enter item title" value={formData.title} onChange={e => handleInputChange('title', e.target.value)} />
+              <Input id="title" value={formData.title} onChange={e => handleInputChange('title', e.target.value)} />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Describe your item, its condition, and what you're looking to trade for." value={formData.description} onChange={e => handleInputChange('description', e.target.value)} rows={4} />
+              <Textarea id="description" value={formData.description} onChange={e => handleInputChange('description', e.target.value)} rows={4} />
             </div>
 
             {/* Category */}
