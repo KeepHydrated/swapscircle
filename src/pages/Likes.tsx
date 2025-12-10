@@ -196,9 +196,6 @@ const Likes = () => {
               <Heart className="w-6 h-6 text-red-500" fill="red" />
               Liked Items
             </h1>
-            <p className="text-muted-foreground mt-1">
-              Items you've liked ({likedItems.length})
-            </p>
           </div>
 
           {/* Loading State */}
