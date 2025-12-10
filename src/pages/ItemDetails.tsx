@@ -150,10 +150,10 @@ const ItemDetails: React.FC = () => {
     <MainLayout>
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="grid md:grid-cols-2 gap-6">
-          {/* LEFT COLUMN - What You're Offering */}
+          {/* LEFT COLUMN - What They're Offering */}
           <Card>
             <CardHeader>
-              <CardTitle>What You're Offering</CardTitle>
+              <CardTitle>What They're Offering</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Title */}
@@ -224,10 +224,10 @@ const ItemDetails: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* RIGHT COLUMN - What You're Looking For */}
+          {/* RIGHT COLUMN - What They're Looking For */}
           <Card>
             <CardHeader>
-              <CardTitle>What You're Looking For</CardTitle>
+              <CardTitle>What They're Looking For</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Description */}
