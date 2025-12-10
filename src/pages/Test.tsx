@@ -21,6 +21,7 @@ const mockMatches = [
     priceRangeMax: 400,
     condition: 'Good',
     myItemImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200',
+    myItemId: 'my-item-1', // ID of the user's matched item
     category: 'Sports & Outdoors',
     description: 'Reliable mountain bike perfect for trails.',
     user_id: 'demo-user-1',
@@ -38,6 +39,7 @@ const mockMatches = [
     priceRangeMax: 600,
     condition: 'Excellent',
     myItemImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200',
+    myItemId: 'my-item-2',
     category: 'Electronics',
     description: 'Professional DSLR camera with multiple lenses.',
     user_id: 'demo-user-2',
@@ -56,6 +58,7 @@ const mockMatches = [
     priceRangeMax: 700,
     condition: 'Like New',
     myItemImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200',
+    myItemId: 'my-item-3',
     category: 'Entertainment',
     description: 'Classic Fender electric guitar with rich tone.',
     user_id: 'demo-user-3',
@@ -72,6 +75,7 @@ const mockMatches = [
     priceRangeMax: 1200,
     condition: 'Good',
     myItemImage: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=200',
+    myItemId: 'my-item-4',
     category: 'Accessories',
     description: 'Collectible vintage Rolex watch.',
     user_id: 'demo-user-4',
@@ -89,6 +93,7 @@ const mockMatches = [
     priceRangeMax: 500,
     condition: 'Excellent',
     myItemImage: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=200',
+    myItemId: 'my-item-5',
     category: 'Electronics',
     description: 'PlayStation 5 with controller.',
     user_id: 'demo-user-5',
@@ -107,6 +112,7 @@ const mockMatches = [
     priceRangeMax: 250,
     condition: 'Good',
     myItemImage: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=200',
+    myItemId: 'my-item-6',
     category: 'Clothing',
     description: 'Genuine leather jacket in great condition.',
     user_id: 'demo-user-6',
@@ -291,6 +297,7 @@ const Test: React.FC = () => {
         currentIndex={selectedIndex}
         totalItems={mockMatches.length}
         matchedItemImage={mockMatches[selectedIndex]?.myItemImage}
+        matchedItemId={mockMatches[selectedIndex]?.myItemId}
       />
     </MainLayout>
   );

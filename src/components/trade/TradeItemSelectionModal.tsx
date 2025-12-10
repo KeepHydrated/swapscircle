@@ -12,13 +12,15 @@ interface TradeItemSelectionModalProps {
   onClose: () => void;
   targetItem: Item | null;
   targetItemOwnerId?: string;
+  preSelectedItemId?: string; // Pre-select a specific item (e.g., matched item)
 }
 
 const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
   isOpen,
   onClose,
   targetItem,
-  targetItemOwnerId
+  targetItemOwnerId,
+  preSelectedItemId
 }) => {
   const [myItems, setMyItems] = useState<Item[]>([]);
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
@@ -26,12 +28,14 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
 
-  // Reset selection when modal opens/closes
+  // Reset selection when modal opens/closes, pre-select if provided
   useEffect(() => {
     if (!isOpen) {
       setSelectedItemIds([]);
+    } else if (preSelectedItemId) {
+      setSelectedItemIds([preSelectedItemId]);
     }
-  }, [isOpen]);
+  }, [isOpen, preSelectedItemId]);
 
   // Fetch user's items
   useEffect(() => {
