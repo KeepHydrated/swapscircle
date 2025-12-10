@@ -9,6 +9,11 @@ const mockMatches = [
     id: '1',
     name: 'Mountain Bike - Trek',
     image: 'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=800',
+    image_urls: [
+      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=800',
+      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800',
+      'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=800',
+    ],
     priceRangeMin: 300,
     priceRangeMax: 400,
     condition: 'Good',
@@ -19,6 +24,10 @@ const mockMatches = [
     id: '2',
     name: 'Digital Camera - Canon',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800',
+    image_urls: [
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800',
+      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800',
+    ],
     priceRangeMin: 450,
     priceRangeMax: 600,
     condition: 'Excellent',
@@ -29,6 +38,11 @@ const mockMatches = [
     id: '3',
     name: 'Electric Guitar - Fender',
     image: 'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=800',
+    image_urls: [
+      'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=800',
+      'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800',
+      'https://images.unsplash.com/photo-1550985616-10810253b84d?w=800',
+    ],
     priceRangeMin: 500,
     priceRangeMax: 700,
     condition: 'Like New',
@@ -39,6 +53,9 @@ const mockMatches = [
     id: '4',
     name: 'Vintage Watch - Rolex',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
+    image_urls: [
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
+    ],
     priceRangeMin: 800,
     priceRangeMax: 1200,
     condition: 'Good',
@@ -49,6 +66,10 @@ const mockMatches = [
     id: '5',
     name: 'Gaming Console - PS5',
     image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800',
+    image_urls: [
+      'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800',
+      'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=800',
+    ],
     priceRangeMin: 400,
     priceRangeMax: 500,
     condition: 'Excellent',
@@ -59,6 +80,11 @@ const mockMatches = [
     id: '6',
     name: 'Leather Jacket',
     image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800',
+    image_urls: [
+      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800',
+      'https://images.unsplash.com/photo-1559551409-dadc959f76b8?w=800',
+      'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?w=800',
+    ],
     priceRangeMin: 150,
     priceRangeMax: 250,
     condition: 'Good',
@@ -104,6 +130,7 @@ const Test: React.FC = () => {
               id={match.id}
               name={match.name}
               image={match.image}
+              image_urls={match.image_urls}
               isMatch={true}
               liked={likedItems[match.id] || match.liked}
               onSelect={handleOpenModal}
@@ -126,6 +153,7 @@ const Test: React.FC = () => {
             id: selectedItem.id,
             name: selectedItem.name,
             image: selectedItem.image,
+            image_urls: selectedItem.image_urls,
             priceRangeMin: selectedItem.priceRangeMin,
             priceRangeMax: selectedItem.priceRangeMax,
             condition: selectedItem.condition,
