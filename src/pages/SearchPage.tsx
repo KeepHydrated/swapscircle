@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X, Check, Heart, Users } from 'lucide-react';
+import { Search, ChevronDown, X, RefreshCw, Heart, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -460,7 +460,7 @@ const SearchPage = () => {
                       }}
                       title="Suggest a Trade"
                     >
-                      <Check className="w-5 h-5 text-white" />
+                      <RefreshCw className="w-5 h-5 text-white" />
                     </button>
                     {/* Like button */}
                     <button 
