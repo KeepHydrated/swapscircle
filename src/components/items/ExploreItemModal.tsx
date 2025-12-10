@@ -411,6 +411,17 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
               <div className="absolute top-4 right-4 flex gap-3 z-20">
+                {/* Suggest Trade button - only show if not own item */}
+                {!disableActions && fullItem?.user_id && (
+                  <button
+                    onClick={() => setShowTradeModal(true)}
+                    className="w-12 h-12 bg-green-500 rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-green-600 cursor-pointer"
+                    aria-label="Suggest a Trade"
+                    title="Suggest a Trade"
+                  >
+                    <RefreshCw className="w-5 h-5 text-white" />
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     onClose();
@@ -479,18 +490,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </div>
                 </div>
                 
-                {/* Suggest Trade Button - only show if not own item */}
-                {!disableActions && fullItem?.user_id && (
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setShowTradeModal(true)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <RefreshCw className="w-5 h-5" />
-                      Suggest a Trade
-                    </button>
-                  </div>
-                )}
                 
                 {/* User profile info */}
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
