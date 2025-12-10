@@ -1,126 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, Check } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { Item } from '@/types/item';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mock matches data
-const mockMatches = [
-  {
-    id: '1',
-    name: 'Mountain Bike - Trek',
-    image: 'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=800',
-    image_urls: [
-      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=800',
-      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800',
-      'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=800',
-    ],
-    priceRangeMin: 300,
-    priceRangeMax: 400,
-    condition: 'Good',
-    myItemImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200',
-    myItemId: 'my-item-1', // ID of the user's matched item
-    category: 'Sports & Outdoors',
-    description: 'Reliable mountain bike perfect for trails.',
-    user_id: 'demo-user-1',
-    isDemo: true,
-  },
-  {
-    id: '2',
-    name: 'Digital Camera - Canon',
-    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800',
-    image_urls: [
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800',
-      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800',
-    ],
-    priceRangeMin: 450,
-    priceRangeMax: 600,
-    condition: 'Excellent',
-    myItemImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200',
-    myItemId: 'my-item-2',
-    category: 'Electronics',
-    description: 'Professional DSLR camera with multiple lenses.',
-    user_id: 'demo-user-2',
-    isDemo: true,
-  },
-  {
-    id: '3',
-    name: 'Electric Guitar - Fender',
-    image: 'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=800',
-    image_urls: [
-      'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=800',
-      'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800',
-      'https://images.unsplash.com/photo-1550985616-10810253b84d?w=800',
-    ],
-    priceRangeMin: 500,
-    priceRangeMax: 700,
-    condition: 'Like New',
-    myItemImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200',
-    myItemId: 'my-item-3',
-    category: 'Entertainment',
-    description: 'Classic Fender electric guitar with rich tone.',
-    user_id: 'demo-user-3',
-    isDemo: true,
-  },
-  {
-    id: '4',
-    name: 'Vintage Watch - Rolex',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
-    image_urls: [
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
-    ],
-    priceRangeMin: 800,
-    priceRangeMax: 1200,
-    condition: 'Good',
-    myItemImage: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=200',
-    myItemId: 'my-item-4',
-    category: 'Accessories',
-    description: 'Collectible vintage Rolex watch.',
-    user_id: 'demo-user-4',
-    isDemo: true,
-  },
-  {
-    id: '5',
-    name: 'Gaming Console - PS5',
-    image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800',
-    image_urls: [
-      'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800',
-      'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=800',
-    ],
-    priceRangeMin: 400,
-    priceRangeMax: 500,
-    condition: 'Excellent',
-    myItemImage: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=200',
-    myItemId: 'my-item-5',
-    category: 'Electronics',
-    description: 'PlayStation 5 with controller.',
-    user_id: 'demo-user-5',
-    isDemo: true,
-  },
-  {
-    id: '6',
-    name: 'Leather Jacket',
-    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800',
-    image_urls: [
-      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800',
-      'https://images.unsplash.com/photo-1559551409-dadc959f76b8?w=800',
-      'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?w=800',
-    ],
-    priceRangeMin: 150,
-    priceRangeMax: 250,
-    condition: 'Good',
-    myItemImage: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=200',
-    myItemId: 'my-item-6',
-    category: 'Clothing',
-    description: 'Genuine leather jacket in great condition.',
-    user_id: 'demo-user-6',
-    isDemo: true,
-  },
-];
+interface MatchItem {
+  id: string;
+  name: string;
+  image: string;
+  image_urls: string[];
+  priceRangeMin: number;
+  priceRangeMax: number;
+  condition: string;
+  myItemImage: string;
+  myItemId: string;
+  category: string;
+  description: string;
+  user_id: string;
+}
 
 const Test: React.FC = () => {
+  const [matches, setMatches] = useState<MatchItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -128,13 +32,86 @@ const Test: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleLike = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  // Fetch real items from database
+  useEffect(() => {
+    const fetchMatches = async () => {
+      setLoading(true);
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        const currentUserId = session?.session?.user?.id;
+
+        // Fetch items that are NOT owned by the current user (to simulate matches)
+        let query = supabase
+          .from('items')
+          .select('*')
+          .eq('is_available', true)
+          .eq('is_hidden', false)
+          .not('image_url', 'is', null)
+          .limit(10);
+
+        if (currentUserId) {
+          query = query.neq('user_id', currentUserId);
+        }
+
+        const { data: otherItems, error: otherError } = await query;
+
+        if (otherError) {
+          console.error('Error fetching items:', otherError);
+          return;
+        }
+
+        // Fetch current user's items (to use as "my item" in matches)
+        let myItems: any[] = [];
+        if (currentUserId) {
+          const { data: userItems, error: userError } = await supabase
+            .from('items')
+            .select('*')
+            .eq('user_id', currentUserId)
+            .eq('is_available', true)
+            .limit(5);
+
+          if (!userError && userItems) {
+            myItems = userItems;
+          }
+        }
+
+        // Create match pairs
+        const matchData: MatchItem[] = (otherItems || []).map((item, index) => {
+          const myItem = myItems[index % Math.max(myItems.length, 1)] || null;
+          return {
+            id: item.id,
+            name: item.name,
+            image: item.image_url || '/placeholder.svg',
+            image_urls: item.image_urls || [item.image_url].filter(Boolean),
+            priceRangeMin: item.price_range_min || 0,
+            priceRangeMax: item.price_range_max || 0,
+            condition: item.condition || 'Unknown',
+            myItemImage: myItem?.image_url || '/placeholder.svg',
+            myItemId: myItem?.id || '',
+            category: item.category || 'Other',
+            description: item.description || '',
+            user_id: item.user_id,
+          };
+        });
+
+        setMatches(matchData);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatches();
+  }, []);
+
+  const handleLike = (id: string) => {
     if (!user) {
       navigate('/auth');
       return;
     }
-    setLikedItems(prev => {
+    
+    setLikedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -145,63 +122,44 @@ const Test: React.FC = () => {
     });
   };
 
-  const handleRequestTrade = (item: typeof mockMatches[0], e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleRequestTrade = (match: MatchItem) => {
     if (!user) {
       navigate('/auth');
       return;
     }
-    // For demo, navigate to messages with demo trade data
-    navigate('/messages', { 
-      state: { 
-        demoTrade: true,
-        demoData: {
-          theirItem: {
-            name: item.name,
-            image: item.image,
-            image_url: item.image,
-            image_urls: item.image_urls,
-            description: item.description,
-            category: item.category,
-            condition: item.condition,
-            price_range_min: item.priceRangeMin,
-            price_range_max: item.priceRangeMax
+    
+    navigate('/messages', {
+      state: {
+        initiateTradeWith: {
+          item: {
+            id: match.id,
+            name: match.name,
+            image: match.image,
           },
-          myItem: {
-            name: 'Your Item',
-            image: item.myItemImage,
-            image_url: item.myItemImage,
-            image_urls: [item.myItemImage],
-            description: 'Your item for trade',
-            category: 'Your Items',
-            condition: 'Good'
-          },
-          partnerProfile: {
-            id: item.user_id,
-            username: 'Demo User',
-            avatar_url: null,
-            created_at: '2023-06-15T10:30:00Z'
+          owner: {
+            id: match.user_id,
+            name: 'User',
           }
         }
-      } 
+      }
     });
   };
 
-  const convertToItem = (match: typeof mockMatches[0]): Item => ({
+  const convertToItem = (match: MatchItem): Item => ({
     id: match.id,
     name: match.name,
     image: match.image,
     image_urls: match.image_urls,
-    category: match.category,
-    condition: match.condition,
-    description: match.description,
     priceRangeMin: match.priceRangeMin,
     priceRangeMax: match.priceRangeMax,
+    condition: match.condition,
+    category: match.category,
+    description: match.description,
     user_id: match.user_id,
   });
 
-  const handleCardClick = (item: typeof mockMatches[0], index: number) => {
-    setSelectedItem(convertToItem(item));
+  const handleCardClick = (match: MatchItem, index: number) => {
+    setSelectedItem(convertToItem(match));
     setSelectedIndex(index);
     setIsModalOpen(true);
   };
@@ -210,80 +168,109 @@ const Test: React.FC = () => {
     if (selectedIndex > 0) {
       const newIndex = selectedIndex - 1;
       setSelectedIndex(newIndex);
-      setSelectedItem(convertToItem(mockMatches[newIndex]));
+      setSelectedItem(convertToItem(matches[newIndex]));
     }
   };
 
   const handleNavigateNext = () => {
-    if (selectedIndex < mockMatches.length - 1) {
+    if (selectedIndex < matches.length - 1) {
       const newIndex = selectedIndex + 1;
       setSelectedIndex(newIndex);
-      setSelectedItem(convertToItem(mockMatches[newIndex]));
+      setSelectedItem(convertToItem(matches[newIndex]));
     }
   };
 
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">Your Matches</h1>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {mockMatches.map((item, index) => (
-            <div key={item.id}>
-              <div 
-                className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                onClick={() => handleCardClick(item, index)}
-              >
-                <div className="relative aspect-[4/3]">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                  
-                  {/* Action buttons */}
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    <button 
-                      className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => handleRequestTrade(item, e)}
-                      title="Request Trade"
-                    >
-                      <Check className="w-5 h-5 text-white" />
-                    </button>
-                    <button 
-                      className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => handleLike(item.id, e)}
-                      title={likedItems.has(item.id) ? "Unlike item" : "Like item"}
-                    >
-                      <Heart 
-                        className={`w-5 h-5 transition-colors ${
-                          likedItems.has(item.id) 
-                            ? 'text-red-500 fill-red-500' 
-                            : 'text-muted-foreground hover:text-red-500'
-                        }`} 
-                      />
-                    </button>
+      <h1 className="text-2xl font-bold mb-6">Your Matches</h1>
+      
+      {matches.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <p>No matches found. Try posting some items first!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {matches.map((match, index) => (
+            <div
+              key={match.id}
+              className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+              onClick={() => handleCardClick(match, index)}
+            >
+              {/* Matched item thumbnail */}
+              {match.myItemImage && match.myItemImage !== '/placeholder.svg' && (
+                <div className="absolute top-3 left-3 z-10">
+                  <div className="w-10 h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-background">
+                    <img 
+                      src={match.myItemImage} 
+                      alt="Your matched item" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
+                </div>
+              )}
 
-                  {/* My Item Thumbnail */}
-                  <div className="absolute bottom-2 right-2">
-                    <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
-                      <img src={item.myItemImage} alt="Your item" className="w-full h-full object-cover" />
-                    </div>
-                  </div>
+              {/* Image */}
+              <div className="aspect-square relative overflow-hidden">
+                <img
+                  src={match.image}
+                  alt={match.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              {/* Content */}
+              <div className="p-3">
+                <h3 className="font-semibold text-sm truncate">{match.name}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    ${match.priceRangeMin} - ${match.priceRangeMax}
+                  </span>
+                  <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                    {match.condition}
+                  </span>
                 </div>
-                <div className="p-4">
-                  <h3 className="text-base font-semibold text-foreground mb-1 truncate">{item.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
-                      ${item.priceRangeMin} - ${item.priceRangeMax}
-                    </p>
-                    <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
-                      {item.condition}
-                    </span>
-                  </div>
-                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRequestTrade(match);
+                  }}
+                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  aria-label="Suggest trade"
+                >
+                  <Check className="w-4 h-4 text-green-500" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLike(match.id);
+                  }}
+                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  aria-label={likedItems.has(match.id) ? "Unlike" : "Like"}
+                >
+                  <Heart 
+                    className="w-4 h-4 text-red-500" 
+                    fill={likedItems.has(match.id) ? "red" : "none"}
+                  />
+                </button>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      )}
 
       <ExploreItemModal
         open={isModalOpen}
@@ -295,9 +282,9 @@ const Test: React.FC = () => {
         onNavigatePrev={handleNavigatePrev}
         onNavigateNext={handleNavigateNext}
         currentIndex={selectedIndex}
-        totalItems={mockMatches.length}
-        matchedItemImage={mockMatches[selectedIndex]?.myItemImage}
-        matchedItemId={mockMatches[selectedIndex]?.myItemId}
+        totalItems={matches.length}
+        matchedItemImage={matches[selectedIndex]?.myItemImage}
+        matchedItemId={matches[selectedIndex]?.myItemId}
       />
     </MainLayout>
   );
