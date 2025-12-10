@@ -501,7 +501,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     aria-label="Suggest a Trade"
                     title="Suggest a Trade"
                   >
-                    <Check className="w-5 h-5 text-white" />
+                    <Repeat className="w-5 h-5 text-white" />
                   </button>
                 )}
                 <button
