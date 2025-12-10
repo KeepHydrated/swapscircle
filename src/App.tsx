@@ -129,7 +129,7 @@ const AppContent = () => {
         <Route path="/test" element={<Test />} />
         <Route path="/test2" element={<Test2 />} />
         <Route path="/testpage" element={<TestPage />} />
-        <Route path="/matches" element={<Test2 />} />
+        <Route path="/matches" element={<Test />} />
         <Route path="/search" element={<SearchPage />} />
         
          <Route path="*" element={<NotFound />} />
