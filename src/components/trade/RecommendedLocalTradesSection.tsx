@@ -73,7 +73,7 @@ const RecommendedLocalTradesSection = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <MapPin className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Recommended Local Trades</h2>
+            <h2 className="text-2xl font-bold text-foreground">Local Items</h2>
           </div>
           <p className="text-muted-foreground">
             Discover great trading opportunities near you
