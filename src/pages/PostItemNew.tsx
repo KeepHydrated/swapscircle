@@ -532,7 +532,7 @@ const PostItemNew: React.FC = () => {
               <Label>Category *</Label>
               <Select value={formData.category} onValueChange={value => handleInputChange('category', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.keys(categories).map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
@@ -545,7 +545,7 @@ const PostItemNew: React.FC = () => {
                 <Label>Subcategory</Label>
                 <Select value={formData.subcategory} onValueChange={value => handleInputChange('subcategory', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a subcategory" />
+                    <SelectValue placeholder="" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories[formData.category as keyof typeof categories]?.map(subcat => <SelectItem key={subcat} value={subcat}>{subcat}</SelectItem>)}
@@ -558,7 +558,7 @@ const PostItemNew: React.FC = () => {
               <Label>Condition *</Label>
               <Select value={formData.condition} onValueChange={value => handleInputChange('condition', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select condition" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
                   {conditions.map(condition => <SelectItem key={condition} value={condition}>{condition}</SelectItem>)}
@@ -571,7 +571,7 @@ const PostItemNew: React.FC = () => {
               <Label>Price Range *</Label>
               <Select value={formData.priceRange} onValueChange={value => handleInputChange('priceRange', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select price range" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
                   {priceRanges.map(range => <SelectItem key={range} value={range}>${range}</SelectItem>)}
