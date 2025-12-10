@@ -434,20 +434,18 @@ const UserProfile: React.FC = () => {
               value="available" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
-              Items For Trade
+              Items
             </TabsTrigger>
             <TabsTrigger 
               value="reviews" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
-              <Star className="mr-2 h-4 w-4" />
               Reviews
             </TabsTrigger>
             <TabsTrigger 
               value="friends" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
-              <Users className="mr-2 h-4 w-4" />
               Friends
             </TabsTrigger>
           </TabsList>
