@@ -429,7 +429,7 @@ const UserProfile: React.FC = () => {
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="w-full flex rounded-none h-12 bg-white dark:bg-gray-800 border-b justify-start">
+          <TabsList className="w-full flex rounded-none h-12 bg-card border-b justify-start">
             <TabsTrigger 
               value="available" 
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
