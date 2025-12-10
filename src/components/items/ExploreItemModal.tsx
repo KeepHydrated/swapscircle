@@ -716,7 +716,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
         onClose={() => setShowTradeModal(false)}
         targetItem={fullItem || item}
         targetItemOwnerId={fullItem?.user_id}
-        preSelectedItemId={matchedItemId}
       />
     </Dialog>
   );
