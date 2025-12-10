@@ -107,14 +107,6 @@ const ItemDetails: React.FC = () => {
     return (
       <MainLayout>
         <div className="max-w-4xl mx-auto p-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(-1)}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
           <div className="text-center py-12">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {error || 'Item not found'}
@@ -157,15 +149,6 @@ const ItemDetails: React.FC = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(-1)}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-
         <div className="grid md:grid-cols-2 gap-6">
           {/* LEFT COLUMN - What You're Offering */}
           <Card>
