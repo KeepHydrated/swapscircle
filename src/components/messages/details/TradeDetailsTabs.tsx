@@ -7,7 +7,7 @@ import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import ReviewModal from '@/components/trade/ReviewModal';
-import ExploreItemModal from '@/components/items/ExploreItemModal';
+
 import { supabase } from '@/integrations/supabase/client';
 
 interface ItemDisplay {
@@ -53,8 +53,6 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   const [currentItemIndex, setCurrentItemIndex] = useState(0); // For navigating between multiple offered items
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [showItemModal, setShowItemModal] = useState(false);
-  const [modalItem, setModalItem] = useState<ItemDisplay | null>(null);
 
   // Get current user
   React.useEffect(() => {
@@ -235,13 +233,7 @@ const handleNextItem = () => {
         {selectedItem === 'item1' ? (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Item Image with Navigation */}
-            <div 
-              className="relative aspect-square bg-gray-100 w-full h-52 md:h-64 cursor-pointer group"
-              onClick={() => {
-                setModalItem(currentMyItem);
-                setShowItemModal(true);
-              }}
-            >
+            <div className="relative aspect-square bg-gray-100 w-full h-52 md:h-64">
               <img 
                 src={itemImages[currentImageIndex]} 
                 alt={currentMyItem.name} 
@@ -335,13 +327,7 @@ const handleNextItem = () => {
         ) : (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Their Item Image with Navigation */}
-            <div 
-              className="relative aspect-square bg-gray-100 w-full h-52 md:h-64 cursor-pointer group"
-              onClick={() => {
-                setModalItem(selectedPair.item2);
-                setShowItemModal(true);
-              }}
-            >
+            <div className="relative aspect-square bg-gray-100 w-full h-52 md:h-64">
               <img 
                 src={theirItemImages[currentImageIndex]} 
                 alt={selectedPair.item2.name} 
@@ -514,30 +500,6 @@ const handleNextItem = () => {
           />
         )}
         
-        {/* Item Detail Modal */}
-        {showItemModal && modalItem && (
-          <ExploreItemModal
-            open={showItemModal}
-            onClose={() => {
-              setShowItemModal(false);
-              setModalItem(null);
-            }}
-            item={{
-              id: modalItem.id || '',
-              name: modalItem.name,
-              image: modalItem.image,
-              image_url: modalItem.image_url,
-              image_urls: modalItem.image_urls,
-              description: modalItem.description,
-              category: modalItem.category,
-              condition: modalItem.condition,
-              priceRangeMin: modalItem.price_range_min,
-              priceRangeMax: modalItem.price_range_max,
-              tags: modalItem.tags,
-            }}
-            hideActions={true}
-          />
-        )}
       </div>
     </div>
   );
