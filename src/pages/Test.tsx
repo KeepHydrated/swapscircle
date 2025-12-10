@@ -122,27 +122,56 @@ const Test: React.FC = () => {
     });
   };
 
-  const handleRequestTrade = (match: MatchItem) => {
+  const handleRequestTrade = async (match: MatchItem) => {
     if (!user) {
       navigate('/auth');
       return;
     }
     
-    navigate('/messages', {
-      state: {
-        initiateTradeWith: {
-          item: {
-            id: match.id,
-            name: match.name,
-            image: match.image,
-          },
-          owner: {
-            id: match.user_id,
-            name: 'User',
-          }
+    // Need a valid myItemId to create a trade
+    if (!match.myItemId) {
+      console.error('No user item available for trade');
+      return;
+    }
+
+    try {
+      // Create trade conversation
+      const { data: conversation, error } = await supabase
+        .from('trade_conversations')
+        .insert({
+          requester_id: user.id,
+          owner_id: match.user_id,
+          requester_item_id: match.myItemId,
+          requester_item_ids: [match.myItemId],
+          owner_item_id: match.id,
+          status: 'pending'
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        // If duplicate, try to find existing conversation
+        const { data: existing } = await supabase
+          .from('trade_conversations')
+          .select('id')
+          .eq('requester_id', user.id)
+          .eq('owner_id', match.user_id)
+          .eq('owner_item_id', match.id)
+          .single();
+        
+        if (existing) {
+          navigate(`/messages?conversation=${existing.id}`);
+          return;
         }
+        console.error('Error creating trade:', error);
+        return;
       }
-    });
+
+      // Navigate to messages with the specific conversation
+      navigate(`/messages?conversation=${conversation.id}`);
+    } catch (err) {
+      console.error('Error:', err);
+    }
   };
 
   const convertToItem = (match: MatchItem): Item => ({
