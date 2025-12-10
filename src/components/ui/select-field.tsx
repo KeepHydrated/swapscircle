@@ -20,7 +20,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   value,
   onChange,
   options,
-  placeholder = "Select an option",
+  placeholder = "",
   disabled = false,
   className = ""
 }) => {

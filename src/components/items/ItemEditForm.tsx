@@ -100,7 +100,6 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
           value={category}
           onChange={setCategory}
           options={categoryOptions}
-          placeholder="Select a category"
         />
         
         {/* Condition */}
@@ -110,7 +109,6 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
           value={condition}
           onChange={setCondition}
           options={conditionOptions}
-          placeholder="Select condition"
         />
       </div>
       
@@ -121,7 +119,6 @@ const ItemEditForm: React.FC<ItemEditFormProps> = ({
         value={priceRange}
         onChange={setPriceRange}
         options={priceRangeOptions}
-        placeholder="Select price range"
       />
 
       {/* What You're Looking For Section */}
