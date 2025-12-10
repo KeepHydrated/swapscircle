@@ -37,7 +37,7 @@ export function useDbItems() {
         // Build the query
         let query = supabase
           .from('items')
-          .select('id, name, image_url, category, condition, description, tags, user_id, price_range_min, price_range_max')
+          .select('id, name, image_url, image_urls, category, condition, description, tags, user_id, price_range_min, price_range_max')
           .eq('is_available', true) // Only show available items
           .eq('is_hidden', false) // Only show non-hidden items
           .eq('status', 'published'); // Only show published items (exclude drafts and removed items)
@@ -65,6 +65,7 @@ export function useDbItems() {
             id: item.id,
             name: item.name,
             image: item.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f",
+            image_urls: item.image_urls || [],
             category: item.category,
             condition: item.condition,
             description: item.description,

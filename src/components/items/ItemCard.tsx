@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Check, X, RefreshCw } from 'lucide-react';
+import { Heart, Check, X, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,6 +13,7 @@ interface ItemCardProps {
   id: string;
   name: string;
   image: string;
+  image_urls?: string[];
   isSelected?: boolean;
   isMatch?: boolean;
   liked?: boolean;
@@ -44,6 +45,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   id, 
   name, 
   image, 
+  image_urls,
   isSelected, 
   isMatch,
   liked,
@@ -71,6 +73,22 @@ const ItemCard: React.FC<ItemCardProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Build array of all images
+  const allImages = image_urls && image_urls.length > 0 ? image_urls : (image ? [image] : []);
+  const hasMultipleImages = allImages.length > 1;
+  const currentImage = allImages[currentImageIndex] || image;
+
+  const handlePrevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
 
   const handleSwapClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -164,7 +182,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               }`}
             >
               <AvatarImage 
-                src={image} 
+                src={currentImage} 
                 alt={name} 
                 className={`object-cover transition-transform duration-300 group-hover:scale-105 ${isRemoved ? 'grayscale' : ''}`}
                 onLoad={() => setImageLoaded(true)}
@@ -187,8 +205,32 @@ const ItemCard: React.FC<ItemCardProps> = ({
               </div>
             )}
             
+            {/* Image Navigation Arrows */}
+            {hasMultipleImages && !isRemoved && (
+              <>
+                <button
+                  onClick={handlePrevImage}
+                  className={`absolute left-1 top-1/2 -translate-y-1/2 ${compact ? 'w-5 h-5' : 'w-6 h-6'} rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors z-10`}
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className={`${compact ? 'w-3 h-3' : 'w-4 h-4'} text-white`} />
+                </button>
+                <button
+                  onClick={handleNextImage}
+                  className={`absolute right-1 top-1/2 -translate-y-1/2 ${compact ? 'w-5 h-5' : 'w-6 h-6'} rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors z-10`}
+                  aria-label="Next image"
+                >
+                  <ChevronRight className={`${compact ? 'w-3 h-3' : 'w-4 h-4'} text-white`} />
+                </button>
+                {/* Image counter */}
+                <div className={`absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white ${compact ? 'text-[10px] px-1.5 py-0.5' : 'text-xs px-2 py-0.5'} rounded-full`}>
+                  {currentImageIndex + 1}/{allImages.length}
+                </div>
+              </>
+            )}
+
             {/* Distance badge at bottom of image when available */}
-            {distance && !isRemoved && (
+            {distance && !isRemoved && !hasMultipleImages && (
               <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full shadow-lg">
                 {distance}
               </div>
