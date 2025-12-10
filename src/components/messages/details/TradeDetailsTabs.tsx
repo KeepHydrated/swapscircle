@@ -230,29 +230,6 @@ const handleNextItem = () => {
       <div className="flex-1 flex flex-col">
         {selectedItem === 'item1' ? (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            {/* Item Navigation Header (for multiple items) */}
-            {hasMultipleItems && (
-              <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b">
-                <button
-                  onClick={handlePrevItem}
-                  className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 shadow-sm flex items-center justify-center transition-colors border"
-                  aria-label="Previous item"
-                >
-                  <ChevronLeft className="w-4 h-4 text-gray-700" />
-                </button>
-                <span className="text-sm font-medium text-gray-600">
-                  Item {currentItemIndex + 1} of {myItems.length}
-                </span>
-                <button
-                  onClick={handleNextItem}
-                  className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 shadow-sm flex items-center justify-center transition-colors border"
-                  aria-label="Next item"
-                >
-                  <ChevronRight className="w-4 h-4 text-gray-700" />
-                </button>
-              </div>
-            )}
-            
             {/* Item Image with Navigation */}
             <div className="relative aspect-square bg-gray-100 w-full h-52 md:h-64">
               <img 
@@ -261,31 +238,55 @@ const handleNextItem = () => {
                 className="w-full h-full object-cover"
               />
               
-{itemImages.length > 1 && (
-              <>
-                {/* Navigation Arrows */}
-                <button
-                  onClick={handlePrevImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-                
-                <button
-                  onClick={handleNextImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="w-5 h-5 text-gray-700" />
-                </button>
-                
-                {/* Image Counter */}
+              {/* Item Navigation (for multiple items) - overlaid on image */}
+              {hasMultipleItems && (
+                <>
+                  <button
+                    onClick={handlePrevItem}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Previous item"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={handleNextItem}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Next item"
+                  >
+                    <ChevronRight className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs rounded-full px-3 py-1">
+                    Item {currentItemIndex + 1} of {myItems.length}
+                  </div>
+                </>
+              )}
+
+              {/* Image Navigation (for multiple images of same item) */}
+              {itemImages.length > 1 && !hasMultipleItems && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-5 h-5 text-gray-700" />
+                  </button>
+                </>
+              )}
+
+              {/* Image Counter - show for multiple images */}
+              {itemImages.length > 1 && (
                 <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
                   {currentImageIndex + 1}/{itemImages.length}
                 </div>
-              </>
-            )}
+              )}
             </div>
             
             {/* Item Details */}
