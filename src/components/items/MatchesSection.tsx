@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, RefreshCw } from 'lucide-react';
+import { Heart, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { Item } from '@/types/item';
@@ -246,7 +246,7 @@ const MatchesSection = () => {
                       disabled={isCreatingTrade === item.id}
                       title="Request Trade"
                     >
-                      <RefreshCw className={`w-5 h-5 text-white ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
+                      <Plus className={`w-5 h-5 text-white ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
                     </button>
                     <button 
                       className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"

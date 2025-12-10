@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Check, X, RefreshCw } from 'lucide-react';
+import { Heart, Check, X, Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -219,7 +219,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                               aria-label="Suggest trade"
                               onClick={handleSwapClick}
                             >
-                              <RefreshCw className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
+                              <Plus className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -261,7 +261,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                             aria-label="Suggest trade"
                             onClick={handleSwapClick}
                           >
-                            <RefreshCw className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
+                            <Plus className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>
