@@ -533,6 +533,21 @@ const SearchPage = () => {
             setSelectedItem(filteredResults[currentIdx + 1]);
           }
         }}
+        liked={selectedItem ? likedItemIds.has(selectedItem.id) : false}
+        onLike={() => {
+          if (selectedItem) {
+            const isLiked = likedItemIds.has(selectedItem.id);
+            setLikedItemIds(prev => {
+              const newSet = new Set(prev);
+              if (isLiked) {
+                newSet.delete(selectedItem.id);
+              } else {
+                newSet.add(selectedItem.id);
+              }
+              return newSet;
+            });
+          }
+        }}
       />
 
       {/* Trade Item Selection Modal */}
