@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Check } from 'lucide-react';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import ItemCard from '@/components/items/ItemCard';
 import { MatchItem, Item } from '@/types/item';
@@ -91,7 +91,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                         onClick={(e) => handleTradeClick(e, item)}
                         title="Suggest a Trade"
                       >
-                        <Plus className="w-5 h-5 text-white" />
+                        <Check className="w-5 h-5 text-white" />
                       </button>
                     </div>
                     <div className="p-4">
