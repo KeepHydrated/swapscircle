@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Save, Loader2, Package, Heart } from 'lucide-react';
+import { Save, Loader2, Package, Heart, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import ItemOfferingForm from '@/components/postItem/ItemOfferingForm';
@@ -602,14 +603,23 @@ const EditItem: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* What You're Offering Column */}
           <div className="space-y-6">
-            <div className="flex items-center mb-6">
-              <div className="bg-blue-50 p-3 rounded-full mr-4">
-                <Package className="h-6 w-6 text-blue-600" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="bg-blue-50 p-3 rounded-full mr-4">
+                  <Package className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Edit Your Item</h2>
+                  <p className="text-gray-600">Update your item details</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">What You're Offering</h2>
-                <p className="text-gray-600">Update your item details</p>
-              </div>
+              <Link 
+                to={`/item/${itemId}`}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                title="View item page"
+              >
+                <ExternalLink className="h-5 w-5 text-gray-500" />
+              </Link>
             </div>
             <ItemOfferingForm
               title={title}
