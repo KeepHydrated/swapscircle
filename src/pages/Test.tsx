@@ -117,6 +117,7 @@ const mockMatches = [
 const Test: React.FC = () => {
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -180,20 +181,39 @@ const Test: React.FC = () => {
     });
   };
 
-  const handleCardClick = (item: typeof mockMatches[0]) => {
-    setSelectedItem({
-      id: item.id,
-      name: item.name,
-      image: item.image,
-      image_urls: item.image_urls,
-      category: item.category,
-      condition: item.condition,
-      description: item.description,
-      priceRangeMin: item.priceRangeMin,
-      priceRangeMax: item.priceRangeMax,
-      user_id: item.user_id,
-    });
+  const convertToItem = (match: typeof mockMatches[0]): Item => ({
+    id: match.id,
+    name: match.name,
+    image: match.image,
+    image_urls: match.image_urls,
+    category: match.category,
+    condition: match.condition,
+    description: match.description,
+    priceRangeMin: match.priceRangeMin,
+    priceRangeMax: match.priceRangeMax,
+    user_id: match.user_id,
+  });
+
+  const handleCardClick = (item: typeof mockMatches[0], index: number) => {
+    setSelectedItem(convertToItem(item));
+    setSelectedIndex(index);
     setIsModalOpen(true);
+  };
+
+  const handleNavigatePrev = () => {
+    if (selectedIndex > 0) {
+      const newIndex = selectedIndex - 1;
+      setSelectedIndex(newIndex);
+      setSelectedItem(convertToItem(mockMatches[newIndex]));
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (selectedIndex < mockMatches.length - 1) {
+      const newIndex = selectedIndex + 1;
+      setSelectedIndex(newIndex);
+      setSelectedItem(convertToItem(mockMatches[newIndex]));
+    }
   };
 
   return (
@@ -202,11 +222,11 @@ const Test: React.FC = () => {
         <h1 className="text-2xl font-bold mb-6 text-foreground">Your Matches</h1>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {mockMatches.map((item) => (
+          {mockMatches.map((item, index) => (
             <div key={item.id}>
               <div 
                 className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                onClick={() => handleCardClick(item)}
+                onClick={() => handleCardClick(item, index)}
               >
                 <div className="relative aspect-[4/3]">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -266,6 +286,10 @@ const Test: React.FC = () => {
           setIsModalOpen(false);
           setSelectedItem(null);
         }}
+        onNavigatePrev={handleNavigatePrev}
+        onNavigateNext={handleNavigateNext}
+        currentIndex={selectedIndex}
+        totalItems={mockMatches.length}
       />
     </MainLayout>
   );
