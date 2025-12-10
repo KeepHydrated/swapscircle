@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RotateCcw, Grid3x3, LayoutList, LogIn } from 'lucide-react';
+import { RotateCcw, LogIn } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 import FriendItemsCarousel from '@/components/profile/FriendItemsCarousel';
@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem } from '@/services/authService';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -653,236 +653,32 @@ const Test: React.FC = () => {
                 )}
               </div>
 
-              {/* Right Column - Matches and Friends Items */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <Tabs defaultValue="matches" onValueChange={setActiveTab} className="h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <TabsList className="grid grid-cols-2 w-auto">
-                      <TabsTrigger value="matches">Matches</TabsTrigger>
-                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    </TabsList>
-                    <div className="flex items-center gap-2">
-                      {activeTab === 'matches' && !isMobile && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setViewMode(viewMode === 'slider' ? 'grid' : 'slider')}
-                            className="flex items-center gap-2"
-                          >
-                            {viewMode === 'slider' ? (
-                              <Grid3x3 className="h-4 w-4" />
-                            ) : (
-                              <LayoutList className="h-4 w-4" />
-                            )}
-                            <span className="hidden md:inline">{viewMode === 'slider' ? 'Grid' : 'Slider'}</span>
-                          </Button>
-                          <HeaderLocationSelector 
-                            onLocationChange={(value) => {
-                              console.log('Location changed to:', value);
-                              setSelectedLocation(value);
-                            }}
-                            initialValue={selectedLocation}
-                            className="hidden md:block"
-                          />
-                        </>
-                      )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleUndo}
-                        disabled={!isUndoAvailable()}
-                        className="flex items-center gap-2"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                        <span className="hidden md:inline">Undo</span>
-                      </Button>
+              {/* Right Column - Matches */}
+              <div className="bg-card rounded-lg shadow-sm border border-border p-4 h-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
+                  <a href="/" className="text-sm text-primary hover:underline">View all</a>
+                </div>
+                
+                {selectedUserItem ? (
+                  <Matches
+                    matches={matches}
+                    selectedItemName={selectedUserItem.name}
+                    selectedItemId={selectedUserItem.id}
+                    onUndoAvailable={handleMatchesUndoAvailable}
+                    loading={matchesLoading}
+                    viewMode="slider"
+                    location={selectedLocation}
+                  />
+                ) : (
+                  <div className="h-full flex flex-col">
+                    <div className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground py-8">
+                      <div className="text-4xl mb-3">🔍</div>
+                      <p className="text-base font-medium mb-1">No item selected</p>
+                      <p className="text-sm">Select an item to see matches</p>
                     </div>
                   </div>
-                  
-                  {/* Location selector below tabs - only shown on mobile for matches tab */}
-                  {activeTab === 'matches' && (
-                    <div className="mb-4 md:hidden">
-                      <HeaderLocationSelector 
-                        onLocationChange={(value) => {
-                          console.log('Location changed to:', value);
-                          setSelectedLocation(value);
-                        }}
-                        initialValue={selectedLocation}
-                      />
-                    </div>
-                  )}
-                  
-                  
-                  <TabsContent value="matches" className="flex-1 mt-0">
-                      {selectedUserItem ? (
-                        <Matches
-                          matches={matches}
-                          selectedItemName={selectedUserItem.name}
-                          selectedItemId={selectedUserItem.id}
-                          onUndoAvailable={handleMatchesUndoAvailable}
-                          loading={matchesLoading}
-                          viewMode={viewMode}
-                          location={selectedLocation}
-                        />
-                      ) : (
-                       <div className="h-full flex flex-col">
-                         <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                           <div className="text-4xl mb-3">🔍</div>
-                           <p className="text-base font-medium mb-1">No item selected</p>
-                           <p className="text-sm">Select an item to see matches</p>
-                         </div>
-                       </div>
-                     )}
-                   </TabsContent>
-                  
-                       <TabsContent value="friends" className="flex-1 mt-0">
-                         <div className="h-full flex flex-col">
-                         {friendItemsLoading ? (
-                           <div className="overflow-x-auto overflow-y-hidden p-2">
-                             <div className="flex gap-2 min-w-max">
-                               {Array.from({ length: 3 }).map((_, index) => (
-                                 <div key={`friend-skeleton-${index}`} className="flex-shrink-0 w-64">
-                                   <Card className="overflow-hidden">
-                                     <Skeleton className="aspect-[4/3] w-full" />
-                                     <div className="p-3">
-                                       <Skeleton className="h-4 w-3/4 mx-auto" />
-                                     </div>
-                                   </Card>
-                                 </div>
-                               ))}
-                             </div>
-                           </div>
-                          ) : friendItems.length === 0 ? (
-                            <div className="overflow-x-auto overflow-y-hidden p-2">
-                              <div className="flex gap-2 min-w-max">
-                                {[
-                                  { name: "Wireless Headphones - Sony", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
-                                  { name: "Gaming Console - PlayStation 5", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3" },
-                                  { name: "Coffee Machine - Espresso", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6" },
-                                  { name: "Running Shoes - Nike Air", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff" },
-                                ].map((item, idx) => (
-                                  <div key={idx} className="flex-shrink-0 w-64">
-                                    <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
-                                      <div className="relative aspect-[4/3]">
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                        <div className="absolute top-2 left-2">
-                                          <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                            <svg className="w-4 h-4 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
-                                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
-                                            </svg>
-                                          </button>
-                                        </div>
-                                        <div className="absolute top-2 right-2 flex gap-2">
-                                          <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                            <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                          </button>
-                                          <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                            </svg>
-                                          </button>
-                                        </div>
-                                      </div>
-                                      <CardContent className="p-4">
-                                        <p className="text-sm font-semibold truncate">{item.name}</p>
-                                      </CardContent>
-                                    </Card>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          ) : displayedFriendItems.length === 0 ? (
-                           <div className="flex-1 flex flex-col justify-center items-center text-center text-gray-500 py-8">
-                             <div className="text-4xl mb-3">🔍</div>
-                             <p className="text-base font-medium mb-1">No matches found</p>
-                             <p className="text-sm">Try updating your preferences or check back later</p>
-                           </div>
-                           ) : (() => {
-                            console.log('🔥 MOBILE CHECK:', { 
-                              isMobile,
-                              displayedFriendItemsLength: displayedFriendItems.length,
-                              windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
-                              userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'undefined'
-                            });
-                            
-                            if (isMobile) {
-                              const formattedItems = displayedFriendItems.map(item => ({
-                                id: item.id,
-                                title: item.name,
-                                image: item.image,
-                                description: item.description,
-                                condition: item.condition,
-                                category: item.category,
-                                user: {
-                                  id: item.user_id,
-                                  name: item.ownerName,
-                                  avatar_url: item.ownerAvatar
-                                }
-                              }));
-                              console.log('🔥 MOBILE FRIENDS DEBUG:', {
-                                isMobile,
-                                displayedFriendItemsCount: displayedFriendItems.length,
-                                formattedItemsCount: formattedItems.length,
-                                firstItem: formattedItems[0],
-                                firstItemDetails: {
-                                  id: formattedItems[0]?.id,
-                                  title: formattedItems[0]?.title,
-                                  image: formattedItems[0]?.image,
-                                  description: formattedItems[0]?.description,
-                                  condition: formattedItems[0]?.condition,
-                                  category: formattedItems[0]?.category,
-                                  userName: formattedItems[0]?.user?.name
-                                },
-                                allItems: formattedItems
-                              });
-                               return (
-                                 <SwipeCards
-                                   cards={formattedItems}
-                                   onLike={(id) => handleLikeFriendItem(id)}
-                                   onReject={(id) => handleRejectFriendItem(id)}
-                                 />
-                               );
-                            } else {
-                              return (
-                                <div 
-                                  className="overflow-x-auto overflow-y-hidden p-2"
-                                  style={{ touchAction: 'pan-x' }}
-                                  onTouchStart={(e) => e.stopPropagation()}
-                                  onTouchMove={(e) => e.stopPropagation()}
-                                  onTouchEnd={(e) => e.stopPropagation()}
-                                  onPointerDown={(e) => e.stopPropagation()}
-                                >
-                                  <div className="flex gap-2 min-w-max">
-                                     {friendItems
-                                       .filter(item => !rejectedFriendItems.includes(item.id) && !pairRejectedFriendIds.has(item.id))
-                                       .map((item) => (
-                                   <div key={item.id} className="flex-shrink-0 w-64 transform transition-all duration-200">
-                                     <ItemCard
-                                       id={item.id}
-                                       name={item.name}
-                                       image={item.image}
-                                       liked={item.liked}
-                                       onSelect={() => handleOpenItemModal(item)}
-                                       onLike={(id, global) => handleLikeFriendItem(id, global)}
-                                       onReject={(id, global) => handleRejectFriendItem(id, global)}
-                                       onReport={handleReport}
-                                       showLikeButton={true}
-                                     />
-                                   </div>
-                                 ))}
-                               </div>
-                             </div>
-                              );
-                            }
-                           })()
-                        }
-                       </div>
-                   </TabsContent>
-
-                 </Tabs>
+                )}
               </div>
             </div>
           ) : (
@@ -923,116 +719,58 @@ const Test: React.FC = () => {
               </div>
 
               {/* Matches Section */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-full">
-                <Tabs defaultValue="matches" className="h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <TabsList className="grid grid-cols-2 w-auto">
-                      <TabsTrigger value="matches">Matches</TabsTrigger>
-                      <TabsTrigger value="friends">Friends' Items</TabsTrigger>
-                    </TabsList>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" className="flex items-center gap-2">
-                        <Grid3x3 className="h-4 w-4" />
-                        <span className="hidden md:inline">Grid</span>
-                      </Button>
-                      <HeaderLocationSelector 
-                        onLocationChange={() => {}}
-                        initialValue="nationwide"
-                        className="hidden md:block"
-                      />
-                      <Button variant="outline" size="sm" disabled className="flex items-center gap-2">
-                        <RotateCcw className="h-4 w-4" />
-                        <span className="hidden md:inline">Undo</span>
-                      </Button>
-                    </div>
+              <div className="bg-card rounded-lg shadow-sm border border-border p-4 h-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
+                  <a href="/" className="text-sm text-primary hover:underline">View all</a>
+                </div>
+                
+                <div className="overflow-x-auto overflow-y-hidden">
+                  <div className="flex gap-3 pb-4">
+                    {[
+                      { name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", priceMin: 300, priceMax: 400, condition: "Good" },
+                      { name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", priceMin: 450, priceMax: 600, condition: "Excellent" },
+                      { name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", priceMin: 500, priceMax: 700, condition: "Good" },
+                      { name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", priceMin: 200, priceMax: 350, condition: "Like New" },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
+                        <div className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+                          <div className="relative aspect-[4/3]">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            <div className="absolute top-2 right-2 flex gap-1">
+                              <button className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                              </button>
+                              <button className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+                                <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                              </button>
+                            </div>
+                            <div className="absolute bottom-2 right-2">
+                              <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                                <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7" alt="Your item" className="w-full h-full object-cover" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <h3 className="text-base font-semibold text-foreground mb-1 truncate">{item.name}</h3>
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm text-muted-foreground">
+                                ${item.priceMin} - ${item.priceMax}
+                              </p>
+                              <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                                {item.condition}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  
-                  <TabsContent value="matches" className="flex-1 mt-0">
-                    <div className="overflow-x-auto overflow-y-hidden">
-                      <div className="flex gap-4 pb-4">
-                        {[
-                          { name: "Sample Match - Camping Gear ...", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4" },
-                          { name: "Paddleboard - Inflatable SUP", image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19" },
-                          { name: "Mountain Bike - Trek X-Caliber", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e" },
-                          { name: "Fist...", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5" },
-                        ].map((item, idx) => (
-                          <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
-                            <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
-                              <div className="relative aspect-[4/3]">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                <div className="absolute top-2 left-2">
-                                  <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                    <svg className="w-4 h-4 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
-                                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
-                                    </svg>
-                                  </button>
-                                </div>
-                                <div className="absolute top-2 right-2 flex gap-2">
-                                  <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                  </button>
-                                  <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                    <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
-                              <CardContent className="p-4">
-                                <p className="text-sm font-semibold truncate">{item.name}</p>
-                              </CardContent>
-                            </Card>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="friends" className="flex-1 mt-0">
-                    <div className="overflow-x-auto overflow-y-hidden">
-                      <div className="flex gap-4 pb-4">
-                        {[
-                          { name: "Wireless Headphones - Sony", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
-                          { name: "Gaming Console - PlayStation 5", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3" },
-                          { name: "Coffee Machine - Espresso", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6" },
-                          { name: "Running Shoes - Nike Air", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff" },
-                        ].map((item, idx) => (
-                          <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
-                            <Card className="overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
-                              <div className="relative aspect-[4/3]">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                <div className="absolute top-2 left-2">
-                                  <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                    <svg className="w-4 h-4 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
-                                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
-                                    </svg>
-                                  </button>
-                                </div>
-                                <div className="absolute top-2 right-2 flex gap-2">
-                                  <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                  </button>
-                                  <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white transition-colors">
-                                    <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
-                              <CardContent className="p-4">
-                                <p className="text-sm font-semibold truncate">{item.name}</p>
-                              </CardContent>
-                            </Card>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                </div>
               </div>
             </div>
           )}
