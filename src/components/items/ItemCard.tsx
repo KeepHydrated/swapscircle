@@ -238,8 +238,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
             
             {/* My Item Thumbnail in Bottom Right */}
             {myItemImage && !isRemoved && (
-              <div className={`absolute ${compact ? 'bottom-1.5 right-1.5' : 'bottom-2 right-2'}`}>
-                <div className={`${compact ? 'w-10 h-10' : 'w-12 h-12'} rounded-full border-2 border-background shadow-lg overflow-hidden bg-background`}>
+              <div className={`absolute ${compact ? 'bottom-1.5 left-1.5' : 'bottom-2 left-2'}`}>
+                <div className={`${compact ? 'w-12 h-12' : 'w-14 h-14'} rounded-full border-2 border-background shadow-lg overflow-hidden bg-background`}>
                   <img src={myItemImage} alt="Your item" className="w-full h-full object-cover" />
                 </div>
               </div>
