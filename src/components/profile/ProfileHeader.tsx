@@ -110,6 +110,27 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="flex items-center justify-center md:justify-between">
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
+                <div className="flex items-center">
+                  <Star
+                    size={16}
+                    fill="#FFD700"
+                    color="#FFD700"
+                    className="inline-block"
+                  />
+                  {isMobile ? (
+                    <span className="ml-1 text-sm text-gray-600">
+                      {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount})
+                    </span>
+                  ) : (
+                    <Button 
+                      variant="link" 
+                      className="ml-1 p-0 h-auto text-sm text-gray-600 hover:text-primary"
+                      onClick={onReviewsClick}
+                    >
+                      {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount})
+                    </Button>
+                  )}
+                </div>
                 {menuItems.length > 0 && isOwnProfile && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -183,27 +204,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </div>
               {/* Action buttons will be rendered here by parent component */}
               <div id="profile-action-buttons" className="hidden md:flex"></div>
-            </div>
-            <div className="my-2 flex items-center justify-center md:justify-start">
-              <Star
-                size={20}
-                fill="#FFD700"
-                color="#FFD700"
-                className="inline-block"
-              />
-              {isMobile ? (
-                <span className="ml-1 text-gray-600">
-                  {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
-                </span>
-              ) : (
-                <Button 
-                  variant="link" 
-                  className="ml-1 p-0 h-auto text-gray-600 hover:text-primary"
-                  onClick={onReviewsClick}
-                >
-                  {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount} review{profile.reviewCount !== 1 ? 's' : ''})
-                </Button>
-              )}
             </div>
             <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
               <div className="flex items-center">
