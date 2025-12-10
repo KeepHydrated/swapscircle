@@ -59,6 +59,68 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [userRating, setUserRating] = useState<number>(0);
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [isLiked, setIsLiked] = useState(liked ?? false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // Fetch current user and liked status
+  useEffect(() => {
+    const fetchLikedStatus = async () => {
+      if (!item?.id || !open) return;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setCurrentUserId(null);
+        setIsLiked(false);
+        return;
+      }
+      
+      setCurrentUserId(user.id);
+
+      // Check if item is liked
+      const { data: likedData } = await supabase
+        .from('liked_items')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('item_id', item.id)
+        .maybeSingle();
+
+      setIsLiked(!!likedData);
+    };
+
+    fetchLikedStatus();
+  }, [item?.id, open]);
+
+  // Handle like/unlike
+  const handleLikeClick = async () => {
+    if (!item?.id || !currentUserId) {
+      navigate('/auth');
+      return;
+    }
+
+    if (isLiked) {
+      // Unlike
+      const { error } = await supabase
+        .from('liked_items')
+        .delete()
+        .eq('user_id', currentUserId)
+        .eq('item_id', item.id);
+
+      if (!error) {
+        setIsLiked(false);
+        if (onLike) onLike(); // Notify parent if callback exists
+      }
+    } else {
+      // Like
+      const { error } = await supabase
+        .from('liked_items')
+        .insert({ user_id: currentUserId, item_id: item.id });
+
+      if (!error) {
+        setIsLiked(true);
+        if (onLike) onLike(); // Notify parent if callback exists
+      }
+    }
+  };
 
   // Fetch complete item details and user profile from database
   useEffect(() => {
@@ -439,13 +501,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       ? 'cursor-not-allowed' 
                       : 'hover:bg-gray-50 cursor-pointer'
                   }`}
-                  onClick={disableActions ? undefined : onLike}
-                  aria-label={liked ? "Unlike" : "Like"}
+                  onClick={disableActions ? undefined : handleLikeClick}
+                  aria-label={isLiked ? "Unlike" : "Like"}
                   disabled={disableActions}
                 >
                   <Heart
                     className="w-5 h-5 text-red-500"
-                    fill={liked ? "red" : "none"}
+                    fill={isLiked ? "red" : "none"}
                   />
                 </button>
               </div>
