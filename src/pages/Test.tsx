@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { Heart, Check } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
-import ItemCard from '@/components/items/ItemCard';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
+import { Item } from '@/types/item';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 // Mock matches data
 const mockMatches = [
@@ -18,7 +21,10 @@ const mockMatches = [
     priceRangeMax: 400,
     condition: 'Good',
     myItemImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200',
-    liked: false,
+    category: 'Sports & Outdoors',
+    description: 'Reliable mountain bike perfect for trails.',
+    user_id: 'demo-user-1',
+    isDemo: true,
   },
   {
     id: '2',
@@ -32,7 +38,10 @@ const mockMatches = [
     priceRangeMax: 600,
     condition: 'Excellent',
     myItemImage: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200',
-    liked: false,
+    category: 'Electronics',
+    description: 'Professional DSLR camera with multiple lenses.',
+    user_id: 'demo-user-2',
+    isDemo: true,
   },
   {
     id: '3',
@@ -47,7 +56,10 @@ const mockMatches = [
     priceRangeMax: 700,
     condition: 'Like New',
     myItemImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200',
-    liked: true,
+    category: 'Entertainment',
+    description: 'Classic Fender electric guitar with rich tone.',
+    user_id: 'demo-user-3',
+    isDemo: true,
   },
   {
     id: '4',
@@ -60,7 +72,10 @@ const mockMatches = [
     priceRangeMax: 1200,
     condition: 'Good',
     myItemImage: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=200',
-    liked: false,
+    category: 'Accessories',
+    description: 'Collectible vintage Rolex watch.',
+    user_id: 'demo-user-4',
+    isDemo: true,
   },
   {
     id: '5',
@@ -74,7 +89,10 @@ const mockMatches = [
     priceRangeMax: 500,
     condition: 'Excellent',
     myItemImage: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=200',
-    liked: false,
+    category: 'Electronics',
+    description: 'PlayStation 5 with controller.',
+    user_id: 'demo-user-5',
+    isDemo: true,
   },
   {
     id: '6',
@@ -89,77 +107,168 @@ const mockMatches = [
     priceRangeMax: 250,
     condition: 'Good',
     myItemImage: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=200',
-    liked: true,
+    category: 'Clothing',
+    description: 'Genuine leather jacket in great condition.',
+    user_id: 'demo-user-6',
+    isDemo: true,
   },
 ];
 
 const Test: React.FC = () => {
-  const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLike = (id: string) => {
-    setLikedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  const handleLike = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setLikedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
-  const handleReject = (id: string) => {
-    console.log('Rejected:', id);
+  const handleRequestTrade = (item: typeof mockMatches[0], e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    // For demo, navigate to messages with demo trade data
+    navigate('/messages', { 
+      state: { 
+        demoTrade: true,
+        demoData: {
+          theirItem: {
+            name: item.name,
+            image: item.image,
+            image_url: item.image,
+            image_urls: item.image_urls,
+            description: item.description,
+            category: item.category,
+            condition: item.condition,
+            price_range_min: item.priceRangeMin,
+            price_range_max: item.priceRangeMax
+          },
+          myItem: {
+            name: 'Your Item',
+            image: item.myItemImage,
+            image_url: item.myItemImage,
+            image_urls: [item.myItemImage],
+            description: 'Your item for trade',
+            category: 'Your Items',
+            condition: 'Good'
+          },
+          partnerProfile: {
+            id: item.user_id,
+            username: 'Demo User',
+            avatar_url: null,
+            created_at: '2023-06-15T10:30:00Z'
+          }
+        }
+      } 
+    });
   };
 
-  const handleOpenModal = (id: string) => {
-    setSelectedItemId(id);
+  const handleCardClick = (item: typeof mockMatches[0]) => {
+    setSelectedItem({
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      image_urls: item.image_urls,
+      category: item.category,
+      condition: item.condition,
+      description: item.description,
+      priceRangeMin: item.priceRangeMin,
+      priceRangeMax: item.priceRangeMax,
+      user_id: item.user_id,
+    });
     setIsModalOpen(true);
   };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedItemId(null);
-  };
-
-  const selectedItem = mockMatches.find(m => m.id === selectedItemId);
 
   return (
     <MainLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Your Matches</h1>
+        <h1 className="text-2xl font-bold mb-6 text-foreground">Your Matches</h1>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {mockMatches.map(match => (
-            <ItemCard
-              key={match.id}
-              id={match.id}
-              name={match.name}
-              image={match.image}
-              image_urls={match.image_urls}
-              isMatch={true}
-              liked={likedItems[match.id] || match.liked}
-              onSelect={handleOpenModal}
-              onLike={handleLike}
-              onReject={handleReject}
-              priceRangeMin={match.priceRangeMin}
-              priceRangeMax={match.priceRangeMax}
-              condition={match.condition}
-              myItemImage={match.myItemImage}
-            />
-          ))}
+        <div className="overflow-x-auto overflow-y-hidden pb-2">
+          <div className="flex gap-3 min-w-max">
+            {mockMatches.map((item) => (
+              <div key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
+                <div 
+                  className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                  onClick={() => handleCardClick(item)}
+                >
+                  <div className="relative aspect-[4/3]">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    
+                    {/* Action buttons */}
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      <button 
+                        className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                        onClick={(e) => handleRequestTrade(item, e)}
+                        title="Request Trade"
+                      >
+                        <Check className="w-5 h-5 text-white" />
+                      </button>
+                      <button 
+                        className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                        onClick={(e) => handleLike(item.id, e)}
+                        title={likedItems.has(item.id) ? "Unlike item" : "Like item"}
+                      >
+                        <Heart 
+                          className={`w-5 h-5 transition-colors ${
+                            likedItems.has(item.id) 
+                              ? 'text-red-500 fill-red-500' 
+                              : 'text-muted-foreground hover:text-red-500'
+                          }`} 
+                        />
+                      </button>
+                    </div>
+
+                    {/* My Item Thumbnail */}
+                    <div className="absolute bottom-2 right-2">
+                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                        <img src={item.myItemImage} alt="Your item" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-base font-semibold text-foreground mb-1 truncate">{item.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">
+                        ${item.priceRangeMin} - ${item.priceRangeMax}
+                      </p>
+                      <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                        {item.condition}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {selectedItem && (
-        <ExploreItemModal
-          open={isModalOpen}
-          onClose={handleCloseModal}
-          item={{
-            id: selectedItem.id,
-            name: selectedItem.name,
-            image: selectedItem.image,
-            image_urls: selectedItem.image_urls,
-            priceRangeMin: selectedItem.priceRangeMin,
-            priceRangeMax: selectedItem.priceRangeMax,
-            condition: selectedItem.condition,
-          }}
-        />
-      )}
+      <ExploreItemModal
+        open={isModalOpen}
+        item={selectedItem}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedItem(null);
+        }}
+      />
     </MainLayout>
   );
 };
