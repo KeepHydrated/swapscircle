@@ -416,23 +416,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     onClose();
                     navigate(`/item/${item.id}`);
                   }}
-                  className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
+                  className="w-12 h-12 bg-green-500 rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-green-600 cursor-pointer"
                   aria-label="View item page"
                   title="View item page"
                 >
-                  <ExternalLink className="w-5 h-5 text-gray-500" />
-                </button>
-                <button
-                  onClick={disableActions ? undefined : onClose}
-                  className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
-                    disableActions 
-                      ? 'cursor-not-allowed' 
-                      : 'hover:bg-gray-50 cursor-pointer'
-                  }`}
-                  aria-label="Close"
-                  disabled={disableActions}
-                >
-                  <X className="w-5 h-5 text-gray-500" />
+                  <ExternalLink className="w-5 h-5 text-white" />
                 </button>
                 <button
                   className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
@@ -445,7 +433,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   disabled={disableActions}
                 >
                   <Heart
-                    className={`w-5 h-5 ${liked ? "text-red-500" : "text-gray-400"}`}
+                    className="w-5 h-5 text-red-500"
                     fill={liked ? "red" : "none"}
                   />
                 </button>
