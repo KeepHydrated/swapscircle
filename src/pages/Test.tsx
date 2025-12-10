@@ -201,63 +201,61 @@ const Test: React.FC = () => {
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6 text-foreground">Your Matches</h1>
         
-        <div className="overflow-x-auto overflow-y-hidden pb-2">
-          <div className="flex gap-3 min-w-max">
-            {mockMatches.map((item) => (
-              <div key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80">
-                <div 
-                  className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => handleCardClick(item)}
-                >
-                  <div className="relative aspect-[4/3]">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                    
-                    {/* Action buttons */}
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      <button 
-                        className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                        onClick={(e) => handleRequestTrade(item, e)}
-                        title="Request Trade"
-                      >
-                        <Check className="w-5 h-5 text-white" />
-                      </button>
-                      <button 
-                        className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                        onClick={(e) => handleLike(item.id, e)}
-                        title={likedItems.has(item.id) ? "Unlike item" : "Like item"}
-                      >
-                        <Heart 
-                          className={`w-5 h-5 transition-colors ${
-                            likedItems.has(item.id) 
-                              ? 'text-red-500 fill-red-500' 
-                              : 'text-muted-foreground hover:text-red-500'
-                          }`} 
-                        />
-                      </button>
-                    </div>
-
-                    {/* My Item Thumbnail */}
-                    <div className="absolute bottom-2 right-2">
-                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
-                        <img src={item.myItemImage} alt="Your item" className="w-full h-full object-cover" />
-                      </div>
-                    </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {mockMatches.map((item) => (
+            <div key={item.id}>
+              <div 
+                className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                onClick={() => handleCardClick(item)}
+              >
+                <div className="relative aspect-[4/3]">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  
+                  {/* Action buttons */}
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button 
+                      className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                      onClick={(e) => handleRequestTrade(item, e)}
+                      title="Request Trade"
+                    >
+                      <Check className="w-5 h-5 text-white" />
+                    </button>
+                    <button 
+                      className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                      onClick={(e) => handleLike(item.id, e)}
+                      title={likedItems.has(item.id) ? "Unlike item" : "Like item"}
+                    >
+                      <Heart 
+                        className={`w-5 h-5 transition-colors ${
+                          likedItems.has(item.id) 
+                            ? 'text-red-500 fill-red-500' 
+                            : 'text-muted-foreground hover:text-red-500'
+                        }`} 
+                      />
+                    </button>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-base font-semibold text-foreground mb-1 truncate">{item.name}</h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        ${item.priceRangeMin} - ${item.priceRangeMax}
-                      </p>
-                      <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
-                        {item.condition}
-                      </span>
+
+                  {/* My Item Thumbnail */}
+                  <div className="absolute bottom-2 right-2">
+                    <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                      <img src={item.myItemImage} alt="Your item" className="w-full h-full object-cover" />
                     </div>
                   </div>
                 </div>
+                <div className="p-4">
+                  <h3 className="text-base font-semibold text-foreground mb-1 truncate">{item.name}</h3>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      ${item.priceRangeMin} - ${item.priceRangeMax}
+                    </p>
+                    <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                      {item.condition}
+                    </span>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
 
