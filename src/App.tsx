@@ -25,6 +25,7 @@ import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
 import Likes from "./pages/Likes";
 
+import Test2 from "./pages/Test2";
 import TestPage from "./pages/TestPage";
 import Test from "./pages/Test";
 
@@ -44,7 +45,7 @@ const AppContent = () => {
   
   return (
     <Routes>
-      <Route path="/" element={<Test />} />
+      <Route path="/" element={<Test2 />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/trades" element={
@@ -126,6 +127,7 @@ const AppContent = () => {
           </RequireAuth>
         } />
         <Route path="/test" element={<Test />} />
+        <Route path="/test2" element={<Test2 />} />
         <Route path="/testpage" element={<TestPage />} />
         <Route path="/matches" element={<Test />} />
         <Route path="/search" element={<SearchPage />} />
