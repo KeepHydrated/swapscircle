@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat, RefreshCw } from "lucide-react";
+import { X, Heart, ArrowLeft, ArrowRight, Tag, Camera, Shield, DollarSign, Repeat, Plus } from "lucide-react";
 import { MatchItem } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from "react-router-dom";
@@ -430,7 +430,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                       onClick={() => setShowTradeModal(true)}
                       className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
-                      <RefreshCw className="w-5 h-5" />
+                      <Plus className="w-5 h-5" />
                       Suggest a Trade
                     </button>
                   </div>

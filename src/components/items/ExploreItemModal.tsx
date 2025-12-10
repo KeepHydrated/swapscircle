@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, RefreshCw, ExternalLink } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, Plus, ExternalLink } from "lucide-react";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -501,7 +501,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     aria-label="Suggest a Trade"
                     title="Suggest a Trade"
                   >
-                    <RefreshCw className="w-5 h-5 text-white" />
+                    <Plus className="w-5 h-5 text-white" />
                   </button>
                 )}
                 <button
