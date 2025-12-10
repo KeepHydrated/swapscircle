@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star, Expand } from 'lucide-react';
+import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { updateTradeAcceptance, rejectTrade, fetchUserTradeConversations, updateTradeStatus } from '@/services/tradeService';
 import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -247,12 +247,6 @@ const handleNextItem = () => {
                 alt={currentMyItem.name} 
                 className="w-full h-full object-cover"
               />
-              {/* View Details Overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-2">
-                  <Expand className="w-5 h-5 text-gray-700" />
-                </div>
-              </div>
               
               {/* Item Navigation (for multiple items) - overlaid on image */}
               {hasMultipleItems && (
@@ -353,12 +347,6 @@ const handleNextItem = () => {
                 alt={selectedPair.item2.name} 
                 className="w-full h-full object-cover"
               />
-              {/* View Details Overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-2">
-                  <Expand className="w-5 h-5 text-gray-700" />
-                </div>
-              </div>
               
 {theirItemImages.length > 1 && (
               <>
