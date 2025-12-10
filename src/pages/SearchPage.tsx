@@ -432,68 +432,67 @@ const SearchPage = () => {
               <p className="text-muted-foreground">Loading items...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredResults.map((item) => (
               <div
                 key={item.id}
-                className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
                 onClick={() => {
                   setSelectedItem(item);
                   setIsModalOpen(true);
                 }}
               >
-                <div className="relative aspect-[4/3]">
+                {/* Image */}
+                <div className="aspect-square relative overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  {/* Action buttons */}
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    {/* Suggest Trade button */}
-                    <button 
-                      className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTradeTargetItem(item);
-                        setIsTradeModalOpen(true);
-                      }}
-                      title="Suggest a Trade"
-                    >
-                      <RefreshCw className="w-5 h-5 text-white" />
-                    </button>
-                    {/* Like button */}
-                    <button 
-                      className="w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                      onClick={(e) => handleLikeItem(item.id, e)}
-                      title={likedItemIds.has(item.id) ? "Unlike item" : "Like item"}
-                    >
-                      <Heart 
-                        className={`w-5 h-5 transition-colors ${
-                          likedItemIds.has(item.id) 
-                            ? 'text-red-500 fill-red-500' 
-                            : 'text-muted-foreground hover:text-red-500'
-                        }`} 
-                      />
-                    </button>
-                  </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
+
+                {/* Content */}
+                <div className="p-3">
+                  <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs text-muted-foreground">
                       {item.priceRangeMin && item.priceRangeMax 
                         ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
                         : item.priceRangeMin 
                           ? `$${item.priceRangeMin}+`
                           : 'Price not set'}
-                    </p>
+                    </span>
                     {item.condition && (
-                      <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                      <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
                         {item.condition}
                       </span>
                     )}
                   </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTradeTargetItem(item);
+                      setIsTradeModalOpen(true);
+                    }}
+                    className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
+                    aria-label="Suggest trade"
+                  >
+                    <RefreshCw className="w-4 h-4 text-white" />
+                  </button>
+                  <button
+                    onClick={(e) => handleLikeItem(item.id, e)}
+                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                    aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
+                  >
+                    <Heart 
+                      className="w-4 h-4 text-red-500" 
+                      fill={likedItemIds.has(item.id) ? "red" : "none"}
+                    />
+                  </button>
                 </div>
               </div>
             ))}
