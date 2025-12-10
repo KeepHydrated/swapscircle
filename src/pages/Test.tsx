@@ -75,9 +75,15 @@ const Test: React.FC = () => {
           }
         }
 
-        // Create match pairs
+        // Only show matches if user has items to trade
+        if (myItems.length === 0) {
+          setMatches([]);
+          return;
+        }
+
+        // Create match pairs - cycle through user's items
         const matchData: MatchItem[] = (otherItems || []).map((item, index) => {
-          const myItem = myItems[index % Math.max(myItems.length, 1)] || null;
+          const myItem = myItems[index % myItems.length];
           return {
             id: item.id,
             name: item.name,
@@ -86,8 +92,8 @@ const Test: React.FC = () => {
             priceRangeMin: item.price_range_min || 0,
             priceRangeMax: item.price_range_max || 0,
             condition: item.condition || 'Unknown',
-            myItemImage: myItem?.image_url || '/placeholder.svg',
-            myItemId: myItem?.id || '',
+            myItemImage: myItem.image_url || myItem.image_urls?.[0] || '',
+            myItemId: myItem.id,
             category: item.category || 'Other',
             description: item.description || '',
             user_id: item.user_id,
@@ -236,7 +242,7 @@ const Test: React.FC = () => {
               onClick={() => handleCardClick(match, index)}
             >
               {/* Matched item thumbnail */}
-              {match.myItemImage && match.myItemImage !== '/placeholder.svg' && (
+              {match.myItemImage && (
                 <div className="absolute top-3 left-3 z-10">
                   <div className="w-14 h-14 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
                     <img 
