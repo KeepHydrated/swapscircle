@@ -23,7 +23,6 @@ import SearchPage from "./pages/SearchPage";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
 import Trades from "./pages/Trades";
-import TradeRequests from "./pages/TradeRequests";
 import Likes from "./pages/Likes";
 import Test from "./pages/Test";
 import Test2 from "./pages/Test2";
@@ -51,11 +50,6 @@ const AppContent = () => {
       <Route path="/trades" element={
         <RequireAuth>
           <Trades />
-        </RequireAuth>
-      } />
-      <Route path="/trade-requests" element={
-        <RequireAuth>
-          <TradeRequests />
         </RequireAuth>
       } />
       <Route path="/likes" element={
