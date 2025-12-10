@@ -250,27 +250,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
                       </TooltipProvider>
                     </div>
                 ) : (
-                  /* Buttons for non-match items (search page) */
+                  /* Only heart button for non-match items (search page) - click card to open modal for trade */
                   <div className="flex gap-1">
-                    {/* Swap/Trade button */}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
-                            aria-label="Suggest trade"
-                            onClick={handleSwapClick}
-                          >
-                            <Check className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Suggest a trade</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
-                    {/* Like button (Heart) */}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -286,7 +267,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Like to initiate trading (create a match)</p>
+                          <p>Like item</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
