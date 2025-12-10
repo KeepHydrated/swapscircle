@@ -27,6 +27,7 @@ import Likes from "./pages/Likes";
 
 import Test2 from "./pages/Test2";
 import TestPage from "./pages/TestPage";
+import Test from "./pages/Test";
 
 
 import AdminReports from "./pages/AdminReports";
@@ -125,8 +126,9 @@ const AppContent = () => {
             <AdminCustomerSupport />
           </RequireAuth>
         } />
-        <Route path="/test" element={<TestPage />} />
+        <Route path="/test" element={<Test />} />
         <Route path="/test2" element={<Test2 />} />
+        <Route path="/testpage" element={<TestPage />} />
         <Route path="/matches" element={<Test2 />} />
         <Route path="/search" element={<SearchPage />} />
         
