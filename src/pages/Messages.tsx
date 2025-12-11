@@ -871,7 +871,7 @@ const Messages = () => {
         /* Desktop Layout - 2 columns with toggleable right panel */
         <div className="flex flex-1 min-h-0 overflow-hidden pt-16">
           {/* Left sidebar - Conversations (always visible, narrower) */}
-          <div className="w-[280px] border-r border-gray-200 flex flex-col h-full">
+          <div className="w-[340px] border-r border-gray-200 flex flex-col h-full">
             
           {(conversations.length > 0 || isDemoTrade) ? (
             <div className="flex flex-col h-full">
@@ -941,9 +941,21 @@ const Messages = () => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium truncate text-sm">
-                            {conversation.name}
+                          <div className="flex justify-between items-center mb-1">
+                            <div className="font-medium truncate text-sm">
+                              {conversation.name}
+                            </div>
+                            <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                           </div>
+                          
+                          {exchangePair && (
+                            <div className="flex items-center mb-1 text-xs">
+                              <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
+                              <span className="mx-1 text-blue-600">↔</span>
+                              <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item1.name}</span>
+                            </div>
+                          )}
+                          
                           <p className="text-xs text-gray-600 truncate">{conversation.lastMessage || "No messages"}</p>
                         </div>
                       </div>
