@@ -29,6 +29,8 @@ const FriendsFeedSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(0);
+  const [selectedMatchedItemImage, setSelectedMatchedItemImage] = useState<string>('');
+  const [selectedMatchedItemId, setSelectedMatchedItemId] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
@@ -127,6 +129,17 @@ const FriendsFeedSection: React.FC = () => {
     };
     setSelectedItem(mappedItem);
     setSelectedItemIndex(index);
+    
+    // Set matched item data if this is a match
+    const matchedItem = (item as any).matchedItem;
+    if (matchedItem) {
+      setSelectedMatchedItemImage(matchedItem.image_url);
+      setSelectedMatchedItemId(matchedItem.id);
+    } else {
+      setSelectedMatchedItemImage('');
+      setSelectedMatchedItemId('');
+    }
+    
     setIsModalOpen(true);
   };
 
@@ -356,6 +369,8 @@ const FriendsFeedSection: React.FC = () => {
             setSelectedItem(null);
           }}
           item={selectedItem}
+          matchedItemImage={selectedMatchedItemImage}
+          matchedItemId={selectedMatchedItemId}
           onNavigatePrev={() => {
             if (selectedItemIndex > 0) {
               handleItemClick(displayItems[selectedItemIndex - 1], selectedItemIndex - 1);
