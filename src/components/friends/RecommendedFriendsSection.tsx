@@ -125,12 +125,12 @@ export const RecommendedFriendsSection = () => {
         <h2 className="text-xl font-bold text-foreground">Recommended Friends</h2>
       </div>
       
-      <div className="overflow-x-auto pb-4 -ml-6">
-        <div className="flex gap-3 pl-6">
-          {profiles.map((profile) => (
-            <div key={profile.id} className="flex-shrink-0 w-32">
+      <div className="overflow-x-auto pb-4">
+        <div className="flex gap-6">
+          {profiles.map((profile, index) => (
+            <div key={profile.id} className="flex-shrink-0">
               <div className="py-2">
-              <div className="flex flex-col items-center">
+              <div className={`flex flex-col ${index === 0 ? 'items-start' : 'items-center'}`}>
                 <div className="relative">
                   <Avatar 
                     className="w-20 h-20 border-2 border-background mb-1 cursor-pointer"
