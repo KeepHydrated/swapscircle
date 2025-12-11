@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoreHorizontal, Calendar, MapPin } from 'lucide-react';
+import { MoreHorizontal, Calendar, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConversationDisplay } from '@/hooks/useTradeConversations';
@@ -22,8 +22,9 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
   console.log('ChatHeader DEBUG - profileName:', profileName);
   
   const avatarUrl = profile?.avatar_url;
-  const location = profile?.location || "2.3 mi away";
-  const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : 2023;
+  const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
+  const rating = 0.0; // TODO: Get from profile when available
+  const reviewCount = 0; // TODO: Get from profile when available
 
   return (
     <div className="p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
@@ -39,17 +40,15 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
           </Link>
           <div>
             <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="hover:underline">
-              <h2 className="font-semibold text-lg">{profileName}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-lg">{profileName}</h2>
+                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                <span className="text-sm text-muted-foreground">{rating.toFixed(1)} ({reviewCount})</span>
+              </div>
             </Link>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>Since {memberSince}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <MapPin className="h-4 w-4" />
-                <span>{location}</span>
-              </div>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>{memberSince}</span>
             </div>
           </div>
         </div>
