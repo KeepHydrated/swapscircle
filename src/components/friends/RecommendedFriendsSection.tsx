@@ -112,7 +112,7 @@ export const RecommendedFriendsSection = () => {
     return (
       <div className="w-full">
         <div className="text-center">
-          <h2 className="text-xl font-bold mb-4 text-foreground">Recommended Friends</h2>
+          <h2 className="text-xl font-bold mb-4 text-foreground uppercase">Recommended Friends</h2>
           <p className="text-muted-foreground">No recommendations available at the moment.</p>
         </div>
       </div>
@@ -122,7 +122,7 @@ export const RecommendedFriendsSection = () => {
   return (
     <div className="w-full">
       <div className="mb-4">
-        <h2 className="text-xl font-bold text-foreground">Recommended Friends</h2>
+        <h2 className="text-xl font-bold text-foreground uppercase">Recommended Friends</h2>
       </div>
       
       <div className="overflow-x-auto pb-4">
