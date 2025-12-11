@@ -1002,31 +1002,19 @@ const Messages = () => {
               {/* Demo Partner Header */}
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-center">
-                  <Avatar className="h-8 w-8 mr-3">
+                  <Avatar className="h-10 w-10 mr-3">
                     <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
                     <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-sm font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
-                        <div className="flex items-center text-amber-400 text-xs">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} className={`h-3 w-3 ${star <= 4 ? 'fill-current' : ''}`} />
-                          ))}
-                          <span className="ml-1 text-gray-600">(12)</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-gray-600">
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          <span>Since 2023</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span>~1 hour</span>
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
+                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                      <span className="text-sm text-muted-foreground">0.0 (0)</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date().getFullYear()}</span>
                     </div>
                   </div>
                 </div>
@@ -1060,55 +1048,33 @@ const Messages = () => {
               <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-center">
                   <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} onClick={() => console.log('Messages.tsx Avatar Link - userId:', activeChat.otherUserProfile?.id)}>
-                    <Avatar className="h-8 w-8 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                    <Avatar className="h-10 w-10 mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
                       <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
                       <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Link>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Link 
-                          to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}
-                          className="text-sm font-semibold hover:text-blue-600 transition-colors"
-                          onClick={() => console.log('Messages.tsx Name Link - userId:', activeChat.otherUserProfile?.id)}
-                        >
-                          {activeChat.otherUserProfile?.username || activeChat.name}
-                        </Link>
-                        <div className="flex items-center text-amber-400 text-xs">
-                          {(() => {
-                            const avgRating = partnerReviews.length > 0 
-                              ? partnerReviews.reduce((sum, review) => sum + review.rating, 0) / partnerReviews.length 
-                              : 0;
-                            const fullStars = Math.floor(avgRating);
-                            const reviewCount = partnerReviews.length;
-                            
-                            return (
-                              <>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className={`h-3 w-3 ${star <= fullStars ? 'fill-current' : ''}`}
-                                  />
-                                ))}
-                                <span className="ml-1">({reviewCount})</span>
-                              </>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-xs text-gray-600">
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          <span>Since {activeChat.otherUserProfile?.created_at ? new Date(activeChat.otherUserProfile.created_at).getFullYear() : 2023}</span>
-                        </div>
-                        
-                        <div className="flex items-center">
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span>~1 hour</span>
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Link 
+                        to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}
+                        className="font-semibold hover:text-blue-600 transition-colors"
+                        onClick={() => console.log('Messages.tsx Name Link - userId:', activeChat.otherUserProfile?.id)}
+                      >
+                        {activeChat.otherUserProfile?.username || activeChat.name}
+                      </Link>
+                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                      <span className="text-sm text-muted-foreground">
+                        {(() => {
+                          const avgRating = partnerReviews.length > 0 
+                            ? partnerReviews.reduce((sum, review) => sum + review.rating, 0) / partnerReviews.length 
+                            : 0;
+                          return `${avgRating.toFixed(1)} (${partnerReviews.length})`;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span>{activeChat.otherUserProfile?.created_at ? new Date(activeChat.otherUserProfile.created_at).getFullYear() : new Date().getFullYear()}</span>
                     </div>
                   </div>
                 </div>
