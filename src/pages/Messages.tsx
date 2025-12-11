@@ -921,6 +921,7 @@ const Messages = () => {
                         setDemoTradeData(null);
                         setActiveConversation(conversation.id);
                         setSelectedItem('item2');
+                        setCurrentMobileView('messages'); // Reset to messages view when switching chats
                         
                         const matchingPair = exchangePairs.find(pair => pair.partnerId === conversation.id);
                         if (matchingPair) {
