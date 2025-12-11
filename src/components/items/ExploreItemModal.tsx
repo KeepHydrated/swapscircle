@@ -606,6 +606,13 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                       <EyeOff className="w-4 h-4 mr-2" />
                       Don't show this item again
                     </DropdownMenuItem>
+                    {/* Trade for another item - only show when it's a match */}
+                    {matchedItemId && (
+                      <DropdownMenuItem onClick={() => setShowTradeModal(true)}>
+                        <Repeat className="w-4 h-4 mr-2" />
+                        Trade for another item
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
                 {/* Quick Accept button - only show if there's a matched item */}
@@ -622,8 +629,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     <Check className="w-5 h-5 text-green-500" />
                   </button>
                 )}
-                {/* Suggest Trade button - only show if not own item */}
-                {!disableActions && fullItem?.user_id && (
+                {/* Suggest Trade button - only show if not own item AND not a match */}
+                {!disableActions && fullItem?.user_id && !matchedItemId && (
                   <button
                     onClick={() => setShowTradeModal(true)}
                     className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
