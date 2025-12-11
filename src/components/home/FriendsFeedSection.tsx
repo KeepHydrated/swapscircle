@@ -144,20 +144,67 @@ const FriendsFeedSection: React.FC = () => {
     );
   }
 
-  if (friendItems.length === 0) {
-    return (
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          Recent from Friends
-        </h2>
-        <Card className="p-6 text-center">
-          <p className="text-muted-foreground">No recent items from friends yet.</p>
-          <p className="text-sm text-muted-foreground/70 mt-1">Add friends to see their latest items here!</p>
-        </Card>
-      </section>
-    );
-  }
+  // Demo items when no real friend items exist
+  const demoFriendItems: FriendItem[] = [
+    {
+      id: 'demo-friend-1',
+      name: 'Vintage Polaroid Camera',
+      image_url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
+      image_urls: null,
+      category: 'Electronics',
+      condition: 'Good',
+      description: 'Classic instant camera in working condition',
+      price_range_min: 50,
+      price_range_max: 100,
+      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      user_id: 'demo-user-1',
+      profile: { id: 'demo-user-1', username: 'Sarah_M', avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' }
+    },
+    {
+      id: 'demo-friend-2',
+      name: 'Leather Messenger Bag',
+      image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
+      image_urls: null,
+      category: 'Accessories',
+      condition: 'Like New',
+      description: 'Premium leather bag, barely used',
+      price_range_min: 80,
+      price_range_max: 150,
+      created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      user_id: 'demo-user-2',
+      profile: { id: 'demo-user-2', username: 'Mike_T', avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100' }
+    },
+    {
+      id: 'demo-friend-3',
+      name: 'Mechanical Keyboard',
+      image_url: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=400',
+      image_urls: null,
+      category: 'Electronics',
+      condition: 'Good',
+      description: 'Cherry MX Blue switches, RGB lighting',
+      price_range_min: 60,
+      price_range_max: 120,
+      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      user_id: 'demo-user-3',
+      profile: { id: 'demo-user-3', username: 'Alex_K', avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100' }
+    },
+    {
+      id: 'demo-friend-4',
+      name: 'Vintage Record Player',
+      image_url: 'https://images.unsplash.com/photo-1539375665275-f9de415ef9ac?w=400',
+      image_urls: null,
+      category: 'Electronics',
+      condition: 'Fair',
+      description: 'Retro turntable with built-in speakers',
+      price_range_min: 75,
+      price_range_max: 125,
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      user_id: 'demo-user-1',
+      profile: { id: 'demo-user-1', username: 'Sarah_M', avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' }
+    }
+  ];
+
+  const displayItems = friendItems.length > 0 ? friendItems : demoFriendItems;
 
   return (
     <section className="space-y-4">
@@ -167,7 +214,7 @@ const FriendsFeedSection: React.FC = () => {
       </h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {friendItems.map(item => (
+        {displayItems.map(item => (
           <Card 
             key={item.id}
             className="flex gap-3 p-3 cursor-pointer hover:shadow-md transition-shadow"
@@ -231,15 +278,15 @@ const FriendsFeedSection: React.FC = () => {
           }}
           item={selectedItem}
           onNavigatePrev={() => {
-            const currentIdx = friendItems.findIndex(i => i.id === selectedItem?.id);
-            if (currentIdx > 0) handleItemClick(friendItems[currentIdx - 1]);
+            const currentIdx = displayItems.findIndex(i => i.id === selectedItem?.id);
+            if (currentIdx > 0) handleItemClick(displayItems[currentIdx - 1]);
           }}
           onNavigateNext={() => {
-            const currentIdx = friendItems.findIndex(i => i.id === selectedItem?.id);
-            if (currentIdx < friendItems.length - 1) handleItemClick(friendItems[currentIdx + 1]);
+            const currentIdx = displayItems.findIndex(i => i.id === selectedItem?.id);
+            if (currentIdx < displayItems.length - 1) handleItemClick(displayItems[currentIdx + 1]);
           }}
-          currentIndex={friendItems.findIndex(i => i.id === selectedItem?.id)}
-          totalItems={friendItems.length}
+          currentIndex={displayItems.findIndex(i => i.id === selectedItem?.id)}
+          totalItems={displayItems.length}
         />
       )}
     </section>
