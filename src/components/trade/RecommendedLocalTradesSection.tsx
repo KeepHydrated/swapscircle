@@ -204,8 +204,7 @@ const RecommendedLocalTradesSection = () => {
   if (loading) {
     return (
       <div className="w-full space-y-4">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-5 h-5" />
+        <div>
           <Skeleton className="h-6 w-32" />
         </div>
         <div className="flex gap-3">
@@ -224,8 +223,7 @@ const RecommendedLocalTradesSection = () => {
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <MapPin className="h-5 w-5" />
+        <h2 className="text-xl font-bold text-foreground">
           Local Items
         </h2>
         <button 
