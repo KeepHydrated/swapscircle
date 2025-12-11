@@ -175,7 +175,7 @@ const FriendsFeedSection: React.FC = () => {
   }
 
   // Demo items when no real friend items exist
-  const demoFriendItems: FriendItem[] = [
+  const demoFriendItems: (FriendItem & { matchedItem?: { id: string; name: string; image_url: string } })[] = [
     {
       id: 'demo-friend-1',
       name: 'Vintage Polaroid Camera',
@@ -188,7 +188,13 @@ const FriendsFeedSection: React.FC = () => {
       price_range_max: 100,
       created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
       user_id: 'demo-user-1',
-      profile: { id: 'demo-user-1', username: 'Sarah_M', avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' }
+      profile: { id: 'demo-user-1', username: 'Sarah_M', avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' },
+      // This is a match!
+      matchedItem: {
+        id: 'my-item-1',
+        name: 'Canon DSLR Camera',
+        image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=100'
+      }
     },
     {
       id: 'demo-friend-2',
@@ -250,6 +256,19 @@ const FriendsFeedSection: React.FC = () => {
             className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
             onClick={() => handleItemClick(item, index)}
           >
+            {/* Matched item thumbnail */}
+            {(item as any).matchedItem && (
+              <div className="absolute top-3 left-3 z-10">
+                <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-card">
+                  <img
+                    src={(item as any).matchedItem.image_url}
+                    alt={(item as any).matchedItem.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Image */}
             <div className="aspect-square relative overflow-hidden">
               <img
