@@ -871,7 +871,7 @@ const Messages = () => {
         /* Desktop Layout - 2 columns with toggleable right panel */
         <div className="flex flex-1 min-h-0 overflow-hidden pt-16">
           {/* Left sidebar - Conversations (always visible, narrower) */}
-          <div className="w-[200px] border-r border-gray-200 flex flex-col h-full">
+          <div className="w-[280px] border-r border-gray-200 flex flex-col h-full">
             
           {(conversations.length > 0 || isDemoTrade) ? (
             <div className="flex flex-col h-full">
