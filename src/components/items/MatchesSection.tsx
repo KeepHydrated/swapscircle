@@ -252,7 +252,7 @@ const MatchesSection = () => {
           {matches.map((item, index) => (
             <div
               key={item.id}
-              className="flex-shrink-0 w-48 sm:w-56 md:w-64 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+              className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col"
               onClick={() => handleCardClick(item, index)}
             >
               {/* Matched item thumbnail */}
@@ -269,7 +269,7 @@ const MatchesSection = () => {
               )}
 
               {/* Image */}
-              <div className="aspect-[4/3] relative overflow-hidden">
+              <div className="flex-1 relative overflow-hidden">
                 <img
                   src={item.image}
                   alt={item.name}
@@ -278,7 +278,7 @@ const MatchesSection = () => {
               </div>
 
               {/* Content */}
-              <div className="p-3">
+              <div className="p-3 h-20 flex flex-col justify-center">
                 <h3 className="font-semibold text-sm truncate">{item.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-muted-foreground">
