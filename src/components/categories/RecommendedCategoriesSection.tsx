@@ -37,7 +37,7 @@ const RecommendedCategoriesSection: React.FC = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-foreground mb-4 uppercase">Shop by category</h2>
+      <h2 className="text-xl font-bold text-foreground mb-4">Shop By Category</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {categories.map((category) => (
           <button

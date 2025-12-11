@@ -223,7 +223,7 @@ const RecommendedLocalTradesSection = () => {
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground uppercase">
+        <h2 className="text-xl font-bold text-foreground">
           Local Items
         </h2>
         <button 
