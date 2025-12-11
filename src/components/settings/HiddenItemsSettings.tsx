@@ -115,6 +115,9 @@ const HiddenItemsSettings: React.FC = () => {
         <p className="text-sm text-muted-foreground mt-1">
           Items you've chosen not to see again. You can unhide them to see them in your matches.
         </p>
+        <p className="text-sm text-muted-foreground/70 mt-1">
+          Items are automatically removed from this list after 30 days.
+        </p>
       </div>
 
       {hiddenItems.length === 0 ? (
