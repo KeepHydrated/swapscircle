@@ -513,8 +513,8 @@ const Messages = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Header - conditionally rendered */}
-      {!(isTablet && currentMobileView === 'details') && <Header />}
+      {/* Header - always visible */}
+      <Header />
       
       {/* Mobile Layout Only */}
       {isMobile ? (
