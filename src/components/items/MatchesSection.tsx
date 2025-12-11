@@ -247,7 +247,7 @@ const MatchesSection = () => {
         <Link to="/" className="text-sm text-primary hover:underline">View all</Link>
       </div>
       
-      <div className="overflow-x-auto overflow-y-hidden pb-2">
+      <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-4 px-4">
         <div className="flex gap-3 min-w-max">
           {matches.map((item, index) => (
             <div
