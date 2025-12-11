@@ -34,11 +34,16 @@ const HiddenItemsSettings: React.FC = () => {
     
     setLoading(true);
     try {
+      // Only show items hidden within the last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
       const { data, error } = await supabase
         .from('rejections')
         .select(`
           id,
           item_id,
+          created_at,
           item:items (
             id,
             name,
@@ -47,7 +52,8 @@ const HiddenItemsSettings: React.FC = () => {
             condition
           )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .gte('created_at', thirtyDaysAgo.toISOString());
 
       if (error) {
         console.error('Error fetching hidden items:', error);
