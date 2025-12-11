@@ -516,9 +516,9 @@ const Messages = () => {
       {/* Header - conditionally rendered */}
       {!(isTablet && currentMobileView === 'details') && <Header />}
       
-      {/* Mobile/Tablet Layout */}
-      {(isMobile || isTablet) ? (
-        <div className={`flex-1 overflow-hidden pt-16 ${isTablet && currentMobileView === 'details' ? 'h-screen' : ''}`}>
+      {/* Mobile Layout Only */}
+      {isMobile ? (
+        <div className="flex-1 overflow-hidden pt-16">
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
@@ -789,7 +789,7 @@ const Messages = () => {
                       </div>
                     )}
                   </div>
-                ) : isMobile && currentMobileView === 'details' ? (
+                ) : currentMobileView === 'details' ? (
                   /* Details Panel - Full width on mobile when showing details */
                   <div className="flex-1 flex flex-col overflow-y-auto">
                     {selectedPair ? (
@@ -806,73 +806,7 @@ const Messages = () => {
                       </div>
                     )}
                   </div>
-                ) : (
-                  /* Tablet Layout - Both panels side by side */
-                  <>
-                    <div className={`flex-1 flex flex-col min-h-0 ${isTablet ? 'mr-80' : ''}`}>
-                      {activeConversation ? (
-                        <>
-                          <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
-                            {messagesLoading ? (
-                              <div className="flex justify-center items-center h-full">
-                                <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
-                              </div>
-                            ) : messages.length > 0 ? (
-                              <div className="space-y-4">
-                                {messages.map((message: any) => (
-                                  <TradeMessageBubble 
-                                    key={message.id}
-                                    message={message}
-                                    senderName={message.sender_profile?.username || activeChat?.name || 'User'}
-                                    onImageLoad={handleScrollToBottom}
-                                    currentUserId={currentUserId}
-                                  />
-                                ))}
-                                <div ref={scrollRef} />
-                              </div>
-                            ) : (
-                              <div className="text-center py-8">
-                                <p className="text-gray-500">Trade conversation started!</p>
-                                <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
-                                <div ref={scrollRef} />
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div className="flex-shrink-0 border-t border-gray-200">
-                            <MessageInput 
-                              onMarkCompleted={() => handleTradeCompleted(activeConversation)}
-                              conversationId={activeConversation}
-                            />
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <p className="text-gray-500">Select a conversation to start messaging</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Trade Details Panel - Always visible on tablet, full height on iPad */}
-                    <div className={`w-80 border-l border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col overflow-y-auto ${
-                      isTablet ? 'fixed right-0 top-0 h-screen z-40' : ''
-                    }`}>
-                      {selectedPair ? (
-                        <TradeDetailsTabs 
-                          selectedPair={selectedPair}
-                          selectedItem={selectedItem}
-                          onSelectItem={handleSelectItem}
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center h-full p-4">
-                          <p className="text-gray-500 text-center text-sm">
-                            Trade details will appear here
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
+                ) : null}
               </div>
             </div>
           )}
