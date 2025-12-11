@@ -1,5 +1,4 @@
 import MainLayout from '@/components/layout/MainLayout';
-import { RecommendedTradesSlider } from '@/components/trade/RecommendedTradesSlider';
 import { RecommendedFriendsSection } from '@/components/friends/RecommendedFriendsSection';
 import RecommendedCategoriesSection from '@/components/categories/RecommendedCategoriesSection';
 import RecommendedLocalTradesSection from '@/components/trade/RecommendedLocalTradesSection';
@@ -14,7 +13,6 @@ const Test2 = () => {
         <HeroBanner />
         <MatchesSection />
         <FriendsFeedSection />
-        <RecommendedTradesSlider />
         <RecommendedLocalTradesSection />
         <RecommendedCategoriesSection />
         <RecommendedFriendsSection />
