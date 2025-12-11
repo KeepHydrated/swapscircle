@@ -240,6 +240,7 @@ const Messages = () => {
   
   // Width detector state
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const showThreeColumns = windowWidth > 1120;
   
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -983,35 +984,23 @@ const Messages = () => {
           )}
         </div>
         
-        {/* Right side - Combined chat/details area with toggle */}
-        <div className="flex-1 flex flex-col h-full bg-white">
-          {isDemoTrade && demoTradeData ? (
-            /* Demo trade view */
-            <div className="flex flex-col h-full">
-              {/* Demo Header with toggle */}
-              <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
-                      <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
-                    </Avatar>
-                    <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
+        {/* Right side - Chat and/or Details */}
+        {showThreeColumns ? (
+          /* Three column layout: Chat + Details side by side */
+          <>
+            {/* Middle - Chat area */}
+            <div className="flex-1 flex flex-col h-full bg-white border-r border-gray-200">
+              {isDemoTrade && demoTradeData ? (
+                <div className="flex flex-col h-full">
+                  <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
+                        <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                      </Avatar>
+                      <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
+                    </div>
                   </div>
-                  <Button 
-                    variant={currentMobileView === 'details' ? 'default' : 'ghost'} 
-                    size="icon"
-                    onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')}
-                    className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}
-                  >
-                    <Info className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Demo Content - toggleable */}
-              {currentMobileView === 'messages' ? (
-                <div className="flex-1 flex flex-col min-h-0">
                   <div className="flex-1 overflow-y-auto p-4 bg-muted/50 flex items-center justify-center">
                     <div className="text-center text-muted-foreground">
                       <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -1020,63 +1009,24 @@ const Messages = () => {
                     </div>
                   </div>
                   <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
-                    <p className="text-center text-sm text-muted-foreground">
-                      This is a demo trade.
-                    </p>
+                    <p className="text-center text-sm text-muted-foreground">This is a demo trade.</p>
                   </div>
                 </div>
-              ) : (
-                <div className="flex-1 overflow-y-auto bg-gray-50">
-                  <DemoTradeDetailsTabs
-                    demoData={demoTradeData}
-                    onCancel={() => {
-                      setIsDemoTrade(false);
-                      setDemoTradeData(null);
-                      toast({
-                        title: "Trade Cancelled",
-                        description: "This was a demo trade request.",
-                      });
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          ) : activeConversation ? (
-            <>
-              {/* Header with user info and toggle buttons */}
-              <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
-                      <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                        <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
-                        <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                    </Link>
-                    <Link 
-                      to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}
-                      className="font-semibold hover:text-blue-600 transition-colors"
-                    >
-                      {activeChat.otherUserProfile?.username || activeChat.name}
-                    </Link>
+              ) : activeConversation ? (
+                <div className="flex flex-col h-full">
+                  <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                    <div className="flex items-center gap-3">
+                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
+                        <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                          <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                          <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                      </Link>
+                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                        {activeChat.otherUserProfile?.username || activeChat.name}
+                      </Link>
+                    </div>
                   </div>
-                  
-                  {/* Toggle button - just info icon */}
-                  <Button 
-                    variant={currentMobileView === 'details' ? 'default' : 'ghost'} 
-                    size="icon"
-                    onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')}
-                    className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}
-                  >
-                    <Info className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Content area - toggles between chat and details */}
-              {currentMobileView === 'messages' ? (
-                <div className="flex-1 flex flex-col min-h-0">
-                  {/* Messages area */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
                     {messagesLoading ? (
                       <div className="flex justify-center items-center h-full">
@@ -1085,12 +1035,7 @@ const Messages = () => {
                     ) : (
                       <div className="space-y-4">
                         {messages
-                          .filter((message: any, index: number) => {
-                            if (index === 0 && message.message?.startsWith("Hi! I'm interested in trading")) {
-                              return false;
-                            }
-                            return true;
-                          })
+                          .filter((message: any, index: number) => !(index === 0 && message.message?.startsWith("Hi! I'm interested in trading")))
                           .map((message: any) => (
                             <TradeMessageBubble 
                               key={message.id}
@@ -1104,42 +1049,138 @@ const Messages = () => {
                       </div>
                     )}
                   </div>
-                  
-                  {/* Message input */}
                   <div className="flex-shrink-0 border-t border-gray-200">
-                    <MessageInput 
-                      onMarkCompleted={() => handleTradeCompleted(activeConversation)}
-                      conversationId={activeConversation}
-                    />
+                    <MessageInput onMarkCompleted={() => handleTradeCompleted(activeConversation)} conversationId={activeConversation} />
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 overflow-y-auto bg-gray-50 flex justify-center">
-                  <div className="w-full max-w-md">
-                    {selectedPair ? (
-                      <TradeDetailsTabs
-                        selectedPair={selectedPair}
-                        selectedItem={selectedItem}
-                        onSelectItem={handleSelectItem}
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-gray-500 text-center">
-                          Select a trade conversation<br />
-                          to view details
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500">Select a conversation to start messaging</p>
                 </div>
               )}
-            </>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-500">Select a conversation to start messaging</p>
             </div>
-          )}
-        </div>
+            
+            {/* Right - Details panel (always visible in 3-column) */}
+            <div className="w-[340px] flex flex-col h-full bg-gray-50 overflow-y-auto">
+              {isDemoTrade && demoTradeData ? (
+                <DemoTradeDetailsTabs
+                  demoData={demoTradeData}
+                  onCancel={() => {
+                    setIsDemoTrade(false);
+                    setDemoTradeData(null);
+                    toast({ title: "Trade Cancelled", description: "This was a demo trade request." });
+                  }}
+                />
+              ) : selectedPair ? (
+                <TradeDetailsTabs selectedPair={selectedPair} selectedItem={selectedItem} onSelectItem={handleSelectItem} />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500 text-center text-sm">Select a trade conversation<br />to view details</p>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          /* Two column layout: Combined chat/details with toggle */
+          <div className="flex-1 flex flex-col h-full bg-white">
+            {isDemoTrade && demoTradeData ? (
+              <div className="flex flex-col h-full">
+                <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
+                        <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                      </Avatar>
+                      <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
+                    </div>
+                    <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
+                      <Info className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+                {currentMobileView === 'messages' ? (
+                  <div className="flex-1 flex flex-col min-h-0">
+                    <div className="flex-1 overflow-y-auto p-4 bg-muted/50 flex items-center justify-center">
+                      <div className="text-center text-muted-foreground">
+                        <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p className="text-sm">No messages yet</p>
+                        <p className="text-xs mt-1">Send a message to start the conversation</p>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
+                      <p className="text-center text-sm text-muted-foreground">This is a demo trade.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-1 overflow-y-auto bg-gray-50">
+                    <DemoTradeDetailsTabs demoData={demoTradeData} onCancel={() => { setIsDemoTrade(false); setDemoTradeData(null); toast({ title: "Trade Cancelled", description: "This was a demo trade request." }); }} />
+                  </div>
+                )}
+              </div>
+            ) : activeConversation ? (
+              <>
+                <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
+                        <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                          <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                          <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                      </Link>
+                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                        {activeChat.otherUserProfile?.username || activeChat.name}
+                      </Link>
+                    </div>
+                    <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
+                      <Info className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+                {currentMobileView === 'messages' ? (
+                  <div className="flex-1 flex flex-col min-h-0">
+                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                      {messagesLoading ? (
+                        <div className="flex justify-center items-center h-full">
+                          <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {messages
+                            .filter((message: any, index: number) => !(index === 0 && message.message?.startsWith("Hi! I'm interested in trading")))
+                            .map((message: any) => (
+                              <TradeMessageBubble key={message.id} message={message} senderName={message.sender_profile?.username || activeChat?.name || 'User'} onImageLoad={handleScrollToBottom} currentUserId={currentUserId} />
+                            ))}
+                          <div ref={scrollRef} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-shrink-0 border-t border-gray-200">
+                      <MessageInput onMarkCompleted={() => handleTradeCompleted(activeConversation)} conversationId={activeConversation} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-1 overflow-y-auto bg-gray-50 flex justify-center">
+                    <div className="w-full max-w-md">
+                      {selectedPair ? (
+                        <TradeDetailsTabs selectedPair={selectedPair} selectedItem={selectedItem} onSelectItem={handleSelectItem} />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <p className="text-gray-500 text-center">Select a trade conversation<br />to view details</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">Select a conversation to start messaging</p>
+              </div>
+            )}
+          </div>
+        )}
         </div>
       )}
       <SupportChat />
