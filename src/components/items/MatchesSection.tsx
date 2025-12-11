@@ -9,6 +9,9 @@ import { toast } from 'sonner';
 
 const MatchesSection = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number>(0);
+  const [selectedMatchedItemImage, setSelectedMatchedItemImage] = useState<string>('');
+  const [selectedMatchedItemId, setSelectedMatchedItemId] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
   const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
@@ -205,7 +208,7 @@ const MatchesSection = () => {
     }
   };
 
-  const handleCardClick = (item: typeof matches[0]) => {
+  const handleCardClick = (item: typeof matches[0], index: number) => {
     setSelectedItem({
       id: item.id,
       name: item.name,
@@ -217,7 +220,24 @@ const MatchesSection = () => {
       priceRangeMax: item.priceRangeMax,
       user_id: item.user_id,
     });
+    setSelectedItemIndex(index);
+    setSelectedMatchedItemImage(item.myItemImage);
+    setSelectedMatchedItemId(item.myItemId);
     setIsModalOpen(true);
+  };
+
+  const handleNavigatePrev = () => {
+    if (selectedItemIndex > 0) {
+      const prevItem = matches[selectedItemIndex - 1];
+      handleCardClick(prevItem, selectedItemIndex - 1);
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (selectedItemIndex < matches.length - 1) {
+      const nextItem = matches[selectedItemIndex + 1];
+      handleCardClick(nextItem, selectedItemIndex + 1);
+    }
   };
 
   return (
@@ -229,11 +249,11 @@ const MatchesSection = () => {
       
       <div className="overflow-x-auto overflow-y-hidden pb-2">
         <div className="flex gap-3 min-w-max">
-          {matches.map((item) => (
+          {matches.map((item, index) => (
             <div
               key={item.id}
               className="flex-shrink-0 w-48 sm:w-56 md:w-64 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
-              onClick={() => handleCardClick(item)}
+              onClick={() => handleCardClick(item, index)}
             >
               {/* Matched item thumbnail */}
               {item.myItemImage && (
@@ -303,6 +323,12 @@ const MatchesSection = () => {
           setIsModalOpen(false);
           setSelectedItem(null);
         }}
+        matchedItemImage={selectedMatchedItemImage}
+        matchedItemId={selectedMatchedItemId}
+        onNavigatePrev={handleNavigatePrev}
+        onNavigateNext={handleNavigateNext}
+        currentIndex={selectedItemIndex}
+        totalItems={matches.length}
       />
     </div>
   );
