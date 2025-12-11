@@ -174,7 +174,7 @@ const FriendsFeedSection: React.FC = () => {
   if (loading) {
     return (
       <section className="space-y-4">
-        <h2 className="text-xl font-bold text-foreground">
+        <h2 className="text-xl font-bold text-foreground uppercase">
           Recent from Friends
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -256,7 +256,7 @@ const FriendsFeedSection: React.FC = () => {
 
   return (
     <section className="space-y-4">
-      <h2 className="text-xl font-bold text-foreground">
+      <h2 className="text-xl font-bold text-foreground uppercase">
         Recent from Friends
       </h2>
       
