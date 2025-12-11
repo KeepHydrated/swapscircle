@@ -175,7 +175,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
   return (
     <div className="flex h-full overflow-hidden">
       {/* Left sidebar - Conversations */}
-      <div className="w-[280px] border-r border-gray-200 flex flex-col min-h-0">
+      <div className="w-[240px] border-r border-gray-200 flex flex-col min-h-0">
         <ConversationList 
           conversations={conversations}
           activeConversation={activeConversation}
