@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
-import { Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, RefreshCw, Heart } from 'lucide-react';
 import ReviewsTab from '@/components/profile/ReviewsTab';
-import ItemCard from '@/components/items/ItemCard';
 import { MatchItem, Item } from '@/types/item';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 interface OtherProfileTabContentProps {
   activeTab: string;
@@ -27,8 +28,68 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
   isFriend,
   profileUserId
 }) => {
+  const { user } = useAuth();
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
   const [selectedTradeItem, setSelectedTradeItem] = useState<Item | null>(null);
+  const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
+  const [matchedItems, setMatchedItems] = useState<Map<string, any>>(new Map()); // Maps item id to matched user item
+
+  // Fetch liked items and check for matches
+  useEffect(() => {
+    const fetchLikesAndMatches = async () => {
+      if (!user || !profileUserId) return;
+
+      // Fetch user's liked items
+      const { data: likedData } = await supabase
+        .from('liked_items')
+        .select('item_id')
+        .eq('user_id', user.id);
+
+      if (likedData) {
+        setLikedItemIds(new Set(likedData.map(l => l.item_id)));
+      }
+
+      // Fetch user's items
+      const { data: userItems } = await supabase
+        .from('items')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'published')
+        .eq('is_available', true);
+
+      if (!userItems || userItems.length === 0) return;
+
+      // Check for mutual matches (profile owner liked one of user's items)
+      const { data: profileOwnerLikes } = await supabase
+        .from('liked_items')
+        .select('item_id, my_item_id')
+        .eq('user_id', profileUserId);
+
+      if (profileOwnerLikes) {
+        const userItemIds = new Set(userItems.map(i => i.id));
+        const matched = new Map<string, any>();
+
+        // For each profile item, check if user liked it AND profile owner liked one of user's items
+        for (const item of items) {
+          const userLikedThis = likedData?.some(l => l.item_id === item.id);
+          if (userLikedThis) {
+            // Check if profile owner liked any of user's items
+            const ownerLike = profileOwnerLikes.find(l => userItemIds.has(l.item_id));
+            if (ownerLike) {
+              // Find the user's item that was liked
+              const matchedUserItem = userItems.find(i => i.id === ownerLike.item_id);
+              if (matchedUserItem) {
+                matched.set(item.id, matchedUserItem);
+              }
+            }
+          }
+        }
+        setMatchedItems(matched);
+      }
+    };
+
+    fetchLikesAndMatches();
+  }, [user, profileUserId, items]);
 
   // Handle item click to show popup
   const handleItemClick = (id: string) => {
@@ -50,89 +111,130 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
     setTradeModalOpen(true);
   };
 
+  // Handle like button click
+  const handleLikeClick = (e: React.MouseEvent, itemId: string) => {
+    e.stopPropagation();
+    onLikeItem(itemId);
+    // Toggle local state for immediate feedback
+    setLikedItemIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
+  };
+
   // Only render the content for the active tab
   return (
     <>
       {/* Available Items Tab Content */}
       {activeTab === 'available' && (
         <div className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {items.map((item) => (
-              <div key={item.id} className="space-y-2">
-                {isFriend ? (
-                  // Friends see the match buttons
-                  <ItemCard
-                    id={item.id}
-                    name={item.name}
-                    image={item.image}
-                    isMatch={true}
-                    liked={item.liked}
-                    onSelect={handleItemClick}
-                    onLike={onLikeItem}
-                    onReject={(id) => onRejectItem(id)}
-                    disableLike={false}
-                    status={item.status}
-                  />
-                ) : (
-                  // Non-friends see the trade button
-                  <div 
-                    className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                    onClick={() => handleItemClick(item.id)}
-                  >
-                    <div className="relative aspect-[4/3]">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                      {/* Suggest Trade button */}
-                      <button 
-                        className="absolute top-2 right-2 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-                        onClick={(e) => handleTradeClick(e, item)}
-                        title="Suggest a Trade"
-                      >
-                        <Check className="w-5 h-5 text-white" />
-                      </button>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-base font-semibold text-foreground mb-1">{item.name}</h3>
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                          {item.priceRangeMin && item.priceRangeMax 
-                            ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
-                            : item.priceRange 
-                              ? `Up to $${item.priceRange}`
-                              : 'Price not set'}
-                        </p>
-                        {item.condition && (
-                          <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
-                            {item.condition}
-                          </span>
-                        )}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {items.map((item) => {
+              const matchedUserItem = matchedItems.get(item.id);
+              const isMatch = !!matchedUserItem;
+              const isLiked = likedItemIds.has(item.id) || item.liked;
+
+              return (
+                <div
+                  key={item.id}
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+                  onClick={() => handleItemClick(item.id)}
+                >
+                  {/* Matched item thumbnail - only for matches */}
+                  {isMatch && matchedUserItem && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                        <img
+                          src={matchedUserItem.image_url || matchedUserItem.image_urls?.[0]}
+                          alt={matchedUserItem.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
-                  </div>
-                )}
-                {/* Mobile-only description and details */}
-                <div className="md:hidden space-y-2">
-                  {item.description && (
-                    <p className="text-sm text-gray-600 line-clamp-3">{item.description}</p>
                   )}
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    {item.category && (
-                      <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded">{item.category}</span>
-                    )}
-                    {item.tags && item.tags.map((tag, index) => (
-                      <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded">{tag}</span>
-                    ))}
+
+                  {/* Image */}
+                  <div className="aspect-square relative overflow-hidden">
+                    <img
+                      src={item.image || item.image_url || (item.image_urls as string[])?.[0] || '/placeholder.svg'}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
-                  <div className="flex gap-4 text-xs text-gray-500">
-                    {item.condition && <span>{item.condition}</span>}
-                    {item.priceRange && <span>Up to ${item.priceRange}</span>}
+
+                  {/* Content */}
+                  <div className="p-3">
+                    <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground">
+                        {item.priceRangeMin && item.priceRangeMax 
+                          ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
+                          : item.priceRangeMin 
+                            ? `$${item.priceRangeMin}+`
+                            : 'Price not set'}
+                      </span>
+                      {item.condition && (
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                          {item.condition}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action buttons - different for matched vs non-matched items */}
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {isMatch ? (
+                      // Match card buttons - checkmark for direct trade
+                      <>
+                        <button
+                          onClick={(e) => handleTradeClick(e, item)}
+                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                          aria-label="Accept trade"
+                        >
+                          <Check className="w-4 h-4 text-green-500" />
+                        </button>
+                        <button
+                          onClick={(e) => handleLikeClick(e, item.id)}
+                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                          aria-label={isLiked ? "Unlike" : "Like"}
+                        >
+                          <Heart 
+                            className="w-4 h-4 text-red-500" 
+                            fill={isLiked ? "red" : "none"}
+                          />
+                        </button>
+                      </>
+                    ) : (
+                      // Search-style card buttons - swap for trade suggestion
+                      <>
+                        <button
+                          onClick={(e) => handleTradeClick(e, item)}
+                          className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
+                          aria-label="Suggest trade"
+                        >
+                          <RefreshCw className="w-4 h-4 text-white" />
+                        </button>
+                        <button
+                          onClick={(e) => handleLikeClick(e, item.id)}
+                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                          aria-label={isLiked ? "Unlike" : "Like"}
+                        >
+                          <Heart 
+                            className="w-4 h-4 text-red-500" 
+                            fill={isLiked ? "red" : "none"}
+                          />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
