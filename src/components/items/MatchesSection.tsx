@@ -227,71 +227,73 @@ const MatchesSection = () => {
         <Link to="/" className="text-sm text-primary hover:underline">View all</Link>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {matches.map((item) => (
-          <div
-            key={item.id}
-            className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => handleCardClick(item)}
-          >
-            {/* Matched item thumbnail */}
-            {item.myItemImage && (
-              <div className="absolute top-3 left-3 z-10">
-                <div className="w-14 h-14 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
-                  <img 
-                    src={item.myItemImage} 
-                    alt="Your matched item" 
-                    className="w-full h-full object-cover"
-                  />
+      <div className="overflow-x-auto overflow-y-hidden pb-2">
+        <div className="flex gap-3 min-w-max">
+          {matches.map((item) => (
+            <div
+              key={item.id}
+              className="flex-shrink-0 w-48 sm:w-56 md:w-64 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+              onClick={() => handleCardClick(item)}
+            >
+              {/* Matched item thumbnail */}
+              {item.myItemImage && (
+                <div className="absolute top-3 left-3 z-10">
+                  <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                    <img 
+                      src={item.myItemImage} 
+                      alt="Your matched item" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Image */}
+              <div className="aspect-[4/3] relative overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              {/* Content */}
+              <div className="p-3">
+                <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    ${item.priceRangeMin} - ${item.priceRangeMax}
+                  </span>
+                  <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                    {item.condition}
+                  </span>
                 </div>
               </div>
-            )}
 
-            {/* Image */}
-            <div className="aspect-square relative overflow-hidden">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="p-3">
-              <h3 className="font-semibold text-sm truncate">{item.name}</h3>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-muted-foreground">
-                  ${item.priceRangeMin} - ${item.priceRangeMax}
-                </span>
-                <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
-                  {item.condition}
-                </span>
+              {/* Action buttons */}
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={(e) => handleRequestTrade(item, e)}
+                  disabled={isCreatingTrade === item.id}
+                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  aria-label="Suggest trade"
+                >
+                  <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
+                </button>
+                <button
+                  onClick={(e) => handleLikeItem(item.id, item.isDemo, e)}
+                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
+                >
+                  <Heart 
+                    className="w-4 h-4 text-red-500" 
+                    fill={likedItemIds.has(item.id) ? "red" : "none"}
+                  />
+                </button>
               </div>
             </div>
-
-            {/* Action buttons */}
-            <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={(e) => handleRequestTrade(item, e)}
-                disabled={isCreatingTrade === item.id}
-                className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                aria-label="Suggest trade"
-              >
-                <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
-              </button>
-              <button
-                onClick={(e) => handleLikeItem(item.id, item.isDemo, e)}
-                className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
-              >
-                <Heart 
-                  className="w-4 h-4 text-red-500" 
-                  fill={likedItemIds.has(item.id) ? "red" : "none"}
-                />
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <ExploreItemModal
