@@ -267,7 +267,7 @@ const FriendsFeedSection: React.FC = () => {
           {displayItems.map((item, index) => (
             <div
               key={item.id}
-              className="flex-shrink-0 w-48 sm:w-56 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+              className="flex-shrink-0 w-48 sm:w-56 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col"
               onClick={() => handleItemClick(item, index)}
           >
             {/* Matched item thumbnail */}
@@ -284,7 +284,7 @@ const FriendsFeedSection: React.FC = () => {
             )}
 
             {/* Image */}
-            <div className="aspect-square relative overflow-hidden">
+            <div className="flex-1 relative overflow-hidden">
               <img
                 src={item.image_url || (item.image_urls?.[0]) || '/placeholder.svg'}
                 alt={item.name}
@@ -293,7 +293,7 @@ const FriendsFeedSection: React.FC = () => {
             </div>
 
             {/* Content */}
-            <div className="p-3">
+            <div className="p-3 h-20">
               <h3 className="font-semibold text-sm truncate">{item.name}</h3>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">
