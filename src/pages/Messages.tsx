@@ -1105,21 +1105,23 @@ const Messages = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 overflow-y-auto bg-gray-50">
-                  {selectedPair ? (
-                    <TradeDetailsTabs 
-                      selectedPair={selectedPair}
-                      selectedItem={selectedItem}
-                      onSelectItem={handleSelectItem}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="text-gray-500 text-center">
-                        Select a trade conversation<br />
-                        to view details
-                      </p>
-                    </div>
-                  )}
+                <div className="flex-1 overflow-y-auto bg-gray-50 flex justify-center">
+                  <div className="w-full max-w-md">
+                    {selectedPair ? (
+                      <TradeDetailsTabs
+                        selectedPair={selectedPair}
+                        selectedItem={selectedItem}
+                        onSelectItem={handleSelectItem}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-500 text-center">
+                          Select a trade conversation<br />
+                          to view details
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </>
