@@ -238,6 +238,15 @@ const Messages = () => {
   const [isDemoTrade, setIsDemoTrade] = useState(false);
   const [demoTradeData, setDemoTradeData] = useState<any>(null);
   
+  // Width detector state
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   // Handle demo trade from navigation state
   useEffect(() => {
     if (location.state?.demoTrade && location.state?.demoData) {
@@ -1134,6 +1143,11 @@ const Messages = () => {
         </div>
       )}
       <SupportChat />
+      
+      {/* Width Detector */}
+      <div className="fixed bottom-4 right-4 z-50 bg-black/80 text-white text-xs px-2 py-1 rounded font-mono">
+        {windowWidth}px
+      </div>
     </div>
   );
 };
