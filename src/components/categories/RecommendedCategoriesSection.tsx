@@ -1,19 +1,31 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const categories = [
-  { name: "Electronics", icon: "📱", color: "bg-blue-100" },
-  { name: "Home & Garden", icon: "🏠", color: "bg-green-100" },
-  { name: "Sports & Outdoors", icon: "⚽", color: "bg-orange-100" },
-  { name: "Clothing", icon: "👕", color: "bg-purple-100" },
-  { name: "Business", icon: "💼", color: "bg-gray-100" },
-  { name: "Entertainment", icon: "🎮", color: "bg-pink-100" },
-  { name: "Collectibles", icon: "🎨", color: "bg-yellow-100" },
-  { name: "Books & Media", icon: "📚", color: "bg-indigo-100" },
-  { name: "Tools & Equipment", icon: "🔧", color: "bg-red-100" },
-  { name: "Food", icon: "🍕", color: "bg-amber-100" },
+  { 
+    name: "Electronics", 
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400"
+  },
+  { 
+    name: "Home & Garden", 
+    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400"
+  },
+  { 
+    name: "Sports & Outdoors", 
+    image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=400"
+  },
+  { 
+    name: "Clothing", 
+    image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400"
+  },
+  { 
+    name: "Entertainment", 
+    image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400"
+  },
+  { 
+    name: "Collectibles", 
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"
+  },
 ];
 
 const RecommendedCategoriesSection: React.FC = () => {
@@ -24,41 +36,28 @@ const RecommendedCategoriesSection: React.FC = () => {
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-sm border border-border p-6">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Recommended Categories</h2>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: false,
-        }}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-4">
-          {categories.map((category) => (
-            <CarouselItem key={category.name} className="pl-4 basis-auto">
-              <button
-                onClick={() => handleCategoryClick(category.name)}
-                className="flex flex-col items-center gap-2"
-              >
-                <div
-                  className={cn(
-                    "w-28 h-28 rounded-full flex items-center justify-center text-4xl",
-                    "border-2 border-border shadow-sm",
-                    category.color
-                  )}
-                >
-                  {category.icon}
-                </div>
-                <span className="text-sm text-center font-medium max-w-[110px] text-muted-foreground">
-                  {category.name}
-                </span>
-              </button>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-0" />
-        <CarouselNext className="right-0" />
-      </Carousel>
+    <div className="w-full">
+      <h2 className="text-xl font-bold text-foreground mb-4">Shop by category</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {categories.map((category) => (
+          <button
+            key={category.name}
+            onClick={() => handleCategoryClick(category.name)}
+            className="flex flex-col items-center gap-2 group"
+          >
+            <div className="w-full aspect-square rounded-lg overflow-hidden">
+              <img
+                src={category.image}
+                alt={category.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <span className="text-sm font-medium text-foreground">
+              {category.name}
+            </span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
