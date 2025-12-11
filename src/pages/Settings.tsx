@@ -6,14 +6,16 @@ import ProfileSettings from '@/components/settings/ProfileSettings';
 import NotificationSettings from '@/components/settings/NotificationSettings';
 import PrivacySettings from '@/components/settings/PrivacySettings';
 import AccountSettings from '@/components/settings/AccountSettings';
+import HiddenItemsSettings from '@/components/settings/HiddenItemsSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { User, Bell, Shield, Settings as SettingsIcon } from 'lucide-react';
+import { User, Bell, Shield, Settings as SettingsIcon, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
   { value: 'profile', label: 'Profile Settings', icon: User },
   { value: 'notifications', label: 'Notifications', icon: Bell },
   { value: 'privacy', label: 'Privacy', icon: Shield },
+  { value: 'hidden', label: 'Hidden Items', icon: EyeOff },
   { value: 'account', label: 'Account', icon: SettingsIcon },
 ];
 
@@ -49,6 +51,10 @@ const Settings: React.FC = () => {
 
             <TabsContent value="privacy" className="p-6">
               <PrivacySettings />
+            </TabsContent>
+
+            <TabsContent value="hidden" className="p-6">
+              <HiddenItemsSettings />
             </TabsContent>
 
             <TabsContent value="account" className="p-3 pt-1">
@@ -94,6 +100,7 @@ const Settings: React.FC = () => {
             {activeTab === 'profile' && <ProfileSettings />}
             {activeTab === 'notifications' && <NotificationSettings />}
             {activeTab === 'privacy' && <PrivacySettings />}
+            {activeTab === 'hidden' && <HiddenItemsSettings />}
             {activeTab === 'account' && <AccountSettings />}
           </div>
         </div>
