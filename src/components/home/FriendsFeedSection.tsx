@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, RefreshCw, Heart } from 'lucide-react';
+import { Users, RefreshCw, Heart, Check } from 'lucide-react';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
@@ -259,7 +259,7 @@ const FriendsFeedSection: React.FC = () => {
             {/* Matched item thumbnail */}
             {(item as any).matchedItem && (
               <div className="absolute top-3 left-3 z-10">
-                <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-card">
+                <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
                   <img
                     src={(item as any).matchedItem.image_url}
                     alt={(item as any).matchedItem.name}
@@ -297,25 +297,51 @@ const FriendsFeedSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Action buttons */}
+            {/* Action buttons - different for matched vs non-matched items */}
             <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={(e) => handleTradeClick(item, e)}
-                className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
-                aria-label="Suggest trade"
-              >
-                <RefreshCw className="w-4 h-4 text-white" />
-              </button>
-              <button
-                onClick={(e) => handleLike(item.id, e)}
-                className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
-              >
-                <Heart 
-                  className="w-4 h-4 text-red-500" 
-                  fill={likedItems.has(item.id) ? "red" : "none"}
-                />
-              </button>
+              {(item as any).matchedItem ? (
+                // Match card buttons - checkmark for direct trade
+                <>
+                  <button
+                    onClick={(e) => handleTradeClick(item, e)}
+                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                    aria-label="Accept trade"
+                  >
+                    <Check className="w-4 h-4 text-green-500" />
+                  </button>
+                  <button
+                    onClick={(e) => handleLike(item.id, e)}
+                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                    aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
+                  >
+                    <Heart 
+                      className="w-4 h-4 text-red-500" 
+                      fill={likedItems.has(item.id) ? "red" : "none"}
+                    />
+                  </button>
+                </>
+              ) : (
+                // Regular card buttons - swap for trade suggestion
+                <>
+                  <button
+                    onClick={(e) => handleTradeClick(item, e)}
+                    className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
+                    aria-label="Suggest trade"
+                  >
+                    <RefreshCw className="w-4 h-4 text-white" />
+                  </button>
+                  <button
+                    onClick={(e) => handleLike(item.id, e)}
+                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                    aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
+                  >
+                    <Heart 
+                      className="w-4 h-4 text-red-500" 
+                      fill={likedItems.has(item.id) ? "red" : "none"}
+                    />
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ))}
