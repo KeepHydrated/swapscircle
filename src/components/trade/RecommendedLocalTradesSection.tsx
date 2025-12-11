@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Heart, RefreshCw } from "lucide-react";
+import { MapPin, Heart, RefreshCw, Check } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
@@ -15,7 +15,44 @@ interface TradeItem {
   price_range_min: number | null;
   price_range_max: number | null;
   user_id: string;
+  // Match-related fields
+  isMatch?: boolean;
+  myItemImage?: string;
+  myItemId?: string;
+  myItemName?: string;
 }
+
+// Mock matched items to show in Local Items
+const mockMatchedItems: TradeItem[] = [
+  {
+    id: "local-match-1",
+    name: "Vintage Record Player",
+    image_url: "https://images.unsplash.com/photo-1616707977737-3a6e64f7e3f0?w=800",
+    category: "Electronics",
+    condition: "Good",
+    price_range_min: 150,
+    price_range_max: 250,
+    user_id: "demo-local-1",
+    isMatch: true,
+    myItemImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
+    myItemId: "my-local-1",
+    myItemName: "Wireless Headphones"
+  },
+  {
+    id: "local-match-2",
+    name: "Leather Messenger Bag",
+    image_url: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800",
+    category: "Fashion",
+    condition: "Like New",
+    price_range_min: 80,
+    price_range_max: 120,
+    user_id: "demo-local-2",
+    isMatch: true,
+    myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=800",
+    myItemId: "my-local-2",
+    myItemName: "Denim Jacket"
+  },
+];
 
 const RecommendedLocalTradesSection = () => {
   const [items, setItems] = useState<TradeItem[]>([]);
@@ -38,12 +75,15 @@ const RecommendedLocalTradesSection = () => {
         .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id")
         .eq("is_available", true)
         .eq("status", "published")
-        .limit(10);
+        .limit(8);
 
       if (error) throw error;
-      setItems(data || []);
+      // Merge mock matched items at the beginning with real items
+      setItems([...mockMatchedItems, ...(data || [])]);
     } catch (error) {
       console.error("Error fetching local trades:", error);
+      // Still show mock matched items on error
+      setItems(mockMatchedItems);
     } finally {
       setLoading(false);
     }
@@ -112,14 +152,53 @@ const RecommendedLocalTradesSection = () => {
     }
   };
 
-  const handleTrade = (itemId: string, e: React.MouseEvent) => {
+  const handleTrade = (item: TradeItem, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
       navigate('/auth');
       return;
     }
-    // Navigate to item page for now - trade modal would be added here
-    navigate(`/item/${itemId}`);
+    
+    // For matched demo items, navigate to messages with demo trade
+    if (item.isMatch) {
+      navigate('/messages', { 
+        state: { 
+          demoTrade: true,
+          demoData: {
+            theirItem: {
+              name: item.name,
+              image: item.image_url,
+              image_url: item.image_url,
+              image_urls: [item.image_url],
+              description: 'Item available for trade',
+              category: item.category,
+              condition: item.condition,
+              price_range_min: item.price_range_min,
+              price_range_max: item.price_range_max
+            },
+            myItem: {
+              name: item.myItemName,
+              image: item.myItemImage,
+              image_url: item.myItemImage,
+              image_urls: [item.myItemImage],
+              description: 'Your item for trade',
+              category: 'Your Items',
+              condition: 'Good'
+            },
+            partnerProfile: {
+              id: item.user_id,
+              username: 'Local Trader',
+              avatar_url: null,
+              created_at: '2024-01-15T10:30:00Z'
+            }
+          }
+        } 
+      });
+      return;
+    }
+    
+    // Navigate to item page for real items
+    navigate(`/item/${item.id}`);
   };
 
   if (loading) {
@@ -165,6 +244,19 @@ const RecommendedLocalTradesSection = () => {
               className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col"
               onClick={() => navigate(`/item/${item.id}`)}
             >
+              {/* Matched item thumbnail */}
+              {item.isMatch && item.myItemImage && (
+                <div className="absolute top-3 left-3 z-10">
+                  <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                    <img 
+                      src={item.myItemImage} 
+                      alt="Your matched item" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Image */}
               <div className="flex-1 relative overflow-hidden">
                 {item.image_url ? (
@@ -199,13 +291,23 @@ const RecommendedLocalTradesSection = () => {
 
               {/* Action buttons */}
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={(e) => handleTrade(item.id, e)}
-                  className="w-8 h-8 bg-primary rounded-full shadow-md flex items-center justify-center hover:bg-primary/90"
-                  aria-label="Suggest trade"
-                >
-                  <RefreshCw className="w-4 h-4 text-primary-foreground" />
-                </button>
+                {item.isMatch ? (
+                  <button
+                    onClick={(e) => handleTrade(item, e)}
+                    className="w-8 h-8 bg-background rounded-full shadow-md flex items-center justify-center hover:bg-background/90"
+                    aria-label="Accept trade"
+                  >
+                    <Check className="w-4 h-4 text-green-500" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={(e) => handleTrade(item, e)}
+                    className="w-8 h-8 bg-primary rounded-full shadow-md flex items-center justify-center hover:bg-primary/90"
+                    aria-label="Suggest trade"
+                  >
+                    <RefreshCw className="w-4 h-4 text-primary-foreground" />
+                  </button>
+                )}
                 <button
                   onClick={(e) => handleLike(item.id, e)}
                   className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center ${
