@@ -121,11 +121,8 @@ export const RecommendedFriendsSection = () => {
 
   return (
     <div className="w-full">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Recommended Friends</h2>
-          <p className="text-muted-foreground">Connect with traders in your area</p>
-        </div>
+      <div className="mb-4">
+        <h2 className="text-xl font-bold text-foreground">Recommended Friends</h2>
       </div>
       
       <div className="overflow-x-auto pb-4">
