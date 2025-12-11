@@ -14,8 +14,8 @@ const Test2 = () => {
         <MatchesSection />
         <FriendsFeedSection />
         <RecommendedCategoriesSection />
-        <RecommendedFriendsSection />
         <RecommendedLocalTradesSection />
+        <RecommendedFriendsSection />
       </div>
     </MainLayout>
   );
