@@ -1,7 +1,14 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, Check, ExternalLink } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, Check, ExternalLink, EyeOff } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { rejectItem } from "@/services/rejectionService";
 import { Item } from "@/types/item";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -28,6 +35,7 @@ interface ExploreItemModalProps {
   onReport?: (id: string) => void;
   matchedItemImage?: string; // Image of user's matched item to display
   matchedItemId?: string; // ID of user's matched item to pre-select in trade modal
+  onHideItem?: (id: string) => void; // Callback when user hides an item
 }
 
 interface UserProfile {
@@ -56,6 +64,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   onReport,
   matchedItemImage,
   matchedItemId,
+  onHideItem,
 }) => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -562,17 +571,43 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
               <div className="absolute top-4 right-4 flex gap-3 z-20">
-                <button
-                  onClick={() => {
-                    onClose();
-                    navigate(`/item/${item.id}`);
-                  }}
-                  className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
-                  aria-label="View item page"
-                  title="View item page"
-                >
-                  <ExternalLink className="w-5 h-5 text-gray-500" />
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer"
+                      aria-label="More options"
+                    >
+                      <MoreVertical className="w-5 h-5 text-gray-500" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-background z-50">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        onClose();
+                        navigate(`/item/${item.id}`);
+                      }}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Go to item page
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={async () => {
+                        if (item?.id) {
+                          await rejectItem(item.id);
+                          onHideItem?.(item.id);
+                          onClose();
+                          toast({
+                            title: "Item hidden",
+                            description: "You won't see this item again.",
+                          });
+                        }
+                      }}
+                    >
+                      <EyeOff className="w-4 h-4 mr-2" />
+                      Don't show this item again
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 {/* Quick Accept button - only show if there's a matched item */}
                 {!disableActions && fullItem?.user_id && matchedItemId && (
                   <button
