@@ -12,8 +12,8 @@ const Test2 = () => {
       <div className="bg-background min-h-screen space-y-8 p-6">
         <HeroBanner />
         <MatchesSection />
-        <RecommendedCategoriesSection />
         <FriendsFeedSection />
+        <RecommendedCategoriesSection />
         <RecommendedFriendsSection />
         <RecommendedLocalTradesSection />
       </div>
