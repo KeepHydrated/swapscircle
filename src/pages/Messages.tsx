@@ -976,24 +976,14 @@ const Messages = () => {
                     </Avatar>
                     <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      variant={currentMobileView === 'messages' ? 'default' : 'ghost'} 
-                      size="icon"
-                      onClick={() => setCurrentMobileView('messages')}
-                      className={currentMobileView === 'messages' ? 'bg-primary text-primary-foreground' : ''}
-                    >
-                      <MessageSquare className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                      variant={currentMobileView === 'details' ? 'default' : 'ghost'} 
-                      size="icon"
-                      onClick={() => setCurrentMobileView('details')}
-                      className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}
-                    >
-                      <Info className="h-5 w-5" />
-                    </Button>
-                  </div>
+                  <Button 
+                    variant={currentMobileView === 'details' ? 'default' : 'ghost'} 
+                    size="icon"
+                    onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')}
+                    className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}
+                  >
+                    <Info className="h-5 w-5" />
+                  </Button>
                 </div>
               </div>
 
@@ -1049,25 +1039,15 @@ const Messages = () => {
                     </Link>
                   </div>
                   
-                  {/* Toggle buttons */}
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      variant={currentMobileView === 'messages' ? 'default' : 'ghost'} 
-                      size="icon"
-                      onClick={() => setCurrentMobileView('messages')}
-                      className={currentMobileView === 'messages' ? 'bg-primary text-primary-foreground' : ''}
-                    >
-                      <MessageSquare className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                      variant={currentMobileView === 'details' ? 'default' : 'ghost'} 
-                      size="icon"
-                      onClick={() => setCurrentMobileView('details')}
-                      className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}
-                    >
-                      <Info className="h-5 w-5" />
-                    </Button>
-                  </div>
+                  {/* Toggle button - just info icon */}
+                  <Button 
+                    variant={currentMobileView === 'details' ? 'default' : 'ghost'} 
+                    size="icon"
+                    onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')}
+                    className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}
+                  >
+                    <Info className="h-5 w-5" />
+                  </Button>
                 </div>
               </div>
 
