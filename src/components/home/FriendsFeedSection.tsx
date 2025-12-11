@@ -262,12 +262,13 @@ const FriendsFeedSection: React.FC = () => {
         Recent from Friends
       </h2>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {displayItems.map((item, index) => (
-          <div
-            key={item.id}
-            className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => handleItemClick(item, index)}
+      <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-4 px-4">
+        <div className="flex gap-3 min-w-max">
+          {displayItems.map((item, index) => (
+            <div
+              key={item.id}
+              className="flex-shrink-0 w-48 sm:w-56 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+              onClick={() => handleItemClick(item, index)}
           >
             {/* Matched item thumbnail */}
             {(item as any).matchedItem && (
@@ -358,6 +359,7 @@ const FriendsFeedSection: React.FC = () => {
             </div>
           </div>
         ))}
+        </div>
       </div>
 
       {/* Item Modal */}
