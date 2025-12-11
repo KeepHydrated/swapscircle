@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
-import { formatDistanceToNow } from 'date-fns';
-import { Link } from 'react-router-dom';
 import { Users } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
+import ItemCard from '@/components/items/ItemCard';
 import { Item } from '@/types/item';
 
 interface FriendItem {
@@ -31,7 +29,9 @@ const FriendsFeedSection: React.FC = () => {
   const [friendItems, setFriendItems] = useState<FriendItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchFriendItems = async () => {
@@ -112,7 +112,7 @@ const FriendsFeedSection: React.FC = () => {
     fetchFriendItems();
   }, []);
 
-  const handleItemClick = (item: FriendItem) => {
+  const handleItemClick = (item: FriendItem, index: number) => {
     const mappedItem: Item = {
       id: item.id,
       name: item.name,
@@ -125,7 +125,20 @@ const FriendsFeedSection: React.FC = () => {
       user_id: item.user_id
     };
     setSelectedItem(mappedItem);
+    setSelectedItemIndex(index);
     setIsModalOpen(true);
+  };
+
+  const handleLike = (id: string) => {
+    setLikedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
   if (loading) {
@@ -135,9 +148,9 @@ const FriendsFeedSection: React.FC = () => {
           <Users className="h-5 w-5" />
           Recent from Friends
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="animate-pulse bg-muted rounded-xl h-24" />
+            <div key={i} className="animate-pulse bg-muted rounded-xl aspect-square" />
           ))}
         </div>
       </section>
@@ -213,58 +226,27 @@ const FriendsFeedSection: React.FC = () => {
         Recent from Friends
       </h2>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {displayItems.map(item => (
-          <Card 
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {displayItems.map((item, index) => (
+          <ItemCard
             key={item.id}
-            className="flex gap-3 p-3 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleItemClick(item)}
-          >
-            {/* Item Image */}
-            <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-              <img
-                src={item.image_url || (item.image_urls?.[0]) || '/placeholder.svg'}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              {/* User info */}
-              <Link 
-                to={`/other-person-profile?userId=${item.profile.id}`}
-                className="flex items-center gap-2 mb-1"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={item.profile.avatar_url || undefined} />
-                  <AvatarFallback className="text-xs">
-                    {item.profile.username?.charAt(0).toUpperCase() || 'F'}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-xs text-muted-foreground hover:text-foreground">
-                  {item.profile.username || 'Friend'}
-                </span>
-                <span className="text-xs text-muted-foreground/60">
-                  · {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-                </span>
-              </Link>
-
-              {/* Item name */}
-              <h3 className="font-medium text-sm text-foreground truncate">{item.name}</h3>
-
-              {/* Price & Condition */}
-              <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                {(item.price_range_min || item.price_range_max) && (
-                  <span>${item.price_range_min || 0} - ${item.price_range_max || '∞'}</span>
-                )}
-                {item.condition && (
-                  <span className="bg-muted px-1.5 py-0.5 rounded text-xs">{item.condition}</span>
-                )}
-              </div>
-            </div>
-          </Card>
+            id={item.id}
+            name={item.name}
+            image={item.image_url || (item.image_urls?.[0]) || '/placeholder.svg'}
+            image_urls={item.image_urls || undefined}
+            priceRangeMin={item.price_range_min || undefined}
+            priceRangeMax={item.price_range_max || undefined}
+            condition={item.condition || undefined}
+            category={item.category || undefined}
+            ownerId={item.user_id}
+            isMatch={false}
+            showLikeButton={true}
+            liked={likedItems.has(item.id)}
+            onSelect={() => handleItemClick(item, index)}
+            onLike={handleLike}
+            compact={true}
+            disableClick={false}
+          />
         ))}
       </div>
 
@@ -278,14 +260,16 @@ const FriendsFeedSection: React.FC = () => {
           }}
           item={selectedItem}
           onNavigatePrev={() => {
-            const currentIdx = displayItems.findIndex(i => i.id === selectedItem?.id);
-            if (currentIdx > 0) handleItemClick(displayItems[currentIdx - 1]);
+            if (selectedItemIndex > 0) {
+              handleItemClick(displayItems[selectedItemIndex - 1], selectedItemIndex - 1);
+            }
           }}
           onNavigateNext={() => {
-            const currentIdx = displayItems.findIndex(i => i.id === selectedItem?.id);
-            if (currentIdx < displayItems.length - 1) handleItemClick(displayItems[currentIdx + 1]);
+            if (selectedItemIndex < displayItems.length - 1) {
+              handleItemClick(displayItems[selectedItemIndex + 1], selectedItemIndex + 1);
+            }
           }}
-          currentIndex={displayItems.findIndex(i => i.id === selectedItem?.id)}
+          currentIndex={selectedItemIndex}
           totalItems={displayItems.length}
         />
       )}
