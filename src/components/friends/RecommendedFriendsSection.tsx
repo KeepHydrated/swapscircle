@@ -125,11 +125,11 @@ export const RecommendedFriendsSection = () => {
         <h2 className="text-xl font-bold text-foreground">Recommended Friends</h2>
       </div>
       
-      <div className="overflow-x-auto pb-4">
-        <div className="flex gap-3">
-          {profiles.map((profile, index) => (
-            <div key={profile.id} className={`flex-shrink-0 ${index === 0 ? 'w-48' : 'w-48'}`}>
-              <div className={index === 0 ? "py-2 pr-2" : "p-2"}>
+      <div className="overflow-x-auto pb-4 -ml-6">
+        <div className="flex gap-3 pl-6">
+          {profiles.map((profile) => (
+            <div key={profile.id} className="flex-shrink-0 w-32">
+              <div className="py-2">
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <Avatar 
