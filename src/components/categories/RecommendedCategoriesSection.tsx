@@ -45,7 +45,7 @@ const RecommendedCategoriesSection: React.FC = () => {
             onClick={() => handleCategoryClick(category.name)}
             className="flex flex-col items-center gap-2 group"
           >
-            <div className="w-full aspect-square rounded-lg overflow-hidden">
+            <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
               <img
                 src={category.image}
                 alt={category.name}
