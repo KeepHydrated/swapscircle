@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Users } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Users, RefreshCw, Heart } from 'lucide-react';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
-import ItemCard from '@/components/items/ItemCard';
+import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
 
 interface FriendItem {
@@ -32,6 +31,8 @@ const FriendsFeedSection: React.FC = () => {
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
+  const [tradeModalOpen, setTradeModalOpen] = useState(false);
+  const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
 
   useEffect(() => {
     const fetchFriendItems = async () => {
@@ -129,7 +130,8 @@ const FriendsFeedSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleLike = (id: string) => {
+  const handleLike = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setLikedItems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -141,6 +143,21 @@ const FriendsFeedSection: React.FC = () => {
     });
   };
 
+  const handleTradeClick = (item: FriendItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const mappedItem: Item = {
+      id: item.id,
+      name: item.name,
+      image: item.image_url || (item.image_urls?.[0]) || '/placeholder.svg',
+      priceRangeMin: item.price_range_min || undefined,
+      priceRangeMax: item.price_range_max || undefined,
+      condition: item.condition || undefined,
+      user_id: item.user_id
+    };
+    setTradeTargetItem(mappedItem);
+    setTradeModalOpen(true);
+  };
+
   if (loading) {
     return (
       <section className="space-y-4">
@@ -148,7 +165,7 @@ const FriendsFeedSection: React.FC = () => {
           <Users className="h-5 w-5" />
           Recent from Friends
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="animate-pulse bg-muted rounded-xl aspect-square" />
           ))}
@@ -226,27 +243,62 @@ const FriendsFeedSection: React.FC = () => {
         Recent from Friends
       </h2>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {displayItems.map((item, index) => (
-          <ItemCard
+          <div
             key={item.id}
-            id={item.id}
-            name={item.name}
-            image={item.image_url || (item.image_urls?.[0]) || '/placeholder.svg'}
-            image_urls={item.image_urls || undefined}
-            priceRangeMin={item.price_range_min || undefined}
-            priceRangeMax={item.price_range_max || undefined}
-            condition={item.condition || undefined}
-            category={item.category || undefined}
-            ownerId={item.user_id}
-            isMatch={false}
-            showLikeButton={true}
-            liked={likedItems.has(item.id)}
-            onSelect={() => handleItemClick(item, index)}
-            onLike={handleLike}
-            compact={true}
-            disableClick={false}
-          />
+            className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+            onClick={() => handleItemClick(item, index)}
+          >
+            {/* Image */}
+            <div className="aspect-square relative overflow-hidden">
+              <img
+                src={item.image_url || (item.image_urls?.[0]) || '/placeholder.svg'}
+                alt={item.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="p-3">
+              <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs text-muted-foreground">
+                  {item.price_range_min && item.price_range_max 
+                    ? `$${item.price_range_min} - $${item.price_range_max}`
+                    : item.price_range_min 
+                      ? `$${item.price_range_min}+`
+                      : 'Price not set'}
+                </span>
+                {item.condition && (
+                  <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                    {item.condition}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={(e) => handleTradeClick(item, e)}
+                className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
+                aria-label="Suggest trade"
+              >
+                <RefreshCw className="w-4 h-4 text-white" />
+              </button>
+              <button
+                onClick={(e) => handleLike(item.id, e)}
+                className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
+              >
+                <Heart 
+                  className="w-4 h-4 text-red-500" 
+                  fill={likedItems.has(item.id) ? "red" : "none"}
+                />
+              </button>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -271,8 +323,31 @@ const FriendsFeedSection: React.FC = () => {
           }}
           currentIndex={selectedItemIndex}
           totalItems={displayItems.length}
+          liked={likedItems.has(selectedItem.id)}
+          onLike={() => {
+            setLikedItems(prev => {
+              const newSet = new Set(prev);
+              if (newSet.has(selectedItem.id)) {
+                newSet.delete(selectedItem.id);
+              } else {
+                newSet.add(selectedItem.id);
+              }
+              return newSet;
+            });
+          }}
         />
       )}
+
+      {/* Trade Item Selection Modal */}
+      <TradeItemSelectionModal
+        isOpen={tradeModalOpen}
+        onClose={() => {
+          setTradeModalOpen(false);
+          setTradeTargetItem(null);
+        }}
+        targetItem={tradeTargetItem}
+        targetItemOwnerId={tradeTargetItem?.user_id}
+      />
     </section>
   );
 };
