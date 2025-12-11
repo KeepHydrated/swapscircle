@@ -55,7 +55,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
   };
   
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="flex flex-col h-full bg-background">
       {/* Trade Details Tabs - handles all item display including images */}
       {selectedPair && (
         <TradeDetailsTabs 
