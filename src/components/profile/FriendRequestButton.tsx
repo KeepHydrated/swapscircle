@@ -181,7 +181,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       setStatus('pending');
       if (onStatusChange) onStatusChange('pending');
       
-      toast.success("Friend request sent!");
+      // Request sent silently
     } catch (error) {
       console.error('Error sending friend request:', error);
       toast.error("Failed to send friend request");
