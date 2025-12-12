@@ -395,7 +395,7 @@ const handleNextItem = () => {
         )}
         
         {/* Action buttons at the bottom or status display */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="mt-6 pt-4 border-t border-gray-200">
           {isRejected ? (
             <div className="flex items-center justify-center py-3 bg-red-50 rounded-lg border border-red-200">
               <X className="w-5 h-5 mr-2 text-red-600" />
