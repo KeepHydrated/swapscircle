@@ -54,10 +54,9 @@ const MatchesSection = () => {
     if (savedModalState) {
       try {
         const { itemId, returnUrl } = JSON.parse(savedModalState);
-        const currentPath = window.location.pathname + window.location.search;
         
         // Only restore if we're on the same page we left from
-        if (returnUrl === currentPath || returnUrl.startsWith('/test2') || returnUrl === '/') {
+        if (returnUrl === '/' || returnUrl.startsWith('/test2')) {
           const matchIndex = matches.findIndex(m => m.id === itemId);
           if (matchIndex >= 0) {
             const match = matches[matchIndex];
@@ -76,9 +75,9 @@ const MatchesSection = () => {
             setSelectedMatchedItemImage(match.myItemImage);
             setSelectedMatchedItemId(match.myItemId);
             setIsModalOpen(true);
+            // Only clear after successfully restoring
+            sessionStorage.removeItem('returnToModal');
           }
-          // Clear the saved state after restoring
-          sessionStorage.removeItem('returnToModal');
         }
       } catch (e) {
         console.error('Error restoring modal state:', e);
