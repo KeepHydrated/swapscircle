@@ -178,7 +178,53 @@ const SearchPage = () => {
     }
   };
 
-  // Update search query when URL param changes
+  // Handle direct trade request for matched items
+  const handleDirectTrade = async (item: Item, matchData: { myItemId: string; myItemImage: string }) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    try {
+      // Create trade conversation
+      const { data: conversation, error } = await supabase
+        .from('trade_conversations')
+        .insert({
+          requester_id: user.id,
+          owner_id: item.user_id,
+          requester_item_id: matchData.myItemId,
+          requester_item_ids: [matchData.myItemId],
+          owner_item_id: item.id,
+          status: 'pending'
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        // If duplicate, try to find existing conversation
+        const { data: existing } = await supabase
+          .from('trade_conversations')
+          .select('id')
+          .eq('requester_id', user.id)
+          .eq('owner_id', item.user_id)
+          .eq('owner_item_id', item.id)
+          .single();
+        
+        if (existing) {
+          navigate(`/messages?conversation=${existing.id}`);
+          return;
+        }
+        console.error('Error creating trade:', error);
+        return;
+      }
+
+      // Navigate to messages with the specific conversation
+      navigate(`/messages?conversation=${conversation.id}`);
+    } catch (err) {
+      console.error('Error:', err);
+    }
+  };
+
   useEffect(() => {
     setSearchQuery(queryParam);
   }, [queryParam]);
@@ -573,12 +619,11 @@ const SearchPage = () => {
                   <div className="absolute top-3 right-3 flex gap-2">
                     {/* Trade button - hover only */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      {isMatch ? (
+                      {isMatch && matchData ? (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setTradeTargetItem(item);
-                            setIsTradeModalOpen(true);
+                            handleDirectTrade(item, matchData);
                           }}
                           className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
                           aria-label="Accept trade"
