@@ -201,10 +201,10 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                       ) : (
                         <button
                           onClick={(e) => handleTradeClick(e, item)}
-                          className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
+                          className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
                           aria-label="Suggest trade"
                         >
-                          <Repeat className="w-4 h-4 text-white" />
+                          <Repeat className="w-4 h-4 text-green-500" />
                         </button>
                       )}
                     </div>
