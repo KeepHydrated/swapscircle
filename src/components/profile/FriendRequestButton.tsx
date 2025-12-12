@@ -293,7 +293,7 @@ const FriendRequestButton: React.FC<FriendRequestButtonProps> = ({
       setStatus('none');
       if (onStatusChange) onStatusChange('none');
       
-      toast.success("Friend request unsent");
+      // Request unsent silently
     } catch (error) {
       console.error('Error unsending friend request:', error);
       toast.error("Failed to unsend friend request");
