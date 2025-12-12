@@ -556,11 +556,12 @@ const SearchPage = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredResults.map((item, index) => {
-                // Use real match data if available, otherwise use sample matches for first 3 items
+                // Use real match data if available, otherwise use sample matches for first 3 items (only if user has items)
                 const realMatchData = matchedItemsMap.get(item.id);
-                const sampleMatchData = index < 3 && !realMatchData ? {
-                  myItemId: `sample-${index}`,
-                  myItemImage: sampleMatchImages[index]
+                const userItem = userItems[index % userItems.length];
+                const sampleMatchData = index < 3 && !realMatchData && userItem ? {
+                  myItemId: userItem.id,
+                  myItemImage: userItem.image || sampleMatchImages[index % sampleMatchImages.length]
                 } : null;
                 const matchData = realMatchData || sampleMatchData;
                 const isMatch = !!matchData;
