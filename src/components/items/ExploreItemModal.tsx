@@ -561,7 +561,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
             {/* Matched item thumbnail */}
             {matchedItemImage && (
-              <div className="absolute bottom-4 right-4 z-20">
+              <div className="absolute top-4 left-4 z-20">
                 <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-background">
                   <img src={matchedItemImage} alt="Your matched item" className="w-full h-full object-cover" />
                 </div>
