@@ -141,6 +141,16 @@ const SearchPage = () => {
     }
   };
 
+  const clearAllFilters = () => {
+    setSearchQuery('');
+    setSelectedCategories([]);
+    setSelectedSubcategories({});
+    setSelectedConditions([]);
+    setSelectedPriceRanges([]);
+    setFriendsOnly(false);
+    setSearchParams({});
+  };
+
   const categories = [
     'Electronics', 'Home & Garden', 'Sports & Outdoors', 'Clothing',
     'Business', 'Entertainment', 'Collectibles', 'Books & Media',
@@ -416,7 +426,7 @@ const SearchPage = () => {
                   </button>
                 </Badge>
                 <button
-                  onClick={() => handleSearchChange('')}
+                  onClick={clearAllFilters}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Clear all
