@@ -122,13 +122,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount})
                     </span>
                   ) : (
-                    <Button 
-                      variant="link" 
-                      className="ml-1 p-0 h-auto text-sm text-gray-600 hover:text-primary"
+                    <span 
+                      className="ml-1 text-sm text-gray-600 cursor-pointer"
                       onClick={onReviewsClick}
                     >
                       {profile.rating === 0 ? '0.0' : profile.rating} ({profile.reviewCount})
-                    </Button>
+                    </span>
                   )}
                 </div>
                 {menuItems.length > 0 && isOwnProfile && (
