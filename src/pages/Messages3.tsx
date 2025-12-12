@@ -117,9 +117,7 @@ const Messages3: React.FC = () => {
               });
             }, 2000);
           } else {
-            if (shouldShowToast) {
-              toast.success("Item liked");
-            }
+            // Silent like - no toast
           }
         }
       }
