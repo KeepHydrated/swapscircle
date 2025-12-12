@@ -41,6 +41,13 @@ const SearchPage = () => {
   const [userItems, setUserItems] = useState<Item[]>([]);
   const [matchedItemsMap, setMatchedItemsMap] = useState<Map<string, { myItemId: string; myItemImage: string }>>(new Map());
 
+  // Sample match data for demo - maps item IDs to user's matched items
+  const sampleMatchImages = [
+    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100',
+    'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=100',
+    'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=100',
+  ];
+
   // Fetch real items from database
   const { items: dbItems, loading: itemsLoading } = useDbItems();
 
@@ -495,8 +502,14 @@ const SearchPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredResults.map((item) => {
-                const matchData = matchedItemsMap.get(item.id);
+              {filteredResults.map((item, index) => {
+                // Use real match data if available, otherwise use sample matches for first 3 items
+                const realMatchData = matchedItemsMap.get(item.id);
+                const sampleMatchData = index < 3 && !realMatchData ? {
+                  myItemId: `sample-${index}`,
+                  myItemImage: sampleMatchImages[index]
+                } : null;
+                const matchData = realMatchData || sampleMatchData;
                 const isMatch = !!matchData;
                 
                 return (
