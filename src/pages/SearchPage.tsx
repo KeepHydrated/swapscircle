@@ -527,23 +527,26 @@ const SearchPage = () => {
               Showing {filteredResults.length} {filteredResults.length === 1 ? 'result' : 'results'}
             </p>
             {searchQuery && (
-              <>
-                <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-                  Search: "{searchQuery}"
-                  <button
-                    onClick={() => handleSearchChange('')}
-                    className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
+              <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                Search: "{searchQuery}"
                 <button
-                  onClick={clearAllFilters}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSearchChange('');
+                  }}
+                  className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors"
                 >
-                  Clear all
+                  <X className="w-3 h-3" />
                 </button>
-              </>
+              </Badge>
+            )}
+            {(searchQuery || selectedCategories.length > 0 || selectedConditions.length > 0 || selectedPriceRanges.length > 0 || friendsOnly) && (
+              <button
+                onClick={clearAllFilters}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Clear all
+              </button>
             )}
           </div>
 
