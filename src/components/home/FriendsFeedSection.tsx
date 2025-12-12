@@ -310,10 +310,10 @@ const FriendsFeedSection: React.FC = () => {
             </div>
 
             {/* Action buttons - different for matched vs non-matched items */}
-            <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              {(item as any).matchedItem ? (
-                // Match card buttons - checkmark for direct trade
-                <>
+            <div className="absolute top-3 right-3 flex gap-2">
+              {/* Trade buttons - hover only */}
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                {(item as any).matchedItem ? (
                   <button
                     onClick={(e) => handleTradeClick(item, e)}
                     className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
@@ -321,20 +321,7 @@ const FriendsFeedSection: React.FC = () => {
                   >
                     <Check className="w-4 h-4 text-green-500" />
                   </button>
-                  <button
-                    onClick={(e) => handleLike(item.id, e)}
-                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                    aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
-                  >
-                    <Heart 
-                      className="w-4 h-4 text-red-500" 
-                      fill={likedItems.has(item.id) ? "red" : "none"}
-                    />
-                  </button>
-                </>
-              ) : (
-                // Regular card buttons - swap for trade suggestion
-                <>
+                ) : (
                   <button
                     onClick={(e) => handleTradeClick(item, e)}
                     className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
@@ -342,18 +329,21 @@ const FriendsFeedSection: React.FC = () => {
                   >
                     <RefreshCw className="w-4 h-4 text-white" />
                   </button>
-                  <button
-                    onClick={(e) => handleLike(item.id, e)}
-                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                    aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
-                  >
-                    <Heart 
-                      className="w-4 h-4 text-red-500" 
-                      fill={likedItems.has(item.id) ? "red" : "none"}
-                    />
-                  </button>
-                </>
-              )}
+                )}
+              </div>
+              {/* Heart button - always visible when liked, hover otherwise */}
+              <button
+                onClick={(e) => handleLike(item.id, e)}
+                className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
+                  likedItems.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}
+                aria-label={likedItems.has(item.id) ? "Unlike" : "Like"}
+              >
+                <Heart 
+                  className="w-4 h-4 text-red-500" 
+                  fill={likedItems.has(item.id) ? "red" : "none"}
+                />
+              </button>
             </div>
           </div>
         ))}
