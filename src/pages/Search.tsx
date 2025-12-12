@@ -149,39 +149,30 @@ const Search: React.FC = () => {
             </div>
           ) : (
             <>
-              {/* Matches Section */}
-              {sampleMatchItems.length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-lg font-semibold mb-4">Your Matches</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {sampleMatchItems.map(item => (
-                      <ItemCard
-                        key={item.id}
-                        id={item.id}
-                        name={item.name}
-                        image={item.image}
-                        isMatch={true}
-                        myItemImage={item.myItemImage}
-                        onSelect={(id) => navigate(`/item/${id}`)}
-                        onLike={handleLike}
-                        onReject={handleReject}
-                        onReport={handleReport}
-                        showLikeButton={true}
-                        category={item.category}
-                        priceRangeMin={item.priceRangeMin}
-                        priceRangeMax={item.priceRangeMax}
-                        condition={item.condition}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* All Items Section */}
               <div className="mb-4 text-sm text-muted-foreground">
-                Found {filteredItems.length} item{filteredItems.length !== 1 ? 's' : ''}
+                Found {filteredItems.length + sampleMatchItems.length} item{filteredItems.length + sampleMatchItems.length !== 1 ? 's' : ''}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {/* Mix sample matches with regular items */}
+                {sampleMatchItems.map(item => (
+                  <ItemCard
+                    key={item.id}
+                    id={item.id}
+                    name={item.name}
+                    image={item.image}
+                    isMatch={true}
+                    myItemImage={item.myItemImage}
+                    onSelect={(id) => navigate(`/item/${id}`)}
+                    onLike={handleLike}
+                    onReject={handleReject}
+                    onReport={handleReport}
+                    showLikeButton={true}
+                    category={item.category}
+                    priceRangeMin={item.priceRangeMin}
+                    priceRangeMax={item.priceRangeMax}
+                    condition={item.condition}
+                  />
+                ))}
                 {filteredItems.map(item => (
                   <ItemCard
                     key={item.id}
