@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MatchItem } from '@/types/item';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ItemDetailsModal from '@/components/profile/carousel/ItemDetailsModal';
+import ExploreItemModal from '@/components/items/ExploreItemModal';
 import { otherPersonProfileData, getOtherPersonItems } from '@/data/otherPersonProfileData';
 import OtherProfileTabContent from '@/components/profile/OtherProfileTabContent';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -632,26 +632,28 @@ const OtherPersonProfile: React.FC = () => {
         </div>
       </div>
 
-      {/* Item Details Popup - with profile info for other person's items */}
+      {/* Item Details Popup - using ExploreItemModal for consistency */}
       {popupItem && (
-        <ItemDetailsModal 
-          item={popupItem}
-          isOpen={!!popupItem}
+        <ExploreItemModal 
+          open={!!popupItem}
+          item={{
+            id: popupItem.id,
+            name: popupItem.name,
+            image: popupItem.image,
+            category: popupItem.category,
+            condition: popupItem.condition,
+            description: popupItem.description,
+            priceRangeMin: popupItem.priceRangeMin,
+            priceRangeMax: popupItem.priceRangeMax,
+            user_id: userId || undefined
+          }}
           onClose={handlePopupClose}
-          onLikeClick={handlePopupLikeClick}
           onNavigatePrev={handleNavigatePrev}
           onNavigateNext={handleNavigateNext}
           currentIndex={currentPopupIndex}
           totalItems={itemsWithLikedStatus.length}
-          showProfileInfo={true}
-          preloadedUserProfile={{
-            name: profileData.name,
-            avatar_url: profileData.avatar_url || '',
-            username: profileData.name,
-            created_at: `${profileData.memberSince}-01-01T00:00:00.000Z`
-          }}
-          skipDataFetch={true}
-          onReport={handleReport}
+          liked={likedItems[popupItem.id] || false}
+          onLike={() => handleLikeItem(popupItem.id)}
         />
       )}
 
