@@ -583,11 +583,12 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   <DropdownMenuContent align="end" className="bg-background z-50">
                     <DropdownMenuItem
                       onClick={() => {
-                        // Navigate without closing - the modal will be in history
-                        // When user clicks back, they return to this page with modal open
-                        navigate(`/item/${item.id}`, {
-                          state: { fromModal: true, returnItemId: item.id }
-                        });
+                        // Save modal state to sessionStorage so we can restore it on back navigation
+                        sessionStorage.setItem('returnToModal', JSON.stringify({
+                          itemId: item.id,
+                          returnUrl: window.location.pathname + window.location.search
+                        }));
+                        navigate(`/item/${item.id}`);
                       }}
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />

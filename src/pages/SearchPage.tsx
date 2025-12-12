@@ -142,6 +142,41 @@ const SearchPage = () => {
     fetchUserData();
   }, [user]);
 
+  // Restore modal state from sessionStorage (for back navigation from item page)
+  useEffect(() => {
+    const savedModalState = sessionStorage.getItem('returnToModal');
+    if (savedModalState) {
+      try {
+        const { itemId, returnUrl } = JSON.parse(savedModalState);
+        const currentPath = window.location.pathname + window.location.search;
+        
+        // Only restore if we're on the search page
+        if (returnUrl.startsWith('/search')) {
+          const item = dbItems.find(i => i.id === itemId);
+          if (item) {
+            setSelectedItem({
+              id: item.id,
+              name: item.name,
+              image: item.image_urls?.[0] || item.image_url || '',
+              category: item.category,
+              condition: item.condition,
+              description: item.description,
+              priceRangeMin: item.priceRangeMin,
+              priceRangeMax: item.priceRangeMax,
+              user_id: item.user_id
+            });
+            setIsModalOpen(true);
+          }
+          // Clear the saved state after restoring
+          sessionStorage.removeItem('returnToModal');
+        }
+      } catch (e) {
+        console.error('Error restoring modal state:', e);
+        sessionStorage.removeItem('returnToModal');
+      }
+    }
+  }, [dbItems]);
+
   const handleLikeItem = async (itemId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
