@@ -569,7 +569,6 @@ export const unlikeItem = async (itemId: string, selectedItemId?: string) => {
       return false;
     }
 
-    toast.success('Item unliked!');
     return true;
   } catch (error: any) {
     console.error('Error unliking item:', error);
