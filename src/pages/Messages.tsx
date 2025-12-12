@@ -702,7 +702,7 @@ const Messages = () => {
               </div>
               
               {/* Mobile/Tablet Chat Content */}
-              <div className="flex-1 flex min-h-0">
+              <div className="flex-1 flex min-h-0 bg-background">
                 {/* Messages Area - Full width on mobile when showing messages, shared on tablet */}
                 {isMobile && currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
