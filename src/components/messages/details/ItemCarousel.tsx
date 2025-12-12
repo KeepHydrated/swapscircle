@@ -39,17 +39,16 @@ const ItemCarousel = ({ imageUrls, showThumbnails = true }: ItemCarouselProps) =
   return (
     <>
       {/* Main image container with navigation buttons */}
-      <div className="relative h-56 bg-gray-100 overflow-hidden">
+      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden rounded-t-lg">
         <Carousel setApi={setApi} opts={{ align: "center", loop: hasMultiple }} className="h-full">
           <CarouselContent className="h-full">
             {imageUrls.map((url, index) => (
               <CarouselItem key={index} className="h-full">
-                <div 
-                  className="w-full h-full bg-center bg-cover bg-no-repeat flex items-center justify-center text-gray-400"
-                  style={{ backgroundImage: `url(${url})` }}
-                >
-                  {!url && <span>Image {index + 1}</span>}
-                </div>
+                <img 
+                  src={url}
+                  alt={`Item image ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
               </CarouselItem>
             ))}
           </CarouselContent>
