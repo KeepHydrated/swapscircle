@@ -680,8 +680,26 @@ const SearchPage = () => {
       <ExploreItemModal
         open={isModalOpen}
         item={selectedItem}
-        matchedItemImage={selectedItem ? matchedItemsMap.get(selectedItem.id)?.myItemImage : undefined}
-        matchedItemId={selectedItem ? matchedItemsMap.get(selectedItem.id)?.myItemId : undefined}
+        matchedItemImage={selectedItem ? (() => {
+          const realMatch = matchedItemsMap.get(selectedItem.id);
+          if (realMatch) return realMatch.myItemImage;
+          const selectedIdx = filteredResults.findIndex(i => i.id === selectedItem.id);
+          const userItem = userItems[selectedIdx % userItems.length];
+          if (selectedIdx < 3 && userItem) {
+            return userItem.image || sampleMatchImages[selectedIdx % sampleMatchImages.length];
+          }
+          return undefined;
+        })() : undefined}
+        matchedItemId={selectedItem ? (() => {
+          const realMatch = matchedItemsMap.get(selectedItem.id);
+          if (realMatch) return realMatch.myItemId;
+          const selectedIdx = filteredResults.findIndex(i => i.id === selectedItem.id);
+          const userItem = userItems[selectedIdx % userItems.length];
+          if (selectedIdx < 3 && userItem) {
+            return userItem.id;
+          }
+          return undefined;
+        })() : undefined}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedItem(null);
