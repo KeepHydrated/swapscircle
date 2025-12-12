@@ -200,7 +200,7 @@ const handleNextItem = () => {
   };
 
   return (
-    <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full">
+    <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full max-w-md mx-auto">
       
       {/* Item Selector with consistent height and perfect alignment */}
       <div className="mb-4">
