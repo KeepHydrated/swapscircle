@@ -145,10 +145,9 @@ const SearchPage = () => {
   // Restore modal state from sessionStorage (for back navigation from item page)
   useEffect(() => {
     const savedModalState = sessionStorage.getItem('returnToModal');
-    if (savedModalState) {
+    if (savedModalState && dbItems.length > 0) {
       try {
         const { itemId, returnUrl } = JSON.parse(savedModalState);
-        const currentPath = window.location.pathname + window.location.search;
         
         // Only restore if we're on the search page
         if (returnUrl.startsWith('/search')) {
@@ -166,9 +165,12 @@ const SearchPage = () => {
               user_id: item.user_id
             });
             setIsModalOpen(true);
+            // Only clear after successfully restoring
+            sessionStorage.removeItem('returnToModal');
+          } else {
+            // Item not found in loaded items, clear storage
+            sessionStorage.removeItem('returnToModal');
           }
-          // Clear the saved state after restoring
-          sessionStorage.removeItem('returnToModal');
         }
       } catch (e) {
         console.error('Error restoring modal state:', e);

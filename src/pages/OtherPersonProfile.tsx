@@ -417,7 +417,7 @@ const OtherPersonProfile: React.FC = () => {
   // Restore modal state from sessionStorage (for back navigation from item page)
   useEffect(() => {
     const savedModalState = sessionStorage.getItem('returnToModal');
-    if (savedModalState) {
+    if (savedModalState && itemsWithLikedStatus.length > 0) {
       try {
         const { itemId, returnUrl } = JSON.parse(savedModalState);
         
@@ -426,9 +426,12 @@ const OtherPersonProfile: React.FC = () => {
           const item = itemsWithLikedStatus.find(i => i.id === itemId);
           if (item) {
             setPopupItem(item);
+            // Only clear after successfully restoring
+            sessionStorage.removeItem('returnToModal');
+          } else {
+            // Item not found, clear storage
+            sessionStorage.removeItem('returnToModal');
           }
-          // Clear the saved state after restoring
-          sessionStorage.removeItem('returnToModal');
         }
       } catch (e) {
         console.error('Error restoring modal state:', e);
