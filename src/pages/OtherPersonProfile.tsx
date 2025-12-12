@@ -278,8 +278,6 @@ const OtherPersonProfile: React.FC = () => {
       window.removeEventListener('selectedItemChanged', updateSelectedItem);
     };
   }, []);
-
-  // Recompute liked status and rejected list when selected item or items change
   useEffect(() => {
     const refresh = async () => {
       if (!userItems || userItems.length === 0) {
@@ -415,6 +413,29 @@ const OtherPersonProfile: React.FC = () => {
     ...item,
     liked: likedItems[item.id] || false
   }));
+
+  // Restore modal state from sessionStorage (for back navigation from item page)
+  useEffect(() => {
+    const savedModalState = sessionStorage.getItem('returnToModal');
+    if (savedModalState) {
+      try {
+        const { itemId, returnUrl } = JSON.parse(savedModalState);
+        
+        // Only restore if we're on the other-person-profile page
+        if (returnUrl.startsWith('/other-person-profile')) {
+          const item = itemsWithLikedStatus.find(i => i.id === itemId);
+          if (item) {
+            setPopupItem(item);
+          }
+          // Clear the saved state after restoring
+          sessionStorage.removeItem('returnToModal');
+        }
+      } catch (e) {
+        console.error('Error restoring modal state:', e);
+        sessionStorage.removeItem('returnToModal');
+      }
+    }
+  }, [itemsWithLikedStatus]);
 
   // Hide items rejected for the currently selected item only
   const visibleItems = itemsWithLikedStatus.filter(item => !rejectedForSelected.has(item.id));

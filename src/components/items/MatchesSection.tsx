@@ -48,6 +48,45 @@ const MatchesSection = () => {
     fetchLikedItems();
   }, [user]);
 
+  // Restore modal state from sessionStorage (for back navigation from item page)
+  useEffect(() => {
+    const savedModalState = sessionStorage.getItem('returnToModal');
+    if (savedModalState) {
+      try {
+        const { itemId, returnUrl } = JSON.parse(savedModalState);
+        const currentPath = window.location.pathname + window.location.search;
+        
+        // Only restore if we're on the same page we left from
+        if (returnUrl === currentPath || returnUrl.startsWith('/test2') || returnUrl === '/') {
+          const matchIndex = matches.findIndex(m => m.id === itemId);
+          if (matchIndex >= 0) {
+            const match = matches[matchIndex];
+            setSelectedItem({
+              id: match.id,
+              name: match.name,
+              image: match.image,
+              category: match.category,
+              condition: match.condition,
+              description: match.description,
+              priceRangeMin: match.priceRangeMin,
+              priceRangeMax: match.priceRangeMax,
+              user_id: match.user_id
+            });
+            setSelectedItemIndex(matchIndex);
+            setSelectedMatchedItemImage(match.myItemImage);
+            setSelectedMatchedItemId(match.myItemId);
+            setIsModalOpen(true);
+          }
+          // Clear the saved state after restoring
+          sessionStorage.removeItem('returnToModal');
+        }
+      } catch (e) {
+        console.error('Error restoring modal state:', e);
+        sessionStorage.removeItem('returnToModal');
+      }
+    }
+  }, []);
+
   const handleLikeItem = async (itemId: string, isDemo: boolean, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
