@@ -65,31 +65,6 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
               </Link>
             </Button>
             
-            <Button variant="ghost" className="w-full justify-start h-12" asChild>
-              <Link to="/customer-support" onClick={() => onOpenChange(false)}>
-                <Headphones className="mr-3 h-5 w-5" />
-                <span>Customer Support</span>
-              </Link>
-            </Button>
-            
-            {user?.email === 'nadiachibri@gmail.com' && (
-              <>
-                <Button variant="ghost" className="w-full justify-start h-12" asChild>
-                  <Link to="/analytics" onClick={() => onOpenChange(false)}>
-                    <BarChart3 className="mr-3 h-5 w-5" />
-                    <span>Analytics</span>
-                  </Link>
-                </Button>
-                
-                <Button variant="ghost" className="w-full justify-start h-12" asChild>
-                  <Link to="/admin-customer-support" onClick={() => onOpenChange(false)}>
-                    <Headphones className="mr-3 h-5 w-5" />
-                    <span>Admin Customer Support</span>
-                  </Link>
-                </Button>
-              </>
-            )}
-            
           </div>
           
           {supabaseConfigured && (
