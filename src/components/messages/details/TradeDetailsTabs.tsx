@@ -294,9 +294,8 @@ const handleNextItem = () => {
             {/* Item Details */}
             <div className="p-4">
               <h3 className="font-semibold text-lg mb-2">{currentMyItem.name}</h3>
-              <p className="text-gray-600 text-sm mb-3">
-                {currentMyItem.description || 
-                `${currentMyItem.condition || 'Good'} condition. This ${currentMyItem.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`}
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                {currentMyItem.description || currentMyItem.name}
               </p>
               
               {/* Property Tags */}
@@ -364,9 +363,8 @@ const handleNextItem = () => {
             {/* Their Item Details */}
             <div className="p-4">
               <h3 className="font-semibold text-lg mb-2">{selectedPair.item2.name}</h3>
-              <p className="text-gray-600 text-sm mb-3">
-                {selectedPair.item2.description || 
-                `${selectedPair.item2.condition || 'Good'} condition. This ${selectedPair.item2.name.toLowerCase()} has been well-cared for and is ready for a new home. Great quality and functionality.`}
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                {selectedPair.item2.description || selectedPair.item2.name}
               </p>
               
               {/* Property Tags */}
