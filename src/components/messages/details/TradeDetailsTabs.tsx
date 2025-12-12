@@ -307,7 +307,7 @@ const handleNextItem = () => {
                 )}
                 {currentMyItem.tags && currentMyItem.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span>{currentMyItem.tags[0]}</span>
+                    <span className="capitalize">{currentMyItem.tags[0]}</span>
                   </div>
                 )}
                 {currentMyItem.condition && (
@@ -376,7 +376,7 @@ const handleNextItem = () => {
                 )}
                 {selectedPair.item2.tags && selectedPair.item2.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item2.tags[0]}</span>
+                    <span className="capitalize">{selectedPair.item2.tags[0]}</span>
                   </div>
                 )}
                 {selectedPair.item2.condition && (
