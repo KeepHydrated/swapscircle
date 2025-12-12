@@ -261,6 +261,13 @@ const SearchPage = () => {
     }
     
     return true;
+  }).sort((a, b) => {
+    // Sort matches first
+    const aIsMatch = matchedItemsMap.has(a.id);
+    const bIsMatch = matchedItemsMap.has(b.id);
+    if (aIsMatch && !bIsMatch) return -1;
+    if (!aIsMatch && bIsMatch) return 1;
+    return 0;
   });
 
   return (
