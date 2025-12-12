@@ -57,35 +57,49 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
         .eq('status', 'published')
         .eq('is_available', true);
 
-      if (!userItems || userItems.length === 0) return;
+      // Check for mutual matches from the mutual_matches table
+      const { data: mutualMatchesData } = await supabase
+        .from('mutual_matches')
+        .select('*')
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
 
-      // Check for mutual matches (profile owner liked one of user's items)
-      const { data: profileOwnerLikes } = await supabase
-        .from('liked_items')
-        .select('item_id, my_item_id')
-        .eq('user_id', profileUserId);
+      const matched = new Map<string, any>();
 
-      if (profileOwnerLikes) {
-        const userItemIds = new Set(userItems.map(i => i.id));
-        const matched = new Map<string, any>();
-
-        // For each profile item, check if user liked it AND profile owner liked one of user's items
-        for (const item of items) {
-          const userLikedThis = likedData?.some(l => l.item_id === item.id);
-          if (userLikedThis) {
-            // Check if profile owner liked any of user's items
-            const ownerLike = profileOwnerLikes.find(l => userItemIds.has(l.item_id));
-            if (ownerLike) {
-              // Find the user's item that was liked
-              const matchedUserItem = userItems.find(i => i.id === ownerLike.item_id);
-              if (matchedUserItem) {
-                matched.set(item.id, matchedUserItem);
-              }
-            }
+      if (mutualMatchesData && userItems) {
+        for (const match of mutualMatchesData) {
+          // Determine which item belongs to the profile owner and which to current user
+          const isUser1 = match.user1_id === user.id;
+          const profileItemId = isUser1 ? match.user2_item_id : match.user1_item_id;
+          const userItemId = isUser1 ? match.user1_item_id : match.user2_item_id;
+          
+          // Find the user's item
+          const userItem = userItems.find(i => i.id === userItemId);
+          if (userItem) {
+            matched.set(profileItemId, userItem);
           }
         }
-        setMatchedItems(matched);
       }
+
+      // DEMO: Add sample matches for testing - match first 2 items if user has items
+      if (userItems && userItems.length > 0 && items.length > 0) {
+        // Match first profile item with first user item
+        if (items[0] && !matched.has(items[0].id)) {
+          matched.set(items[0].id, {
+            ...userItems[0],
+            image_url: userItems[0].image_urls?.[0] || userItems[0].image_url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200'
+          });
+        }
+        // Match second profile item with second user item (or first if only one)
+        if (items[1] && !matched.has(items[1].id)) {
+          const secondUserItem = userItems[1] || userItems[0];
+          matched.set(items[1].id, {
+            ...secondUserItem,
+            image_url: secondUserItem.image_urls?.[0] || secondUserItem.image_url || 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=200'
+          });
+        }
+      }
+
+      setMatchedItems(matched);
     };
 
     fetchLikesAndMatches();
