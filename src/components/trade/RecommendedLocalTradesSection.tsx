@@ -291,10 +291,10 @@ const RecommendedLocalTradesSection = () => {
               <div className="absolute top-3 right-3 flex gap-2">
                 {/* Trade button - hover only */}
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  {item.isMatch ? (
+                {item.isMatch ? (
                     <button
                       onClick={(e) => handleTrade(item, e)}
-                      className="w-8 h-8 bg-background rounded-full shadow-md flex items-center justify-center hover:bg-background/90"
+                      className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
                       aria-label="Accept trade"
                     >
                       <Check className="w-4 h-4 text-green-500" />
@@ -302,25 +302,24 @@ const RecommendedLocalTradesSection = () => {
                   ) : (
                     <button
                       onClick={(e) => handleTrade(item, e)}
-                      className="w-8 h-8 bg-primary rounded-full shadow-md flex items-center justify-center hover:bg-primary/90"
+                      className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
                       aria-label="Suggest trade"
                     >
-                      <Repeat className="w-4 h-4 text-primary-foreground" />
+                      <Repeat className="w-4 h-4 text-green-500" />
                     </button>
                   )}
                 </div>
                 {/* Heart button - always visible when liked, hover otherwise */}
                 <button
                   onClick={(e) => handleLike(item.id, e)}
-                  className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-opacity ${
-                    likedItemIds.has(item.id) 
-                      ? 'bg-red-500 text-white opacity-100' 
-                      : 'bg-background/90 text-foreground hover:bg-background opacity-0 group-hover:opacity-100'
+                  className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
+                    likedItemIds.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                   }`}
                   aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
                 >
                   <Heart 
-                    className={`w-4 h-4 ${likedItemIds.has(item.id) ? 'fill-current' : ''}`}
+                    className="w-4 h-4 text-red-500" 
+                    fill={likedItemIds.has(item.id) ? "red" : "none"}
                   />
                 </button>
               </div>
