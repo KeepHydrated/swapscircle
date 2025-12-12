@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Heart, RefreshCw, Check } from "lucide-react";
+import { MapPin, Heart, Repeat, Check } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
@@ -305,7 +305,7 @@ const RecommendedLocalTradesSection = () => {
                       className="w-8 h-8 bg-primary rounded-full shadow-md flex items-center justify-center hover:bg-primary/90"
                       aria-label="Suggest trade"
                     >
-                      <RefreshCw className="w-4 h-4 text-primary-foreground" />
+                      <Repeat className="w-4 h-4 text-primary-foreground" />
                     </button>
                   )}
                 </div>

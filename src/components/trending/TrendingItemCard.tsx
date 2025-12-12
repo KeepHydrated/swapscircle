@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, RefreshCw } from 'lucide-react';
+import { Heart, Repeat } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface TrendingItemCardProps {
@@ -72,7 +72,7 @@ export const TrendingItemCard: React.FC<TrendingItemCardProps> = ({
             onClick={handleTradeClick}
             className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
           >
-            <RefreshCw className="h-5 w-5" />
+            <Repeat className="h-5 w-5" />
           </button>
           <button
             onClick={handleLikeClick}

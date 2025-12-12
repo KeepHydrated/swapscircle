@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, RefreshCw, MoreVertical, Check, ExternalLink, EyeOff } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, Check, ExternalLink, EyeOff } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -609,7 +609,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     {/* Trade for another item - only show when it's a match */}
                     {matchedItemId && (
                       <DropdownMenuItem onClick={() => setShowTradeModal(true)}>
-                        <RefreshCw className="w-4 h-4 mr-2" />
+                        <Repeat className="w-4 h-4 mr-2" />
                         Trade for another item
                       </DropdownMenuItem>
                     )}
@@ -637,7 +637,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     aria-label="Suggest a Trade"
                     title="Suggest a Trade"
                   >
-                    <RefreshCw className="w-5 h-5 text-green-500" />
+                    <Repeat className="w-5 h-5 text-green-500" />
                   </button>
                 )}
                 <button
@@ -738,7 +738,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                         <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
                           <span>Since {memberSince}</span>
                           <div className="flex items-center gap-1">
-                            <RefreshCw className="h-3 w-3" />
+                            <Repeat className="h-3 w-3" />
                             <span>{tradesCompleted} trade{tradesCompleted !== 1 ? 's' : ''} completed</span>
                           </div>
                         </div>
