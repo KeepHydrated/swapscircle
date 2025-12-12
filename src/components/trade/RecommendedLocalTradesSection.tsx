@@ -288,30 +288,34 @@ const RecommendedLocalTradesSection = () => {
               </div>
 
               {/* Action buttons */}
-              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {item.isMatch ? (
-                  <button
-                    onClick={(e) => handleTrade(item, e)}
-                    className="w-8 h-8 bg-background rounded-full shadow-md flex items-center justify-center hover:bg-background/90"
-                    aria-label="Accept trade"
-                  >
-                    <Check className="w-4 h-4 text-green-500" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={(e) => handleTrade(item, e)}
-                    className="w-8 h-8 bg-primary rounded-full shadow-md flex items-center justify-center hover:bg-primary/90"
-                    aria-label="Suggest trade"
-                  >
-                    <RefreshCw className="w-4 h-4 text-primary-foreground" />
-                  </button>
-                )}
+              <div className="absolute top-3 right-3 flex gap-2">
+                {/* Trade button - hover only */}
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  {item.isMatch ? (
+                    <button
+                      onClick={(e) => handleTrade(item, e)}
+                      className="w-8 h-8 bg-background rounded-full shadow-md flex items-center justify-center hover:bg-background/90"
+                      aria-label="Accept trade"
+                    >
+                      <Check className="w-4 h-4 text-green-500" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => handleTrade(item, e)}
+                      className="w-8 h-8 bg-primary rounded-full shadow-md flex items-center justify-center hover:bg-primary/90"
+                      aria-label="Suggest trade"
+                    >
+                      <RefreshCw className="w-4 h-4 text-primary-foreground" />
+                    </button>
+                  )}
+                </div>
+                {/* Heart button - always visible when liked, hover otherwise */}
                 <button
                   onClick={(e) => handleLike(item.id, e)}
-                  className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center ${
+                  className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-opacity ${
                     likedItemIds.has(item.id) 
-                      ? 'bg-red-500 text-white' 
-                      : 'bg-background/90 text-foreground hover:bg-background'
+                      ? 'bg-red-500 text-white opacity-100' 
+                      : 'bg-background/90 text-foreground hover:bg-background opacity-0 group-hover:opacity-100'
                   }`}
                   aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
                 >

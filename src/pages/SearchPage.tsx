@@ -471,21 +471,27 @@ const SearchPage = () => {
                 </div>
 
                 {/* Action buttons */}
-                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTradeTargetItem(item);
-                      setIsTradeModalOpen(true);
-                    }}
-                    className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
-                    aria-label="Suggest trade"
-                  >
-                    <RefreshCw className="w-4 h-4 text-white" />
-                  </button>
+                <div className="absolute top-3 right-3 flex gap-2">
+                  {/* Trade button - hover only */}
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTradeTargetItem(item);
+                        setIsTradeModalOpen(true);
+                      }}
+                      className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
+                      aria-label="Suggest trade"
+                    >
+                      <RefreshCw className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                  {/* Heart button - always visible when liked, hover otherwise */}
                   <button
                     onClick={(e) => handleLikeItem(item.id, e)}
-                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                    className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
+                      likedItemIds.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    }`}
                     aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
                   >
                     <Heart 

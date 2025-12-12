@@ -291,18 +291,24 @@ const MatchesSection = () => {
               </div>
 
               {/* Action buttons */}
-              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={(e) => handleRequestTrade(item, e)}
-                  disabled={isCreatingTrade === item.id}
-                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                  aria-label="Suggest trade"
-                >
-                  <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
-                </button>
+              <div className="absolute top-3 right-3 flex gap-2">
+                {/* Trade button - hover only */}
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={(e) => handleRequestTrade(item, e)}
+                    disabled={isCreatingTrade === item.id}
+                    className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                    aria-label="Suggest trade"
+                  >
+                    <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
+                  </button>
+                </div>
+                {/* Heart button - always visible when liked, hover otherwise */}
                 <button
                   onClick={(e) => handleLikeItem(item.id, item.isDemo, e)}
-                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
+                    likedItemIds.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  }`}
                   aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
                 >
                   <Heart 
