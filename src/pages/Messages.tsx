@@ -1084,7 +1084,7 @@ const Messages = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-1 overflow-y-auto bg-gray-50 flex justify-center">
+                  <div className="flex-1 overflow-y-auto bg-background flex justify-center">
                     <div className="w-full max-w-md">
                       {selectedPair ? (
                         <TradeDetailsTabs selectedPair={selectedPair} selectedItem={selectedItem} onSelectItem={handleSelectItem} />
