@@ -194,6 +194,7 @@ const OtherPersonProfile: React.FC = () => {
   }, [userId]);
   // State for popup
   const [popupItem, setPopupItem] = useState<MatchItem | null>(null);
+  const [popupMatchData, setPopupMatchData] = useState<{ id: string; image: string } | null>(null);
   const [reportModal, setReportModal] = useState<{ id: string; name: string } | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
@@ -234,12 +235,20 @@ const OtherPersonProfile: React.FC = () => {
   // Handle popup close
   const handlePopupClose = () => {
     setPopupItem(null);
+    setPopupMatchData(null);
   };
   
   // Handle like item in popup
   const handlePopupLikeClick = (item: MatchItem) => {
     handleLikeItem(item.id);
     setPopupItem(null);
+    setPopupMatchData(null);
+  };
+  
+  // Handle setting popup item with match data
+  const handleSetPopupItem = (item: MatchItem | null, matchData?: { id: string; image: string } | null) => {
+    setPopupItem(item);
+    setPopupMatchData(matchData || null);
   };
 
   // State for selected item from homepage
@@ -622,7 +631,7 @@ const OtherPersonProfile: React.FC = () => {
               activeTab={activeTab}
               items={visibleItems}
               reviews={userReviews}
-              setPopupItem={setPopupItem}
+              setPopupItem={handleSetPopupItem}
               onLikeItem={handleLikeItem}
               onRejectItem={handleRejectItemForSelected}
               isFriend={isFriend}
@@ -654,6 +663,8 @@ const OtherPersonProfile: React.FC = () => {
           totalItems={itemsWithLikedStatus.length}
           liked={likedItems[popupItem.id] || false}
           onLike={() => handleLikeItem(popupItem.id)}
+          matchedItemImage={popupMatchData?.image}
+          matchedItemId={popupMatchData?.id}
         />
       )}
 

@@ -11,7 +11,7 @@ interface OtherProfileTabContentProps {
   activeTab: string;
   items: MatchItem[];
   reviews: any[];
-  setPopupItem: (item: MatchItem | null) => void;
+  setPopupItem: (item: MatchItem | null, matchedUserItem?: { id: string; image: string } | null) => void;
   onLikeItem: (id: string) => void;
   onRejectItem: (id: string) => void;
   isFriend: boolean;
@@ -109,7 +109,12 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
   const handleItemClick = (id: string) => {
     const item = items.find(item => item.id === id);
     if (item) {
-      setPopupItem(item);
+      const matchedUserItem = matchedItems.get(id);
+      const matchData = matchedUserItem ? {
+        id: matchedUserItem.id,
+        image: matchedUserItem.image_urls?.[0] || matchedUserItem.image_url || matchedUserItem.image
+      } : null;
+      setPopupItem(item, matchData);
     }
   };
 
