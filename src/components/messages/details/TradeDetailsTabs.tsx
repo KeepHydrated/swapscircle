@@ -213,7 +213,7 @@ const handleNextItem = () => {
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
-            Their Item
+            {isCurrentUserRequester ? 'Their Item' : 'Your Item'}
           </button>
           <button
             onClick={() => onSelectItem('item1')}
@@ -223,7 +223,7 @@ const handleNextItem = () => {
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
-            Your Item
+            {isCurrentUserRequester ? 'Your Item' : 'Their Item'}
           </button>
         </div>
       </div>
