@@ -11,6 +11,40 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
+// Sample match items for demo purposes
+const sampleMatchItems = [
+  {
+    id: 'match-1',
+    name: 'Vintage Camera',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400',
+    priceRangeMin: 150,
+    priceRangeMax: 250,
+    condition: 'Good',
+    category: 'Electronics',
+    myItemImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100',
+  },
+  {
+    id: 'match-2',
+    name: 'Leather Messenger Bag',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
+    priceRangeMin: 80,
+    priceRangeMax: 120,
+    condition: 'Like New',
+    category: 'Fashion',
+    myItemImage: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=100',
+  },
+  {
+    id: 'match-3',
+    name: 'Mechanical Keyboard',
+    image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=400',
+    priceRangeMin: 100,
+    priceRangeMax: 180,
+    condition: 'Excellent',
+    category: 'Electronics',
+    myItemImage: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=100',
+  },
+];
+
 const Search: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('items');
@@ -107,7 +141,7 @@ const Search: React.FC = () => {
             <div className="text-center py-12">
               <p className="text-muted-foreground">Loading items...</p>
             </div>
-          ) : filteredItems.length === 0 ? (
+          ) : filteredItems.length === 0 && sampleMatchItems.length === 0 ? (
             <div className="bg-card rounded-lg shadow-sm p-12 text-center">
               <SearchIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h2 className="text-xl font-medium text-foreground mb-2">No items found</h2>
@@ -115,6 +149,35 @@ const Search: React.FC = () => {
             </div>
           ) : (
             <>
+              {/* Matches Section */}
+              {sampleMatchItems.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-lg font-semibold mb-4">Your Matches</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {sampleMatchItems.map(item => (
+                      <ItemCard
+                        key={item.id}
+                        id={item.id}
+                        name={item.name}
+                        image={item.image}
+                        isMatch={true}
+                        myItemImage={item.myItemImage}
+                        onSelect={(id) => navigate(`/item/${id}`)}
+                        onLike={handleLike}
+                        onReject={handleReject}
+                        onReport={handleReport}
+                        showLikeButton={true}
+                        category={item.category}
+                        priceRangeMin={item.priceRangeMin}
+                        priceRangeMax={item.priceRangeMax}
+                        condition={item.condition}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* All Items Section */}
               <div className="mb-4 text-sm text-muted-foreground">
                 Found {filteredItems.length} item{filteredItems.length !== 1 ? 's' : ''}
               </div>
