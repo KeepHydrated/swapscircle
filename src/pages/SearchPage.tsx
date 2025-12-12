@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X, Repeat, Heart, Users } from 'lucide-react';
+import { Search, ChevronDown, X, Repeat, Heart, Users, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -38,16 +38,20 @@ const SearchPage = () => {
   const [friendsOnly, setFriendsOnly] = useState(false);
   const [friendUserIds, setFriendUserIds] = useState<string[]>([]);
   const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
+  const [userItems, setUserItems] = useState<Item[]>([]);
+  const [matchedItemsMap, setMatchedItemsMap] = useState<Map<string, { myItemId: string; myItemImage: string }>>(new Map());
 
   // Fetch real items from database
   const { items: dbItems, loading: itemsLoading } = useDbItems();
 
-  // Fetch friend user IDs and liked items
+  // Fetch friend user IDs, liked items, user items, and matches
   useEffect(() => {
-    const fetchFriendsAndLikes = async () => {
+    const fetchUserData = async () => {
       if (!user) {
         setFriendUserIds([]);
         setLikedItemIds(new Set());
+        setUserItems([]);
+        setMatchedItemsMap(new Map());
         return;
       }
 
@@ -78,9 +82,57 @@ const SearchPage = () => {
       } else {
         setLikedItemIds(new Set(likedData.map(l => l.item_id)));
       }
+
+      // Fetch user's own items
+      const { data: myItemsData, error: myItemsError } = await supabase
+        .from('items')
+        .select('id, name, image_url, image_urls')
+        .eq('user_id', user.id)
+        .eq('is_available', true)
+        .eq('status', 'published');
+
+      if (myItemsError) {
+        console.error('Error fetching user items:', myItemsError);
+      } else {
+        const mappedItems = (myItemsData || []).map(item => ({
+          id: item.id,
+          name: item.name,
+          image: item.image_url || (item.image_urls?.[0]) || '/placeholder.svg'
+        }));
+        setUserItems(mappedItems as Item[]);
+      }
+
+      // Fetch mutual matches
+      const { data: matchesData, error: matchesError } = await supabase
+        .from('mutual_matches')
+        .select('user1_id, user1_item_id, user2_id, user2_item_id')
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+
+      if (matchesError) {
+        console.error('Error fetching matches:', matchesError);
+      } else if (matchesData && myItemsData) {
+        // Build a map of other person's item ID -> my matched item
+        const matchMap = new Map<string, { myItemId: string; myItemImage: string }>();
+        
+        matchesData.forEach(match => {
+          const isUser1 = match.user1_id === user.id;
+          const myItemId = isUser1 ? match.user1_item_id : match.user2_item_id;
+          const theirItemId = isUser1 ? match.user2_item_id : match.user1_item_id;
+          
+          const myItem = myItemsData.find(item => item.id === myItemId);
+          if (myItem) {
+            matchMap.set(theirItemId, {
+              myItemId: myItem.id,
+              myItemImage: myItem.image_url || (myItem.image_urls?.[0]) || '/placeholder.svg'
+            });
+          }
+        });
+        
+        setMatchedItemsMap(matchMap);
+      }
     };
 
-    fetchFriendsAndLikes();
+    fetchUserData();
   }, [user]);
 
   const handleLikeItem = async (itemId: string, e: React.MouseEvent) => {
@@ -443,75 +495,107 @@ const SearchPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredResults.map((item) => (
-              <div
-                key={item.id}
-                className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
-                onClick={() => {
-                  setSelectedItem(item);
-                  setIsModalOpen(true);
-                }}
-              >
-                {/* Image */}
-                <div className="aspect-square relative overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+              {filteredResults.map((item) => {
+                const matchData = matchedItemsMap.get(item.id);
+                const isMatch = !!matchData;
+                
+                return (
+                <div
+                  key={item.id}
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+                  onClick={() => {
+                    setSelectedItem(item);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  {/* Matched item thumbnail */}
+                  {isMatch && matchData && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                        <img 
+                          src={matchData.myItemImage} 
+                          alt="Your matched item" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
 
-                {/* Content */}
-                <div className="p-3">
-                  <h3 className="font-semibold text-sm truncate">{item.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-muted-foreground">
-                      {item.priceRangeMin && item.priceRangeMax 
-                        ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
-                        : item.priceRangeMin 
-                          ? `$${item.priceRangeMin}+`
-                          : 'Price not set'}
-                    </span>
-                    {item.condition && (
-                      <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
-                        {item.condition}
-                      </span>
-                    )}
+                  {/* Image */}
+                  <div className="aspect-square relative overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
-                </div>
 
-                {/* Action buttons */}
-                <div className="absolute top-3 right-3 flex gap-2">
-                  {/* Trade button - hover only */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* Content */}
+                  <div className="p-3">
+                    <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground">
+                        {item.priceRangeMin && item.priceRangeMax 
+                          ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
+                          : item.priceRangeMin 
+                            ? `$${item.priceRangeMin}+`
+                            : 'Price not set'}
+                      </span>
+                      {item.condition && (
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                          {item.condition}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    {/* Trade button - hover only */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      {isMatch ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTradeTargetItem(item);
+                            setIsTradeModalOpen(true);
+                          }}
+                          className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
+                          aria-label="Accept trade"
+                        >
+                          <Check className="w-4 h-4 text-green-500" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTradeTargetItem(item);
+                            setIsTradeModalOpen(true);
+                          }}
+                          className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
+                          aria-label="Suggest trade"
+                        >
+                          <Repeat className="w-4 h-4 text-green-500" />
+                        </button>
+                      )}
+                    </div>
+                    {/* Heart button - always visible when liked, hover otherwise */}
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTradeTargetItem(item);
-                        setIsTradeModalOpen(true);
-                      }}
-                      className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
-                      aria-label="Suggest trade"
+                      onClick={(e) => handleLikeItem(item.id, e)}
+                      className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
+                        likedItemIds.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      }`}
+                      aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
                     >
-                      <Repeat className="w-4 h-4 text-green-500" />
+                      <Heart 
+                        className="w-4 h-4 text-red-500" 
+                        fill={likedItemIds.has(item.id) ? "red" : "none"}
+                      />
                     </button>
                   </div>
-                  {/* Heart button - always visible when liked, hover otherwise */}
-                  <button
-                    onClick={(e) => handleLikeItem(item.id, e)}
-                    className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
-                      likedItemIds.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                    }`}
-                    aria-label={likedItemIds.has(item.id) ? "Unlike" : "Like"}
-                  >
-                    <Heart 
-                      className="w-4 h-4 text-red-500" 
-                      fill={likedItemIds.has(item.id) ? "red" : "none"}
-                    />
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+              })}
             </div>
           )}
 
@@ -530,6 +614,8 @@ const SearchPage = () => {
       <ExploreItemModal
         open={isModalOpen}
         item={selectedItem}
+        matchedItemImage={selectedItem ? matchedItemsMap.get(selectedItem.id)?.myItemImage : undefined}
+        matchedItemId={selectedItem ? matchedItemsMap.get(selectedItem.id)?.myItemId : undefined}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedItem(null);
