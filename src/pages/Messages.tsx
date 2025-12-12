@@ -780,7 +780,7 @@ const Messages = () => {
                   </div>
                 ) : currentMobileView === 'details' ? (
                   /* Details Panel - Full width on mobile when showing details */
-                  <div className="flex-1 flex flex-col overflow-y-auto">
+                  <div className="flex-1 flex flex-col overflow-y-auto bg-background">
                     {selectedPair ? (
                       <TradeDetailsTabs 
                         selectedPair={selectedPair}
