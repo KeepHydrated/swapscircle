@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Search, ChevronDown, X, RefreshCw, Heart, Users } from 'lucide-react';
+import { Search, ChevronDown, X, Repeat, Heart, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -483,7 +483,7 @@ const SearchPage = () => {
                       className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
                       aria-label="Suggest trade"
                     >
-                      <RefreshCw className="w-4 h-4 text-green-500" />
+                      <Repeat className="w-4 h-4 text-green-500" />
                     </button>
                   </div>
                   {/* Heart button - always visible when liked, hover otherwise */}

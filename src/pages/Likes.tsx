@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Heart, RefreshCw } from 'lucide-react';
+import { Heart, Repeat } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Item } from '@/types/item';
@@ -236,7 +236,7 @@ const Likes = () => {
                         onClick={(e) => handleTradeClick(e, likedItem)}
                         title="Suggest a Trade"
                       >
-                        <RefreshCw className="w-5 h-5 text-white" />
+                        <Repeat className="w-5 h-5 text-white" />
                       </button>
                       {/* Unlike button */}
                       <button 

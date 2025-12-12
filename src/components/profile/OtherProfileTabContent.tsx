@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, RefreshCw, Heart } from 'lucide-react';
+import { Check, Repeat, Heart } from 'lucide-react';
 import ReviewsTab from '@/components/profile/ReviewsTab';
 import { MatchItem, Item } from '@/types/item';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
@@ -204,7 +204,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                           className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
                           aria-label="Suggest trade"
                         >
-                          <RefreshCw className="w-4 h-4 text-white" />
+                          <Repeat className="w-4 h-4 text-white" />
                         </button>
                       )}
                     </div>

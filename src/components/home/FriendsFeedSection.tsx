@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, RefreshCw, Heart, Check } from 'lucide-react';
+import { Users, Repeat, Heart, Check } from 'lucide-react';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
@@ -327,7 +327,7 @@ const FriendsFeedSection: React.FC = () => {
                     className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center"
                     aria-label="Suggest trade"
                   >
-                    <RefreshCw className="w-4 h-4 text-white" />
+                    <Repeat className="w-4 h-4 text-white" />
                   </button>
                 )}
               </div>
