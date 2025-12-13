@@ -152,16 +152,24 @@ const DemoTradeDetailsTabs: React.FC<DemoTradeDetailsTabsProps> = ({ demoData, o
           </div>
         </div>
         
-        {/* Cancel Request Button */}
+        {/* Accept/Reject Buttons (demo is a request sent TO the user) */}
         <div className="mt-4 pt-4 border-t border-gray-200">
-          <Button 
-            variant="outline" 
-            className="w-full text-red-600 border-red-200 hover:bg-red-50"
-            onClick={onCancel}
-          >
-            <X className="w-4 h-4 mr-2" />
-            Cancel Request
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button 
+              variant="outline" 
+              className="w-full text-red-600 border-red-200 hover:bg-red-50"
+              onClick={onCancel}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Reject
+            </Button>
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={onCancel}
+            >
+              Accept
+            </Button>
+          </div>
         </div>
       </div>
     </div>
