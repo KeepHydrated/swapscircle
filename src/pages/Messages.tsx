@@ -725,13 +725,22 @@ const Messages = () => {
                               yourItem={demoTradeData.myItem}
                               conversationTime="Just now"
                               isPending={true}
-                              isRequester={true}
-                              onCancel={() => {
+                              isRequester={false}
+                              onAccept={() => {
                                 setIsDemoTrade(false);
                                 setDemoTradeData(null);
                                 setCurrentView('conversations');
                                 toast({
-                                  title: "Trade Cancelled",
+                                  title: "Trade Accepted",
+                                  description: "This was a demo trade request.",
+                                });
+                              }}
+                              onReject={() => {
+                                setIsDemoTrade(false);
+                                setDemoTradeData(null);
+                                setCurrentView('conversations');
+                                toast({
+                                  title: "Trade Rejected",
                                   description: "This was a demo trade request.",
                                 });
                               }}
@@ -932,11 +941,32 @@ const Messages = () => {
                       <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-4 bg-muted/50 flex items-center justify-center">
-                    <div className="text-center text-muted-foreground">
-                      <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p className="text-sm">No messages yet</p>
-                      <p className="text-xs mt-1">Send a message to start the conversation</p>
+                  <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
+                    <div className="max-w-sm mx-auto">
+                      <TradeRequestMessage
+                        partnerProfile={demoTradeData.partnerProfile}
+                        theirItem={demoTradeData.theirItem}
+                        yourItem={demoTradeData.myItem}
+                        conversationTime="Just now"
+                        isPending={true}
+                        isRequester={false}
+                        onAccept={() => {
+                          setIsDemoTrade(false);
+                          setDemoTradeData(null);
+                          toast({
+                            title: "Trade Accepted",
+                            description: "This was a demo trade request.",
+                          });
+                        }}
+                        onReject={() => {
+                          setIsDemoTrade(false);
+                          setDemoTradeData(null);
+                          toast({
+                            title: "Trade Rejected",
+                            description: "This was a demo trade request.",
+                          });
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
@@ -1032,11 +1062,32 @@ const Messages = () => {
                 </div>
                 {currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
-                    <div className="flex-1 overflow-y-auto p-4 bg-muted/50 flex items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                        <p className="text-sm">No messages yet</p>
-                        <p className="text-xs mt-1">Send a message to start the conversation</p>
+                    <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
+                      <div className="max-w-sm mx-auto">
+                        <TradeRequestMessage
+                          partnerProfile={demoTradeData.partnerProfile}
+                          theirItem={demoTradeData.theirItem}
+                          yourItem={demoTradeData.myItem}
+                          conversationTime="Just now"
+                          isPending={true}
+                          isRequester={false}
+                          onAccept={() => {
+                            setIsDemoTrade(false);
+                            setDemoTradeData(null);
+                            toast({
+                              title: "Trade Accepted",
+                              description: "This was a demo trade request.",
+                            });
+                          }}
+                          onReject={() => {
+                            setIsDemoTrade(false);
+                            setDemoTradeData(null);
+                            toast({
+                              title: "Trade Rejected",
+                              description: "This was a demo trade request.",
+                            });
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
