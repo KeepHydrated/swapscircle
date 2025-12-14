@@ -411,13 +411,21 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             <div className="text-sm text-muted-foreground">
               {selectedMyItems.length > 0 && (
                 <span>
-                  Offering: <span className="font-medium text-foreground">{selectedMyItems.length} {selectedMyItems.length === 1 ? 'item' : 'items'}</span>
+                  Offering: <span className="font-medium text-foreground">
+                    {selectedMyItems.length === 1 
+                      ? selectedMyItems[0].name 
+                      : `${selectedMyItems.length} items`}
+                  </span>
                 </span>
               )}
               {selectedMyItems.length > 0 && selectedTheirItems.length > 0 && <span className="mx-2">→</span>}
               {selectedTheirItems.length > 0 && (
                 <span>
-                  For: <span className="font-medium text-foreground">{selectedTheirItems.length} {selectedTheirItems.length === 1 ? 'item' : 'items'}</span>
+                  For: <span className="font-medium text-foreground">
+                    {selectedTheirItems.length === 1 
+                      ? selectedTheirItems[0].name 
+                      : `${selectedTheirItems.length} items`}
+                  </span>
                 </span>
               )}
             </div>
