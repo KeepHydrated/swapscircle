@@ -258,21 +258,21 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           <h2 className="text-xl font-semibold mb-4">Change Trade</h2>
           
           {/* Tab Menu */}
-          <div className="flex bg-muted rounded-lg p-1">
+          <div className="flex gap-3">
             <button
               onClick={() => setActiveTab('theirs')}
-              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 h-10 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'theirs' 
-                  ? 'bg-background text-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
               }`}
             >
               Their Items
               {selectedTheirItemIds.length > 0 && (
                 <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'theirs' 
-                    ? 'bg-foreground text-background' 
-                    : 'bg-muted-foreground/30 text-muted-foreground'
+                    ? 'bg-blue-700 text-white' 
+                    : 'bg-gray-300 text-gray-600'
                 }`}>
                   {selectedTheirItemIds.length}
                 </span>
@@ -280,18 +280,18 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('yours')}
-              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 h-10 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'yours' 
-                  ? 'bg-background text-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
               }`}
             >
               Your Items
               {selectedMyItemIds.length > 0 && (
                 <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'yours' 
-                    ? 'bg-foreground text-background' 
-                    : 'bg-muted-foreground/30 text-muted-foreground'
+                    ? 'bg-blue-700 text-white' 
+                    : 'bg-gray-300 text-gray-600'
                 }`}>
                   {selectedMyItemIds.length}
                 </span>
