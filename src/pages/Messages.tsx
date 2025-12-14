@@ -1184,11 +1184,6 @@ const Messages = () => {
         </div>
       )}
       
-      
-      {/* Width Detector */}
-      <div className="fixed bottom-4 right-4 z-50 bg-black/80 text-white text-xs px-2 py-1 rounded font-mono">
-        {windowWidth}px
-      </div>
     </div>
   );
 };
