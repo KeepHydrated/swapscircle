@@ -197,52 +197,75 @@ const RecommendedLocalTradesSection = () => {
     }
   };
 
-  const handleTradeClick = (item: TradeItem, e: React.MouseEvent) => {
+  const handleTradeClick = async (item: TradeItem, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
       navigate('/auth');
       return;
     }
     
-    // For matched demo items, navigate to messages with demo trade
-    if (item.isMatch) {
-      navigate('/messages', { 
-        state: { 
-          demoTrade: true,
-          demoData: {
-            theirItem: {
-              name: item.name,
-              image: item.image_url,
-              image_url: item.image_url,
-              image_urls: [item.image_url],
-              description: item.description || 'Item available for trade',
-              category: item.category,
-              condition: item.condition,
-              price_range_min: item.price_range_min,
-              price_range_max: item.price_range_max
-            },
-            myItem: {
-              name: item.myItemName,
-              image: item.myItemImage,
-              image_url: item.myItemImage,
-              image_urls: [item.myItemImage],
-              description: 'Your item for trade',
-              category: 'Your Items',
-              condition: 'Good'
-            },
-            partnerProfile: {
-              id: item.user_id,
-              username: 'Local Trader',
-              avatar_url: null,
-              created_at: '2024-01-15T10:30:00Z'
-            }
-          }
-        } 
-      });
+    // For matched items, create a real trade conversation
+    if (item.isMatch && item.myItemId) {
+      try {
+        // Check if a conversation already exists
+        const { data: existing } = await supabase
+          .from('trade_conversations')
+          .select('id')
+          .eq('requester_id', user.id)
+          .eq('owner_id', item.user_id)
+          .eq('owner_item_id', item.id)
+          .maybeSingle();
+
+        if (existing) {
+          navigate(`/messages?conversation=${existing.id}`);
+          return;
+        }
+
+        // Create new trade conversation
+        const { data: conversation, error } = await supabase
+          .from('trade_conversations')
+          .insert({
+            requester_id: user.id,
+            owner_id: item.user_id,
+            requester_item_id: item.myItemId,
+            requester_item_ids: [item.myItemId],
+            owner_item_id: item.id,
+            status: 'pending'
+          })
+          .select('*')
+          .single();
+
+        if (error) {
+          console.error('Error creating trade:', error);
+          toast.error('Failed to start trade chat');
+          return;
+        }
+
+        // Send initial trade message
+        const message = `Hi! I'd like to trade my ${item.myItemName} for your ${item.name}. Let me know if you're interested!`;
+
+        await supabase
+          .from('trade_messages')
+          .insert({
+            conversation_id: conversation.id,
+            sender_id: user.id,
+            message: message
+          });
+
+        navigate('/messages', { 
+          state: { 
+            tradeConversationId: conversation.id, 
+            newTrade: true 
+          } 
+        });
+      } catch (error) {
+        console.error('Error requesting trade:', error);
+        toast.error('Failed to start trade chat');
+      }
       return;
     }
     
-    // Open trade modal for real items
+    // Open trade modal for non-matched items
     const mappedItem: Item = {
       id: item.id,
       name: item.name,
