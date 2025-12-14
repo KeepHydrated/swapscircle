@@ -65,6 +65,13 @@ const MobileProfileSidebar = ({ open, onOpenChange }: MobileProfileSidebarProps)
               </Link>
             </Button>
             
+            <Button variant="ghost" className="w-full justify-start h-12" asChild>
+              <Link to="/customer-support" onClick={() => onOpenChange(false)}>
+                <Headphones className="mr-3 h-5 w-5" />
+                <span>Contact Support</span>
+              </Link>
+            </Button>
+            
           </div>
           
           {supabaseConfigured && (

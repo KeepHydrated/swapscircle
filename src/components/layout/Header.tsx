@@ -194,6 +194,12 @@ const Header = () => {
                           <span>Settings</span>
                         </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                        <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
+                          <Headphones className="mr-2 h-4 w-4" />
+                          <span>Contact Support</span>
+                        </Link>
+                        </DropdownMenuItem>
                         {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
                         <DropdownMenuItem asChild>
                           <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
