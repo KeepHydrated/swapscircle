@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Star, Check, X, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import ChangeTradeItemsModal from '@/components/trade/ChangeTradeItemsModal';
 
 interface TradeRequestMessageProps {
   partnerProfile?: {
@@ -26,6 +27,7 @@ interface TradeRequestMessageProps {
     tags?: string[];
   };
   yourItem?: {
+    id?: string;
     name: string;
     image?: string;
     image_url?: string;
@@ -37,6 +39,7 @@ interface TradeRequestMessageProps {
     price_range_max?: number;
     tags?: string[];
   };
+  conversationId?: string;
   conversationTime?: string;
   onAccept?: () => void;
   onChange?: () => void;
@@ -52,6 +55,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
   partnerProfile,
   theirItem,
   yourItem,
+  conversationId,
   conversationTime,
   onAccept,
   onChange,
@@ -63,6 +67,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
   isRequester = false
 }) => {
   const [reviewData, setReviewData] = useState({ rating: 0, reviewCount: 0 });
+  const [showChangeItemsModal, setShowChangeItemsModal] = useState(false);
 
   // Fetch reviews for the partner
   useEffect(() => {
@@ -206,7 +211,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={onChange}
+                onClick={() => setShowChangeItemsModal(true)}
               >
                 <RefreshCw className="w-3 h-3 mr-1" />
                 Change
@@ -240,6 +245,17 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
             <span className="text-red-700 dark:text-red-400 text-sm font-medium">Trade Rejected</span>
           </div>
         </div>
+      )}
+
+      {/* Change Items Modal */}
+      {conversationId && (
+        <ChangeTradeItemsModal
+          isOpen={showChangeItemsModal}
+          onClose={() => setShowChangeItemsModal(false)}
+          conversationId={conversationId}
+          targetItemName={theirItem?.name || 'their item'}
+          currentItemIds={yourItem?.id ? [yourItem.id] : []}
+        />
       )}
     </div>
   );

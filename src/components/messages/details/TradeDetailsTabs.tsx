@@ -7,6 +7,7 @@ import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import ReviewModal from '@/components/trade/ReviewModal';
+import ChangeTradeItemsModal from '@/components/trade/ChangeTradeItemsModal';
 
 import { supabase } from '@/integrations/supabase/client';
 
@@ -53,6 +54,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   const [currentItemIndex, setCurrentItemIndex] = useState(0); // For navigating between multiple offered items
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showChangeItemsModal, setShowChangeItemsModal] = useState(false);
 
   // Get current user
   React.useEffect(() => {
@@ -478,9 +480,7 @@ const handleNextItem = () => {
               <Button 
                 variant="outline" 
                 className="w-full"
-                onClick={() => {
-                  toast.info('Change trade items functionality coming soon');
-                }}
+                onClick={() => setShowChangeItemsModal(true)}
               >
                 <RefreshCw className="w-4 h-4 mr-1" />
                 <span className="hidden sm:inline">Change</span>
@@ -507,6 +507,15 @@ const handleNextItem = () => {
             revieweeName={selectedPair.partnerProfile.username}
           />
         )}
+
+        {/* Change Items Modal */}
+        <ChangeTradeItemsModal
+          isOpen={showChangeItemsModal}
+          onClose={() => setShowChangeItemsModal(false)}
+          conversationId={selectedPair.partnerId}
+          targetItemName={selectedPair.item1?.name || 'their item'}
+          currentItemIds={selectedPair.item2?.id ? [selectedPair.item2.id] : []}
+        />
         
       </div>
     </div>
