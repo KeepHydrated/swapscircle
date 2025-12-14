@@ -918,7 +918,7 @@ const Messages = () => {
                       </div>
                     </div>
                   );
-                })}
+              })}
               </div>
             </div>
            ) : (
@@ -928,6 +928,16 @@ const Messages = () => {
                </div>
              </div>
           )}
+          
+          {/* Contact Support Link */}
+          <div className="flex-shrink-0 p-3 border-t border-gray-200 bg-white">
+            <a 
+              href="/customer-support" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
+            >
+              Contact Support
+            </a>
+          </div>
         </div>
         
         {/* Right side - Chat and/or Details */}
@@ -1183,7 +1193,7 @@ const Messages = () => {
         )}
         </div>
       )}
-      <SupportChat />
+      
       
       {/* Width Detector */}
       <div className="fixed bottom-4 right-4 z-50 bg-black/80 text-white text-xs px-2 py-1 rounded font-mono">
