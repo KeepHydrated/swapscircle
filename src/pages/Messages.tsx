@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
-import { fetchTradeMessages, sendTradeMessage, createTestIncomingTrade } from '@/services/tradeService';
+import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { fetchUserReviews } from '@/services/authService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
@@ -420,17 +420,6 @@ const Messages = () => {
       conversationId: activeConversation,
       message: messageText.trim()
     });
-  };
-
-  // DEV: Create test incoming trade
-  const handleCreateTestTrade = async () => {
-    const result = await createTestIncomingTrade();
-    if (result) {
-      queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
-      toast({ title: "Test trade created", description: "A new incoming trade request was created." });
-    } else {
-      toast({ title: "Failed", description: "Could not create test trade." });
-    }
   };
 
   const handleSelectItem = (item: 'item1' | 'item2') => {
@@ -1195,14 +1184,6 @@ const Messages = () => {
         </div>
       )}
       
-      {/* DEV: Test button */}
-      <Button 
-        onClick={handleCreateTestTrade}
-        className="fixed bottom-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white text-xs"
-        size="sm"
-      >
-        + Test Incoming Trade
-      </Button>
     </div>
   );
 };
