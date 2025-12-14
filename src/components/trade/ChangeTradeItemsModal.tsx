@@ -29,6 +29,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   const [selectedTheirItemId, setSelectedTheirItemId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [activeTab, setActiveTab] = useState<'yours' | 'theirs'>('yours');
   const queryClient = useQueryClient();
 
   // Pre-select current items when modal opens
@@ -36,6 +37,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
     if (isOpen) {
       setSelectedMyItemIds(currentMyItemIds || []);
       setSelectedTheirItemId(currentTheirItemId || null);
+      setActiveTab('yours');
     }
   }, [isOpen, currentMyItemIds, currentTheirItemId]);
 
@@ -178,7 +180,6 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
         updateData.owner_item_id = selectedTheirItemId;
       } else {
         // Owner is counter-proposing: offering their items, wanting requester's items
-        // Swap the perspective - owner's selected items become what they're offering
         updateData.owner_item_id = selectedMyItemIds[0];
         updateData.requester_item_id = selectedTheirItemId;
         updateData.requester_item_ids = [selectedTheirItemId];
@@ -229,6 +230,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   };
 
   const selectedMyItems = myItems.filter(item => selectedMyItemIds.includes(item.id));
+  const selectedTheirItem = theirItems.find(item => item.id === selectedTheirItemId);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -238,12 +240,51 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           Select which items you want to offer and which items you want in return
         </DialogDescription>
 
-        {/* Header */}
+        {/* Header with Tabs */}
         <div className="p-4 sm:p-6 border-b border-border bg-background flex-shrink-0">
-          <h2 className="text-xl font-semibold mb-1">Change Trade</h2>
-          <p className="text-muted-foreground text-sm">
-            Select items you want to offer and items you want in return
-          </p>
+          <h2 className="text-xl font-semibold mb-4">Change Trade</h2>
+          
+          {/* Tab Menu */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => setActiveTab('yours')}
+              className={`flex-1 h-10 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'yours' 
+                  ? 'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800 dark:text-green-400' 
+                  : 'bg-muted/50 border-border hover:bg-muted'
+              }`}
+            >
+              Your Items
+              {selectedMyItemIds.length > 0 && (
+                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                  activeTab === 'yours' 
+                    ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200' 
+                    : 'bg-muted-foreground/20 text-muted-foreground'
+                }`}>
+                  {selectedMyItemIds.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('theirs')}
+              className={`flex-1 h-10 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'theirs' 
+                  ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-400' 
+                  : 'bg-muted/50 border-border hover:bg-muted'
+              }`}
+            >
+              Their Items
+              {selectedTheirItemId && (
+                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                  activeTab === 'theirs' 
+                    ? 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200' 
+                    : 'bg-muted-foreground/20 text-muted-foreground'
+                }`}>
+                  1
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Content - Scrollable */}
@@ -252,96 +293,89 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
             </div>
+          ) : activeTab === 'yours' ? (
+            <div>
+              <p className="text-sm text-muted-foreground mb-4">Select items you want to offer</p>
+              {myItems.length === 0 ? (
+                <p className="text-muted-foreground text-sm text-center py-12">You don't have any items to trade.</p>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                  {myItems.map((item) => {
+                    const isSelected = selectedMyItemIds.includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
+                          isSelected
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                            : 'border-border hover:border-border/80'
+                        }`}
+                        onClick={() => toggleMyItemSelection(item.id)}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                        
+                        <div className="aspect-square overflow-hidden rounded-t-md bg-muted">
+                          <img
+                            src={item.image || '/placeholder.svg'}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        
+                        <div className="p-2">
+                          <h4 className="font-medium text-xs truncate">{item.name}</h4>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           ) : (
-            <div className="space-y-6">
-              {/* Your Items Section */}
-              <div>
-                <h3 className="font-medium text-base mb-3">Your items to offer</h3>
-                {myItems.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">You don't have any items to trade.</p>
-                ) : (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-                    {myItems.map((item) => {
-                      const isSelected = selectedMyItemIds.includes(item.id);
-                      return (
-                        <div
-                          key={item.id}
-                          className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
-                            isSelected
-                              ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
-                              : 'border-border hover:border-border/80'
-                          }`}
-                          onClick={() => toggleMyItemSelection(item.id)}
-                        >
-                          {isSelected && (
-                            <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
-                              <Check className="w-3 h-3 text-white" />
-                            </div>
-                          )}
-                          
-                          <div className="aspect-square overflow-hidden rounded-t-md bg-muted">
-                            <img
-                              src={item.image || '/placeholder.svg'}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                            />
+            <div>
+              <p className="text-sm text-muted-foreground mb-4">Select the item you want from them</p>
+              {theirItems.length === 0 ? (
+                <p className="text-muted-foreground text-sm text-center py-12">They don't have any available items.</p>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                  {theirItems.map((item) => {
+                    const isSelected = selectedTheirItemId === item.id;
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
+                          isSelected
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                            : 'border-border hover:border-border/80'
+                        }`}
+                        onClick={() => selectTheirItem(item.id)}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center z-10">
+                            <Check className="w-3 h-3 text-white" />
                           </div>
-                          
-                          <div className="p-2">
-                            <h4 className="font-medium text-xs truncate">{item.name}</h4>
-                          </div>
+                        )}
+                        
+                        <div className="aspect-square overflow-hidden rounded-t-md bg-muted">
+                          <img
+                            src={item.image || '/placeholder.svg'}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-border" />
-
-              {/* Their Items Section */}
-              <div>
-                <h3 className="font-medium text-base mb-3">Items you want from them</h3>
-                {theirItems.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">They don't have any available items.</p>
-                ) : (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-                    {theirItems.map((item) => {
-                      const isSelected = selectedTheirItemId === item.id;
-                      return (
-                        <div
-                          key={item.id}
-                          className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
-                              : 'border-border hover:border-border/80'
-                          }`}
-                          onClick={() => selectTheirItem(item.id)}
-                        >
-                          {isSelected && (
-                            <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center z-10">
-                              <Check className="w-3 h-3 text-white" />
-                            </div>
-                          )}
-                          
-                          <div className="aspect-square overflow-hidden rounded-t-md bg-muted">
-                            <img
-                              src={item.image || '/placeholder.svg'}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          
-                          <div className="p-2">
-                            <h4 className="font-medium text-xs truncate">{item.name}</h4>
-                          </div>
+                        
+                        <div className="p-2">
+                          <h4 className="font-medium text-xs truncate">{item.name}</h4>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -355,10 +389,10 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                   Offering: <span className="font-medium text-foreground">{selectedMyItems.length} {selectedMyItems.length === 1 ? 'item' : 'items'}</span>
                 </span>
               )}
-              {selectedMyItems.length > 0 && selectedTheirItemId && <span className="mx-2">•</span>}
-              {selectedTheirItemId && (
+              {selectedMyItems.length > 0 && selectedTheirItem && <span className="mx-2">→</span>}
+              {selectedTheirItem && (
                 <span>
-                  Wanting: <span className="font-medium text-foreground">{theirItems.find(i => i.id === selectedTheirItemId)?.name}</span>
+                  For: <span className="font-medium text-foreground">{selectedTheirItem.name}</span>
                 </span>
               )}
             </div>
