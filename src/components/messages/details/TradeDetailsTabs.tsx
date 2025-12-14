@@ -227,16 +227,6 @@ const handleNextTheirItem = () => {
       <div className="mb-4">
         <div className="flex gap-3">
           <button
-            onClick={() => onSelectItem('item2')}
-            className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
-              selectedItem === 'item2' 
-                ? 'bg-blue-50 border-blue-200 text-blue-700' 
-                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-            }`}
-          >
-            {isCurrentUserRequester ? 'Their Item' : 'Your Item'}
-          </button>
-          <button
             onClick={() => onSelectItem('item1')}
             className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
               selectedItem === 'item1' 
@@ -244,7 +234,17 @@ const handleNextTheirItem = () => {
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
-            {isCurrentUserRequester ? 'Your Item' : 'Their Item'}
+            Your Item
+          </button>
+          <button
+            onClick={() => onSelectItem('item2')}
+            className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
+              selectedItem === 'item2' 
+                ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+            }`}
+          >
+            Their Item
           </button>
         </div>
       </div>
