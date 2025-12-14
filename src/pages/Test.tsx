@@ -40,40 +40,47 @@ const Test: React.FC = () => {
         const { data: session } = await supabase.auth.getSession();
         const currentUserId = session?.session?.user?.id;
 
+        if (!currentUserId) {
+          setMatches([]);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch rejected item IDs first
+        const { data: rejections } = await supabase
+          .from('rejections')
+          .select('item_id')
+          .eq('user_id', currentUserId);
+        
+        const rejectedItemIds = new Set(rejections?.map(r => r.item_id) || []);
+
         // Fetch items that are NOT owned by the current user (to simulate matches)
-        let query = supabase
+        const { data: otherItems, error: otherError } = await supabase
           .from('items')
           .select('*')
           .eq('is_available', true)
           .eq('is_hidden', false)
+          .neq('user_id', currentUserId)
           .not('image_url', 'is', null)
-          .limit(10);
-
-        if (currentUserId) {
-          query = query.neq('user_id', currentUserId);
-        }
-
-        const { data: otherItems, error: otherError } = await query;
+          .limit(30); // Fetch more to account for filtering
 
         if (otherError) {
           console.error('Error fetching items:', otherError);
           return;
         }
 
-        // Fetch current user's items (to use as "my item" in matches)
-        let myItems: any[] = [];
-        if (currentUserId) {
-          const { data: userItems, error: userError } = await supabase
-            .from('items')
-            .select('*')
-            .eq('user_id', currentUserId)
-            .eq('is_available', true)
-            .limit(5);
+        // Filter out rejected items
+        const filteredItems = (otherItems || []).filter(item => !rejectedItemIds.has(item.id));
 
-          if (!userError && userItems) {
-            myItems = userItems;
-          }
-        }
+        // Fetch current user's items (to use as "my item" in matches)
+        const { data: userItems, error: userError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .eq('is_available', true)
+          .limit(5);
+
+        const myItems = (!userError && userItems) ? userItems : [];
 
         // Only show matches if user has items to trade
         if (myItems.length === 0) {
@@ -82,7 +89,7 @@ const Test: React.FC = () => {
         }
 
         // Create match pairs - cycle through user's items
-        const matchData: MatchItem[] = (otherItems || []).map((item, index) => {
+        const matchData: MatchItem[] = filteredItems.slice(0, 10).map((item, index) => {
           const myItem = myItems[index % myItems.length];
           return {
             id: item.id,
