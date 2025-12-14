@@ -6,6 +6,26 @@ import { Item } from '@/types/item';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
+
+interface MatchItem {
+  id: string;
+  name: string;
+  image: string;
+  image_url?: string;
+  image_urls?: string[];
+  user_id: string;
+  priceRangeMin?: number;
+  priceRangeMax?: number;
+  price_range_min?: number;
+  price_range_max?: number;
+  condition?: string;
+  category?: string;
+  description?: string;
+  myItemId?: string;
+  myItemName?: string;
+  myItemImage?: string;
+}
 
 const MatchesSection = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -15,17 +35,91 @@ const MatchesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
   const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
+  const [matches, setMatches] = useState<MatchItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userItems, setUserItems] = useState<any[]>([]);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Mock match data for testing
-  const matches = [
-    { id: "1", name: "Mountain Bike - Trek", image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91", user: "Alex M.", myItemId: "my-item-1", myItemName: "Vintage Camera", myItemImage: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", priceRangeMin: 300, priceRangeMax: 400, condition: "Good", category: "Sports & Outdoors", description: "Reliable mountain bike perfect for trails. Recently serviced with new brakes and tires.", user_id: "demo-user-1", isDemo: true },
-    { id: "2", name: "Digital Camera - Canon", image: "https://images.unsplash.com/photo-1526413232644-8a40f03cc03b", user: "Sarah K.", myItemId: "my-item-2", myItemName: "Leather Jacket", myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b", priceRangeMin: 450, priceRangeMax: 600, condition: "Excellent", category: "Electronics", description: "Professional DSLR camera with multiple lenses included. Perfect for photography enthusiasts.", user_id: "demo-user-2", isDemo: true },
-    { id: "3", name: "Electric Guitar - Fender", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d", user: "Mike T.", myItemId: "my-item-3", myItemName: "Headphones", myItemImage: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c", priceRangeMin: 500, priceRangeMax: 700, condition: "Good", category: "Entertainment", description: "Classic Fender electric guitar with rich tone. Includes hard case and amp.", user_id: "demo-user-3", isDemo: true },
-    { id: "4", name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2", user: "Emma L.", myItemId: "my-item-4", myItemName: "Office Chair", myItemImage: "https://images.unsplash.com/photo-1487147264018-f937fba0c817", priceRangeMin: 200, priceRangeMax: 350, condition: "Like New", category: "Home & Garden", description: "Electric height-adjustable standing desk. Barely used, in excellent condition.", user_id: "demo-user-4", isDemo: true },
-    { id: "5", name: "Coffee Machine - Breville", image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6", user: "James P.", myItemId: "my-item-5", myItemName: "Blender", myItemImage: "https://images.unsplash.com/photo-1585399000684-d2f72660f092", priceRangeMin: 150, priceRangeMax: 250, condition: "Good", category: "Home & Garden", description: "Premium espresso machine with milk frother. Makes cafe-quality coffee at home.", user_id: "demo-user-5", isDemo: true },
-  ];
+  // Fetch real items from the database
+  useEffect(() => {
+    const fetchMatches = async () => {
+      setLoading(true);
+      
+      try {
+        // First, get the current user's items
+        let myItems: any[] = [];
+        if (user) {
+          const { data: userItemsData } = await supabase
+            .from('items')
+            .select('id, name, image_url, image_urls')
+            .eq('user_id', user.id)
+            .eq('status', 'published')
+            .eq('is_available', true)
+            .limit(5);
+          
+          myItems = userItemsData || [];
+          setUserItems(myItems);
+        }
+
+        // Fetch other users' items (potential matches)
+        const query = supabase
+          .from('items')
+          .select('*')
+          .eq('status', 'published')
+          .eq('is_available', true)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        // Exclude current user's items if logged in
+        if (user) {
+          query.neq('user_id', user.id);
+        }
+
+        const { data: itemsData, error } = await query;
+
+        if (error) {
+          console.error('Error fetching matches:', error);
+          setLoading(false);
+          return;
+        }
+
+        // Transform items to match format and pair with user's items
+        const transformedMatches: MatchItem[] = (itemsData || []).map((item, index) => {
+          const myItem = myItems[index % Math.max(myItems.length, 1)] || null;
+          const imageUrl = item.image_url || (item.image_urls && item.image_urls[0]) || '';
+          const myItemImageUrl = myItem ? (myItem.image_url || (myItem.image_urls && myItem.image_urls[0]) || '') : '';
+          
+          return {
+            id: item.id,
+            name: item.name,
+            image: imageUrl,
+            image_url: imageUrl,
+            image_urls: item.image_urls || [],
+            user_id: item.user_id,
+            priceRangeMin: item.price_range_min,
+            priceRangeMax: item.price_range_max,
+            price_range_min: item.price_range_min,
+            price_range_max: item.price_range_max,
+            condition: item.condition,
+            category: item.category,
+            description: item.description,
+            myItemId: myItem?.id,
+            myItemName: myItem?.name,
+            myItemImage: myItemImageUrl,
+          };
+        });
+
+        setMatches(transformedMatches);
+      } catch (err) {
+        console.error('Error in fetchMatches:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatches();
+  }, [user]);
 
   // Fetch liked items on mount
   useEffect(() => {
@@ -50,6 +144,8 @@ const MatchesSection = () => {
 
   // Restore modal state from sessionStorage (for back navigation from item page)
   useEffect(() => {
+    if (matches.length === 0) return;
+    
     const savedModalState = sessionStorage.getItem('returnToModal');
     if (savedModalState) {
       try {
@@ -72,8 +168,8 @@ const MatchesSection = () => {
               user_id: match.user_id
             });
             setSelectedItemIndex(matchIndex);
-            setSelectedMatchedItemImage(match.myItemImage);
-            setSelectedMatchedItemId(match.myItemId);
+            setSelectedMatchedItemImage(match.myItemImage || '');
+            setSelectedMatchedItemId(match.myItemId || '');
             setIsModalOpen(true);
             // Only clear after successfully restoring
             sessionStorage.removeItem('returnToModal');
@@ -84,26 +180,12 @@ const MatchesSection = () => {
         sessionStorage.removeItem('returnToModal');
       }
     }
-  }, []);
+  }, [matches]);
 
-  const handleLikeItem = async (itemId: string, isDemo: boolean, e: React.MouseEvent) => {
+  const handleLikeItem = async (itemId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
       navigate('/auth');
-      return;
-    }
-
-    // For demo items, just toggle visual state
-    if (isDemo) {
-      setLikedItemIds(prev => {
-        const newSet = new Set(prev);
-        if (newSet.has(itemId)) {
-          newSet.delete(itemId);
-        } else {
-          newSet.add(itemId);
-        }
-        return newSet;
-      });
       return;
     }
 
@@ -134,7 +216,7 @@ const MatchesSection = () => {
     }
   };
 
-  const handleRequestTrade = async (item: typeof matches[0], e: React.MouseEvent) => {
+  const handleRequestTrade = async (item: MatchItem, e: React.MouseEvent) => {
     e.stopPropagation();
     
     if (!user) {
@@ -142,43 +224,9 @@ const MatchesSection = () => {
       return;
     }
 
-    // For demo items, navigate to messages with demo trade data via state
-    if (item.isDemo) {
-      navigate('/messages', { 
-        state: { 
-          demoTrade: true,
-          demoData: {
-            // Their item = the match item (what they're offering)
-            theirItem: {
-              name: item.name,
-              image: item.image,
-              image_url: item.image,
-              image_urls: [item.image],
-              description: item.description,
-              category: item.category,
-              condition: item.condition,
-              price_range_min: item.priceRangeMin,
-              price_range_max: item.priceRangeMax
-            },
-            // My item = what I'm offering in exchange
-            myItem: {
-              name: item.myItemName,
-              image: item.myItemImage,
-              image_url: item.myItemImage,
-              image_urls: [item.myItemImage],
-              description: 'Your item for trade',
-              category: 'Your Items',
-              condition: 'Good'
-            },
-            partnerProfile: {
-              id: item.user_id,
-              username: item.user,
-              avatar_url: null, // Use fallback avatar
-              created_at: '2023-06-15T10:30:00Z'
-            }
-          }
-        } 
-      });
+    if (!item.myItemId) {
+      toast.error('You need to post an item first to trade');
+      navigate('/post-item');
       return;
     }
 
@@ -246,11 +294,13 @@ const MatchesSection = () => {
     }
   };
 
-  const handleCardClick = (item: typeof matches[0], index: number) => {
+  const handleCardClick = (item: MatchItem, index: number) => {
     setSelectedItem({
       id: item.id,
       name: item.name,
       image: item.image,
+      image_url: item.image_url,
+      image_urls: item.image_urls,
       category: item.category,
       condition: item.condition,
       description: item.description,
@@ -259,8 +309,8 @@ const MatchesSection = () => {
       user_id: item.user_id,
     });
     setSelectedItemIndex(index);
-    setSelectedMatchedItemImage(item.myItemImage);
-    setSelectedMatchedItemId(item.myItemId);
+    setSelectedMatchedItemImage(item.myItemImage || '');
+    setSelectedMatchedItemId(item.myItemId || '');
     setIsModalOpen(true);
   };
 
@@ -277,6 +327,42 @@ const MatchesSection = () => {
       handleCardClick(nextItem, selectedItemIndex + 1);
     }
   };
+
+  // Loading skeleton
+  if (loading) {
+    return (
+      <div className="w-full">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
+          <Link to="/matches" className="text-sm text-primary hover:underline">View all</Link>
+        </div>
+        <div className="overflow-x-auto overflow-y-hidden pb-2">
+          <div className="flex gap-3 min-w-max">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80">
+                <Skeleton className="w-full h-full rounded-xl" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No matches
+  if (matches.length === 0) {
+    return (
+      <div className="w-full">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
+          <Link to="/matches" className="text-sm text-primary hover:underline">View all</Link>
+        </div>
+        <div className="text-center py-8 text-muted-foreground">
+          <p>No matches found yet. Post an item to start matching!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -320,11 +406,13 @@ const MatchesSection = () => {
                 <h3 className="font-semibold text-sm truncate">{item.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-muted-foreground">
-                    ${item.priceRangeMin} - ${item.priceRangeMax}
+                    ${item.priceRangeMin || item.price_range_min || 0} - ${item.priceRangeMax || item.price_range_max || 0}
                   </span>
-                  <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
-                    {item.condition}
-                  </span>
+                  {item.condition && (
+                    <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                      {item.condition}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -343,7 +431,7 @@ const MatchesSection = () => {
                 </div>
                 {/* Heart button - always visible when liked, hover otherwise */}
                 <button
-                  onClick={(e) => handleLikeItem(item.id, item.isDemo, e)}
+                  onClick={(e) => handleLikeItem(item.id, e)}
                   className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
                     likedItemIds.has(item.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                   }`}
