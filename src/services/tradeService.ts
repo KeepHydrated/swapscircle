@@ -172,24 +172,26 @@ export const fetchUserTradeConversations = async () => {
       const requesterProfile = profiles?.find(p => p.id === conversation.requester_id);
       const ownerProfile = profiles?.find(p => p.id === conversation.owner_id);
       
-      // Build requester_items array from requester_item_ids
+      // Build requester_items array from requester_item_ids, sorted by created_at desc to match modal display order
       let requester_items: any[] = [];
       if (conversation.requester_item_ids && Array.isArray(conversation.requester_item_ids)) {
         requester_items = conversation.requester_item_ids
           .map((id: string) => additionalItemsMap[id])
-          .filter(Boolean);
+          .filter(Boolean)
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       }
       // If no requester_item_ids but has requester_item, use that as the single item
       if (requester_items.length === 0 && conversation.requester_item) {
         requester_items = [conversation.requester_item];
       }
       
-      // Build owner_items array from owner_item_ids
+      // Build owner_items array from owner_item_ids, sorted by created_at desc to match modal display order
       let owner_items: any[] = [];
       if (conversation.owner_item_ids && Array.isArray(conversation.owner_item_ids)) {
         owner_items = conversation.owner_item_ids
           .map((id: string) => additionalItemsMap[id])
-          .filter(Boolean);
+          .filter(Boolean)
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       }
       // If no owner_item_ids but has owner_item, use that as the single item
       if (owner_items.length === 0 && conversation.owner_item) {
