@@ -204,6 +204,21 @@ const handleNextTheirItem = () => {
       const freshTrade = updatedTradeData.find((tc: any) => tc.id === selectedPair.partnerId);
       const bothNowAccepted = freshTrade?.requester_accepted && freshTrade?.owner_accepted;
       
+      // Send chat message for trade acceptance
+      const { data: session } = await supabase.auth.getSession();
+      if (session?.session?.user?.id) {
+        const messageContent = bothNowAccepted 
+          ? "🎉 Trade completed! Both parties have accepted."
+          : "✅ I've accepted the trade.";
+        
+        await supabase.from('trade_messages').insert({
+          conversation_id: selectedPair.partnerId,
+          sender_id: session.session.user.id,
+          message: messageContent
+        });
+        queryClient.invalidateQueries({ queryKey: ['trade-messages', selectedPair.partnerId] });
+      }
+      
       if (bothNowAccepted && freshTrade?.status !== 'completed') {
         try {
           await updateTradeStatus(selectedPair.partnerId, 'completed');
@@ -227,7 +242,22 @@ const handleNextTheirItem = () => {
 
   const rejectTradeMutation = useMutation({
     mutationFn: () => rejectTrade(selectedPair.partnerId),
-    onSuccess: () => {
+    onSuccess: async () => {
+      // Send chat message for trade rejection
+      const { data: session } = await supabase.auth.getSession();
+      if (session?.session?.user?.id) {
+        const messageContent = isCurrentUserRequester 
+          ? "❌ I've cancelled the trade request."
+          : "❌ I've declined the trade request.";
+        
+        await supabase.from('trade_messages').insert({
+          conversation_id: selectedPair.partnerId,
+          sender_id: session.session.user.id,
+          message: messageContent
+        });
+        queryClient.invalidateQueries({ queryKey: ['trade-messages', selectedPair.partnerId] });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
     },
     onError: (error) => {
