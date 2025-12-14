@@ -583,6 +583,18 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   <DropdownMenuContent align="end" className="bg-background z-50">
                     <DropdownMenuItem
                       onClick={() => {
+                        // Check if this is a valid UUID (real item) or a demo item
+                        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                        const isValidUUID = uuidRegex.test(item.id);
+                        
+                        if (!isValidUUID) {
+                          toast({
+                            title: "Demo item",
+                            description: "This is a demo item and doesn't have a detail page.",
+                          });
+                          return;
+                        }
+                        
                         // Save modal state to sessionStorage so we can restore it on back navigation
                         sessionStorage.setItem('returnToModal', JSON.stringify({
                           itemId: item.id,
