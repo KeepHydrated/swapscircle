@@ -516,13 +516,13 @@ const handleNextItem = () => {
           partnerId={selectedPair.partnerProfile?.id || ''}
           currentMyItemIds={
             isCurrentUserRequester 
-              ? (currentTrade?.requester_item_ids || (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
-              : (currentTrade?.owner_item_ids || (currentTrade?.owner_item_id ? [currentTrade.owner_item_id] : []))
+              ? (currentTrade?.requester_item_ids?.length ? currentTrade.requester_item_ids : (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
+              : (currentTrade?.owner_item_ids?.length ? currentTrade.owner_item_ids : (currentTrade?.owner_item_id ? [currentTrade.owner_item_id] : []))
           }
           currentTheirItemIds={
             isCurrentUserRequester 
-              ? (currentTrade?.owner_item_ids || (currentTrade?.owner_item_id ? [currentTrade.owner_item_id] : []))
-              : (currentTrade?.requester_item_ids || (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
+              ? (currentTrade?.owner_item_ids?.length ? currentTrade.owner_item_ids : (currentTrade?.owner_item_id ? [currentTrade.owner_item_id] : []))
+              : (currentTrade?.requester_item_ids?.length ? currentTrade.requester_item_ids : (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
           }
         />
         
