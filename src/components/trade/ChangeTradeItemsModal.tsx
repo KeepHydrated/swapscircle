@@ -29,7 +29,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   const [selectedTheirItemIds, setSelectedTheirItemIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [activeTab, setActiveTab] = useState<'yours' | 'theirs'>('yours');
+  const [activeTab, setActiveTab] = useState<'yours' | 'theirs'>('theirs');
   const queryClient = useQueryClient();
 
   // Pre-select current items when modal opens
@@ -37,7 +37,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
     if (isOpen) {
       setSelectedMyItemIds(currentMyItemIds || []);
       setSelectedTheirItemIds(currentTheirItemIds || []);
-      setActiveTab('yours');
+      setActiveTab('theirs');
     }
   }, [isOpen, currentMyItemIds, currentTheirItemIds]);
 
@@ -260,25 +260,6 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           {/* Tab Menu */}
           <div className="flex bg-muted rounded-lg p-1">
             <button
-              onClick={() => setActiveTab('yours')}
-              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-                activeTab === 'yours' 
-                  ? 'bg-background text-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Your Items
-              {selectedMyItemIds.length > 0 && (
-                <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
-                  activeTab === 'yours' 
-                    ? 'bg-foreground text-background' 
-                    : 'bg-muted-foreground/30 text-muted-foreground'
-                }`}>
-                  {selectedMyItemIds.length}
-                </span>
-              )}
-            </button>
-            <button
               onClick={() => setActiveTab('theirs')}
               className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'theirs' 
@@ -294,6 +275,25 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                     : 'bg-muted-foreground/30 text-muted-foreground'
                 }`}>
                   {selectedTheirItemIds.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('yours')}
+              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                activeTab === 'yours' 
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Your Items
+              {selectedMyItemIds.length > 0 && (
+                <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
+                  activeTab === 'yours' 
+                    ? 'bg-foreground text-background' 
+                    : 'bg-muted-foreground/30 text-muted-foreground'
+                }`}>
+                  {selectedMyItemIds.length}
                 </span>
               )}
             </button>
