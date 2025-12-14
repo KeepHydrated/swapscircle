@@ -696,14 +696,15 @@ const Messages = () => {
           {/* Left sidebar - Conversations (always visible, narrower) */}
           <div className="w-[340px] border-r border-gray-200 flex flex-col h-full">
             
-          {(conversations.length > 0 || isDemoTrade) ? (
+          {(conversations.length > 0 || demoTradeData) ? (
             <div className="flex flex-col h-full">
               <div ref={leftListRef} className="flex-1 overflow-y-auto">
-                {/* Demo Trade Entry */}
-                {isDemoTrade && demoTradeData && (
+                {/* Demo Trade Entry - always visible when demoTradeData exists */}
+                {demoTradeData && (
                   <div 
-                    className="p-3 border-b border-gray-200 cursor-pointer bg-blue-50 border-l-4 border-l-blue-500"
+                    className={`p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${isDemoTrade ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                     onClick={() => {
+                      setIsDemoTrade(true);
                       setActiveConversation(null as any);
                     }}
                   >
@@ -723,6 +724,11 @@ const Messages = () => {
                             {demoTradeData.partnerProfile?.username || 'Demo User'}
                           </div>
                         </div>
+                        <div className="flex items-center mb-1 text-xs">
+                          <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.theirItem?.name || 'Their Item'}</span>
+                          <span className="mx-1 text-blue-600">↔</span>
+                          <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.myItem?.name || 'Your Item'}</span>
+                        </div>
                         <p className="text-xs text-gray-600 truncate">Demo trade</p>
                       </div>
                     </div>
@@ -741,7 +747,7 @@ const Messages = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         setIsDemoTrade(false);
-                        setDemoTradeData(null);
+                        // Don't clear demoTradeData - keep it in the list
                         setActiveConversation(conversation.id);
                         setSelectedItem('item2');
                         setCurrentMobileView('messages'); // Reset to messages view when switching chats
