@@ -41,6 +41,8 @@ interface TradeRequestMessageProps {
     tags?: string[];
   };
   conversationId?: string;
+  yourItemIds?: string[];
+  theirItemIds?: string[];
   conversationTime?: string;
   onAccept?: () => void;
   onChange?: () => void;
@@ -57,6 +59,8 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
   theirItem,
   yourItem,
   conversationId,
+  yourItemIds,
+  theirItemIds,
   conversationTime,
   onAccept,
   onChange,
@@ -255,8 +259,8 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
           onClose={() => setShowChangeItemsModal(false)}
           conversationId={conversationId}
           partnerId={partnerProfile.id}
-          currentMyItemIds={yourItem?.id ? [yourItem.id] : []}
-          currentTheirItemIds={theirItem?.id ? [theirItem.id] : []}
+          currentMyItemIds={yourItemIds || (yourItem?.id ? [yourItem.id] : [])}
+          currentTheirItemIds={theirItemIds || (theirItem?.id ? [theirItem.id] : [])}
         />
       )}
     </div>

@@ -514,8 +514,16 @@ const handleNextItem = () => {
           onClose={() => setShowChangeItemsModal(false)}
           conversationId={selectedPair.partnerId}
           partnerId={selectedPair.partnerProfile?.id || ''}
-          currentMyItemIds={selectedPair.item2?.id ? [selectedPair.item2.id] : []}
-          currentTheirItemIds={selectedPair.item1?.id ? [selectedPair.item1.id] : []}
+          currentMyItemIds={
+            isCurrentUserRequester 
+              ? (currentTrade?.requester_item_ids || (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
+              : (currentTrade?.owner_item_ids || (currentTrade?.owner_item_id ? [currentTrade.owner_item_id] : []))
+          }
+          currentTheirItemIds={
+            isCurrentUserRequester 
+              ? (currentTrade?.owner_item_ids || (currentTrade?.owner_item_id ? [currentTrade.owner_item_id] : []))
+              : (currentTrade?.requester_item_ids || (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
+          }
         />
         
       </div>
