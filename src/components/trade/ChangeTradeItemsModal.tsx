@@ -380,13 +380,13 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                         key={item.id}
                         className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
                           isSelected
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
                             : 'border-border hover:border-border/80'
                         }`}
                         onClick={() => toggleTheirItemSelection(item.id)}
                       >
                         {isSelected && (
-                          <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center z-10">
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
                             <Check className="w-3 h-3 text-white" />
                           </div>
                         )}
