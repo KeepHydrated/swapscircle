@@ -258,21 +258,21 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           <h2 className="text-xl font-semibold mb-4">Change Trade</h2>
           
           {/* Tab Menu */}
-          <div className="flex gap-3">
+          <div className="flex bg-muted rounded-lg p-1">
             <button
               onClick={() => setActiveTab('yours')}
-              className={`flex-1 h-10 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'yours' 
-                  ? 'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800 dark:text-green-400' 
-                  : 'bg-muted/50 border-border hover:bg-muted'
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Your Items
               {selectedMyItemIds.length > 0 && (
-                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'yours' 
-                    ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200' 
-                    : 'bg-muted-foreground/20 text-muted-foreground'
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-muted-foreground/30 text-muted-foreground'
                 }`}>
                   {selectedMyItemIds.length}
                 </span>
@@ -280,18 +280,18 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('theirs')}
-              className={`flex-1 h-10 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'theirs' 
-                  ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-400' 
-                  : 'bg-muted/50 border-border hover:bg-muted'
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Their Items
               {selectedTheirItemIds.length > 0 && (
-                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'theirs' 
-                    ? 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200' 
-                    : 'bg-muted-foreground/20 text-muted-foreground'
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-muted-foreground/30 text-muted-foreground'
                 }`}>
                   {selectedTheirItemIds.length}
                 </span>
