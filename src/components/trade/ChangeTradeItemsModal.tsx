@@ -12,7 +12,7 @@ interface ChangeTradeItemsModalProps {
   conversationId: string;
   partnerId: string;
   currentMyItemIds: string[];
-  currentTheirItemId?: string;
+  currentTheirItemIds?: string[];
 }
 
 const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
@@ -21,12 +21,12 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   conversationId,
   partnerId,
   currentMyItemIds,
-  currentTheirItemId
+  currentTheirItemIds
 }) => {
   const [myItems, setMyItems] = useState<Item[]>([]);
   const [theirItems, setTheirItems] = useState<Item[]>([]);
   const [selectedMyItemIds, setSelectedMyItemIds] = useState<string[]>([]);
-  const [selectedTheirItemId, setSelectedTheirItemId] = useState<string | null>(null);
+  const [selectedTheirItemIds, setSelectedTheirItemIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [activeTab, setActiveTab] = useState<'yours' | 'theirs'>('yours');
@@ -36,10 +36,10 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setSelectedMyItemIds(currentMyItemIds || []);
-      setSelectedTheirItemId(currentTheirItemId || null);
+      setSelectedTheirItemIds(currentTheirItemIds || []);
       setActiveTab('yours');
     }
-  }, [isOpen, currentMyItemIds, currentTheirItemId]);
+  }, [isOpen, currentMyItemIds, currentTheirItemIds]);
 
   // Fetch both users' items
   useEffect(() => {
@@ -117,8 +117,14 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
     });
   };
 
-  const selectTheirItem = (itemId: string) => {
-    setSelectedTheirItemId(prev => prev === itemId ? null : itemId);
+  const toggleTheirItemSelection = (itemId: string) => {
+    setSelectedTheirItemIds(prev => {
+      if (prev.includes(itemId)) {
+        return prev.filter(id => id !== itemId);
+      } else {
+        return [...prev, itemId];
+      }
+    });
   };
 
   const handleConfirmChange = async () => {
@@ -127,18 +133,20 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
       return;
     }
 
-    if (!selectedTheirItemId) {
-      toast.error("Please select an item you want from them.");
+    if (selectedTheirItemIds.length === 0) {
+      toast.error("Please select at least one item you want from them.");
       return;
     }
 
     // Check if selection has actually changed
     const sortedCurrentMy = [...(currentMyItemIds || [])].sort();
     const sortedNewMy = [...selectedMyItemIds].sort();
+    const sortedCurrentTheir = [...(currentTheirItemIds || [])].sort();
+    const sortedNewTheir = [...selectedTheirItemIds].sort();
     const myItemsChanged = JSON.stringify(sortedCurrentMy) !== JSON.stringify(sortedNewMy);
-    const theirItemChanged = currentTheirItemId !== selectedTheirItemId;
+    const theirItemsChanged = JSON.stringify(sortedCurrentTheir) !== JSON.stringify(sortedNewTheir);
 
-    if (!myItemsChanged && !theirItemChanged) {
+    if (!myItemsChanged && !theirItemsChanged) {
       toast.info("No changes made to selected items.");
       onClose();
       return;
@@ -177,12 +185,14 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
         // Requester is changing their offered items and what they want
         updateData.requester_item_id = selectedMyItemIds[0];
         updateData.requester_item_ids = selectedMyItemIds;
-        updateData.owner_item_id = selectedTheirItemId;
+        updateData.owner_item_id = selectedTheirItemIds[0];
+        updateData.owner_item_ids = selectedTheirItemIds;
       } else {
         // Owner is counter-proposing: offering their items, wanting requester's items
         updateData.owner_item_id = selectedMyItemIds[0];
-        updateData.requester_item_id = selectedTheirItemId;
-        updateData.requester_item_ids = [selectedTheirItemId];
+        updateData.owner_item_ids = selectedMyItemIds;
+        updateData.requester_item_id = selectedTheirItemIds[0];
+        updateData.requester_item_ids = selectedTheirItemIds;
       }
 
       const { error: updateError } = await supabase
@@ -202,9 +212,12 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
         .map(item => item.name)
         .join(', ');
       
-      const theirSelectedName = theirItems.find(item => item.id === selectedTheirItemId)?.name || 'their item';
+      const theirSelectedNames = theirItems
+        .filter(item => selectedTheirItemIds.includes(item.id))
+        .map(item => item.name)
+        .join(', ');
       
-      const messageContent = `I've updated the trade: offering ${mySelectedNames} for ${theirSelectedName}`;
+      const messageContent = `I've updated the trade: offering ${mySelectedNames} for ${theirSelectedNames}`;
 
       await supabase
         .from('trade_messages')
@@ -230,7 +243,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   };
 
   const selectedMyItems = myItems.filter(item => selectedMyItemIds.includes(item.id));
-  const selectedTheirItem = theirItems.find(item => item.id === selectedTheirItemId);
+  const selectedTheirItems = theirItems.filter(item => selectedTheirItemIds.includes(item.id));
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -274,13 +287,13 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               }`}
             >
               Their Items
-              {selectedTheirItemId && (
+              {selectedTheirItemIds.length > 0 && (
                 <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                   activeTab === 'theirs' 
                     ? 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200' 
                     : 'bg-muted-foreground/20 text-muted-foreground'
                 }`}>
-                  1
+                  {selectedTheirItemIds.length}
                 </span>
               )}
             </button>
@@ -337,13 +350,13 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             </div>
           ) : (
             <div>
-              <p className="text-sm text-muted-foreground mb-4">Select the item you want from them</p>
+              <p className="text-sm text-muted-foreground mb-4">Select items you want from them</p>
               {theirItems.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-12">They don't have any available items.</p>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
                   {theirItems.map((item) => {
-                    const isSelected = selectedTheirItemId === item.id;
+                    const isSelected = selectedTheirItemIds.includes(item.id);
                     return (
                       <div
                         key={item.id}
@@ -352,7 +365,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
                             : 'border-border hover:border-border/80'
                         }`}
-                        onClick={() => selectTheirItem(item.id)}
+                        onClick={() => toggleTheirItemSelection(item.id)}
                       >
                         {isSelected && (
                           <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center z-10">
@@ -389,10 +402,10 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                   Offering: <span className="font-medium text-foreground">{selectedMyItems.length} {selectedMyItems.length === 1 ? 'item' : 'items'}</span>
                 </span>
               )}
-              {selectedMyItems.length > 0 && selectedTheirItem && <span className="mx-2">→</span>}
-              {selectedTheirItem && (
+              {selectedMyItems.length > 0 && selectedTheirItems.length > 0 && <span className="mx-2">→</span>}
+              {selectedTheirItems.length > 0 && (
                 <span>
-                  For: <span className="font-medium text-foreground">{selectedTheirItem.name}</span>
+                  For: <span className="font-medium text-foreground">{selectedTheirItems.length} {selectedTheirItems.length === 1 ? 'item' : 'items'}</span>
                 </span>
               )}
             </div>
@@ -405,7 +418,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               </button>
               <button
                 onClick={handleConfirmChange}
-                disabled={selectedMyItemIds.length === 0 || !selectedTheirItemId || updating}
+                disabled={selectedMyItemIds.length === 0 || selectedTheirItemIds.length === 0 || updating}
                 className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
               >
                 {updating ? 'Updating...' : 'Confirm Change'}
