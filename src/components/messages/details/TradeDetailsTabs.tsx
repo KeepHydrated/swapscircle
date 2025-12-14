@@ -576,16 +576,26 @@ const handleNextTheirItem = () => {
               </div>
             </div>
           ) : isCurrentUserRequester ? (
-            // Requester sees Cancel Request button
-            <Button 
-              variant="outline" 
-              className="w-full text-red-600 border-red-200 hover:bg-red-50"
-              onClick={handleRejectTrade}
-              disabled={rejectTradeMutation.isPending}
-            >
-              <X className="w-4 h-4 mr-2" />
-              {rejectTradeMutation.isPending ? 'Cancelling...' : 'Cancel Request'}
-            </Button>
+            // Requester sees Change and Cancel Request buttons
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                variant="outline" 
+                className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                onClick={handleRejectTrade}
+                disabled={rejectTradeMutation.isPending}
+              >
+                <X className="w-4 h-4 mr-2" />
+                {rejectTradeMutation.isPending ? 'Cancelling...' : 'Cancel'}
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => setShowChangeItemsModal(true)}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Change
+              </Button>
+            </div>
           ) : (
             // Receiver sees Reject/Change/Accept buttons
             <div className="grid grid-cols-3 gap-2">
