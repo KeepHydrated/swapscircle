@@ -313,13 +313,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                 <p className="text-muted-foreground text-sm text-center py-12">You don't have any items to trade.</p>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-                  {[...myItems].sort((a, b) => {
-                    const aSelected = selectedMyItemIds.includes(a.id);
-                    const bSelected = selectedMyItemIds.includes(b.id);
-                    if (aSelected && !bSelected) return -1;
-                    if (!aSelected && bSelected) return 1;
-                    return 0;
-                  }).map((item) => {
+                  {myItems.map((item) => {
                     const isSelected = selectedMyItemIds.includes(item.id);
                     return (
                       <div
@@ -361,13 +355,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                 <p className="text-muted-foreground text-sm text-center py-12">They don't have any available items.</p>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-                  {[...theirItems].sort((a, b) => {
-                    const aSelected = selectedTheirItemIds.includes(a.id);
-                    const bSelected = selectedTheirItemIds.includes(b.id);
-                    if (aSelected && !bSelected) return -1;
-                    if (!aSelected && bSelected) return 1;
-                    return 0;
-                  }).map((item) => {
+                  {theirItems.map((item) => {
                     const isSelected = selectedTheirItemIds.includes(item.id);
                     return (
                       <div
