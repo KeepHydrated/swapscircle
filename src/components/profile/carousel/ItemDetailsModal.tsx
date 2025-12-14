@@ -407,7 +407,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                     {/* Item Details */}
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="font-medium text-gray-900">{displayItem.category || "Electronics"}</div>
-                      <div className="font-medium text-gray-900">{displayItem.tags?.[0] || "Cameras"}</div>
+                      <div className="font-medium text-gray-900">{displayItem.tags?.[0]?.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') || "Cameras"}</div>
                       <div className="font-medium text-gray-900">{displayItem.condition || "Brand New"}</div>
                       <div className="font-medium text-gray-900">
                         {((displayItem.price_range_min || displayItem.priceRangeMin) && (displayItem.price_range_max || displayItem.priceRangeMax))
