@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { Check, X, Tag, Layers, Shield, DollarSign, ChevronLeft, ChevronRight, Star, RefreshCw } from 'lucide-react';
 import { updateTradeAcceptance, rejectTrade, fetchUserTradeConversations, updateTradeStatus } from '@/services/tradeService';
 import { checkReviewEligibility } from '@/services/reviewService';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -464,24 +464,34 @@ const handleNextItem = () => {
               {rejectTradeMutation.isPending ? 'Cancelling...' : 'Cancel Request'}
             </Button>
           ) : (
-            // Receiver sees Reject/Accept buttons
-            <div className="grid grid-cols-2 gap-3">
+            // Receiver sees Reject/Change/Accept buttons
+            <div className="grid grid-cols-3 gap-2">
               <Button 
                 variant="outline" 
                 className="w-full text-red-600 border-red-200 hover:bg-red-50"
                 onClick={handleRejectTrade}
                 disabled={rejectTradeMutation.isPending}
               >
-                <X className="w-4 h-4 mr-2" />
-                {rejectTradeMutation.isPending ? 'Rejecting...' : 'Reject'}
+                <X className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">{rejectTradeMutation.isPending ? 'Rejecting...' : 'Reject'}</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  toast.info('Change trade items functionality coming soon');
+                }}
+              >
+                <RefreshCw className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">Change</span>
               </Button>
               <Button 
                 className="w-full bg-green-600 hover:bg-green-700"
                 onClick={handleAcceptTrade}
                 disabled={acceptTradeMutation.isPending}
               >
-                <Check className="w-4 h-4 mr-2" />
-                {acceptTradeMutation.isPending ? 'Accepting...' : 'Accept'}
+                <Check className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">{acceptTradeMutation.isPending ? 'Accepting...' : 'Accept'}</span>
               </Button>
             </div>
           )}

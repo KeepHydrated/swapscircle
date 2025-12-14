@@ -735,6 +735,12 @@ const Messages = () => {
                                   description: "This was a demo trade request.",
                                 });
                               }}
+                              onChange={() => {
+                                toast({
+                                  title: "Change Items",
+                                  description: "Item selection modal will open here.",
+                                });
+                              }}
                               onReject={() => {
                                 setIsDemoTrade(false);
                                 setDemoTradeData(null);
@@ -958,6 +964,12 @@ const Messages = () => {
                             description: "This was a demo trade request.",
                           });
                         }}
+                        onChange={() => {
+                          toast({
+                            title: "Change Items",
+                            description: "Item selection modal will open here.",
+                          });
+                        }}
                         onReject={() => {
                           setIsDemoTrade(false);
                           setDemoTradeData(null);
@@ -1077,6 +1089,12 @@ const Messages = () => {
                             toast({
                               title: "Trade Accepted",
                               description: "This was a demo trade request.",
+                            });
+                          }}
+                          onChange={() => {
+                            toast({
+                              title: "Change Items",
+                              description: "Item selection modal will open here.",
                             });
                           }}
                           onReject={() => {

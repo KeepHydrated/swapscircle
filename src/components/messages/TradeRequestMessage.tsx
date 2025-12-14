@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Star, Check, X } from 'lucide-react';
+import { Star, Check, X, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -39,6 +39,7 @@ interface TradeRequestMessageProps {
   };
   conversationTime?: string;
   onAccept?: () => void;
+  onChange?: () => void;
   onReject?: () => void;
   onCancel?: () => void;
   isAccepted?: boolean;
@@ -53,6 +54,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
   yourItem,
   conversationTime,
   onAccept,
+  onChange,
   onReject,
   onCancel,
   isAccepted,
@@ -191,7 +193,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
               Cancel Request
             </Button>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               <Button
                 variant="outline"
                 size="sm"
@@ -200,6 +202,14 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
               >
                 <X className="w-3 h-3 mr-1" />
                 Reject
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onChange}
+              >
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Change
               </Button>
               <Button
                 size="sm"
