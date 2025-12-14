@@ -718,44 +718,19 @@ const Messages = () => {
                       /* Demo trade on mobile - PRIORITIZED FIRST */
                       <div className="flex flex-col h-full">
                         <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                          <div className="max-w-sm mx-auto">
-                            <TradeRequestMessage
-                              partnerProfile={demoTradeData.partnerProfile}
-                              theirItem={demoTradeData.theirItem}
-                              yourItem={demoTradeData.myItem}
-                              conversationTime="Just now"
-                              isPending={true}
-                              isRequester={false}
-                              onAccept={() => {
-                                setIsDemoTrade(false);
-                                setDemoTradeData(null);
-                                setCurrentView('conversations');
-                                toast({
-                                  title: "Trade Accepted",
-                                  description: "This was a demo trade request.",
-                                });
-                              }}
-                              onChange={() => {
-                                toast({
-                                  title: "Change Items",
-                                  description: "Item selection modal will open here.",
-                                });
-                              }}
-                              onReject={() => {
-                                setIsDemoTrade(false);
-                                setDemoTradeData(null);
-                                setCurrentView('conversations');
-                                toast({
-                                  title: "Trade Rejected",
-                                  description: "This was a demo trade request.",
-                                });
-                              }}
-                            />
+                          <div className="space-y-4">
+                            {/* Demo intro message */}
+                            <div className="flex justify-start">
+                              <div className="bg-white rounded-lg p-3 shadow-sm max-w-[80%]">
+                                <p className="text-sm">Hi! I'd like to trade my {demoTradeData.myItem?.name || 'item'} for your {demoTradeData.theirItem?.name || 'item'}. Let me know if you're interested!</p>
+                                <span className="text-xs text-gray-400 mt-1 block">Just now</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                         <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
                           <p className="text-center text-sm text-muted-foreground">
-                            This is a demo trade.
+                            This is a demo trade. Tap ⓘ for details.
                           </p>
                         </div>
                       </div>
@@ -948,41 +923,18 @@ const Messages = () => {
                     </div>
                   </div>
                   <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                    <div className="max-w-sm mx-auto">
-                      <TradeRequestMessage
-                        partnerProfile={demoTradeData.partnerProfile}
-                        theirItem={demoTradeData.theirItem}
-                        yourItem={demoTradeData.myItem}
-                        conversationTime="Just now"
-                        isPending={true}
-                        isRequester={false}
-                        onAccept={() => {
-                          setIsDemoTrade(false);
-                          setDemoTradeData(null);
-                          toast({
-                            title: "Trade Accepted",
-                            description: "This was a demo trade request.",
-                          });
-                        }}
-                        onChange={() => {
-                          toast({
-                            title: "Change Items",
-                            description: "Item selection modal will open here.",
-                          });
-                        }}
-                        onReject={() => {
-                          setIsDemoTrade(false);
-                          setDemoTradeData(null);
-                          toast({
-                            title: "Trade Rejected",
-                            description: "This was a demo trade request.",
-                          });
-                        }}
-                      />
+                    <div className="space-y-4">
+                      {/* Demo intro message */}
+                      <div className="flex justify-start">
+                        <div className="bg-white rounded-lg p-3 shadow-sm max-w-[80%]">
+                          <p className="text-sm">Hi! I'd like to trade my {demoTradeData.myItem?.name || 'item'} for your {demoTradeData.theirItem?.name || 'item'}. Let me know if you're interested!</p>
+                          <span className="text-xs text-gray-400 mt-1 block">Just now</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
-                    <p className="text-center text-sm text-muted-foreground">This is a demo trade.</p>
+                    <p className="text-center text-sm text-muted-foreground">This is a demo trade. View details in the panel →</p>
                   </div>
                 </div>
               ) : activeConversation ? (
@@ -1075,41 +1027,18 @@ const Messages = () => {
                 {currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
                     <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                      <div className="max-w-sm mx-auto">
-                        <TradeRequestMessage
-                          partnerProfile={demoTradeData.partnerProfile}
-                          theirItem={demoTradeData.theirItem}
-                          yourItem={demoTradeData.myItem}
-                          conversationTime="Just now"
-                          isPending={true}
-                          isRequester={false}
-                          onAccept={() => {
-                            setIsDemoTrade(false);
-                            setDemoTradeData(null);
-                            toast({
-                              title: "Trade Accepted",
-                              description: "This was a demo trade request.",
-                            });
-                          }}
-                          onChange={() => {
-                            toast({
-                              title: "Change Items",
-                              description: "Item selection modal will open here.",
-                            });
-                          }}
-                          onReject={() => {
-                            setIsDemoTrade(false);
-                            setDemoTradeData(null);
-                            toast({
-                              title: "Trade Rejected",
-                              description: "This was a demo trade request.",
-                            });
-                          }}
-                        />
+                      <div className="space-y-4">
+                        {/* Demo intro message */}
+                        <div className="flex justify-start">
+                          <div className="bg-white rounded-lg p-3 shadow-sm max-w-[80%]">
+                            <p className="text-sm">Hi! I'd like to trade my {demoTradeData.myItem?.name || 'item'} for your {demoTradeData.theirItem?.name || 'item'}. Let me know if you're interested!</p>
+                            <span className="text-xs text-gray-400 mt-1 block">Just now</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
-                      <p className="text-center text-sm text-muted-foreground">This is a demo trade.</p>
+                      <p className="text-center text-sm text-muted-foreground">This is a demo trade. Tap ⓘ for details.</p>
                     </div>
                   </div>
                 ) : (
