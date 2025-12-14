@@ -256,7 +256,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
           conversationId={conversationId}
           partnerId={partnerProfile.id}
           currentMyItemIds={yourItem?.id ? [yourItem.id] : []}
-          currentTheirItemId={theirItem?.id}
+          currentTheirItemIds={theirItem?.id ? [theirItem.id] : []}
         />
       )}
     </div>

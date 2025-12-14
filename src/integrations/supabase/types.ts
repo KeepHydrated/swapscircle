@@ -2284,6 +2284,7 @@ export type Database = {
           owner_accepted: boolean | null
           owner_id: string
           owner_item_id: string
+          owner_item_ids: string[] | null
           requester_accepted: boolean | null
           requester_id: string
           requester_item_id: string
@@ -2298,6 +2299,7 @@ export type Database = {
           owner_accepted?: boolean | null
           owner_id: string
           owner_item_id: string
+          owner_item_ids?: string[] | null
           requester_accepted?: boolean | null
           requester_id: string
           requester_item_id: string
@@ -2312,6 +2314,7 @@ export type Database = {
           owner_accepted?: boolean | null
           owner_id?: string
           owner_item_id?: string
+          owner_item_ids?: string[] | null
           requester_accepted?: boolean | null
           requester_id?: string
           requester_item_id?: string

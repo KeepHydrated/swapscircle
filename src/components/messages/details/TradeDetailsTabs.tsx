@@ -515,7 +515,7 @@ const handleNextItem = () => {
           conversationId={selectedPair.partnerId}
           partnerId={selectedPair.partnerProfile?.id || ''}
           currentMyItemIds={selectedPair.item2?.id ? [selectedPair.item2.id] : []}
-          currentTheirItemId={selectedPair.item1?.id}
+          currentTheirItemIds={selectedPair.item1?.id ? [selectedPair.item1.id] : []}
         />
         
       </div>
