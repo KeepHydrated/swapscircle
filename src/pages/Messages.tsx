@@ -928,16 +928,6 @@ const Messages = () => {
                </div>
              </div>
           )}
-          
-          {/* Contact Support Link */}
-          <div className="flex-shrink-0 p-3 border-t border-gray-200 bg-white">
-            <a 
-              href="/customer-support" 
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
-            >
-              Contact Support
-            </a>
-          </div>
         </div>
         
         {/* Right side - Chat and/or Details */}
