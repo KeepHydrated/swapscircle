@@ -229,7 +229,6 @@ const handleNextTheirItem = () => {
     mutationFn: () => rejectTrade(selectedPair.partnerId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
-      toast.success('Trade rejected.');
     },
     onError: (error) => {
       console.error('Error rejecting trade:', error);
