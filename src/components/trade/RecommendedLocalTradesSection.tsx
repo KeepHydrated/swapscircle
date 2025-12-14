@@ -204,7 +204,48 @@ const RecommendedLocalTradesSection = () => {
       return;
     }
     
-    // For matched items, create a real trade conversation
+    // Check if this is a mock/demo item (fake IDs that don't exist in database)
+    const isMockItem = item.id.startsWith('local-match-') || item.user_id.startsWith('demo-');
+    
+    // For mock matched items, use demo trade flow (can't create real DB entries)
+    if (item.isMatch && isMockItem) {
+      navigate('/messages', { 
+        state: { 
+          demoTrade: true,
+          demoData: {
+            theirItem: {
+              name: item.name,
+              image: item.image_url,
+              image_url: item.image_url,
+              image_urls: [item.image_url],
+              description: item.description || 'Item available for trade',
+              category: item.category,
+              condition: item.condition,
+              price_range_min: item.price_range_min,
+              price_range_max: item.price_range_max
+            },
+            myItem: {
+              name: item.myItemName,
+              image: item.myItemImage,
+              image_url: item.myItemImage,
+              image_urls: [item.myItemImage],
+              description: 'Your item for trade',
+              category: 'Your Items',
+              condition: 'Good'
+            },
+            partnerProfile: {
+              id: item.user_id,
+              username: 'Local Trader',
+              avatar_url: null,
+              created_at: '2024-01-15T10:30:00Z'
+            }
+          }
+        } 
+      });
+      return;
+    }
+    
+    // For real matched items, create a real trade conversation
     if (item.isMatch && item.myItemId) {
       try {
         // Check if a conversation already exists
