@@ -555,3 +555,80 @@ export const checkAndCompleteAcceptedTrades = async () => {
     return 0;
   }
 };
+
+// DEV ONLY: Create a test incoming trade request where current user is the owner
+export const createTestIncomingTrade = async () => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
+      console.error('No authenticated user');
+      return null;
+    }
+    
+    const currentUserId = session.user.id;
+    
+    // Get one of the current user's items (they will be the owner)
+    const { data: myItems } = await supabase
+      .from('items')
+      .select('id, name')
+      .eq('user_id', currentUserId)
+      .eq('is_available', true)
+      .limit(1);
+    
+    if (!myItems || myItems.length === 0) {
+      console.error('Current user has no available items');
+      return null;
+    }
+    
+    // Get another user's item (they will be the requester)
+    const { data: otherItems } = await supabase
+      .from('items')
+      .select('id, name, user_id')
+      .neq('user_id', currentUserId)
+      .eq('is_available', true)
+      .limit(2);
+    
+    if (!otherItems || otherItems.length === 0) {
+      console.error('No other users have available items');
+      return null;
+    }
+    
+    const requesterUserId = otherItems[0].user_id;
+    const requesterItemIds = otherItems.map(item => item.id);
+    
+    // Create trade conversation where current user is OWNER (receiver)
+    const { data, error } = await supabase
+      .from('trade_conversations')
+      .insert({
+        requester_id: requesterUserId,
+        owner_id: currentUserId,
+        requester_item_id: otherItems[0].id,
+        owner_item_id: myItems[0].id,
+        requester_item_ids: requesterItemIds,
+        owner_item_ids: [myItems[0].id],
+        status: 'pending',
+        requester_accepted: false,
+        owner_accepted: false
+      })
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error creating test trade:', error);
+      return null;
+    }
+
+    // Add initial message
+    await supabase.from('trade_messages').insert({
+      conversation_id: data.id,
+      sender_id: requesterUserId,
+      message: "🔄 I'd like to trade with you!"
+    });
+
+    console.log('Created test incoming trade:', data);
+    return data;
+  } catch (error) {
+    console.error('Error in createTestIncomingTrade:', error);
+    return null;
+  }
+};
