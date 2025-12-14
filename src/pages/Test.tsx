@@ -358,6 +358,24 @@ const Test: React.FC = () => {
         totalItems={matches.length}
         matchedItemImage={matches[selectedIndex]?.myItemImage}
         matchedItemId={matches[selectedIndex]?.myItemId}
+        onHideItem={(id) => {
+          // Remove the hidden item from matches immediately
+          setMatches(prev => prev.filter(m => m.id !== id));
+          // Close modal and navigate to next item or close if none left
+          const newMatches = matches.filter(m => m.id !== id);
+          if (newMatches.length === 0) {
+            setIsModalOpen(false);
+            setSelectedItem(null);
+          } else if (selectedIndex >= newMatches.length) {
+            // If we were at the last item, go to the new last item
+            const newIndex = newMatches.length - 1;
+            setSelectedIndex(newIndex);
+            setSelectedItem(convertToItem(newMatches[newIndex]));
+          } else {
+            // Stay at current index but update to new item at that position
+            setSelectedItem(convertToItem(newMatches[selectedIndex]));
+          }
+        }}
       />
     </MainLayout>
   );
