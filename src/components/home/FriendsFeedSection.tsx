@@ -186,73 +186,12 @@ const FriendsFeedSection: React.FC = () => {
     );
   }
 
-  // Demo items when no real friend items exist
-  const demoFriendItems: (FriendItem & { matchedItem?: { id: string; name: string; image_url: string } })[] = [
-    {
-      id: 'demo-friend-1',
-      name: 'Vintage Polaroid Camera',
-      image_url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
-      image_urls: null,
-      category: 'Electronics',
-      condition: 'Good',
-      description: 'Classic instant camera in working condition',
-      price_range_min: 50,
-      price_range_max: 100,
-      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      user_id: 'demo-user-1',
-      profile: { id: 'demo-user-1', username: 'Sarah_M', avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' },
-      // This is a match!
-      matchedItem: {
-        id: 'my-item-1',
-        name: 'Canon DSLR Camera',
-        image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=100'
-      }
-    },
-    {
-      id: 'demo-friend-2',
-      name: 'Leather Messenger Bag',
-      image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
-      image_urls: null,
-      category: 'Accessories',
-      condition: 'Like New',
-      description: 'Premium leather bag, barely used',
-      price_range_min: 80,
-      price_range_max: 150,
-      created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-      user_id: 'demo-user-2',
-      profile: { id: 'demo-user-2', username: 'Mike_T', avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100' }
-    },
-    {
-      id: 'demo-friend-3',
-      name: 'Mechanical Keyboard',
-      image_url: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=400',
-      image_urls: null,
-      category: 'Electronics',
-      condition: 'Good',
-      description: 'Cherry MX Blue switches, RGB lighting',
-      price_range_min: 60,
-      price_range_max: 120,
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      user_id: 'demo-user-3',
-      profile: { id: 'demo-user-3', username: 'Alex_K', avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100' }
-    },
-    {
-      id: 'demo-friend-4',
-      name: 'Vintage Record Player',
-      image_url: 'https://images.unsplash.com/photo-1539375665275-f9de415ef9ac?w=400',
-      image_urls: null,
-      category: 'Electronics',
-      condition: 'Fair',
-      description: 'Retro turntable with built-in speakers',
-      price_range_min: 75,
-      price_range_max: 125,
-      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      user_id: 'demo-user-1',
-      profile: { id: 'demo-user-1', username: 'Sarah_M', avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' }
-    }
-  ];
+  // If no friend items, don't show the section
+  if (friendItems.length === 0) {
+    return null;
+  }
 
-  const displayItems = friendItems.length > 0 ? friendItems : demoFriendItems;
+  const displayItems = friendItems;
 
   return (
     <section className="space-y-4">
