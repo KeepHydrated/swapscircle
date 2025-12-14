@@ -513,8 +513,9 @@ const handleNextItem = () => {
           isOpen={showChangeItemsModal}
           onClose={() => setShowChangeItemsModal(false)}
           conversationId={selectedPair.partnerId}
-          targetItemName={selectedPair.item1?.name || 'their item'}
-          currentItemIds={selectedPair.item2?.id ? [selectedPair.item2.id] : []}
+          partnerId={selectedPair.partnerProfile?.id || ''}
+          currentMyItemIds={selectedPair.item2?.id ? [selectedPair.item2.id] : []}
+          currentTheirItemId={selectedPair.item1?.id}
         />
         
       </div>

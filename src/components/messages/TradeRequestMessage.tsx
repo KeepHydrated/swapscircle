@@ -15,6 +15,7 @@ interface TradeRequestMessageProps {
     location?: string;
   };
   theirItem?: {
+    id?: string;
     name: string;
     image?: string;
     image_url?: string;
@@ -248,13 +249,14 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
       )}
 
       {/* Change Items Modal */}
-      {conversationId && (
+      {conversationId && partnerProfile?.id && (
         <ChangeTradeItemsModal
           isOpen={showChangeItemsModal}
           onClose={() => setShowChangeItemsModal(false)}
           conversationId={conversationId}
-          targetItemName={theirItem?.name || 'their item'}
-          currentItemIds={yourItem?.id ? [yourItem.id] : []}
+          partnerId={partnerProfile.id}
+          currentMyItemIds={yourItem?.id ? [yourItem.id] : []}
+          currentTheirItemId={theirItem?.id}
         />
       )}
     </div>
