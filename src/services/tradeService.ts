@@ -124,21 +124,24 @@ export const fetchUserTradeConversations = async () => {
       return [];
     }
 
-    // Collect all requester_item_ids that need to be fetched for multiple-item trades
-    const allRequesterItemIds: string[] = [];
+    // Collect all item IDs that need to be fetched for multiple-item trades
+    const allItemIds: string[] = [];
     conversations.forEach((c: any) => {
       if (c.requester_item_ids && Array.isArray(c.requester_item_ids)) {
-        allRequesterItemIds.push(...c.requester_item_ids);
+        allItemIds.push(...c.requester_item_ids);
+      }
+      if (c.owner_item_ids && Array.isArray(c.owner_item_ids)) {
+        allItemIds.push(...c.owner_item_ids);
       }
     });
 
     // Fetch all additional items if there are multiple-item trades
     let additionalItemsMap: Record<string, any> = {};
-    if (allRequesterItemIds.length > 0) {
+    if (allItemIds.length > 0) {
       const { data: additionalItems, error: itemsError } = await supabase
         .from('items')
         .select('id, name, image_url, image_urls, category, condition, description, tags, price_range_min, price_range_max, user_id, created_at, updated_at')
-        .in('id', allRequesterItemIds);
+        .in('id', [...new Set(allItemIds)]); // Deduplicate IDs
       
       if (!itemsError && additionalItems) {
         additionalItems.forEach(item => {
@@ -164,7 +167,7 @@ export const fetchUserTradeConversations = async () => {
       // Continue without profiles if there's an error
     }
 
-    // Add profile data and requester_items array to conversations
+    // Add profile data and items arrays to conversations
     const conversationsWithProfiles = conversations.map((conversation: any) => {
       const requesterProfile = profiles?.find(p => p.id === conversation.requester_id);
       const ownerProfile = profiles?.find(p => p.id === conversation.owner_id);
@@ -181,11 +184,24 @@ export const fetchUserTradeConversations = async () => {
         requester_items = [conversation.requester_item];
       }
       
+      // Build owner_items array from owner_item_ids
+      let owner_items: any[] = [];
+      if (conversation.owner_item_ids && Array.isArray(conversation.owner_item_ids)) {
+        owner_items = conversation.owner_item_ids
+          .map((id: string) => additionalItemsMap[id])
+          .filter(Boolean);
+      }
+      // If no owner_item_ids but has owner_item, use that as the single item
+      if (owner_items.length === 0 && conversation.owner_item) {
+        owner_items = [conversation.owner_item];
+      }
+      
       return {
         ...conversation,
         requester_profile: requesterProfile,
         owner_profile: ownerProfile,
-        requester_items
+        requester_items,
+        owner_items
       };
     });
 

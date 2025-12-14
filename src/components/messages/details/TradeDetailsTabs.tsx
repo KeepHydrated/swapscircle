@@ -29,8 +29,9 @@ interface TradeDetailsTabsProps {
   selectedPair: {
     id: number;
     item1: ItemDisplay;
-    item1Items?: ItemDisplay[]; // Array of all requester items when multiple
+    item1Items?: ItemDisplay[]; // Array of all my items when multiple
     item2: ItemDisplay;
+    item2Items?: ItemDisplay[]; // Array of all their items when multiple
     partnerId: string;
     partnerProfile?: {
       id: string;
@@ -52,6 +53,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   const queryClient = useQueryClient();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentItemIndex, setCurrentItemIndex] = useState(0); // For navigating between multiple offered items
+  const [currentTheirItemIndex, setCurrentTheirItemIndex] = useState(0); // For navigating between multiple their items
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showChangeItemsModal, setShowChangeItemsModal] = useState(false);
@@ -80,18 +82,24 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
 // Get the current item to display (either single item or from array of items)
 const myItems = selectedPair.item1Items || [selectedPair.item1];
 const currentMyItem = myItems[currentItemIndex] || selectedPair.item1;
-const hasMultipleItems = myItems.length > 1;
+const hasMultipleMyItems = myItems.length > 1;
+
+// Get their items (either single or from array)
+const theirItems = selectedPair.item2Items || [selectedPair.item2];
+const currentTheirItem = theirItems[currentTheirItemIndex] || selectedPair.item2;
+const hasMultipleTheirItems = theirItems.length > 1;
 
 const itemImages = getItemImages(currentMyItem);
-const theirItemImages = getItemImages(selectedPair.item2);
+const theirItemImages = getItemImages(currentTheirItem);
 
 // Always start from the first image when switching items or pairs
 React.useEffect(() => {
   setCurrentImageIndex(0);
   setCurrentItemIndex(0);
+  setCurrentTheirItemIndex(0);
 }, [selectedItem, selectedPair]);
 
-// Navigate between multiple offered items
+// Navigate between multiple offered items (my items)
 const handlePrevItem = () => {
   setCurrentItemIndex((prev) => (prev === 0 ? myItems.length - 1 : prev - 1));
   setCurrentImageIndex(0);
@@ -99,6 +107,17 @@ const handlePrevItem = () => {
 
 const handleNextItem = () => {
   setCurrentItemIndex((prev) => (prev === myItems.length - 1 ? 0 : prev + 1));
+  setCurrentImageIndex(0);
+};
+
+// Navigate between multiple their items
+const handlePrevTheirItem = () => {
+  setCurrentTheirItemIndex((prev) => (prev === 0 ? theirItems.length - 1 : prev - 1));
+  setCurrentImageIndex(0);
+};
+
+const handleNextTheirItem = () => {
+  setCurrentTheirItemIndex((prev) => (prev === theirItems.length - 1 ? 0 : prev + 1));
   setCurrentImageIndex(0);
 };
 
@@ -243,7 +262,7 @@ const handleNextItem = () => {
               />
               
               {/* Item Navigation (for multiple items) - overlaid on image */}
-              {hasMultipleItems && (
+              {hasMultipleMyItems && (
                 <>
                   <button
                     onClick={handlePrevItem}
@@ -266,7 +285,7 @@ const handleNextItem = () => {
               )}
 
               {/* Image Navigation (for multiple images of same item) */}
-              {itemImages.length > 1 && !hasMultipleItems && (
+              {itemImages.length > 1 && !hasMultipleMyItems && (
                 <>
                   <button
                     onClick={handlePrevImage}
@@ -331,64 +350,88 @@ const handleNextItem = () => {
             <div className="relative bg-gray-100 w-full aspect-[4/3]">
               <img 
                 src={theirItemImages[currentImageIndex]} 
-                alt={selectedPair.item2.name} 
+                alt={currentTheirItem.name} 
                 className="w-full h-full object-cover"
               />
               
-{theirItemImages.length > 1 && (
-              <>
-                {/* Navigation Arrows */}
-                <button
-                  onClick={handlePrevTheirImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-                
-                <button
-                  onClick={handleNextTheirImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="w-5 h-5 text-gray-700" />
-                </button>
-                
-                {/* Image Counter */}
+              {/* Item Navigation (for multiple their items) - overlaid on image */}
+              {hasMultipleTheirItems && (
+                <>
+                  <button
+                    onClick={handlePrevTheirItem}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Previous item"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={handleNextTheirItem}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Next item"
+                  >
+                    <ChevronRight className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs rounded-full px-3 py-1">
+                    Item {currentTheirItemIndex + 1} of {theirItems.length}
+                  </div>
+                </>
+              )}
+
+              {/* Image Navigation (for multiple images of same item) */}
+              {theirItemImages.length > 1 && !hasMultipleTheirItems && (
+                <>
+                  <button
+                    onClick={handlePrevTheirImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={handleNextTheirImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-5 h-5 text-gray-700" />
+                  </button>
+                </>
+              )}
+              
+              {/* Image Counter */}
+              {theirItemImages.length > 1 && (
                 <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
                   {currentImageIndex + 1}/{theirItemImages.length}
                 </div>
-              </>
-            )}
+              )}
             </div>
             
             {/* Their Item Details */}
             <div className="p-4 h-[160px] overflow-hidden">
-              <h3 className="font-semibold text-lg mb-2">{selectedPair.item2.name}</h3>
+              <h3 className="font-semibold text-lg mb-2">{currentTheirItem.name}</h3>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                {selectedPair.item2.description || selectedPair.item2.name}
+                {currentTheirItem.description || currentTheirItem.name}
               </p>
               
               {/* Property Tags */}
               <div className="grid grid-cols-2 gap-1.5 text-sm">
-                {selectedPair.item2.category && (
+                {currentTheirItem.category && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item2.category}</span>
+                    <span>{currentTheirItem.category}</span>
                   </div>
                 )}
-                {selectedPair.item2.tags && selectedPair.item2.tags.length > 0 && (
+                {currentTheirItem.tags && currentTheirItem.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="capitalize">{selectedPair.item2.tags[0]}</span>
+                    <span className="capitalize">{currentTheirItem.tags[0]}</span>
                   </div>
                 )}
-                {selectedPair.item2.condition && (
+                {currentTheirItem.condition && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item2.condition}</span>
+                    <span>{currentTheirItem.condition}</span>
                   </div>
                 )}
-                {(selectedPair.item2.price_range_min || selectedPair.item2.price_range_max) && (
+                {(currentTheirItem.price_range_min || currentTheirItem.price_range_max) && (
                   <div className="flex items-center gap-2">
-                    <span>{selectedPair.item2.price_range_min || 0} - {selectedPair.item2.price_range_max || '∞'}</span>
+                    <span>{currentTheirItem.price_range_min || 0} - {currentTheirItem.price_range_max || '∞'}</span>
                   </div>
                 )}
               </div>
