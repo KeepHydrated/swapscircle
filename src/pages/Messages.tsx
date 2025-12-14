@@ -19,161 +19,54 @@ import { Calendar, MapPin, Clock, Star } from 'lucide-react';
 import TradeDetailsTabs from '@/components/messages/details/TradeDetailsTabs';
 import MessageInput from '@/components/messages/MessageInput';
 
-// Demo Trade Details Component - matches the real TradeDetailsTabs layout
-interface DemoTradeDetailsTabsProps {
-  demoData: {
-    theirItem: any;
-    myItem: any;
-    partnerProfile: any;
-  };
-  onCancel: () => void;
-}
-
-const DemoTradeDetailsTabs: React.FC<DemoTradeDetailsTabsProps> = ({ demoData, onCancel }) => {
-  const [selectedItem, setSelectedItem] = useState<'item1' | 'item2'>('item2');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const getItemImages = (item: any) => {
-    if (item.image_urls && item.image_urls.length > 0) return item.image_urls;
-    if (item.image_url) return [item.image_url];
-    if (item.image) return [item.image];
-    return [];
+// Helper to construct selectedPair from demo data for TradeDetailsTabs
+const constructDemoPair = (demoData: any) => {
+  if (!demoData) return null;
+  
+  const getItemImage = (item: any) => {
+    if (item?.image_urls?.length > 0) return item.image_urls[0];
+    if (item?.image_url) return item.image_url;
+    if (item?.image) return item.image;
+    return '/placeholder.svg';
   };
 
-  const theirItemImages = getItemImages(demoData.theirItem);
-  const myItemImages = getItemImages(demoData.myItem);
-  const currentImages = selectedItem === 'item2' ? theirItemImages : myItemImages;
-  const currentItem = selectedItem === 'item2' ? demoData.theirItem : demoData.myItem;
-
-  React.useEffect(() => {
-    setCurrentImageIndex(0);
-  }, [selectedItem]);
-
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? currentImages.length - 1 : prev - 1));
+  return {
+    id: 0,
+    item1: {
+      id: demoData.myItem?.id || 'demo-my-item',
+      name: demoData.myItem?.name || 'My Item',
+      image: getItemImage(demoData.myItem),
+      image_url: demoData.myItem?.image_url,
+      image_urls: demoData.myItem?.image_urls,
+      description: demoData.myItem?.description,
+      category: demoData.myItem?.category,
+      condition: demoData.myItem?.condition,
+      price_range_min: demoData.myItem?.price_range_min,
+      price_range_max: demoData.myItem?.price_range_max,
+      tags: demoData.myItem?.tags
+    },
+    item2: {
+      id: demoData.theirItem?.id || 'demo-their-item',
+      name: demoData.theirItem?.name || 'Their Item',
+      image: getItemImage(demoData.theirItem),
+      image_url: demoData.theirItem?.image_url,
+      image_urls: demoData.theirItem?.image_urls,
+      description: demoData.theirItem?.description,
+      category: demoData.theirItem?.category,
+      condition: demoData.theirItem?.condition,
+      price_range_min: demoData.theirItem?.price_range_min,
+      price_range_max: demoData.theirItem?.price_range_max,
+      tags: demoData.theirItem?.tags
+    },
+    partnerId: 'demo-trade',
+    partnerProfile: {
+      id: demoData.partnerProfile?.id || 'demo-user',
+      username: demoData.partnerProfile?.username || 'Demo User',
+      avatar_url: demoData.partnerProfile?.avatar_url,
+      created_at: demoData.partnerProfile?.created_at || new Date().toISOString(),
+      location: demoData.partnerProfile?.location
+    }
   };
-
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === currentImages.length - 1 ? 0 : prev + 1));
-  };
-
-  return (
-    <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full">
-      {/* Item Selector Tabs */}
-      <div className="mb-4">
-        <div className="flex gap-3">
-          <button
-            onClick={() => setSelectedItem('item2')}
-            className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
-              selectedItem === 'item2' 
-                ? 'bg-blue-50 border-blue-200 text-blue-700' 
-                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-            }`}
-          >
-            Their Item
-          </button>
-          <button
-            onClick={() => setSelectedItem('item1')}
-            className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
-              selectedItem === 'item1' 
-                ? 'bg-blue-50 border-blue-200 text-blue-700' 
-                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-            }`}
-          >
-            Your Item
-          </button>
-        </div>
-      </div>
-      
-      {/* Item Details Content */}
-      <div className="flex-1 flex flex-col">
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          {/* Item Image with Navigation */}
-          <div className="relative aspect-square bg-gray-100 w-full h-52 md:h-64">
-            <img 
-              src={currentImages[currentImageIndex] || '/placeholder.svg'} 
-              alt={currentItem.name} 
-              className="w-full h-full object-cover"
-            />
-            
-            {currentImages.length > 1 && (
-              <>
-                <button
-                  onClick={handlePrevImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-                <button
-                  onClick={handleNextImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center transition-colors"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="w-5 h-5 text-gray-700" />
-                </button>
-                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-1">
-                  {currentImageIndex + 1}/{currentImages.length}
-                </div>
-              </>
-            )}
-          </div>
-          
-          {/* Item Details */}
-          <div className="p-4">
-            <h3 className="font-semibold text-lg mb-2">{currentItem.name}</h3>
-            <p className="text-gray-600 text-sm mb-3">
-              {currentItem.description || 'No description available.'}
-            </p>
-            
-            {/* Property Tags */}
-            <div className="grid grid-cols-2 gap-1.5 text-sm">
-              {currentItem.category && (
-                <div className="flex items-center gap-2">
-                  <span>{currentItem.category}</span>
-                </div>
-              )}
-              {currentItem.tags && currentItem.tags[0] && (
-                <div className="flex items-center gap-2">
-                  <span>{currentItem.tags[0]}</span>
-                </div>
-              )}
-              {currentItem.condition && (
-                <div className="flex items-center gap-2">
-                  <span>{currentItem.condition}</span>
-                </div>
-              )}
-              {(currentItem.price_range_min || currentItem.price_range_max) && (
-                <div className="flex items-center gap-2">
-                  <span>{currentItem.price_range_min || 0} - {currentItem.price_range_max || '∞'}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {/* Accept/Reject Buttons (demo is a request sent TO the user) */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              className="w-full text-red-600 border-red-200 hover:bg-red-50"
-              onClick={onCancel}
-            >
-              <X className="w-4 h-4 mr-2" />
-              Reject
-            </Button>
-            <Button 
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-              onClick={onCancel}
-            >
-              Accept
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 // Force scroll helper for tablet/mobile
@@ -772,7 +665,13 @@ const Messages = () => {
                 ) : currentMobileView === 'details' ? (
                   /* Details Panel - Full width on mobile when showing details */
                   <div className="flex-1 flex flex-col overflow-y-auto bg-white">
-                    {selectedPair ? (
+                    {isDemoTrade && demoTradeData ? (
+                      <TradeDetailsTabs 
+                        selectedPair={constructDemoPair(demoTradeData)}
+                        selectedItem={selectedItem}
+                        onSelectItem={handleSelectItem}
+                      />
+                    ) : selectedPair ? (
                       <TradeDetailsTabs 
                         selectedPair={selectedPair}
                         selectedItem={selectedItem}
@@ -976,13 +875,10 @@ const Messages = () => {
             {/* Right - Details panel (always visible in 3-column) */}
             <div className="w-[340px] flex flex-col h-full bg-gray-50 overflow-y-auto">
               {isDemoTrade && demoTradeData ? (
-                <DemoTradeDetailsTabs
-                  demoData={demoTradeData}
-                  onCancel={() => {
-                    setIsDemoTrade(false);
-                    setDemoTradeData(null);
-                    toast({ title: "Trade Cancelled", description: "This was a demo trade request." });
-                  }}
+                <TradeDetailsTabs 
+                  selectedPair={constructDemoPair(demoTradeData)} 
+                  selectedItem={selectedItem} 
+                  onSelectItem={handleSelectItem} 
                 />
               ) : selectedPair ? (
                 <TradeDetailsTabs selectedPair={selectedPair} selectedItem={selectedItem} onSelectItem={handleSelectItem} />
@@ -1026,7 +922,11 @@ const Messages = () => {
                   </div>
                 ) : (
                   <div className="flex-1 overflow-y-auto bg-gray-50">
-                    <DemoTradeDetailsTabs demoData={demoTradeData} onCancel={() => { setIsDemoTrade(false); setDemoTradeData(null); toast({ title: "Trade Cancelled", description: "This was a demo trade request." }); }} />
+                    <TradeDetailsTabs 
+                      selectedPair={constructDemoPair(demoTradeData)} 
+                      selectedItem={selectedItem} 
+                      onSelectItem={handleSelectItem} 
+                    />
                   </div>
                 )}
               </div>
