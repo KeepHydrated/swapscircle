@@ -111,6 +111,50 @@ const Test: React.FC = () => {
     fetchMatches();
   }, []);
 
+  const convertToItem = (match: MatchItem): Item => ({
+    id: match.id,
+    name: match.name,
+    image: match.image,
+    image_urls: match.image_urls,
+    priceRangeMin: match.priceRangeMin,
+    priceRangeMax: match.priceRangeMax,
+    condition: match.condition,
+    category: match.category,
+    description: match.description,
+    user_id: match.user_id,
+  });
+
+  // Restore modal state from sessionStorage (for back navigation from item page)
+  useEffect(() => {
+    if (matches.length === 0) return;
+    
+    const savedModalState = sessionStorage.getItem('returnToModal');
+    if (savedModalState) {
+      try {
+        const { itemId, returnUrl } = JSON.parse(savedModalState);
+        
+        // Only restore if we're on the matches page
+        if (returnUrl === '/matches' || returnUrl.startsWith('/matches')) {
+          const matchIndex = matches.findIndex(m => m.id === itemId);
+          if (matchIndex >= 0) {
+            const match = matches[matchIndex];
+            setSelectedItem(convertToItem(match));
+            setSelectedIndex(matchIndex);
+            setIsModalOpen(true);
+            // Only clear after successfully restoring
+            sessionStorage.removeItem('returnToModal');
+          } else {
+            // Item not found, clear storage
+            sessionStorage.removeItem('returnToModal');
+          }
+        }
+      } catch (e) {
+        console.error('Error restoring modal state:', e);
+        sessionStorage.removeItem('returnToModal');
+      }
+    }
+  }, [matches]);
+
   const handleLike = (id: string) => {
     if (!user) {
       navigate('/auth');
@@ -180,18 +224,6 @@ const Test: React.FC = () => {
     }
   };
 
-  const convertToItem = (match: MatchItem): Item => ({
-    id: match.id,
-    name: match.name,
-    image: match.image,
-    image_urls: match.image_urls,
-    priceRangeMin: match.priceRangeMin,
-    priceRangeMax: match.priceRangeMax,
-    condition: match.condition,
-    category: match.category,
-    description: match.description,
-    user_id: match.user_id,
-  });
 
   const handleCardClick = (match: MatchItem, index: number) => {
     setSelectedItem(convertToItem(match));
