@@ -408,13 +408,11 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
         {/* Footer */}
         <div className="p-4 sm:p-6 border-t border-border bg-muted/50 flex-shrink-0">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground truncate max-w-[50%]">
               {selectedMyItems.length > 0 && (
                 <span>
                   Offering: <span className="font-medium text-foreground">
-                    {selectedMyItems.length === 1 
-                      ? selectedMyItems[0].name 
-                      : `${selectedMyItems.length} items`}
+                    {selectedMyItems.map(item => item.name).join(', ')}
                   </span>
                 </span>
               )}
@@ -422,9 +420,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {selectedTheirItems.length > 0 && (
                 <span>
                   For: <span className="font-medium text-foreground">
-                    {selectedTheirItems.length === 1 
-                      ? selectedTheirItems[0].name 
-                      : `${selectedTheirItems.length} items`}
+                    {selectedTheirItems.map(item => item.name).join(', ')}
                   </span>
                 </span>
               )}
