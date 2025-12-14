@@ -715,23 +715,16 @@ const Messages = () => {
                 {isMobile && currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
                     {isDemoTrade && demoTradeData ? (
-                      /* Demo trade on mobile - PRIORITIZED FIRST */
+                      /* Demo trade on mobile - matches real trade layout */
                       <div className="flex flex-col h-full">
-                        <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                          <div className="space-y-4">
-                            {/* Demo intro message */}
-                            <div className="flex justify-start">
-                              <div className="bg-white rounded-lg p-3 shadow-sm max-w-[80%]">
-                                <p className="text-sm">Hi! I'd like to trade my {demoTradeData.myItem?.name || 'item'} for your {demoTradeData.theirItem?.name || 'item'}. Let me know if you're interested!</p>
-                                <span className="text-xs text-gray-400 mt-1 block">Just now</span>
-                              </div>
-                            </div>
+                        <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                          <div className="text-center py-8">
+                            <p className="text-gray-500">Trade conversation started!</p>
+                            <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
                           </div>
                         </div>
-                        <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
-                          <p className="text-center text-sm text-muted-foreground">
-                            This is a demo trade. Tap ⓘ for details.
-                          </p>
+                        <div className="flex-shrink-0 border-t border-gray-200">
+                          <MessageInput onMarkCompleted={() => {}} conversationId="" />
                         </div>
                       </div>
                     ) : activeConversation ? (
@@ -922,19 +915,14 @@ const Messages = () => {
                       <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                    <div className="space-y-4">
-                      {/* Demo intro message */}
-                      <div className="flex justify-start">
-                        <div className="bg-white rounded-lg p-3 shadow-sm max-w-[80%]">
-                          <p className="text-sm">Hi! I'd like to trade my {demoTradeData.myItem?.name || 'item'} for your {demoTradeData.theirItem?.name || 'item'}. Let me know if you're interested!</p>
-                          <span className="text-xs text-gray-400 mt-1 block">Just now</span>
-                        </div>
-                      </div>
+                  <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Trade conversation started!</p>
+                      <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
-                    <p className="text-center text-sm text-muted-foreground">This is a demo trade. View details in the panel →</p>
+                  <div className="flex-shrink-0 border-t border-gray-200">
+                    <MessageInput onMarkCompleted={() => {}} conversationId="" />
                   </div>
                 </div>
               ) : activeConversation ? (
@@ -1026,19 +1014,14 @@ const Messages = () => {
                 </div>
                 {currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
-                    <div className="flex-1 overflow-y-auto p-4 bg-muted/50">
-                      <div className="space-y-4">
-                        {/* Demo intro message */}
-                        <div className="flex justify-start">
-                          <div className="bg-white rounded-lg p-3 shadow-sm max-w-[80%]">
-                            <p className="text-sm">Hi! I'd like to trade my {demoTradeData.myItem?.name || 'item'} for your {demoTradeData.theirItem?.name || 'item'}. Let me know if you're interested!</p>
-                            <span className="text-xs text-gray-400 mt-1 block">Just now</span>
-                          </div>
-                        </div>
+                    <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">Trade conversation started!</p>
+                        <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
                       </div>
                     </div>
-                    <div className="flex-shrink-0 border-t border-gray-200 p-4 bg-white">
-                      <p className="text-center text-sm text-muted-foreground">This is a demo trade. Tap ⓘ for details.</p>
+                    <div className="flex-shrink-0 border-t border-gray-200">
+                      <MessageInput onMarkCompleted={() => {}} conversationId="" />
                     </div>
                   </div>
                 ) : (
