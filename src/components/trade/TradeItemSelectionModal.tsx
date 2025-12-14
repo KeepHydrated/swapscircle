@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Item } from '@/types/item';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
@@ -12,7 +12,7 @@ interface TradeItemSelectionModalProps {
   onClose: () => void;
   targetItem: Item | null;
   targetItemOwnerId?: string;
-  preSelectedItemId?: string; // Pre-select a specific item (e.g., matched item)
+  preSelectedItemId?: string;
 }
 
 const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
@@ -23,24 +23,34 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
   preSelectedItemId
 }) => {
   const [myItems, setMyItems] = useState<Item[]>([]);
-  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+  const [theirItems, setTheirItems] = useState<Item[]>([]);
+  const [selectedMyItemIds, setSelectedMyItemIds] = useState<string[]>([]);
+  const [selectedTheirItemIds, setSelectedTheirItemIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [activeTab, setActiveTab] = useState<'yours' | 'theirs'>('yours');
   const navigate = useNavigate();
 
-  // Reset selection when modal opens/closes, pre-select if provided
+  // Reset selection when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setSelectedItemIds([]);
-    } else if (preSelectedItemId) {
-      setSelectedItemIds([preSelectedItemId]);
+      setSelectedMyItemIds([]);
+      setSelectedTheirItemIds([]);
+      setActiveTab('yours');
+    } else {
+      if (preSelectedItemId) {
+        setSelectedMyItemIds([preSelectedItemId]);
+      }
+      if (targetItem?.id) {
+        setSelectedTheirItemIds([targetItem.id]);
+      }
     }
-  }, [isOpen, preSelectedItemId]);
+  }, [isOpen, preSelectedItemId, targetItem?.id]);
 
-  // Fetch user's items
+  // Fetch items
   useEffect(() => {
-    const fetchMyItems = async () => {
-      if (!isOpen) return;
+    const fetchItems = async () => {
+      if (!isOpen || !targetItemOwnerId) return;
       
       setLoading(true);
       try {
@@ -51,7 +61,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           return;
         }
 
-        const { data: items, error } = await supabase
+        // Fetch my items
+        const { data: myItemsData, error: myError } = await supabase
           .from('items')
           .select('*')
           .eq('user_id', session.session.user.id)
@@ -59,16 +70,28 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           .eq('is_hidden', false)
           .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching user items:', error);
-          toast({
-            title: "Error",
-            description: "Failed to load your items.",
-          });
+        if (myError) {
+          console.error('Error fetching my items:', myError);
+          toast({ title: "Error", description: "Failed to load your items." });
           return;
         }
 
-        const mappedItems: Item[] = (items || []).map(item => ({
+        // Fetch their items
+        const { data: theirItemsData, error: theirError } = await supabase
+          .from('items')
+          .select('*')
+          .eq('user_id', targetItemOwnerId)
+          .eq('is_available', true)
+          .eq('is_hidden', false)
+          .order('created_at', { ascending: false });
+
+        if (theirError) {
+          console.error('Error fetching their items:', theirError);
+          toast({ title: "Error", description: "Failed to load their items." });
+          return;
+        }
+
+        const mapItems = (items: any[]): Item[] => items.map(item => ({
           id: item.id,
           name: item.name,
           image: item.image_url || '/placeholder.svg',
@@ -78,36 +101,36 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           tags: item.tags
         }));
 
-        setMyItems(mappedItems);
+        setMyItems(mapItems(myItemsData || []));
+        setTheirItems(mapItems(theirItemsData || []));
       } catch (error) {
         console.error('Error fetching items:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load your items.",
-        });
+        toast({ title: "Error", description: "Failed to load items." });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMyItems();
-  }, [isOpen]);
+    fetchItems();
+  }, [isOpen, targetItemOwnerId]);
 
-  const toggleItemSelection = (itemId: string) => {
-    setSelectedItemIds(prev => {
-      if (prev.includes(itemId)) {
-        return prev.filter(id => id !== itemId);
-      } else {
-        return [...prev, itemId];
-      }
-    });
+  const toggleMyItemSelection = (itemId: string) => {
+    setSelectedMyItemIds(prev => 
+      prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
+    );
+  };
+
+  const toggleTheirItemSelection = (itemId: string) => {
+    setSelectedTheirItemIds(prev => 
+      prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
+    );
   };
 
   const handleConfirmTrade = async () => {
-    if (selectedItemIds.length === 0 || !targetItem || !targetItemOwnerId) {
+    if (selectedMyItemIds.length === 0 || selectedTheirItemIds.length === 0 || !targetItemOwnerId) {
       toast({
         title: "Error",
-        description: "Please select at least one item to trade.",
+        description: "Please select at least one item from each side.",
       });
       return;
     }
@@ -121,15 +144,16 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         return;
       }
 
-      // Create trade conversation with multiple items
+      // Create trade conversation
       const { data: tradeConversation, error: tradeError } = await supabase
         .from('trade_conversations')
         .insert({
           requester_id: session.session.user.id,
           owner_id: targetItemOwnerId,
-          requester_item_id: selectedItemIds[0], // First item for backwards compatibility
-          requester_item_ids: selectedItemIds, // All selected items
-          owner_item_id: targetItem.id,
+          requester_item_id: selectedMyItemIds[0],
+          requester_item_ids: selectedMyItemIds,
+          owner_item_id: selectedTheirItemIds[0],
+          owner_item_ids: selectedTheirItemIds,
           status: 'pending'
         })
         .select('*')
@@ -137,21 +161,22 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
       if (tradeError) {
         console.error('Error creating trade conversation:', tradeError);
-        toast({
-          title: "Error",
-          description: "Failed to create trade request.",
-        });
+        toast({ title: "Error", description: "Failed to create trade request." });
         return;
       }
 
-      // Create initial message in trade_messages table
-      const selectedItemNames = myItems
-        .filter(item => selectedItemIds.includes(item.id))
+      // Create initial message
+      const myItemNames = myItems
+        .filter(item => selectedMyItemIds.includes(item.id))
         .map(item => item.name)
         .join(', ');
       
-      const itemWord = selectedItemIds.length === 1 ? 'item' : 'items';
-      const messageContent = `Hi! I'm interested in trading my ${itemWord} (${selectedItemNames}) for your ${targetItem.name}. Let me know if you're interested!`;
+      const theirItemNames = theirItems
+        .filter(item => selectedTheirItemIds.includes(item.id))
+        .map(item => item.name)
+        .join(', ');
+      
+      const messageContent = `Hi! I'm interested in trading my ${myItemNames} for your ${theirItemNames}. Let me know if you're interested!`;
 
       const { error: messageError } = await supabase
         .from('trade_messages')
@@ -171,133 +196,211 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       });
 
       onClose();
-      // Navigate to messages page with the new conversation selected
       navigate(`/messages?conversation=${tradeConversation.id}`);
 
     } catch (error) {
       console.error('Error creating trade:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create trade request.",
-      });
+      toast({ title: "Error", description: "Failed to create trade request." });
     } finally {
       setCreating(false);
     }
   };
 
-  const selectedItems = myItems.filter(item => selectedItemIds.includes(item.id));
+  const selectedMyItems = myItems.filter(item => selectedMyItemIds.includes(item.id));
+  const selectedTheirItems = theirItems.filter(item => selectedTheirItemIds.includes(item.id));
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[80vh] flex flex-col p-0 overflow-hidden my-8">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[85vh] flex flex-col p-0 overflow-hidden my-4">
         <DialogTitle className="sr-only">Select Items to Trade</DialogTitle>
         <DialogDescription className="sr-only">
-          Choose which of your items you want to trade for {targetItem?.name}
+          Choose which items you want to trade
         </DialogDescription>
 
         {/* Header */}
-        <div className="p-6 border-b border-border bg-background flex-shrink-0">
+        <div className="p-4 sm:p-6 border-b border-border bg-background flex-shrink-0 space-y-4">
+          <h2 className="text-xl font-semibold">Suggest Trade</h2>
           
-          <div className="flex items-start gap-4">
-            {targetItem?.image && (
-              <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-border">
-                <img 
-                  src={targetItem.image} 
-                  alt={targetItem.name} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            <div>
-              <h2 className="text-xl font-semibold mb-1">Select Items to Trade</h2>
-              <p className="text-muted-foreground">
-                Choose one or more items to trade for <span className="font-medium text-foreground">{targetItem?.name}</span>
-              </p>
-            </div>
+          {/* Tab Menu */}
+          <div className="flex bg-muted rounded-lg p-1">
+            <button
+              onClick={() => setActiveTab('yours')}
+              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                activeTab === 'yours' 
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Your Items
+              {selectedMyItemIds.length > 0 && (
+                <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
+                  activeTab === 'yours' 
+                    ? 'bg-foreground text-background' 
+                    : 'bg-muted-foreground/30 text-muted-foreground'
+                }`}>
+                  {selectedMyItemIds.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('theirs')}
+              className={`flex-1 h-9 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                activeTab === 'theirs' 
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Their Items
+              {selectedTheirItemIds.length > 0 && (
+                <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
+                  activeTab === 'theirs' 
+                    ? 'bg-foreground text-background' 
+                    : 'bg-muted-foreground/30 text-muted-foreground'
+                }`}>
+                  {selectedTheirItemIds.length}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="h-px bg-border" />
+
         {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 pt-8 min-h-0">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0">
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
             </div>
-          ) : myItems.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">You don't have any items to trade yet.</p>
-              <p className="text-sm text-muted-foreground/70 mt-2">Post some items first to start trading!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
-              {myItems.map((item) => {
-                const isSelected = selectedItemIds.includes(item.id);
-                return (
-                  <div
-                    key={item.id}
-                    className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
-                      isSelected
-                        ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
-                        : 'border-border hover:border-border/80'
-                    }`}
-                    onClick={() => toggleItemSelection(item.id)}
-                  >
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center z-10">
-                        <Check className="w-4 h-4 text-white" />
+          ) : activeTab === 'yours' ? (
+            <>
+              <p className="text-muted-foreground text-sm mb-4">Select items you want to offer</p>
+              {myItems.length === 0 ? (
+                <p className="text-muted-foreground text-sm text-center py-12">You don't have any items to trade.</p>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                  {[...myItems].sort((a, b) => {
+                    const aSelected = selectedMyItemIds.includes(a.id);
+                    const bSelected = selectedMyItemIds.includes(b.id);
+                    if (aSelected && !bSelected) return -1;
+                    if (!aSelected && bSelected) return 1;
+                    return 0;
+                  }).map((item) => {
+                    const isSelected = selectedMyItemIds.includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
+                          isSelected
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                            : 'border-border hover:border-border/80'
+                        }`}
+                        onClick={() => toggleMyItemSelection(item.id)}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                        <div className="aspect-square overflow-hidden rounded-t-md bg-muted">
+                          <img src={item.image || '/placeholder.svg'} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-2">
+                          <h4 className="font-medium text-xs truncate">{item.name}</h4>
+                        </div>
                       </div>
-                    )}
-                    
-                    <div className="aspect-square overflow-hidden rounded-t-lg bg-muted">
-                      <img
-                        src={item.image || '/placeholder.svg'}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    
-                    <div className="p-3">
-                      <h3 className="font-medium text-sm truncate">{item.name}</h3>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="text-muted-foreground text-sm mb-4">Select items you want in return</p>
+              {theirItems.length === 0 ? (
+                <p className="text-muted-foreground text-sm text-center py-12">They don't have any items available.</p>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                  {[...theirItems].sort((a, b) => {
+                    const aSelected = selectedTheirItemIds.includes(a.id);
+                    const bSelected = selectedTheirItemIds.includes(b.id);
+                    if (aSelected && !bSelected) return -1;
+                    if (!aSelected && bSelected) return 1;
+                    return 0;
+                  }).map((item) => {
+                    const isSelected = selectedTheirItemIds.includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
+                          isSelected
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                            : 'border-border hover:border-border/80'
+                        }`}
+                        onClick={() => toggleTheirItemSelection(item.id)}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                        <div className="aspect-square overflow-hidden rounded-t-md bg-muted">
+                          <img src={item.image || '/placeholder.svg'} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-2">
+                          <h4 className="font-medium text-xs truncate">{item.name}</h4>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {/* Footer */}
-        {myItems.length > 0 && (
-          <div className="p-6 border-t border-border bg-muted/50 flex-shrink-0">
-            <div className="flex justify-between items-center">
-              <div>
-                {selectedItems.length > 0 && (
-                  <div className="text-sm text-muted-foreground">
-                    Selected: <span className="font-medium text-foreground">
-                      {selectedItems.length} {selectedItems.length === 1 ? 'item' : 'items'}
-                      {selectedItems.length <= 3 && ` (${selectedItems.map(i => i.name).join(', ')})`}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmTrade}
-                  disabled={selectedItemIds.length === 0 || creating}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
-                >
-                  {creating ? 'Sending...' : `Suggest${selectedItemIds.length > 0 ? ` (${selectedItemIds.length})` : ''}`}
-                </button>
-              </div>
+        <div className="p-4 sm:p-6 border-t border-border bg-muted/50 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="text-sm text-muted-foreground">
+              {selectedMyItems.length > 0 && (
+                <span>
+                  Offering: <span className="font-medium text-foreground">
+                    {selectedMyItems.length === 1 
+                      ? selectedMyItems[0].name 
+                      : `${selectedMyItems.length} items`}
+                  </span>
+                </span>
+              )}
+              {selectedMyItems.length > 0 && selectedTheirItems.length > 0 && <span className="mx-2">→</span>}
+              {selectedTheirItems.length > 0 && (
+                <span>
+                  For: <span className="font-medium text-foreground">
+                    {selectedTheirItems.length === 1 
+                      ? selectedTheirItems[0].name 
+                      : `${selectedTheirItems.length} items`}
+                  </span>
+                </span>
+              )}
+            </div>
+            <div className="flex gap-3 w-full sm:w-auto">
+              <button
+                onClick={onClose}
+                className="flex-1 sm:flex-none px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmTrade}
+                disabled={selectedMyItemIds.length === 0 || selectedTheirItemIds.length === 0 || creating}
+                className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
+              >
+                {creating ? 'Sending...' : 'Suggest Trade'}
+              </button>
             </div>
           </div>
-        )}
+        </div>
       </DialogContent>
     </Dialog>
   );
