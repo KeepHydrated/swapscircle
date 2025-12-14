@@ -79,14 +79,70 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
     return [];
   };
 
-// Get the current item to display (either single item or from array of items)
-const myItems = selectedPair.item1Items || [selectedPair.item1];
-const currentMyItem = myItems[currentItemIndex] || selectedPair.item1;
+// Helper to convert trade item to ItemDisplay format
+const toItemDisplay = (item: any): ItemDisplay | null => {
+  if (!item) return null;
+  return {
+    id: item.id,
+    name: item.name || 'Unknown Item',
+    image: item.image_url || (item.image_urls?.length > 0 ? item.image_urls[0] : '/placeholder.svg'),
+    image_url: item.image_url,
+    image_urls: item.image_urls,
+    description: item.description,
+    category: item.category,
+    condition: item.condition,
+    price_range_min: item.price_range_min,
+    price_range_max: item.price_range_max,
+    tags: item.tags
+  };
+};
+
+// Fetch trade status to check acceptance status
+const { data: tradeConversations = [] } = useQuery({
+  queryKey: ['trade-conversations'],
+  queryFn: fetchUserTradeConversations,
+});
+
+const currentTrade = tradeConversations.find((tc: any) => tc.id === selectedPair.partnerId);
+const isCurrentUserRequester = currentTrade?.requester_id === currentUserId;
+const isCurrentUserOwner = currentTrade?.owner_id === currentUserId;
+const userRole: 'requester' | 'owner' = isCurrentUserRequester ? 'requester' : 'owner';
+
+// Derive items from fresh currentTrade data, with correct swapping based on user role
+const freshMyItems: ItemDisplay[] = React.useMemo(() => {
+  if (!currentTrade) return selectedPair.item1Items || [selectedPair.item1];
+  
+  const rawItems = isCurrentUserRequester ? currentTrade.requester_items : currentTrade.owner_items;
+  if (rawItems && rawItems.length > 0) {
+    return rawItems.map(toItemDisplay).filter(Boolean) as ItemDisplay[];
+  }
+  // Fallback to single item
+  const singleItem = isCurrentUserRequester ? currentTrade.requester_item : currentTrade.owner_item;
+  const converted = toItemDisplay(singleItem);
+  return converted ? [converted] : (selectedPair.item1Items || [selectedPair.item1]);
+}, [currentTrade, isCurrentUserRequester, selectedPair]);
+
+const freshTheirItems: ItemDisplay[] = React.useMemo(() => {
+  if (!currentTrade) return selectedPair.item2Items || [selectedPair.item2];
+  
+  const rawItems = isCurrentUserRequester ? currentTrade.owner_items : currentTrade.requester_items;
+  if (rawItems && rawItems.length > 0) {
+    return rawItems.map(toItemDisplay).filter(Boolean) as ItemDisplay[];
+  }
+  // Fallback to single item
+  const singleItem = isCurrentUserRequester ? currentTrade.owner_item : currentTrade.requester_item;
+  const converted = toItemDisplay(singleItem);
+  return converted ? [converted] : (selectedPair.item2Items || [selectedPair.item2]);
+}, [currentTrade, isCurrentUserRequester, selectedPair]);
+
+// Get the current item to display
+const myItems = freshMyItems;
+const currentMyItem = myItems[currentItemIndex] || myItems[0];
 const hasMultipleMyItems = myItems.length > 1;
 
-// Get their items (either single or from array)
-const theirItems = selectedPair.item2Items || [selectedPair.item2];
-const currentTheirItem = theirItems[currentTheirItemIndex] || selectedPair.item2;
+// Get their items
+const theirItems = freshTheirItems;
+const currentTheirItem = theirItems[currentTheirItemIndex] || theirItems[0];
 const hasMultipleTheirItems = theirItems.length > 1;
 
 const itemImages = getItemImages(currentMyItem);
@@ -97,7 +153,7 @@ React.useEffect(() => {
   setCurrentImageIndex(0);
   setCurrentItemIndex(0);
   setCurrentTheirItemIndex(0);
-}, [selectedItem, selectedPair]);
+}, [selectedItem, selectedPair, currentTrade?.id]);
 
 // Navigate between multiple offered items (my items)
 const handlePrevItem = () => {
@@ -121,17 +177,6 @@ const handleNextTheirItem = () => {
   setCurrentImageIndex(0);
 };
 
-  // Fetch trade status to check acceptance status
-  const { data: tradeConversations = [] } = useQuery({
-    queryKey: ['trade-conversations'],
-    queryFn: fetchUserTradeConversations,
-  });
-
-  const currentTrade = tradeConversations.find((tc: any) => tc.id === selectedPair.partnerId);
-  const isCurrentUserRequester = currentTrade?.requester_id === currentUserId;
-  const isCurrentUserOwner = currentTrade?.owner_id === currentUserId;
-  const userRole: 'requester' | 'owner' = isCurrentUserRequester ? 'requester' : 'owner';
-  
   const userAccepted = isCurrentUserRequester ? currentTrade?.requester_accepted : currentTrade?.owner_accepted;
   const otherUserAccepted = isCurrentUserRequester ? currentTrade?.owner_accepted : currentTrade?.requester_accepted;
   const bothAccepted = userAccepted && otherUserAccepted;
