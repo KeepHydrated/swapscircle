@@ -271,7 +271,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {selectedMyItemIds.length > 0 && (
                 <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'yours' 
-                    ? 'bg-green-500 text-white' 
+                    ? 'bg-foreground text-background' 
                     : 'bg-muted-foreground/30 text-muted-foreground'
                 }`}>
                   {selectedMyItemIds.length}
@@ -290,7 +290,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {selectedTheirItemIds.length > 0 && (
                 <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'theirs' 
-                    ? 'bg-blue-500 text-white' 
+                    ? 'bg-foreground text-background' 
                     : 'bg-muted-foreground/30 text-muted-foreground'
                 }`}>
                   {selectedTheirItemIds.length}
