@@ -109,31 +109,35 @@ const isCurrentUserOwner = currentTrade?.owner_id === currentUserId;
 const userRole: 'requester' | 'owner' = isCurrentUserRequester ? 'requester' : 'owner';
 
 // Derive items from fresh currentTrade data, with correct swapping based on user role
+// When you're the OWNER: owner_items = YOUR items, requester_items = THEIR items (what they're offering)
+// When you're the REQUESTER: requester_items = YOUR items, owner_items = THEIR items (what you want)
 const freshMyItems: ItemDisplay[] = React.useMemo(() => {
   if (!currentTrade) return selectedPair.item1Items || [selectedPair.item1];
   
-  const rawItems = isCurrentUserRequester ? currentTrade.requester_items : currentTrade.owner_items;
+  // My items: if I'm owner, use owner_items; if I'm requester, use requester_items
+  const rawItems = isCurrentUserOwner ? currentTrade.owner_items : currentTrade.requester_items;
   if (rawItems && rawItems.length > 0) {
     return rawItems.map(toItemDisplay).filter(Boolean) as ItemDisplay[];
   }
   // Fallback to single item
-  const singleItem = isCurrentUserRequester ? currentTrade.requester_item : currentTrade.owner_item;
+  const singleItem = isCurrentUserOwner ? currentTrade.owner_item : currentTrade.requester_item;
   const converted = toItemDisplay(singleItem);
   return converted ? [converted] : (selectedPair.item1Items || [selectedPair.item1]);
-}, [currentTrade, isCurrentUserRequester, selectedPair]);
+}, [currentTrade, isCurrentUserOwner, selectedPair]);
 
 const freshTheirItems: ItemDisplay[] = React.useMemo(() => {
   if (!currentTrade) return selectedPair.item2Items || [selectedPair.item2];
   
-  const rawItems = isCurrentUserRequester ? currentTrade.owner_items : currentTrade.requester_items;
+  // Their items: if I'm owner, use requester_items; if I'm requester, use owner_items
+  const rawItems = isCurrentUserOwner ? currentTrade.requester_items : currentTrade.owner_items;
   if (rawItems && rawItems.length > 0) {
     return rawItems.map(toItemDisplay).filter(Boolean) as ItemDisplay[];
   }
   // Fallback to single item
-  const singleItem = isCurrentUserRequester ? currentTrade.owner_item : currentTrade.requester_item;
+  const singleItem = isCurrentUserOwner ? currentTrade.requester_item : currentTrade.owner_item;
   const converted = toItemDisplay(singleItem);
   return converted ? [converted] : (selectedPair.item2Items || [selectedPair.item2]);
-}, [currentTrade, isCurrentUserRequester, selectedPair]);
+}, [currentTrade, isCurrentUserOwner, selectedPair]);
 
 // Get the current item to display
 const myItems = freshMyItems;
