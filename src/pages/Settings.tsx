@@ -1,15 +1,21 @@
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import NotificationSettings from '@/components/settings/NotificationSettings';
 import PrivacySettings from '@/components/settings/PrivacySettings';
 import AccountSettings from '@/components/settings/AccountSettings';
 import HiddenItemsSettings from '@/components/settings/HiddenItemsSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { User, Bell, Shield, Settings as SettingsIcon, EyeOff } from 'lucide-react';
+import { User, Bell, Shield, Settings as SettingsIcon, EyeOff, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from '@/components/ui/button';
 
 const menuItems = [
   { value: 'profile', label: 'Profile Settings', icon: User },
@@ -23,44 +29,55 @@ const Settings: React.FC = () => {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('profile');
 
-  // Mobile: horizontal tabs
+  const activeItem = menuItems.find(item => item.value === activeTab) || menuItems[0];
+  const ActiveIcon = activeItem.icon;
+
+  // Mobile: dropdown menu
   if (isMobile) {
     return (
       <MainLayout>
         <div className="bg-card rounded-lg shadow-sm overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start overflow-x-auto">
-              {menuItems.map((item) => (
-                <TabsTrigger 
-                  key={item.value}
-                  value={item.value} 
-                  className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none whitespace-nowrap px-2 text-sm"
-                >
-                  {item.label.replace(' Settings', '')}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          {/* Dropdown menu for mobile */}
+          <div className="p-4 border-b">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span className="flex items-center gap-2">
+                    <ActiveIcon className="h-4 w-4" />
+                    {activeItem.label}
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[calc(100vw-2rem)] bg-popover border border-border shadow-lg">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <DropdownMenuItem
+                      key={item.value}
+                      onClick={() => setActiveTab(item.value)}
+                      className={cn(
+                        "flex items-center gap-2 cursor-pointer",
+                        activeTab === item.value && "bg-muted"
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-            <TabsContent value="profile" className="p-6">
-              <ProfileSettings />
-            </TabsContent>
-
-            <TabsContent value="notifications" className="p-6">
-              <NotificationSettings />
-            </TabsContent>
-
-            <TabsContent value="privacy" className="p-6">
-              <PrivacySettings />
-            </TabsContent>
-
-            <TabsContent value="hidden" className="p-6">
-              <HiddenItemsSettings />
-            </TabsContent>
-
-            <TabsContent value="account" className="p-3 pt-1">
-              <AccountSettings />
-            </TabsContent>
-          </Tabs>
+          {/* Content */}
+          <div className="p-4">
+            {activeTab === 'profile' && <ProfileSettings />}
+            {activeTab === 'notifications' && <NotificationSettings />}
+            {activeTab === 'privacy' && <PrivacySettings />}
+            {activeTab === 'hidden' && <HiddenItemsSettings />}
+            {activeTab === 'account' && <AccountSettings />}
+          </div>
         </div>
       </MainLayout>
     );
