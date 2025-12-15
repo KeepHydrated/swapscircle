@@ -343,11 +343,13 @@ const Likes = () => {
       const { data: existingConvo } = await supabase
         .from('trade_conversations')
         .select('id')
-        .or(`and(requester_id.eq.${user.id},owner_id.eq.${item.item.user_id}),and(requester_id.eq.${item.item.user_id},owner_id.eq.${user.id})`)
+        .eq('requester_id', user.id)
+        .eq('owner_id', item.item.user_id)
+        .eq('owner_item_id', item.item.id)
         .maybeSingle();
 
       if (existingConvo) {
-        navigate('/messages', { state: { conversationId: existingConvo.id } });
+        navigate('/messages', { state: { tradeConversationId: existingConvo.id } });
         return;
       }
 
@@ -358,9 +360,8 @@ const Likes = () => {
           requester_id: user.id,
           owner_id: item.item.user_id,
           requester_item_id: item.matchedItem.id,
-          owner_item_id: item.item.id,
           requester_item_ids: [item.matchedItem.id],
-          owner_item_ids: [item.item.id],
+          owner_item_id: item.item.id,
           status: 'pending'
         })
         .select('id')
@@ -368,14 +369,16 @@ const Likes = () => {
 
       if (convoError) throw convoError;
 
-      // Send initial trade request message
+      // Send initial trade message
+      const message = `Hi! I'd like to trade my ${item.matchedItem.name} for your ${item.item.name}. Let me know if you're interested!`;
+      
       await supabase.from('trade_messages').insert({
         conversation_id: newConvo.id,
         sender_id: user.id,
-        message: `[TRADE_REQUEST]`
+        message: message
       });
 
-      navigate('/messages', { state: { conversationId: newConvo.id } });
+      navigate('/messages', { state: { tradeConversationId: newConvo.id, newTrade: true } });
     } catch (error) {
       console.error('Error creating trade:', error);
       toast({ title: 'Error', description: 'Failed to create trade request', variant: 'destructive' });
