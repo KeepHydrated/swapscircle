@@ -341,10 +341,15 @@ const Likes = () => {
       return;
     }
     
-    // Check if it's a demo item - navigate to messages like on matches page
+    // Check if it's a demo item - navigate to messages with test conversation
     const isDemo = item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo');
     if (isDemo) {
-      navigate('/messages');
+      navigate('/messages', {
+        state: {
+          tradeConversationId: 'test-conversation-123',
+          newTrade: true
+        }
+      });
       return;
     }
     
