@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Repeat } from 'lucide-react';
+import { Heart, Repeat, Check } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Item } from '@/types/item';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { toast } from '@/hooks/use-toast';
-interface LikedItem {
+import { useNavigate } from 'react-router-dom';
+
+interface MatchedItemInfo {
+  id: string;
+  name: string;
+  image_url: string;
+}
+
+interface LikedItemWithMatch {
   id: string;
   item_id: string;
   created_at: string;
+  matchedItem?: MatchedItemInfo;
   item: {
     id: string;
     name: string;
@@ -24,33 +33,34 @@ interface LikedItem {
     status: string;
   };
 }
+
 const Likes = () => {
-  const [likedItems, setLikedItems] = useState<LikedItem[]>([]);
+  const navigate = useNavigate();
+  const [likedItems, setLikedItems] = useState<LikedItemWithMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
+
   useEffect(() => {
     fetchLikedItems();
   }, []);
+
   const fetchLikedItems = async () => {
     try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // First, get all liked item IDs
-      const {
-        data: likedData,
-        error: likedError
-      } = await supabase.from('liked_items').select('id, item_id, created_at').eq('user_id', user.id).order('created_at', {
-        ascending: false
-      });
+      // Get all liked item IDs
+      const { data: likedData, error: likedError } = await supabase
+        .from('liked_items')
+        .select('id, item_id, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
       if (likedError) throw likedError;
       if (!likedData || likedData.length === 0) {
         setLikedItems([]);
@@ -58,22 +68,65 @@ const Likes = () => {
         return;
       }
 
-      // Then fetch the actual items
+      // Fetch the actual items
       const itemIds = likedData.map(l => l.item_id);
-      const {
-        data: itemsData,
-        error: itemsError
-      } = await supabase.from('items').select('id, name, image_url, image_urls, description, category, condition, price_range_min, price_range_max, user_id, status').in('id', itemIds);
+      const { data: itemsData, error: itemsError } = await supabase
+        .from('items')
+        .select('id, name, image_url, image_urls, description, category, condition, price_range_min, price_range_max, user_id, status')
+        .in('id', itemIds);
+
       if (itemsError) throw itemsError;
 
-      // Merge the data
+      // Fetch mutual matches for this user
+      const { data: matchesData } = await supabase
+        .from('mutual_matches')
+        .select('*')
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+
+      // Create a map of other user's item -> my item for matches
+      const matchMap = new Map<string, string>();
+      matchesData?.forEach(match => {
+        if (match.user1_id === user.id) {
+          matchMap.set(match.user2_item_id, match.user1_item_id);
+        } else {
+          matchMap.set(match.user1_item_id, match.user2_item_id);
+        }
+      });
+
+      // Get user's own items for match thumbnails
+      const myItemIds = Array.from(new Set(matchMap.values()));
+      let myItemsMap = new Map<string, MatchedItemInfo>();
+      
+      if (myItemIds.length > 0) {
+        const { data: myItems } = await supabase
+          .from('items')
+          .select('id, name, image_url')
+          .in('id', myItemIds);
+        
+        myItems?.forEach(item => {
+          myItemsMap.set(item.id, {
+            id: item.id,
+            name: item.name,
+            image_url: item.image_url || ''
+          });
+        });
+      }
+
+      // Merge the data with match info
       const itemsMap = new Map(itemsData?.map(item => [item.id, item]) || []);
-      const mergedItems: LikedItem[] = likedData.map(liked => ({
-        id: liked.id,
-        item_id: liked.item_id,
-        created_at: liked.created_at,
-        item: itemsMap.get(liked.item_id)
-      })).filter(item => item.item && item.item.status !== 'removed') as LikedItem[];
+      const mergedItems: LikedItemWithMatch[] = likedData.map(liked => {
+        const myMatchedItemId = matchMap.get(liked.item_id);
+        const matchedItem = myMatchedItemId ? myItemsMap.get(myMatchedItemId) : undefined;
+        
+        return {
+          id: liked.id,
+          item_id: liked.item_id,
+          created_at: liked.created_at,
+          matchedItem,
+          item: itemsMap.get(liked.item_id)
+        };
+      }).filter(item => item.item && item.item.status !== 'removed') as LikedItemWithMatch[];
+
       setLikedItems(mergedItems);
     } catch (error) {
       console.error('Error fetching liked items:', error);
@@ -86,17 +139,18 @@ const Likes = () => {
       setLoading(false);
     }
   };
+
   const handleUnlike = async (itemId: string) => {
     try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const {
-        error
-      } = await supabase.from('liked_items').delete().eq('user_id', user.id).eq('item_id', itemId);
+      
+      const { error } = await supabase
+        .from('liked_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('item_id', itemId);
+      
       if (error) throw error;
       setLikedItems(prev => prev.filter(item => item.item_id !== itemId));
       toast({
@@ -112,7 +166,8 @@ const Likes = () => {
       });
     }
   };
-  const handleItemClick = (item: LikedItem, index: number) => {
+
+  const handleItemClick = (item: LikedItemWithMatch, index: number) => {
     setCurrentIndex(index);
     setSelectedItem({
       id: item.item.id,
@@ -127,6 +182,7 @@ const Likes = () => {
     } as Item);
     setIsModalOpen(true);
   };
+
   const handleNavigatePrev = () => {
     if (currentIndex > 0) {
       const newIndex = currentIndex - 1;
@@ -145,6 +201,7 @@ const Likes = () => {
       } as Item);
     }
   };
+
   const handleNavigateNext = () => {
     if (currentIndex < likedItems.length - 1) {
       const newIndex = currentIndex + 1;
@@ -163,7 +220,8 @@ const Likes = () => {
       } as Item);
     }
   };
-  const handleTradeClick = (e: React.MouseEvent, item: LikedItem) => {
+
+  const handleTradeClick = (e: React.MouseEvent, item: LikedItemWithMatch) => {
     e.stopPropagation();
     setTradeTargetItem({
       id: item.item.id,
@@ -173,33 +231,108 @@ const Likes = () => {
     } as Item);
     setIsTradeModalOpen(true);
   };
-  return <MainLayout>
+
+  const handleQuickTrade = async (e: React.MouseEvent, item: LikedItemWithMatch) => {
+    e.stopPropagation();
+    if (!item.matchedItem) return;
+
+    setIsCreatingTrade(item.item_id);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({ title: 'Error', description: 'Please log in to trade', variant: 'destructive' });
+        return;
+      }
+
+      // Check for existing trade conversation
+      const { data: existingConvo } = await supabase
+        .from('trade_conversations')
+        .select('id')
+        .or(`and(requester_id.eq.${user.id},owner_id.eq.${item.item.user_id}),and(requester_id.eq.${item.item.user_id},owner_id.eq.${user.id})`)
+        .maybeSingle();
+
+      if (existingConvo) {
+        navigate('/messages', { state: { conversationId: existingConvo.id } });
+        return;
+      }
+
+      // Create new trade conversation
+      const { data: newConvo, error: convoError } = await supabase
+        .from('trade_conversations')
+        .insert({
+          requester_id: user.id,
+          owner_id: item.item.user_id,
+          requester_item_id: item.matchedItem.id,
+          owner_item_id: item.item.id,
+          requester_item_ids: [item.matchedItem.id],
+          owner_item_ids: [item.item.id],
+          status: 'pending'
+        })
+        .select('id')
+        .single();
+
+      if (convoError) throw convoError;
+
+      // Send initial trade request message
+      await supabase.from('trade_messages').insert({
+        conversation_id: newConvo.id,
+        sender_id: user.id,
+        message: `[TRADE_REQUEST]`
+      });
+
+      navigate('/messages', { state: { conversationId: newConvo.id } });
+    } catch (error) {
+      console.error('Error creating trade:', error);
+      toast({ title: 'Error', description: 'Failed to create trade request', variant: 'destructive' });
+    } finally {
+      setIsCreatingTrade(null);
+    }
+  };
+
+  return (
+    <MainLayout>
       <div className="bg-background min-h-screen">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            
-          </div>
+          <div className="mb-8"></div>
 
           {/* Loading State */}
-          {loading ? <div className="text-center py-16">
+          {loading ? (
+            <div className="text-center py-16">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
               <p className="text-muted-foreground">Loading liked items...</p>
-            </div> : likedItems.length === 0 ? (/* Empty State */
-        <div className="text-center py-16">
+            </div>
+          ) : likedItems.length === 0 ? (
+            /* Empty State */
+            <div className="text-center py-16">
               <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-foreground mb-2">No liked items yet</h3>
               <p className="text-muted-foreground">
                 Items you like will appear here. Start exploring to find items you love!
               </p>
-            </div>) : (/* Items Grid */
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            </div>
+          ) : (
+            /* Items Grid */
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {likedItems.map((likedItem, index) => (
                 <div
                   key={likedItem.id}
                   className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-72 sm:h-80"
                   onClick={() => handleItemClick(likedItem, index)}
                 >
+                  {/* Matched item thumbnail */}
+                  {likedItem.matchedItem && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                        <img
+                          src={likedItem.matchedItem.image_url}
+                          alt="Your matched item"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Image */}
                   <div className="flex-1 relative overflow-hidden">
                     <img
@@ -214,10 +347,10 @@ const Likes = () => {
                     <h3 className="font-semibold text-sm truncate">{likedItem.item.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs text-muted-foreground">
-                        {likedItem.item.price_range_min && likedItem.item.price_range_max 
-                          ? `$${likedItem.item.price_range_min} - $${likedItem.item.price_range_max}` 
-                          : likedItem.item.price_range_min 
-                            ? `$${likedItem.item.price_range_min}+` 
+                        {likedItem.item.price_range_min && likedItem.item.price_range_max
+                          ? `$${likedItem.item.price_range_min} - $${likedItem.item.price_range_max}`
+                          : likedItem.item.price_range_min
+                            ? `$${likedItem.item.price_range_min}+`
                             : ''}
                       </span>
                       {likedItem.item.condition && (
@@ -232,17 +365,28 @@ const Likes = () => {
                   <div className="absolute top-3 right-3 flex gap-2">
                     {/* Trade button - hover only */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={e => handleTradeClick(e, likedItem)}
-                        className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                        aria-label="Suggest trade"
-                      >
-                        <Repeat className="w-4 h-4 text-green-500" />
-                      </button>
+                      {likedItem.matchedItem ? (
+                        <button
+                          onClick={(e) => handleQuickTrade(e, likedItem)}
+                          disabled={isCreatingTrade === likedItem.item_id}
+                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                          aria-label="Accept trade"
+                        >
+                          <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === likedItem.item_id ? 'animate-spin' : ''}`} />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => handleTradeClick(e, likedItem)}
+                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                          aria-label="Suggest trade"
+                        >
+                          <Repeat className="w-4 h-4 text-green-500" />
+                        </button>
+                      )}
                     </div>
                     {/* Heart button - always visible since all items are liked */}
                     <button
-                      onClick={e => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         handleUnlike(likedItem.item_id);
                       }}
@@ -254,26 +398,44 @@ const Likes = () => {
                   </div>
                 </div>
               ))}
-            </div>)}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Item Details Modal */}
-      <ExploreItemModal open={isModalOpen} item={selectedItem} onClose={() => {
-      setIsModalOpen(false);
-      setSelectedItem(null);
-    }} currentIndex={currentIndex} totalItems={likedItems.length} onNavigatePrev={handleNavigatePrev} onNavigateNext={handleNavigateNext} liked={true} onLike={() => {
-      if (selectedItem) {
-        handleUnlike(selectedItem.id);
-        setIsModalOpen(false);
-      }
-    }} />
+      <ExploreItemModal
+        open={isModalOpen}
+        item={selectedItem}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedItem(null);
+        }}
+        currentIndex={currentIndex}
+        totalItems={likedItems.length}
+        onNavigatePrev={handleNavigatePrev}
+        onNavigateNext={handleNavigateNext}
+        liked={true}
+        onLike={() => {
+          if (selectedItem) {
+            handleUnlike(selectedItem.id);
+            setIsModalOpen(false);
+          }
+        }}
+      />
 
       {/* Trade Item Selection Modal */}
-      <TradeItemSelectionModal isOpen={isTradeModalOpen} onClose={() => {
-      setIsTradeModalOpen(false);
-      setTradeTargetItem(null);
-    }} targetItem={tradeTargetItem} targetItemOwnerId={tradeTargetItem?.user_id} />
-    </MainLayout>;
+      <TradeItemSelectionModal
+        isOpen={isTradeModalOpen}
+        onClose={() => {
+          setIsTradeModalOpen(false);
+          setTradeTargetItem(null);
+        }}
+        targetItem={tradeTargetItem}
+        targetItemOwnerId={tradeTargetItem?.user_id}
+      />
+    </MainLayout>
+  );
 };
+
 export default Likes;
