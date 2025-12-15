@@ -25,7 +25,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
-import SupportChat from '@/components/chat/SupportChat';
+
 import Header from '@/components/layout/Header';
 
 // Login form schema
@@ -244,7 +244,6 @@ const Auth: React.FC = () => {
           </Button>
         </CardFooter>
       </Card>
-      <SupportChat />
     </div>
     </>
   );
