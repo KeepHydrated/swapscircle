@@ -6,6 +6,7 @@ import { Item } from '@/types/item';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 
 interface MatchItem {
   id: string;
@@ -31,6 +32,7 @@ const Test: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   // Fetch real items from database
   useEffect(() => {
@@ -69,8 +71,10 @@ const Test: React.FC = () => {
           return;
         }
 
-        // Filter out rejected items
-        const filteredItems = (otherItems || []).filter(item => !rejectedItemIds.has(item.id));
+        // Filter out rejected items and items in active trades
+        const filteredItems = (otherItems || []).filter(item => 
+          !rejectedItemIds.has(item.id) && !itemsInActiveTrades.has(item.id)
+        );
 
         // Fetch current user's items (to use as "my item" in matches)
         const { data: userItems, error: userError } = await supabase
@@ -116,7 +120,7 @@ const Test: React.FC = () => {
     };
 
     fetchMatches();
-  }, []);
+  }, [itemsInActiveTrades]);
 
   // Fetch liked items from database on mount
   useEffect(() => {
