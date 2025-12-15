@@ -203,30 +203,32 @@ const Test: React.FC = () => {
     });
 
     // Persist to database
-    try {
-      if (isCurrentlyLiked) {
-        await supabase
-          .from('liked_items')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('item_id', id);
-      } else {
-        await supabase
-          .from('liked_items')
-          .insert({ user_id: user.id, item_id: id });
+    if (isCurrentlyLiked) {
+      const { error } = await supabase
+        .from('liked_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('item_id', id);
+      
+      if (error) {
+        console.error('Error removing like:', error);
+        // Revert on error
+        setLikedItems((prev) => new Set([...prev, id]));
       }
-    } catch (error) {
-      console.error('Error saving like:', error);
-      // Revert on error
-      setLikedItems((prev) => {
-        const newSet = new Set(prev);
-        if (isCurrentlyLiked) {
-          newSet.add(id);
-        } else {
+    } else {
+      const { error } = await supabase
+        .from('liked_items')
+        .insert({ user_id: user.id, item_id: id });
+      
+      if (error) {
+        console.error('Error saving like:', error);
+        // Revert on error
+        setLikedItems((prev) => {
+          const newSet = new Set(prev);
           newSet.delete(id);
-        }
-        return newSet;
-      });
+          return newSet;
+        });
+      }
     }
   };
 
