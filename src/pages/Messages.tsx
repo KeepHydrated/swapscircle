@@ -917,9 +917,32 @@ const Messages = () => {
                 {currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
                     <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
-                      <div className="text-center py-8">
-                        <p className="text-gray-500">Trade conversation started!</p>
-                        <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
+                      <div className="py-4">
+                        <TradeRequestMessage
+                          partnerProfile={{
+                            id: 'demo-user',
+                            username: demoTradeData.partnerProfile?.username || 'Demo User',
+                            avatar_url: demoTradeData.partnerProfile?.avatar_url || '',
+                          }}
+                          theirItem={{
+                            id: demoTradeData.theirItem?.id,
+                            name: demoTradeData.theirItem?.name || 'Their Item',
+                            image: demoTradeData.theirItem?.image,
+                            image_url: demoTradeData.theirItem?.image,
+                          }}
+                          yourItem={{
+                            id: demoTradeData.myItem?.id,
+                            name: demoTradeData.myItem?.name || 'Your Item',
+                            image: demoTradeData.myItem?.image,
+                            image_url: demoTradeData.myItem?.image,
+                          }}
+                          isPending={true}
+                          isRequester={true}
+                          onCancel={() => {
+                            setIsDemoTrade(false);
+                            setDemoTradeData(null);
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="flex-shrink-0 border-t border-gray-200">
