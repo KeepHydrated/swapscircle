@@ -161,7 +161,7 @@ const Likes = () => {
       // Get all liked item IDs
       const { data: likedData, error: likedError } = await supabase
         .from('liked_items')
-        .select('id, item_id, created_at')
+        .select('id, item_id, created_at, my_item_id')
         .eq('user_id', authUser.id)
         .order('created_at', { ascending: false });
 
@@ -206,15 +206,20 @@ const Likes = () => {
         }
       });
 
-      // Get user's own items for match thumbnails
-      const myItemIds = Array.from(new Set(matchMap.values()));
+      // Get user's own items for match thumbnails - include both from mutual_matches and my_item_id from liked_items
+      const myItemIdsFromMatches = Array.from(new Set(matchMap.values()));
+      const myItemIdsFromLikes = likedData
+        .filter(l => l.my_item_id)
+        .map(l => l.my_item_id as string);
+      const allMyItemIds = Array.from(new Set([...myItemIdsFromMatches, ...myItemIdsFromLikes]));
+      
       let myItemsMap = new Map<string, MatchedItemInfo>();
       
-      if (myItemIds.length > 0) {
+      if (allMyItemIds.length > 0) {
         const { data: myItems } = await supabase
           .from('items')
           .select('id, name, image_url')
-          .in('id', myItemIds);
+          .in('id', allMyItemIds);
         
         myItems?.forEach(item => {
           myItemsMap.set(item.id, {
@@ -230,13 +235,18 @@ const Likes = () => {
       console.log('[Likes] itemsMap:', Array.from(itemsMap.keys()));
       
       const mergedItems: LikedItemWithMatch[] = likedData.map(liked => {
-        const myMatchedItemId = matchMap.get(liked.item_id);
+        // First try to get matched item from mutual_matches, then fallback to my_item_id from liked_items
+        const myMatchedItemIdFromMatch = matchMap.get(liked.item_id);
+        const myMatchedItemId = myMatchedItemIdFromMatch || liked.my_item_id;
         const matchedItem = myMatchedItemId ? myItemsMap.get(myMatchedItemId) : undefined;
         const itemData = itemsMap.get(liked.item_id);
         
         console.log('[Likes] Processing liked item:', { 
           liked_id: liked.id, 
           item_id: liked.item_id, 
+          my_item_id: liked.my_item_id,
+          matchedItemId: myMatchedItemId,
+          hasMatchedItem: !!matchedItem,
           itemFound: !!itemData,
           itemStatus: itemData?.status
         });
