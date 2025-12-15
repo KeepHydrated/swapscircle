@@ -341,9 +341,20 @@ const Likes = () => {
       return;
     }
     
-    // Check if it's a demo item
-    if (item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo')) {
-      navigate('/auth');
+    // Check if it's a demo item - for demos, just open the trade modal instead
+    const isDemo = item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo');
+    if (isDemo) {
+      // For demo items, just open trade modal like non-matched items
+      setTradeTargetItem({
+        id: item.item.id,
+        name: item.item.name,
+        image: item.item.image_url || item.item.image_urls?.[0] || '',
+        user_id: item.item.user_id,
+        priceRangeMin: item.item.price_range_min,
+        priceRangeMax: item.item.price_range_max,
+        condition: item.item.condition
+      } as Item);
+      setIsTradeModalOpen(true);
       return;
     }
     
