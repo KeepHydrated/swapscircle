@@ -419,24 +419,24 @@ export const likeItem = async (itemId: string, selectedItemId?: string) => {
 
     const currentUserId = session.user.id;
 
-    // Skip the existing like check since we allow re-liking items for different matches
+    // Use upsert to handle the unique constraint on (user_id, item_id)
+    // This will insert a new like or update the existing one with the new my_item_id
     const { error } = await supabase
       .from('liked_items')
-      .insert({
+      .upsert({
         user_id: currentUserId,
         item_id: itemId,
-        my_item_id: selectedItemId || null // Include the specific item this like is from
+        my_item_id: selectedItemId || null, // Include the specific item this like is from
+        created_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id,item_id',
+        ignoreDuplicates: false
       });
 
     if (error) {
-      // Handle duplicate like gracefully
-      if (error.code === '23505') {
-        console.log('Like already exists, but checking for mutual match anyway...');
-      } else {
-        console.error('Error liking item:', error);
-        toast.error('Error liking item');
-        return false;
-      }
+      console.error('Error liking item:', error);
+      toast.error('Error liking item');
+      return false;
     }
 
     // Check for mutual match
