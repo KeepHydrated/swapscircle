@@ -353,6 +353,18 @@ const Likes = () => {
     const theirItemId = item.item.id;
     const ownerId = item.item.user_id;
 
+    // Check if it's a demo item - navigate to messages with test conversation
+    const isDemo = ownerId.startsWith('demo-') || myItemId.startsWith('my-demo');
+    if (isDemo) {
+      navigate('/messages', {
+        state: {
+          tradeConversationId: 'test-conversation-123',
+          newTrade: true
+        }
+      });
+      return;
+    }
+
     // Prevent trading with yourself
     if (ownerId === user.id) {
       toast({
