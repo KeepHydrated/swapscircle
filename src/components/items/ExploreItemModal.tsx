@@ -508,7 +508,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
           <DialogDescription>View details for this item including description and owner information</DialogDescription>
         </VisuallyHidden>
-        <div className="flex flex-col md:flex-row w-full max-h-[92vh] h-auto md:h-[520px] bg-white rounded-2xl overflow-hidden relative animate-fade-in">
+        <div className="flex flex-col md:flex-row w-full max-h-[92vh] overflow-y-auto md:overflow-hidden md:h-[520px] bg-white rounded-2xl relative animate-fade-in">
           
           {/* Navigation arrows positioned outside the modal on dark overlay */}
           {(onNavigatePrev || onNavigateNext) && totalItems && totalItems > 1 && (
@@ -541,7 +541,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           )}
 
           {/* Carousel */}
-          <div className="relative w-full md:w-1/2 h-[300px] md:h-full flex-shrink-0 bg-black/10">
+          <div className="relative w-full md:w-1/2 h-[280px] md:h-full flex-shrink-0 bg-black/10">
             {allImages.length > 0 ? (
               <img
                 src={allImages[slide]}
@@ -711,7 +711,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           </div>
           
           {/* Details */}
-          <div className="flex-1 flex flex-col px-4 py-5 md:px-8 md:py-7 justify-start overflow-y-auto max-h-[400px] md:max-h-none">
+          <div className="flex-1 flex flex-col px-4 py-5 md:px-8 md:py-7 justify-start md:overflow-y-auto">
             {loading ? (
               <div className="flex justify-center items-center h-full">
                 <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
