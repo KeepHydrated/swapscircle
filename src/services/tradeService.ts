@@ -506,6 +506,7 @@ export const createTradeConversation = async (
         requester_id: requesterId,
         owner_id: ownerId,
         requester_item_id: requesterItemId,
+        requester_item_ids: [requesterItemId],
         owner_item_id: ownerItemId,
         status: 'pending'
       })
