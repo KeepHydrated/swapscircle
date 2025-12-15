@@ -227,18 +227,34 @@ const Likes = () => {
 
       // Merge the data with match info
       const itemsMap = new Map(itemsData?.map(item => [item.id, item]) || []);
+      console.log('[Likes] itemsMap:', Array.from(itemsMap.keys()));
+      
       const mergedItems: LikedItemWithMatch[] = likedData.map(liked => {
         const myMatchedItemId = matchMap.get(liked.item_id);
         const matchedItem = myMatchedItemId ? myItemsMap.get(myMatchedItemId) : undefined;
+        const itemData = itemsMap.get(liked.item_id);
+        
+        console.log('[Likes] Processing liked item:', { 
+          liked_id: liked.id, 
+          item_id: liked.item_id, 
+          itemFound: !!itemData,
+          itemStatus: itemData?.status
+        });
         
         return {
           id: liked.id,
           item_id: liked.item_id,
           created_at: liked.created_at,
           matchedItem,
-          item: itemsMap.get(liked.item_id)
+          item: itemData
         };
-      }).filter(item => item.item && item.item.status !== 'removed') as LikedItemWithMatch[];
+      }).filter(item => {
+        const keep = item.item && item.item.status !== 'removed';
+        console.log('[Likes] Filter result:', { item_id: item.item_id, hasItem: !!item.item, keep });
+        return keep;
+      }) as LikedItemWithMatch[];
+
+      console.log('[Likes] Final mergedItems count:', mergedItems.length);
 
       // Only show real items
       setLikedItems(mergedItems);
