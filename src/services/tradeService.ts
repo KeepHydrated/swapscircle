@@ -605,6 +605,7 @@ export const createTestIncomingTrade = async () => {
     const requesterItemIds = otherItems.map(item => item.id);
     
     // Create trade conversation where current user is OWNER (receiver)
+    // The requester has already "accepted" by proposing the trade
     const { data, error } = await supabase
       .from('trade_conversations')
       .insert({
@@ -615,8 +616,8 @@ export const createTestIncomingTrade = async () => {
         requester_item_ids: requesterItemIds,
         owner_item_ids: [myItems[0].id],
         status: 'pending',
-        requester_accepted: false,
-        owner_accepted: false
+        requester_accepted: true,  // Requester accepted by proposing
+        owner_accepted: false      // Owner (you) needs to accept
       })
       .select('*')
       .single();
