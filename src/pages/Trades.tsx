@@ -130,7 +130,7 @@ const Trades = () => {
     return (
       <MainLayout>
         <div className="p-6 max-w-7xl mx-auto">
-          <div className="mb-6 hidden lg:block">
+          <div className="mb-6 hidden md:block">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">My Trades</h1>
             <p className="text-gray-600">Manage your trading activities and conversations</p>
           </div>
@@ -148,7 +148,7 @@ const Trades = () => {
   return (
     <MainLayout>
       <div className="p-6 max-w-7xl mx-auto">
-        <div className="mb-6 hidden lg:block">
+        <div className="mb-6 hidden md:block">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-gray-900">My Trades</h1>
           </div>
@@ -157,7 +157,7 @@ const Trades = () => {
         
         {/* Mobile navigation - only show if multiple trades */}
         {completedTrades.length > 1 && (
-          <div className="flex items-center justify-center space-x-2 lg:hidden mb-6">
+          <div className="flex items-center justify-center space-x-2 md:hidden mb-6">
             <Button
               variant="outline"
               size="sm"
@@ -202,12 +202,12 @@ const Trades = () => {
             return (
               <div 
                 key={trade.id} 
-                className={`flex flex-col lg:flex-row gap-4 ${
-                  index === currentTradeIndex ? 'block' : 'hidden lg:flex'
+                className={`flex flex-col md:flex-row gap-4 ${
+                  index === currentTradeIndex ? 'block' : 'hidden md:flex'
                 }`}
               >
                 {/* Left side - Trade Details */}
-                <div className="w-full lg:w-1/3">
+                <div className="w-full md:w-[45%] md:flex-shrink-0">
                   <Card>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
@@ -269,9 +269,9 @@ const Trades = () => {
                 </div>
 
                 {/* Middle - Their Review of You */}
-                <div className="w-full lg:w-1/3">
-                  <Card className="h-full">
-                    <CardContent className="p-6">
+                <div className="w-full md:flex-1 md:min-w-0">
+                  <Card className="h-full max-h-[280px]">
+                    <CardContent className="p-4 h-full overflow-y-auto">
                       <div className="flex items-center space-x-3 mb-3">
                         <Avatar 
                           className="h-8 w-8 cursor-pointer hover:opacity-80"
@@ -311,9 +311,9 @@ const Trades = () => {
                 </div>
 
                 {/* Right - Your Review Section */}
-                <div className="w-full lg:w-1/3">
-                  <Card className="h-full">
-                    <CardContent className="p-6">
+                <div className="w-full md:flex-1 md:min-w-0">
+                  <Card className="h-full max-h-[280px]">
+                    <CardContent className="p-4 h-full overflow-y-auto">
                       <div className="flex items-center space-x-3 mb-3">
                         <Avatar 
                           className="h-8 w-8 cursor-pointer hover:opacity-80"
