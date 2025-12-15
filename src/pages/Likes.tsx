@@ -45,6 +45,97 @@ const Likes = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
 
+  // Demo matched items for display
+  const demoMatchedItems: LikedItemWithMatch[] = [
+    {
+      id: 'demo-liked-1',
+      item_id: 'demo-item-1',
+      created_at: new Date().toISOString(),
+      matchedItem: {
+        id: 'my-demo-1',
+        name: 'My Vintage Camera',
+        image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200'
+      },
+      item: {
+        id: 'demo-item-1',
+        name: 'Leather Messenger Bag',
+        image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
+        image_urls: [],
+        description: 'Beautiful leather bag',
+        category: 'Accessories',
+        condition: 'Like New',
+        price_range_min: 80,
+        price_range_max: 150,
+        user_id: 'demo-user-1',
+        status: 'published'
+      }
+    },
+    {
+      id: 'demo-liked-2',
+      item_id: 'demo-item-2',
+      created_at: new Date().toISOString(),
+      matchedItem: {
+        id: 'my-demo-2',
+        name: 'My Headphones',
+        image_url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200'
+      },
+      item: {
+        id: 'demo-item-2',
+        name: 'Mechanical Keyboard',
+        image_url: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=400',
+        image_urls: [],
+        description: 'Cherry MX switches',
+        category: 'Electronics',
+        condition: 'Good',
+        price_range_min: 100,
+        price_range_max: 200,
+        user_id: 'demo-user-2',
+        status: 'published'
+      }
+    },
+    {
+      id: 'demo-liked-3',
+      item_id: 'demo-item-3',
+      created_at: new Date().toISOString(),
+      item: {
+        id: 'demo-item-3',
+        name: 'Vintage Record Player',
+        image_url: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400',
+        image_urls: [],
+        description: 'Classic turntable',
+        category: 'Electronics',
+        condition: 'Good',
+        price_range_min: 150,
+        price_range_max: 300,
+        user_id: 'demo-user-3',
+        status: 'published'
+      }
+    },
+    {
+      id: 'demo-liked-4',
+      item_id: 'demo-item-4',
+      created_at: new Date().toISOString(),
+      matchedItem: {
+        id: 'my-demo-3',
+        name: 'My Watch',
+        image_url: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=200'
+      },
+      item: {
+        id: 'demo-item-4',
+        name: 'Polaroid Camera',
+        image_url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
+        image_urls: [],
+        description: 'Instant film camera',
+        category: 'Electronics',
+        condition: 'Like New',
+        price_range_min: 60,
+        price_range_max: 120,
+        user_id: 'demo-user-4',
+        status: 'published'
+      }
+    }
+  ];
+
   useEffect(() => {
     fetchLikedItems();
   }, []);
@@ -52,7 +143,12 @@ const Likes = () => {
   const fetchLikedItems = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        // Show demo items for non-logged in users
+        setLikedItems(demoMatchedItems);
+        setLoading(false);
+        return;
+      }
 
       // Get all liked item IDs
       const { data: likedData, error: likedError } = await supabase
@@ -62,8 +158,10 @@ const Likes = () => {
         .order('created_at', { ascending: false });
 
       if (likedError) throw likedError;
+      
+      // If no real liked items, show demo items
       if (!likedData || likedData.length === 0) {
-        setLikedItems([]);
+        setLikedItems(demoMatchedItems);
         setLoading(false);
         return;
       }
@@ -127,14 +225,12 @@ const Likes = () => {
         };
       }).filter(item => item.item && item.item.status !== 'removed') as LikedItemWithMatch[];
 
-      setLikedItems(mergedItems);
+      // Combine real items with demo items for display
+      setLikedItems([...mergedItems, ...demoMatchedItems]);
     } catch (error) {
       console.error('Error fetching liked items:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load liked items',
-        variant: 'destructive'
-      });
+      // Show demo items on error
+      setLikedItems(demoMatchedItems);
     } finally {
       setLoading(false);
     }
