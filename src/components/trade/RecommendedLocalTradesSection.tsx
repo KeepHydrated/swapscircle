@@ -47,7 +47,7 @@ const RecommendedLocalTradesSection = () => {
     if (user) {
       fetchLikedItems();
     }
-  }, [user]);
+  }, [user, itemsInActiveTrades]);
 
   const fetchLocalTrades = async () => {
     try {
