@@ -553,23 +553,31 @@ const handleNextTheirItem = () => {
               <div className="flex items-center justify-center py-3 bg-orange-50 rounded-lg border border-orange-200">
                 <span className="text-orange-700 font-medium">The other party accepted - Your response needed</span>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <Button 
                   variant="outline" 
                   className="w-full text-red-600 border-red-200 hover:bg-red-50"
                   onClick={handleRejectTrade}
                   disabled={rejectTradeMutation.isPending}
                 >
-                  <X className="w-4 h-4 mr-2" />
-                  {rejectTradeMutation.isPending ? 'Rejecting...' : 'Reject'}
+                  <X className="w-4 h-4 mr-1" />
+                  Reject
                 </Button>
                 <Button 
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => setShowChangeItemsModal(true)}
+                >
+                  <RefreshCw className="w-4 h-4 mr-1" />
+                  Change
+                </Button>
+                <Button 
+                  className="w-full bg-green-600 hover:bg-green-700 text-xs sm:text-sm px-2"
                   onClick={handleAcceptTrade}
                   disabled={acceptTradeMutation.isPending}
                 >
-                  <Check className="w-4 h-4 mr-2" />
-                  {acceptTradeMutation.isPending ? 'Accepting...' : 'Accept'}
+                  <Check className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="truncate">{acceptTradeMutation.isPending ? 'Confirming...' : 'Confirm Final Trade'}</span>
                 </Button>
               </div>
             </div>
