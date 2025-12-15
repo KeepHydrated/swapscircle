@@ -118,6 +118,27 @@ const Test: React.FC = () => {
     fetchMatches();
   }, []);
 
+  // Fetch liked items from database on mount
+  useEffect(() => {
+    const fetchLikedItems = async () => {
+      if (!user) {
+        setLikedItems(new Set());
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('liked_items')
+        .select('item_id')
+        .eq('user_id', user.id);
+
+      if (!error && data) {
+        setLikedItems(new Set(data.map(l => l.item_id)));
+      }
+    };
+
+    fetchLikedItems();
+  }, [user]);
+
   const convertToItem = (match: MatchItem): Item => ({
     id: match.id,
     name: match.name,
@@ -162,12 +183,15 @@ const Test: React.FC = () => {
     }
   }, [matches]);
 
-  const handleLike = (id: string) => {
+  const handleLike = async (id: string) => {
     if (!user) {
       navigate('/auth');
       return;
     }
     
+    const isCurrentlyLiked = likedItems.has(id);
+    
+    // Optimistic update
     setLikedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -177,6 +201,33 @@ const Test: React.FC = () => {
       }
       return newSet;
     });
+
+    // Persist to database
+    try {
+      if (isCurrentlyLiked) {
+        await supabase
+          .from('liked_items')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('item_id', id);
+      } else {
+        await supabase
+          .from('liked_items')
+          .insert({ user_id: user.id, item_id: id });
+      }
+    } catch (error) {
+      console.error('Error saving like:', error);
+      // Revert on error
+      setLikedItems((prev) => {
+        const newSet = new Set(prev);
+        if (isCurrentlyLiked) {
+          newSet.add(id);
+        } else {
+          newSet.delete(id);
+        }
+        return newSet;
+      });
+    }
   };
 
   const handleRequestTrade = async (match: MatchItem) => {
