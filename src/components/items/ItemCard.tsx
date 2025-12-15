@@ -252,7 +252,54 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 <div className="absolute top-1.5 right-1.5 z-10">
                   {isMatch ? (
                     <div className="flex gap-1">
-                      {/* Swap/Trade button */}
+                      {/* Swap/Trade button - only show on hover */}
+                      <div className={`transition-opacity duration-200 ${liked ? 'opacity-0 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
+                                aria-label="Suggest trade"
+                                onClick={handleSwapClick}
+                              >
+                                <Check className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Suggest a trade</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      
+                      {/* Like button - always visible when liked, otherwise show on hover */}
+                      <div className={`transition-opacity duration-200 ${liked ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
+                                aria-label="Like item"
+                                onClick={(e) => handleHeartClick(e)}
+                              >
+                                <Heart 
+                                  className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
+                                  fill={liked ? "red" : "none"}
+                                />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Like to initiate trading (create a match)</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div>
+                ) : (
+                  /* Arrow button + heart for non-match items (search page) */
+                  <div className="flex gap-1">
+                    {/* Swap/Trade button with arrow - only show on hover */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -261,7 +308,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                               aria-label="Suggest trade"
                               onClick={handleSwapClick}
                             >
-                              <Check className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
+                              <Repeat className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -269,8 +316,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      
-                      {/* Like button for current item */}
+                    </div>
+                    
+                    {/* Like button (Heart) - always visible when liked, otherwise show on hover */}
+                    <div className={`transition-opacity duration-200 ${liked ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -286,52 +335,11 @@ const ItemCard: React.FC<ItemCardProps> = ({
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Like to initiate trading (create a match)</p>
+                            <p>Like item</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </div>
-                ) : (
-                  /* Arrow button + heart for non-match items (search page) */
-                  <div className="flex gap-1">
-                    {/* Swap/Trade button with arrow */}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
-                            aria-label="Suggest trade"
-                            onClick={handleSwapClick}
-                          >
-                            <Repeat className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white`} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Suggest a trade</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
-                    {/* Like button (Heart) */}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 hover:scale-110`}
-                            aria-label="Like item"
-                            onClick={(e) => handleHeartClick(e)}
-                          >
-                            <Heart 
-                              className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} transition-colors ${liked ? "text-red-500" : "text-gray-400"}`}
-                              fill={liked ? "red" : "none"}
-                            />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Like item</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
                   </div>
                 )}
                 </div>
