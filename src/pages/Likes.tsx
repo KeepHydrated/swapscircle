@@ -377,7 +377,8 @@ const Likes = () => {
         // Navigate to messages with the new conversation
         navigate('/messages', {
           state: {
-            conversationId: conversation.id
+            tradeConversationId: conversation.id,
+            newTrade: true
           }
         });
       }
