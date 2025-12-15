@@ -68,6 +68,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
   userProfile,
   ownerId,
 }) => {
+  // Debug logging for liked state
+  console.log('🎴 ItemCard render:', { id, name: name.substring(0, 15), liked, isMatch });
+  
   const navigate = useNavigate();
   const isRemoved = status === 'removed';
   const [imageLoaded, setImageLoaded] = useState(false);
