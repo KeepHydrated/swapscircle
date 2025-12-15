@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Eye, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HiddenItem {
   id: string;
@@ -19,6 +20,7 @@ interface HiddenItem {
 
 const HiddenItemsSettings: React.FC = () => {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [hiddenItems, setHiddenItems] = useState<HiddenItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [unhidingId, setUnhidingId] = useState<string | null>(null);
@@ -131,36 +133,39 @@ const HiddenItemsSettings: React.FC = () => {
           {hiddenItems.map((hidden) => (
             <div
               key={hidden.id}
-              className="flex items-center gap-4 p-4 border rounded-lg bg-background"
+              className={`p-4 border rounded-lg bg-background ${isMobile ? 'flex flex-col gap-3' : 'flex items-center gap-4'}`}
             >
-              <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                {hidden.item?.image_url ? (
-                  <img
-                    src={hidden.item.image_url}
-                    alt={hidden.item.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                    No image
+              <div className={`${isMobile ? 'flex items-center gap-4' : 'contents'}`}>
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                  {hidden.item?.image_url ? (
+                    <img
+                      src={hidden.item.image_url}
+                      alt={hidden.item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                      No image
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-foreground truncate">
+                    {hidden.item?.name || 'Unknown Item'}
+                  </h3>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                    {hidden.item?.category && <span>{hidden.item.category}</span>}
+                    {hidden.item?.category && hidden.item?.condition && <span>•</span>}
+                    {hidden.item?.condition && <span>{hidden.item.condition}</span>}
                   </div>
-                )}
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-foreground truncate">
-                  {hidden.item?.name || 'Unknown Item'}
-                </h3>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                  {hidden.item?.category && <span>{hidden.item.category}</span>}
-                  {hidden.item?.category && hidden.item?.condition && <span>•</span>}
-                  {hidden.item?.condition && <span>{hidden.item.condition}</span>}
                 </div>
               </div>
 
               <Button
                 variant="outline"
                 size="sm"
+                className={isMobile ? 'w-full' : ''}
                 onClick={() => handleUnhide(hidden.id, hidden.item?.name || 'Item')}
                 disabled={unhidingId === hidden.id}
               >
