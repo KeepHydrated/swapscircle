@@ -572,12 +572,12 @@ const handleNextTheirItem = () => {
                   Change
                 </Button>
                 <Button 
-                  className="w-full bg-green-600 hover:bg-green-700 text-xs sm:text-sm px-2"
+                  className="w-full bg-green-600 hover:bg-green-700"
                   onClick={handleAcceptTrade}
                   disabled={acceptTradeMutation.isPending}
                 >
-                  <Check className="w-4 h-4 mr-1 flex-shrink-0" />
-                  <span className="truncate">{acceptTradeMutation.isPending ? 'Confirming...' : 'Confirm Final Trade'}</span>
+                  <Check className="w-4 h-4 mr-1" />
+                  {acceptTradeMutation.isPending ? 'Confirming...' : 'Confirm'}
                 </Button>
               </div>
             </div>
