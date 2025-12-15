@@ -33,10 +33,100 @@ interface LikedItemWithMatch {
     status: string;
   };
 }
+// Demo matched items for display - defined outside component
+const demoMatchedItems: LikedItemWithMatch[] = [
+  {
+    id: 'demo-liked-1',
+    item_id: 'demo-item-1',
+    created_at: new Date().toISOString(),
+    matchedItem: {
+      id: 'my-demo-1',
+      name: 'My Vintage Camera',
+      image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200'
+    },
+    item: {
+      id: 'demo-item-1',
+      name: 'Leather Messenger Bag',
+      image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
+      image_urls: [],
+      description: 'Beautiful leather bag',
+      category: 'Accessories',
+      condition: 'Like New',
+      price_range_min: 80,
+      price_range_max: 150,
+      user_id: 'demo-user-1',
+      status: 'published'
+    }
+  },
+  {
+    id: 'demo-liked-2',
+    item_id: 'demo-item-2',
+    created_at: new Date().toISOString(),
+    matchedItem: {
+      id: 'my-demo-2',
+      name: 'My Headphones',
+      image_url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200'
+    },
+    item: {
+      id: 'demo-item-2',
+      name: 'Mechanical Keyboard',
+      image_url: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=400',
+      image_urls: [],
+      description: 'Cherry MX switches',
+      category: 'Electronics',
+      condition: 'Good',
+      price_range_min: 100,
+      price_range_max: 200,
+      user_id: 'demo-user-2',
+      status: 'published'
+    }
+  },
+  {
+    id: 'demo-liked-3',
+    item_id: 'demo-item-3',
+    created_at: new Date().toISOString(),
+    item: {
+      id: 'demo-item-3',
+      name: 'Vintage Record Player',
+      image_url: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400',
+      image_urls: [],
+      description: 'Classic turntable',
+      category: 'Electronics',
+      condition: 'Good',
+      price_range_min: 150,
+      price_range_max: 300,
+      user_id: 'demo-user-3',
+      status: 'published'
+    }
+  },
+  {
+    id: 'demo-liked-4',
+    item_id: 'demo-item-4',
+    created_at: new Date().toISOString(),
+    matchedItem: {
+      id: 'my-demo-3',
+      name: 'My Watch',
+      image_url: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=200'
+    },
+    item: {
+      id: 'demo-item-4',
+      name: 'Polaroid Camera',
+      image_url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
+      image_urls: [],
+      description: 'Instant film camera',
+      category: 'Electronics',
+      condition: 'Like New',
+      price_range_min: 60,
+      price_range_max: 120,
+      user_id: 'demo-user-4',
+      status: 'published'
+    }
+  }
+];
 
 const Likes = () => {
   const navigate = useNavigate();
-  const [likedItems, setLikedItems] = useState<LikedItemWithMatch[]>([]);
+  const [likedItems, setLikedItems] = useState<LikedItemWithMatch[]>(demoMatchedItems);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,97 +134,6 @@ const Likes = () => {
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
-
-  // Demo matched items for display
-  const demoMatchedItems: LikedItemWithMatch[] = [
-    {
-      id: 'demo-liked-1',
-      item_id: 'demo-item-1',
-      created_at: new Date().toISOString(),
-      matchedItem: {
-        id: 'my-demo-1',
-        name: 'My Vintage Camera',
-        image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200'
-      },
-      item: {
-        id: 'demo-item-1',
-        name: 'Leather Messenger Bag',
-        image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
-        image_urls: [],
-        description: 'Beautiful leather bag',
-        category: 'Accessories',
-        condition: 'Like New',
-        price_range_min: 80,
-        price_range_max: 150,
-        user_id: 'demo-user-1',
-        status: 'published'
-      }
-    },
-    {
-      id: 'demo-liked-2',
-      item_id: 'demo-item-2',
-      created_at: new Date().toISOString(),
-      matchedItem: {
-        id: 'my-demo-2',
-        name: 'My Headphones',
-        image_url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200'
-      },
-      item: {
-        id: 'demo-item-2',
-        name: 'Mechanical Keyboard',
-        image_url: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=400',
-        image_urls: [],
-        description: 'Cherry MX switches',
-        category: 'Electronics',
-        condition: 'Good',
-        price_range_min: 100,
-        price_range_max: 200,
-        user_id: 'demo-user-2',
-        status: 'published'
-      }
-    },
-    {
-      id: 'demo-liked-3',
-      item_id: 'demo-item-3',
-      created_at: new Date().toISOString(),
-      item: {
-        id: 'demo-item-3',
-        name: 'Vintage Record Player',
-        image_url: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400',
-        image_urls: [],
-        description: 'Classic turntable',
-        category: 'Electronics',
-        condition: 'Good',
-        price_range_min: 150,
-        price_range_max: 300,
-        user_id: 'demo-user-3',
-        status: 'published'
-      }
-    },
-    {
-      id: 'demo-liked-4',
-      item_id: 'demo-item-4',
-      created_at: new Date().toISOString(),
-      matchedItem: {
-        id: 'my-demo-3',
-        name: 'My Watch',
-        image_url: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=200'
-      },
-      item: {
-        id: 'demo-item-4',
-        name: 'Polaroid Camera',
-        image_url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
-        image_urls: [],
-        description: 'Instant film camera',
-        category: 'Electronics',
-        condition: 'Like New',
-        price_range_min: 60,
-        price_range_max: 120,
-        user_id: 'demo-user-4',
-        status: 'published'
-      }
-    }
-  ];
 
   useEffect(() => {
     fetchLikedItems();
@@ -159,7 +158,7 @@ const Likes = () => {
 
       if (likedError) throw likedError;
       
-      // If no real liked items, show demo items
+      // If no real liked items, just show demo items
       if (!likedData || likedData.length === 0) {
         setLikedItems(demoMatchedItems);
         setLoading(false);
