@@ -54,7 +54,9 @@ export const useMatchActions = (
   const navigate = useNavigate();
 
   // Helper function to update state for current item - uses functional update to avoid stale state
-  const updateCurrentState = (updates: Partial<typeof currentState>) => {
+  const updateCurrentState = (
+    updater: Partial<typeof currentState> | ((prev: typeof currentState) => Partial<typeof currentState>)
+  ) => {
     setStateByItem(prev => {
       const prevState = prev[stateKey] || {
         likedItems: {},
@@ -62,6 +64,7 @@ export const useMatchActions = (
         lastActions: [],
         isLoadingLikedStatus: false
       };
+      const updates = typeof updater === 'function' ? updater(prevState) : updater;
       return {
         ...prev,
         [stateKey]: { ...prevState, ...updates }
@@ -119,16 +122,16 @@ export const useMatchActions = (
 
     const isCurrentlyLiked = currentState.likedItems[id];
 
-    // Track the action for undo (keep only last 3 actions)
-    const newAction = { type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked };
-    const updatedActions = [newAction, ...currentState.lastActions].slice(0, 3);
-    updateCurrentState({ lastActions: updatedActions });
+    // Track the action for undo using functional update
+    updateCurrentState(prev => ({
+      lastActions: [{ type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked }, ...prev.lastActions].slice(0, 3)
+    }));
 
     if (supabaseConfigured && isValidUUID(id)) {
-      // Optimistically update
-      updateCurrentState({ 
-        likedItems: { ...currentState.likedItems, [id]: !isCurrentlyLiked } 
-      });
+      // Optimistically update using functional update
+      updateCurrentState(prev => ({ 
+        likedItems: { ...prev.likedItems, [id]: !isCurrentlyLiked } 
+      }));
 
       try {
         let result;
@@ -170,18 +173,18 @@ export const useMatchActions = (
         }
       } catch (error) {
         console.error('DB like/unlike error:', error);
-        // Revert optimistic update on error
-        updateCurrentState({ 
-          likedItems: { ...currentState.likedItems, [id]: isCurrentlyLiked } 
-        });
+        // Revert optimistic update on error using functional update
+        updateCurrentState(prev => ({ 
+          likedItems: { ...prev.likedItems, [id]: isCurrentlyLiked } 
+        }));
       }
       return;
     }
 
-    // For mock/demo items (non-UUID): do only local toggle
-    updateCurrentState({ 
-      likedItems: { ...currentState.likedItems, [id]: !isCurrentlyLiked } 
-    });
+    // For mock/demo items (non-UUID): do only local toggle using functional update
+    updateCurrentState(prev => ({ 
+      likedItems: { ...prev.likedItems, [id]: !isCurrentlyLiked } 
+    }));
   };
 
   // Handle rejecting an item (removing it from matches)
@@ -191,15 +194,15 @@ export const useMatchActions = (
       return;
     }
 
-    // Track the action for undo (keep only last 3 actions)
-    const newAction = { type: 'reject' as const, itemId: id };
-    const updatedActions = [newAction, ...currentState.lastActions].slice(0, 3);
-    updateCurrentState({ lastActions: updatedActions });
+    // Track the action for undo using functional update
+    updateCurrentState(prev => ({
+      lastActions: [{ type: 'reject' as const, itemId: id }, ...prev.lastActions].slice(0, 3)
+    }));
 
-    // Optimistically update local state
-    updateCurrentState({ 
-      removedItems: [...currentState.removedItems, id] 
-    });
+    // Optimistically update local state using functional update
+    updateCurrentState(prev => ({ 
+      removedItems: [...prev.removedItems, id] 
+    }));
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
@@ -211,17 +214,17 @@ export const useMatchActions = (
             setTimeout(() => onRefreshMatches(), 500); // Small delay to ensure DB is updated
           }
         } else {
-          // Revert optimistic update on error
-          updateCurrentState({ 
-            removedItems: currentState.removedItems.filter(itemId => itemId !== id) 
-          });
+          // Revert optimistic update on error using functional update
+          updateCurrentState(prev => ({ 
+            removedItems: prev.removedItems.filter(itemId => itemId !== id) 
+          }));
         }
       } catch (error) {
         console.error('DB reject error:', error);
-        // Revert optimistic update on error
-        updateCurrentState({ 
-          removedItems: currentState.removedItems.filter(itemId => itemId !== id) 
-        });
+        // Revert optimistic update on error using functional update
+        updateCurrentState(prev => ({ 
+          removedItems: prev.removedItems.filter(itemId => itemId !== id) 
+        }));
       }
     }
   };
@@ -233,16 +236,16 @@ export const useMatchActions = (
     const actionToUndo = currentState.lastActions[0]; // Get most recent action
 
     if (actionToUndo.type === 'like') {
-      // Undo like action - revert to previous liked state
-      updateCurrentState({ 
-        likedItems: { ...currentState.likedItems, [actionToUndo.itemId]: actionToUndo.wasLiked || false } 
-      });
+      // Undo like action - revert to previous liked state using functional update
+      updateCurrentState(prev => ({ 
+        likedItems: { ...prev.likedItems, [actionToUndo.itemId]: actionToUndo.wasLiked || false } 
+      }));
       toast.success('Like action undone');
     } else if (actionToUndo.type === 'reject') {
-      // Undo reject action - restore item to matches
-      updateCurrentState({ 
-        removedItems: currentState.removedItems.filter(id => id !== actionToUndo.itemId) 
-      });
+      // Undo reject action - restore item to matches using functional update
+      updateCurrentState(prev => ({ 
+        removedItems: prev.removedItems.filter(id => id !== actionToUndo.itemId) 
+      }));
       
       // Also undo in database if it was persisted
       if (supabaseConfigured && isValidUUID(actionToUndo.itemId)) {
@@ -256,10 +259,10 @@ export const useMatchActions = (
       toast.success('Reject action undone');
     }
 
-    // Remove the undone action from the list
-    updateCurrentState({ 
-      lastActions: currentState.lastActions.slice(1) 
-    });
+    // Remove the undone action from the list using functional update
+    updateCurrentState(prev => ({ 
+      lastActions: prev.lastActions.slice(1) 
+    }));
   };
 
   const handleOpenModal = (id: string) => {
