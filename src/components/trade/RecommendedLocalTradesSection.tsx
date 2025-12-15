@@ -26,40 +26,6 @@ interface TradeItem {
   myItemName?: string;
 }
 
-// Mock matched items to show in Local Items
-const mockMatchedItems: TradeItem[] = [
-  {
-    id: "local-match-1",
-    name: "Vintage Record Player",
-    image_url: "https://images.unsplash.com/photo-1616707977737-3a6e64f7e3f0?w=800",
-    category: "Electronics",
-    condition: "Good",
-    price_range_min: 150,
-    price_range_max: 250,
-    user_id: "demo-local-1",
-    description: "Classic vinyl record player in excellent condition",
-    isMatch: true,
-    myItemImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
-    myItemId: "my-local-1",
-    myItemName: "Wireless Headphones"
-  },
-  {
-    id: "local-match-2",
-    name: "Leather Messenger Bag",
-    image_url: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800",
-    category: "Fashion",
-    condition: "Like New",
-    price_range_min: 80,
-    price_range_max: 120,
-    user_id: "demo-local-2",
-    description: "Genuine leather messenger bag, barely used",
-    isMatch: true,
-    myItemImage: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=800",
-    myItemId: "my-local-2",
-    myItemName: "Denim Jacket"
-  },
-];
-
 const RecommendedLocalTradesSection = () => {
   const [items, setItems] = useState<TradeItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +49,95 @@ const RecommendedLocalTradesSection = () => {
 
   const fetchLocalTrades = async () => {
     try {
+      // If user is logged in, try to fetch items with matches first
+      if (user) {
+        // Get user's items
+        const { data: myItems } = await supabase
+          .from('items')
+          .select('id, name, image_url, looking_for_categories')
+          .eq('user_id', user.id)
+          .eq('is_available', true)
+          .eq('status', 'published');
+
+        if (myItems && myItems.length > 0) {
+          // Find items that match with user's items (mutual likes create matches)
+          const { data: likedByMe } = await supabase
+            .from('liked_items')
+            .select('item_id, my_item_id')
+            .eq('user_id', user.id);
+
+          const { data: likedByOthers } = await supabase
+            .from('liked_items')
+            .select('item_id, user_id, my_item_id')
+            .in('item_id', myItems.map(i => i.id));
+
+          // Find mutual matches
+          const matchedItems: TradeItem[] = [];
+          
+          if (likedByMe && likedByOthers) {
+            for (const otherLike of likedByOthers) {
+              // Check if I liked any of their items
+              const { data: theirItems } = await supabase
+                .from('items')
+                .select('id')
+                .eq('user_id', otherLike.user_id)
+                .eq('is_available', true);
+              
+              if (theirItems) {
+                for (const theirItem of theirItems) {
+                  const myLikeOfTheirs = likedByMe.find(l => l.item_id === theirItem.id);
+                  if (myLikeOfTheirs) {
+                    // This is a match - get the full item details
+                    const { data: fullItem } = await supabase
+                      .from('items')
+                      .select('*')
+                      .eq('id', theirItem.id)
+                      .single();
+
+                    const myMatchedItem = myItems.find(i => i.id === otherLike.item_id);
+                    
+                    if (fullItem && myMatchedItem) {
+                      matchedItems.push({
+                        id: fullItem.id,
+                        name: fullItem.name,
+                        image_url: fullItem.image_url,
+                        category: fullItem.category,
+                        condition: fullItem.condition,
+                        price_range_min: fullItem.price_range_min,
+                        price_range_max: fullItem.price_range_max,
+                        user_id: fullItem.user_id,
+                        description: fullItem.description,
+                        isMatch: true,
+                        myItemImage: myMatchedItem.image_url || undefined,
+                        myItemId: myMatchedItem.id,
+                        myItemName: myMatchedItem.name
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          if (matchedItems.length > 0) {
+            // Also fetch some regular items to fill the carousel
+            const { data: regularItems } = await supabase
+              .from("items")
+              .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id, description")
+              .eq("is_available", true)
+              .eq("status", "published")
+              .neq("user_id", user.id)
+              .not('id', 'in', `(${matchedItems.map(i => i.id).join(',')})`)
+              .limit(6);
+
+            setItems([...matchedItems, ...(regularItems || [])]);
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
+      // Fallback: fetch regular local items if no matches
       const { data, error } = await supabase
         .from("items")
         .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id, description")
@@ -91,12 +146,10 @@ const RecommendedLocalTradesSection = () => {
         .limit(8);
 
       if (error) throw error;
-      // Merge mock matched items at the beginning with real items
-      setItems([...mockMatchedItems, ...(data || [])]);
+      setItems(data || []);
     } catch (error) {
       console.error("Error fetching local trades:", error);
-      // Still show mock matched items on error
-      setItems(mockMatchedItems);
+      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -165,11 +218,6 @@ const RecommendedLocalTradesSection = () => {
       return next;
     });
 
-    // Skip DB operations for mock items
-    if (itemId.startsWith('local-match-')) {
-      return;
-    }
-
     try {
       if (isLiked) {
         await supabase
@@ -204,48 +252,7 @@ const RecommendedLocalTradesSection = () => {
       return;
     }
     
-    // Check if this is a mock/demo item (fake IDs that don't exist in database)
-    const isMockItem = item.id.startsWith('local-match-') || item.user_id.startsWith('demo-');
-    
-    // For mock matched items, use demo trade flow (can't create real DB entries)
-    if (item.isMatch && isMockItem) {
-      navigate('/messages', { 
-        state: { 
-          demoTrade: true,
-          demoData: {
-            theirItem: {
-              name: item.name,
-              image: item.image_url,
-              image_url: item.image_url,
-              image_urls: [item.image_url],
-              description: item.description || 'Item available for trade',
-              category: item.category,
-              condition: item.condition,
-              price_range_min: item.price_range_min,
-              price_range_max: item.price_range_max
-            },
-            myItem: {
-              name: item.myItemName,
-              image: item.myItemImage,
-              image_url: item.myItemImage,
-              image_urls: [item.myItemImage],
-              description: 'Your item for trade',
-              category: 'Your Items',
-              condition: 'Good'
-            },
-            partnerProfile: {
-              id: item.user_id,
-              username: 'Local Trader',
-              avatar_url: null,
-              created_at: '2024-01-15T10:30:00Z'
-            }
-          }
-        } 
-      });
-      return;
-    }
-    
-    // For real matched items, create a real trade conversation
+    // For matched items, create a real trade conversation
     if (item.isMatch && item.myItemId) {
       try {
         // Check if a conversation already exists
