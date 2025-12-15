@@ -9,6 +9,7 @@ import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { createTradeConversation, sendTradeMessage } from '@/services/tradeService';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 interface MatchedItemInfo {
   id: string;
   name: string;
@@ -136,6 +137,7 @@ const Likes = () => {
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [preSelectedItemId, setPreSelectedItemId] = useState<string | undefined>(undefined);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   useEffect(() => {
     if (user) {
@@ -259,6 +261,8 @@ const Likes = () => {
           item: itemData
         };
       }).filter(item => {
+        // Filter out items that are in active trades
+        if (itemsInActiveTrades.has(item.item_id)) return false;
         const keep = item.item && item.item.status !== 'removed';
         console.log('[Likes] Filter result:', { item_id: item.item_id, hasItem: !!item.item, keep });
         return keep;
