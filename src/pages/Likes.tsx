@@ -195,56 +195,62 @@ const Likes = () => {
             </div>) : (/* Items Grid */
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {likedItems.map((likedItem, index) => (
-                <div 
-                  key={likedItem.id} 
-                  className="group bg-card rounded-xl border border-border overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer"
+                <div
+                  key={likedItem.id}
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-72 sm:h-80"
                   onClick={() => handleItemClick(likedItem, index)}
                 >
-                  <div className="relative aspect-square">
-                    <img 
-                      src={likedItem.item.image_url || likedItem.item.image_urls?.[0] || '/placeholder.svg'} 
-                      alt={likedItem.item.name} 
-                      className="w-full h-full object-cover" 
+                  {/* Image */}
+                  <div className="flex-1 relative overflow-hidden">
+                    <img
+                      src={likedItem.item.image_url || likedItem.item.image_urls?.[0] || '/placeholder.svg'}
+                      alt={likedItem.item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    {/* Action buttons - trade only shows on hover */}
-                    <div className="absolute top-2 right-2 flex gap-1.5">
-                      <button 
-                        className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100" 
-                        onClick={e => handleTradeClick(e, likedItem)} 
-                        title="Suggest a Trade"
-                      >
-                        <Repeat className="w-4 h-4 text-white" />
-                      </button>
-                    </div>
-                    {/* Heart always visible since all items are liked */}
-                    <div 
-                      className="absolute bottom-2 right-2 bg-white/90 rounded-full p-1.5 shadow-md cursor-pointer hover:bg-white transition-all"
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleUnlike(likedItem.item_id);
-                      }}
-                    >
-                      <Heart className="h-4 w-4 text-red-500" fill="red" />
-                    </div>
                   </div>
-                  <div className="p-3">
-                    <h3 className="font-medium text-sm truncate text-foreground" title={likedItem.item.name}>
-                      {likedItem.item.name}
-                    </h3>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-xs text-muted-foreground">
+
+                  {/* Content */}
+                  <div className="p-3 h-20 flex flex-col justify-center">
+                    <h3 className="font-semibold text-sm truncate">{likedItem.item.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground">
                         {likedItem.item.price_range_min && likedItem.item.price_range_max 
                           ? `$${likedItem.item.price_range_min} - $${likedItem.item.price_range_max}` 
                           : likedItem.item.price_range_min 
                             ? `$${likedItem.item.price_range_min}+` 
                             : ''}
-                      </p>
+                      </span>
                       {likedItem.item.condition && (
-                        <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full text-muted-foreground">
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
                           {likedItem.item.condition}
                         </span>
                       )}
                     </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    {/* Trade button - hover only */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={e => handleTradeClick(e, likedItem)}
+                        className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                        aria-label="Suggest trade"
+                      >
+                        <Repeat className="w-4 h-4 text-green-500" />
+                      </button>
+                    </div>
+                    {/* Heart button - always visible since all items are liked */}
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleUnlike(likedItem.item_id);
+                      }}
+                      className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                      aria-label="Unlike"
+                    >
+                      <Heart className="w-4 h-4 text-red-500" fill="red" />
+                    </button>
                   </div>
                 </div>
               ))}
