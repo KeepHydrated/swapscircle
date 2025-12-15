@@ -229,7 +229,7 @@ const handleNextTheirItem = () => {
           queryClient.invalidateQueries({ queryKey: ['trade-conversations'] });
           // Proactively refresh notifications in case realtime misses
           window.dispatchEvent(new Event('notificationsRefresh'));
-          toast.success('Trade completed! Both parties have accepted.');
+          // Toast removed per user preference
         } catch (error) {
           console.error('Error completing trade:', error);
           toast.error('Trade accepted but failed to mark as completed.');
