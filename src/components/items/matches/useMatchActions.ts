@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MatchItem } from '@/types/item';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -34,135 +34,101 @@ export const useMatchActions = (
   selectedItemId?: string
 ): UseMatchActionsResult => {
   const { user, supabaseConfigured } = useAuth();
-  // Key the state to selectedItemId to ensure isolation between different items
-  const stateKey = selectedItemId || 'default';
-  const [stateByItem, setStateByItem] = useState<Record<string, {
-    likedItems: Record<string, boolean>;
-    removedItems: string[];
-    lastActions: { type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[];
-    isLoadingLikedStatus: boolean;
-  }>>({});
-  
-  const currentState = stateByItem[stateKey] || {
-    likedItems: {},
-    removedItems: [],
-    lastActions: [],
-    isLoadingLikedStatus: matches.length > 0 // Only set loading to true if there are actually matches to load
-  };
-
-  const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const navigate = useNavigate();
+  
+  // Simple state - like the home page MatchesSection
+  const [likedItems, setLikedItems] = useState<Record<string, boolean>>({});
+  const [removedItems, setRemovedItems] = useState<string[]>([]);
+  const [lastActions, setLastActions] = useState<{ type: 'like' | 'reject'; itemId: string; wasLiked?: boolean }[]>([]);
+  const [isLoadingLikedStatus, setIsLoadingLikedStatus] = useState(true);
+  const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
+  const [loadedForItemId, setLoadedForItemId] = useState<string | undefined>(undefined);
 
-  // Helper function to update state for current item - uses functional update to avoid stale state
-  const updateCurrentState = (
-    updater: Partial<typeof currentState> | ((prev: typeof currentState) => Partial<typeof currentState>)
-  ) => {
-    setStateByItem(prev => {
-      const prevState = prev[stateKey] || {
-        likedItems: {},
-        removedItems: [],
-        lastActions: [],
-        isLoadingLikedStatus: false
-      };
-      const updates = typeof updater === 'function' ? updater(prevState) : updater;
-      return {
-        ...prev,
-        [stateKey]: { ...prevState, ...updates }
-      };
-    });
-  };
-
-  // Track if we've already loaded status for this stateKey to avoid overwriting optimistic updates
-  const [loadedKeys, setLoadedKeys] = useState<Set<string>>(new Set());
-
-  // Load actual liked status from database for this specific matching session
-  const loadLikedStatus = async () => {
-    // If no matches, don't set loading state - just set empty state immediately
-    if (matches.length === 0) {
-      updateCurrentState({ likedItems: {}, isLoadingLikedStatus: false });
+  // Load liked status from database - only on initial load or when selectedItemId changes
+  useEffect(() => {
+    // Skip if already loaded for this item
+    if (loadedForItemId === selectedItemId) {
       return;
     }
-    
-    // Set loading state only when we have matches to process
-    updateCurrentState({ isLoadingLikedStatus: true });
-    
-    if (!user || !supabaseConfigured) {
-      const initialLikedStatus: Record<string, boolean> = {};
-      matches.forEach(match => {
-        initialLikedStatus[match.id] = false;
-      });
-      updateCurrentState({ likedItems: initialLikedStatus, isLoadingLikedStatus: false });
-      return;
-    }
-    
-    const likedStatus: Record<string, boolean> = {};
-    for (const match of matches) {
-      if (isValidUUID(match.id)) {
-        try {
-          const liked = await isItemLiked(match.id, selectedItemId);
-          likedStatus[match.id] = liked;
-        } catch (e) {
+
+    const loadLikedStatus = async () => {
+      if (matches.length === 0) {
+        setIsLoadingLikedStatus(false);
+        return;
+      }
+      
+      setIsLoadingLikedStatus(true);
+      
+      if (!user || !supabaseConfigured) {
+        const initialStatus: Record<string, boolean> = {};
+        matches.forEach(match => {
+          initialStatus[match.id] = false;
+        });
+        setLikedItems(initialStatus);
+        setIsLoadingLikedStatus(false);
+        setLoadedForItemId(selectedItemId);
+        return;
+      }
+      
+      const likedStatus: Record<string, boolean> = {};
+      for (const match of matches) {
+        if (isValidUUID(match.id)) {
+          try {
+            const liked = await isItemLiked(match.id, selectedItemId);
+            likedStatus[match.id] = liked;
+          } catch (e) {
+            likedStatus[match.id] = false;
+          }
+        } else {
           likedStatus[match.id] = false;
         }
-      } else {
-        likedStatus[match.id] = false;
       }
-    }
-    
-    updateCurrentState({ likedItems: likedStatus, isLoadingLikedStatus: false });
-  };
+      
+      setLikedItems(likedStatus);
+      setIsLoadingLikedStatus(false);
+      setLoadedForItemId(selectedItemId);
+    };
 
-  useEffect(() => {
-    // Only load liked status on initial mount for this stateKey, not on every re-render
-    // This prevents overwriting optimistic updates when user likes an item
-    if (loadedKeys.has(stateKey)) {
-      return;
-    }
-    
     loadLikedStatus();
-    setLoadedKeys(prev => new Set(prev).add(stateKey));
-    // eslint-disable-next-line
-  }, [matches.length, user, supabaseConfigured, selectedItemId, stateKey]);
+  }, [matches.length, user, supabaseConfigured, selectedItemId, loadedForItemId]);
 
-  const handleLike = async (id: string, global?: boolean) => {
-    console.log('💖 handleLike called:', { id, global, stateKey });
+  // Reset state when selectedItemId changes
+  useEffect(() => {
+    if (selectedItemId !== loadedForItemId && loadedForItemId !== undefined) {
+      setRemovedItems([]);
+      setLastActions([]);
+    }
+  }, [selectedItemId, loadedForItemId]);
+
+  const handleLike = useCallback(async (id: string, global?: boolean) => {
+    console.log('💖 handleLike called:', { id, global, currentLikedState: likedItems[id] });
     
     if (!user) {
       navigate('/auth');
       return;
     }
 
-    // Get current liked state from stateByItem directly to avoid stale closure
-    const currentLikedState = stateByItem[stateKey]?.likedItems?.[id] ?? false;
-    console.log('💖 currentLikedState:', currentLikedState, 'will toggle to:', !currentLikedState);
+    const isCurrentlyLiked = likedItems[id] ?? false;
+    const newLikedState = !isCurrentlyLiked;
+    
+    console.log('💖 Toggling from', isCurrentlyLiked, 'to', newLikedState);
 
-    // Track the action for undo using functional update
-    setStateByItem(prev => {
-      const prevState = prev[stateKey] || { likedItems: {}, removedItems: [], lastActions: [], isLoadingLikedStatus: false };
-      const wasLiked = prevState.likedItems[id] ?? false;
-      return {
-        ...prev,
-        [stateKey]: {
-          ...prevState,
-          lastActions: [{ type: 'like' as const, itemId: id, wasLiked }, ...prevState.lastActions].slice(0, 3),
-          likedItems: { ...prevState.likedItems, [id]: !wasLiked }
-        }
-      };
-    });
+    // Optimistic update - update state immediately
+    setLikedItems(prev => ({ ...prev, [id]: newLikedState }));
+    setLastActions(prev => [{ type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked }, ...prev].slice(0, 3));
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
         let result;
-        if (currentLikedState) {
+        if (isCurrentlyLiked) {
           result = await unlikeItem(id, global ? undefined : selectedItemId);
         } else {
           result = await likeItem(id, global ? undefined : selectedItemId);
         }
 
-        // Handle mutual match result - check if result is an object with match data
-        if (result && typeof result === 'object' && 'success' in result && result.success && !currentLikedState) {
+        // Handle mutual match result
+        if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-            // Refresh matches after a small delay to ensure DB is fully updated
             if (onRefreshMatches) {
               setTimeout(() => {
                 console.log('🔄 REFRESHING MATCHES after mutual match creation');
@@ -170,7 +136,6 @@ export const useMatchActions = (
               }, 1000);
             }
             
-            // Only navigate to messages if there's a confirmed mutual match
             setTimeout(() => {
               navigate('/messages', {
                 state: {
@@ -183,85 +148,50 @@ export const useMatchActions = (
         }
       } catch (error) {
         console.error('DB like/unlike error:', error);
-        // Revert optimistic update on error
-        setStateByItem(prev => {
-          const prevState = prev[stateKey] || { likedItems: {}, removedItems: [], lastActions: [], isLoadingLikedStatus: false };
-          return {
-            ...prev,
-            [stateKey]: {
-              ...prevState,
-              likedItems: { ...prevState.likedItems, [id]: currentLikedState }
-            }
-          };
-        });
+        // Revert on error
+        setLikedItems(prev => ({ ...prev, [id]: isCurrentlyLiked }));
       }
-      return;
     }
+  }, [user, likedItems, supabaseConfigured, selectedItemId, onRefreshMatches, navigate]);
 
-    // For mock/demo items - state already updated above
-  };
-
-  // Handle rejecting an item (removing it from matches)
-  const handleReject = async (id: string, global?: boolean) => {
+  const handleReject = useCallback(async (id: string, global?: boolean) => {
     if (!user) {
       navigate('/auth');
       return;
     }
 
-    // Track the action for undo using functional update
-    updateCurrentState(prev => ({
-      lastActions: [{ type: 'reject' as const, itemId: id }, ...prev.lastActions].slice(0, 3)
-    }));
-
-    // Optimistically update local state using functional update
-    updateCurrentState(prev => ({ 
-      removedItems: [...prev.removedItems, id] 
-    }));
+    // Optimistic update
+    setRemovedItems(prev => [...prev, id]);
+    setLastActions(prev => [{ type: 'reject' as const, itemId: id }, ...prev].slice(0, 3));
 
     if (supabaseConfigured && isValidUUID(id)) {
       try {
         const result = await rejectItem(id, global ? undefined : selectedItemId);
         
-        if (result) {
-          // Refresh matches to apply bidirectional filtering
-          if (onRefreshMatches) {
-            setTimeout(() => onRefreshMatches(), 500); // Small delay to ensure DB is updated
-          }
-        } else {
-          // Revert optimistic update on error using functional update
-          updateCurrentState(prev => ({ 
-            removedItems: prev.removedItems.filter(itemId => itemId !== id) 
-          }));
+        if (result && onRefreshMatches) {
+          setTimeout(() => onRefreshMatches(), 500);
+        } else if (!result) {
+          // Revert on failure
+          setRemovedItems(prev => prev.filter(itemId => itemId !== id));
         }
       } catch (error) {
         console.error('DB reject error:', error);
-        // Revert optimistic update on error using functional update
-        updateCurrentState(prev => ({ 
-          removedItems: prev.removedItems.filter(itemId => itemId !== id) 
-        }));
+        setRemovedItems(prev => prev.filter(itemId => itemId !== id));
       }
     }
-  };
+  }, [user, supabaseConfigured, selectedItemId, onRefreshMatches, navigate]);
 
-  // Handle undo last action
-  const handleUndo = async () => {
-    if (currentState.lastActions.length === 0) return;
+  const handleUndo = useCallback(async () => {
+    if (lastActions.length === 0) return;
 
-    const actionToUndo = currentState.lastActions[0]; // Get most recent action
+    const actionToUndo = lastActions[0];
 
     if (actionToUndo.type === 'like') {
-      // Undo like action - revert to previous liked state using functional update
-      updateCurrentState(prev => ({ 
-        likedItems: { ...prev.likedItems, [actionToUndo.itemId]: actionToUndo.wasLiked || false } 
-      }));
+      setLikedItems(prev => ({ ...prev, [actionToUndo.itemId]: actionToUndo.wasLiked || false }));
       toast.success('Like action undone');
     } else if (actionToUndo.type === 'reject') {
-      // Undo reject action - restore item to matches using functional update
-      updateCurrentState(prev => ({ 
-        removedItems: prev.removedItems.filter(id => id !== actionToUndo.itemId) 
-      }));
+      setRemovedItems(prev => prev.filter(id => id !== actionToUndo.itemId));
       
-      // Also undo in database if it was persisted
       if (supabaseConfigured && isValidUUID(actionToUndo.itemId)) {
         try {
           await undoRejectItem(actionToUndo.itemId, selectedItemId);
@@ -273,42 +203,38 @@ export const useMatchActions = (
       toast.success('Reject action undone');
     }
 
-    // Remove the undone action from the list using functional update
-    updateCurrentState(prev => ({ 
-      lastActions: prev.lastActions.slice(1) 
-    }));
-  };
+    setLastActions(prev => prev.slice(1));
+  }, [lastActions, supabaseConfigured, selectedItemId]);
 
-  const handleOpenModal = (id: string) => {
+  const handleOpenModal = useCallback((id: string) => {
     const match = matches.find(m => m.id === id);
     if (match) {
       setSelectedMatch(match);
     }
-  };
+  }, [matches]);
 
-  const handlePopupLikeClick = (item: MatchItem) => {
+  const handlePopupLikeClick = useCallback((item: MatchItem) => {
     handleLike(item.id);
     setSelectedMatch(null);
-  };
+  }, [handleLike]);
 
-  const handleClosePopup = () => {
+  const handleClosePopup = useCallback(() => {
     setSelectedMatch(null);
-  };
+  }, []);
 
-  const handleReport = (id: string) => {
+  const handleReport = useCallback((id: string) => {
     const match = matches.find(m => m.id === id);
     if (match) {
-      // Set a special state to trigger the report modal
       setSelectedMatch({ ...match, isReportModal: true } as any);
     }
-  };
+  }, [matches]);
 
   return {
-    likedItems: currentState.likedItems,
-    removedItems: currentState.removedItems,
+    likedItems,
+    removedItems,
     selectedMatch,
-    lastActions: currentState.lastActions,
-    isLoadingLikedStatus: currentState.isLoadingLikedStatus,
+    lastActions,
+    isLoadingLikedStatus,
     handleLike,
     handleReject,
     handleUndo,
