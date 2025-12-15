@@ -234,8 +234,6 @@ const handleNextTheirItem = () => {
           console.error('Error completing trade:', error);
           toast.error('Trade accepted but failed to mark as completed.');
         }
-      } else {
-        toast.success('Trade accepted! Waiting for the other party to accept.');
       }
     },
     onError: (error) => {
