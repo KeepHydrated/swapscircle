@@ -183,14 +183,14 @@ const Test: React.FC = () => {
     }
   }, [matches]);
 
-  const handleLike = async (id: string) => {
+  const handleLike = async (id: string, myItemId?: string) => {
     if (!user) {
       navigate('/auth');
       return;
     }
     
     const isCurrentlyLiked = likedItems.has(id);
-    console.log('[Matches] handleLike called:', { id, isCurrentlyLiked, userId: user.id });
+    console.log('[Matches] handleLike called:', { id, myItemId, isCurrentlyLiked, userId: user.id });
     
     // Optimistic update
     setLikedItems((prev) => {
@@ -220,7 +220,7 @@ const Test: React.FC = () => {
     } else {
       const { data, error } = await supabase
         .from('liked_items')
-        .insert({ user_id: user.id, item_id: id })
+        .insert({ user_id: user.id, item_id: id, my_item_id: myItemId || null })
         .select();
       
       console.log('[Matches] Like result:', { data, error });
@@ -386,7 +386,7 @@ const Test: React.FC = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleLike(match.id);
+                    handleLike(match.id, match.myItemId);
                   }}
                   className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
                     likedItems.has(match.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
