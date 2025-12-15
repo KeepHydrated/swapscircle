@@ -138,8 +138,13 @@ const Likes = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetchLikedItems();
-  }, []);
+    if (user) {
+      fetchLikedItems();
+    } else {
+      setLikedItems([]);
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchLikedItems = async () => {
     try {
