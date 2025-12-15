@@ -331,18 +331,20 @@ const Likes = () => {
     e.stopPropagation();
     if (!item.matchedItem) return;
 
-    // Check if this is a demo item (demo user IDs are not valid UUIDs)
+    // Check if this is a demo item - just redirect to auth
     const isDemoItem = item.item.user_id?.startsWith('demo-') || item.matchedItem.id?.startsWith('my-demo-');
-    if (isDemoItem) {
-      toast({ title: 'Demo Item', description: 'This is a demo item. Sign in and like real items to trade!' });
-      return;
-    }
-
+    
     setIsCreatingTrade(item.item_id);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast({ title: 'Error', description: 'Please log in to trade', variant: 'destructive' });
+        navigate('/auth');
+        return;
+      }
+
+      // For demo items, redirect to auth since user is not logged in or item is demo
+      if (isDemoItem) {
+        navigate('/auth');
         return;
       }
 
