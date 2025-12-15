@@ -190,6 +190,7 @@ const Test: React.FC = () => {
     }
     
     const isCurrentlyLiked = likedItems.has(id);
+    console.log('[Matches] handleLike called:', { id, isCurrentlyLiked, userId: user.id });
     
     // Optimistic update
     setLikedItems((prev) => {
@@ -210,16 +211,19 @@ const Test: React.FC = () => {
         .eq('user_id', user.id)
         .eq('item_id', id);
       
+      console.log('[Matches] Unlike result:', { error });
       if (error) {
         console.error('Error removing like:', error);
         // Revert on error
         setLikedItems((prev) => new Set([...prev, id]));
       }
     } else {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('liked_items')
-        .insert({ user_id: user.id, item_id: id });
+        .insert({ user_id: user.id, item_id: id })
+        .select();
       
+      console.log('[Matches] Like result:', { data, error });
       if (error) {
         console.error('Error saving like:', error);
         // Revert on error
