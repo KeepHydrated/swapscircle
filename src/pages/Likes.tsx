@@ -348,64 +348,86 @@ const Likes = () => {
       handleTradeClick(e, item);
       return;
     }
-    
-    // Check if it's a demo item - navigate to messages with test conversation
-    const isDemo = item.item.user_id.startsWith('demo-') || item.matchedItem.id.startsWith('my-demo');
-    if (isDemo) {
-      navigate('/messages', {
-        state: {
-          tradeConversationId: 'test-conversation-123',
-          newTrade: true
-        }
+
+    const myItemId = item.matchedItem.id;
+    const theirItemId = item.item.id;
+    const ownerId = item.item.user_id;
+
+    // Prevent trading with yourself
+    if (ownerId === user.id) {
+      toast({
+        title: "Cannot trade",
+        description: "You cannot trade with yourself",
+        variant: "destructive"
       });
       return;
     }
-    
-    // Create a trade conversation with the matched items
+
     try {
-      const myItemId = item.matchedItem.id;
-      const theirItemId = item.item.id;
-      const ownerId = item.item.user_id;
-      
-      // Prevent trading with yourself
-      if (ownerId === user.id) {
+      // Check if a conversation already exists
+      const { data: existing } = await supabase
+        .from('trade_conversations')
+        .select('id')
+        .eq('requester_id', user.id)
+        .eq('owner_id', ownerId)
+        .eq('owner_item_id', theirItemId)
+        .maybeSingle();
+
+      if (existing) {
+        // Navigate to existing conversation
+        navigate(`/messages?conversation=${existing.id}`);
+        return;
+      }
+
+      // Create new trade conversation
+      const { data: conversation, error } = await supabase
+        .from('trade_conversations')
+        .insert({
+          requester_id: user.id,
+          owner_id: ownerId,
+          requester_item_id: myItemId,
+          requester_item_ids: [myItemId],
+          owner_item_id: theirItemId,
+          status: 'pending'
+        })
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Error creating trade:', error);
         toast({
-          title: "Cannot trade",
-          description: "You cannot trade with yourself",
+          title: "Error",
+          description: "Failed to start trade chat",
           variant: "destructive"
         });
         return;
       }
-      
-      // Create the trade conversation
-      const conversation = await createTradeConversation(
-        user.id,
-        ownerId,
-        myItemId,
-        theirItemId
-      );
-      
-      if (conversation) {
-        const myItemName = item.matchedItem.name;
-        const theirItemName = item.item.name;
-        
-        await sendTradeMessage(
-          conversation.id,
-          `Hi! I'd like to trade my ${myItemName} for your ${theirItemName}. Let me know if you're interested!`
-        );
-        
-        navigate('/messages', {
-          state: {
-            tradeConversationId: conversation.id,
-            newTrade: true
-          }
+
+      // Send initial trade message
+      const myItemName = item.matchedItem.name;
+      const theirItemName = item.item.name;
+      const message = `Hi! I'd like to trade my ${myItemName} for your ${theirItemName}. Let me know if you're interested!`;
+
+      await supabase
+        .from('trade_messages')
+        .insert({
+          conversation_id: conversation.id,
+          sender_id: user.id,
+          message: message
         });
-      }
+
+      // Navigate to messages with the new conversation
+      navigate('/messages', { 
+        state: { 
+          tradeConversationId: conversation.id, 
+          newTrade: true 
+        } 
+      });
     } catch (error) {
-      console.error('Error creating trade:', error);
+      console.error('Error requesting trade:', error);
       toast({
         title: "Error",
-        description: "Failed to create trade conversation",
+        description: "Failed to start trade chat",
         variant: "destructive"
       });
     }
