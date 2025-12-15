@@ -72,6 +72,9 @@ export const useMatchActions = (
     });
   };
 
+  // Track if we've already loaded status for this stateKey to avoid overwriting optimistic updates
+  const [loadedKeys, setLoadedKeys] = useState<Set<string>>(new Set());
+
   // Load actual liked status from database for this specific matching session
   const loadLikedStatus = async () => {
     // If no matches, don't set loading state - just set empty state immediately
@@ -110,9 +113,16 @@ export const useMatchActions = (
   };
 
   useEffect(() => {
+    // Only load liked status on initial mount for this stateKey, not on every re-render
+    // This prevents overwriting optimistic updates when user likes an item
+    if (loadedKeys.has(stateKey)) {
+      return;
+    }
+    
     loadLikedStatus();
+    setLoadedKeys(prev => new Set(prev).add(stateKey));
     // eslint-disable-next-line
-  }, [matches, user, supabaseConfigured, selectedItemId, stateKey]);
+  }, [matches.length, user, supabaseConfigured, selectedItemId, stateKey]);
 
   const handleLike = async (id: string, global?: boolean) => {
     if (!user) {
