@@ -315,13 +315,13 @@ const Test: React.FC = () => {
               </div>
 
               {/* Action buttons */}
-              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-3 right-3 flex gap-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRequestTrade(match);
                   }}
-                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity"
                   aria-label="Suggest trade"
                 >
                   <Check className="w-4 h-4 text-green-500" />
@@ -331,7 +331,9 @@ const Test: React.FC = () => {
                     e.stopPropagation();
                     handleLike(match.id);
                   }}
-                  className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                  className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-opacity ${
+                    likedItems.has(match.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  }`}
                   aria-label={likedItems.has(match.id) ? "Unlike" : "Like"}
                 >
                   <Heart 
