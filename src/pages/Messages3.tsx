@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { likeItem, unlikeItem, fetchItemsWhoLikedMyItem } from '@/services/authService';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import SupportChat from '@/components/chat/SupportChat';
+
 import { useFirstTimeSwipes } from '@/hooks/useFirstTimeSwipes';
 
 const Messages3: React.FC = () => {
@@ -363,7 +363,6 @@ const Messages3: React.FC = () => {
         currentIndex={currentItemIndex}
         totalItems={displayedItems.length}
       />
-      <SupportChat />
     </div>
   );
 };
