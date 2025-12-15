@@ -133,7 +133,7 @@ const Likes = () => {
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
+  
 
   useEffect(() => {
     fetchLikedItems();
@@ -322,78 +322,12 @@ const Likes = () => {
       id: item.item.id,
       name: item.item.name,
       image: item.item.image_url || item.item.image_urls?.[0] || '',
-      user_id: item.item.user_id
+      user_id: item.item.user_id,
+      priceRangeMin: item.item.price_range_min,
+      priceRangeMax: item.item.price_range_max,
+      condition: item.item.condition
     } as Item);
     setIsTradeModalOpen(true);
-  };
-
-  const handleQuickTrade = async (e: React.MouseEvent, item: LikedItemWithMatch) => {
-    e.stopPropagation();
-    if (!item.matchedItem) return;
-
-    // Check if this is a demo item - just redirect to auth
-    const isDemoItem = item.item.user_id?.startsWith('demo-') || item.matchedItem.id?.startsWith('my-demo-');
-    
-    setIsCreatingTrade(item.item_id);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate('/auth');
-        return;
-      }
-
-      // For demo items, redirect to auth since user is not logged in or item is demo
-      if (isDemoItem) {
-        navigate('/auth');
-        return;
-      }
-
-      // Check for existing trade conversation
-      const { data: existingConvo } = await supabase
-        .from('trade_conversations')
-        .select('id')
-        .eq('requester_id', user.id)
-        .eq('owner_id', item.item.user_id)
-        .eq('owner_item_id', item.item.id)
-        .maybeSingle();
-
-      if (existingConvo) {
-        navigate('/messages', { state: { tradeConversationId: existingConvo.id } });
-        return;
-      }
-
-      // Create new trade conversation
-      const { data: newConvo, error: convoError } = await supabase
-        .from('trade_conversations')
-        .insert({
-          requester_id: user.id,
-          owner_id: item.item.user_id,
-          requester_item_id: item.matchedItem.id,
-          requester_item_ids: [item.matchedItem.id],
-          owner_item_id: item.item.id,
-          status: 'pending'
-        })
-        .select('id')
-        .single();
-
-      if (convoError) throw convoError;
-
-      // Send initial trade message
-      const message = `Hi! I'd like to trade my ${item.matchedItem.name} for your ${item.item.name}. Let me know if you're interested!`;
-      
-      await supabase.from('trade_messages').insert({
-        conversation_id: newConvo.id,
-        sender_id: user.id,
-        message: message
-      });
-
-      navigate('/messages', { state: { tradeConversationId: newConvo.id, newTrade: true } });
-    } catch (error) {
-      console.error('Error creating trade:', error);
-      toast({ title: 'Error', description: 'Failed to create trade request', variant: 'destructive' });
-    } finally {
-      setIsCreatingTrade(null);
-    }
   };
 
   return (
@@ -472,24 +406,17 @@ const Likes = () => {
                   <div className="absolute top-3 right-3 flex gap-2">
                     {/* Trade button - hover only */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      {likedItem.matchedItem ? (
-                        <button
-                          onClick={(e) => handleQuickTrade(e, likedItem)}
-                          disabled={isCreatingTrade === likedItem.item_id}
-                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                          aria-label="Accept trade"
-                        >
-                          <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === likedItem.item_id ? 'animate-spin' : ''}`} />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={(e) => handleTradeClick(e, likedItem)}
-                          className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                          aria-label="Suggest trade"
-                        >
+                      <button
+                        onClick={(e) => handleTradeClick(e, likedItem)}
+                        className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
+                        aria-label="Suggest trade"
+                      >
+                        {likedItem.matchedItem ? (
+                          <Check className="w-4 h-4 text-green-500" />
+                        ) : (
                           <Repeat className="w-4 h-4 text-green-500" />
-                        </button>
-                      )}
+                        )}
+                      </button>
                     </div>
                     {/* Heart button - always visible since all items are liked */}
                     <button
