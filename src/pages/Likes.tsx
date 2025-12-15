@@ -193,37 +193,61 @@ const Likes = () => {
                 Items you like will appear here. Start exploring to find items you love!
               </p>
             </div>) : (/* Items Grid */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {likedItems.map((likedItem, index) => <div key={likedItem.id} className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all cursor-pointer" onClick={() => handleItemClick(likedItem, index)}>
-                  <div className="relative aspect-[4/3]">
-                    <img src={likedItem.item.image_url || likedItem.item.image_urls?.[0] || '/placeholder.svg'} alt={likedItem.item.name} className="w-full h-full object-cover" />
-                    {/* Action buttons */}
-                    <div className="absolute top-2 right-2 flex gap-2">
-                      {/* Suggest Trade button */}
-                      <button className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" onClick={e => handleTradeClick(e, likedItem)} title="Suggest a Trade">
-                        <Repeat className="w-5 h-5 text-white" />
-                      </button>
-                      {/* Unlike button */}
-                      <button className="w-10 h-10 bg-white hover:bg-gray-100 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" onClick={e => {
-                  e.stopPropagation();
-                  handleUnlike(likedItem.item_id);
-                }} title="Remove from likes">
-                        <Heart className="w-5 h-5 text-red-500" fill="red" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {likedItems.map((likedItem, index) => (
+                <div 
+                  key={likedItem.id} 
+                  className="group bg-card rounded-xl border border-border overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer"
+                  onClick={() => handleItemClick(likedItem, index)}
+                >
+                  <div className="relative aspect-square">
+                    <img 
+                      src={likedItem.item.image_url || likedItem.item.image_urls?.[0] || '/placeholder.svg'} 
+                      alt={likedItem.item.name} 
+                      className="w-full h-full object-cover" 
+                    />
+                    {/* Action buttons - trade only shows on hover */}
+                    <div className="absolute top-2 right-2 flex gap-1.5">
+                      <button 
+                        className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full shadow-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100" 
+                        onClick={e => handleTradeClick(e, likedItem)} 
+                        title="Suggest a Trade"
+                      >
+                        <Repeat className="w-4 h-4 text-white" />
                       </button>
                     </div>
+                    {/* Heart always visible since all items are liked */}
+                    <div 
+                      className="absolute bottom-2 right-2 bg-white/90 rounded-full p-1.5 shadow-md cursor-pointer hover:bg-white transition-all"
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleUnlike(likedItem.item_id);
+                      }}
+                    >
+                      <Heart className="h-4 w-4 text-red-500" fill="red" />
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-base font-semibold text-foreground mb-1">{likedItem.item.name}</h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        {likedItem.item.price_range_min && likedItem.item.price_range_max ? `$${likedItem.item.price_range_min} - $${likedItem.item.price_range_max}` : likedItem.item.price_range_min ? `$${likedItem.item.price_range_min}+` : 'Price not set'}
+                  <div className="p-3">
+                    <h3 className="font-medium text-sm truncate text-foreground" title={likedItem.item.name}>
+                      {likedItem.item.name}
+                    </h3>
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-xs text-muted-foreground">
+                        {likedItem.item.price_range_min && likedItem.item.price_range_max 
+                          ? `$${likedItem.item.price_range_min} - $${likedItem.item.price_range_max}` 
+                          : likedItem.item.price_range_min 
+                            ? `$${likedItem.item.price_range_min}+` 
+                            : ''}
                       </p>
-                      {likedItem.item.condition && <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                      {likedItem.item.condition && (
+                        <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full text-muted-foreground">
                           {likedItem.item.condition}
-                        </span>}
+                        </span>
+                      )}
                     </div>
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>)}
         </div>
       </div>
