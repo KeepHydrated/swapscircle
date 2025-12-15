@@ -173,51 +173,50 @@ const Header = () => {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={-8} className="w-56 bg-white z-[10000]">
+                  <DropdownMenuContent align="end" sideOffset={8} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex w-full cursor-pointer items-center">
-                        <span>Profile</span>
+                        Profile
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/trades" className="flex w-full cursor-pointer items-center">
-                        <span>Trades</span>
+                        Trades
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/likes" className="flex w-full cursor-pointer items-center">
-                        <span>Likes</span>
+                        Likes
                       </Link>
                     </DropdownMenuItem>
-                     <DropdownMenuItem asChild>
-                        <Link to="/settings" className="flex w-full cursor-pointer items-center">
-                          <span>Settings</span>
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings" className="flex w-full cursor-pointer items-center">
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
+                        Contact Support
+                      </Link>
+                    </DropdownMenuItem>
+                    {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
+                          Admin Reports
                         </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                        <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
-                          <Headphones className="mr-2 h-4 w-4" />
-                          <span>Contact Support</span>
-                        </Link>
-                        </DropdownMenuItem>
-                        {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
-                        <DropdownMenuItem asChild>
-                          <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
-                            <Flag className="mr-2 h-4 w-4" />
-                            <span>Admin Reports</span>
-                          </Link>
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator />
-                     {supabaseConfigured && (
+                      </DropdownMenuItem>
+                    )}
+                    {supabaseConfigured && (
+                      <>
+                        <DropdownMenuSeparator className="bg-border" />
                         <DropdownMenuItem 
-                          className="flex cursor-pointer items-center text-red-500 focus:text-red-500"
+                          className="flex cursor-pointer items-center text-destructive focus:text-destructive focus:bg-destructive/10"
                           onClick={handleLogout}
                         >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          <span>Log Out</span>
+                          Log Out
                         </DropdownMenuItem>
-                      )}
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               )
