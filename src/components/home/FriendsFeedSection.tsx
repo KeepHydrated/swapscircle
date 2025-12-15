@@ -117,7 +117,7 @@ const FriendsFeedSection: React.FC = () => {
     };
 
     fetchFriendItems();
-  }, []);
+  }, [itemsInActiveTrades]);
 
   const handleItemClick = (item: FriendItem, index: number) => {
     const mappedItem: Item = {
