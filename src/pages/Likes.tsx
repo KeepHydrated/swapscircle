@@ -341,14 +341,10 @@ const Likes = () => {
       return;
     }
     
-    // Check if it's a demo item - for demos, just show feedback (can't actually trade)
+    // Check if it's a demo item - navigate to messages like on matches page
     const isDemo = item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo');
     if (isDemo) {
-      // Demo items can't actually trade, just provide feedback
-      toast({
-        title: "Demo Item",
-        description: "Sign in and match with real items to trade!"
-      });
+      navigate('/messages');
       return;
     }
     
