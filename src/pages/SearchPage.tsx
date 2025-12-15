@@ -18,6 +18,7 @@ import { Item } from '@/types/item';
 import { useDbItems } from '@/hooks/useDbItems';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 
 
 const SearchPage = () => {
@@ -50,6 +51,9 @@ const SearchPage = () => {
 
   // Fetch real items from database
   const { items: dbItems, loading: itemsLoading } = useDbItems();
+  
+  // Get items in active trades (to filter them out)
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   // Fetch friend user IDs, liked items, user items, and matches
   useEffect(() => {
@@ -317,6 +321,9 @@ const SearchPage = () => {
 
   // Filter items based on search query and filters
   const filteredResults = dbItems.filter(item => {
+    // Filter out items in active trades
+    if (itemsInActiveTrades.has(item.id)) return false;
+    
     // Filter by friends only
     if (friendsOnly) {
       if (!item.user_id || !friendUserIds.includes(item.user_id)) return false;

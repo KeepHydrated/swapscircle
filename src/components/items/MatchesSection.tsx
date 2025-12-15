@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 
 interface MatchItem {
   id: string;
@@ -40,6 +41,7 @@ const MatchesSection = () => {
   const [userItems, setUserItems] = useState<any[]>([]);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   // Fetch real items from the database
   useEffect(() => {
@@ -85,7 +87,10 @@ const MatchesSection = () => {
         }
 
         // Transform items to match format and pair with user's items
-        const transformedMatches: MatchItem[] = (itemsData || []).map((item, index) => {
+        // Filter out items that are in active trades
+        const transformedMatches: MatchItem[] = (itemsData || [])
+          .filter(item => !itemsInActiveTrades.has(item.id))
+          .map((item, index) => {
           const myItem = myItems[index % Math.max(myItems.length, 1)] || null;
           const imageUrl = item.image_url || (item.image_urls && item.image_urls[0]) || '';
           const myItemImageUrl = myItem ? (myItem.image_url || (myItem.image_urls && myItem.image_urls[0]) || '') : '';

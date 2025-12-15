@@ -4,6 +4,7 @@ import { Users, Repeat, Heart, Check } from 'lucide-react';
 import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { Item } from '@/types/item';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 
 interface FriendItem {
   id: string;
@@ -35,6 +36,7 @@ const FriendsFeedSection: React.FC = () => {
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   useEffect(() => {
     const fetchFriendItems = async () => {
@@ -94,15 +96,17 @@ const FriendsFeedSection: React.FC = () => {
           .select('id, username, avatar_url')
           .in('id', userIds);
 
-        // Combine items with profiles
-        const itemsWithProfiles = items?.map(item => ({
-          ...item,
-          profile: profiles?.find(p => p.id === item.user_id) || {
-            id: item.user_id,
-            username: 'Friend',
-            avatar_url: null
-          }
-        })) || [];
+        // Combine items with profiles and filter out items in active trades
+        const itemsWithProfiles = items
+          ?.filter(item => !itemsInActiveTrades.has(item.id))
+          .map(item => ({
+            ...item,
+            profile: profiles?.find(p => p.id === item.user_id) || {
+              id: item.user_id,
+              username: 'Friend',
+              avatar_url: null
+            }
+          })) || [];
 
         setFriendItems(itemsWithProfiles);
       } catch (error) {

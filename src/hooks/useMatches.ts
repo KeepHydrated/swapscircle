@@ -4,6 +4,7 @@ import { Item, MatchItem } from '@/types/item';
 import { findMatchingItems } from '@/services/matchingService';
 import { isItemLiked } from '@/services/authService';
 import { supabase } from '@/integrations/supabase/client';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 
 export function useMatches(selectedItem: Item | null, location: string = 'nationwide', perspectiveUserId?: string) {
   const [matches, setMatches] = useState<MatchItem[]>([]);
@@ -11,6 +12,7 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { user, supabaseConfigured } = useAuth();
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   const refreshMatches = () => {
     setMatches([]); // Clear existing matches
@@ -52,8 +54,10 @@ export function useMatches(selectedItem: Item | null, location: string = 'nation
 
       try {
         const matchingItems = await findMatchingItems(selectedItem, user.id, location, perspectiveUserId);
-        console.log('🎯 useMatches: Received matches:', matchingItems.length, matchingItems.slice(0, 3).map(m => m.name));
-        setMatches(matchingItems);
+        // Filter out items that are in active trades
+        const filteredMatches = matchingItems.filter(item => !itemsInActiveTrades.has(item.id));
+        console.log('🎯 useMatches: Received matches:', filteredMatches.length, filteredMatches.slice(0, 3).map(m => m.name));
+        setMatches(filteredMatches);
         console.log('🎯 useMatches: State updated with matches');
       } catch (e: any) {
         console.error('❌ useMatches: Error fetching matches:', e);

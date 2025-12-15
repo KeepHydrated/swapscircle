@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import ExploreItemModal from "@/components/items/ExploreItemModal";
 import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
 import { Item } from "@/types/item";
+import { useItemsInActiveTrades } from "@/hooks/useItemsInActiveTrades";
 
 interface TradeItem {
   id: string;
@@ -39,6 +40,7 @@ const RecommendedLocalTradesSection = () => {
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   useEffect(() => {
     fetchLocalTrades();
@@ -130,7 +132,9 @@ const RecommendedLocalTradesSection = () => {
               .not('id', 'in', `(${matchedItems.map(i => i.id).join(',')})`)
               .limit(6);
 
-            setItems([...matchedItems, ...(regularItems || [])]);
+            // Filter out items in active trades
+            const allItems = [...matchedItems, ...(regularItems || [])].filter(item => !itemsInActiveTrades.has(item.id));
+            setItems(allItems);
             setLoading(false);
             return;
           }
@@ -146,7 +150,9 @@ const RecommendedLocalTradesSection = () => {
         .limit(8);
 
       if (error) throw error;
-      setItems(data || []);
+      // Filter out items in active trades
+      const filteredData = (data || []).filter(item => !itemsInActiveTrades.has(item.id));
+      setItems(filteredData);
     } catch (error) {
       console.error("Error fetching local trades:", error);
       setItems([]);

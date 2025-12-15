@@ -30,6 +30,7 @@ import { blockingService } from '@/services/blockingService';
 import { ReportItemModal } from '@/components/items/ReportItemModal';
 import { ReportModal } from '@/components/profile/ReportModal';
 import { rejectItem, getUserRejectedItems } from '@/services/rejectionService';
+import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
 
 const OtherPersonProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -45,13 +46,16 @@ const OtherPersonProfile: React.FC = () => {
   const [isLoading, setIsLoading] = useState(!!userId); // Only show loading if we have a userId to fetch
   const [userItems, setUserItems] = useState<any[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
+  const { itemsInActiveTrades } = useItemsInActiveTrades();
   
-  // Convert items to MatchItems and add liked property
-  const itemsAsMatchItems: MatchItem[] = userItems.map(item => ({
-    ...item, 
-    image: (Array.isArray(item.image_urls) && item.image_urls.length > 0 ? item.image_urls[0] : (item.image_url || item.image)), // Prefer first image_url from array, then single url, then legacy image
-    liked: false
-  }));
+  // Convert items to MatchItems and add liked property, filtering out items in active trades
+  const itemsAsMatchItems: MatchItem[] = userItems
+    .filter(item => !itemsInActiveTrades.has(item.id))
+    .map(item => ({
+      ...item, 
+      image: (Array.isArray(item.image_urls) && item.image_urls.length > 0 ? item.image_urls[0] : (item.image_url || item.image)), // Prefer first image_url from array, then single url, then legacy image
+      liked: false
+    }));
   
   // Fetch profile data if userId is provided
   useEffect(() => {
