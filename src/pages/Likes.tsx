@@ -7,8 +7,8 @@ import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { likeItem } from '@/services/authService';
 import { useAuth } from '@/context/AuthContext';
+import { createTradeConversation, sendTradeMessage } from '@/services/tradeService';
 interface MatchedItemInfo {
   id: string;
   name: string;
@@ -348,25 +348,46 @@ const Likes = () => {
       return;
     }
     
-    // Use the same likeItem flow as matches page - this will trigger mutual match creation
+    // Create a trade conversation with the matched items
     try {
-      const result = await likeItem(item.item.id, item.matchedItem?.id);
+      // My item is the matchedItem, their item is item.item
+      const myItemId = item.matchedItem!.id;
+      const theirItemId = item.item.id;
+      const ownerId = item.item.user_id;
       
-      // Handle mutual match result - navigate to messages
-      if (result && typeof result === 'object' && 'success' in result && result.success) {
-        if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
-          setTimeout(() => {
-            navigate('/messages', {
-              state: {
-                newMatch: true,
-                matchData: result.matchData,
-              },
-            });
-          }, 500);
-        }
+      // Create the trade conversation
+      const conversation = await createTradeConversation(
+        user.id,       // requester (me)
+        ownerId,       // owner (them)
+        myItemId,      // my item
+        theirItemId    // their item
+      );
+      
+      if (conversation) {
+        // Get item names for the message
+        const myItemName = item.matchedItem!.name;
+        const theirItemName = item.item.name;
+        
+        // Send initial trade message
+        await sendTradeMessage(
+          conversation.id,
+          `Hi! I'd like to trade my ${myItemName} for your ${theirItemName}. Let me know if you're interested!`
+        );
+        
+        // Navigate to messages with the new conversation
+        navigate('/messages', {
+          state: {
+            conversationId: conversation.id
+          }
+        });
       }
     } catch (error) {
       console.error('Error creating trade:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create trade conversation",
+        variant: "destructive"
+      });
     }
   };
 
