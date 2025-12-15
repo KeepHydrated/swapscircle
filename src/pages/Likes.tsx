@@ -148,9 +148,11 @@ const Likes = () => {
 
   const fetchLikedItems = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        // Show empty list for non-logged in users
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      console.log('[Likes] fetchLikedItems called, authUser:', authUser?.id);
+      
+      if (!authUser) {
+        console.log('[Likes] No auth user, setting empty');
         setLikedItems([]);
         setLoading(false);
         return;
@@ -160,13 +162,16 @@ const Likes = () => {
       const { data: likedData, error: likedError } = await supabase
         .from('liked_items')
         .select('id, item_id, created_at')
-        .eq('user_id', user.id)
+        .eq('user_id', authUser.id)
         .order('created_at', { ascending: false });
+
+      console.log('[Likes] liked_items query result:', { likedData, likedError, count: likedData?.length });
 
       if (likedError) throw likedError;
       
       // If no real liked items, show empty list
       if (!likedData || likedData.length === 0) {
+        console.log('[Likes] No liked items found');
         setLikedItems([]);
         setLoading(false);
         return;
@@ -174,10 +179,14 @@ const Likes = () => {
 
       // Fetch the actual items
       const itemIds = likedData.map(l => l.item_id);
+      console.log('[Likes] Fetching items with IDs:', itemIds);
+      
       const { data: itemsData, error: itemsError } = await supabase
         .from('items')
         .select('id, name, image_url, image_urls, description, category, condition, price_range_min, price_range_max, user_id, status')
         .in('id', itemIds);
+      
+      console.log('[Likes] items query result:', { itemsData, itemsError, count: itemsData?.length });
 
       if (itemsError) throw itemsError;
 
@@ -185,12 +194,12 @@ const Likes = () => {
       const { data: matchesData } = await supabase
         .from('mutual_matches')
         .select('*')
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+        .or(`user1_id.eq.${authUser.id},user2_id.eq.${authUser.id}`);
 
       // Create a map of other user's item -> my item for matches
       const matchMap = new Map<string, string>();
       matchesData?.forEach(match => {
-        if (match.user1_id === user.id) {
+        if (match.user1_id === authUser.id) {
           matchMap.set(match.user2_item_id, match.user1_item_id);
         } else {
           matchMap.set(match.user1_item_id, match.user2_item_id);
