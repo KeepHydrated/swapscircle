@@ -711,7 +711,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           </div>
           
           {/* Details */}
-          <div className="flex-1 flex flex-col px-4 pt-8 pb-5 md:px-8 md:py-7 justify-start md:overflow-y-auto">
+          <div className="flex-1 flex flex-col px-4 pt-12 pb-5 md:px-8 md:py-7 justify-start md:overflow-y-auto">
             {loading ? (
               <div className="flex justify-center items-center h-full">
                 <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
