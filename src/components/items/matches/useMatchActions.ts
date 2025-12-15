@@ -53,12 +53,20 @@ export const useMatchActions = (
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const navigate = useNavigate();
 
-  // Helper function to update state for current item
+  // Helper function to update state for current item - uses functional update to avoid stale state
   const updateCurrentState = (updates: Partial<typeof currentState>) => {
-    setStateByItem(prev => ({
-      ...prev,
-      [stateKey]: { ...currentState, ...updates }
-    }));
+    setStateByItem(prev => {
+      const prevState = prev[stateKey] || {
+        likedItems: {},
+        removedItems: [],
+        lastActions: [],
+        isLoadingLikedStatus: false
+      };
+      return {
+        ...prev,
+        [stateKey]: { ...prevState, ...updates }
+      };
+    });
   };
 
   // Load actual liked status from database for this specific matching session
