@@ -577,7 +577,7 @@ const handleNextTheirItem = () => {
                   disabled={acceptTradeMutation.isPending}
                 >
                   <Check className="w-4 h-4 mr-1" />
-                  {acceptTradeMutation.isPending ? 'Confirming...' : 'Confirm'}
+                  {acceptTradeMutation.isPending ? 'Finalizing...' : 'Finalize'}
                 </Button>
               </div>
             </div>
