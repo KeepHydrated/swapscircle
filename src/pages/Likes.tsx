@@ -355,6 +355,16 @@ const Likes = () => {
       const theirItemId = item.item.id;
       const ownerId = item.item.user_id;
       
+      // Prevent trading with yourself
+      if (ownerId === user.id) {
+        toast({
+          title: "Cannot trade",
+          description: "You cannot trade with yourself",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       // Create the trade conversation
       const conversation = await createTradeConversation(
         user.id,       // requester (me)

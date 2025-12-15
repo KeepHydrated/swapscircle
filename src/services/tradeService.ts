@@ -488,6 +488,12 @@ export const createTradeConversation = async (
   ownerItemId: string
 ): Promise<TradeConversation | null> => {
   try {
+    // Prevent trading with yourself
+    if (requesterId === ownerId) {
+      console.error('Cannot create trade conversation with yourself');
+      return null;
+    }
+    
     // Check if conversation already exists
     const { data: existingConversation } = await supabase
       .from('trade_conversations')
