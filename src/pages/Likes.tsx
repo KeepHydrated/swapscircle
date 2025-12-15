@@ -128,7 +128,7 @@ const demoMatchedItems: LikedItemWithMatch[] = [
 const Likes = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [likedItems, setLikedItems] = useState<LikedItemWithMatch[]>(demoMatchedItems);
+  const [likedItems, setLikedItems] = useState<LikedItemWithMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -145,8 +145,8 @@ const Likes = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        // Show demo items for non-logged in users
-        setLikedItems(demoMatchedItems);
+        // Show empty list for non-logged in users
+        setLikedItems([]);
         setLoading(false);
         return;
       }
@@ -160,9 +160,9 @@ const Likes = () => {
 
       if (likedError) throw likedError;
       
-      // If no real liked items, just show demo items
+      // If no real liked items, show empty list
       if (!likedData || likedData.length === 0) {
-        setLikedItems(demoMatchedItems);
+        setLikedItems([]);
         setLoading(false);
         return;
       }
@@ -226,12 +226,12 @@ const Likes = () => {
         };
       }).filter(item => item.item && item.item.status !== 'removed') as LikedItemWithMatch[];
 
-      // Combine real items with demo items for display
-      setLikedItems([...mergedItems, ...demoMatchedItems]);
+      // Only show real items
+      setLikedItems(mergedItems);
     } catch (error) {
       console.error('Error fetching liked items:', error);
-      // Show demo items on error
-      setLikedItems(demoMatchedItems);
+      // Show empty list on error
+      setLikedItems([]);
     } finally {
       setLoading(false);
     }
