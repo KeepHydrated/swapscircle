@@ -91,10 +91,6 @@ const HiddenItemsSettings: React.FC = () => {
       }
 
       setHiddenItems(prev => prev.filter(item => item.id !== rejectionId));
-      toast({
-        title: "Item unhidden",
-        description: `"${itemName}" will now appear in your matches again.`,
-      });
     } catch (error) {
       console.error('Error unhiding item:', error);
     } finally {
