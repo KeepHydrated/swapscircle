@@ -331,6 +331,13 @@ const Likes = () => {
     e.stopPropagation();
     if (!item.matchedItem) return;
 
+    // Check if this is a demo item (demo user IDs are not valid UUIDs)
+    const isDemoItem = item.item.user_id?.startsWith('demo-') || item.matchedItem.id?.startsWith('my-demo-');
+    if (isDemoItem) {
+      toast({ title: 'Demo Item', description: 'This is a demo item. Sign in and like real items to trade!' });
+      return;
+    }
+
     setIsCreatingTrade(item.item_id);
     try {
       const { data: { user } } = await supabase.auth.getUser();
