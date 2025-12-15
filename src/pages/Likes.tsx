@@ -331,7 +331,7 @@ const Likes = () => {
     setIsTradeModalOpen(true);
   };
 
-  // Handle checkmark click for matched items - same as matches page
+  // Handle checkmark click for matched items - directly initiate trade with matched item
   const handleMatchedTradeClick = async (e: React.MouseEvent, item: LikedItemWithMatch) => {
     e.stopPropagation();
     
@@ -341,20 +341,14 @@ const Likes = () => {
       return;
     }
     
-    // Check if it's a demo item - for demos, just open the trade modal instead
+    // Check if it's a demo item - for demos, just show feedback (can't actually trade)
     const isDemo = item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo');
     if (isDemo) {
-      // For demo items, just open trade modal like non-matched items
-      setTradeTargetItem({
-        id: item.item.id,
-        name: item.item.name,
-        image: item.item.image_url || item.item.image_urls?.[0] || '',
-        user_id: item.item.user_id,
-        priceRangeMin: item.item.price_range_min,
-        priceRangeMax: item.item.price_range_max,
-        condition: item.item.condition
-      } as Item);
-      setIsTradeModalOpen(true);
+      // Demo items can't actually trade, just provide feedback
+      toast({
+        title: "Demo Item",
+        description: "Sign in and match with real items to trade!"
+      });
       return;
     }
     
