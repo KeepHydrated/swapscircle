@@ -150,6 +150,41 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const handleQuickTrade = async () => {
     if (!matchedItemId || !fullItem?.user_id || creatingTrade) return;
     
+    // Check if this is a demo/mock item (non-UUID IDs)
+    const isMockItem = 
+      (fullItem.id && (fullItem.id.startsWith('local-match-') || fullItem.id.startsWith('demo-'))) ||
+      (fullItem.user_id && fullItem.user_id.startsWith('demo-')) ||
+      (matchedItemId && (matchedItemId.startsWith('my-local-') || matchedItemId.startsWith('demo-')));
+    
+    if (isMockItem) {
+      // Use demo trade flow for mock items
+      onClose();
+      navigate('/messages', { 
+        state: { 
+          demoTrade: true,
+          theirItem: {
+            id: fullItem.id || item?.id,
+            name: fullItem.name || item?.name,
+            image: fullItem.image_url || fullItem.image || item?.image,
+            category: fullItem.category || item?.category,
+            condition: fullItem.condition || item?.condition,
+            price_range_min: fullItem.price_range_min,
+            price_range_max: fullItem.price_range_max,
+          },
+          myItem: {
+            id: matchedItemId,
+            name: (fullItem as any)?.myItemName || 'Your Item',
+            image: (fullItem as any)?.myItemImage || '',
+          },
+          partnerProfile: {
+            username: 'Demo User',
+            avatar_url: '',
+          }
+        }
+      });
+      return;
+    }
+    
     setCreatingTrade(true);
     try {
       const { data: session } = await supabase.auth.getSession();
