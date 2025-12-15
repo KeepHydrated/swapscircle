@@ -7,7 +7,8 @@ import ExploreItemModal from '@/components/items/ExploreItemModal';
 import TradeItemSelectionModal from '@/components/trade/TradeItemSelectionModal';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-
+import { likeItem } from '@/services/authService';
+import { useAuth } from '@/context/AuthContext';
 interface MatchedItemInfo {
   id: string;
   name: string;
@@ -126,6 +127,7 @@ const demoMatchedItems: LikedItemWithMatch[] = [
 
 const Likes = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [likedItems, setLikedItems] = useState<LikedItemWithMatch[]>(demoMatchedItems);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -133,7 +135,6 @@ const Likes = () => {
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
 
   useEffect(() => {
     fetchLikedItems();
@@ -330,6 +331,44 @@ const Likes = () => {
     setIsTradeModalOpen(true);
   };
 
+  // Handle checkmark click for matched items - same as matches page
+  const handleMatchedTradeClick = async (e: React.MouseEvent, item: LikedItemWithMatch) => {
+    e.stopPropagation();
+    
+    // Check if user is logged in
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
+    // Check if it's a demo item
+    if (item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo')) {
+      navigate('/auth');
+      return;
+    }
+    
+    // Use the same likeItem flow as matches page - this will trigger mutual match creation
+    try {
+      const result = await likeItem(item.item.id, item.matchedItem?.id);
+      
+      // Handle mutual match result - navigate to messages
+      if (result && typeof result === 'object' && 'success' in result && result.success) {
+        if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
+          setTimeout(() => {
+            navigate('/messages', {
+              state: {
+                newMatch: true,
+                matchData: result.matchData,
+              },
+            });
+          }, 500);
+        }
+      }
+    } catch (error) {
+      console.error('Error creating trade:', error);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="bg-background min-h-screen">
@@ -407,9 +446,12 @@ const Likes = () => {
                     {/* Trade button - hover only */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={(e) => handleTradeClick(e, likedItem)}
+                        onClick={(e) => likedItem.matchedItem 
+                          ? handleMatchedTradeClick(e, likedItem) 
+                          : handleTradeClick(e, likedItem)
+                        }
                         className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
-                        aria-label="Suggest trade"
+                        aria-label={likedItem.matchedItem ? "Complete trade" : "Suggest trade"}
                       >
                         {likedItem.matchedItem ? (
                           <Check className="w-4 h-4 text-green-500" />
