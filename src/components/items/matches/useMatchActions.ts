@@ -125,49 +125,49 @@ export const useMatchActions = (
   }, [matches.length, user, supabaseConfigured, selectedItemId, stateKey]);
 
   const handleLike = async (id: string, global?: boolean) => {
+    console.log('💖 handleLike called:', { id, global, stateKey });
+    
     if (!user) {
       navigate('/auth');
       return;
     }
 
-    const isCurrentlyLiked = currentState.likedItems[id];
+    // Get current liked state from stateByItem directly to avoid stale closure
+    const currentLikedState = stateByItem[stateKey]?.likedItems?.[id] ?? false;
+    console.log('💖 currentLikedState:', currentLikedState, 'will toggle to:', !currentLikedState);
 
     // Track the action for undo using functional update
-    updateCurrentState(prev => ({
-      lastActions: [{ type: 'like' as const, itemId: id, wasLiked: isCurrentlyLiked }, ...prev.lastActions].slice(0, 3)
-    }));
+    setStateByItem(prev => {
+      const prevState = prev[stateKey] || { likedItems: {}, removedItems: [], lastActions: [], isLoadingLikedStatus: false };
+      const wasLiked = prevState.likedItems[id] ?? false;
+      return {
+        ...prev,
+        [stateKey]: {
+          ...prevState,
+          lastActions: [{ type: 'like' as const, itemId: id, wasLiked }, ...prevState.lastActions].slice(0, 3),
+          likedItems: { ...prevState.likedItems, [id]: !wasLiked }
+        }
+      };
+    });
 
     if (supabaseConfigured && isValidUUID(id)) {
-      // Optimistically update using functional update
-      updateCurrentState(prev => ({ 
-        likedItems: { ...prev.likedItems, [id]: !isCurrentlyLiked } 
-      }));
-
       try {
         let result;
-        if (isCurrentlyLiked) {
+        if (currentLikedState) {
           result = await unlikeItem(id, global ? undefined : selectedItemId);
         } else {
           result = await likeItem(id, global ? undefined : selectedItemId);
         }
 
-        // Keep the optimistic update - no need to reload from DB
-        
-        // Show appropriate success message
-        if (!isCurrentlyLiked) {
-          const likeMessage = global ? 'Item liked for all your items' : 'Item liked!';
-          // Don't show like message if we're about to show match message
-        }
-
         // Handle mutual match result - check if result is an object with match data
-        if (result && typeof result === 'object' && 'success' in result && result.success && !isCurrentlyLiked) {
+        if (result && typeof result === 'object' && 'success' in result && result.success && !currentLikedState) {
           if ('isMatch' in result && result.isMatch && 'matchData' in result && result.matchData) {
             // Refresh matches after a small delay to ensure DB is fully updated
             if (onRefreshMatches) {
               setTimeout(() => {
                 console.log('🔄 REFRESHING MATCHES after mutual match creation');
                 onRefreshMatches();
-              }, 1000); // Give time for DB to fully commit the mutual match
+              }, 1000);
             }
             
             // Only navigate to messages if there's a confirmed mutual match
@@ -178,23 +178,27 @@ export const useMatchActions = (
                   matchData: result.matchData,
                 },
               });
-            }, 2000); // Give user time to see the success message
+            }, 2000);
           }
         }
       } catch (error) {
         console.error('DB like/unlike error:', error);
-        // Revert optimistic update on error using functional update
-        updateCurrentState(prev => ({ 
-          likedItems: { ...prev.likedItems, [id]: isCurrentlyLiked } 
-        }));
+        // Revert optimistic update on error
+        setStateByItem(prev => {
+          const prevState = prev[stateKey] || { likedItems: {}, removedItems: [], lastActions: [], isLoadingLikedStatus: false };
+          return {
+            ...prev,
+            [stateKey]: {
+              ...prevState,
+              likedItems: { ...prevState.likedItems, [id]: currentLikedState }
+            }
+          };
+        });
       }
       return;
     }
 
-    // For mock/demo items (non-UUID): do only local toggle using functional update
-    updateCurrentState(prev => ({ 
-      likedItems: { ...prev.likedItems, [id]: !isCurrentlyLiked } 
-    }));
+    // For mock/demo items - state already updated above
   };
 
   // Handle rejecting an item (removing it from matches)
