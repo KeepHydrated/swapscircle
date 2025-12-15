@@ -134,6 +134,7 @@ const Likes = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
+  const [preSelectedItemId, setPreSelectedItemId] = useState<string | undefined>(undefined);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -331,8 +332,8 @@ const Likes = () => {
     setIsTradeModalOpen(true);
   };
 
-  // Handle checkmark click for matched items - directly initiate trade with matched item
-  const handleMatchedTradeClick = async (e: React.MouseEvent, item: LikedItemWithMatch) => {
+  // Handle checkmark click for matched items - open trade modal with pre-selected matched item
+  const handleMatchedTradeClick = (e: React.MouseEvent, item: LikedItemWithMatch) => {
     e.stopPropagation();
     
     // Check if user is logged in
@@ -341,70 +342,23 @@ const Likes = () => {
       return;
     }
     
-    // Check if it's a demo item - navigate to messages with test conversation
-    const isDemo = item.item.user_id.startsWith('demo-') || item.matchedItem?.id.startsWith('my-demo');
-    if (isDemo) {
-      navigate('/messages', {
-        state: {
-          tradeConversationId: 'test-conversation-123',
-          newTrade: true
-        }
-      });
-      return;
+    // Set target item (their item) and open trade modal with pre-selected matched item
+    setTradeTargetItem({
+      id: item.item.id,
+      name: item.item.name,
+      image: item.item.image_url || item.item.image_urls?.[0] || '',
+      user_id: item.item.user_id,
+      priceRangeMin: item.item.price_range_min,
+      priceRangeMax: item.item.price_range_max,
+      condition: item.item.condition
+    } as Item);
+    
+    // Set pre-selected item ID if there's a matched item
+    if (item.matchedItem) {
+      setPreSelectedItemId(item.matchedItem.id);
     }
     
-    // Create a trade conversation with the matched items
-    try {
-      // My item is the matchedItem, their item is item.item
-      const myItemId = item.matchedItem!.id;
-      const theirItemId = item.item.id;
-      const ownerId = item.item.user_id;
-      
-      // Prevent trading with yourself
-      if (ownerId === user.id) {
-        toast({
-          title: "Cannot trade",
-          description: "You cannot trade with yourself",
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      // Create the trade conversation
-      const conversation = await createTradeConversation(
-        user.id,       // requester (me)
-        ownerId,       // owner (them)
-        myItemId,      // my item
-        theirItemId    // their item
-      );
-      
-      if (conversation) {
-        // Get item names for the message
-        const myItemName = item.matchedItem!.name;
-        const theirItemName = item.item.name;
-        
-        // Send initial trade message
-        await sendTradeMessage(
-          conversation.id,
-          `Hi! I'd like to trade my ${myItemName} for your ${theirItemName}. Let me know if you're interested!`
-        );
-        
-        // Navigate to messages with the new conversation
-        navigate('/messages', {
-          state: {
-            tradeConversationId: conversation.id,
-            newTrade: true
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error creating trade:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create trade conversation",
-        variant: "destructive"
-      });
-    }
+    setIsTradeModalOpen(true);
   };
 
   return (
@@ -544,9 +498,11 @@ const Likes = () => {
         onClose={() => {
           setIsTradeModalOpen(false);
           setTradeTargetItem(null);
+          setPreSelectedItemId(undefined);
         }}
         targetItem={tradeTargetItem}
         targetItemOwnerId={tradeTargetItem?.user_id}
+        preSelectedItemId={preSelectedItemId}
       />
     </MainLayout>
   );
