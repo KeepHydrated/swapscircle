@@ -519,7 +519,7 @@ const Likes = () => {
                   {/* Matched item thumbnail */}
                   {likedItem.matchedItem && (
                     <div className="absolute top-3 left-3 z-10">
-                      <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
+                      <div className="w-14 h-14 rounded-full border-2 border-background shadow-lg overflow-hidden bg-background">
                         <img
                           src={likedItem.matchedItem.image_url}
                           alt="Your matched item"
