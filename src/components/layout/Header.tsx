@@ -245,7 +245,7 @@ const Header = () => {
                   variant="ghost" 
                   size="sm"
                   onClick={handleLogin}
-                  className="text-foreground font-semibold hover:bg-transparent"
+                  className="text-foreground font-medium hover:bg-transparent"
                 >
                   Log in
                 </Button>
