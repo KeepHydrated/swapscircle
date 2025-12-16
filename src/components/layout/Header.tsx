@@ -163,7 +163,7 @@ const Header = () => {
                     {user?.avatar_url ? (
                       <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                     ) : null}
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                    <AvatarFallback className="bg-gray-200 text-gray-700 text-sm font-semibold">
                       {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
                     </AvatarFallback>
                   </Avatar>
@@ -176,7 +176,7 @@ const Header = () => {
                         {user?.avatar_url ? (
                           <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                         ) : null}
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                        <AvatarFallback className="bg-gray-200 text-gray-700 text-sm font-semibold">
                           {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
                         </AvatarFallback>
                       </Avatar>
