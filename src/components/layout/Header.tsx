@@ -88,12 +88,16 @@ const Header = () => {
             )}
           </div>
 
+          {/* Mobile M button - far left */}
+          {isMobile && (
+            <Link to="/matches" className="absolute left-4">
+              <span className="text-lg font-semibold text-gray-500">M</span>
+            </Link>
+          )}
+
           {/* Mobile center icons */}
           {isMobile && (
             <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-12">
-              <Link to="/matches">
-                <span className="text-lg font-semibold text-gray-500">M</span>
-              </Link>
               <Link to="/post-item">
                 <Plus className="h-6 w-6 text-gray-500" />
               </Link>
