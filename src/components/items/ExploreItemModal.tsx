@@ -596,7 +596,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
             {/* Matched item thumbnail */}
             {matchedItemImage && (
-              <div className="absolute top-8 md:top-4 left-4 z-20">
+              <div className="absolute top-[calc(env(safe-area-inset-top)+3rem)] md:top-4 left-4 z-20">
                 <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-background">
                   <img src={matchedItemImage} alt="Your matched item" className="w-full h-full object-cover" />
                 </div>
@@ -605,7 +605,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
-              <div className="absolute top-8 md:top-4 right-4 flex gap-3 z-20">
+              <div className="absolute top-[calc(env(safe-area-inset-top)+3rem)] md:top-4 right-4 flex gap-3 z-20">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
