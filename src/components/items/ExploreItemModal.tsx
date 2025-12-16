@@ -753,7 +753,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
                 {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}
                 {userProfile && !loading ? (
-                  <div className="flex gap-3 items-center md:mt-auto mt-8 pt-6 border-t border-gray-200 bg-gray-50 p-4 pb-6 -mx-4 md:-mx-8 md:-mb-7">
+                  <div className="flex gap-3 items-center md:mt-auto mt-8 pt-6 border-t border-gray-200 bg-gray-50 p-4 pb-4 -mx-4 md:-mx-8 md:-mb-7">
                     <div
                       className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden"
                       onClick={handleProfileClick}
