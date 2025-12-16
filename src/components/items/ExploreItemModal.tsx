@@ -508,7 +508,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
           <DialogDescription>View details for this item including description and owner information</DialogDescription>
         </VisuallyHidden>
-        <div className="flex flex-col md:flex-row w-full max-h-[92vh] overflow-y-auto md:overflow-hidden md:h-[520px] bg-white rounded-2xl relative">
+        <div className="flex flex-col md:flex-row w-full h-[92vh] overflow-y-auto md:overflow-hidden md:h-[520px] bg-white rounded-2xl relative">
           
           {/* Navigation arrows positioned outside the modal on dark overlay */}
           {(onNavigatePrev || onNavigateNext) && totalItems && totalItems > 1 && (
@@ -753,7 +753,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {console.log('MODAL DEBUG: About to render profile section, userProfile:', userProfile, 'loading:', loading)}
                 {console.log('MODAL DEBUG: userProfile exists?', !!userProfile, 'loading:', loading)}
                 {userProfile && !loading ? (
-                  <div className="flex gap-3 items-center mt-4 md:mt-auto pt-4 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
+                  <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
                     <div
                       className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden"
                       onClick={handleProfileClick}
