@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const categories = [
   { 
@@ -30,16 +31,19 @@ const categories = [
 
 const RecommendedCategoriesSection: React.FC = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleCategoryClick = (categoryName: string) => {
     navigate(`/search?category=${encodeURIComponent(categoryName)}`);
   };
 
+  const displayCategories = isMobile ? categories.slice(0, 4) : categories;
+
   return (
     <div className="w-full">
       <h2 className="text-xl font-bold text-foreground mb-4">Shop By Category</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {categories.map((category) => (
+        {displayCategories.map((category) => (
           <button
             key={category.name}
             onClick={() => handleCategoryClick(category.name)}
