@@ -153,10 +153,10 @@ const Header = () => {
             {/* Profile avatar - show different UI for logged in vs logged out */}
             {user ? (
               isMobile ? (
-                <Button 
+                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="relative h-8 w-8"
+                  className="relative h-8 w-8 bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                   onClick={() => setMobileMenuOpen(true)}
                 >
                   <Avatar className="h-8 w-8">
@@ -236,7 +236,7 @@ const Header = () => {
                   variant="ghost" 
                   size="icon"
                   onClick={handleLogin}
-                  className="h-8 w-8"
+                  className="h-8 w-8 bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                 >
                   <User className="h-5 w-5 text-muted-foreground" />
                 </Button>
