@@ -3,9 +3,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
+import Header from "@/components/layout/Header";
 
 import PostItemNew from "./pages/PostItemNew";
 import EditItem from "./pages/EditItem";
@@ -29,7 +30,6 @@ import Test2 from "./pages/Test2";
 import TestPage from "./pages/TestPage";
 import Test from "./pages/Test";
 
-
 import AdminReports from "./pages/AdminReports";
 import Analytics from "./pages/Analytics";
 import CustomerSupport from "./pages/CustomerSupport";
@@ -40,115 +40,171 @@ import { usePageViewTracking } from "./hooks/usePageViewTracking";
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  usePageViewTracking();
-  
+const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Test2 />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="/auth" element={<Auth />} />
-      <Route path="/trades" element={
-        <RequireAuth>
-          <Trades />
-        </RequireAuth>
-      } />
-      <Route path="/likes" element={
-        <RequireAuth>
-          <Likes />
-        </RequireAuth>
-      } />
+      <Route
+        path="/trades"
+        element={
+          <RequireAuth>
+            <Trades />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/likes"
+        element={
+          <RequireAuth>
+            <Likes />
+          </RequireAuth>
+        }
+      />
       <Route path="/item/:itemId" element={<ItemDetails />} />
-      <Route path="/post-item" element={
-        <RequireAuth>
-          <PostItemNew />
-        </RequireAuth>
-      } />
-      <Route path="/edit-item/:itemId" element={
-        <RequireAuth>
-          <PostItemNew />
-        </RequireAuth>
-      } />
-      <Route path="/messages" element={
-        <RequireAuth>
-          <Messages />
-        </RequireAuth>
-      } />
-      <Route path="/other-person-profile" element={
-        <RequireAuth>
-          <OtherPersonProfile />
-        </RequireAuth>
-      } />
-      
-      <Route path="/notifications" element={
-        <RequireAuth>
-          <Notifications />
-        </RequireAuth>
-      } />
-      <Route path="/notifications/:id" element={
-        <RequireAuth>
-          <NotificationDetails />
-        </RequireAuth>
-      } />
-      <Route path="/profile" element={
-        <RequireAuth>
-          <UserProfile />
-        </RequireAuth>
-      } />
-      <Route path="/settings" element={
-        <RequireAuth>
-          <Settings />
-        </RequireAuth>
-       } />
-       <Route path="/admin/reports" element={
-         <RequireAuth>
-           <AdminReports />
-         </RequireAuth>
-         } />
-        <Route path="/analytics" element={
+      <Route
+        path="/post-item"
+        element={
+          <RequireAuth>
+            <PostItemNew />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/edit-item/:itemId"
+        element={
+          <RequireAuth>
+            <PostItemNew />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/messages"
+        element={
+          <RequireAuth>
+            <Messages />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/other-person-profile"
+        element={
+          <RequireAuth>
+            <OtherPersonProfile />
+          </RequireAuth>
+        }
+      />
+
+      <Route
+        path="/notifications"
+        element={
+          <RequireAuth>
+            <Notifications />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/notifications/:id"
+        element={
+          <RequireAuth>
+            <NotificationDetails />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <RequireAuth>
+            <UserProfile />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <RequireAuth>
+            <Settings />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/admin/reports"
+        element={
+          <RequireAuth>
+            <AdminReports />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
           <RequireAuth>
             <Analytics />
           </RequireAuth>
-        } />
-        <Route path="/posting-rules" element={<PostingRules />} />
-        <Route path="/customer-support" element={
+        }
+      />
+      <Route path="/posting-rules" element={<PostingRules />} />
+      <Route
+        path="/customer-support"
+        element={
           <RequireAuth>
             <CustomerSupport />
           </RequireAuth>
-        } />
-        <Route path="/admin-customer-support" element={
+        }
+      />
+      <Route
+        path="/admin-customer-support"
+        element={
           <RequireAuth>
             <AdminCustomerSupport />
           </RequireAuth>
-        } />
-        <Route path="/test" element={<Test />} />
-        <Route path="/test2" element={<Test2 />} />
-        <Route path="/testpage" element={<TestPage />} />
-        <Route path="/matches" element={<Test />} />
-        <Route path="/search" element={<SearchPage />} />
-        
-         <Route path="*" element={<NotFound />} />
+        }
+      />
+      <Route path="/test" element={<Test />} />
+      <Route path="/test2" element={<Test2 />} />
+      <Route path="/testpage" element={<TestPage />} />
+      <Route path="/matches" element={<Test />} />
+      <Route path="/search" element={<SearchPage />} />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
 
-const App = () => {
-  console.log('🚨 APP COMPONENT LOADING!');
+const AppContent = () => {
+  usePageViewTracking();
+  const location = useLocation();
+
+  // Keep header mounted across navigation to prevent mobile flashing.
+  // Hide it on auth.
+  const hideHeader = location.pathname === "/auth";
+
   return (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <AppContent />
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+    <>
+      {!hideHeader && <Header />}
+      <AppRoutes />
+    </>
+  );
+};
+
+const App = () => {
+  console.log("🚨 APP COMPONENT LOADING!");
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ScrollToTop />
+              <AppContent />
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
