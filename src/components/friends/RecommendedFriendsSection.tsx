@@ -111,10 +111,8 @@ export const RecommendedFriendsSection = () => {
   if (profiles.length === 0) {
     return (
       <div className="w-full">
-        <div className="text-center">
-          <h2 className="text-xl font-bold mb-4 text-foreground">Recommended Friends</h2>
-          <p className="text-muted-foreground">No recommendations available at the moment.</p>
-        </div>
+        <h2 className="text-xl font-bold mb-4 text-foreground">Recommended Friends</h2>
+        <p className="text-muted-foreground">No recommendations available at the moment.</p>
       </div>
     );
   }
