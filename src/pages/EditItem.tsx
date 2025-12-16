@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Save, Loader2, Package, Heart, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -586,8 +585,7 @@ const EditItem: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
+      <div className="flex flex-col min-h-screen pt-16">
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
         </div>
@@ -596,9 +594,7 @@ const EditItem: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-      
+    <div className="flex flex-col min-h-screen bg-gray-50 pt-16">
       <div className="flex-1 p-6 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* What You're Offering Column */}

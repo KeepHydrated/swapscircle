@@ -26,8 +26,6 @@ import { z } from "zod";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
 
-import Header from '@/components/layout/Header';
-
 // Login form schema
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -102,9 +100,7 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <>
-      <Header />
-      <div className="flex justify-center bg-background p-4 pt-24 pb-16 min-h-screen">
+    <div className="flex justify-center bg-background p-4 pt-24 pb-16 min-h-screen">
       <Card className="w-full max-w-md h-fit">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">SwapsCircle</CardTitle>
@@ -245,7 +241,6 @@ const Auth: React.FC = () => {
         </CardFooter>
       </Card>
     </div>
-    </>
   );
 };
 

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Header from "@/components/layout/Header";
@@ -174,15 +174,10 @@ const AppRoutes = () => {
 
 const AppContent = () => {
   usePageViewTracking();
-  const location = useLocation();
-
-  // Keep header mounted across navigation to prevent mobile flashing.
-  // Hide it on auth.
-  const hideHeader = location.pathname === "/auth";
 
   return (
     <>
-      {!hideHeader && <Header />}
+      <Header />
       <AppRoutes />
     </>
   );

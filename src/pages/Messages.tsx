@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Header from '@/components/layout/Header';
 import { useTradeConversations } from '@/hooks/useTradeConversations';
 import { fetchTradeMessages, sendTradeMessage } from '@/services/tradeService';
 import { fetchUserReviews } from '@/services/authService';
@@ -392,8 +391,7 @@ const Messages = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col h-screen">
-        <Header />
+      <div className="flex flex-col h-screen pt-16">
         <div className="flex justify-center items-center flex-1">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
         </div>
@@ -413,10 +411,7 @@ const Messages = () => {
   });
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* Header - always visible */}
-      <Header />
-      
+    <div className="flex flex-col h-screen pt-16">
       {/* Mobile Layout Only */}
       {isMobile ? (
         <div className="flex-1 overflow-hidden pt-16">

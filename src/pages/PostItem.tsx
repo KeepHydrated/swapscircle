@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -510,9 +509,7 @@ const PostItem: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-      
+    <div className="flex flex-col min-h-screen bg-gray-50 pt-16">
       <div className="flex-1 p-6 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* What You're Offering Column */}
