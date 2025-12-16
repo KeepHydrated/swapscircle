@@ -91,7 +91,9 @@ const Header = () => {
           {/* Mobile M button - far left */}
           {isMobile && (
             <Link to="/matches" className="absolute left-4">
-              <span className="text-lg font-semibold text-gray-500">M</span>
+              <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">M</span>
+              </div>
             </Link>
           )}
 
