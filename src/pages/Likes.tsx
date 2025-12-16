@@ -517,8 +517,14 @@ const Likes = () => {
               {likedItems.map((likedItem, index) => (
                 <div
                   key={likedItem.id}
-                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-72 sm:h-80"
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-72 sm:h-80 touch-manipulation"
                   onClick={() => handleItemClick(likedItem, index)}
+                  onTouchEnd={(e) => {
+                    const target = e.target as HTMLElement;
+                    if (target.closest('button') || target.closest('[role="button"]')) return;
+                    e.preventDefault();
+                    handleItemClick(likedItem, index);
+                  }}
                 >
                   {/* Matched item thumbnail */}
                   {likedItem.matchedItem && (
