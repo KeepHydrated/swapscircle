@@ -242,13 +242,12 @@ const Header = () => {
                 </Button>
               ) : (
                 <Button 
-                  variant="default" 
+                  variant="ghost" 
                   size="sm"
                   onClick={handleLogin}
-                  className="flex items-center gap-2"
+                  className="text-foreground font-semibold hover:bg-transparent"
                 >
-                  <LogIn className="h-4 w-4" />
-                  <span>Log In</span>
+                  Log in
                 </Button>
               )
             )}
