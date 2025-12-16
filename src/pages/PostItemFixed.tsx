@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -472,8 +471,7 @@ const PostItemFixed: React.FC = () => {
 
   // Full PostItem UI
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <div className="min-h-screen bg-gray-50 pt-16">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">
           What Are You Trading?

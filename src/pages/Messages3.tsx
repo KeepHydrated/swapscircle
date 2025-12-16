@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
-import Header from '@/components/layout/Header';
 import HeaderLocationSelector from '@/components/layout/HeaderLocationSelector';
 
 import { useUserItems } from '@/hooks/useUserItems';
@@ -235,8 +234,7 @@ const Messages3: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-gray-50 pt-16">
       <div className="flex-1 p-4 md:p-6 flex flex-col h-full">{/* Container without top padding */}
 
         {/* Main Content */}

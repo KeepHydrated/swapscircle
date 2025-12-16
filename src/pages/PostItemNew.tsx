@@ -3,7 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -455,7 +454,6 @@ const PostItemNew: React.FC = () => {
       </div>;
   }
   return <div className="min-h-screen bg-background">
-      <Header />
       <div className="container mx-auto px-4 pt-24 pb-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - What You're Offering */}
