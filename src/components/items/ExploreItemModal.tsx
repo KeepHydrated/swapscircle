@@ -488,7 +488,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     }}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent
-        className="max-w-4xl w-full md:w-[97vw] h-full md:h-auto p-0 border-0 rounded-none md:rounded-xl bg-transparent shadow-none top-0 translate-y-0 md:top-[50%] md:translate-y-[-50%]"
+        className="max-w-4xl w-full md:w-[97vw] h-full md:h-auto p-0 border-0 rounded-none md:rounded-xl bg-transparent shadow-none"
         onPointerDownOutside={(e) => {
           // Only allow closing when clicking the dark overlay, not during scrolling
           const target = e.target as HTMLElement;
@@ -508,7 +508,8 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
           <DialogDescription>View details for this item including description and owner information</DialogDescription>
         </VisuallyHidden>
-        <div className="flex flex-col md:flex-row w-full h-full md:h-[520px] overflow-y-auto md:overflow-hidden bg-white rounded-none md:rounded-2xl relative touch-pan-y"
+        <div 
+          className="flex flex-col md:flex-row w-full h-screen md:h-[520px] overflow-y-auto md:overflow-hidden bg-white rounded-none md:rounded-2xl relative pt-[env(safe-area-inset-top)] md:pt-0 touch-pan-y"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           
@@ -598,7 +599,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
             {/* Matched item thumbnail */}
             {matchedItemImage && (
-              <div className="absolute top-4 left-4 z-20">
+              <div className="absolute top-[calc(env(safe-area-inset-top)+6rem)] md:top-4 left-4 z-20">
                 <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-background">
                   <img src={matchedItemImage} alt="Your matched item" className="w-full h-full object-cover" />
                 </div>
@@ -607,7 +608,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
-              <div className="absolute top-4 right-4 flex gap-3 z-20">
+              <div className="absolute top-[calc(env(safe-area-inset-top)+6rem)] md:top-4 right-4 flex gap-3 z-20">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
@@ -713,7 +714,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           </div>
           
           {/* Details */}
-          <div className="flex-1 flex flex-col px-4 pt-6 pb-6 md:px-8 md:py-7 justify-start md:overflow-y-auto">
+          <div className="flex-1 flex flex-col px-4 pt-16 pb-2 md:px-8 md:py-7 justify-start md:overflow-y-auto">
             {loading ? (
               <div className="flex justify-center items-center h-full">
                 <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
