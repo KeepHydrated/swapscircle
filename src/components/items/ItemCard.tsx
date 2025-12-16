@@ -143,7 +143,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
     }
   };
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (disableClick) {
       return;
     }
@@ -155,12 +155,22 @@ const ItemCard: React.FC<ItemCardProps> = ({
     }
   };
 
-  const handleMouseDown = () => {
-    // Mouse down handler
-  };
-
-  const handleMouseUp = () => {
-    // Mouse up handler
+  // Handle touch to prevent double-tap issue on mobile
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    // Only handle single-finger taps
+    if (e.changedTouches.length === 1) {
+      const touch = e.changedTouches[0];
+      const target = e.target as HTMLElement;
+      
+      // Don't trigger card click if tapping on buttons or interactive elements
+      if (target.closest('button') || target.closest('[role="button"]')) {
+        return;
+      }
+      
+      // Prevent the subsequent click event and handle immediately
+      e.preventDefault();
+      handleCardClick(e);
+    }
   };
 
   return (
@@ -170,8 +180,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
           isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
         }`}
         onClick={handleCardClick}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
+        onTouchEnd={handleTouchEnd}
         style={{ pointerEvents: 'auto', zIndex: 1 }}
       >
         <div className="relative">
