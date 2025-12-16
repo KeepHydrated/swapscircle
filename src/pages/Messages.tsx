@@ -414,7 +414,7 @@ const Messages = () => {
     <div className="flex flex-col h-screen pt-16">
       {/* Mobile Layout Only */}
       {isMobile ? (
-        <div className="flex-1 overflow-hidden pt-16">
+        <div className="flex-1 overflow-hidden">
           {currentView === 'conversations' ? (
             /* Conversations List Only */
             <div className="h-full flex flex-col">
@@ -687,7 +687,7 @@ const Messages = () => {
         </div>
       ) : (
         /* Desktop Layout - 2 columns with toggleable right panel */
-        <div className="flex flex-1 min-h-0 overflow-hidden pt-16">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Left sidebar - Conversations (always visible, narrower) */}
           <div className="w-[340px] border-r border-gray-200 flex flex-col h-full">
             
