@@ -230,16 +230,27 @@ const Header = () => {
                 </DropdownMenu>
               )
             ) : (
-              // Show Log In button when not logged in
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={handleLogin}
-                className="flex items-center gap-2"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Log In</span>
-              </Button>
+              // Show Log In button when not logged in - icon only on mobile
+              isMobile ? (
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleLogin}
+                  className="h-8 w-8"
+                >
+                  <User className="h-5 w-5 text-muted-foreground" />
+                </Button>
+              ) : (
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={handleLogin}
+                  className="flex items-center gap-2"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Log In</span>
+                </Button>
+              )
             )}
           </div>
         </div>
