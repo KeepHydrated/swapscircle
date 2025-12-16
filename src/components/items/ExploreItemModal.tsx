@@ -488,7 +488,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     }}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent
-        className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none"
+        className="max-w-4xl w-[97vw] p-0 border-0 rounded-xl bg-transparent shadow-none top-[54%] md:top-1/2"
         onPointerDownOutside={(e) => {
           // Only allow closing when clicking the dark overlay, not during scrolling
           const target = e.target as HTMLElement;
