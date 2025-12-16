@@ -488,7 +488,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
     }}>
       <DialogOverlay className="bg-black/80" />
       <DialogContent
-        className="max-w-4xl w-full md:w-[97vw] p-0 border-0 rounded-none md:rounded-xl bg-transparent shadow-none mt-10 md:mt-0"
+        className="max-w-4xl w-full md:w-[97vw] h-full md:h-auto p-0 border-0 rounded-none md:rounded-xl bg-transparent shadow-none"
         onPointerDownOutside={(e) => {
           // Only allow closing when clicking the dark overlay, not during scrolling
           const target = e.target as HTMLElement;
@@ -508,7 +508,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
           <DialogDescription>View details for this item including description and owner information</DialogDescription>
         </VisuallyHidden>
-        <div className="flex flex-col md:flex-row w-full h-[92vh] overflow-y-auto md:overflow-hidden md:h-[520px] bg-white rounded-none md:rounded-2xl relative">
+        <div className="flex flex-col md:flex-row w-full h-screen md:h-[520px] overflow-y-auto md:overflow-hidden bg-white rounded-none md:rounded-2xl relative pt-[env(safe-area-inset-top)] md:pt-0">
           
           {/* Navigation arrows positioned outside the modal on dark overlay */}
           {(onNavigatePrev || onNavigateNext) && totalItems && totalItems > 1 && (
