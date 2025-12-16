@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, User, Settings, LogOut, MessageCircle, LogIn, AlertTriangle, Handshake, Flag, FileText, Headphones, Heart, ArrowLeftRight, BarChart3, Search, Lightbulb } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import HeaderLocationSelector from './HeaderLocationSelector';
 import NotificationDropdown from './NotificationDropdown';
@@ -23,6 +23,7 @@ import { useIsNativeApp } from '@/hooks/useIsNativeApp';
 const Header = () => {
   const { user, signOut, supabaseConfigured } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { notifications, unreadCount, markAsRead, markDropdownAsViewed, markAllAsRead } = useNotifications();
   const isMobile = useIsMobile();
   const isNativeApp = useIsNativeApp();
@@ -61,7 +62,7 @@ const Header = () => {
   };
 
   // Check if we're on the auth page to avoid showing login button there
-  const isAuthPage = window.location.pathname === '/auth';
+  const isAuthPage = location.pathname === '/auth';
 
   return (
     <>
