@@ -508,7 +508,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           <DialogTitle>{displayItem?.name || 'Item Details'}</DialogTitle>
           <DialogDescription>View details for this item including description and owner information</DialogDescription>
         </VisuallyHidden>
-        <div className="flex flex-col md:flex-row w-full min-h-screen md:h-[520px] md:overflow-hidden bg-white rounded-none md:rounded-2xl relative pt-[env(safe-area-inset-top)] md:pt-0">
+        <div className="flex flex-col md:flex-row w-full min-h-screen md:min-h-0 md:h-[520px] md:overflow-hidden bg-white rounded-none md:rounded-2xl relative pt-[env(safe-area-inset-top)] md:pt-0">
           
           {/* Navigation arrows positioned outside the modal on dark overlay */}
           {(onNavigatePrev || onNavigateNext) && totalItems && totalItems > 1 && (
