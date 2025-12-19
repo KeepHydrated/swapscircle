@@ -427,39 +427,52 @@ const UserProfile: React.FC = () => {
         <Tabs 
           value={activeTab} 
           onValueChange={(value) => {
-            const scrollEl = document.querySelector('main');
-            const scrollTop = scrollEl ? (scrollEl as HTMLElement).scrollTop : window.scrollY;
+            const main = document.querySelector('main') as HTMLElement | null;
+            const scrollingEl = document.scrollingElement as HTMLElement | null;
+
+            const candidates = [main, scrollingEl].filter(Boolean) as HTMLElement[];
+            const target =
+              candidates.find((el) => el.scrollTop > 0) ||
+              candidates.find((el) => el.scrollHeight > el.clientHeight) ||
+              main ||
+              scrollingEl;
+
+            const prevTop = target?.scrollTop ?? window.scrollY;
 
             setActiveTab(value);
 
-            // Preserve scroll position (our app scrolls inside <main>, not window)
             const restore = () => {
-              if (scrollEl) {
-                (scrollEl as HTMLElement).scrollTop = scrollTop;
-              } else {
-                window.scrollTo(0, scrollTop);
-              }
+              if (target) target.scrollTop = prevTop;
+              else window.scrollTo(0, prevTop);
             };
 
-            requestAnimationFrame(() => requestAnimationFrame(restore));
+            // Restore multiple times to beat focus/roving-tabindex scroll adjustments
+            requestAnimationFrame(() => {
+              restore();
+              requestAnimationFrame(restore);
+            });
+            setTimeout(restore, 50);
           }}
           className="w-full"
         >
           <TabsList className="w-full flex rounded-none h-12 bg-card border-b justify-start">
             <TabsTrigger 
               value="available" 
+              onMouseDown={(e) => e.preventDefault()}
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Items
             </TabsTrigger>
             <TabsTrigger 
               value="reviews" 
+              onMouseDown={(e) => e.preventDefault()}
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Reviews
             </TabsTrigger>
             <TabsTrigger 
               value="friends" 
+              onMouseDown={(e) => e.preventDefault()}
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Friends
