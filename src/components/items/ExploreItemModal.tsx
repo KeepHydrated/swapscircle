@@ -542,6 +542,15 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
 
           {/* Carousel */}
           <div className="relative w-full md:w-1/2 h-[280px] md:h-full flex-shrink-0 bg-black/10">
+            {/* Mobile-only close button */}
+            <button
+              onClick={onClose}
+              className="md:hidden absolute top-3 left-3 z-30 bg-black/50 rounded-full p-1.5 hover:bg-black/70 transition"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+            
             {allImages.length > 0 ? (
               <img
                 src={allImages[slide]}
