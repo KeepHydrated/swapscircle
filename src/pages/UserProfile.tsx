@@ -465,13 +465,13 @@ const UserProfile: React.FC = () => {
               Friends
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="available" className="p-6">
+          <TabsContent forceMount value="available" className={`p-6 ${activeTab !== 'available' ? 'hidden' : ''}`}>
             <ProfileItemsManager initialItems={userItems} userProfile={userProfile} />
           </TabsContent>
-          <TabsContent value="reviews" className="p-6">
+          <TabsContent forceMount value="reviews" className={`p-6 ${activeTab !== 'reviews' ? 'hidden' : ''}`}>
             <ReviewsTab reviews={userReviews} />
           </TabsContent>
-          <TabsContent value="friends" className="p-6">
+          <TabsContent forceMount value="friends" className={`p-6 ${activeTab !== 'friends' ? 'hidden' : ''}`}>
             <FriendsTab friends={userFriends} />
           </TabsContent>
         </Tabs>
