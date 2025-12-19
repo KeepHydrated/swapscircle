@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -25,6 +25,33 @@ const UserProfile: React.FC = () => {
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const lastScrollTopRef = useRef<number>(0);
+
+  const getScrollTarget = useCallback(() => {
+    const main = document.querySelector('main') as HTMLElement | null;
+    const scrollingEl = document.scrollingElement as HTMLElement | null;
+    return main ?? scrollingEl;
+  }, []);
+
+  const setTabPreserveScroll = useCallback((value: string) => {
+    const target = getScrollTarget();
+    const prevTop = target?.scrollTop ?? window.scrollY;
+    lastScrollTopRef.current = prevTop;
+
+    setActiveTab(value);
+
+    const restore = () => {
+      if (target) target.scrollTop = prevTop;
+      else window.scrollTo(0, prevTop);
+    };
+
+    requestAnimationFrame(() => {
+      restore();
+      requestAnimationFrame(restore);
+    });
+    setTimeout(restore, 50);
+  }, [getScrollTarget]);
 
   // Set default tab based on mobile state when it's available
   useEffect(() => {
@@ -426,39 +453,20 @@ const UserProfile: React.FC = () => {
         />
         <Tabs 
           value={activeTab} 
-          onValueChange={(value) => {
-            const main = document.querySelector('main') as HTMLElement | null;
-            const scrollingEl = document.scrollingElement as HTMLElement | null;
-
-            const candidates = [main, scrollingEl].filter(Boolean) as HTMLElement[];
-            const target =
-              candidates.find((el) => el.scrollTop > 0) ||
-              candidates.find((el) => el.scrollHeight > el.clientHeight) ||
-              main ||
-              scrollingEl;
-
-            const prevTop = target?.scrollTop ?? window.scrollY;
-
-            setActiveTab(value);
-
-            const restore = () => {
-              if (target) target.scrollTop = prevTop;
-              else window.scrollTo(0, prevTop);
-            };
-
-            // Restore multiple times to beat focus/roving-tabindex scroll adjustments
-            requestAnimationFrame(() => {
-              restore();
-              requestAnimationFrame(restore);
-            });
-            setTimeout(restore, 50);
-          }}
+          onValueChange={setTabPreserveScroll}
           className="w-full"
         >
-          <TabsList className="w-full flex rounded-none h-12 bg-card border-b justify-start">
+          <TabsList
+            className="w-full flex rounded-none h-12 bg-card border-b justify-start"
+            onPointerDownCapture={() => {
+              const target = getScrollTarget();
+              lastScrollTopRef.current = target?.scrollTop ?? window.scrollY;
+            }}
+          >
             <TabsTrigger 
               value="available" 
               onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setTabPreserveScroll('available')}
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Items
@@ -466,6 +474,7 @@ const UserProfile: React.FC = () => {
             <TabsTrigger 
               value="reviews" 
               onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setTabPreserveScroll('reviews')}
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Reviews
@@ -473,6 +482,7 @@ const UserProfile: React.FC = () => {
             <TabsTrigger 
               value="friends" 
               onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setTabPreserveScroll('friends')}
               className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Friends
