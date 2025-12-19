@@ -163,6 +163,36 @@ const EditItem: React.FC = () => {
           console.log('selectedCategories:', (item as any).looking_for_categories || []);
           console.log('selectedConditions:', (item as any).looking_for_conditions || []);
           
+          // Define expected price range formats
+          const validPriceRanges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
+          
+          // Helper function to normalize stored price ranges to form format
+          const normalizePriceRange = (storedRange: string): string | null => {
+            // Remove $ signs and normalize format
+            const cleaned = storedRange.replace(/\$/g, '').replace(/-/g, ' - ').replace(/,/g, '');
+            
+            // Try to match to our valid ranges
+            for (const validRange of validPriceRanges) {
+              const validCleaned = validRange.replace(/,/g, '');
+              if (cleaned === validCleaned || storedRange === validRange) {
+                return validRange;
+              }
+            }
+            
+            // Try to parse and find matching range
+            const parts = cleaned.split(' - ').map(p => parseFloat(p.trim()));
+            if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+              for (const validRange of validPriceRanges) {
+                const [vMin, vMax] = validRange.split(' - ').map(p => parseFloat(p.replace(/,/g, '')));
+                if (parts[0] >= vMin && parts[1] <= vMax) {
+                  return validRange;
+                }
+              }
+            }
+            
+            return null;
+          };
+
           // Convert price range for both item form and preferences
           if ((item as any).price_range_min !== null && (item as any).price_range_max !== null) {
             const min = (item as any).price_range_min;
@@ -171,37 +201,50 @@ const EditItem: React.FC = () => {
             // Check if we have looking_for_price_ranges stored
             if ((item as any).looking_for_price_ranges && (item as any).looking_for_price_ranges.length > 0) {
               console.log('Found stored price ranges:', (item as any).looking_for_price_ranges);
-              setSelectedPriceRanges((item as any).looking_for_price_ranges);
               
-              // For the item form, use the first price range or a formatted min-max
-              const storedRanges = (item as any).looking_for_price_ranges;
-              setPriceRange(storedRanges[0] || `${min} - ${max}`);
+              // Normalize stored price ranges to form format
+              const normalizedRanges = (item as any).looking_for_price_ranges
+                .map(normalizePriceRange)
+                .filter((r: string | null): r is string => r !== null);
               
-              // Update original data with stored ranges
-              setOriginalItemData(prev => ({
-                ...prev,
-                priceRange: storedRanges[0] || `${min} - ${max}`,
-                selectedPriceRanges: storedRanges
-              }));
+              console.log('Normalized price ranges:', normalizedRanges);
+              
+              if (normalizedRanges.length > 0) {
+                setSelectedPriceRanges(normalizedRanges);
+                setPriceRange(normalizedRanges[0]);
+                setOriginalItemData(prev => ({
+                  ...prev,
+                  priceRange: normalizedRanges[0],
+                  selectedPriceRanges: normalizedRanges
+                }));
+              } else {
+                // Fallback to min/max matching
+                const matchingRange = validPriceRanges.find(r => {
+                  const [rMin, rMax] = r.split(' - ').map(p => parseFloat(p.replace(/,/g, '')));
+                  return min >= rMin && max <= rMax;
+                }) || "100 - 250";
+                
+                setPriceRange(matchingRange);
+                setSelectedPriceRanges([matchingRange]);
+                setOriginalItemData(prev => ({
+                  ...prev,
+                  priceRange: matchingRange,
+                  selectedPriceRanges: [matchingRange]
+                }));
+              }
             } else {
               // Fallback to the old min-max logic
-              // Find all matching price ranges that fall within the min-max range
-              const ranges = ["0 - 50", "50 - 100", "100 - 250", "250 - 500", "500 - 750", "750 - 1,000"];
-              const matchingRanges = ranges.filter(r => {
-                const [rMin, rMax] = r.split(" - ").map(Number);
+              const matchingRanges = validPriceRanges.filter(r => {
+                const [rMin, rMax] = r.split(' - ').map(p => parseFloat(p.replace(/,/g, '')));
                 return (rMin >= min && rMin <= max) || (rMax >= min && rMax <= max) || (min >= rMin && max <= rMax);
               });
               
               console.log('Setting price range to item form:', matchingRanges[0] || "0 - 50");
               console.log('Setting selected price ranges:', matchingRanges);
               
-              // For the item offering form, just use the first matching range
               setPriceRange(matchingRanges[0] || "0 - 50");
-              
-              // For the preferences form, use all matching ranges
               setSelectedPriceRanges(matchingRanges.length > 0 ? matchingRanges : ["0 - 50"]);
               
-              // Update original data with the price range
               setOriginalItemData(prev => ({
                 ...prev,
                 priceRange: matchingRanges[0] || "0 - 50",
