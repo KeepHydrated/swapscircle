@@ -426,7 +426,14 @@ const UserProfile: React.FC = () => {
         />
         <Tabs 
           value={activeTab} 
-          onValueChange={setActiveTab}
+          onValueChange={(value) => {
+            const scrollY = window.scrollY;
+            setActiveTab(value);
+            // Preserve scroll position after tab change
+            requestAnimationFrame(() => {
+              window.scrollTo(0, scrollY);
+            });
+          }}
           className="w-full"
         >
           <TabsList className="w-full flex rounded-none h-12 bg-card border-b justify-start">
