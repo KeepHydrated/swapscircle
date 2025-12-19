@@ -427,12 +427,21 @@ const UserProfile: React.FC = () => {
         <Tabs 
           value={activeTab} 
           onValueChange={(value) => {
-            const scrollY = window.scrollY;
+            const scrollEl = document.querySelector('main');
+            const scrollTop = scrollEl ? (scrollEl as HTMLElement).scrollTop : window.scrollY;
+
             setActiveTab(value);
-            // Preserve scroll position after tab change
-            requestAnimationFrame(() => {
-              window.scrollTo(0, scrollY);
-            });
+
+            // Preserve scroll position (our app scrolls inside <main>, not window)
+            const restore = () => {
+              if (scrollEl) {
+                (scrollEl as HTMLElement).scrollTop = scrollTop;
+              } else {
+                window.scrollTo(0, scrollTop);
+              }
+            };
+
+            requestAnimationFrame(() => requestAnimationFrame(restore));
           }}
           className="w-full"
         >
