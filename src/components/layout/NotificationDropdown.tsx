@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Bell, MessageCircle, User, ArrowRight, Handshake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,7 @@ interface NotificationDropdownProps {
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notifications, unreadCount, onNotificationRead, onDropdownViewed, onMarkAllAsRead }) => {
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleNotificationClick = async (notification: Notification) => {
     console.log('🔔 Header dropdown notification clicked:', notification);
@@ -86,6 +87,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   };
 
   const handleViewAllClick = () => {
+    setIsOpen(false);
     navigate('/notifications');
   };
 
@@ -130,7 +132,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
   };
 
   return (
-    <DropdownMenu onOpenChange={(open) => { if (open) handleDropdownOpen(); }}>
+    <DropdownMenu open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (open) handleDropdownOpen(); }}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
