@@ -16,6 +16,58 @@ interface UserProfile {
   bio: string;
 }
 
+// Sample profiles with real images for when no database data exists
+const SAMPLE_PROFILES: UserProfile[] = [
+  {
+    id: 'sample-1',
+    name: 'Sarah Johnson',
+    username: 'sarahj',
+    avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+    location: 'Brooklyn, NY',
+    bio: 'Vintage collector & plant lover',
+  },
+  {
+    id: 'sample-2',
+    name: 'Marcus Chen',
+    username: 'marcusc',
+    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    location: 'San Francisco, CA',
+    bio: 'Tech enthusiast, vinyl records',
+  },
+  {
+    id: 'sample-3',
+    name: 'Emma Wilson',
+    username: 'emmaw',
+    avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    location: 'Austin, TX',
+    bio: 'Books, art & handmade crafts',
+  },
+  {
+    id: 'sample-4',
+    name: 'James Miller',
+    username: 'jamesm',
+    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+    location: 'Seattle, WA',
+    bio: 'Outdoor gear & camera equipment',
+  },
+  {
+    id: 'sample-5',
+    name: 'Olivia Brown',
+    username: 'oliviab',
+    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+    location: 'Denver, CO',
+    bio: 'Fashion & sustainable living',
+  },
+  {
+    id: 'sample-6',
+    name: 'David Kim',
+    username: 'davidk',
+    avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    location: 'Portland, OR',
+    bio: 'Music gear & coffee enthusiast',
+  },
+];
+
 export const RecommendedFriendsSection = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,10 +90,16 @@ export const RecommendedFriendsSection = () => {
         .limit(6);
 
       if (error) throw error;
-      setProfiles(data || []);
+      
+      // Use sample profiles if no real data exists
+      if (!data || data.length === 0) {
+        setProfiles(SAMPLE_PROFILES);
+      } else {
+        setProfiles(data);
+      }
 
       // Check for existing friendships
-      if (user && data) {
+      if (user && data && data.length > 0) {
         const profileIds = data.map(p => p.id);
         const { data: friendships } = await supabase
           .from('friend_requests')
@@ -60,6 +118,8 @@ export const RecommendedFriendsSection = () => {
       }
     } catch (error) {
       console.error('Error fetching recommended friends:', error);
+      // Fallback to sample profiles on error
+      setProfiles(SAMPLE_PROFILES);
     } finally {
       setLoading(false);
     }
