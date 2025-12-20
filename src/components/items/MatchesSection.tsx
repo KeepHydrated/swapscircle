@@ -28,6 +28,65 @@ interface MatchItem {
   myItemImage?: string;
 }
 
+// Sample/demo matches for when no real data exists
+const SAMPLE_MATCHES: MatchItem[] = [
+  {
+    id: 'sample-1',
+    name: 'Vintage Leather Jacket',
+    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop',
+    user_id: 'sample-user-1',
+    priceRangeMin: 80,
+    priceRangeMax: 120,
+    condition: 'Good',
+    category: 'Clothing',
+    description: 'Classic vintage leather jacket in excellent condition',
+  },
+  {
+    id: 'sample-2',
+    name: 'Retro Polaroid Camera',
+    image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop',
+    user_id: 'sample-user-2',
+    priceRangeMin: 50,
+    priceRangeMax: 80,
+    condition: 'Like New',
+    category: 'Electronics',
+    description: 'Working vintage Polaroid camera with case',
+  },
+  {
+    id: 'sample-3',
+    name: 'Handmade Ceramic Vase',
+    image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400&h=400&fit=crop',
+    user_id: 'sample-user-3',
+    priceRangeMin: 30,
+    priceRangeMax: 50,
+    condition: 'New',
+    category: 'Home & Garden',
+    description: 'Beautiful handcrafted ceramic vase',
+  },
+  {
+    id: 'sample-4',
+    name: 'Acoustic Guitar',
+    image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=400&fit=crop',
+    user_id: 'sample-user-4',
+    priceRangeMin: 150,
+    priceRangeMax: 250,
+    condition: 'Good',
+    category: 'Musical Instruments',
+    description: 'Well-maintained acoustic guitar with soft case',
+  },
+  {
+    id: 'sample-5',
+    name: 'Vintage Record Player',
+    image: 'https://images.unsplash.com/photo-1539375665275-f9de415ef9ac?w=400&h=400&fit=crop',
+    user_id: 'sample-user-5',
+    priceRangeMin: 100,
+    priceRangeMax: 180,
+    condition: 'Good',
+    category: 'Electronics',
+    description: 'Classic vinyl record player in working condition',
+  },
+];
+
 const MatchesSection = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(0);
@@ -115,9 +174,16 @@ const MatchesSection = () => {
           };
         });
 
-        setMatches(transformedMatches);
+        // If no real matches found, use sample data
+        if (transformedMatches.length === 0) {
+          setMatches(SAMPLE_MATCHES);
+        } else {
+          setMatches(transformedMatches);
+        }
       } catch (err) {
         console.error('Error in fetchMatches:', err);
+        // Fallback to sample matches on error
+        setMatches(SAMPLE_MATCHES);
       } finally {
         setLoading(false);
       }
