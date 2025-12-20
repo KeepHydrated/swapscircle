@@ -16,13 +16,23 @@ interface UserProfile {
   bio: string;
 }
 
+// Sample avatar URLs to use as fallbacks
+const SAMPLE_AVATARS = [
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+];
+
 // Sample profiles with real images for when no database data exists
 const SAMPLE_PROFILES: UserProfile[] = [
   {
     id: 'sample-1',
     name: 'Sarah Johnson',
     username: 'sarahj',
-    avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+    avatar_url: SAMPLE_AVATARS[0],
     location: 'Brooklyn, NY',
     bio: 'Vintage collector & plant lover',
   },
@@ -30,7 +40,7 @@ const SAMPLE_PROFILES: UserProfile[] = [
     id: 'sample-2',
     name: 'Marcus Chen',
     username: 'marcusc',
-    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    avatar_url: SAMPLE_AVATARS[1],
     location: 'San Francisco, CA',
     bio: 'Tech enthusiast, vinyl records',
   },
@@ -38,7 +48,7 @@ const SAMPLE_PROFILES: UserProfile[] = [
     id: 'sample-3',
     name: 'Emma Wilson',
     username: 'emmaw',
-    avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    avatar_url: SAMPLE_AVATARS[2],
     location: 'Austin, TX',
     bio: 'Books, art & handmade crafts',
   },
@@ -46,7 +56,7 @@ const SAMPLE_PROFILES: UserProfile[] = [
     id: 'sample-4',
     name: 'James Miller',
     username: 'jamesm',
-    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+    avatar_url: SAMPLE_AVATARS[3],
     location: 'Seattle, WA',
     bio: 'Outdoor gear & camera equipment',
   },
@@ -54,7 +64,7 @@ const SAMPLE_PROFILES: UserProfile[] = [
     id: 'sample-5',
     name: 'Olivia Brown',
     username: 'oliviab',
-    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+    avatar_url: SAMPLE_AVATARS[4],
     location: 'Denver, CO',
     bio: 'Fashion & sustainable living',
   },
@@ -62,11 +72,18 @@ const SAMPLE_PROFILES: UserProfile[] = [
     id: 'sample-6',
     name: 'David Kim',
     username: 'davidk',
-    avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    avatar_url: SAMPLE_AVATARS[5],
     location: 'Portland, OR',
     bio: 'Music gear & coffee enthusiast',
   },
 ];
+
+// Helper to get a consistent sample avatar based on profile id
+const getSampleAvatar = (profileId: string, index: number): string => {
+  // Use a hash of the profile ID to get a consistent avatar
+  const hash = profileId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return SAMPLE_AVATARS[(hash + index) % SAMPLE_AVATARS.length];
+};
 
 export const RecommendedFriendsSection = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -95,7 +112,12 @@ export const RecommendedFriendsSection = () => {
       if (!data || data.length === 0) {
         setProfiles(SAMPLE_PROFILES);
       } else {
-        setProfiles(data);
+        // Enhance profiles with sample avatars if they don't have one
+        const enhancedProfiles = data.map((profile, index) => ({
+          ...profile,
+          avatar_url: profile.avatar_url || getSampleAvatar(profile.id, index),
+        }));
+        setProfiles(enhancedProfiles);
       }
 
       // Check for existing friendships
