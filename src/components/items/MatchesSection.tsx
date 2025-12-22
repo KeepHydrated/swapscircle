@@ -40,6 +40,9 @@ const SAMPLE_MATCHES: MatchItem[] = [
     condition: 'Good',
     category: 'Clothing',
     description: 'Classic vintage leather jacket in excellent condition',
+    myItemId: 'my-sample-1',
+    myItemName: 'Denim Jacket',
+    myItemImage: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=100&h=100&fit=crop',
   },
   {
     id: 'sample-2',
@@ -51,6 +54,9 @@ const SAMPLE_MATCHES: MatchItem[] = [
     condition: 'Like New',
     category: 'Electronics',
     description: 'Working vintage Polaroid camera with case',
+    myItemId: 'my-sample-2',
+    myItemName: 'Digital Camera',
+    myItemImage: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=100&h=100&fit=crop',
   },
   {
     id: 'sample-3',
@@ -62,6 +68,9 @@ const SAMPLE_MATCHES: MatchItem[] = [
     condition: 'New',
     category: 'Home & Garden',
     description: 'Beautiful handcrafted ceramic vase',
+    myItemId: 'my-sample-3',
+    myItemName: 'Plant Pot',
+    myItemImage: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=100&h=100&fit=crop',
   },
   {
     id: 'sample-4',
@@ -73,6 +82,9 @@ const SAMPLE_MATCHES: MatchItem[] = [
     condition: 'Good',
     category: 'Musical Instruments',
     description: 'Well-maintained acoustic guitar with soft case',
+    myItemId: 'my-sample-4',
+    myItemName: 'Electric Keyboard',
+    myItemImage: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=100&h=100&fit=crop',
   },
   {
     id: 'sample-5',
@@ -84,6 +96,9 @@ const SAMPLE_MATCHES: MatchItem[] = [
     condition: 'Good',
     category: 'Electronics',
     description: 'Classic vinyl record player in working condition',
+    myItemId: 'my-sample-5',
+    myItemName: 'Bluetooth Speaker',
+    myItemImage: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=100&h=100&fit=crop',
   },
 ];
 
