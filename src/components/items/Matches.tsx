@@ -128,7 +128,23 @@ const Matches: React.FC<MatchesProps> = ({
   return (
     <div className="w-full flex flex-col h-full">
       
-      {(displayedMatches.length === 0 && !isTransitioning) ? (
+      {isTransitioning ? (
+        // Show skeleton loading state during transitions
+        <div className="overflow-x-auto overflow-y-hidden p-2">
+          <div className="flex gap-2 min-w-max">
+            {[1, 2, 3, 4].map((idx) => (
+              <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
+                <div className="bg-muted rounded-lg border border-border overflow-hidden animate-pulse">
+                  <div className="relative aspect-[4/3] bg-muted-foreground/10" />
+                  <div className="p-4">
+                    <div className="h-4 bg-muted-foreground/10 rounded w-3/4" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : displayedMatches.length === 0 ? (
         <div className="overflow-x-auto overflow-y-hidden p-2">
           <div className="flex gap-2 min-w-max">
             {[
@@ -138,24 +154,24 @@ const Matches: React.FC<MatchesProps> = ({
               { name: "Standing Desk - Adjustable", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2" },
             ].map((item, idx) => (
               <div key={idx} className="flex-shrink-0 w-48 sm:w-56 md:w-64">
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                <div className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all">
                   <div className="relative aspect-[4/3]">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     <div className="absolute top-1.5 left-1.5">
-                      <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all duration-200 hover:scale-110">
-                        <svg className="w-4 h-4 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                      <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-background transition-all duration-200 hover:scale-110">
+                        <svg className="w-4 h-4 text-foreground" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                         </svg>
                       </button>
                     </div>
                     <div className="absolute top-1.5 right-1.5 flex gap-1">
-                      <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all duration-200 hover:scale-110">
-                        <svg className="w-4 h-4 text-gray-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-background transition-all duration-200 hover:scale-110">
+                        <svg className="w-4 h-4 text-muted-foreground hover:text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                       </button>
-                      <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all duration-200 hover:scale-110">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <button className="w-8 h-8 bg-background/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-background transition-all duration-200 hover:scale-110">
+                        <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
                       </button>
@@ -169,7 +185,7 @@ const Matches: React.FC<MatchesProps> = ({
             ))}
           </div>
         </div>
-      ) : displayedMatches.length > 0 ? (
+      ) : (
         <div className="flex-grow">
           <MatchesContainer
             displayedMatches={displayedMatches}
@@ -182,7 +198,7 @@ const Matches: React.FC<MatchesProps> = ({
             location={location}
           />
         </div>
-      ) : null}
+      )}
       
       {/* Modal for displaying match details */}
       {selectedMatch && !(selectedMatch as any).isReportModal && (
