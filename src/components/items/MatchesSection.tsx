@@ -275,6 +275,25 @@ const MatchesSection = () => {
       return;
     }
 
+    // Check if this is a sample item (not a real database item)
+    const isSampleItem = itemId.startsWith('sample-');
+    
+    if (isSampleItem) {
+      // For sample items, just toggle the UI state locally without database operations
+      const isLiked = likedItemIds.has(itemId);
+      if (isLiked) {
+        setLikedItemIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(itemId);
+          return newSet;
+        });
+      } else {
+        setLikedItemIds(prev => new Set(prev).add(itemId));
+        toast.success('Item liked! Sign up to save your likes permanently.');
+      }
+      return;
+    }
+
     const isLiked = likedItemIds.has(itemId);
 
     if (isLiked) {
@@ -307,6 +326,14 @@ const MatchesSection = () => {
     
     if (!user) {
       navigate('/auth');
+      return;
+    }
+
+    // Check if this is a sample item
+    const isSampleItem = item.id.startsWith('sample-');
+    
+    if (isSampleItem) {
+      toast.info('This is a demo item. Post your own items to start real trades!');
       return;
     }
 
