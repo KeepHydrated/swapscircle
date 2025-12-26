@@ -289,7 +289,6 @@ const MatchesSection = () => {
         });
       } else {
         setLikedItemIds(prev => new Set(prev).add(itemId));
-        toast.success('Item liked!');
       }
       return;
     }
