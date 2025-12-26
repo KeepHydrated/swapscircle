@@ -144,7 +144,7 @@ export const updateProfile = async (userId: string, data: { name?: string; avata
       throw error;
     }
 
-    toast.success('Profile updated successfully');
+    // Note: Toast removed - callers should handle their own success feedback
     return true;
   } catch (error: any) {
     toast.error(error.message || 'Error updating profile');
