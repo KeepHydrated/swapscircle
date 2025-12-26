@@ -30,22 +30,10 @@ const Matches: React.FC<MatchesProps> = ({
   viewMode = 'slider',
   location = 'nationwide'
 }) => {
-  // Force loading state on any selectedItemId change until data syncs
-  const [isItemChanging, setIsItemChanging] = useState(false);
+  // Keep content stable while changing the selected item (prevents “flash” states)
   const [syncedItemId, setSyncedItemId] = useState<string | undefined>(selectedItemId);
-  
-  // Immediately detect item changes at render time (before useEffect)
-  if (selectedItemId !== syncedItemId) {
-    console.log('🚨 ITEM CHANGE DETECTED AT RENDER:', {
-      from: syncedItemId,
-      to: selectedItemId,
-      matchesLength: matches.length
-    });
-    // Force loading state immediately
-    if (!isItemChanging) {
-      setIsItemChanging(true);
-    }
-  }
+  const isItemChanging = selectedItemId !== syncedItemId;
+
   
   
   
@@ -67,13 +55,12 @@ const Matches: React.FC<MatchesProps> = ({
   } = useMatchActions(matches, onRefreshMatches, selectedItemId);
   
   
-  // Update syncedItemId and clear isItemChanging when data is ready
+  // Mark the new selection as “synced” once data (and liked status) are ready
   useEffect(() => {
     if (selectedItemId && !isLoadingLikedStatus && !loading) {
       setSyncedItemId(selectedItemId);
-      setIsItemChanging(false);
     }
-  }, [selectedItemId, isLoadingLikedStatus, loading, syncedItemId, isItemChanging]);
+  }, [selectedItemId, isLoadingLikedStatus, loading]);
   
   // Notify parent about undo availability whenever lastActions changes
   useEffect(() => {
