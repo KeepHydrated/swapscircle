@@ -190,13 +190,13 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
-                        Trades
+                      <Link to="/likes" className="flex w-full cursor-pointer items-center">
+                        Likes
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/likes" className="flex w-full cursor-pointer items-center">
-                        Likes
+                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
+                        Trades
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
