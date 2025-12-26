@@ -289,7 +289,7 @@ const MatchesSection = () => {
         });
       } else {
         setLikedItemIds(prev => new Set(prev).add(itemId));
-        toast.success('Item liked! Sign up to save your likes permanently.');
+        toast.success('Item liked!');
       }
       return;
     }
