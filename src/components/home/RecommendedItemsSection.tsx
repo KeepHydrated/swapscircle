@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import ExploreItemModal from "@/components/items/ExploreItemModal";
+import TradeItemSelectionModal from "@/components/trade/TradeItemSelectionModal";
 import { Item } from "@/types/item";
 import { useItemsInActiveTrades } from "@/hooks/useItemsInActiveTrades";
+import { Heart, Repeat } from "lucide-react";
+import { toast } from "sonner";
 
 interface RecommendedItem {
   id: string;
@@ -92,16 +95,38 @@ const SAMPLE_ITEMS: RecommendedItem[] = [
 const RecommendedItemsSection = () => {
   const [items, setItems] = useState<RecommendedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [likedItemIds, setLikedItemIds] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tradeModalOpen, setTradeModalOpen] = useState(false);
+  const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   useEffect(() => {
     fetchRecommendedItems();
+    if (user) {
+      fetchLikedItems();
+    }
   }, [user, itemsInActiveTrades]);
+
+  const fetchLikedItems = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from('liked_items')
+        .select('item_id')
+        .eq('user_id', user.id);
+      
+      if (data) {
+        setLikedItemIds(new Set(data.map(l => l.item_id)));
+      }
+    } catch (error) {
+      console.error('Error fetching liked items:', error);
+    }
+  };
 
   const fetchRecommendedItems = async () => {
     try {
@@ -194,6 +219,73 @@ const RecommendedItemsSection = () => {
     }
   };
 
+  const handleLike = async (itemId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    const isLiked = likedItemIds.has(itemId);
+    
+    // Optimistic update
+    setLikedItemIds(prev => {
+      const next = new Set(prev);
+      if (isLiked) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+
+    try {
+      if (isLiked) {
+        await supabase
+          .from('liked_items')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('item_id', itemId);
+      } else {
+        await supabase
+          .from('liked_items')
+          .insert({ user_id: user.id, item_id: itemId });
+      }
+    } catch (error) {
+      // Revert on error
+      setLikedItemIds(prev => {
+        const next = new Set(prev);
+        if (isLiked) {
+          next.add(itemId);
+        } else {
+          next.delete(itemId);
+        }
+        return next;
+      });
+      toast.error('Failed to update like');
+    }
+  };
+
+  const handleTradeClick = (item: RecommendedItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
+    const mappedItem: Item = {
+      id: item.id,
+      name: item.name,
+      image: item.image_url || '/placeholder.svg',
+      priceRangeMin: item.price_range_min || undefined,
+      priceRangeMax: item.price_range_max || undefined,
+      condition: item.condition || undefined,
+      user_id: item.user_id
+    };
+    setTradeTargetItem(mappedItem);
+    setTradeModalOpen(true);
+  };
+
   const handleItemClick = (item: RecommendedItem, index: number) => {
     const mappedItem: Item = {
       id: item.id,
@@ -247,45 +339,68 @@ const RecommendedItemsSection = () => {
 
         <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-4 px-4">
           <div className="flex gap-3 min-w-max">
-            {items.map((item, index) => (
-              <div
-                key={item.id}
-                className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col"
-                onClick={() => handleItemClick(item, index)}
-              >
-                {/* Image */}
-                <div className="flex-1 relative overflow-hidden">
-                  {item.image_url ? (
-                    <img
-                      src={item.image_url}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted">
-                      <span className="text-muted-foreground text-sm">No image</span>
-                    </div>
-                  )}
-                </div>
+            {items.map((item, index) => {
+              const isLiked = likedItemIds.has(item.id);
+              return (
+                <div
+                  key={item.id}
+                  className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col"
+                  onClick={() => handleItemClick(item, index)}
+                >
+                  {/* Image */}
+                  <div className="flex-1 relative overflow-hidden">
+                    {item.image_url ? (
+                      <img
+                        src={item.image_url}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted">
+                        <span className="text-muted-foreground text-sm">No image</span>
+                      </div>
+                    )}
 
-                {/* Content */}
-                <div className="p-3 h-20 flex flex-col justify-center">
-                  <h3 className="font-semibold text-sm truncate">{item.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    {item.price_range_min !== null && item.price_range_max !== null && (
-                      <span className="text-xs text-muted-foreground">
-                        ${item.price_range_min} - ${item.price_range_max}
-                      </span>
-                    )}
-                    {item.condition && (
-                      <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
-                        {item.condition}
-                      </span>
-                    )}
+                    {/* Action buttons - visible on hover */}
+                    <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {/* Trade button */}
+                      <button
+                        onClick={(e) => handleTradeClick(item, e)}
+                        className="w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
+                      >
+                        <Repeat className="w-5 h-5 text-green-600" />
+                      </button>
+                      {/* Like button */}
+                      <button
+                        onClick={(e) => handleLike(item.id, e)}
+                        className="w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
+                      >
+                        <Heart 
+                          className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-red-500'}`} 
+                        />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-3 h-20 flex flex-col justify-center">
+                    <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      {item.price_range_min !== null && item.price_range_max !== null && (
+                        <span className="text-xs text-muted-foreground">
+                          ${item.price_range_min} - ${item.price_range_max}
+                        </span>
+                      )}
+                      {item.condition && (
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                          {item.condition}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -312,6 +427,18 @@ const RecommendedItemsSection = () => {
           }
         }}
       />
+
+      {/* Trade selection modal */}
+      {tradeTargetItem && (
+        <TradeItemSelectionModal
+          isOpen={tradeModalOpen}
+          onClose={() => {
+            setTradeModalOpen(false);
+            setTradeTargetItem(null);
+          }}
+          targetItem={tradeTargetItem}
+        />
+      )}
     </>
   );
 };
