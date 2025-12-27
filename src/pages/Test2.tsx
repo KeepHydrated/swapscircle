@@ -2,6 +2,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { RecommendedFriendsSection } from '@/components/friends/RecommendedFriendsSection';
 import RecommendedCategoriesSection from '@/components/categories/RecommendedCategoriesSection';
 import RecommendedLocalTradesSection from '@/components/trade/RecommendedLocalTradesSection';
+import RecommendedItemsSection from '@/components/home/RecommendedItemsSection';
 import MatchesSection from '@/components/items/MatchesSection';
 import HeroBanner from '@/components/home/HeroBanner';
 import FriendsFeedSection from '@/components/home/FriendsFeedSection';
@@ -16,6 +17,7 @@ const Test2 = () => {
         <RecommendedCategoriesSection />
         <RecommendedLocalTradesSection />
         <RecommendedFriendsSection />
+        <RecommendedItemsSection />
       </div>
     </MainLayout>
   );
