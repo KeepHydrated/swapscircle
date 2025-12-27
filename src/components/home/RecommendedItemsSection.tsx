@@ -366,17 +366,18 @@ const RecommendedItemsSection = () => {
                       {/* Trade button */}
                       <button
                         onClick={(e) => handleTradeClick(item, e)}
-                        className="w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
+                        className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
                       >
-                        <Repeat className="w-5 h-5 text-green-600" />
+                        <Repeat className="w-4 h-4 text-green-500" />
                       </button>
                       {/* Like button */}
                       <button
                         onClick={(e) => handleLike(item.id, e)}
-                        className="w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
+                        className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
                       >
                         <Heart 
-                          className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-red-500'}`} 
+                          className="w-4 h-4 text-red-500" 
+                          fill={isLiked ? "red" : "none"}
                         />
                       </button>
                     </div>
