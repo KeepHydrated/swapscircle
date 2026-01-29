@@ -6,8 +6,10 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Users, Search, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, Search, Calendar, Settings } from 'lucide-react';
 import { format } from 'date-fns';
+import UserSettingsModal from '@/components/admin/UserSettingsModal';
 
 interface UserProfile {
   id: string;
@@ -26,6 +28,8 @@ const AdminUsers: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   // Check if user is admin
   useEffect(() => {
@@ -89,6 +93,12 @@ const AdminUsers: React.FC = () => {
 
   const handleUserClick = (userId: string) => {
     navigate(`/other-person-profile?userId=${userId}`);
+  };
+
+  const handleViewSettings = (e: React.MouseEvent, userId: string) => {
+    e.stopPropagation();
+    setSelectedUserId(userId);
+    setSettingsModalOpen(true);
   };
 
   if (!user) {
@@ -178,9 +188,19 @@ const AdminUsers: React.FC = () => {
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground shrink-0">
-                      <Calendar className="w-4 h-4" />
-                      <span>{format(new Date(userProfile.created_at), 'MMM d, yyyy')}</span>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => handleViewSettings(e, userProfile.id)}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        <span>{format(new Date(userProfile.created_at), 'MMM d, yyyy')}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -189,6 +209,12 @@ const AdminUsers: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
+      <UserSettingsModal
+        userId={selectedUserId}
+        open={settingsModalOpen}
+        onOpenChange={setSettingsModalOpen}
+      />
     </MainLayout>
   );
 };
