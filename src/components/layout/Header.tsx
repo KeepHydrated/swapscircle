@@ -212,11 +212,18 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     {user?.email === 'nadiachibri@gmail.com' && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
-                          Admin Reports
-                        </Link>
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
+                            Admin Reports
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/analytics" className="flex w-full cursor-pointer items-center">
+                            Analytics
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     {supabaseConfigured && (
                       <>
