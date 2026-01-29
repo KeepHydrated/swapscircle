@@ -606,6 +606,14 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {/* Top-right buttons positioned over the image */}
             {!hideActions && (
               <div className="absolute top-[calc(env(safe-area-inset-top)+6rem)] md:top-4 right-4 flex gap-3 z-20">
+                {/* Close button - visible on mobile */}
+                <button
+                  onClick={onClose}
+                  className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors hover:bg-gray-50 cursor-pointer md:hidden"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
