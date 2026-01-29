@@ -211,11 +211,6 @@ const Header = () => {
                         Settings
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/customer-support" className="flex w-full cursor-pointer items-center">
-                        Contact Support
-                      </Link>
-                    </DropdownMenuItem>
                     {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
                       <DropdownMenuItem asChild>
                         <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
