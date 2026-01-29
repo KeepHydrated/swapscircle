@@ -7,9 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Users, Search, Calendar, Settings } from 'lucide-react';
+import { Users, Search, Calendar, Settings, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import UserSettingsModal from '@/components/admin/UserSettingsModal';
+import UserProfileModal from '@/components/admin/UserProfileModal';
 
 interface UserProfile {
   id: string;
@@ -30,6 +31,7 @@ const AdminUsers: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   // Check if user is admin
   useEffect(() => {
@@ -99,6 +101,12 @@ const AdminUsers: React.FC = () => {
     e.stopPropagation();
     setSelectedUserId(userId);
     setSettingsModalOpen(true);
+  };
+
+  const handleViewProfile = (e: React.MouseEvent, userId: string) => {
+    e.stopPropagation();
+    setSelectedUserId(userId);
+    setProfileModalOpen(true);
   };
 
   if (!user) {
@@ -190,8 +198,18 @@ const AdminUsers: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={(e) => handleViewProfile(e, userProfile.id)}
+                        className="text-muted-foreground hover:text-foreground"
+                        title="View Profile"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={(e) => handleViewSettings(e, userProfile.id)}
                         className="text-muted-foreground hover:text-foreground"
+                        title="View Settings"
                       >
                         <Settings className="w-4 h-4" />
                       </Button>
@@ -212,6 +230,12 @@ const AdminUsers: React.FC = () => {
         userId={selectedUserId}
         open={settingsModalOpen}
         onOpenChange={setSettingsModalOpen}
+      />
+
+      <UserProfileModal
+        userId={selectedUserId}
+        open={profileModalOpen}
+        onOpenChange={setProfileModalOpen}
       />
     </MainLayout>
   );
