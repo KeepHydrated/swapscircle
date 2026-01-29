@@ -55,6 +55,15 @@ const LiveChatPopup = () => {
     initializeConversation();
   }, [user?.id, isOpen]);
 
+  // Listen for open-live-chat event from footer
+  useEffect(() => {
+    const handleOpenEvent = () => {
+      handleOpenChat();
+    };
+    window.addEventListener('open-live-chat', handleOpenEvent);
+    return () => window.removeEventListener('open-live-chat', handleOpenEvent);
+  }, [user]);
+
   const stableHandleNewMessage = useCallback((newMessage: SupportMessage) => {
     if (conversationId && newMessage.conversation_id !== conversationId) return;
     
