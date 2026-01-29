@@ -31,6 +31,7 @@ import TestPage from "./pages/TestPage";
 import Test from "./pages/Test";
 
 import AdminReports from "./pages/AdminReports";
+import AdminUsers from "./pages/AdminUsers";
 import Analytics from "./pages/Analytics";
 import CustomerSupport from "./pages/CustomerSupport";
 import AdminCustomerSupport from "./pages/AdminCustomerSupport";
@@ -133,6 +134,14 @@ const AppRoutes = () => {
         element={
           <RequireAuth>
             <AdminReports />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <RequireAuth>
+            <AdminUsers />
           </RequireAuth>
         }
       />
