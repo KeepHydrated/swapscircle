@@ -34,7 +34,6 @@ import Test from "./pages/Test";
 import AdminReports from "./pages/AdminReports";
 import AdminUsers from "./pages/AdminUsers";
 import Analytics from "./pages/Analytics";
-import CustomerSupport from "./pages/CustomerSupport";
 import AdminCustomerSupport from "./pages/AdminCustomerSupport";
 import RequireAuth from "./components/auth/RequireAuth";
 import ScrollToTop from "./components/ScrollToTop";
@@ -155,14 +154,6 @@ const AppRoutes = () => {
         }
       />
       <Route path="/posting-rules" element={<PostingRules />} />
-      <Route
-        path="/customer-support"
-        element={
-          <RequireAuth>
-            <CustomerSupport />
-          </RequireAuth>
-        }
-      />
       <Route
         path="/admin-customer-support"
         element={
