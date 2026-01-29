@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import LiveChatPopup from "@/components/chat/LiveChatPopup";
 
 import PostItemNew from "./pages/PostItemNew";
 import EditItem from "./pages/EditItem";
@@ -188,6 +189,7 @@ const AppContent = () => {
         <AppRoutes />
       </main>
       <Footer />
+      <LiveChatPopup />
     </div>
   );
 };
