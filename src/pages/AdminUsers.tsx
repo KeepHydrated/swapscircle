@@ -181,11 +181,9 @@ const AdminUsers: React.FC = () => {
                       <div className="font-medium truncate">
                         {userProfile.username || userProfile.name || 'Anonymous User'}
                       </div>
-                      {userProfile.email && (
-                        <div className="text-sm text-muted-foreground truncate">
-                          {userProfile.email}
-                        </div>
-                      )}
+                      <div className="text-sm text-muted-foreground truncate">
+                        {userProfile.email || 'No email'}
+                      </div>
                     </div>
                     
                     <div className="flex items-center gap-3 shrink-0">
