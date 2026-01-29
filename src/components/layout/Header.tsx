@@ -219,6 +219,11 @@ const Header = () => {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
+                          <Link to="/admin/users" className="flex w-full cursor-pointer items-center">
+                            Admin Users
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
                           <Link to="/analytics" className="flex w-full cursor-pointer items-center">
                             Analytics
                           </Link>
