@@ -211,7 +211,7 @@ const Header = () => {
                         Settings
                       </Link>
                     </DropdownMenuItem>
-                    {(user?.name === 'NadiaHibri' || user?.email === 'nadiahsheriff@gmail.com') && (
+                    {user?.email === 'nadiachibri@gmail.com' && (
                       <DropdownMenuItem asChild>
                         <Link to="/admin/reports" className="flex w-full cursor-pointer items-center">
                           Admin Reports
