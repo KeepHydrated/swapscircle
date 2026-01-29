@@ -175,8 +175,7 @@ const AdminUsers: React.FC = () => {
                 {filteredUsers.map((userProfile) => (
                   <div
                     key={userProfile.id}
-                    onClick={() => handleUserClick(userProfile.id)}
-                    className="flex items-center gap-4 p-4 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
+                    className="flex items-center gap-4 p-4 rounded-lg border"
                   >
                     <Avatar className="w-12 h-12">
                       <AvatarImage src={userProfile.avatar_url || ''} />
