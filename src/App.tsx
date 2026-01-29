@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/providers/AuthProvider";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 import PostItemNew from "./pages/PostItemNew";
 import EditItem from "./pages/EditItem";
@@ -181,10 +182,13 @@ const AppContent = () => {
   usePageViewTracking();
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <AppRoutes />
-    </>
+      <main className="flex-1">
+        <AppRoutes />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
