@@ -27,7 +27,6 @@ import Trades from "./pages/Trades";
 import Likes from "./pages/Likes";
 
 import Test2 from "./pages/Test2";
-import TestPage from "./pages/TestPage";
 import Test from "./pages/Test";
 
 import AdminReports from "./pages/AdminReports";
