@@ -69,11 +69,12 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           return;
         }
 
-        // Fetch their items
+        // Fetch their items (must include status='published' due to RLS policy)
         const { data: theirItemsData, error: theirError } = await supabase
           .from('items')
           .select('*')
           .eq('user_id', partnerId)
+          .eq('status', 'published')
           .eq('is_available', true)
           .eq('is_hidden', false)
           .order('created_at', { ascending: false });
