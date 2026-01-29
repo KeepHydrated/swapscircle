@@ -1709,6 +1709,98 @@ export type Database = {
           },
         ]
       }
+      sponsored_product_clicks: {
+        Row: {
+          cost: number
+          created_at: string
+          id: string
+          ip_hash: string | null
+          product_id: string
+          search_query: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cost: number
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          product_id: string
+          search_query?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          product_id?: string
+          search_query?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_product_clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsored_products: {
+        Row: {
+          category: string | null
+          cost_per_click: number
+          created_at: string
+          daily_budget: number
+          description: string | null
+          external_url: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          status: string
+          total_clicks: number
+          total_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          cost_per_click?: number
+          created_at?: string
+          daily_budget?: number
+          description?: string | null
+          external_url: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          status?: string
+          total_clicks?: number
+          total_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          cost_per_click?: number
+          created_at?: string
+          daily_budget?: number
+          description?: string | null
+          external_url?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          status?: string
+          total_clicks?: number
+          total_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       submission_attachments: {
         Row: {
           created_at: string

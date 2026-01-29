@@ -19,6 +19,8 @@ import { useDbItems } from '@/hooks/useDbItems';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useItemsInActiveTrades } from '@/hooks/useItemsInActiveTrades';
+import { useSponsoredProducts } from '@/hooks/useSponsoredProducts';
+import SponsoredProductCard from '@/components/sponsored/SponsoredProductCard';
 
 
 const SearchPage = () => {
@@ -54,6 +56,9 @@ const SearchPage = () => {
   
   // Get items in active trades (to filter them out)
   const { itemsInActiveTrades } = useItemsInActiveTrades();
+
+  // Fetch sponsored products
+  const { sponsoredProducts } = useSponsoredProducts(searchQuery, selectedCategories[0]);
 
   // Fetch friend user IDs, liked items, user items, and matches
   useEffect(() => {
@@ -602,6 +607,15 @@ const SearchPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {/* Sponsored products - shown first */}
+              {sponsoredProducts.map((product) => (
+                <SponsoredProductCard 
+                  key={`sponsored-${product.id}`} 
+                  product={product} 
+                  searchQuery={searchQuery}
+                />
+              ))}
+              
               {filteredResults.map((item, index) => {
                 // Use real match data if available, otherwise use sample matches for first 3 items (only if user has items)
                 const realMatchData = matchedItemsMap.get(item.id);

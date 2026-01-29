@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.check-image-originality]
 verify_jwt = true
+
+[functions.track-sponsored-click]
+verify_jwt = false
