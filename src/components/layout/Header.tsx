@@ -278,7 +278,7 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
+                      <Link to="/demo-trades" className="flex w-full cursor-pointer items-center">
                         Trades
                       </Link>
                     </DropdownMenuItem>
