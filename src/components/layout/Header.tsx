@@ -245,25 +245,62 @@ const Header = () => {
                 </DropdownMenu>
               )
             ) : (
-              // Show Log In button when not logged in - icon only on mobile
+              // Show demo dropdown for non-logged-in users (without admin items)
               isMobile ? (
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  onClick={handleLogin}
+                  onClick={() => setMobileMenuOpen(true)}
                   className="h-8 w-8 bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                 >
                   <User className="h-5 w-5 text-muted-foreground" />
                 </Button>
               ) : (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleLogin}
-                  className="text-foreground font-medium hover:bg-transparent"
-                >
-                  Log in
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-muted text-foreground text-sm font-semibold">
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" sideOffset={8} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex w-full cursor-pointer items-center">
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/likes" className="flex w-full cursor-pointer items-center">
+                        Likes
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/trades" className="flex w-full cursor-pointer items-center">
+                        Trades
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings" className="flex w-full cursor-pointer items-center">
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    {supabaseConfigured && (
+                      <>
+                        <DropdownMenuSeparator className="bg-border" />
+                        <DropdownMenuItem 
+                          className="flex cursor-pointer items-center text-primary font-medium"
+                          onClick={handleLogin}
+                        >
+                          <LogIn className="mr-2 h-4 w-4" />
+                          Log In
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )
             )}
           </div>
