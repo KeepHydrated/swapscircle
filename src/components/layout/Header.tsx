@@ -268,7 +268,7 @@ const Header = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" sideOffset={8} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
                     <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex w-full cursor-pointer items-center">
+                      <Link to="/demo-profile" className="flex w-full cursor-pointer items-center">
                         Profile
                       </Link>
                     </DropdownMenuItem>

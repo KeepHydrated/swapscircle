@@ -25,6 +25,7 @@ import SearchPage from "./pages/SearchPage";
 
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
+import DemoProfile from "./pages/DemoProfile";
 import Trades from "./pages/Trades";
 import Likes from "./pages/Likes";
 
@@ -121,6 +122,7 @@ const AppRoutes = () => {
           </RequireAuth>
         }
       />
+      <Route path="/demo-profile" element={<DemoProfile />} />
       <Route
         path="/settings"
         element={
