@@ -27,6 +27,7 @@ import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
 import DemoProfile from "./pages/DemoProfile";
 import Trades from "./pages/Trades";
+import DemoTrades from "./pages/DemoTrades";
 import Likes from "./pages/Likes";
 
 import Test2 from "./pages/Test2";
@@ -123,6 +124,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/demo-profile" element={<DemoProfile />} />
+      <Route path="/demo-trades" element={<DemoTrades />} />
       <Route
         path="/settings"
         element={
