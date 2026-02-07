@@ -26,16 +26,37 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [resolvedOwnerId, setResolvedOwnerId] = useState<string | undefined>(targetItemOwnerId);
   const navigate = useNavigate();
 
   // Reset selection when modal opens/closes, pre-select if provided
   useEffect(() => {
     if (!isOpen) {
       setSelectedItemIds([]);
-    } else if (preSelectedItemId) {
-      setSelectedItemIds([preSelectedItemId]);
+      setResolvedOwnerId(undefined);
+    } else {
+      if (preSelectedItemId) {
+        setSelectedItemIds([preSelectedItemId]);
+      }
+      // Set or resolve owner ID
+      if (targetItemOwnerId) {
+        setResolvedOwnerId(targetItemOwnerId);
+      } else if (targetItem?.id) {
+        // Fetch owner from database if not provided
+        const fetchOwner = async () => {
+          const { data } = await supabase
+            .from('items')
+            .select('user_id')
+            .eq('id', targetItem.id)
+            .single();
+          if (data?.user_id) {
+            setResolvedOwnerId(data.user_id);
+          }
+        };
+        fetchOwner();
+      }
     }
-  }, [isOpen, preSelectedItemId]);
+  }, [isOpen, preSelectedItemId, targetItemOwnerId, targetItem?.id]);
 
   // Fetch user's items
   useEffect(() => {
@@ -104,10 +125,18 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
   };
 
   const handleConfirmTrade = async () => {
-    if (selectedItemIds.length === 0 || !targetItem || !targetItemOwnerId) {
+    if (selectedItemIds.length === 0) {
       toast({
         title: "Error",
         description: "Please select at least one item to trade.",
+      });
+      return;
+    }
+
+    if (!targetItem || !resolvedOwnerId) {
+      toast({
+        title: "Error",
+        description: "Could not determine the item owner. Please try again.",
       });
       return;
     }
@@ -126,7 +155,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         .from('trade_conversations')
         .insert({
           requester_id: session.session.user.id,
-          owner_id: targetItemOwnerId,
+          owner_id: resolvedOwnerId,
           requester_item_id: selectedItemIds[0], // First item for backwards compatibility
           requester_item_ids: selectedItemIds, // All selected items
           owner_item_id: targetItem.id,
