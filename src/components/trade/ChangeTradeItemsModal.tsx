@@ -44,7 +44,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
   // Fetch both users' items
   useEffect(() => {
     const fetchItems = async () => {
-      if (!isOpen) return;
+      if (!isOpen || !partnerId) return;
       
       setLoading(true);
       try {
@@ -80,7 +80,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           .order('created_at', { ascending: false });
 
         if (theirError) {
-          console.error('Error fetching their items:', theirError);
+          console.error('Error fetching their items:', theirError, 'partnerId:', partnerId);
           toast.error("Failed to load their items.");
           return;
         }

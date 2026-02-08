@@ -650,7 +650,7 @@ const handleNextTheirItem = () => {
           isOpen={showChangeItemsModal}
           onClose={() => setShowChangeItemsModal(false)}
           conversationId={selectedPair.partnerId}
-          partnerId={selectedPair.partnerProfile?.id || ''}
+          partnerId={isCurrentUserRequester ? (currentTrade?.owner_id || selectedPair.partnerProfile?.id || '') : (currentTrade?.requester_id || selectedPair.partnerProfile?.id || '')}
           currentMyItemIds={
             isCurrentUserRequester 
               ? (currentTrade?.requester_item_ids?.length ? currentTrade.requester_item_ids : (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
