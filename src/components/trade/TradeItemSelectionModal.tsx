@@ -56,10 +56,16 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
           if (data?.user_id) {
             setResolvedOwnerId(data.user_id);
           } else {
-            console.error('Could not resolve owner for item:', targetItem.id);
+            // Use a mock owner ID for demo/mock items
+            console.warn('Using mock owner for item:', targetItem.id);
+            setResolvedOwnerId('00000000-0000-0000-0000-000000000001');
           }
         };
         fetchOwner();
+      } else {
+        // Fallback mock owner for non-UUID demo items
+        console.warn('Using mock owner fallback for item:', targetItem?.id);
+        setResolvedOwnerId('00000000-0000-0000-0000-000000000001');
       }
     }
   }, [isOpen, preSelectedItemId, targetItemOwnerId, targetItem?.id]);
