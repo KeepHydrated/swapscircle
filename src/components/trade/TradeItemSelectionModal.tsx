@@ -145,10 +145,21 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       return;
     }
 
+    const isValidUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
     if (!targetItem || !resolvedOwnerId) {
       toast({
         title: "Error",
         description: "Could not determine the item owner. Please try again.",
+      });
+      return;
+    }
+
+    // Validate all IDs are proper UUIDs before inserting
+    if (!isValidUuid(resolvedOwnerId) || !isValidUuid(targetItem.id) || selectedItemIds.some(id => !isValidUuid(id))) {
+      toast({
+        title: "Error",
+        description: "This item is from demo data and cannot be traded. Try trading with real items from other users.",
       });
       return;
     }
