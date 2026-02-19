@@ -41,6 +41,9 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       // Set or resolve owner ID
       if (targetItemOwnerId) {
         setResolvedOwnerId(targetItemOwnerId);
+      } else if (targetItem?.user_id) {
+        // Use user_id from the item object if available
+        setResolvedOwnerId(targetItem.user_id);
       } else if (targetItem?.id) {
         // Fetch owner from database if not provided
         const fetchOwner = async () => {
@@ -48,9 +51,11 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
             .from('items')
             .select('user_id')
             .eq('id', targetItem.id)
-            .single();
+            .maybeSingle();
           if (data?.user_id) {
             setResolvedOwnerId(data.user_id);
+          } else {
+            console.error('Could not resolve owner for item:', targetItem.id);
           }
         };
         fetchOwner();
