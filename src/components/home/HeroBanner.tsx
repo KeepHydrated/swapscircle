@@ -7,7 +7,7 @@ const HeroBanner = () => {
         {/* Left side - Text */}
         <div className="flex-1">
           <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight">
-            Skip Shopping — Trade With Friends, Your Local Community, Or People Across The US
+            Skip Shopping —<br />Trade With Friends, Your Local Community, Or People Across The US
           </h1>
         </div>
         
