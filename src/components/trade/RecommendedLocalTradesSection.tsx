@@ -45,70 +45,70 @@ const RecommendedLocalTradesSection = () => {
   // Sample fallback items to ensure content is always displayed
   const SAMPLE_ITEMS: TradeItem[] = [
     {
-      id: 'sample-1',
-      name: 'Vintage Camera',
+      id: '9a1c5bbb-3dc6-411a-990f-1fe3d3272ec8',
+      name: 'Canon DSLR Camera',
       image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400',
       category: 'Electronics',
-      condition: 'Good',
-      price_range_min: 100,
-      price_range_max: 200,
-      user_id: 'sample-user-1',
-      description: 'Classic vintage film camera in excellent condition'
-    },
-    {
-      id: 'sample-2',
-      name: 'Mountain Bike',
-      image_url: 'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400',
-      category: 'Sports',
       condition: 'Like New',
       price_range_min: 300,
-      price_range_max: 500,
-      user_id: 'sample-user-2',
-      description: 'High-quality mountain bike perfect for trails'
+      price_range_max: 600,
+      user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      description: 'Professional grade camera with 18-55mm lens'
     },
     {
-      id: 'sample-3',
-      name: 'Leather Jacket',
-      image_url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
-      category: 'Clothing',
-      condition: 'Like New',
-      price_range_min: 150,
-      price_range_max: 250,
-      user_id: 'sample-user-3',
-      description: 'Genuine leather jacket, barely worn'
-    },
-    {
-      id: 'sample-4',
-      name: 'Acoustic Guitar',
+      id: '97d0aedc-c4c7-420d-9caa-8aa5e92f2498',
+      name: 'Taylor Acoustic Guitar',
       image_url: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400',
       category: 'Music',
       condition: 'Good',
       price_range_min: 200,
       price_range_max: 400,
-      user_id: 'sample-user-4',
-      description: 'Beautiful acoustic guitar with rich sound'
+      user_id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+      description: 'Beautiful sound, well-maintained'
     },
     {
-      id: 'sample-5',
-      name: 'Vintage Watch',
-      image_url: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400',
-      category: 'Accessories',
+      id: '35db9963-a8e4-4b04-bd1e-ef5ea56f3755',
+      name: 'Vintage Watch Collection',
+      image_url: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400',
+      category: 'Fashion',
       condition: 'Good',
-      price_range_min: 250,
-      price_range_max: 450,
-      user_id: 'sample-user-5',
-      description: 'Classic automatic watch with leather strap'
+      price_range_min: 150,
+      price_range_max: 400,
+      user_id: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+      description: 'Set of 3 classic timepieces'
     },
     {
-      id: 'sample-6',
-      name: 'Coffee Maker',
-      image_url: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400',
+      id: 'cd867711-6abc-4896-88ed-444f2f8c609c',
+      name: 'Vintage Leather Messenger Bag',
+      image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
+      category: 'Fashion',
+      condition: 'Good',
+      price_range_min: 50,
+      price_range_max: 150,
+      user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      description: 'Beautiful aged leather messenger bag'
+    },
+    {
+      id: '4a5d56cd-272d-483b-aa5c-c80c7eb4491c',
+      name: 'Espresso Machine',
+      image_url: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400',
       category: 'Home',
       condition: 'Like New',
+      price_range_min: 200,
+      price_range_max: 400,
+      user_id: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+      description: 'Makes great coffee, fully automatic'
+    },
+    {
+      id: 'dbf0d188-1b1a-4c1c-ba26-9d5561622645',
+      name: 'Wireless Bluetooth Speaker',
+      image_url: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
+      category: 'Electronics',
+      condition: 'Like New',
       price_range_min: 80,
-      price_range_max: 150,
-      user_id: 'sample-user-6',
-      description: 'Premium espresso machine with milk frother'
+      price_range_max: 180,
+      user_id: 'f6a7b8c9-d0e1-2345-fabc-678901234567',
+      description: 'JBL, excellent sound quality'
     }
   ];
 
