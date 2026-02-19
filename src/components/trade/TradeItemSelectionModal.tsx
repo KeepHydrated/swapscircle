@@ -38,13 +38,14 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       if (preSelectedItemId) {
         setSelectedItemIds([preSelectedItemId]);
       }
-      // Set or resolve owner ID
-      if (targetItemOwnerId) {
-        setResolvedOwnerId(targetItemOwnerId);
-      } else if (targetItem?.user_id) {
-        // Use user_id from the item object if available
-        setResolvedOwnerId(targetItem.user_id);
-      } else if (targetItem?.id) {
+      // Validate UUID format helper
+      const isValidUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      
+      // Set or resolve owner ID - always validate UUID format
+      const providedOwnerId = targetItemOwnerId || targetItem?.user_id;
+      if (providedOwnerId && isValidUuid(providedOwnerId)) {
+        setResolvedOwnerId(providedOwnerId);
+      } else if (targetItem?.id && isValidUuid(targetItem.id)) {
         // Fetch owner from database if not provided
         const fetchOwner = async () => {
           const { data } = await supabase
