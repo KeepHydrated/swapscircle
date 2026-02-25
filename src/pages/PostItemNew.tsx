@@ -449,9 +449,6 @@ const PostItemNew: React.FC = () => {
       setProceedWithSubmit(false); // Reset for next submission
     }
   };
-  if (!user) {
-    return <div>Please log in to {isEditing ? 'edit' : 'post'} an item.</div>;
-  }
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
