@@ -307,6 +307,13 @@ const PostItemNew: React.FC = () => {
     console.log('📸 New Images:', images.length);
     console.log('🖼️ Existing Images:', existingImageUrls.length);
 
+    // Auth check - must be logged in to submit
+    if (!user) {
+      toast.error('You must be logged in to post an item.');
+      navigate('/auth', { state: { from: '/post-item' } });
+      return;
+    }
+
     // Validation
     const requiredFields = ['title', 'description', 'category', 'condition', 'priceRange'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);

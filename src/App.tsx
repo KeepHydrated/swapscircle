@@ -66,14 +66,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/item/:itemId" element={<ItemDetails />} />
-      <Route
-        path="/post-item"
-        element={
-          <RequireAuth>
-            <PostItemNew />
-          </RequireAuth>
-        }
-      />
+      <Route path="/post-item" element={<PostItemNew />} />
       <Route
         path="/edit-item/:itemId"
         element={
