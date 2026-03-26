@@ -775,23 +775,34 @@ const Messages = () => {
                     >
                       <div className="flex items-start gap-2">
                         <Avatar className="h-10 w-10">
-                           <AvatarImage 
-                            src={conversation.otherUserProfile?.avatar_url || undefined} 
-                            alt={`${conversation.name}'s avatar`} 
-                          />
-                          <AvatarFallback>
-                            {conversation.name.substring(0, 1).toUpperCase()}
-                          </AvatarFallback>
+                          {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                            <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
+                          ) : (
+                            <>
+                              <AvatarImage 
+                                src={conversation.otherUserProfile?.avatar_url || undefined} 
+                                alt={`${conversation.name}'s avatar`} 
+                              />
+                              <AvatarFallback>
+                                {conversation.name.substring(0, 1).toUpperCase()}
+                              </AvatarFallback>
+                            </>
+                          )}
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
-                            <div className="font-medium truncate text-sm">
-                              {conversation.name}
+                            <div className="flex items-center gap-1.5">
+                              <div className="font-medium truncate text-sm">
+                                {conversation.name}
+                              </div>
+                              {conversation.isSupport && (
+                                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full shrink-0">Support</span>
+                              )}
                             </div>
                             <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                           </div>
                           
-                          {exchangePair && (
+                          {!conversation.isSupport && exchangePair && (
                             <div className="flex items-center mb-1 text-xs">
                               <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
                               <span className="mx-1 text-blue-600">↔</span>
