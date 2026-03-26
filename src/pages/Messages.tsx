@@ -888,7 +888,21 @@ const Messages = () => {
             
             {/* Right - Details panel (always visible in 3-column) */}
             <div className="w-[340px] flex flex-col h-full bg-gray-50 overflow-y-auto">
-              {isDemoTrade && demoTradeData ? (
+              {activeChat?.isSupport ? (
+                <div className="flex items-center justify-center h-full p-4">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <MessageSquare className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1">Support Conversation</h3>
+                    <p className="text-muted-foreground text-sm">
+                      {currentUserEmail === 'nadiachibri@gmail.com' 
+                        ? `Messaging ${activeChat.name}` 
+                        : 'You are chatting with SwapsCircle Support'}
+                    </p>
+                  </div>
+                </div>
+              ) : isDemoTrade && demoTradeData ? (
                 <TradeDetailsTabs 
                   selectedPair={constructDemoPair(demoTradeData)} 
                   selectedItem={selectedItem} 
