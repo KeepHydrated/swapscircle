@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import SupportChat from '@/components/chat/SupportChat';
+import NewSupportMessageDialog from '@/components/messages/NewSupportMessageDialog';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsTablet } from '@/hooks/use-tablet';
 import { Button } from '@/components/ui/button';
