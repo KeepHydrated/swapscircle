@@ -61,29 +61,39 @@ const ConversationList = ({
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage 
-                      src={conversation.otherUserProfile?.avatar_url || undefined} 
-                      alt={`${conversation.name}'s avatar`} 
-                    />
-                    <AvatarFallback>
-                      {conversation.name.substring(0, 1).toUpperCase()}
-                    </AvatarFallback>
+                    {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                      <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                    ) : (
+                      <>
+                        <AvatarImage 
+                          src={conversation.otherUserProfile?.avatar_url || undefined} 
+                          alt={`${conversation.name}'s avatar`} 
+                        />
+                        <AvatarFallback>
+                          {conversation.name.substring(0, 1).toUpperCase()}
+                        </AvatarFallback>
+                      </>
+                    )}
                   </Avatar>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-medium truncate">{conversation.name}</h3>
-                      <div className="flex items-center gap-1">
-                        <span className="text-yellow-500 text-xs">★</span>
-                        <span className="text-xs text-gray-600">4.5</span>
-                      </div>
+                      {conversation.isSupport ? (
+                        <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full shrink-0">Support</span>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-500 text-xs">★</span>
+                          <span className="text-xs text-gray-600">4.5</span>
+                        </div>
+                      )}
                     </div>
                     <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                   </div>
                   
-                  {/* Exchange item display */}
-                  {exchangePair && (
+                  {/* Exchange item display - hide for support conversations */}
+                  {!conversation.isSupport && exchangePair && (
                     <div className="flex items-center mb-1 text-xs">
                       <span className="truncate text-gray-900 max-w-[100px] inline-block">{exchangePair.item1.name}</span>
                       <ArrowRight className="h-3 w-3 mx-1 text-blue-600 flex-shrink-0" />
