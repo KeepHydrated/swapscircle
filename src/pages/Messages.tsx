@@ -692,6 +692,11 @@ const Messages = () => {
         <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Left sidebar - Conversations (always visible, narrower) */}
           <div className="w-[340px] border-r border-gray-200 flex flex-col h-full">
+            {currentUserEmail === 'nadiachibri@gmail.com' && (
+              <div className="p-2 border-b border-gray-200 flex-shrink-0">
+                <NewSupportMessageDialog />
+              </div>
+            )}
             
           {(conversations.length > 0 || demoTradeData) ? (
             <div className="flex flex-col h-full">
