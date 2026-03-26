@@ -558,6 +558,11 @@ const Messages = () => {
                   </Avatar>
                   {isDemoTrade ? (
                     <span className="font-medium text-lg">{demoTradeData?.partnerProfile?.username || 'Demo User'}</span>
+                  ) : activeChat?.isSupport ? (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-lg">{activeChat?.name}</span>
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
+                    </div>
                   ) : (
                     <Link 
                       to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
