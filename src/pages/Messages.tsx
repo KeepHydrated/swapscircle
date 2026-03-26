@@ -972,19 +972,33 @@ const Messages = () => {
                 <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
-                        <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                          <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
-                          <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                      </Link>
-                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
-                        {activeChat.otherUserProfile?.username || activeChat.name}
-                      </Link>
+                      {activeChat.isSupport ? (
+                        <>
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                          </Avatar>
+                          <span className="font-semibold">{activeChat.name}</span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
+                            <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                              <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                              <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                          </Link>
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                            {activeChat.otherUserProfile?.username || activeChat.name}
+                          </Link>
+                        </>
+                      )}
                     </div>
-                    <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
-                      <Info className="h-5 w-5" />
-                    </Button>
+                    {!activeChat.isSupport && (
+                      <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
+                        <Info className="h-5 w-5" />
+                      </Button>
+                    )}
                   </div>
                 </div>
                 {currentMobileView === 'messages' ? (
