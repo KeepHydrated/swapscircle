@@ -2373,13 +2373,14 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           id: string
+          is_support: boolean | null
           owner_accepted: boolean | null
           owner_id: string
-          owner_item_id: string
+          owner_item_id: string | null
           owner_item_ids: string[] | null
           requester_accepted: boolean | null
           requester_id: string
-          requester_item_id: string
+          requester_item_id: string | null
           requester_item_ids: string[] | null
           status: string | null
           updated_at: string | null
@@ -2388,13 +2389,14 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           id?: string
+          is_support?: boolean | null
           owner_accepted?: boolean | null
           owner_id: string
-          owner_item_id: string
+          owner_item_id?: string | null
           owner_item_ids?: string[] | null
           requester_accepted?: boolean | null
           requester_id: string
-          requester_item_id: string
+          requester_item_id?: string | null
           requester_item_ids?: string[] | null
           status?: string | null
           updated_at?: string | null
@@ -2403,13 +2405,14 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           id?: string
+          is_support?: boolean | null
           owner_accepted?: boolean | null
           owner_id?: string
-          owner_item_id?: string
+          owner_item_id?: string | null
           owner_item_ids?: string[] | null
           requester_accepted?: boolean | null
           requester_id?: string
-          requester_item_id?: string
+          requester_item_id?: string | null
           requester_item_ids?: string[] | null
           status?: string | null
           updated_at?: string | null
