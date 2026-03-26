@@ -21,6 +21,7 @@ const AdminCustomerSupport = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <div className="bg-background">
         <div className="p-6">
           <AdminSupportChat />

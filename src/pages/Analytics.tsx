@@ -307,6 +307,7 @@ const Analytics = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <SEOHelmet 
         title="Analytics Dashboard - SwapsCircle Admin"
         description="Comprehensive analytics dashboard for SwapsCircle trading platform. Monitor user growth, trade activity, and platform performance metrics."

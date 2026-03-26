@@ -518,6 +518,7 @@ const AdminReports: React.FC = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <Flag className="w-8 h-8" />

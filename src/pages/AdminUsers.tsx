@@ -139,6 +139,7 @@ const AdminUsers: React.FC = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <div className="container mx-auto p-4 md:p-6 max-w-4xl">
         <Card>
           <CardHeader>
