@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import AdminSupportChat from '@/components/chat/AdminSupportChat';
 import MainLayout from '@/components/layout/MainLayout';
+import AdminNav from '@/components/admin/AdminNav';
 
 const AdminCustomerSupport = () => {
   const { user } = useAuth();
@@ -21,6 +22,7 @@ const AdminCustomerSupport = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <div className="bg-background">
         <div className="p-6">
           <AdminSupportChat />

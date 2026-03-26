@@ -11,6 +11,7 @@ import { Users, Search, Calendar, Settings, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import UserSettingsModal from '@/components/admin/UserSettingsModal';
 import UserProfileModal from '@/components/admin/UserProfileModal';
+import AdminNav from '@/components/admin/AdminNav';
 
 interface UserProfile {
   id: string;
@@ -139,6 +140,7 @@ const AdminUsers: React.FC = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <div className="container mx-auto p-4 md:p-6 max-w-4xl">
         <Card>
           <CardHeader>

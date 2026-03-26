@@ -22,6 +22,7 @@ import { AlertCircle, Clock, CheckCircle, X, Flag, Eye, Trash2 } from 'lucide-re
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ReportedItemModal } from '@/components/admin/ReportedItemModal';
+import AdminNav from '@/components/admin/AdminNav';
 
 interface Report {
   id: string;
@@ -518,6 +519,7 @@ const AdminReports: React.FC = () => {
 
   return (
     <MainLayout>
+      <AdminNav />
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <Flag className="w-8 h-8" />
