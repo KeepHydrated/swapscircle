@@ -116,6 +116,16 @@ const AdminUsers: React.FC = () => {
     setProfileModalOpen(true);
   };
 
+  const handleMessageUser = async (e: React.MouseEvent, userId: string) => {
+    e.stopPropagation();
+    const conversationId = await createOrFindSupportConversation(userId);
+    if (conversationId) {
+      navigate(`/messages?conversation=${conversationId}`);
+    } else {
+      toast.error('Failed to create support conversation');
+    }
+  };
+
   if (!user) {
     return (
       <MainLayout>
