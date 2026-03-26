@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import SupportChat from '@/components/chat/SupportChat';
+import NewSupportMessageDialog from '@/components/messages/NewSupportMessageDialog';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsTablet } from '@/hooks/use-tablet';
 import { Button } from '@/components/ui/button';
@@ -487,23 +488,34 @@ const Messages = () => {
                       >
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12">
-                            <AvatarImage 
-                              src={conversation.otherUserProfile?.avatar_url || undefined} 
-                              alt={`${conversation.name}'s avatar`} 
-                            />
-                            <AvatarFallback>
-                              {conversation.name.substring(0, 1).toUpperCase()}
-                            </AvatarFallback>
+                            {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                              <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                            ) : (
+                              <>
+                                <AvatarImage 
+                                  src={conversation.otherUserProfile?.avatar_url || undefined} 
+                                  alt={`${conversation.name}'s avatar`} 
+                                />
+                                <AvatarFallback>
+                                  {conversation.name.substring(0, 1).toUpperCase()}
+                                </AvatarFallback>
+                              </>
+                            )}
                           </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-center mb-1">
-                              <div className="font-medium truncate">
-                                {conversation.name}
+                              <div className="flex items-center gap-2">
+                                <div className="font-medium truncate">
+                                  {conversation.name}
+                                </div>
+                                {conversation.isSupport && (
+                                  <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full shrink-0">Support</span>
+                                )}
                               </div>
                               <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                             </div>
                             
-                            {exchangePair && (
+                            {!conversation.isSupport && exchangePair && (
                               <div className="flex items-center mb-1 text-xs">
                                 <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
                                 <span className="mx-1 text-blue-600">↔</span>
@@ -548,16 +560,27 @@ const Messages = () => {
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Avatar className="h-8 w-8">
-                    <AvatarImage 
-                      src={isDemoTrade ? demoTradeData?.partnerProfile?.avatar_url : activeChat?.otherUserProfile?.avatar_url || undefined} 
-                      alt={`${isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name}'s avatar`} 
-                    />
-                    <AvatarFallback>
-                      {(isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name)?.substring(0, 1).toUpperCase()}
-                    </AvatarFallback>
+                    {!isDemoTrade && activeChat?.isSupport ? (
+                      <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
+                    ) : (
+                      <>
+                        <AvatarImage 
+                          src={isDemoTrade ? demoTradeData?.partnerProfile?.avatar_url : activeChat?.otherUserProfile?.avatar_url || undefined} 
+                          alt={`${isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name}'s avatar`} 
+                        />
+                        <AvatarFallback>
+                          {(isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name)?.substring(0, 1).toUpperCase()}
+                        </AvatarFallback>
+                      </>
+                    )}
                   </Avatar>
                   {isDemoTrade ? (
                     <span className="font-medium text-lg">{demoTradeData?.partnerProfile?.username || 'Demo User'}</span>
+                  ) : activeChat?.isSupport ? (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-lg">{activeChat?.name}</span>
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
+                    </div>
                   ) : (
                     <Link 
                       to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
@@ -686,6 +709,11 @@ const Messages = () => {
         <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Left sidebar - Conversations (always visible, narrower) */}
           <div className="w-[340px] border-r border-gray-200 flex flex-col h-full">
+            {currentUserEmail === 'nadiachibri@gmail.com' && (
+              <div className="p-2 border-b border-gray-200 flex-shrink-0">
+                <NewSupportMessageDialog />
+              </div>
+            )}
             
           {(conversations.length > 0 || demoTradeData) ? (
             <div className="flex flex-col h-full">
@@ -753,23 +781,34 @@ const Messages = () => {
                     >
                       <div className="flex items-start gap-2">
                         <Avatar className="h-10 w-10">
-                           <AvatarImage 
-                            src={conversation.otherUserProfile?.avatar_url || undefined} 
-                            alt={`${conversation.name}'s avatar`} 
-                          />
-                          <AvatarFallback>
-                            {conversation.name.substring(0, 1).toUpperCase()}
-                          </AvatarFallback>
+                          {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                            <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
+                          ) : (
+                            <>
+                              <AvatarImage 
+                                src={conversation.otherUserProfile?.avatar_url || undefined} 
+                                alt={`${conversation.name}'s avatar`} 
+                              />
+                              <AvatarFallback>
+                                {conversation.name.substring(0, 1).toUpperCase()}
+                              </AvatarFallback>
+                            </>
+                          )}
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
-                            <div className="font-medium truncate text-sm">
-                              {conversation.name}
+                            <div className="flex items-center gap-1.5">
+                              <div className="font-medium truncate text-sm">
+                                {conversation.name}
+                              </div>
+                              {conversation.isSupport && (
+                                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full shrink-0">Support</span>
+                              )}
                             </div>
                             <span className="text-xs text-gray-500 flex-shrink-0">{conversation.time}</span>
                           </div>
                           
-                          {exchangePair && (
+                          {!conversation.isSupport && exchangePair && (
                             <div className="flex items-center mb-1 text-xs">
                               <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
                               <span className="mx-1 text-blue-600">↔</span>
@@ -825,15 +864,27 @@ const Messages = () => {
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                     <div className="flex items-center gap-3">
-                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
-                        <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                          <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
-                          <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                      </Link>
-                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
-                        {activeChat.otherUserProfile?.username || activeChat.name}
-                      </Link>
+                      {activeChat.isSupport ? (
+                        <>
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                          </Avatar>
+                          <span className="font-semibold">{activeChat.name}</span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
+                            <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                              <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                              <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                          </Link>
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                            {activeChat.otherUserProfile?.username || activeChat.name}
+                          </Link>
+                        </>
+                      )}
                     </div>
                   </div>
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
@@ -871,7 +922,21 @@ const Messages = () => {
             
             {/* Right - Details panel (always visible in 3-column) */}
             <div className="w-[340px] flex flex-col h-full bg-gray-50 overflow-y-auto">
-              {isDemoTrade && demoTradeData ? (
+              {activeChat?.isSupport ? (
+                <div className="flex items-center justify-center h-full p-4">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <MessageSquare className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1">Support Conversation</h3>
+                    <p className="text-muted-foreground text-sm">
+                      {currentUserEmail === 'nadiachibri@gmail.com' 
+                        ? `Messaging ${activeChat.name}` 
+                        : 'You are chatting with SwapsCircle Support'}
+                    </p>
+                  </div>
+                </div>
+              ) : isDemoTrade && demoTradeData ? (
                 <TradeDetailsTabs 
                   selectedPair={constructDemoPair(demoTradeData)} 
                   selectedItem={selectedItem} 
@@ -955,19 +1020,33 @@ const Messages = () => {
                 <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
-                        <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
-                          <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
-                          <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                      </Link>
-                      <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
-                        {activeChat.otherUserProfile?.username || activeChat.name}
-                      </Link>
+                      {activeChat.isSupport ? (
+                        <>
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                          </Avatar>
+                          <span className="font-semibold">{activeChat.name}</span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
+                            <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                              <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                              <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                          </Link>
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                            {activeChat.otherUserProfile?.username || activeChat.name}
+                          </Link>
+                        </>
+                      )}
                     </div>
-                    <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
-                      <Info className="h-5 w-5" />
-                    </Button>
+                    {!activeChat.isSupport && (
+                      <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
+                        <Info className="h-5 w-5" />
+                      </Button>
+                    )}
                   </div>
                 </div>
                 {currentMobileView === 'messages' ? (

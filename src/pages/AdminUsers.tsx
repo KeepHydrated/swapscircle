@@ -7,11 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Users, Search, Calendar, Settings, Eye } from 'lucide-react';
+import { Users, Search, Calendar, Settings, Eye, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import UserSettingsModal from '@/components/admin/UserSettingsModal';
 import UserProfileModal from '@/components/admin/UserProfileModal';
 import AdminNav from '@/components/admin/AdminNav';
+import { createOrFindSupportConversation } from '@/services/supportConversationService';
+import { toast } from 'sonner';
 
 interface UserProfile {
   id: string;
@@ -110,6 +112,16 @@ const AdminUsers: React.FC = () => {
     setProfileModalOpen(true);
   };
 
+  const handleMessageUser = async (e: React.MouseEvent, userId: string) => {
+    e.stopPropagation();
+    const conversationId = await createOrFindSupportConversation(userId);
+    if (conversationId) {
+      navigate(`/messages?conversation=${conversationId}`);
+    } else {
+      toast.error('Failed to create support conversation');
+    }
+  };
+
   if (!user) {
     return (
       <MainLayout>
@@ -196,6 +208,15 @@ const AdminUsers: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-3 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => handleMessageUser(e, userProfile.id)}
+                        className="text-muted-foreground hover:text-foreground"
+                        title="Message User"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="sm"

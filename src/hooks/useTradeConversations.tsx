@@ -19,6 +19,7 @@ export interface ConversationDisplay {
   ownerId?: string;
   requesterAccepted?: boolean;
   ownerAccepted?: boolean;
+  isSupport?: boolean;
   otherUserProfile?: {
     id: string;
     username: string;
@@ -116,6 +117,60 @@ export const useTradeConversations = () => {
         }
 
         tradeConversations.forEach((tc: any, index: number) => {
+          // Handle support conversations differently
+          if (tc.is_support) {
+            const isAdmin = tc.requester_id === currentUserId;
+            const otherUserId = isAdmin ? tc.owner_id : tc.requester_id;
+            const otherUserProfile = isAdmin 
+              ? tc.owner_profile
+              : null;
+
+            const conversation: ConversationDisplay = {
+              id: tc.id,
+              name: isAdmin 
+                ? (otherUserProfile?.username || 'User') 
+                : 'SwapsCircle Support',
+              lastMessage: 'Support conversation',
+              time: new Date(tc.updated_at).toLocaleDateString(),
+              isNew: false,
+              isCompleted: false,
+              status: tc.status,
+              requesterId: tc.requester_id,
+              ownerId: tc.owner_id,
+              isSupport: true,
+              otherUserProfile: isAdmin 
+                ? (otherUserProfile || {
+                    id: otherUserId,
+                    username: 'User',
+                    email: '',
+                    avatar_url: '',
+                    bio: '',
+                    location: '',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                  })
+                : {
+                    id: tc.requester_id,
+                    username: 'SwapsCircle Support',
+                    email: '',
+                    avatar_url: '',
+                    bio: 'Official SwapsCircle Support',
+                    location: '',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                  }
+            };
+
+            // Get last message for support conversations
+            const lastMsg = lastMessagesMap[tc.id];
+            if (lastMsg?.message) {
+              conversation.lastMessage = lastMsg.message;
+            }
+
+            displayConversations.push(conversation);
+            return; // Skip exchange pair creation for support conversations
+          }
+
           // Determine who is the other person
           const isRequester = tc.requester_id === currentUserId;
           const myItem = isRequester ? tc.requester_item : tc.owner_item;
