@@ -215,6 +215,15 @@ const AdminUsers: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={(e) => handleMessageUser(e, userProfile.id)}
+                        className="text-muted-foreground hover:text-foreground"
+                        title="Message User"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={(e) => handleViewProfile(e, userProfile.id)}
                         className="text-muted-foreground hover:text-foreground"
                         title="View Profile"
