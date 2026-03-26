@@ -19,6 +19,7 @@ export interface ConversationDisplay {
   ownerId?: string;
   requesterAccepted?: boolean;
   ownerAccepted?: boolean;
+  isSupport?: boolean;
   otherUserProfile?: {
     id: string;
     username: string;
