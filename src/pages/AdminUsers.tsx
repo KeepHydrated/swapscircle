@@ -14,10 +14,6 @@ import UserProfileModal from '@/components/admin/UserProfileModal';
 import AdminNav from '@/components/admin/AdminNav';
 import { createOrFindSupportConversation } from '@/services/supportConversationService';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
-import UserSettingsModal from '@/components/admin/UserSettingsModal';
-import UserProfileModal from '@/components/admin/UserProfileModal';
-import AdminNav from '@/components/admin/AdminNav';
 
 interface UserProfile {
   id: string;
