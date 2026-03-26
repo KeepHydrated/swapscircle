@@ -560,13 +560,19 @@ const Messages = () => {
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Avatar className="h-8 w-8">
-                    <AvatarImage 
-                      src={isDemoTrade ? demoTradeData?.partnerProfile?.avatar_url : activeChat?.otherUserProfile?.avatar_url || undefined} 
-                      alt={`${isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name}'s avatar`} 
-                    />
-                    <AvatarFallback>
-                      {(isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name)?.substring(0, 1).toUpperCase()}
-                    </AvatarFallback>
+                    {!isDemoTrade && activeChat?.isSupport ? (
+                      <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
+                    ) : (
+                      <>
+                        <AvatarImage 
+                          src={isDemoTrade ? demoTradeData?.partnerProfile?.avatar_url : activeChat?.otherUserProfile?.avatar_url || undefined} 
+                          alt={`${isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name}'s avatar`} 
+                        />
+                        <AvatarFallback>
+                          {(isDemoTrade ? demoTradeData?.partnerProfile?.username : activeChat?.name)?.substring(0, 1).toUpperCase()}
+                        </AvatarFallback>
+                      </>
+                    )}
                   </Avatar>
                   {isDemoTrade ? (
                     <span className="font-medium text-lg">{demoTradeData?.partnerProfile?.username || 'Demo User'}</span>
