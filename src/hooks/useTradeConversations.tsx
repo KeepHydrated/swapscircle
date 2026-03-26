@@ -122,7 +122,7 @@ export const useTradeConversations = () => {
             const isAdmin = tc.requester_id === currentUserId;
             const otherUserId = isAdmin ? tc.owner_id : tc.requester_id;
             const otherUserProfile = isAdmin 
-              ? profiles?.find(p => p.id === tc.owner_id)
+              ? tc.owner_profile
               : null;
 
             const conversation: ConversationDisplay = {
