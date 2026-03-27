@@ -170,13 +170,16 @@ const AppRoutes = () => {
 const AppContent = () => {
   usePageViewTracking();
 
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/auth';
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
         <AppRoutes />
       </main>
-      <Footer />
+      {!isAuthPage && <Footer />}
       <LiveChatPopup />
     </div>
   );
