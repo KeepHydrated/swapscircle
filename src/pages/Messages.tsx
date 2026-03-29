@@ -488,7 +488,7 @@ const Messages = () => {
                       >
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12">
-                            {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                            {false ? (
                               <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
                             ) : (
                               <>
