@@ -867,7 +867,8 @@ const Messages = () => {
                       {activeChat.isSupport ? (
                         <>
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                            <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                            <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <span className="font-semibold">{activeChat.name}</span>
                           <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
