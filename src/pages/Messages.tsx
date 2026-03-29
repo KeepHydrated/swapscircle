@@ -560,7 +560,7 @@ const Messages = () => {
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Avatar className="h-8 w-8">
-                    {!isDemoTrade && activeChat?.isSupport ? (
+                    {false ? (
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
                     ) : (
                       <>
