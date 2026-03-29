@@ -488,7 +488,7 @@ const Messages = () => {
                       >
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12">
-                            {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                            {false ? (
                               <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
                             ) : (
                               <>
@@ -560,7 +560,7 @@ const Messages = () => {
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Avatar className="h-8 w-8">
-                    {!isDemoTrade && activeChat?.isSupport ? (
+                    {false ? (
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
                     ) : (
                       <>
@@ -781,7 +781,7 @@ const Messages = () => {
                     >
                       <div className="flex items-start gap-2">
                         <Avatar className="h-10 w-10">
-                          {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
+                          {false ? (
                             <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
                           ) : (
                             <>
@@ -867,7 +867,8 @@ const Messages = () => {
                       {activeChat.isSupport ? (
                         <>
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                            <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                            <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <span className="font-semibold">{activeChat.name}</span>
                           <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
@@ -1023,7 +1024,8 @@ const Messages = () => {
                       {activeChat.isSupport ? (
                         <>
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                            <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
+                            <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <span className="font-semibold">{activeChat.name}</span>
                           <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Support</span>
