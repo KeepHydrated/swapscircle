@@ -28,6 +28,33 @@ interface TradeItem {
   myItemName?: string;
 }
 
+const LocalItemImage = ({ primary, images, name }: { primary: string | null; images?: string[]; name: string }) => {
+  const all = (images && images.length > 0) ? images : (primary ? [primary] : []);
+  const [idx, setIdx] = useState(0);
+  if (all.length === 0) {
+    return (
+      <div className="flex-1 relative overflow-hidden">
+        <div className="w-full h-full flex items-center justify-center bg-muted">
+          <span className="text-muted-foreground text-sm">No image</span>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div
+      className="flex-1 relative overflow-hidden"
+      onMouseEnter={() => { if (all.length > 1) setIdx(1); }}
+      onMouseLeave={() => setIdx(0)}
+    >
+      <img
+        src={all[idx] || all[0]}
+        alt={name}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  );
+}
+
 const RecommendedLocalTradesSection = () => {
   const [items, setItems] = useState<TradeItem[]>([]);
   const [loading, setLoading] = useState(true);
