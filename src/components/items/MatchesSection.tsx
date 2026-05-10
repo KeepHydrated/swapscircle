@@ -28,6 +28,33 @@ interface MatchItem {
   myItemImage?: string;
 }
 
+const HoverItemImage = ({ primary, images, name }: { primary?: string; images?: string[]; name: string }) => {
+  const allImages = Array.from(new Set([primary, ...(images || [])].filter(Boolean) as string[]));
+  const [imageIndex, setImageIndex] = useState(0);
+
+  if (allImages.length === 0) {
+    return (
+      <div className="flex-1 relative overflow-hidden bg-muted" />
+    );
+  }
+
+  return (
+    <div
+      className="flex-1 relative overflow-hidden"
+      onMouseEnter={() => {
+        if (allImages.length > 1) setImageIndex(1);
+      }}
+      onMouseLeave={() => setImageIndex(0)}
+    >
+      <img
+        src={allImages[imageIndex] || allImages[0]}
+        alt={name}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  );
+};
+
 // Sample/demo matches for when no real data exists
 const SAMPLE_MATCHES: MatchItem[] = [
   {
@@ -609,13 +636,7 @@ const MatchesSection = () => {
               )}
 
               {/* Image */}
-              <div className="flex-1 relative overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
+              <HoverItemImage primary={item.image} images={item.image_urls} name={item.name} />
 
               {/* Content */}
               <div className="p-3 h-20 flex flex-col justify-center">
