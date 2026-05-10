@@ -132,11 +132,11 @@ const AccountSettings: React.FC = () => {
   return (
     <div className="space-y-6">
 
-      <Card>
-        <CardHeader className="hidden md:block">
+      <Card className="border-0 shadow-none">
+        <CardHeader className="hidden md:block p-0 mb-4">
           <CardTitle>Account Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 pt-4 md:pt-6">
+        <CardContent className="space-y-4 pt-4 md:pt-0 p-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="text-sm font-medium text-muted-foreground">Account Created</Label>
@@ -157,11 +157,11 @@ const AccountSettings: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="hidden md:block">
+      <Card className="border-0 shadow-none">
+        <CardHeader className="hidden md:block p-0 mb-4">
           <CardTitle>Email Settings</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 pt-4 md:pt-6">
+        <CardContent className="space-y-4 pt-4 md:pt-0 p-0">
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <div className="flex flex-col md:flex-row gap-2">
@@ -189,11 +189,11 @@ const AccountSettings: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="hidden md:block">
+      <Card className="border-0 shadow-none">
+        <CardHeader className="hidden md:block p-0 mb-4">
           <CardTitle>Security</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 pt-4 md:pt-6">
+        <CardContent className="space-y-4 pt-4 md:pt-0 p-0">
           <div className="space-y-2">
             <Label>Password</Label>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
@@ -214,11 +214,11 @@ const AccountSettings: React.FC = () => {
       </Card>
 
 
-      <Card>
-        <CardHeader className="hidden md:block">
+      <Card className="border-0 shadow-none">
+        <CardHeader className="hidden md:block p-0 mb-4">
           <CardTitle className="text-destructive">Delete Account</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 pt-4 md:pt-6">
+        <CardContent className="space-y-4 pt-4 md:pt-0 p-0">
           <div className="space-y-2">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <p className="text-sm text-muted-foreground">
