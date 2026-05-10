@@ -30,7 +30,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
     <div className="p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
+          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="focus:outline-none focus-visible:outline-none">
             <Avatar className="h-12 w-12 cursor-pointer">
               <AvatarImage src={avatarUrl} alt={profileName} />
               <AvatarFallback>
@@ -39,9 +39,9 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
             </Avatar>
           </Link>
           <div>
-            <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="hover:underline">
+            <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="no-underline hover:no-underline focus:outline-none">
               <div className="flex items-center gap-2">
-                <h2 className="font-semibold text-lg">{profileName}</h2>
+                <h2 className="font-semibold text-lg text-foreground">{profileName}</h2>
                 <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
                 <span className="text-sm text-muted-foreground">{rating.toFixed(1)} ({reviewCount})</span>
               </div>
