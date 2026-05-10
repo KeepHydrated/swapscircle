@@ -125,7 +125,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
           <div className="flex-1 min-w-0">
             <Link 
               to={`/other-person-profile?userId=${partnerProfile?.id}`}
-              className="font-medium text-sm text-foreground hover:underline block truncate"
+              className="font-medium text-sm text-foreground block truncate no-underline hover:no-underline focus:outline-none focus-visible:outline-none"
             >
               {partnerProfile?.username || 'Unknown User'}
             </Link>

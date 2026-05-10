@@ -584,7 +584,7 @@ const Messages = () => {
                   ) : (
                     <Link 
                       to={`/other-person-profile?userId=${activeChat?.otherUserProfile?.id}`}
-                      className="font-medium hover:underline text-lg"
+                      className="font-medium text-lg no-underline hover:no-underline focus:outline-none focus-visible:outline-none"
                     >
                       {activeChat?.name}
                     </Link>
