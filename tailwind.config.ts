@@ -66,7 +66,7 @@ export default {
 				dislike: "hsl(var(--dislike))",
 				superlike: "hsl(var(--superlike))",
 				trademate: {
-					blue: '#4361EE',
+					blue: '#1E3A8A',
 					dark: '#1A1F2C',
 					light: '#F1F0FB',
 					green: '#2DC653',
