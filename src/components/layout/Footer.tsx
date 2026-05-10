@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="border-t mt-auto bg-background">
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <button 
             onClick={openLiveChat}
