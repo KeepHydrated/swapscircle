@@ -575,20 +575,20 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   onClick={() =>
                     setSlide(s => (s > 0 ? s - 1 : allImages.length - 1))
                   }
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition z-20"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1 text-white/90 hover:text-white drop-shadow-md transition z-20"
                   aria-label="Previous"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-7 h-7" strokeWidth={2.5} />
                 </button>
 
                 <button
                   onClick={() =>
                     setSlide(s => (s < allImages.length - 1 ? s + 1 : 0))
                   }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full shadow p-2 hover:scale-105 transition z-20"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-white/90 hover:text-white drop-shadow-md transition z-20"
                   aria-label="Next"
                 >
-                  <ArrowRight className="w-4 h-4" />
+                  <ChevronRight className="w-7 h-7" strokeWidth={2.5} />
                 </button>
 
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
