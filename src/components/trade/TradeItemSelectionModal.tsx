@@ -322,8 +322,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         {myItems.length > 0 && (
           <div className="p-6 border-t border-border bg-muted/50 flex-shrink-0">
             <div className="flex items-center gap-4">
-              <div className="flex-1 min-w-0 overflow-x-auto">
-                <div className="flex gap-2">
+              <div className="flex-1 min-w-0 overflow-x-auto overflow-y-visible py-2">
+                <div className="flex gap-2 px-1">
                   {myItems
                     .filter((i) => selectedItemIds.includes(i.id))
                     .map((i) => (
