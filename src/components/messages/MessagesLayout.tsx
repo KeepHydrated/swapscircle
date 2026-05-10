@@ -206,7 +206,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
                     variant={rightPanelView === 'chat' ? 'default' : 'ghost'} 
                     size="icon"
                     onClick={() => setRightPanelView('chat')}
-                    className={rightPanelView === 'chat' ? 'bg-primary text-primary-foreground' : ''}
+                    className={rightPanelView === 'chat' ? 'bg-trademate-blue text-white hover:bg-trademate-blue/90' : ''}
                   >
                     <MessageSquare className="h-5 w-5" />
                   </Button>
@@ -214,7 +214,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
                     variant={rightPanelView === 'details' ? 'default' : 'ghost'} 
                     size="icon"
                     onClick={() => setRightPanelView('details')}
-                    className={rightPanelView === 'details' ? 'bg-primary text-primary-foreground' : ''}
+                    className={rightPanelView === 'details' ? 'bg-trademate-blue text-white hover:bg-trademate-blue/90' : ''}
                   >
                     <Info className="h-5 w-5" />
                   </Button>
