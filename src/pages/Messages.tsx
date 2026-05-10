@@ -489,7 +489,7 @@ const Messages = () => {
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12 border-2 border-gray-300">
                             {false ? (
-                              <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                              <AvatarFallback className="bg-trademate-blue text-white hover:bg-trademate-blue/90 font-bold">SC</AvatarFallback>
                             ) : (
                               <>
                                 <AvatarImage 
@@ -561,7 +561,7 @@ const Messages = () => {
                   </Button>
                   <Avatar className="h-8 w-8">
                     {false ? (
-                      <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
+                      <AvatarFallback className="bg-trademate-blue text-white hover:bg-trademate-blue/90 font-bold text-xs">SC</AvatarFallback>
                     ) : (
                       <>
                         <AvatarImage 
@@ -782,7 +782,7 @@ const Messages = () => {
                       <div className="flex items-start gap-2">
                         <Avatar className="h-10 w-10 border-2 border-gray-300">
                           {false ? (
-                            <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
+                            <AvatarFallback className="bg-trademate-blue text-white hover:bg-trademate-blue/90 font-bold text-xs">SC</AvatarFallback>
                           ) : (
                             <>
                               <AvatarImage 
@@ -966,7 +966,7 @@ const Messages = () => {
                       </Avatar>
                       <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
                     </div>
-                    <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
+                    <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-trademate-blue text-white hover:bg-trademate-blue/90' : ''}>
                       <Info className="h-5 w-5" />
                     </Button>
                   </div>
@@ -1045,7 +1045,7 @@ const Messages = () => {
                       )}
                     </div>
                     {!activeChat.isSupport && (
-                      <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-primary text-primary-foreground' : ''}>
+                      <Button variant={currentMobileView === 'details' ? 'default' : 'ghost'} size="icon" onClick={() => setCurrentMobileView(currentMobileView === 'details' ? 'messages' : 'details')} className={currentMobileView === 'details' ? 'bg-trademate-blue text-white hover:bg-trademate-blue/90' : ''}>
                         <Info className="h-5 w-5" />
                       </Button>
                     )}
