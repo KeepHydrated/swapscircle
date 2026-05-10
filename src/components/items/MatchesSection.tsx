@@ -586,7 +586,7 @@ const MatchesSection = () => {
           {matches.map((item, index) => (
             <div
               key={item.id}
-              className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden border-2 border-trademate-blue shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col touch-manipulation"
+              className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col touch-manipulation"
               onClick={() => handleCardClick(item, index)}
               onTouchEnd={(e) => {
                 const target = e.target as HTMLElement;
