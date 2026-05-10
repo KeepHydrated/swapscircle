@@ -331,7 +331,7 @@ const RecommendedItemsSection = () => {
           </h2>
           <button 
             onClick={() => navigate("/search")}
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-trademate-blue hover:underline"
           >
             View all
           </button>
