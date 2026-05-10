@@ -184,7 +184,11 @@ const ItemCard: React.FC<ItemCardProps> = ({
         style={{ pointerEvents: 'auto', zIndex: 1 }}
       >
         <div className="relative">
-          <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}>
+          <div
+            className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}
+            onMouseEnter={() => { if (hasMultipleImages) setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1)); }}
+            onMouseLeave={() => { if (hasMultipleImages) setCurrentImageIndex(0); }}
+          >
             {!imageLoaded && !imageError && (
               <Skeleton className="w-full h-full rounded-none" />
             )}
