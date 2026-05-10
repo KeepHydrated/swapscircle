@@ -74,8 +74,22 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [isLiked, setIsLiked] = useState(liked ?? false);
+  const [likeCount, setLikeCount] = useState<number>(0);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [creatingTrade, setCreatingTrade] = useState(false);
+
+  // Fetch like count for this item
+  useEffect(() => {
+    if (!item?.id || !open) return;
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('liked_items')
+        .select('id', { count: 'exact', head: true })
+        .eq('item_id', item.id);
+      setLikeCount(count ?? 0);
+    };
+    fetchCount();
+  }, [item?.id, open, isLiked]);
 
   // Sync isLiked with liked prop from parent
   useEffect(() => {
@@ -733,6 +747,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       {displayItem.name}
                     </h2>
+                    <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
+                      <Heart className={`w-4 h-4 ${likeCount > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                      <span>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
+                    </div>
                     <p className="text-gray-700 text-base leading-relaxed mb-4">
                       {displayItem.description || "No description provided."}
                     </p>
