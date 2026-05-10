@@ -49,7 +49,7 @@ const ConversationList = ({
           return (
             <div 
               key={conversation.id}
-              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 relative z-10 ${activeConversation === conversation.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+              className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 relative z-10 ${activeConversation === conversation.id ? 'bg-trademate-blue/10' : ''}`}
               style={{ pointerEvents: 'auto' }}
               onClick={(e) => {
                 e.preventDefault();
@@ -58,9 +58,12 @@ const ConversationList = ({
                 setActiveConversation(conversation.id);
               }}
             >
+              {activeConversation === conversation.id && (
+                <span className="absolute left-0 top-0 bottom-0 w-1 bg-trademate-blue" aria-hidden="true" />
+              )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-12 w-12 border border-gray-200">
                     {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
                     ) : (
