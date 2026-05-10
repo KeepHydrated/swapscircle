@@ -685,7 +685,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     aria-label="Suggest trade with matched item"
                     title="Suggest trade with matched item"
                   >
-                    <Check className="w-5 h-5 text-green-500" />
+                    <Check className="w-5 h-5 text-trademate-blue" />
                   </button>
                 )}
                 {/* Suggest Trade button - only show if not own item AND not a match */}
@@ -696,7 +696,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     aria-label="Suggest a Trade"
                     title="Suggest a Trade"
                   >
-                    <Repeat className="w-5 h-5 text-green-500" />
+                    <Repeat className="w-5 h-5 text-trademate-blue" />
                   </button>
                 )}
                 <button
