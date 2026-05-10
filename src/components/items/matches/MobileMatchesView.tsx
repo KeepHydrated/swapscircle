@@ -189,7 +189,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                 }}
                 className="cursor-pointer"
               >
-                <Users className="h-4 w-4 mr-2 text-green-600" />
+                <Users className="h-4 w-4 mr-2 text-trademate-blue" />
                 Accept for all of my items
               </DropdownMenuItem>
               <DropdownMenuItem 
@@ -429,7 +429,7 @@ export const MobileMatchesView: React.FC<MobileMatchesViewProps> = ({
                          }}
                          className="cursor-pointer"
                        >
-                         <Users className="h-4 w-4 mr-2 text-green-600" />
+                         <Users className="h-4 w-4 mr-2 text-trademate-blue" />
                          Accept for all of my items
                        </DropdownMenuItem>
                        <DropdownMenuItem 

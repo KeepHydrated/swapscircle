@@ -642,7 +642,7 @@ const MatchesSection = () => {
                     className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
                     aria-label="Suggest trade"
                   >
-                    <Check className={`w-4 h-4 text-green-500 ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
+                    <Check className={`w-4 h-4 text-trademate-blue ${isCreatingTrade === item.id ? 'animate-spin' : ''}`} />
                   </button>
                 </div>
                 {/* Heart button - always visible when liked, hover otherwise */}
