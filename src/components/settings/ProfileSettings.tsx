@@ -314,7 +314,7 @@ const ProfileSettings: React.FC = () => {
   };
 
   return (
-    <Card>
+    <Card className="border-0 shadow-none">
       <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0">
         <div>
           <CardTitle>Profile Information</CardTitle>
