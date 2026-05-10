@@ -153,7 +153,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
           )}
           
           {currentView === 'details' && (
-            <ScrollArea className="h-full bg-gray-50">
+            <ScrollArea className="h-full bg-white">
               <DetailsPanel selectedPair={selectedPair} />
             </ScrollArea>
           )}
@@ -239,7 +239,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
                 </div>
               </div>
             ) : (
-              <ScrollArea className="flex-1 bg-gray-50">
+              <ScrollArea className="flex-1 bg-white">
                 <DetailsPanel selectedPair={selectedPair} />
               </ScrollArea>
             )}

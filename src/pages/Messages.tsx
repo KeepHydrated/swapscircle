@@ -76,8 +76,8 @@ const forceScrollToBottom = () => {
   // Try multiple selectors to find the message container
   const selectors = [
     '[data-messages-container]',
-    '.overflow-y-auto.p-4.bg-gray-50',  // The actual container class in Messages.tsx
-    '.flex-1.overflow-y-auto.p-4.bg-gray-50',
+    '.overflow-y-auto.p-4.bg-white',  // The actual container class in Messages.tsx
+    '.flex-1.overflow-y-auto.p-4.bg-white',
     '.space-y-4'  // The messages wrapper
   ];
   
@@ -624,7 +624,7 @@ const Messages = () => {
                     {isDemoTrade && demoTradeData ? (
                       /* Demo trade on mobile - matches real trade layout */
                       <div className="flex flex-col h-full">
-                        <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                        <div className="flex-1 overflow-y-auto p-4 bg-white min-h-0">
                           <div className="text-center py-8">
                             <p className="text-gray-500">Trade conversation started!</p>
                             <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
@@ -636,7 +636,7 @@ const Messages = () => {
                       </div>
                     ) : activeConversation ? (
                       <>
-                        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 min-h-0">
+                        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-white min-h-0">
                           {messagesLoading ? (
                             <div className="flex justify-center items-center h-full">
                               <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -850,7 +850,7 @@ const Messages = () => {
                       <span className="font-semibold">{demoTradeData.partnerProfile?.username || 'Demo User'}</span>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                  <div className="flex-1 overflow-y-auto p-4 bg-white min-h-0">
                     <div className="text-center py-8">
                       <p className="text-gray-500">Trade conversation started!</p>
                       <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
@@ -888,7 +888,7 @@ const Messages = () => {
                       )}
                     </div>
                   </div>
-                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-white min-h-0">
                     {messagesLoading ? (
                       <div className="flex justify-center items-center h-full">
                         <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -922,7 +922,7 @@ const Messages = () => {
             </div>
             
             {/* Right - Details panel (always visible in 3-column) */}
-            <div className="w-[340px] flex flex-col h-full bg-gray-50 overflow-y-auto">
+            <div className="w-[340px] flex flex-col h-full bg-white overflow-y-auto">
               {activeChat?.isSupport ? (
                 <div className="flex items-center justify-center h-full p-4">
                   <div className="text-center">
@@ -973,7 +973,7 @@ const Messages = () => {
                 </div>
                 {currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
-                    <div className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                    <div className="flex-1 overflow-y-auto p-4 bg-white min-h-0">
                       <div className="py-4">
                         <TradeRequestMessage
                           partnerProfile={{
@@ -1007,7 +1007,7 @@ const Messages = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-1 overflow-y-auto bg-gray-50">
+                  <div className="flex-1 overflow-y-auto bg-white">
                     <TradeDetailsTabs 
                       selectedPair={constructDemoPair(demoTradeData)} 
                       selectedItem={selectedItem} 
@@ -1053,7 +1053,7 @@ const Messages = () => {
                 </div>
                 {currentMobileView === 'messages' ? (
                   <div className="flex-1 flex flex-col min-h-0">
-                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-muted/50 min-h-0">
+                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-white min-h-0">
                       {messagesLoading ? (
                         <div className="flex justify-center items-center h-full">
                           <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
