@@ -29,8 +29,8 @@ const NotificationSettings: React.FC = () => {
 
   return (
     <form onSubmit={handleNotificationSubmit}>
-      <Card>
-        <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0">
+      <Card className="border-0 shadow-none">
+        <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0 p-0 mb-6">
           <div>
             <CardTitle>Notification Preferences</CardTitle>
             <CardDescription>
