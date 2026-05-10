@@ -289,7 +289,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                     key={item.id}
                     className={`relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
                       isSelected
-                        ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                        ? 'border-trademate-blue'
                         : 'border-border hover:border-border/80'
                     }`}
                     onClick={() => toggleItemSelection(item.id)}
