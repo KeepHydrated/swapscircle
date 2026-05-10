@@ -306,7 +306,7 @@ const handleNextTheirItem = () => {
             onClick={() => onSelectItem('item2')}
             className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
               selectedItem === 'item2' 
-                ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                ? 'bg-trademate-blue/10 border-trademate-blue text-trademate-blue' 
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
@@ -316,7 +316,7 @@ const handleNextTheirItem = () => {
             onClick={() => onSelectItem('item1')}
             className={`flex-1 h-8 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center ${
               selectedItem === 'item1' 
-                ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                ? 'bg-trademate-blue/10 border-trademate-blue text-trademate-blue' 
                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
