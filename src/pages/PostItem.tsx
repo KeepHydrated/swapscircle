@@ -651,7 +651,7 @@ const PostItem: React.FC = () => {
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                className="bg-trademate-blue hover:bg-trademate-blue/90 text-white px-12 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 {isSubmitting ? (
                   <>
@@ -712,7 +712,7 @@ const PostItem: React.FC = () => {
             </Button>
             <AlertDialogAction 
               onClick={handleSaveAndExit}
-              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+              className="w-full sm:w-auto bg-trademate-blue hover:bg-trademate-blue/90"
             >
               <Save className="mr-2 h-4 w-4" />
               Save & Leave
