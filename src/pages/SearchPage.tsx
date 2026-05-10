@@ -378,7 +378,7 @@ const SearchPage = () => {
                 onClick={() => setFriendsOnly(!friendsOnly)}
                 className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
                   friendsOnly 
-                    ? 'border-primary text-primary border-2 bg-primary/10' 
+                    ? 'border-trademate-blue text-trademate-blue border-2 bg-trademate-blue/10' 
                     : 'border-border hover:bg-accent'
                 }`}
               >
@@ -393,7 +393,7 @@ const SearchPage = () => {
                     variant="outline"
                     className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
                       selectedConditions.length > 0 
-                        ? 'border-primary text-primary border-2' 
+                        ? 'border-trademate-blue text-trademate-blue border-2' 
                         : 'border-border hover:bg-accent'
                     }`}
                   >
@@ -435,7 +435,7 @@ const SearchPage = () => {
                     variant="outline"
                     className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
                       selectedPriceRanges.length > 0 
-                        ? 'border-primary text-primary border-2' 
+                        ? 'border-trademate-blue text-trademate-blue border-2' 
                         : 'border-border hover:bg-accent'
                     }`}
                   >
@@ -477,7 +477,7 @@ const SearchPage = () => {
                     variant="outline"
                     className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
                       selectedCategories.length > 0 
-                        ? 'border-primary text-primary border-2' 
+                        ? 'border-trademate-blue text-trademate-blue border-2' 
                         : 'border-border hover:bg-accent'
                     }`}
                   >
@@ -524,7 +524,7 @@ const SearchPage = () => {
                       variant="outline"
                       className={`rounded-full px-6 py-5 text-base font-normal whitespace-nowrap ${
                         selectedSubcategories[category]?.length > 0 
-                          ? 'border-primary text-primary border-2' 
+                          ? 'border-trademate-blue text-trademate-blue border-2' 
                           : 'border-border hover:bg-accent'
                       }`}
                     >
@@ -576,14 +576,14 @@ const SearchPage = () => {
               Showing {filteredResults.length} {filteredResults.length === 1 ? 'result' : 'results'}
             </p>
             {searchQuery && (
-              <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+              <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-trademate-blue/10 text-trademate-blue hover:bg-trademate-blue/10">
                 Search: "{searchQuery}"
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleSearchChange('');
                   }}
-                  className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors"
+                  className="hover:bg-trademate-blue/20 rounded-full p-0.5 transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>
