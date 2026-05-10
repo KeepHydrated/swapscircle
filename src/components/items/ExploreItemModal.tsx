@@ -747,6 +747,10 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       {displayItem.name}
                     </h2>
+                    <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
+                      <Heart className={`w-4 h-4 ${likeCount > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                      <span>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
+                    </div>
                     <p className="text-gray-700 text-base leading-relaxed mb-4">
                       {displayItem.description || "No description provided."}
                     </p>
