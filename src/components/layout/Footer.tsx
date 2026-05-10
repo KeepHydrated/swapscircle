@@ -11,14 +11,6 @@ const Footer: React.FC = () => {
     <footer className="border-t mt-auto bg-background">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <button 
-            onClick={openLiveChat}
-            className="flex items-center gap-2 hover:text-foreground transition-colors"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>Support Chat</span>
-          </button>
-          
           <div className="flex items-center gap-6">
             <Link to="/posting-rules" className="hover:text-foreground transition-colors">
               Privacy
@@ -27,6 +19,14 @@ const Footer: React.FC = () => {
               Terms
             </Link>
           </div>
+
+          <button 
+            onClick={openLiveChat}
+            className="flex items-center gap-2 hover:text-foreground transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>Support Chat</span>
+          </button>
         </div>
       </div>
     </footer>
