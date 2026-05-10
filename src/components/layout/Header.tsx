@@ -190,7 +190,7 @@ const Header = () => {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={8} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
+                  <DropdownMenuContent align="end" sideOffset={8} onCloseAutoFocus={(e) => e.preventDefault()} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex w-full cursor-pointer items-center">
                         Profile
@@ -247,7 +247,7 @@ const Header = () => {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={8} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
+                  <DropdownMenuContent align="end" sideOffset={8} onCloseAutoFocus={(e) => e.preventDefault()} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
                     <DropdownMenuItem asChild>
                       <Link to="/demo-profile" className="flex w-full cursor-pointer items-center">
                         Profile
