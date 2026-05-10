@@ -109,14 +109,12 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    
+  const addImageFiles = (files: File[]) => {
     if (files.length === 0) return;
 
     // Filter only image files
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
+
     if (imageFiles.length !== files.length) {
       toast.error("Only image files are allowed");
     }
@@ -138,9 +136,8 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
     }
 
     // Add new images to existing selection
-    const newImages = [...selectedImages, ...imageFiles];
-    setSelectedImages(newImages);
-    
+    setSelectedImages(prev => [...prev, ...imageFiles]);
+
     // Create previews for new images
     const newPreviews: string[] = [];
     imageFiles.forEach((file) => {
@@ -153,6 +150,31 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    addImageFiles(Array.from(e.target.files || []));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.currentTarget === e.target) setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files || []);
+    addImageFiles(files);
   };
 
   const removeImage = (index: number) => {
