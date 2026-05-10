@@ -14,6 +14,7 @@ interface TradeItem {
   id: string;
   name: string;
   image_url: string | null;
+  image_urls?: string[] | null;
   category: string | null;
   condition: string | null;
   price_range_min: number | null;
@@ -25,6 +26,33 @@ interface TradeItem {
   myItemImage?: string;
   myItemId?: string;
   myItemName?: string;
+}
+
+const LocalItemImage = ({ primary, images, name }: { primary: string | null; images?: string[]; name: string }) => {
+  const all = (images && images.length > 0) ? images : (primary ? [primary] : []);
+  const [idx, setIdx] = useState(0);
+  if (all.length === 0) {
+    return (
+      <div className="flex-1 relative overflow-hidden">
+        <div className="w-full h-full flex items-center justify-center bg-muted">
+          <span className="text-muted-foreground text-sm">No image</span>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div
+      className="flex-1 relative overflow-hidden"
+      onMouseEnter={() => { if (all.length > 1) setIdx(1); }}
+      onMouseLeave={() => setIdx(0)}
+    >
+      <img
+        src={all[idx] || all[0]}
+        alt={name}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  );
 }
 
 const RecommendedLocalTradesSection = () => {
@@ -195,7 +223,7 @@ const RecommendedLocalTradesSection = () => {
             // Also fetch some regular items to fill the carousel
             const { data: regularItems } = await supabase
               .from("items")
-              .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id, description")
+              .select("id, name, image_url, image_urls, category, condition, price_range_min, price_range_max, user_id, description")
               .eq("is_available", true)
               .eq("status", "published")
               .neq("user_id", user.id)
@@ -214,7 +242,7 @@ const RecommendedLocalTradesSection = () => {
       // Fallback: fetch regular local items if no matches
       const { data, error } = await supabase
         .from("items")
-        .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id, description")
+        .select("id, name, image_url, image_urls, category, condition, price_range_min, price_range_max, user_id, description")
         .eq("is_available", true)
         .eq("status", "published")
         .limit(8);
@@ -459,19 +487,12 @@ const RecommendedLocalTradesSection = () => {
                 )}
 
                 {/* Image */}
-                <div className="flex-1 relative overflow-hidden">
-                  {item.image_url ? (
-                    <img
-                      src={item.image_url}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted">
-                      <span className="text-muted-foreground text-sm">No image</span>
-                    </div>
-                  )}
-                </div>
+                <LocalItemImage
+                  primary={item.image_url}
+                  images={item.image_urls || undefined}
+                  name={item.name}
+                />
+
 
                 {/* Content */}
                 <div className="p-3 h-20 flex flex-col justify-center">
