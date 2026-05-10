@@ -205,7 +205,7 @@ const FriendsTab: React.FC<FriendsTabProps> = ({ friends }) => {
                           {(request.profiles?.name || request.profiles?.username || 'U').substring(0, 2)}
                         </AvatarFallback>
                       </Avatar>
-                      <h4 className="font-medium text-center hover:text-primary transition-colors">
+                      <h4 className="font-medium text-center">
                         {request.profiles?.name || request.profiles?.username || 'Unknown User'}
                       </h4>
                     </div>

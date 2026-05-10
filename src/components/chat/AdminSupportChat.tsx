@@ -530,7 +530,7 @@ const AdminSupportChat = () => {
             <div className="p-6 border-b bg-muted/30">
               <div className="flex items-center gap-3">
                 <Avatar 
-                  className="h-10 w-10 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all" 
+                  className="h-10 w-10 cursor-pointer" 
                   onClick={handleProfileClick}
                 >
                   <AvatarImage src={userProfile?.avatar_url} />
@@ -542,7 +542,7 @@ const AdminSupportChat = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <h3 
-                      className="font-semibold text-lg cursor-pointer hover:text-primary transition-colors"
+                      className="font-semibold text-lg cursor-pointer"
                       onClick={handleProfileClick}
                     >
                       {userProfile?.name || userProfile?.username || 'User'}
