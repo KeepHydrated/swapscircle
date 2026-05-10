@@ -270,7 +270,7 @@ const LiveChatPopup = () => {
       {isOpen && (
         <Card 
           ref={chatWindowRef} 
-          className="fixed bottom-24 right-6 w-80 h-[450px] shadow-2xl z-[9999] flex flex-col overflow-hidden"
+          className="fixed bottom-6 right-6 w-80 h-[450px] shadow-2xl z-[9999] flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
