@@ -586,10 +586,10 @@ const AdminReports: React.FC = () => {
                         <div className="flex flex-col items-center gap-4">
                           {/* Reporter Profile */}
                           <div 
-                            className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-50 p-3 rounded-lg border border-gray-200 w-80"
+                            className="flex gap-3 items-center cursor-pointer bg-gray-50 p-3 rounded-lg border border-gray-200 w-80"
                             onClick={() => handleProfileClick(report.reporter_id)}
                           >
-                            <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
+                            <div className="w-11 h-11 rounded-full border cursor-pointer flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
                               {report.reporter_avatar_url ? (
                                 <img
                                   src={report.reporter_avatar_url}
@@ -604,7 +604,7 @@ const AdminReports: React.FC = () => {
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
+                                <span className="font-semibold text-gray-900 cursor-pointer truncate">
                                   {report.reporter_name || report.reporter_username || "Unknown User"}
                                 </span>
                                 <div className="flex items-center gap-1 flex-shrink-0">
@@ -621,10 +621,10 @@ const AdminReports: React.FC = () => {
                            {/* Reported User Profile (for profile reports) */}
                            {report.reported_user_id && (
                              <div 
-                               className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-red-50 p-3 rounded-lg border border-red-200 w-80"
+                               className="flex gap-3 items-center cursor-pointer bg-red-50 p-3 rounded-lg border border-red-200 w-80"
                                onClick={() => handleProfileClick(report.reported_user_id!)}
                              >
-                               <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-red-600 text-white font-semibold text-sm flex-shrink-0">
+                               <div className="w-11 h-11 rounded-full border cursor-pointer flex items-center justify-center bg-red-600 text-white font-semibold text-sm flex-shrink-0">
                                  {report.reported_avatar_url ? (
                                    <img
                                      src={report.reported_avatar_url}
@@ -639,7 +639,7 @@ const AdminReports: React.FC = () => {
                                </div>
                                <div className="min-w-0 flex-1">
                                  <div className="flex items-center gap-2">
-                                   <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
+                                    <span className="font-semibold text-gray-900 cursor-pointer truncate">
                                      {report.reported_name || report.reported_username || "Unknown User"}
                                    </span>
                                    <div className="flex items-center gap-1 flex-shrink-0">
@@ -657,10 +657,10 @@ const AdminReports: React.FC = () => {
                            {/* Item Owner Profile (for item reports) */}
                            {report.item_owner_id && (
                             <div 
-                              className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition-opacity bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
+                              className="flex gap-3 items-center cursor-pointer bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
                               onClick={() => handleProfileClick(report.item_owner_id!)}
                             >
-                              <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
+                              <div className="w-11 h-11 rounded-full border cursor-pointer flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
                                 {report.item_owner_avatar_url ? (
                                   <img
                                     src={report.item_owner_avatar_url}
@@ -675,7 +675,7 @@ const AdminReports: React.FC = () => {
                               </div>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer truncate">
+                                  <span className="font-semibold text-gray-900 cursor-pointer truncate">
                                     {report.item_owner_name || report.item_owner_username || "Unknown User"}
                                   </span>
                                   <div className="flex items-center gap-1 flex-shrink-0">
