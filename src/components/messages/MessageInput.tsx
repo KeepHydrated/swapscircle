@@ -199,7 +199,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
 
   return (
     <div
-      className="relative p-4 bg-white w-full"
+      className={`relative p-4 w-full transition-colors ${isDragging ? 'bg-gray-100' : 'bg-white'}`}
       onDragOver={handleDragOver}
       onDragEnter={handleDragOver}
       onDragLeave={handleDragLeave}
