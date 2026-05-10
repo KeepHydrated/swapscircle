@@ -195,7 +195,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
                       </AvatarFallback>
                     </Avatar>
                   </Link>
-                  <Link to={`/other-person-profile?userId=${profile?.id}`} className="hover:underline">
+                  <Link to={`/other-person-profile?userId=${profile?.id}`} className="no-underline hover:no-underline focus:outline-none focus-visible:outline-none">
                     <h2 className="font-semibold text-lg">{profileName}</h2>
                   </Link>
                 </div>

@@ -439,7 +439,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                 {/* User profile info - only show if showProfileInfo is true */}
                 {showProfileInfo && userProfile && (
                   <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-8 -mb-7">
-                    <div className="w-11 h-11 rounded-full border cursor-pointer hover:opacity-80 transition-opacity overflow-hidden" onClick={handleProfileClick}>
+                    <div className="w-11 h-11 rounded-full border cursor-pointer overflow-hidden" onClick={handleProfileClick}>
                       {userProfile.avatar_url ? (
                         <img
                           src={userProfile.avatar_url}
@@ -455,7 +455,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span 
-                          className="font-semibold text-gray-900 hover:text-primary transition-colors cursor-pointer"
+                          className="font-semibold text-gray-900 cursor-pointer"
                           onClick={handleProfileClick}
                         >
                           {userProfile.username || userProfile.name || "Unknown User"}

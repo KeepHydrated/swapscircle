@@ -337,7 +337,7 @@ const Trades = () => {
                     <CardContent className="p-4 h-full overflow-y-auto">
                       <div className="flex items-center space-x-3 mb-3">
                         <Avatar 
-                          className="h-8 w-8 cursor-pointer hover:opacity-80"
+                          className="h-8 w-8 cursor-pointer"
                           onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
                         >
                           <AvatarImage src={otherUser?.avatar_url} />
@@ -347,7 +347,7 @@ const Trades = () => {
                         </Avatar>
                         <div className="flex-1">
                           <span 
-                            className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                            className="font-medium text-gray-900 cursor-pointer"
                             onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
                           >
                             {otherUser?.username || 'Unknown User'}
@@ -379,7 +379,7 @@ const Trades = () => {
                     <CardContent className="p-4 h-full overflow-y-auto">
                       <div className="flex items-center space-x-3 mb-3">
                         <Avatar 
-                          className="h-8 w-8 cursor-pointer hover:opacity-80"
+                          className="h-8 w-8 cursor-pointer"
                           onClick={handleMyProfileClick}
                         >
                           <AvatarImage src={currentUser?.profile?.avatar_url} />
@@ -389,7 +389,7 @@ const Trades = () => {
                         </Avatar>
                         <div className="flex-1">
                           <span 
-                            className="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                            className="font-medium text-gray-900 cursor-pointer"
                             onClick={handleMyProfileClick}
                           >
                             {currentUser?.profile?.username || 'You'}

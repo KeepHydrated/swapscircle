@@ -41,7 +41,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
         <div key={review.id} className="bg-white rounded-lg border p-4 shadow-sm">
           <div className="flex items-start space-x-3 mb-3">
             <Avatar 
-              className={`h-10 w-10 transition-opacity ${review.reviewer_id ? 'cursor-pointer hover:opacity-80' : ''}`}
+              className={`h-10 w-10 ${review.reviewer_id ? 'cursor-pointer' : ''}`}
               onClick={() => review.reviewer_id && handleProfileClick(review.reviewer_id)}
             >
               <AvatarImage src={review.avatar_url} />
@@ -52,7 +52,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1">
                 <div 
-                  className={`font-medium text-gray-900 transition-colors ${review.reviewer_id ? 'cursor-pointer hover:text-blue-600' : ''}`}
+                  className={`font-medium text-gray-900 ${review.reviewer_id ? 'cursor-pointer' : ''}`}
                   onClick={() => review.reviewer_id && handleProfileClick(review.reviewer_id)}
                 >
                   {review.user}
