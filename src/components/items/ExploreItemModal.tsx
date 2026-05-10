@@ -714,7 +714,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                   </button>
                 )}
                 <button
-                  className={`w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
+                  className={`relative w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center transition-colors ${
                     disableActions 
                       ? 'cursor-not-allowed' 
                       : 'hover:bg-gray-50 cursor-pointer'
@@ -727,6 +727,11 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     className="w-5 h-5 text-red-500"
                     fill={isLiked ? "red" : "none"}
                   />
+                  {likeCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-red-500 text-white text-[11px] font-semibold flex items-center justify-center shadow">
+                      {likeCount}
+                    </span>
+                  )}
                 </button>
               </div>
             )}
@@ -747,10 +752,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       {displayItem.name}
                     </h2>
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
-                      <Heart className={`w-4 h-4 ${likeCount > 0 ? 'fill-red-500 text-red-500' : ''}`} />
-                      <span>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
-                    </div>
                     <p className="text-gray-700 text-base leading-relaxed mb-4">
                       {displayItem.description || "No description provided."}
                     </p>
