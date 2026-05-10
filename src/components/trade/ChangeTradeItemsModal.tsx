@@ -415,25 +415,39 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
         {/* Footer */}
         <div className="p-4 sm:p-6 border-t border-border bg-muted/50 flex-shrink-0">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div className="text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0 max-w-full overflow-x-auto">
               {selectedMyItems.length > 0 && (
-                <span>
-                  Offering: <span className="font-medium text-foreground">
-                    {selectedMyItems.length === 1 
-                      ? selectedMyItems[0].name 
-                      : `${selectedMyItems.length} items`}
-                  </span>
-                </span>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <span className="text-xs">Offering:</span>
+                  <div className="flex gap-1">
+                    {selectedMyItems.map((item) => (
+                      <img
+                        key={item.id}
+                        src={item.image}
+                        alt={item.name}
+                        title={item.name}
+                        className="w-8 h-8 rounded-md object-cover border border-border"
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
-              {selectedMyItems.length > 0 && selectedTheirItems.length > 0 && <span className="mx-2">→</span>}
+              {selectedMyItems.length > 0 && selectedTheirItems.length > 0 && <span className="flex-shrink-0">→</span>}
               {selectedTheirItems.length > 0 && (
-                <span>
-                  For: <span className="font-medium text-foreground">
-                    {selectedTheirItems.length === 1 
-                      ? selectedTheirItems[0].name 
-                      : `${selectedTheirItems.length} items`}
-                  </span>
-                </span>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <span className="text-xs">For:</span>
+                  <div className="flex gap-1">
+                    {selectedTheirItems.map((item) => (
+                      <img
+                        key={item.id}
+                        src={item.image}
+                        alt={item.name}
+                        title={item.name}
+                        className="w-8 h-8 rounded-md object-cover border border-border"
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
             <div className="flex gap-3 w-full sm:w-auto">
