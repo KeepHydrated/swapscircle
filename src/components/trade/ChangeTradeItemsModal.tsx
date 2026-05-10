@@ -336,7 +336,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                         onClick={() => toggleMyItemSelection(item.id)}
                       >
                         {isSelected && (
-                          <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-trademate-blue rounded-full flex items-center justify-center z-10">
                             <Check className="w-3 h-3 text-white" />
                           </div>
                         )}
@@ -387,7 +387,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                         onClick={() => toggleTheirItemSelection(item.id)}
                       >
                         {isSelected && (
-                          <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center z-10">
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-trademate-blue rounded-full flex items-center justify-center z-10">
                             <Check className="w-3 h-3 text-white" />
                           </div>
                         )}
@@ -446,7 +446,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               <button
                 onClick={handleConfirmChange}
                 disabled={selectedMyItemIds.length === 0 || selectedTheirItemIds.length === 0 || updating}
-                className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
+                className="flex-1 sm:flex-none bg-trademate-blue hover:bg-trademate-blue/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
               >
                 {updating ? 'Updating...' : 'Confirm Change'}
               </button>

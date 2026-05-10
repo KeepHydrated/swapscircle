@@ -580,9 +580,9 @@ const Likes = () => {
                         aria-label={likedItem.matchedItem ? "Complete trade" : "Suggest trade"}
                       >
                         {likedItem.matchedItem ? (
-                          <Check className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-trademate-blue" />
                         ) : (
-                          <Repeat className="w-4 h-4 text-green-500" />
+                          <Repeat className="w-4 h-4 text-trademate-blue" />
                         )}
                       </button>
                     </div>

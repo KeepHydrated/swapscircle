@@ -368,7 +368,7 @@ const RecommendedItemsSection = () => {
                         onClick={(e) => handleTradeClick(item, e)}
                         className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
                       >
-                        <Repeat className="w-4 h-4 text-green-500" />
+                        <Repeat className="w-4 h-4 text-trademate-blue" />
                       </button>
                       {/* Like button */}
                       <button

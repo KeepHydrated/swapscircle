@@ -270,7 +270,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <button
-                                className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
+                                className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-trademate-blue hover:bg-trademate-blue/90 shadow-lg transition-all duration-200 hover:scale-110`}
                                 aria-label="Suggest trade"
                                 onClick={handleSwapClick}
                               >
@@ -316,7 +316,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button
-                              className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-all duration-200 hover:scale-110`}
+                              className={`flex items-center justify-center ${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-trademate-blue hover:bg-trademate-blue/90 shadow-lg transition-all duration-200 hover:scale-110`}
                               aria-label="Suggest trade"
                               onClick={handleSwapClick}
                             >

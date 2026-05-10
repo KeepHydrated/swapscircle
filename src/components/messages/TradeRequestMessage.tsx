@@ -223,7 +223,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
               </Button>
               <Button
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-trademate-blue hover:bg-trademate-blue/90 text-white"
                 onClick={onAccept}
               >
                 <Check className="w-3 h-3 mr-1" />
@@ -237,7 +237,7 @@ const TradeRequestMessage: React.FC<TradeRequestMessageProps> = ({
       {isAccepted && (
         <div className="p-3 pt-0">
           <div className="flex items-center justify-center py-2 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
-            <Check className="w-4 h-4 mr-1 text-green-600" />
+            <Check className="w-4 h-4 mr-1 text-trademate-blue" />
             <span className="text-green-700 dark:text-green-400 text-sm font-medium">Trade Accepted</span>
           </div>
         </div>

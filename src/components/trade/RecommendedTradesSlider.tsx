@@ -77,7 +77,7 @@ export const RecommendedTradesSlider = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-2 right-2">
-                    <button className="w-8 h-8 bg-green-500 rounded-full shadow-md flex items-center justify-center hover:bg-green-600 transition-colors">
+                    <button className="w-8 h-8 bg-trademate-blue rounded-full shadow-md flex items-center justify-center hover:bg-green-600 transition-colors">
                       <ArrowLeftRight className="w-4 h-4 text-white" />
                     </button>
                   </div>
