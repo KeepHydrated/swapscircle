@@ -576,7 +576,7 @@ const SearchPage = () => {
               Showing {filteredResults.length} {filteredResults.length === 1 ? 'result' : 'results'}
             </p>
             {searchQuery && (
-              <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-trademate-blue/10 text-trademate-blue hover:bg-trademate-blue/10">
+              <Badge variant="secondary" className="gap-2 py-1.5 px-3 bg-trademate-blue/10 text-foreground hover:bg-trademate-blue/10">
                 Search: "{searchQuery}"
                 <button
                   onClick={(e) => {
