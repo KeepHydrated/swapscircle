@@ -89,7 +89,7 @@ const Settings: React.FC = () => {
       <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         <div className="flex min-h-[600px]">
           {/* Sidebar */}
-          <div className="w-56 border-r bg-muted/30 p-4">
+          <div className="w-56 border-r bg-white p-4">
             <nav className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
