@@ -321,17 +321,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         {/* Footer */}
         {myItems.length > 0 && (
           <div className="p-6 border-t border-border bg-muted/50 flex-shrink-0">
-            <div className="flex justify-between items-center">
-              <div>
-                {selectedItems.length > 0 && (
-                  <div className="text-sm text-muted-foreground">
-                    Selected: <span className="font-medium text-foreground">
-                      {selectedItems.length} {selectedItems.length === 1 ? 'item' : 'items'}
-                      {selectedItems.length <= 3 && ` (${selectedItems.map(i => i.name).join(', ')})`}
-                    </span>
-                  </div>
-                )}
-              </div>
+            <div className="flex justify-end items-center">
+
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
