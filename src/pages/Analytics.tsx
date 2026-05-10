@@ -433,7 +433,7 @@ const Analytics = () => {
                   return (
                     <div 
                       key={user.id} 
-                      className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                      className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0"
                       onClick={() => handleUserClick(user.id)}
                     >
                       <div 
