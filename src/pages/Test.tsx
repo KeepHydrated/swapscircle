@@ -385,7 +385,7 @@ const Test: React.FC = () => {
                   className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity"
                   aria-label="Suggest trade"
                 >
-                  <Check className="w-4 h-4 text-green-500" />
+                  <Check className="w-4 h-4 text-trademate-blue" />
                 </button>
                 <button
                   onClick={(e) => {
