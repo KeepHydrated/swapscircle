@@ -14,6 +14,7 @@ interface TradeItem {
   id: string;
   name: string;
   image_url: string | null;
+  image_urls?: string[] | null;
   category: string | null;
   condition: string | null;
   price_range_min: number | null;
