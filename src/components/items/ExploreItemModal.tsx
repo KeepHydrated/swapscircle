@@ -74,8 +74,22 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
   const [tradesCompleted, setTradesCompleted] = useState<number>(0);
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [isLiked, setIsLiked] = useState(liked ?? false);
+  const [likeCount, setLikeCount] = useState<number>(0);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [creatingTrade, setCreatingTrade] = useState(false);
+
+  // Fetch like count for this item
+  useEffect(() => {
+    if (!item?.id || !open) return;
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('liked_items')
+        .select('id', { count: 'exact', head: true })
+        .eq('item_id', item.id);
+      setLikeCount(count ?? 0);
+    };
+    fetchCount();
+  }, [item?.id, open, isLiked]);
 
   // Sync isLiked with liked prop from parent
   useEffect(() => {
