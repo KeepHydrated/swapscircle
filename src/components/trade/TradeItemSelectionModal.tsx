@@ -322,8 +322,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         {myItems.length > 0 && (
           <div className="p-6 border-t border-border bg-muted/50 flex-shrink-0">
             <div className="flex items-center gap-4">
-              <div className="flex-1 min-w-0 overflow-x-auto">
-                <div className="flex gap-2">
+              <div className="flex-1 min-w-0 overflow-x-auto overflow-y-visible py-2">
+                <div className="flex gap-2 px-1">
                   {myItems
                     .filter((i) => selectedItemIds.includes(i.id))
                     .map((i) => (
@@ -336,7 +336,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                         />
                         <button
                           onClick={() => setSelectedItemIds(selectedItemIds.filter((id) => id !== i.id))}
-                          className="absolute -top-1 -right-1 w-4 h-4 bg-foreground text-background rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/70 text-background rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           aria-label={`Remove ${i.name}`}
                         >
                           <X className="w-2.5 h-2.5" />
