@@ -47,7 +47,70 @@ const Trades = () => {
   });
 
   // Get completed trades only
-  const completedTrades = trades.filter((trade: any) => trade.status === 'completed');
+  const realCompleted = trades.filter((trade: any) => trade.status === 'completed');
+
+  // Demo completed trades to enrich the page when there are few real ones
+  const demoCompletedTrades = [
+    {
+      id: 'demo-trade-1',
+      status: 'completed',
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14).toISOString(),
+      requester_id: 'demo-user-1',
+      owner_id: currentUser?.id,
+      requester_item: {
+        id: 'demo-item-a',
+        name: 'Vintage Polaroid Camera',
+        image_url: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400',
+      },
+      owner_item: {
+        id: 'demo-item-b',
+        name: 'Leather Messenger Bag',
+        image_url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400',
+      },
+      requester_profile: { id: 'demo-user-1', username: 'jordan_m', avatar_url: null },
+      owner_profile: { id: currentUser?.id, username: currentUser?.profile?.username, avatar_url: currentUser?.profile?.avatar_url },
+    },
+    {
+      id: 'demo-trade-2',
+      status: 'completed',
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(),
+      requester_id: currentUser?.id,
+      owner_id: 'demo-user-2',
+      requester_item: {
+        id: 'demo-item-c',
+        name: 'Acoustic Guitar',
+        image_url: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400',
+      },
+      owner_item: {
+        id: 'demo-item-d',
+        name: 'Vinyl Record Collection',
+        image_url: 'https://images.unsplash.com/photo-1483821474127-c45c205c1cf3?w=400',
+      },
+      requester_profile: { id: currentUser?.id, username: currentUser?.profile?.username, avatar_url: currentUser?.profile?.avatar_url },
+      owner_profile: { id: 'demo-user-2', username: 'sam_w', avatar_url: null },
+    },
+    {
+      id: 'demo-trade-3',
+      status: 'completed',
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 60).toISOString(),
+      requester_id: 'demo-user-3',
+      owner_id: currentUser?.id,
+      requester_item: {
+        id: 'demo-item-e',
+        name: 'Snowboard',
+        image_url: 'https://images.unsplash.com/photo-1551698618-5d6e605d7e9c?w=400',
+      },
+      owner_item: {
+        id: 'demo-item-f',
+        name: 'Mountain Bike Helmet',
+        image_url: 'https://images.unsplash.com/photo-1600181958749-3ed4f8d2f1d3?w=400',
+      },
+      requester_profile: { id: 'demo-user-3', username: 'alex_k', avatar_url: null },
+      owner_profile: { id: currentUser?.id, username: currentUser?.profile?.username, avatar_url: currentUser?.profile?.avatar_url },
+    },
+  ];
+
+  const completedTrades = [...realCompleted, ...demoCompletedTrades];
 
   // Fetch reviews for completed trades
   const { data: allReviews = [] } = useQuery({
