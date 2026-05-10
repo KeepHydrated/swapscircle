@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
             className="flex items-center gap-2 hover:text-foreground transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
-            <span>Questions and/or comments? We'd love to hear from you.</span>
+            <span>Support Chat</span>
           </button>
           
           <div className="flex items-center gap-6">
