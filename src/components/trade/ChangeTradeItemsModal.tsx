@@ -415,7 +415,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
         {/* Footer */}
         <div className="p-4 sm:p-6 border-t border-border bg-muted/50 flex-shrink-0">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0 max-w-full overflow-x-auto">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0 w-full sm:flex-1 overflow-x-auto whitespace-nowrap pb-1">
               {selectedMyItems.length > 0 && (
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <span className="text-xs">Offering:</span>
