@@ -525,7 +525,7 @@ const handleNextTheirItem = () => {
           ) : isCompleted ? (
             <div className="space-y-3">
               <div className="flex items-center justify-center py-3 bg-green-50 rounded-lg border border-green-200">
-                <Check className="w-5 h-5 mr-2 text-green-600" />
+                <Check className="w-5 h-5 mr-2 text-trademate-blue" />
                 <span className="text-green-700 font-medium">Trade Completed</span>
               </div>
               {reviewEligibility?.canReview && (
@@ -572,7 +572,7 @@ const handleNextTheirItem = () => {
                   Change
                 </Button>
                 <Button 
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  className="w-full bg-trademate-blue hover:bg-trademate-blue/90"
                   onClick={handleAcceptTrade}
                   disabled={acceptTradeMutation.isPending}
                 >
@@ -623,7 +623,7 @@ const handleNextTheirItem = () => {
                 <span className="hidden sm:inline">Change</span>
               </Button>
               <Button 
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-trademate-blue hover:bg-trademate-blue/90"
                 onClick={handleAcceptTrade}
                 disabled={acceptTradeMutation.isPending}
               >

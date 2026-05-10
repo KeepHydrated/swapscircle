@@ -215,7 +215,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                           className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50"
                           aria-label="Accept trade"
                         >
-                          <Check className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-trademate-blue" />
                         </button>
                       ) : (
                         <button
@@ -223,7 +223,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                           className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center"
                           aria-label="Suggest trade"
                         >
-                          <Repeat className="w-4 h-4 text-green-500" />
+                          <Repeat className="w-4 h-4 text-trademate-blue" />
                         </button>
                       )}
                     </div>

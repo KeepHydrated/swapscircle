@@ -295,7 +295,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                     onClick={() => toggleItemSelection(item.id)}
                   >
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center z-10">
+                      <div className="absolute top-2 right-2 w-6 h-6 bg-trademate-blue rounded-full flex items-center justify-center z-10">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
@@ -342,7 +342,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                 <button
                   onClick={handleConfirmTrade}
                   disabled={selectedItemIds.length === 0 || creating}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
+                  className="bg-trademate-blue hover:bg-trademate-blue/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
                 >
                   {creating ? 'Sending...' : `Suggest${selectedItemIds.length > 0 ? ` (${selectedItemIds.length})` : ''}`}
                 </button>
