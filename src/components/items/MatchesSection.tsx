@@ -544,7 +544,7 @@ const MatchesSection = () => {
       <div className="w-full">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
-          <Link to="/matches" className="text-sm text-primary hover:underline">View all</Link>
+          <Link to="/matches" className="text-sm text-trademate-blue hover:underline">View all</Link>
         </div>
         <div className="overflow-x-auto overflow-y-hidden pb-2">
           <div className="flex gap-3 min-w-max">
@@ -565,7 +565,7 @@ const MatchesSection = () => {
       <div className="w-full">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
-          <Link to="/matches" className="text-sm text-primary hover:underline">View all</Link>
+          <Link to="/matches" className="text-sm text-trademate-blue hover:underline">View all</Link>
         </div>
         <div className="text-center py-8 text-muted-foreground">
           <p>No matches found yet. Post an item to start matching!</p>
@@ -578,7 +578,7 @@ const MatchesSection = () => {
     <div className="w-full">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold text-foreground">Your Matches</h2>
-        <Link to="/matches" className="text-sm text-primary hover:underline">View all</Link>
+        <Link to="/matches" className="text-sm text-trademate-blue hover:underline">View all</Link>
       </div>
       
       <div className="overflow-x-auto overflow-y-hidden pb-2">
