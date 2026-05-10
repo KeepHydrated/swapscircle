@@ -264,7 +264,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               onClick={() => setActiveTab('theirs')}
               className={`flex-1 h-10 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'theirs' 
-                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                  ? 'bg-trademate-blue/10 border-trademate-blue text-trademate-blue' 
                   : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
               }`}
             >
@@ -272,7 +272,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {selectedTheirItemIds.length > 0 && (
                 <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'theirs' 
-                    ? 'bg-blue-700 text-white' 
+                    ? 'bg-trademate-blue text-white' 
                     : 'bg-gray-300 text-gray-600'
                 }`}>
                   {selectedTheirItemIds.length}
@@ -283,7 +283,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               onClick={() => setActiveTab('yours')}
               className={`flex-1 h-10 md:h-12 rounded-lg border text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'yours' 
-                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                  ? 'bg-trademate-blue/10 border-trademate-blue text-trademate-blue' 
                   : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
               }`}
             >
@@ -291,7 +291,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {selectedMyItemIds.length > 0 && (
                 <span className={`text-xs min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${
                   activeTab === 'yours' 
-                    ? 'bg-blue-700 text-white' 
+                    ? 'bg-trademate-blue text-white' 
                     : 'bg-gray-300 text-gray-600'
                 }`}>
                   {selectedMyItemIds.length}
