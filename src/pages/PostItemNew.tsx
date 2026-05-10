@@ -601,14 +601,14 @@ const PostItemNew: React.FC = () => {
                 <div className="space-y-3">
                   {Object.keys(categories).map(cat => <div key={cat} className="space-y-2">
                       <label className="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" checked={formData.lookingForCategories.includes(cat)} onChange={() => handleArrayToggle('lookingForCategories', cat)} className="rounded" />
+                        <input type="checkbox" checked={formData.lookingForCategories.includes(cat)} onChange={() => handleArrayToggle('lookingForCategories', cat)} className="rounded accent-trademate-blue" />
                         <span className="text-sm font-medium">{cat}</span>
                       </label>
                       
                       {/* Subcategories - Show when category is selected */}
                       {formData.lookingForCategories.includes(cat) && <div className="ml-6 grid grid-cols-1 gap-1 bg-muted/30 p-3 rounded-lg">
                           {categories[cat as keyof typeof categories].map(subcat => <label key={subcat} className="flex items-center space-x-2 cursor-pointer">
-                              <input type="checkbox" checked={formData.lookingForSubcategories[cat]?.includes(subcat) || false} onChange={() => handleSubcategoryToggle(cat, subcat)} className="rounded text-xs" />
+                              <input type="checkbox" checked={formData.lookingForSubcategories[cat]?.includes(subcat) || false} onChange={() => handleSubcategoryToggle(cat, subcat)} className="rounded text-xs accent-trademate-blue" />
                               <span className="text-xs text-muted-foreground">{subcat}</span>
                             </label>)}
                         </div>}
@@ -621,7 +621,7 @@ const PostItemNew: React.FC = () => {
                 <Label>Acceptable conditions</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {conditions.map(condition => <label key={condition} className="flex items-center space-x-2 cursor-pointer">
-                      <input type="checkbox" checked={formData.lookingForConditions.includes(condition)} onChange={() => handleArrayToggle('lookingForConditions', condition)} className="rounded" />
+                      <input type="checkbox" checked={formData.lookingForConditions.includes(condition)} onChange={() => handleArrayToggle('lookingForConditions', condition)} className="rounded accent-trademate-blue" />
                       <span className="text-sm">{condition}</span>
                     </label>)}
                 </div>
@@ -632,7 +632,7 @@ const PostItemNew: React.FC = () => {
                 <Label>Price ranges you're interested in</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {priceRanges.map(range => <label key={range} className="flex items-center space-x-2 cursor-pointer">
-                      <input type="checkbox" checked={formData.lookingForPriceRanges.includes(range)} onChange={() => handleArrayToggle('lookingForPriceRanges', range)} className="rounded" />
+                      <input type="checkbox" checked={formData.lookingForPriceRanges.includes(range)} onChange={() => handleArrayToggle('lookingForPriceRanges', range)} className="rounded accent-trademate-blue" />
                       <span className="text-sm">${range}</span>
                     </label>)}
                 </div>
@@ -643,7 +643,7 @@ const PostItemNew: React.FC = () => {
 
         {/* Submit Button - Full Width Below Both Columns */}
         <div className="mt-8">
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="w-full" size="lg">
+          <Button onClick={handleSubmit} disabled={isSubmitting} className="w-full bg-trademate-blue hover:bg-trademate-blue/90 text-white" size="lg">
             {isSubmitting ? isEditing ? 'Updating...' : 'Posting...' : isEditing ? 'Update Item' : 'Post Item'}
           </Button>
         </div>
