@@ -214,7 +214,7 @@ const Trades = () => {
                         <div className="text-sm text-gray-500">
                           {format(new Date(trade.created_at), 'MMM d, yyyy')}
                         </div>
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                        <Badge className="bg-primary/10 text-primary hover:bg-primary/10">
                           Completed
                         </Badge>
                       </div>
