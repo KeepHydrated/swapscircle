@@ -111,3 +111,17 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Remove focus outlines globally on click; keep keyboard focus subtle */
+button:focus,
+a:focus,
+[role="button"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
