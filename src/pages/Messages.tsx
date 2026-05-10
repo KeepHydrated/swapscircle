@@ -489,7 +489,7 @@ const Messages = () => {
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12 border-2 border-gray-300">
                             {false ? (
-                              <AvatarFallback className="bg-trademate-blue text-white hover:bg-trademate-blue/90 font-bold">SC</AvatarFallback>
+                            <AvatarFallback className="bg-trademate-blue text-white font-bold">SC</AvatarFallback>
                             ) : (
                               <>
                                 <AvatarImage 
@@ -561,7 +561,7 @@ const Messages = () => {
                   </Button>
                   <Avatar className="h-8 w-8">
                     {false ? (
-                      <AvatarFallback className="bg-trademate-blue text-white hover:bg-trademate-blue/90 font-bold text-xs">SC</AvatarFallback>
+                      <AvatarFallback className="bg-trademate-blue text-white font-bold text-xs">SC</AvatarFallback>
                     ) : (
                       <>
                         <AvatarImage 
@@ -782,7 +782,7 @@ const Messages = () => {
                       <div className="flex items-start gap-2">
                         <Avatar className="h-10 w-10 border-2 border-gray-300">
                           {false ? (
-                            <AvatarFallback className="bg-trademate-blue text-white hover:bg-trademate-blue/90 font-bold text-xs">SC</AvatarFallback>
+                            <AvatarFallback className="bg-trademate-blue text-white font-bold text-xs">SC</AvatarFallback>
                           ) : (
                             <>
                               <AvatarImage 
@@ -875,13 +875,13 @@ const Messages = () => {
                         </>
                       ) : (
                         <>
-                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
-                            <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="focus:outline-none focus-visible:outline-none">
+                            <Avatar className="h-10 w-10 cursor-pointer">
                               <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
                               <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                             </Avatar>
                           </Link>
-                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold text-foreground no-underline hover:no-underline focus:outline-none focus-visible:outline-none">
                             {activeChat.otherUserProfile?.username || activeChat.name}
                           </Link>
                         </>
@@ -1032,13 +1032,13 @@ const Messages = () => {
                         </>
                       ) : (
                         <>
-                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`}>
-                            <Avatar className="h-10 w-10 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer">
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="focus:outline-none focus-visible:outline-none">
+                            <Avatar className="h-10 w-10 cursor-pointer">
                               <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
                               <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                             </Avatar>
                           </Link>
-                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold hover:text-blue-600 transition-colors">
+                          <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="font-semibold text-foreground no-underline hover:no-underline focus:outline-none focus-visible:outline-none">
                             {activeChat.otherUserProfile?.username || activeChat.name}
                           </Link>
                         </>
