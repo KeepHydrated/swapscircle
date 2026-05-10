@@ -20,6 +20,7 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
@@ -108,14 +109,12 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    
+  const addImageFiles = (files: File[]) => {
     if (files.length === 0) return;
 
     // Filter only image files
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
+
     if (imageFiles.length !== files.length) {
       toast.error("Only image files are allowed");
     }
@@ -137,9 +136,8 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
     }
 
     // Add new images to existing selection
-    const newImages = [...selectedImages, ...imageFiles];
-    setSelectedImages(newImages);
-    
+    setSelectedImages(prev => [...prev, ...imageFiles]);
+
     // Create previews for new images
     const newPreviews: string[] = [];
     imageFiles.forEach((file) => {
@@ -152,6 +150,31 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    addImageFiles(Array.from(e.target.files || []));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.currentTarget === e.target) setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files || []);
+    addImageFiles(files);
   };
 
   const removeImage = (index: number) => {
@@ -175,7 +198,20 @@ const MessageInput = ({ onMarkCompleted, conversationId }: MessageInputProps = {
   };
 
   return (
-    <div className="p-4 bg-white w-full">{/* Remove border-t since it's handled by parent */}
+    <div
+      className={`relative p-4 bg-white w-full transition-colors ${isDragging ? 'bg-primary/5 ring-2 ring-primary ring-inset' : ''}`}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {isDragging && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+          <div className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-lg">
+            Drop images to attach
+          </div>
+        </div>
+      )}
       {/* Image previews */}
       {imagePreviews.length > 0 && (
         <div className="mb-2">
