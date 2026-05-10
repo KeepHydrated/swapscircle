@@ -50,7 +50,7 @@ const NotificationSettings: React.FC = () => {
             )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-6 pt-8 md:pt-6">
+        <CardContent className="space-y-6 pt-8 md:pt-0 p-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
               <h3 className="text-sm font-medium">Push Notifications</h3>
