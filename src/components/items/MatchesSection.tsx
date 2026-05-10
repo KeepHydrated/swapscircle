@@ -28,6 +28,13 @@ interface MatchItem {
   myItemImage?: string;
 }
 
+interface UserMatchItem {
+  id: string;
+  name: string;
+  image_url?: string | null;
+  image_urls?: string[] | null;
+}
+
 const HoverItemImage = ({ primary, images, name }: { primary?: string; images?: string[]; name: string }) => {
   const allImages = Array.from(new Set([primary, ...(images || [])].filter(Boolean) as string[]));
   const [imageIndex, setImageIndex] = useState(0);
@@ -237,7 +244,7 @@ const MatchesSection = () => {
   const [isCreatingTrade, setIsCreatingTrade] = useState<string | null>(null);
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userItems, setUserItems] = useState<any[]>([]);
+  const [userItems, setUserItems] = useState<UserMatchItem[]>([]);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { itemsInActiveTrades } = useItemsInActiveTrades();
@@ -249,7 +256,7 @@ const MatchesSection = () => {
       
       try {
         // First, get the current user's items
-        let myItems: any[] = [];
+        let myItems: UserMatchItem[] = [];
         if (user) {
           const { data: userItemsData } = await supabase
             .from('items')
