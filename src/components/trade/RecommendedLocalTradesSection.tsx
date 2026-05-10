@@ -460,19 +460,12 @@ const RecommendedLocalTradesSection = () => {
                 )}
 
                 {/* Image */}
-                <div className="flex-1 relative overflow-hidden">
-                  {item.image_url ? (
-                    <img
-                      src={item.image_url}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted">
-                      <span className="text-muted-foreground text-sm">No image</span>
-                    </div>
-                  )}
-                </div>
+                <LocalItemImage
+                  primary={item.image_url}
+                  images={item.image_urls || undefined}
+                  name={item.name}
+                />
+
 
                 {/* Content */}
                 <div className="p-3 h-20 flex flex-col justify-center">
