@@ -420,13 +420,13 @@ const Messages = () => {
                   {/* Demo Trade Entry */}
                   {isDemoTrade && demoTradeData && (
                     <div 
-                      className="p-4 border-b border-gray-200 cursor-pointer bg-blue-50 border-l-4 border-l-blue-500"
+                      className="p-4 border-b border-gray-200 cursor-pointer bg-trademate-blue/10 shadow-[inset_4px_0_0_0_#1E3A8A]"
                       onClick={() => {
                         setCurrentView('chat');
                       }}
                     >
                       <div className="flex items-start gap-4">
-                        <Avatar className="h-12 w-12">
+                        <Avatar className="h-12 w-12 border border-gray-200">
                           <AvatarImage 
                             src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                             alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
@@ -461,7 +461,7 @@ const Messages = () => {
                       <div 
                         key={conversation.id}
                         data-conv-id={conversation.id}
-                        className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id && !isDemoTrade ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                        className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id && !isDemoTrade ? 'bg-trademate-blue/10 shadow-[inset_4px_0_0_0_#1E3A8A]' : ''}`}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -487,7 +487,7 @@ const Messages = () => {
                         }}
                       >
                         <div className="flex items-start gap-4">
-                          <Avatar className="h-12 w-12">
+                          <Avatar className="h-12 w-12 border border-gray-200">
                             {false ? (
                               <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
                             ) : (
@@ -721,14 +721,14 @@ const Messages = () => {
                 {/* Demo Trade Entry - always visible when demoTradeData exists */}
                 {demoTradeData && (
                   <div 
-                    className={`p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${isDemoTrade ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                    className={`p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${isDemoTrade ? 'bg-trademate-blue/10 shadow-[inset_4px_0_0_0_#1E3A8A]' : ''}`}
                     onClick={() => {
                       setIsDemoTrade(true);
                       setActiveConversation(null as any);
                     }}
                   >
                     <div className="flex items-start gap-2">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 border border-gray-200">
                         <AvatarImage 
                           src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                           alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
@@ -761,7 +761,7 @@ const Messages = () => {
                       key={conversation.id}
                       data-conv-id={conversation.id}
                       id={`conv-${conversation.id}`}
-                      className={`p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id && !isDemoTrade ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                      className={`p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 ${activeConversation === conversation.id && !isDemoTrade ? 'bg-trademate-blue/10 shadow-[inset_4px_0_0_0_#1E3A8A]' : ''}`}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -780,7 +780,7 @@ const Messages = () => {
                       }}
                     >
                       <div className="flex items-start gap-2">
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-10 w-10 border border-gray-200">
                           {false ? (
                             <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">SC</AvatarFallback>
                           ) : (
@@ -843,7 +843,7 @@ const Messages = () => {
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 border border-gray-200">
                         <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
                         <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                       </Avatar>
@@ -866,7 +866,7 @@ const Messages = () => {
                     <div className="flex items-center gap-3">
                       {activeChat.isSupport ? (
                         <>
-                          <Avatar className="h-10 w-10">
+                          <Avatar className="h-10 w-10 border border-gray-200">
                             <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
                             <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                           </Avatar>
@@ -960,7 +960,7 @@ const Messages = () => {
                 <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 border border-gray-200">
                         <AvatarImage src={demoTradeData.partnerProfile?.avatar_url} />
                         <AvatarFallback>{demoTradeData.partnerProfile?.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                       </Avatar>
@@ -1023,7 +1023,7 @@ const Messages = () => {
                     <div className="flex items-center gap-3">
                       {activeChat.isSupport ? (
                         <>
-                          <Avatar className="h-10 w-10">
+                          <Avatar className="h-10 w-10 border border-gray-200">
                             <AvatarImage src={activeChat.otherUserProfile?.avatar_url || undefined} />
                             <AvatarFallback>{(activeChat.otherUserProfile?.username || activeChat.name).substring(0, 1).toUpperCase()}</AvatarFallback>
                           </Avatar>
