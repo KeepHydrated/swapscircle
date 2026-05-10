@@ -196,7 +196,7 @@ const RecommendedLocalTradesSection = () => {
             // Also fetch some regular items to fill the carousel
             const { data: regularItems } = await supabase
               .from("items")
-              .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id, description")
+              .select("id, name, image_url, image_urls, category, condition, price_range_min, price_range_max, user_id, description")
               .eq("is_available", true)
               .eq("status", "published")
               .neq("user_id", user.id)
@@ -215,7 +215,7 @@ const RecommendedLocalTradesSection = () => {
       // Fallback: fetch regular local items if no matches
       const { data, error } = await supabase
         .from("items")
-        .select("id, name, image_url, category, condition, price_range_min, price_range_max, user_id, description")
+        .select("id, name, image_url, image_urls, category, condition, price_range_min, price_range_max, user_id, description")
         .eq("is_available", true)
         .eq("status", "published")
         .limit(8);
