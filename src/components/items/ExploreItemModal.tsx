@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, ArrowLeft, ArrowRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, Check, ExternalLink, EyeOff } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Heart, Tag, Shield, DollarSign, Camera, Repeat, MoreVertical, Check, ExternalLink, EyeOff } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
