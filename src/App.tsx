@@ -172,6 +172,8 @@ const AppContent = () => {
 
   const location = useLocation();
   const isAuthPage = location.pathname === '/auth';
+  const isMessagesPage = location.pathname === '/messages';
+  const hideFooter = isAuthPage || isMessagesPage;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -179,7 +181,7 @@ const AppContent = () => {
       <main className="flex-1">
         <AppRoutes />
       </main>
-      {!isAuthPage && <Footer />}
+      {!hideFooter && <Footer />}
       <LiveChatPopup />
     </div>
   );
