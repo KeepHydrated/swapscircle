@@ -136,7 +136,7 @@ const Header = () => {
               </TooltipProvider>
             )}
 
-            <Button variant="default" size="sm" className="hidden md:flex bg-gray-900 hover:bg-gray-800 text-white" asChild>
+            <Button variant="default" size="sm" className="hidden md:flex bg-trademate-blue hover:bg-trademate-blue/90 text-white" asChild>
               <Link to="/matches">
                 <span>Matches</span>
               </Link>
