@@ -428,7 +428,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   <div className="mt-6">
                     <button
                       onClick={() => setShowTradeModal(true)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-trademate-blue hover:bg-trademate-blue/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <Check className="w-5 h-5" />
                       Suggest a Trade
