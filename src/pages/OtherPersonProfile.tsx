@@ -496,7 +496,7 @@ const OtherPersonProfile: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="bg-card rounded-lg shadow-sm overflow-hidden">
+      <div>
         {/* Profile Header with Friend Request Button */}
         <div className="relative">
           <ProfileHeader 
