@@ -102,15 +102,17 @@ const RecommendedItemsSection = () => {
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
   const [tradeTargetItem, setTradeTargetItem] = useState<Item | null>(null);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   useEffect(() => {
+    // Wait for auth to resolve so we don't flash generic items before personalized ones
+    if (authLoading) return;
     fetchRecommendedItems();
     if (user) {
       fetchLikedItems();
     }
-  }, [user, itemsInActiveTrades]);
+  }, [user, authLoading, itemsInActiveTrades]);
 
   const fetchLikedItems = async () => {
     if (!user) return;
