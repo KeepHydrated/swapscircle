@@ -339,7 +339,7 @@ const MatchesSection = () => {
     };
 
     fetchMatches();
-  }, [user, itemsInActiveTrades]);
+  }, [user, authLoading, itemsInActiveTrades]);
 
   // Fetch liked items on mount
   useEffect(() => {
