@@ -245,12 +245,14 @@ const MatchesSection = () => {
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [userItems, setUserItems] = useState<UserMatchItem[]>([]);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { itemsInActiveTrades } = useItemsInActiveTrades();
 
   // Fetch real items from the database
   useEffect(() => {
+    // Wait until auth has resolved so we don't flash items fetched without user context
+    if (authLoading) return;
     const fetchMatches = async () => {
       setLoading(true);
       
@@ -337,7 +339,7 @@ const MatchesSection = () => {
     };
 
     fetchMatches();
-  }, [user, itemsInActiveTrades]);
+  }, [user, authLoading, itemsInActiveTrades]);
 
   // Fetch liked items on mount
   useEffect(() => {
