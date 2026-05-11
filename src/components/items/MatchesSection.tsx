@@ -251,6 +251,8 @@ const MatchesSection = () => {
 
   // Fetch real items from the database
   useEffect(() => {
+    // Wait until auth has resolved so we don't flash items fetched without user context
+    if (authLoading) return;
     const fetchMatches = async () => {
       setLoading(true);
       
