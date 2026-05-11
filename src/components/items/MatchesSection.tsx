@@ -245,7 +245,7 @@ const MatchesSection = () => {
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [userItems, setUserItems] = useState<UserMatchItem[]>([]);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { itemsInActiveTrades } = useItemsInActiveTrades();
 
