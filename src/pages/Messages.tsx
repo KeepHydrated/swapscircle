@@ -728,12 +728,12 @@ const Messages = () => {
                     }}
                   >
                     <div className="flex items-start gap-2">
-                      <Avatar className="h-10 w-10 border-2 border-gray-300">
+                      <Avatar className="h-10 w-10 !border-0 !ring-0 !shadow-none bg-transparent">
                         <AvatarImage 
                           src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                           alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
                         />
-                        <AvatarFallback>
+                        <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
                           {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -780,7 +780,7 @@ const Messages = () => {
                       }}
                     >
                       <div className="flex items-start gap-2">
-                        <Avatar className="h-10 w-10 border-2 border-gray-300">
+                        <Avatar className="h-10 w-10 !border-0 !ring-0 !shadow-none bg-transparent">
                           {false ? (
                             <AvatarFallback className="bg-trademate-blue text-white font-bold text-xs">SC</AvatarFallback>
                           ) : (
@@ -789,7 +789,7 @@ const Messages = () => {
                                 src={conversation.otherUserProfile?.avatar_url || undefined} 
                                 alt={`${conversation.name}'s avatar`} 
                               />
-                              <AvatarFallback>
+                              <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
                                 {conversation.name.substring(0, 1).toUpperCase()}
                               </AvatarFallback>
                             </>
