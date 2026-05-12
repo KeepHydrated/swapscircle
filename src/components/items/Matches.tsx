@@ -74,7 +74,7 @@ const Matches: React.FC<MatchesProps> = ({
   
   
   const displayedMatches = isTransitioning ? [] : matches.filter(match => 
-    !removedItems.includes(match.id)
+    !removedItems.includes(match.id) && !(likedItems[match.id] ?? match.liked)
   );
 
   // Find current index in displayed matches
