@@ -426,12 +426,12 @@ const Messages = () => {
                       }}
                     >
                       <div className="flex items-start gap-4">
-                        <Avatar className="h-12 w-12 !border-0 !ring-0 !shadow-none bg-transparent">
+                        <Avatar className="h-12 w-12 !ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                           <AvatarImage 
                             src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                             alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
                           />
-                          <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
+                          <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                             {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -487,16 +487,16 @@ const Messages = () => {
                         }}
                       >
                         <div className="flex items-start gap-4">
-                          <Avatar className="h-12 w-12 !border-0 !ring-0 !shadow-none bg-transparent">
-                            {false ? (
-                            <AvatarFallback className="bg-trademate-blue text-white font-bold">SC</AvatarFallback>
+                          <Avatar className="h-12 w-12 !ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
+                            {conversation.isSupport ? (
+                              <AvatarFallback className="bg-trademate-blue text-white font-bold">SC</AvatarFallback>
                             ) : (
                               <>
                                 <AvatarImage 
                                   src={conversation.otherUserProfile?.avatar_url || undefined} 
                                   alt={`${conversation.name}'s avatar`} 
                                 />
-                                <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
+                                <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                                   {conversation.name.substring(0, 1).toUpperCase()}
                                 </AvatarFallback>
                               </>
@@ -728,12 +728,12 @@ const Messages = () => {
                     }}
                   >
                     <div className="flex items-start gap-2">
-                      <Avatar className="h-10 w-10 !border-0 !ring-0 !shadow-none bg-transparent">
+                      <Avatar className="h-10 w-10 !ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                         <AvatarImage 
                           src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                           alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
                         />
-                        <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
+                        <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                           {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -780,8 +780,8 @@ const Messages = () => {
                       }}
                     >
                       <div className="flex items-start gap-2">
-                        <Avatar className="h-10 w-10 !border-0 !ring-0 !shadow-none bg-transparent">
-                          {false ? (
+                        <Avatar className="h-10 w-10 !ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
+                          {conversation.isSupport ? (
                             <AvatarFallback className="bg-trademate-blue text-white font-bold text-xs">SC</AvatarFallback>
                           ) : (
                             <>
@@ -789,7 +789,7 @@ const Messages = () => {
                                 src={conversation.otherUserProfile?.avatar_url || undefined} 
                                 alt={`${conversation.name}'s avatar`} 
                               />
-                              <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
+                              <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                                 {conversation.name.substring(0, 1).toUpperCase()}
                               </AvatarFallback>
                             </>
