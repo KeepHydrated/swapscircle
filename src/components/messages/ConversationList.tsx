@@ -24,7 +24,7 @@ const ConversationList = ({
     console.log('ConversationList conversations:', conversations);
     conversations.forEach((conv, index) => {
       console.log(`Conversation ${index}:`, conv);
-      console.log(`Avatar URL for ${conv.name}:`, (conv as any).otherUserProfile?.avatar_url);
+      console.log(`Avatar URL for ${conv.name}:`, conv.otherUserProfile?.avatar_url);
     });
   }, [conversations]);
 
@@ -63,7 +63,7 @@ const ConversationList = ({
               )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <Avatar className="h-12 w-12 border-0">
+                  <Avatar className="h-12 w-12 !border-0 !ring-0 !shadow-none bg-transparent">
                     {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
                     ) : (
@@ -72,7 +72,7 @@ const ConversationList = ({
                           src={conversation.otherUserProfile?.avatar_url || undefined} 
                           alt={`${conversation.name}'s avatar`} 
                         />
-                        <AvatarFallback className="bg-white">
+                        <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
                           {conversation.name.substring(0, 1).toUpperCase()}
                         </AvatarFallback>
                       </>
