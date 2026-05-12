@@ -488,7 +488,14 @@ const Messages = () => {
                       >
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12 !ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
-                            {/* ... */}
+                            {conversation.isSupport ? (
+                              <AvatarFallback className="bg-trademate-blue text-white font-bold">SC</AvatarFallback>
+                            ) : (
+                              <>
+                                <AvatarImage 
+                                  src={conversation.otherUserProfile?.avatar_url || undefined} 
+                                  alt={`${conversation.name}'s avatar`} 
+                                />
                                 <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                                   {conversation.name.substring(0, 1).toUpperCase()}
                                 </AvatarFallback>
@@ -774,7 +781,14 @@ const Messages = () => {
                     >
                       <div className="flex items-start gap-2">
                         <Avatar className="h-10 w-10 !ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
-                          {/* ... */}
+                          {conversation.isSupport ? (
+                            <AvatarFallback className="bg-trademate-blue text-white font-bold text-xs">SC</AvatarFallback>
+                          ) : (
+                            <>
+                              <AvatarImage 
+                                src={conversation.otherUserProfile?.avatar_url || undefined} 
+                                alt={`${conversation.name}'s avatar`} 
+                              />
                               <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-slate-600 border-solid border">
                                 {conversation.name.substring(0, 1).toUpperCase()}
                               </AvatarFallback>
