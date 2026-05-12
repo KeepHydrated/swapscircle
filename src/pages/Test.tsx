@@ -424,9 +424,16 @@ const Test: React.FC = () => {
         onNavigatePrev={handleNavigatePrev}
         onNavigateNext={handleNavigateNext}
         currentIndex={selectedIndex}
-          totalItems={displayedMatches.length}
-          matchedItemImage={displayedMatches[selectedIndex]?.myItemImage}
-          matchedItemId={displayedMatches[selectedIndex]?.myItemId}
+        totalItems={displayedMatches.length}
+        matchedItemImage={displayedMatches[selectedIndex]?.myItemImage}
+        matchedItemId={displayedMatches[selectedIndex]?.myItemId}
+        liked={selectedItem ? likedItems.has(selectedItem.id) : false}
+        onLike={() => {
+          if (!selectedItem) return;
+          setLikedItems(prev => new Set([...prev, selectedItem.id]));
+          setIsModalOpen(false);
+          setSelectedItem(null);
+        }}
         onHideItem={(id) => {
           // Remove the hidden item from matches immediately
           setMatches(prev => prev.filter(m => m.id !== id));
