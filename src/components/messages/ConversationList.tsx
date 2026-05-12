@@ -63,7 +63,7 @@ const ConversationList = ({
               )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-12 w-12 border-0">
                     {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
                     ) : (
