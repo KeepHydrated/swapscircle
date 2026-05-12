@@ -431,7 +431,7 @@ const Messages = () => {
                             src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                             alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
                           />
-                          <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-gray-400 border-solid border">
+                          <AvatarFallback className="!ring-0 !shadow-none bg-transparent !border-0">
                             {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -496,7 +496,7 @@ const Messages = () => {
                                   src={conversation.otherUserProfile?.avatar_url || undefined} 
                                   alt={`${conversation.name}'s avatar`} 
                                 />
-                                <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-gray-400 border-solid border">
+                                <AvatarFallback className="!ring-0 !shadow-none bg-transparent !border-0">
                                   {conversation.name.substring(0, 1).toUpperCase()}
                                 </AvatarFallback>
                               </>
@@ -733,7 +733,7 @@ const Messages = () => {
                           src={demoTradeData.partnerProfile?.avatar_url || undefined} 
                           alt={`${demoTradeData.partnerProfile?.username}'s avatar`} 
                         />
-                        <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-gray-400 border-solid border">
+                        <AvatarFallback className="!ring-0 !shadow-none bg-transparent !border-0">
                           {(demoTradeData.partnerProfile?.username || 'U').substring(0, 1).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -789,7 +789,7 @@ const Messages = () => {
                                 src={conversation.otherUserProfile?.avatar_url || undefined} 
                                 alt={`${conversation.name}'s avatar`} 
                               />
-                              <AvatarFallback className="!ring-0 !shadow-none bg-transparent border-gray-400 border-solid border">
+                              <AvatarFallback className="!ring-0 !shadow-none bg-transparent !border-0">
                                 {conversation.name.substring(0, 1).toUpperCase()}
                               </AvatarFallback>
                             </>
