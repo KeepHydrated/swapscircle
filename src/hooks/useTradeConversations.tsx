@@ -152,12 +152,12 @@ export const useTradeConversations = () => {
                 : {
                     id: tc.requester_id,
                     username: 'SwapsCircle Support',
-                    email: '',
-                    avatar_url: '',
+                    email: tc.requester_profile?.email || '',
+                    avatar_url: tc.requester_profile?.avatar_url || '',
                     bio: 'Official SwapsCircle Support',
                     location: '',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
+                    created_at: tc.requester_profile?.created_at || new Date().toISOString(),
+                    updated_at: tc.requester_profile?.updated_at || new Date().toISOString()
                   }
             };
 
