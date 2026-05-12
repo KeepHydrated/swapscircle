@@ -416,7 +416,7 @@ const UserProfile: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="bg-card rounded-lg shadow-sm overflow-hidden">
+      <div>
         {/* Mobile Icon Bar */}
         {isMobile && (
           <div className="flex items-center justify-around py-4 px-6 border-b bg-background">
