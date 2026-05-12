@@ -2,8 +2,6 @@
 import React, { useEffect } from 'react';
 import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Link } from 'react-router-dom';
 import { ConversationDisplay, ExchangePairDisplay } from '@/hooks/useTradeConversations';
 
 interface ConversationListProps {
@@ -63,21 +61,19 @@ const ConversationList = ({
               )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <Avatar className="h-12 w-12 !border-0 !ring-0 !shadow-none bg-transparent">
-                    {conversation.isSupport && !conversation.otherUserProfile?.avatar_url ? (
-                      <AvatarFallback className="bg-primary text-primary-foreground font-bold">SC</AvatarFallback>
+                  <div className="h-12 w-12 overflow-hidden rounded-full border-none bg-transparent shadow-none ring-0">
+                    {conversation.otherUserProfile?.avatar_url ? (
+                      <img
+                        src={conversation.otherUserProfile.avatar_url}
+                        alt={`${conversation.name}'s avatar`}
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
-                      <>
-                        <AvatarImage 
-                          src={conversation.otherUserProfile?.avatar_url || undefined} 
-                          alt={`${conversation.name}'s avatar`} 
-                        />
-                        <AvatarFallback className="!border-0 !ring-0 !shadow-none bg-transparent">
-                          {conversation.name.substring(0, 1).toUpperCase()}
-                        </AvatarFallback>
-                      </>
+                      <div className={`flex h-full w-full items-center justify-center rounded-full border-none font-bold shadow-none ring-0 ${conversation.isSupport ? 'bg-primary text-primary-foreground' : 'bg-transparent text-foreground'}`}>
+                        {conversation.isSupport ? 'SC' : conversation.name.substring(0, 1).toUpperCase()}
+                      </div>
                     )}
-                  </Avatar>
+                  </div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
