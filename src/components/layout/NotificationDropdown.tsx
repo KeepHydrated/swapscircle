@@ -103,7 +103,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ notificatio
         return <User className="h-4 w-4 text-purple-500" />;
       case 'trade':
       case 'trade_completed':
-        return <Handshake className="h-4 w-4 text-emerald-600" />;
+        return <Handshake className="h-4 w-4 text-blue-600" />;
       default:
         return <Bell className="h-4 w-4 text-gray-500" />;
     }
