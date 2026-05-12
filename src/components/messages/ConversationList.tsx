@@ -24,7 +24,7 @@ const ConversationList = ({
     console.log('ConversationList conversations:', conversations);
     conversations.forEach((conv, index) => {
       console.log(`Conversation ${index}:`, conv);
-      console.log(`Avatar URL for ${conv.name}:`, (conv as any).otherUserProfile?.avatar_url);
+      console.log(`Avatar URL for ${conv.name}:`, conv.otherUserProfile?.avatar_url);
     });
   }, [conversations]);
 
