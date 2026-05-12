@@ -27,6 +27,7 @@ const Test: React.FC = () => {
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
+  const [likedItemsLoading, setLikedItemsLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,8 +126,10 @@ const Test: React.FC = () => {
   // Fetch liked items from database on mount
   useEffect(() => {
     const fetchLikedItems = async () => {
+      setLikedItemsLoading(true);
       if (!user) {
         setLikedItems(new Set());
+        setLikedItemsLoading(false);
         return;
       }
 
@@ -138,10 +141,13 @@ const Test: React.FC = () => {
       if (!error && data) {
         setLikedItems(new Set(data.map(l => l.item_id)));
       }
+      setLikedItemsLoading(false);
     };
 
     fetchLikedItems();
   }, [user]);
+
+  const displayedMatches = matches.filter(match => !likedItems.has(match.id));
 
   const convertToItem = (match: MatchItem): Item => ({
     id: match.id,
@@ -303,19 +309,19 @@ const Test: React.FC = () => {
     if (selectedIndex > 0) {
       const newIndex = selectedIndex - 1;
       setSelectedIndex(newIndex);
-      setSelectedItem(convertToItem(matches[newIndex]));
+      setSelectedItem(convertToItem(displayedMatches[newIndex]));
     }
   };
 
   const handleNavigateNext = () => {
-    if (selectedIndex < matches.length - 1) {
+    if (selectedIndex < displayedMatches.length - 1) {
       const newIndex = selectedIndex + 1;
       setSelectedIndex(newIndex);
-      setSelectedItem(convertToItem(matches[newIndex]));
+      setSelectedItem(convertToItem(displayedMatches[newIndex]));
     }
   };
 
-  if (loading) {
+  if (loading || likedItemsLoading) {
     return (
       <MainLayout>
         <div className="flex justify-center items-center h-64">
