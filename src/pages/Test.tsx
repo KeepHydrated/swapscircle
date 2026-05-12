@@ -334,13 +334,13 @@ const Test: React.FC = () => {
   return (
     <MainLayout>
       
-      {matches.length === 0 ? (
+      {displayedMatches.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <p>No matches found. Try posting some items first!</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {matches.map((match, index) => (
+          {displayedMatches.map((match, index) => (
             <div
               key={match.id}
               className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
@@ -424,9 +424,9 @@ const Test: React.FC = () => {
         onNavigatePrev={handleNavigatePrev}
         onNavigateNext={handleNavigateNext}
         currentIndex={selectedIndex}
-        totalItems={matches.length}
-        matchedItemImage={matches[selectedIndex]?.myItemImage}
-        matchedItemId={matches[selectedIndex]?.myItemId}
+          totalItems={displayedMatches.length}
+          matchedItemImage={displayedMatches[selectedIndex]?.myItemImage}
+          matchedItemId={displayedMatches[selectedIndex]?.myItemId}
         onHideItem={(id) => {
           // Remove the hidden item from matches immediately
           setMatches(prev => prev.filter(m => m.id !== id));
