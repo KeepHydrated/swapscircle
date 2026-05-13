@@ -176,8 +176,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   return (
     <div className="flex flex-col w-full">
       <Card 
-        className={`overflow-hidden cursor-pointer group ${
-          isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : ''
+        className={`overflow-hidden cursor-pointer group rounded-xl shadow-md border-0 bg-card ${
+          isSelected && !isMatch ? 'ring-2 ring-blue-500' : ''
         }`}
         onClick={handleCardClick}
         onTouchEnd={handleTouchEnd}
@@ -185,7 +185,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
       >
         <div className="relative">
           <div
-            className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}
+            className={`aspect-square bg-muted relative overflow-hidden`}
             onMouseEnter={() => { if (hasMultipleImages) setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1)); }}
             onMouseLeave={() => { if (hasMultipleImages) setCurrentImageIndex(0); }}
           >
@@ -368,20 +368,20 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </div>
           )}
         </div>
-        <CardContent className={`${compact ? 'p-2' : 'p-4'}`}>
-          <h3 className={`font-semibold text-foreground ${compact ? 'text-xs' : 'text-base'} leading-tight truncate mb-1`} title={name}>
+        <CardContent className="p-3">
+          <h3 className="font-semibold text-sm text-foreground truncate" title={name}>
             {name}
           </h3>
-          <div className="flex items-center justify-between">
-            <p className={`text-muted-foreground ${compact ? 'text-xs' : 'text-sm'}`}>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-muted-foreground">
               {priceRangeMin && priceRangeMax 
                 ? `$${priceRangeMin} - $${priceRangeMax}`
                 : priceRangeMin 
                   ? `$${priceRangeMin}+`
                   : 'Price not set'}
-            </p>
+            </span>
             {condition && (
-              <span className={`bg-muted px-2 py-0.5 rounded-full text-muted-foreground ${compact ? 'text-xs' : 'text-xs'}`}>
+              <span className="text-xs px-2 py-0.5 bg-muted rounded-full text-muted-foreground">
                 {condition}
               </span>
             )}

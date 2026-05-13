@@ -82,52 +82,42 @@ export const RecommendedTradesSection = () => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((item) => (
-            <Card 
-              key={item.id} 
-              className="overflow-hidden cursor-pointer group"
+            <div
+              key={item.id}
+              className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group"
               onClick={() => navigate(`/item/${item.id}`)}
             >
-              <div className="relative aspect-square overflow-hidden">
+              <div className="aspect-square relative overflow-hidden">
                 <img
                   src={item.image_url || '/placeholder.svg'}
                   alt={item.name}
                   className="w-full h-full object-cover"
                 />
-                <button 
-                  className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full p-2 hover:bg-background transition-colors"
+                <button
+                  className="absolute top-3 right-3 w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Handle like functionality
                   }}
                 >
-                  <Heart className="w-5 h-5 text-foreground" />
+                  <Heart className="w-4 h-4 text-red-500" />
                 </button>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                  <span className="inline-block bg-primary/90 text-primary-foreground text-xs px-2 py-1 rounded">
-                    {item.condition}
+              </div>
+              <div className="p-3">
+                <h3 className="font-semibold text-sm truncate">{item.name}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    ${item.price_range_min} - ${item.price_range_max}
                   </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-xl mb-2 text-foreground group-hover:text-primary transition-colors">
-                  {item.name}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-3">{item.category}</p>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Value: </span>
-                    <span className="font-semibold text-foreground">
-                      ${item.price_range_min} - ${item.price_range_max}
+                  {item.condition && (
+                    <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
+                      {item.condition}
                     </span>
-                  </div>
-                  <Button size="sm" variant="ghost" className="group-hover:bg-primary group-hover:text-primary-foreground">
-                    View
-                  </Button>
+                  )}
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
