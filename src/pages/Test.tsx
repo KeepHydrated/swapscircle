@@ -343,7 +343,7 @@ const Test: React.FC = () => {
           {displayedMatches.map((match, index) => (
             <div
               key={match.id}
-              className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+              className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group"
               onClick={() => handleCardClick(match, index)}
             >
               {/* Matched item thumbnail */}
