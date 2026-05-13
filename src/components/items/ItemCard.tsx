@@ -368,20 +368,20 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </div>
           )}
         </div>
-        <CardContent className={`${compact ? 'p-2' : 'p-4'}`}>
-          <h3 className={`font-semibold text-foreground ${compact ? 'text-xs' : 'text-base'} leading-tight truncate mb-1`} title={name}>
+        <CardContent className="p-3">
+          <h3 className="font-semibold text-sm text-foreground truncate" title={name}>
             {name}
           </h3>
-          <div className="flex items-center justify-between">
-            <p className={`text-muted-foreground ${compact ? 'text-xs' : 'text-sm'}`}>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-muted-foreground">
               {priceRangeMin && priceRangeMax 
                 ? `$${priceRangeMin} - $${priceRangeMax}`
                 : priceRangeMin 
                   ? `$${priceRangeMin}+`
                   : 'Price not set'}
-            </p>
+            </span>
             {condition && (
-              <span className={`bg-muted px-2 py-0.5 rounded-full text-muted-foreground ${compact ? 'text-xs' : 'text-xs'}`}>
+              <span className="text-xs px-2 py-0.5 bg-muted rounded-full text-muted-foreground">
                 {condition}
               </span>
             )}
