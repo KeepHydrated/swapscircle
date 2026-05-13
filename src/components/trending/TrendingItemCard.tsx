@@ -53,7 +53,7 @@ export const TrendingItemCard: React.FC<TrendingItemCardProps> = ({
   
   return (
     <div 
-      className="relative rounded-xl overflow-hidden shadow-md bg-card cursor-pointer group h-72 sm:h-80 flex flex-col"
+      className="relative rounded-xl overflow-hidden shadow-md bg-card cursor-pointer h-72 sm:h-80 flex flex-col"
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -63,7 +63,7 @@ export const TrendingItemCard: React.FC<TrendingItemCardProps> = ({
         <img 
           src={item.image_url} 
           alt={item.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover"
         />
         
         {/* Action buttons on hover */}

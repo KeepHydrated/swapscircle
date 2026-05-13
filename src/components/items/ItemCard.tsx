@@ -176,8 +176,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   return (
     <div className="flex flex-col w-full">
       <Card 
-        className={`overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300 ${
-          isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
+        className={`overflow-hidden cursor-pointer group ${
+          isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : ''
         }`}
         onClick={handleCardClick}
         onTouchEnd={handleTouchEnd}
@@ -200,7 +200,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <AvatarImage 
                 src={currentImage} 
                 alt={name} 
-                className={`object-cover transition-transform duration-300 group-hover:scale-105 ${isRemoved ? 'grayscale' : ''}`}
+                className={`object-cover ${isRemoved ? 'grayscale' : ''}`}
                 onLoad={() => setImageLoaded(true)}
                 onError={() => {
                   setImageError(true);
