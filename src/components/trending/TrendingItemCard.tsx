@@ -70,19 +70,15 @@ export const TrendingItemCard: React.FC<TrendingItemCardProps> = ({
         <div className={`absolute top-3 right-3 flex gap-2 transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
           <button
             onClick={handleTradeClick}
-            className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
+            className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
           >
-            <Repeat className="h-5 w-5" />
+            <Repeat className="w-4 h-4 text-trademate-blue" />
           </button>
           <button
             onClick={handleLikeClick}
-            className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors ${
-              isLiked 
-                ? 'bg-red-500 text-white' 
-                : 'bg-background/90 text-foreground hover:bg-background'
-            }`}
+            className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full shadow-md flex items-center justify-center transition-colors"
           >
-            <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+            <Heart className={`w-4 h-4 text-red-500 ${isLiked ? 'fill-current' : ''}`} />
           </button>
         </div>
       </div>
@@ -90,14 +86,14 @@ export const TrendingItemCard: React.FC<TrendingItemCardProps> = ({
       {/* Content */}
       <div className="p-3 h-20 flex flex-col justify-center">
         <h3 className="font-semibold text-sm line-clamp-1">{item.name}</h3>
-        <div className="flex items-center gap-2 mt-1.5">
+        <div className="flex items-center gap-2 mt-1">
           {formatPrice() && (
             <span className="text-xs text-muted-foreground">{formatPrice()}</span>
           )}
           {item.condition && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+            <span className="text-xs px-2 py-0.5 bg-muted rounded-full">
               {item.condition}
-            </Badge>
+            </span>
           )}
         </div>
       </div>
