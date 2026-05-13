@@ -517,7 +517,7 @@ const Likes = () => {
               {likedItems.map((likedItem, index) => (
                 <div
                   key={likedItem.id}
-                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-72 sm:h-80 touch-manipulation"
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group flex flex-col h-72 sm:h-80 touch-manipulation"
                   onClick={() => handleItemClick(likedItem, index)}
                   onTouchEnd={(e) => {
                     const target = e.target as HTMLElement;
@@ -544,7 +544,7 @@ const Likes = () => {
                     <img
                       src={likedItem.item.image_url || likedItem.item.image_urls?.[0] || '/placeholder.svg'}
                       alt={likedItem.item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 

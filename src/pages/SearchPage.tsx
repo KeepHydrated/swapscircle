@@ -630,7 +630,7 @@ const SearchPage = () => {
                 return (
                 <div
                   key={item.id}
-                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group"
                   onClick={() => {
                     setSelectedItem(item);
                     setIsModalOpen(true);
@@ -654,7 +654,7 @@ const SearchPage = () => {
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 
