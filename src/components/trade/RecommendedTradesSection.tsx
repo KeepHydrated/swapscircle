@@ -86,14 +86,14 @@ export const RecommendedTradesSection = () => {
           {items.map((item) => (
             <Card 
               key={item.id} 
-              className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group"
+              className="overflow-hidden cursor-pointer group"
               onClick={() => navigate(`/item/${item.id}`)}
             >
               <div className="relative aspect-square overflow-hidden">
                 <img
                   src={item.image_url || '/placeholder.svg'}
                   alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-cover"
                 />
                 <button 
                   className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full p-2 hover:bg-background transition-colors"
