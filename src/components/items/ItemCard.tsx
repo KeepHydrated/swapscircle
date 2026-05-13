@@ -176,8 +176,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   return (
     <div className="flex flex-col w-full">
       <Card 
-        className={`overflow-hidden cursor-pointer group ${
-          isSelected && !isMatch ? 'ring-2 ring-blue-500 shadow-lg' : ''
+        className={`overflow-hidden cursor-pointer group rounded-xl shadow-md border-0 bg-card ${
+          isSelected && !isMatch ? 'ring-2 ring-blue-500' : ''
         }`}
         onClick={handleCardClick}
         onTouchEnd={handleTouchEnd}
@@ -185,7 +185,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
       >
         <div className="relative">
           <div
-            className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} bg-gray-100 relative overflow-hidden`}
+            className={`aspect-square bg-muted relative overflow-hidden`}
             onMouseEnter={() => { if (hasMultipleImages) setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1)); }}
             onMouseLeave={() => { if (hasMultipleImages) setCurrentImageIndex(0); }}
           >
