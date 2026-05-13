@@ -56,7 +56,7 @@ const HoverItemImage = ({ primary, images, name }: { primary?: string; images?: 
       <img
         src={allImages[imageIndex] || allImages[0]}
         alt={name}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        className="w-full h-full object-cover"
       />
     </div>
   );
@@ -622,7 +622,7 @@ const MatchesSection = () => {
           {matches.map((item, index) => (
             <div
               key={item.id}
-              className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col touch-manipulation"
+              className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group flex flex-col touch-manipulation"
               onClick={() => handleCardClick(item, index)}
               onTouchEnd={(e) => {
                 const target = e.target as HTMLElement;
