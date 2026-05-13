@@ -28,13 +28,34 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SwapsCircle",
+      "url": "https://swapscircle.com",
+      "logo": "https://swapscircle.com/favicon.png",
+      "description": "Trade and swap items with friends and your local community. Discover matches, suggest trades, and exchange items you want for items you have.",
+      "email": "support@swapscircle.com",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support",
+        "email": "support@swapscircle.com",
+        "availableLanguage": ["English"]
+      },
+      "sameAs": []
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "SwapsCircle",
-      "description": "Trade and swap items with friends and local community",
-      "url": "https://halrrzkthzslqcgzsvcq.lovable.app",
+      "url": "https://swapscircle.com",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://halrrzkthzslqcgzsvcq.lovable.app/search?q={search_term_string}",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://swapscircle.com/search?q={search_term_string}"
+        },
         "query-input": "required name=search_term_string"
       }
     }
