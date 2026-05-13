@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, Repeat } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+
 
 interface TrendingItemCardProps {
   item: {
