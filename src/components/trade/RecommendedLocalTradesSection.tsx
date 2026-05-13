@@ -49,7 +49,7 @@ const LocalItemImage = ({ primary, images, name }: { primary: string | null; ima
       <img
         src={all[idx] || all[0]}
         alt={name}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        className="w-full h-full object-cover"
       />
     </div>
   );
@@ -470,7 +470,7 @@ const RecommendedLocalTradesSection = () => {
             {items.map((item, index) => (
               <div
                 key={item.id}
-                className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex flex-col"
+                className="flex-shrink-0 w-48 sm:w-56 md:w-64 h-72 sm:h-80 relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group flex flex-col"
                 onClick={() => handleItemClick(item, index)}
               >
                 {/* Matched item thumbnail */}

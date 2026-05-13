@@ -118,13 +118,13 @@ const demoFriends = [
 // Simple demo item card (no edit actions)
 const DemoItemCard = ({ item }: { item: typeof demoItems[0] }) => {
   return (
-    <div className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group">
+    <div className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group">
       <div className="aspect-square relative overflow-hidden bg-muted flex items-center justify-center">
         {item.image ? (
           <img 
             src={item.image} 
             alt={item.name} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover"
           />
         ) : (
           <ImageIcon className="h-12 w-12 text-muted-foreground" />

@@ -34,7 +34,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
         return (
           <div 
             key={item.id} 
-            className={`relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group ${
+            className={`relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group ${
               isHidden || isDraft || isRemoved ? 'opacity-60' : ''
             }`}
             onClick={() => onItemClick && onItemClick(item)}
@@ -45,7 +45,7 @@ const ItemsForTradeTab: React.FC<ItemsForTradeTabProps> = ({
                 <img 
                   src={imageUrl} 
                   alt={item.name} 
-                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isRemoved ? 'grayscale' : ''}`}
+                  className={`w-full h-full object-cover ${isRemoved ? 'grayscale' : ''}`}
                 />
               ) : (
                 <ImageIcon className="h-12 w-12 text-gray-400" />

@@ -161,7 +161,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
               return (
                 <div
                   key={item.id}
-                  className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
+                  className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group"
                   onClick={() => handleItemClick(item.id)}
                 >
                   {/* Matched item thumbnail - only for matches */}
@@ -182,7 +182,7 @@ const OtherProfileTabContent: React.FC<OtherProfileTabContentProps> = ({
                     <img
                       src={item.image || item.image_url || (item.image_urls as string[])?.[0] || '/placeholder.svg'}
                       alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 

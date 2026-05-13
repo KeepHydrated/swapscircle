@@ -19,7 +19,7 @@ const SponsoredProductCard: React.FC<SponsoredProductCardProps> = ({ product, se
 
   return (
     <div
-      className="relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer group border border-border/50"
+      className="relative bg-card rounded-xl overflow-hidden shadow-md cursor-pointer group border border-border/50"
       onClick={handleClick}
     >
       {/* Sponsored badge */}
@@ -41,7 +41,7 @@ const SponsoredProductCard: React.FC<SponsoredProductCardProps> = ({ product, se
         <img
           src={product.image_url || '/placeholder.svg'}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover"
         />
       </div>
 
