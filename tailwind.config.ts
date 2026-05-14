@@ -65,6 +65,9 @@ export default {
 				like: "hsl(var(--like))",
 				dislike: "hsl(var(--dislike))",
 				superlike: "hsl(var(--superlike))",
+				message: {
+					'avatar-border': 'hsl(var(--message-avatar-border))',
+				},
 				trademate: {
 					blue: '#1E3A8A',
 					dark: '#1A1F2C',
