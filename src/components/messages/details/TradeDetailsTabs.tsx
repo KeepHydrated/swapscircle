@@ -67,6 +67,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showChangeItemsModal, setShowChangeItemsModal] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   // Get current user
   React.useEffect(() => {
