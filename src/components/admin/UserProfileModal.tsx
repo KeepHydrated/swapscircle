@@ -165,7 +165,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userId, open, onOpe
             {/* Profile Header - mimics actual profile page */}
             <div className="bg-card border rounded-lg p-4">
               <div className="flex gap-4">
-                <Avatar className="w-20 h-20 border-[3px] border-primary">
+                <Avatar className="w-20 h-20 border border-primary">
                   <AvatarImage 
                     src={profile.avatar_url || ''} 
                     className="object-cover"
