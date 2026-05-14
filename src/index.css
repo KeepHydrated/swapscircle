@@ -100,7 +100,11 @@
 }
 
 .message-avatar-border {
-  border-color: hsl(var(--message-avatar-border)) !important;
+  box-shadow: 0 0 0 0.5px hsl(var(--message-avatar-border)) !important;
+}
+
+.profile-icon-border {
+  box-shadow: 0 0 0 0.5px hsl(var(--profile-icon-border));
 }
 
 .preserve-3d {
