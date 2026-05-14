@@ -61,7 +61,7 @@ const ConversationList = ({
               )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="h-12 w-12 overflow-hidden rounded-full border border-solid !border-message-avatar-border bg-transparent shadow-none ring-0">
+                  <div className="message-avatar-border h-12 w-12 overflow-hidden rounded-full border border-solid bg-transparent shadow-none ring-0">
                     {conversation.otherUserProfile?.avatar_url ? (
                       <img
                         src={conversation.otherUserProfile.avatar_url}

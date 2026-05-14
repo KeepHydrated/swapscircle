@@ -98,6 +98,10 @@
   scrollbar-width: none;
 }
 
+.message-avatar-border {
+  border-color: hsl(var(--message-avatar-border)) !important;
+}
+
 .preserve-3d {
   transform-style: preserve-3d;
 }
