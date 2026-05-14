@@ -167,7 +167,7 @@ const Header = () => {
                   className="relative h-8 w-8 bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                   onClick={() => setMobileMenuOpen(true)}
                 >
-                  <Avatar className="h-8 w-8 border border-blue-500">
+                  <Avatar className="h-8 w-8 border-2 border-primary">
                     {user?.avatar_url ? (
                       <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                     ) : null}
@@ -180,7 +180,7 @@ const Header = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8 border border-blue-500">
+                      <Avatar className="h-8 w-8 border-2 border-primary">
                         {user?.avatar_url ? (
                           <AvatarImage src={user.avatar_url} alt={user.name || 'User'} />
                         ) : null}
@@ -240,7 +240,7 @@ const Header = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8 border border-blue-500">
+                      <Avatar className="h-8 w-8 border-2 border-primary">
                         <AvatarFallback className="bg-muted text-foreground text-sm font-semibold">
                           <User className="h-4 w-4" />
                         </AvatarFallback>
