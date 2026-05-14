@@ -115,7 +115,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             {/* Exchange icon */}
             <div className="flex items-center justify-center mb-3">
               <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100">
-                <ArrowLeftRight className="h-3 w-3 text-blue-600" />
+                <ArrowLeftRight className="h-3 w-3 text-trademate-blue" />
               </div>
             </div>
             
@@ -229,7 +229,7 @@ const DetailsPanel = ({ selectedPair }: DetailsPanelProps = {}) => {
             {selectedPair && selectedPair[selectedItem].category && (
               <li className="flex items-center">
                 <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                  <Home className="w-3 h-3 text-blue-600" />
+                  <Home className="w-3 h-3 text-trademate-blue" />
                 </div>
                 <span className="text-gray-800 text-sm">{selectedPair[selectedItem].category}</span>
               </li>
