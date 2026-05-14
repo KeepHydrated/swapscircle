@@ -16,6 +16,7 @@
 
     --primary: 224 76% 33%;
     --primary-foreground: 210 40% 98%;
+    --profile-icon-border: 225 64% 33%;
 
     --secondary: 240 10% 96%;
     --secondary-foreground: 222 47% 11%;
@@ -33,7 +34,7 @@
     --input: 214 32% 91%;
     --ring: 224 76% 33%;
 
-    --message-avatar-border: 224 64% 33%;
+    --message-avatar-border: var(--profile-icon-border);
 
     --radius: 0.5rem;
 
