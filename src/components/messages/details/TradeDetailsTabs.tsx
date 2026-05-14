@@ -676,7 +676,10 @@ const handleNextTheirItem = () => {
 
         {/* Cancel Trade Confirmation */}
         <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
-          <AlertDialogContent>
+          <AlertDialogContent
+            onPointerDownOutside={() => setShowCancelConfirm(false)}
+            onEscapeKeyDown={() => setShowCancelConfirm(false)}
+          >
             <AlertDialogHeader>
               <AlertDialogTitle>Cancel trade request?</AlertDialogTitle>
               <AlertDialogDescription>
