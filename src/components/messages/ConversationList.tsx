@@ -95,7 +95,7 @@ const ConversationList = ({
                   {!conversation.isSupport && exchangePair && (
                     <div className="flex items-center mb-1 text-xs">
                       <span className="truncate text-gray-900 max-w-[100px] inline-block">{exchangePair.item1.name}</span>
-                      <ArrowRight className="h-3 w-3 mx-1 text-blue-600 flex-shrink-0" />
+                      <ArrowRight className="h-3 w-3 mx-1 text-trademate-blue flex-shrink-0" />
                       <span className="truncate text-gray-900 max-w-[100px] inline-block">{exchangePair.item2.name}</span>
                     </div>
                   )}

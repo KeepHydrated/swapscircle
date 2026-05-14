@@ -35,7 +35,7 @@ const ItemConnection = ({ selectedPair, selectedItem, onSelectItem }: ItemConnec
         
         {/* Exchange icon */}
         <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100">
-          <ArrowLeftRight className="h-3 w-3 text-blue-600" />
+          <ArrowLeftRight className="h-3 w-3 text-trademate-blue" />
         </div>
         
         {/* Your item (right) - clickable */}
