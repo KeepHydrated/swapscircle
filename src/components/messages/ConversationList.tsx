@@ -61,7 +61,7 @@ const ConversationList = ({
               )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="h-12 w-12 overflow-hidden rounded-full border-gray-400 border-solid border bg-transparent shadow-none ring-0">
+                  <div className="h-12 w-12 overflow-hidden rounded-full border-trademate-blue border-solid border bg-transparent shadow-none ring-0">
                     {conversation.otherUserProfile?.avatar_url ? (
                       <img
                         src={conversation.otherUserProfile.avatar_url}
@@ -69,7 +69,7 @@ const ConversationList = ({
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className={`flex h-full w-full items-center justify-center rounded-full border-gray-400 border-solid border font-bold shadow-none ring-0 ${conversation.isSupport ? 'bg-primary text-primary-foreground' : 'bg-transparent text-foreground'}`}>
+                      <div className={`flex h-full w-full items-center justify-center rounded-full border-trademate-blue border-solid border font-bold shadow-none ring-0 ${conversation.isSupport ? 'bg-primary text-primary-foreground' : 'bg-transparent text-foreground'}`}>
                         {conversation.isSupport ? 'SC' : conversation.name.substring(0, 1).toUpperCase()}
                       </div>
                     )}
