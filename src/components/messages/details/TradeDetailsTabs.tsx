@@ -598,11 +598,7 @@ const handleNextTheirItem = () => {
               <Button 
                 variant="outline" 
                 className="w-full text-red-600 border-red-200 hover:bg-red-50"
-                onClick={handleRejectTrade}
-                disabled={rejectTradeMutation.isPending}
-              >
-                <X className="w-4 h-4 mr-2" />
-                {rejectTradeMutation.isPending ? 'Cancelling...' : 'Cancel'}
+                onClick={() => setShowCancelConfirm(true)}
               </Button>
               <Button 
                 variant="outline" 
