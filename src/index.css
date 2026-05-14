@@ -104,7 +104,7 @@
 }
 
 .profile-icon-border {
-  box-shadow: 0 0 0 0.5px hsl(var(--profile-icon-border));
+  box-shadow: 0 0 0 0.5px hsl(var(--profile-icon-border)) !important;
 }
 
 .preserve-3d {
