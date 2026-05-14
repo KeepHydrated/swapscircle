@@ -8,6 +8,16 @@ import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import ReviewModal from '@/components/trade/ReviewModal';
 import ChangeTradeItemsModal from '@/components/trade/ChangeTradeItemsModal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 import { supabase } from '@/integrations/supabase/client';
 
@@ -57,6 +67,7 @@ const TradeDetailsTabs: React.FC<TradeDetailsTabsProps> = ({
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showChangeItemsModal, setShowChangeItemsModal] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   // Get current user
   React.useEffect(() => {
@@ -587,7 +598,7 @@ const handleNextTheirItem = () => {
               <Button 
                 variant="outline" 
                 className="w-full text-red-600 border-red-200 hover:bg-red-50"
-                onClick={handleRejectTrade}
+                onClick={() => setShowCancelConfirm(true)}
                 disabled={rejectTradeMutation.isPending}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -662,6 +673,30 @@ const handleNextTheirItem = () => {
               : (currentTrade?.requester_item_ids?.length ? currentTrade.requester_item_ids : (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
           }
         />
+
+        {/* Cancel Trade Confirmation */}
+        <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Cancel trade request?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to cancel this trade request? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Keep trade</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={() => {
+                  setShowCancelConfirm(false);
+                  handleRejectTrade();
+                }}
+              >
+                Yes, cancel
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         
       </div>
     </div>
