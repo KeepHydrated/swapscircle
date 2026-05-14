@@ -92,7 +92,9 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           category: item.category,
           condition: item.condition,
           description: item.description,
-          tags: item.tags
+          tags: item.tags,
+          priceRangeMin: item.price_range_min,
+          priceRangeMax: item.price_range_max,
         }));
 
         setMyItems(mapItems(myItemsData));
