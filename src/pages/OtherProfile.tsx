@@ -233,23 +233,23 @@ const OtherProfile: React.FC = () => {
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="w-full flex rounded-none h-12 bg-white border-b justify-start">
+          <TabsList className="w-full flex rounded-none h-12 p-0 bg-white border-b justify-start">
             <TabsTrigger 
               value="available" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Items For Trade
             </TabsTrigger>
             <TabsTrigger 
               value="reviews" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               <Star className="mr-2 h-4 w-4" />
               Reviews
             </TabsTrigger>
             <TabsTrigger 
               value="friends" 
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               <Users className="mr-2 h-4 w-4" />
               Friends
