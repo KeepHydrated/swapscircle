@@ -675,20 +675,17 @@ const handleNextTheirItem = () => {
         />
 
         {/* Cancel Trade Confirmation */}
-        <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
-          <AlertDialogContent
-            onPointerDownOutside={() => setShowCancelConfirm(false)}
-            onEscapeKeyDown={() => setShowCancelConfirm(false)}
-          >
-            <AlertDialogHeader>
-              <AlertDialogTitle>Cancel trade request?</AlertDialogTitle>
-              <AlertDialogDescription>
+        <Dialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Cancel trade request?</DialogTitle>
+              <DialogDescription>
                 Are you sure you want to cancel this trade request? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Keep trade</AlertDialogCancel>
-              <AlertDialogAction
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowCancelConfirm(false)}>Keep trade</Button>
+              <Button
                 className="bg-red-600 hover:bg-red-700 text-white"
                 onClick={() => {
                   setShowCancelConfirm(false);
@@ -696,10 +693,10 @@ const handleNextTheirItem = () => {
                 }}
               >
                 Yes, cancel
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         
       </div>
     </div>
