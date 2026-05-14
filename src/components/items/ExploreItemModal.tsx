@@ -609,7 +609,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
             {/* Matched item thumbnail */}
             {matchedItemImage && (
               <div className="absolute top-[calc(env(safe-area-inset-top)+6rem)] md:top-4 left-4 z-20">
-                <div className="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-background">
+                <div className="w-14 h-14 rounded-full border-2 border-trademate-blue shadow-lg overflow-hidden bg-background">
                   <img src={matchedItemImage} alt="Your matched item" className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -780,7 +780,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {userProfile && !loading ? (
                   <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-4 md:-mx-8 md:-mb-7">
                     <div
-                      className="w-11 h-11 rounded-full border cursor-pointer overflow-hidden"
+                      className="w-11 h-11 rounded-full border-2 border-trademate-blue cursor-pointer overflow-hidden"
                       onClick={handleProfileClick}
                     >
                       {userProfile.avatar_url ? (
