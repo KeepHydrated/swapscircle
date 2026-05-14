@@ -89,7 +89,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className={`flex justify-between items-start p-6 ${!isOwnProfile ? 'pt-20 md:pt-6' : ''}`}>
         <div className="flex flex-col md:flex-row w-full">
           <div className="flex-shrink-0 mr-0 md:mr-6 flex justify-center mb-4 md:mb-0">
-            <Avatar className="w-20 h-20 border-2 border-trademate-blue">
+            <Avatar className="w-20 h-20 border border-trademate-blue">
               <AvatarImage 
                 src={avatarSrc}
                 alt={`${profile.name}'s avatar`}
