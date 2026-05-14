@@ -780,7 +780,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                 {userProfile && !loading ? (
                   <div className="flex gap-3 items-center mt-auto pt-6 border-t border-gray-200 bg-gray-50 p-4 -mx-4 md:-mx-8 md:-mb-7">
                     <div
-                      className="w-11 h-11 rounded-full border border-profile-icon-border cursor-pointer overflow-hidden"
+                      className="w-11 h-11 rounded-full profile-icon-border cursor-pointer overflow-hidden"
                       onClick={handleProfileClick}
                     >
                       {userProfile.avatar_url ? (

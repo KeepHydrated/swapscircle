@@ -31,7 +31,7 @@ const ChatHeader = ({ activeChat, showProfileInfo = true }: ChatHeaderProps) => 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Link to={`/other-person-profile?userId=${activeChat.otherUserProfile?.id}`} className="focus:outline-none focus-visible:outline-none">
-            <Avatar className="message-avatar-border h-12 w-12 cursor-pointer border">
+            <Avatar className="message-avatar-border h-12 w-12 cursor-pointer">
               <AvatarImage src={avatarUrl} alt={profileName} />
               <AvatarFallback>
                 {profileName.substring(0, 1).toUpperCase()}

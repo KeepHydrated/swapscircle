@@ -589,7 +589,7 @@ const AdminReports: React.FC = () => {
                             className="flex gap-3 items-center cursor-pointer bg-gray-50 p-3 rounded-lg border border-gray-200 w-80"
                             onClick={() => handleProfileClick(report.reporter_id)}
                           >
-                            <div className="w-11 h-11 rounded-full border border-profile-icon-border cursor-pointer flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
+                            <div className="w-11 h-11 rounded-full profile-icon-border cursor-pointer flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm flex-shrink-0">
                               {report.reporter_avatar_url ? (
                                 <img
                                   src={report.reporter_avatar_url}
@@ -624,7 +624,7 @@ const AdminReports: React.FC = () => {
                                className="flex gap-3 items-center cursor-pointer bg-red-50 p-3 rounded-lg border border-red-200 w-80"
                                onClick={() => handleProfileClick(report.reported_user_id!)}
                              >
-                               <div className="w-11 h-11 rounded-full border border-profile-icon-border cursor-pointer flex items-center justify-center bg-red-600 text-white font-semibold text-sm flex-shrink-0">
+                               <div className="w-11 h-11 rounded-full profile-icon-border cursor-pointer flex items-center justify-center bg-red-600 text-white font-semibold text-sm flex-shrink-0">
                                  {report.reported_avatar_url ? (
                                    <img
                                      src={report.reported_avatar_url}
@@ -660,7 +660,7 @@ const AdminReports: React.FC = () => {
                               className="flex gap-3 items-center cursor-pointer bg-blue-50 p-3 rounded-lg border border-blue-200 w-80"
                               onClick={() => handleProfileClick(report.item_owner_id!)}
                             >
-                              <div className="w-11 h-11 rounded-full border border-profile-icon-border cursor-pointer flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
+                              <div className="w-11 h-11 rounded-full profile-icon-border cursor-pointer flex items-center justify-center bg-blue-600 text-white font-semibold text-sm flex-shrink-0">
                                 {report.item_owner_avatar_url ? (
                                   <img
                                     src={report.item_owner_avatar_url}
