@@ -26,7 +26,7 @@ const MessageBubble = ({ message, senderName }: MessageBubbleProps) => {
         
         <div className={`rounded-2xl px-4 py-2 ${
           isUserMessage 
-            ? 'bg-blue-500 text-white rounded-tr-none' 
+            ? 'bg-trademate-blue text-white rounded-tr-none' 
             : 'bg-gray-100 text-gray-800 rounded-tl-none'
         }`}>
           <p>{message.content}</p>
