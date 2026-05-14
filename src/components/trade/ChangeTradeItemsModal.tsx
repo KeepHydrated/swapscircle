@@ -250,7 +250,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[85vh] flex flex-col p-0 overflow-hidden my-4">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[85vh] flex flex-col p-0 overflow-hidden my-4 [&>button]:hidden">
         <DialogTitle className="sr-only">Change Trade Items</DialogTitle>
         <DialogDescription className="sr-only">
           Select which items you want to offer and which items you want in return
