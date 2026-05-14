@@ -328,7 +328,7 @@ const handleNextTheirItem = () => {
       {/* Item Details Content */}
       <div className="flex-1 flex flex-col">
         {selectedItem === 'item1' ? (
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-lg border border-gray-200 md:border-0 overflow-hidden">
             {/* Item Image with Navigation */}
             <div className="relative bg-gray-100 w-full aspect-[4/3]">
               <img 
@@ -421,7 +421,7 @@ const handleNextTheirItem = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-lg border border-gray-200 md:border-0 overflow-hidden">
             {/* Their Item Image with Navigation */}
             <div className="relative bg-gray-100 w-full aspect-[4/3]">
               <img 
