@@ -467,7 +467,7 @@ const UserProfile: React.FC = () => {
               value="available" 
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setTabPreserveScroll('available')}
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Items
             </TabsTrigger>
@@ -475,7 +475,7 @@ const UserProfile: React.FC = () => {
               value="reviews" 
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setTabPreserveScroll('reviews')}
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Reviews
             </TabsTrigger>
@@ -483,7 +483,7 @@ const UserProfile: React.FC = () => {
               value="friends" 
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setTabPreserveScroll('friends')}
-              className="flex-1 md:flex-none md:min-w-[180px] data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+              className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
             >
               Friends
             </TabsTrigger>
