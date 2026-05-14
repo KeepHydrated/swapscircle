@@ -258,7 +258,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
 
         {/* Header with Tabs */}
         <div className="p-4 sm:p-6 border-b border-border bg-background flex-shrink-0">
-          <h2 className="text-xl font-semibold mb-4">Change Trade</h2>
+          
           
           {/* Tab Menu */}
           <div className="flex gap-3">
