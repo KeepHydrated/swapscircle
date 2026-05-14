@@ -8,6 +8,16 @@ import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import ReviewModal from '@/components/trade/ReviewModal';
 import ChangeTradeItemsModal from '@/components/trade/ChangeTradeItemsModal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 import { supabase } from '@/integrations/supabase/client';
 
