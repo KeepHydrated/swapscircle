@@ -188,7 +188,7 @@ const MessagesLayout: React.FC<MessagesLayoutProps> = ({
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <Link to={`/other-person-profile?userId=${profile?.id}`}>
-                    <Avatar className="h-10 w-10 cursor-pointer">
+                    <Avatar className="h-10 w-10 cursor-pointer border !border-message-avatar-border">
                       <AvatarImage src={avatarUrl} alt={profileName} />
                       <AvatarFallback>
                         {profileName.substring(0, 1).toUpperCase()}
