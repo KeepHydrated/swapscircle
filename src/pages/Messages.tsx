@@ -445,7 +445,7 @@ const Messages = () => {
                           
                           <div className="flex items-center mb-1 text-xs">
                             <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.myItem?.name}</span>
-                            <span className="mx-1 text-blue-600">↔</span>
+                            <span className="mx-1 text-trademate-blue">↔</span>
                             <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.theirItem?.name}</span>
                           </div>
                           
@@ -518,7 +518,7 @@ const Messages = () => {
                             {!conversation.isSupport && exchangePair && (
                               <div className="flex items-center mb-1 text-xs">
                                 <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
-                                <span className="mx-1 text-blue-600">↔</span>
+                                <span className="mx-1 text-trademate-blue">↔</span>
                                 <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item1.name}</span>
                               </div>
                             )}
@@ -745,7 +745,7 @@ const Messages = () => {
                         </div>
                         <div className="flex items-center mb-1 text-xs">
                           <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.theirItem?.name || 'Their Item'}</span>
-                          <span className="mx-1 text-blue-600">↔</span>
+                          <span className="mx-1 text-trademate-blue">↔</span>
                           <span className="truncate text-gray-900 max-w-[80px] inline-block">{demoTradeData.myItem?.name || 'Your Item'}</span>
                         </div>
                         <p className="text-xs text-gray-600 truncate">Demo trade</p>
@@ -811,7 +811,7 @@ const Messages = () => {
                           {!conversation.isSupport && exchangePair && (
                             <div className="flex items-center mb-1 text-xs">
                               <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item2.name}</span>
-                              <span className="mx-1 text-blue-600">↔</span>
+                              <span className="mx-1 text-trademate-blue">↔</span>
                               <span className="truncate text-gray-900 max-w-[80px] inline-block">{exchangePair.item1.name}</span>
                             </div>
                           )}
