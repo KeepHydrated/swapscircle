@@ -389,7 +389,7 @@ const handleNextTheirItem = () => {
             </div>
             
             {/* Item Details */}
-            <div className="p-4 h-[160px] md:h-auto overflow-hidden">
+            <div className="p-4 h-[160px] md:h-[200px] overflow-hidden">
               <h3 className="font-semibold text-lg mb-2">{currentMyItem.name}</h3>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                 {currentMyItem.description || currentMyItem.name}
@@ -482,7 +482,7 @@ const handleNextTheirItem = () => {
             </div>
             
             {/* Their Item Details */}
-            <div className="p-4 h-[160px] md:h-auto overflow-hidden">
+            <div className="p-4 h-[160px] md:h-[200px] overflow-hidden">
               <h3 className="font-semibold text-lg mb-2">{currentTheirItem.name}</h3>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                 {currentTheirItem.description || currentTheirItem.name}
@@ -516,7 +516,7 @@ const handleNextTheirItem = () => {
         )}
         
         {/* Action buttons at the bottom or status display */}
-        <div className="mt-4 pt-4 pb-6 border-t border-gray-200">
+        <div className="mt-4 md:mt-auto pt-4 pb-6 border-t border-gray-200">
           {isRejected ? (
             <div className="flex items-center justify-center py-3 bg-red-50 rounded-lg border border-red-200">
               <X className="w-5 h-5 mr-2 text-red-600" />
