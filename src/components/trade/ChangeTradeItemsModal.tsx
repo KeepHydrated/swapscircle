@@ -92,7 +92,9 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
           category: item.category,
           condition: item.condition,
           description: item.description,
-          tags: item.tags
+          tags: item.tags,
+          priceRangeMin: item.price_range_min,
+          priceRangeMax: item.price_range_max,
         }));
 
         setMyItems(mapItems(myItemsData));
@@ -351,6 +353,20 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                         
                         <div className="p-2">
                           <h4 className="font-medium text-xs truncate">{item.name}</h4>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            {(item.priceRangeMin || item.priceRangeMax) && (
+                              <span className="text-[11px] text-muted-foreground">
+                                {item.priceRangeMin && item.priceRangeMax
+                                  ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
+                                  : `$${item.priceRangeMin || item.priceRangeMax}`}
+                              </span>
+                            )}
+                            {item.condition && (
+                              <span className="text-[11px] px-1.5 py-0.5 bg-muted rounded-full">
+                                {item.condition}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
@@ -402,6 +418,20 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
                         
                         <div className="p-2">
                           <h4 className="font-medium text-xs truncate">{item.name}</h4>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            {(item.priceRangeMin || item.priceRangeMax) && (
+                              <span className="text-[11px] text-muted-foreground">
+                                {item.priceRangeMin && item.priceRangeMax
+                                  ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
+                                  : `$${item.priceRangeMin || item.priceRangeMax}`}
+                              </span>
+                            )}
+                            {item.condition && (
+                              <span className="text-[11px] px-1.5 py-0.5 bg-muted rounded-full">
+                                {item.condition}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
