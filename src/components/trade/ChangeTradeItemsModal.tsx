@@ -311,7 +311,6 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             </div>
           ) : activeTab === 'yours' ? (
             <div>
-              <p className="text-sm text-muted-foreground mb-4">Select items you want to offer</p>
               {myItems.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-12">You don't have any items to trade.</p>
               ) : (
@@ -376,7 +375,6 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             </div>
           ) : (
             <div>
-              <p className="text-sm text-muted-foreground mb-4">Select items you want from them</p>
               {theirItems.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-12">They don't have any available items.</p>
               ) : (
