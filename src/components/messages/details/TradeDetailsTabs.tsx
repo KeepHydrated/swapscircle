@@ -389,7 +389,7 @@ const handleNextTheirItem = () => {
             </div>
             
             {/* Item Details */}
-            <div className="p-4 h-[160px] overflow-hidden">
+            <div className="p-4 h-[160px] md:h-auto overflow-hidden">
               <h3 className="font-semibold text-lg mb-2">{currentMyItem.name}</h3>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                 {currentMyItem.description || currentMyItem.name}
