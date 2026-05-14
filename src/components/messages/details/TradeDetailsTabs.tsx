@@ -673,6 +673,30 @@ const handleNextTheirItem = () => {
               : (currentTrade?.requester_item_ids?.length ? currentTrade.requester_item_ids : (currentTrade?.requester_item_id ? [currentTrade.requester_item_id] : []))
           }
         />
+
+        {/* Cancel Trade Confirmation */}
+        <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Cancel trade request?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to cancel this trade request? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Keep trade</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={() => {
+                  setShowCancelConfirm(false);
+                  handleRejectTrade();
+                }}
+              >
+                Yes, cancel
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         
       </div>
     </div>
