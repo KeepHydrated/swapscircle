@@ -457,7 +457,7 @@ const UserProfile: React.FC = () => {
           className="w-full"
         >
           <TabsList
-            className="w-full flex rounded-none h-12 bg-card border-b justify-start"
+            className="w-full flex rounded-none h-12 p-0 bg-card border-b justify-start"
             onPointerDownCapture={() => {
               const target = getScrollTarget();
               lastScrollTopRef.current = target?.scrollTop ?? window.scrollY;
