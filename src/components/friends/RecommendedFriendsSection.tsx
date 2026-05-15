@@ -213,7 +213,7 @@ export const RecommendedFriendsSection = () => {
               <div className={`flex flex-col ${index === 0 ? 'items-start' : 'items-center'}`}>
                 <div className="relative">
                   <Avatar 
-                    className="w-20 h-20 border-2 border-background mb-1 cursor-pointer"
+                    className="w-20 h-20 mb-1 cursor-pointer"
                     onClick={() => navigate(`/other-person-profile?userId=${profile.id}`)}
                   >
                     <AvatarImage src={profile.avatar_url} alt={profile.name} />
