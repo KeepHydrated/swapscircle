@@ -21,6 +21,7 @@ const Trades = () => {
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
+  const [tabletReviewTab, setTabletReviewTab] = useState<Record<string, 'theirs' | 'yours'>>({});
 
   // Get current user with profile data
   const { data: currentUser } = useQuery({
@@ -331,101 +332,130 @@ const Trades = () => {
                   </Card>
                 </div>
 
-                {/* Middle - Their Review of You */}
-                <div className="w-full md:flex-1 md:min-w-0">
-                  <Card className="h-full max-h-[280px]">
-                    <CardContent className="p-4 h-full overflow-y-auto">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Avatar 
-                          className="h-8 w-8 cursor-pointer"
-                          onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                {/* Reviews container */}
+                {(() => {
+                  const activeTab = tabletReviewTab[trade.id] ?? 'theirs';
+                  const showTheirs = activeTab === 'theirs';
+                  const showYours = activeTab === 'yours';
+                  return (
+                    <div className="w-full md:flex-1 md:min-w-0 flex flex-col">
+                      {/* Tablet-only toggle */}
+                      <div className="hidden md:flex lg:hidden mb-3 rounded-md border bg-muted p-1">
+                        <button
+                          type="button"
+                          onClick={() => setTabletReviewTab(prev => ({ ...prev, [trade.id]: 'theirs' }))}
+                          className={`flex-1 text-sm font-medium py-1.5 rounded-sm transition-colors ${showTheirs ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground'}`}
                         >
-                          <AvatarImage src={otherUser?.avatar_url} />
-                          <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">
-                            {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <span 
-                            className="font-medium text-gray-900 cursor-pointer"
-                            onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
-                          >
-                            {otherUser?.username || 'Unknown User'}
-                          </span>
-                        </div>
+                          Their review
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTabletReviewTab(prev => ({ ...prev, [trade.id]: 'yours' }))}
+                          className={`flex-1 text-sm font-medium py-1.5 rounded-sm transition-colors ${showYours ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                        >
+                          Your review
+                        </button>
                       </div>
-                      {yourReview ? (
-                        <div className="space-y-2">
-                          <p className="text-sm text-gray-600">Their review of you:</p>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <div className="flex">
-                              {renderStars(yourReview.rating)}
-                            </div>
-                          </div>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {yourReview.comment || 'No comment provided'}
-                          </p>
-                        </div>
-                      ) : (
-                        <p className="text-gray-400 text-sm italic">No review yet</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
 
-                {/* Right - Your Review Section */}
-                <div className="w-full md:flex-1 md:min-w-0">
-                  <Card className="h-full max-h-[280px]">
-                    <CardContent className="p-4 h-full overflow-y-auto">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Avatar 
-                          className="h-8 w-8 cursor-pointer"
-                          onClick={handleMyProfileClick}
-                        >
-                          <AvatarImage src={currentUser?.profile?.avatar_url} />
-                          <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">
-                            {currentUser?.profile?.username?.charAt(0).toUpperCase() || 'Y'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <span 
-                            className="font-medium text-gray-900 cursor-pointer"
-                            onClick={handleMyProfileClick}
-                          >
-                            {currentUser?.profile?.username || 'You'}
-                          </span>
+                      <div className="flex flex-col lg:flex-row gap-4 flex-1">
+                        {/* Their Review of You */}
+                        <div className={`w-full lg:flex-1 lg:min-w-0 ${showTheirs ? 'block' : 'hidden'} lg:block`}>
+                          <Card className="h-full max-h-[280px]">
+                            <CardContent className="p-4 h-full overflow-y-auto">
+                              <div className="flex items-center space-x-3 mb-3">
+                                <Avatar
+                                  className="h-8 w-8 cursor-pointer"
+                                  onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                                >
+                                  <AvatarImage src={otherUser?.avatar_url} />
+                                  <AvatarFallback className="bg-gray-200 text-gray-600 text-sm">
+                                    {otherUser?.username?.charAt(0).toUpperCase() || 'U'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <span
+                                    className="font-medium text-gray-900 cursor-pointer"
+                                    onClick={() => otherUser?.id && handleProfileClick(otherUser.id)}
+                                  >
+                                    {otherUser?.username || 'Unknown User'}
+                                  </span>
+                                </div>
+                              </div>
+                              {yourReview ? (
+                                <div className="space-y-2">
+                                  <p className="text-sm text-gray-600">Their review of you:</p>
+                                  <div className="flex items-center space-x-2 mb-2">
+                                    <div className="flex">
+                                      {renderStars(yourReview.rating)}
+                                    </div>
+                                  </div>
+                                  <p className="text-gray-600 text-sm leading-relaxed">
+                                    {yourReview.comment || 'No comment provided'}
+                                  </p>
+                                </div>
+                              ) : (
+                                <p className="text-gray-400 text-sm italic">No review yet</p>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        {/* Your Review */}
+                        <div className={`w-full lg:flex-1 lg:min-w-0 ${showYours ? 'block' : 'hidden'} lg:block`}>
+                          <Card className="h-full max-h-[280px]">
+                            <CardContent className="p-4 h-full overflow-y-auto">
+                              <div className="flex items-center space-x-3 mb-3">
+                                <Avatar
+                                  className="h-8 w-8 cursor-pointer"
+                                  onClick={handleMyProfileClick}
+                                >
+                                  <AvatarImage src={currentUser?.profile?.avatar_url} />
+                                  <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">
+                                    {currentUser?.profile?.username?.charAt(0).toUpperCase() || 'Y'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <span
+                                    className="font-medium text-gray-900 cursor-pointer"
+                                    onClick={handleMyProfileClick}
+                                  >
+                                    {currentUser?.profile?.username || 'You'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {theirReview ? (
+                                <div className="space-y-2">
+                                  <p className="text-sm text-gray-600">Your review:</p>
+                                  <div className="flex items-center space-x-2 mb-2">
+                                    <div className="flex">
+                                      {renderStars(theirReview.rating)}
+                                    </div>
+                                  </div>
+                                  <p className="text-gray-600 text-sm leading-relaxed">
+                                    {theirReview.comment || 'No comment provided'}
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="space-y-2">
+                                  <p className="text-gray-400 text-sm italic">Leave a review for {otherUser?.username}</p>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => handleLeaveReview(trade)}
+                                    className="w-full h-10"
+                                  >
+                                    <Star className="w-4 h-4 mr-2" />
+                                    Leave Review
+                                  </Button>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
                         </div>
                       </div>
-                      
-                      {/* Show review button or status based on if you've left a review for them */}
-                      {theirReview ? (
-                        <div className="space-y-2">
-                          <p className="text-sm text-gray-600">Your review:</p>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <div className="flex">
-                              {renderStars(theirReview.rating)}
-                            </div>
-                          </div>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {theirReview.comment || 'No comment provided'}
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <p className="text-gray-400 text-sm italic">Leave a review for {otherUser?.username}</p>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => handleLeaveReview(trade)}
-                            className="w-full h-10"
-                          >
-                            <Star className="w-4 h-4 mr-2" />
-                            Leave Review
-                          </Button>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
