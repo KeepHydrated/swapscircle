@@ -1,0 +1,18 @@
+# SwapsCircle
+
+> Trade and swap items locally with friends and your community. Discover matches, suggest trades, and exchange items you want for items you have.
+
+SwapsCircle is a community-driven trading platform where users post items they want to swap, browse what others have, and arrange trades directly through in-app messaging.
+
+## Pages
+
+- [Home](/): Overview of SwapsCircle, hero banner, matches, categories, friends, and recommended local trades.
+- [Search](/search): Browse and filter items available for trade across the community.
+- [Post an item](/post-item): Create a new listing describing what you have and what you're looking for in return.
+- [Posting rules](/posting-rules): Guidelines covering prohibited items, listing quality, pricing, and enforcement.
+- [Demo profile](/demo-profile): Example user profile showing items, friends, and reviews.
+- [Demo trades](/demo-trades): Example trade flow for unauthenticated visitors.
+
+## Optional
+
+- [Sign in](/auth): Account access for posting items and messaging traders.
