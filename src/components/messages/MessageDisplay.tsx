@@ -39,7 +39,7 @@ const MessageDisplay = ({ activeChat, onSendFirstMessage }: MessageDisplayProps)
   }, [activeChat.id]);
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-hidden max-h-[calc(50vh-120px)]">
+    <div ref={containerRef} className="flex-1 overflow-hidden h-full">
       {activeChat.isNew ? (
         <NewMatchPrompt 
           name={activeChat.name} 
