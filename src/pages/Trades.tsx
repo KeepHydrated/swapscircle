@@ -383,7 +383,7 @@ const Trades = () => {
                               </div>
                               {yourReview ? (
                                 <div className="space-y-2">
-                                  <p className="text-sm text-gray-600">Their review of you:</p>
+                                  <p className="hidden lg:block text-sm text-gray-600">Their review of you:</p>
                                   <div className="flex items-center space-x-2 mb-2">
                                     <div className="flex">
                                       {renderStars(yourReview.rating)}
@@ -426,7 +426,7 @@ const Trades = () => {
 
                               {theirReview ? (
                                 <div className="space-y-2">
-                                  <p className="text-sm text-gray-600">Your review:</p>
+                                  <p className="hidden lg:block text-sm text-gray-600">Your review:</p>
                                   <div className="flex items-center space-x-2 mb-2">
                                     <div className="flex">
                                       {renderStars(theirReview.rating)}
