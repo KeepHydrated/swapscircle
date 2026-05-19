@@ -642,7 +642,7 @@ const Messages = () => {
                               <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
                             </div>
                           ) : messages.length > 0 ? (
-                            <div className="space-y-4">
+                            <div className="flex min-h-full flex-col justify-end space-y-4">
                               {messages.map((message: any) => (
                                 <TradeMessageBubble 
                                   key={message.id}
@@ -894,7 +894,7 @@ const Messages = () => {
                         <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
                       </div>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="flex min-h-full flex-col justify-end space-y-4">
                         {messages
                           .filter((message: any, index: number) => !(index === 0 && message.message?.startsWith("Hi! I'm interested in trading")))
                           .map((message: any) => (
@@ -1059,7 +1059,7 @@ const Messages = () => {
                           <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full"></div>
                         </div>
                       ) : (
-                        <div className="space-y-4">
+                        <div className="flex min-h-full flex-col justify-end space-y-4">
                           {messages
                             .filter((message: any, index: number) => !(index === 0 && message.message?.startsWith("Hi! I'm interested in trading")))
                             .map((message: any) => (
