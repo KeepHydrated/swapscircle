@@ -234,11 +234,6 @@ const Auth: React.FC = () => {
             </TabsContent>
           </Tabs>
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <Button variant="link" asChild>
-            <Link to="/">Go back to home</Link>
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
