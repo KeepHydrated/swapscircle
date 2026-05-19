@@ -652,13 +652,13 @@ const Messages = () => {
                                   currentUserId={currentUserId}
                                 />
                               ))}
-                              <div ref={scrollRef} />
+                              <div ref={scrollRef} className="!mt-0" />
                             </div>
                           ) : (
                             <div className="text-center py-8">
                               <p className="text-gray-500">Trade conversation started!</p>
                               <p className="text-sm text-gray-400 mt-2">Send a message to start the conversation.</p>
-                              <div ref={scrollRef} />
+                              <div ref={scrollRef} className="!mt-0" />
                             </div>
                           )}
                         </div>
@@ -906,7 +906,7 @@ const Messages = () => {
                               currentUserId={currentUserId}
                             />
                           ))}
-                        <div ref={scrollRef} />
+                        <div ref={scrollRef} className="!mt-0" />
                       </div>
                     )}
                   </div>
@@ -1065,7 +1065,7 @@ const Messages = () => {
                             .map((message: any) => (
                               <TradeMessageBubble key={message.id} message={message} senderName={message.sender_profile?.username || activeChat?.name || 'User'} onImageLoad={handleScrollToBottom} currentUserId={currentUserId} />
                             ))}
-                          <div ref={scrollRef} />
+                          <div ref={scrollRef} className="!mt-0" />
                         </div>
                       )}
                     </div>
