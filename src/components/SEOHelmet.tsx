@@ -11,9 +11,9 @@ interface SEOProps {
 
 const SEOHelmet = ({ 
   title = "SwapsCircle - Trade & Swap Items Locally",
-  description = "SwapsCircle connects local communities for trading and swapping items. Discover, match, and exchange items you want for items you have. Join thousands of traders today.",
+  description = "Trade and swap items locally on SwapsCircle. Discover matches, suggest trades, and exchange what you have for what you want.",
   keywords = "trade items, swap items, local trading, marketplace, exchange items, community trading, bartering",
-  image = "https://lovable.dev/opengraph-image-p98pqg.png",
+  image = "https://swapscircle.com/favicon.png",
   type = "website"
 }: SEOProps) => {
   const location = useLocation();
