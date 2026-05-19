@@ -21,6 +21,7 @@ const Trades = () => {
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
+  const [tabletReviewTab, setTabletReviewTab] = useState<Record<string, 'theirs' | 'yours'>>({});
 
   // Get current user with profile data
   const { data: currentUser } = useQuery({
