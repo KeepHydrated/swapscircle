@@ -99,6 +99,20 @@ const Auth: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+  const handleGoogleSignIn = async () => {
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/` },
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      setIsSubmitting(false);
+    }
+  };
+
 
   return (
     <div className="flex justify-center bg-background p-4 pt-24 pb-16 min-h-screen">
