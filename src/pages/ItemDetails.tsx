@@ -156,7 +156,7 @@ const ItemDetails: React.FC = () => {
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
               <CardTitle>What They're Offering</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 pt-8">
               {/* Title */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Title</label>
@@ -230,7 +230,7 @@ const ItemDetails: React.FC = () => {
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
               <CardTitle>What They're Looking For</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 pt-8">
               {/* Description */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Description (optional)</label>
