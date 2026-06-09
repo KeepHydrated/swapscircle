@@ -152,8 +152,8 @@ const ItemDetails: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-6">
           {/* LEFT COLUMN - What They're Offering */}
-          <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
-            <CardHeader>
+          <Card>
+            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
               <CardTitle>What They're Offering</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
