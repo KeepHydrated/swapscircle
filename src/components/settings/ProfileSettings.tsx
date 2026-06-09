@@ -411,9 +411,6 @@ const ProfileSettings: React.FC = () => {
                         disabled={!isEditing}
                       />
                     </FormControl>
-                    <FormDescription className="hidden md:block">
-                      Tell others about yourself and what kinds of items you like to trade.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
