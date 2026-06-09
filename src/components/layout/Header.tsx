@@ -78,7 +78,7 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             
             <Link to="/" className="flex items-center focus:outline-none focus-visible:outline-none">
-              {!isMobile && <h1 className="text-2xl font-bold text-trademate-blue">SwapsCircle</h1>}
+              {!isMobile && <h1 className="text-xl font-bold text-trademate-blue">SwapsCircle</h1>}
             </Link>
             
             {/* Search bar - desktop only */}
