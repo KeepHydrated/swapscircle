@@ -210,7 +210,7 @@ export const RecommendedFriendsSection = () => {
           {profiles.map((profile, index) => (
             <div key={profile.id} className="flex-shrink-0">
               <div className="py-2">
-              <div className={`flex flex-col ${index === 0 ? 'items-start' : 'items-center'}`}>
+              <div className="flex flex-col items-center">
                 <div className="relative">
                   <Avatar 
                     className="w-20 h-20 mb-1 cursor-pointer"
