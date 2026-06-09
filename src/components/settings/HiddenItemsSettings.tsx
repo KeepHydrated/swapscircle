@@ -109,8 +109,8 @@ const HiddenItemsSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-foreground">Hidden Items</h2>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h2 className="text-2xl font-semibold leading-none tracking-tight text-foreground">Hidden Items</h2>
+        <p className="text-sm text-muted-foreground mt-1.5">
           Items you've chosen not to see again. You can unhide them to see them in your matches.
         </p>
         <p className="text-sm text-muted-foreground/70 mt-1">
