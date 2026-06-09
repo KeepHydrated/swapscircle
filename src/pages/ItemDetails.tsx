@@ -227,7 +227,7 @@ const ItemDetails: React.FC = () => {
 
           {/* RIGHT COLUMN - What They're Looking For */}
           <Card>
-            <CardHeader>
+            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
               <CardTitle>What They're Looking For</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
