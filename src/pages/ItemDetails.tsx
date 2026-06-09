@@ -154,7 +154,7 @@ const ItemDetails: React.FC = () => {
           {/* LEFT COLUMN - What They're Offering */}
           <Card>
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
-              <CardTitle>What They're Offering</CardTitle>
+              <CardTitle className="text-base">What They're Offering</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-8">
               {/* Title */}
