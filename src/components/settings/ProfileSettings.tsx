@@ -232,7 +232,7 @@ const ProfileSettings: React.FC = () => {
       console.log("[ProfileSettings] Profile updated successfully!");
       toast.success('Profile updated successfully');
       setIsEditing(false); // Exit edit mode after successful save
-      navigate('/profile');
+      
     } catch (error) {
       console.error('[ProfileSettings] Error updating profile:', error);
       toast.error('Failed to update profile');
