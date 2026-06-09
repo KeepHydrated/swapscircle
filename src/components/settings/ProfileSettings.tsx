@@ -405,7 +405,7 @@ const ProfileSettings: React.FC = () => {
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea 
-                        placeholder="Tell others about yourself and what kinds of items you like to trade." 
+                        placeholder="" 
                         className="min-h-[120px]" 
                         {...field} 
                         disabled={!isEditing}
