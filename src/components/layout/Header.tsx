@@ -226,63 +226,15 @@ const Header = () => {
                 </DropdownMenu>
               )
             ) : (
-              // Show demo dropdown for non-logged-in users (without admin items)
-              isMobile ? (
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => setMobileMenuOpen(true)}
-                  className="h-8 w-8 bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-                >
-                  <User className="h-5 w-5 text-muted-foreground" />
-                </Button>
-              ) : (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8 profile-icon-border">
-                        <AvatarFallback className="bg-muted text-foreground text-sm font-semibold">
-                          <User className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={8} onCloseAutoFocus={(e) => e.preventDefault()} className="w-48 bg-popover border border-border shadow-lg z-[10000]">
-                    <DropdownMenuItem asChild>
-                      <Link to="/demo-profile" className="flex w-full cursor-pointer items-center">
-                        Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/likes" className="flex w-full cursor-pointer items-center">
-                        Likes
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/demo-trades" className="flex w-full cursor-pointer items-center">
-                        Trades
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings" className="flex w-full cursor-pointer items-center">
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    {supabaseConfigured && (
-                      <>
-                        <DropdownMenuSeparator className="bg-border" />
-                        <DropdownMenuItem 
-                          className="flex cursor-pointer items-center text-primary font-medium"
-                          onClick={handleLogin}
-                        >
-                          <LogIn className="mr-2 h-4 w-4" />
-                          Log In
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleLogin}
+                className="bg-trademate-blue hover:bg-trademate-blue/90 text-white"
+              >
+                <LogIn className="h-4 w-4 mr-1.5" />
+                Log In
+              </Button>
             )}
           </div>
         </div>
