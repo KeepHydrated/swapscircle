@@ -311,7 +311,21 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                     </div>
                     
                     <div className="p-3">
-                      <h3 className="font-medium text-sm truncate">{item.name}</h3>
+                      <h3 className="font-semibold text-sm text-foreground truncate" title={item.name}>{item.name}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-muted-foreground">
+                          {item.priceRangeMin && item.priceRangeMax
+                            ? `$${item.priceRangeMin} - $${item.priceRangeMax}`
+                            : item.priceRangeMin
+                              ? `$${item.priceRangeMin}+`
+                              : 'Price not set'}
+                        </span>
+                        {item.condition && (
+                          <span className="text-xs px-2 py-0.5 bg-muted rounded-full text-muted-foreground">
+                            {item.condition}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
