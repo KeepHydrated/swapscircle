@@ -252,7 +252,7 @@ const ItemDetails: React.FC = () => {
 
           {/* RIGHT COLUMN - What They're Looking For */}
           <Card className={`overflow-hidden ${activeTab === 'looking' ? 'block' : 'hidden'} md:block`}>
-            <CardHeader className="bg-primary/10">
+            <CardHeader className="bg-primary/10 hidden md:flex">
               <CardTitle className="text-lg">What They're Looking For</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-8">
