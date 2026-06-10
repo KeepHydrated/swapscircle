@@ -38,6 +38,8 @@ const ItemDetails: React.FC = () => {
   const [item, setItem] = useState<ItemData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'offering' | 'looking'>('offering');
+
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -150,9 +152,30 @@ const ItemDetails: React.FC = () => {
     <MainLayout>
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         
+        {/* Mobile tab switcher */}
+        <div className="md:hidden mb-4 grid grid-cols-2 gap-2 p-1 bg-muted rounded-lg">
+          <button
+            onClick={() => setActiveTab('offering')}
+            className={`text-sm font-medium py-2 px-3 rounded-md transition-colors ${
+              activeTab === 'offering' ? 'bg-background shadow-sm' : 'text-muted-foreground'
+            }`}
+          >
+            What They're Offering
+          </button>
+          <button
+            onClick={() => setActiveTab('looking')}
+            className={`text-sm font-medium py-2 px-3 rounded-md transition-colors ${
+              activeTab === 'looking' ? 'bg-background shadow-sm' : 'text-muted-foreground'
+            }`}
+          >
+            What They're Looking For
+          </button>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-6">
           {/* LEFT COLUMN - What They're Offering */}
-          <Card className="overflow-hidden">
+          <Card className={`overflow-hidden ${activeTab === 'offering' ? 'block' : 'hidden'} md:block`}>
+
             <CardHeader className="bg-primary/10">
 
               <CardTitle className="text-lg">What They're Offering</CardTitle>
@@ -227,7 +250,7 @@ const ItemDetails: React.FC = () => {
           </Card>
 
           {/* RIGHT COLUMN - What They're Looking For */}
-          <Card className="overflow-hidden">
+          <Card className={`overflow-hidden ${activeTab === 'looking' ? 'block' : 'hidden'} md:block`}>
             <CardHeader className="bg-primary/10">
               <CardTitle className="text-lg">What They're Looking For</CardTitle>
             </CardHeader>
