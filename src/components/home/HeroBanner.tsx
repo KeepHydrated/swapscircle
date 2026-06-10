@@ -6,9 +6,16 @@ const HeroBanner = () => {
       <div className="flex items-center justify-between gap-6 p-6 md:p-8">
         {/* Left side - Text */}
         <div className="flex-1">
-          <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight">
-            Skip Shopping —<br />Trade With Friends, Your Local Community, Or People Across The US
+          <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight tracking-tight">
+            Skip Shopping —<br />
+            <span className="font-normal">Trade with </span>
+            <span className="italic font-serif font-medium">friends</span>
+            <span className="font-normal">, your local </span>
+            <span className="italic font-serif font-medium">community</span>
+            <span className="font-normal">, or people across the </span>
+            <span className="italic font-serif font-medium">US</span>
           </h1>
+
         </div>
         
         {/* Right side - Image */}
