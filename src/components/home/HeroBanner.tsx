@@ -12,7 +12,7 @@ const HeroBanner = () => {
             <span className="italic font-serif font-medium">friends</span>
             <span className="font-normal">, your local </span>
             <span className="italic font-serif font-medium">community</span>
-            <span className="font-normal">, or people across the </span>
+            <span className="font-normal">,<br />or people across the </span>
             <span className="italic font-serif font-medium">US</span>
           </h1>
 
