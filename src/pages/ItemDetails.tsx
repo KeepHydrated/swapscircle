@@ -152,7 +152,7 @@ const ItemDetails: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-6">
           {/* LEFT COLUMN - What They're Offering */}
-          <Card>
+          <Card className="overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
               <CardTitle className="text-lg">What They're Offering</CardTitle>
             </CardHeader>
@@ -226,7 +226,7 @@ const ItemDetails: React.FC = () => {
           </Card>
 
           {/* RIGHT COLUMN - What They're Looking For */}
-          <Card>
+          <Card className="overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
               <CardTitle className="text-lg">What They're Looking For</CardTitle>
             </CardHeader>
