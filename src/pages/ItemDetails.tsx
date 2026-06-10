@@ -153,7 +153,7 @@ const ItemDetails: React.FC = () => {
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         
         {/* Mobile tab switcher */}
-        <div className="md:hidden mb-4 grid grid-cols-2 gap-2 p-1 bg-muted rounded-lg">
+        <div className="md:hidden mb-4 grid grid-cols-2 gap-2 p-1 bg-primary/10 rounded-lg">
           <button
             onClick={() => setActiveTab('offering')}
             className={`text-sm font-medium py-2 px-3 rounded-md transition-colors ${
@@ -176,7 +176,8 @@ const ItemDetails: React.FC = () => {
           {/* LEFT COLUMN - What They're Offering */}
           <Card className={`overflow-hidden ${activeTab === 'offering' ? 'block' : 'hidden'} md:block`}>
 
-            <CardHeader className="bg-primary/10">
+            <CardHeader className="bg-primary/10 hidden md:flex">
+
 
               <CardTitle className="text-lg">What They're Offering</CardTitle>
             </CardHeader>
