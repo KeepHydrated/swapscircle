@@ -314,7 +314,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {myItems.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-12">You don't have any items to trade.</p>
               ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
                   {[...myItems].sort((a, b) => {
                     const aSelectedIndex = selectedMyItemIds.indexOf(a.id);
                     const bSelectedIndex = selectedMyItemIds.indexOf(b.id);
@@ -378,7 +378,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               {theirItems.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-12">They don't have any available items.</p>
               ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
                   {[...theirItems].sort((a, b) => {
                     const aSelectedIndex = selectedTheirItemIds.indexOf(a.id);
                     const bSelectedIndex = selectedTheirItemIds.indexOf(b.id);
