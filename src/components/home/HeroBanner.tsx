@@ -14,7 +14,7 @@ const HeroBanner = () => {
             <span className="block md:inline font-normal">
               your local <span className="italic font-serif font-medium">community</span>,
             </span>
-            <span className="block md:inline font-normal">
+            <span className="block font-normal">
               or people across the <span className="italic font-serif font-medium">US</span>
             </span>
           </h1>
