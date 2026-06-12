@@ -488,7 +488,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
               <button
                 onClick={handleConfirmChange}
                 disabled={selectedMyItemIds.length === 0 || selectedTheirItemIds.length === 0 || updating}
-                className="flex-1 sm:flex-none bg-trademate-blue hover:bg-trademate-blue/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors"
+                className="flex-1 sm:flex-none bg-trademate-blue hover:bg-trademate-blue/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white text-sm font-medium px-6 py-2 rounded-lg transition-colors"
               >
                 {updating ? 'Updating...' : 'Suggest Change'}
               </button>
