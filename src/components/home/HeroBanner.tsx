@@ -8,13 +8,13 @@ const HeroBanner = () => {
         <div className="flex-1">
           <h1 className="text-xl md:text-2xl font-bold text-foreground leading-relaxed tracking-tight">
             <span className="block mb-4 text-2xl md:text-4xl">Skip Shopping —</span>
-            <span className="block font-normal">
+            <span className="block md:inline font-normal">
               Trade with <span className="italic font-serif font-medium">friends</span>,
             </span>
-            <span className="block font-normal">
+            <span className="block md:inline font-normal">
               your local <span className="italic font-serif font-medium">community</span>,
             </span>
-            <span className="block font-normal">
+            <span className="block md:inline font-normal">
               or people across the <span className="italic font-serif font-medium">US</span>
             </span>
           </h1>
