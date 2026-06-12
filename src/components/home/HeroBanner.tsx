@@ -21,12 +21,17 @@ const HeroBanner = () => {
 
         </div>
         
-        {/* Right side - Image */}
-        <div className="hidden md:block flex-1 min-w-0 h-48">
+        {/* Right side - Images */}
+        <div className="hidden md:flex flex-1 min-w-0 h-48 gap-4">
           <img 
             src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop"
             alt="Trading community"
-            className="w-full h-full object-cover rounded-lg shadow-lg"
+            className="flex-1 min-w-0 h-full object-cover rounded-lg shadow-lg"
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=300&fit=crop"
+            alt="Friends exchanging items"
+            className="hidden lg:block flex-1 min-w-0 h-full object-cover rounded-lg shadow-lg"
           />
         </div>
       </div>
