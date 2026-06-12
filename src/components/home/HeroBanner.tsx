@@ -3,9 +3,9 @@ import React from 'react';
 const HeroBanner = () => {
   return (
     <div className="w-full bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between gap-6 p-6 md:p-8">
+      <div className="flex items-center gap-6 md:gap-8 p-6 md:p-8">
         {/* Left side - Text */}
-        <div className="flex-1">
+        <div className="flex-shrink-0">
           <h1 className="text-xl md:text-2xl font-bold text-foreground leading-snug md:leading-relaxed tracking-tight">
             <span className="block mb-4 text-2xl md:text-4xl">Skip Shopping —</span>
             <span className="block lg:inline font-normal">
@@ -22,7 +22,7 @@ const HeroBanner = () => {
         </div>
         
         {/* Right side - Image */}
-        <div className="hidden md:block w-64 h-48 flex-shrink-0">
+        <div className="hidden md:block flex-1 min-w-0 h-48">
           <img 
             src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop"
             alt="Trading community"
