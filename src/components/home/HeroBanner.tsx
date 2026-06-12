@@ -12,7 +12,7 @@ const HeroBanner = () => {
               Trade with <span className="italic font-serif font-medium">friends</span>,
             </span>
             <span className="block lg:inline font-normal">
-              your local <span className="italic font-serif font-medium">community</span>,
+              {' '}your local <span className="italic font-serif font-medium">community</span>,
             </span>
             <span className="block font-normal">
               or people across the <span className="italic font-serif font-medium">US</span>
