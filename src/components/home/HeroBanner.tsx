@@ -31,7 +31,7 @@ const HeroBanner = () => {
           <img 
             src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=300&fit=crop"
             alt="Friends exchanging items"
-            className="hidden lg:block flex-1 min-w-0 h-full object-cover rounded-lg shadow-lg"
+            className="hidden md:block flex-1 min-w-0 h-full object-cover rounded-lg shadow-lg"
           />
         </div>
       </div>
