@@ -481,7 +481,7 @@ const ChangeTradeItemsModal: React.FC<ChangeTradeItemsModalProps> = ({
             <div className="flex gap-3 w-full sm:w-auto">
               <button
                 onClick={onClose}
-                className="flex-1 sm:flex-none px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                className="flex-1 sm:flex-none px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Cancel
               </button>
