@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Save, Check, Loader2, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage, createItem } from '@/services/authService';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -514,14 +515,10 @@ const PostItem: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* What You're Offering Column */}
           <div className="space-y-6">
-            <div className="flex items-center mb-6">
-              <div className="bg-blue-50 p-3 rounded-full mr-4">
-                <Package className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">What You're Offering</h2>
-                <p className="text-gray-600">Tell us about the item you want to trade</p>
-              </div>
+            <div className="mb-6">
+              <h2 className="text-3xl font-bold text-gray-900">What You're Offering</h2>
+              <p className="text-gray-500 text-lg mt-1">Tell us about the item you want to trade</p>
+              <p className="text-sm text-gray-500 mt-1">Please review our <Link to="/posting-rules" className="underline underline-offset-2">Posting Rules</Link> before posting.</p>
             </div>
             <ItemOfferingForm
               title={title}
@@ -544,14 +541,9 @@ const PostItem: React.FC = () => {
           {/* What You're Looking For Column */}
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <div className="bg-purple-50 p-3 rounded-full mr-4">
-                  <Heart className="h-6 w-6 text-purple-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
-                  <p className="text-gray-600">Describe what you'd like to receive in return</p>
-                </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">What You're Looking For</h2>
+                <p className="text-gray-500 text-lg mt-1">Describe what you'd like to receive in return</p>
               </div>
               
               {/* Load Saved Preferences Button - moved to top right */}

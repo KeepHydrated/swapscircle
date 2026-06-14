@@ -140,24 +140,23 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="bg-white p-6 rounded-xl border border-gray-200">
       
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="lookingFor">I'm looking for... <span className="text-red-500">*</span></Label>
+          <Label htmlFor="lookingFor" className="text-lg font-semibold text-gray-900">Description</Label>
           <Textarea 
             id="lookingFor" 
-            placeholder="Describe what you would like to trade for..." 
+            placeholder="Describe what you'd like to receive in return..." 
             rows={4}
             value={lookingForText}
             onChange={(e) => setLookingForText(e.target.value)}
-            
           />
         </div>
         
         {/* Categories Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Categories <span className="text-red-500">*</span></h3>
+          <h3 className="text-lg font-semibold text-gray-900">Categories you're interested in</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.keys(categories).map((categoryName) => (
               <div key={categoryName} className="flex items-center space-x-2">
