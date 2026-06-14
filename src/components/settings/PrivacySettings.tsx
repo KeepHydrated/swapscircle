@@ -75,7 +75,7 @@ const PrivacySettings: React.FC = () => {
       <Card className="border-0 shadow-none">
         <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0 p-0 mb-6">
           <div className="space-y-2">
-            <CardTitle>Privacy Settings</CardTitle>
+            <CardTitle className="text-lg">Privacy Settings</CardTitle>
             <CardDescription>
               Control your privacy and visibility.
             </CardDescription>
@@ -108,7 +108,7 @@ const PrivacySettings: React.FC = () => {
     <Card className="border-0 shadow-none">
       <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0 p-0 mb-6">
         <div className="space-y-2">
-          <CardTitle>Privacy Settings</CardTitle>
+          <CardTitle className="text-lg">Privacy Settings</CardTitle>
           <CardDescription>
             Control your privacy and visibility.
           </CardDescription>

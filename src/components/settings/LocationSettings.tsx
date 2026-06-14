@@ -149,7 +149,7 @@ const LocationSettings = () => {
   return (
     <Card>
       <CardHeader className="space-y-2">
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-lg flex items-center gap-2">
           <MapPin className="h-5 w-5" />
           Location Update
         </CardTitle>

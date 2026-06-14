@@ -32,7 +32,7 @@ const NotificationSettings: React.FC = () => {
       <Card className="border-0 shadow-none">
         <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0 p-0 mb-6">
           <div className="space-y-2">
-            <CardTitle>Notification Preferences</CardTitle>
+            <CardTitle className="text-lg">Notification Preferences</CardTitle>
             <CardDescription>
               Manage how you receive notifications.
             </CardDescription>
