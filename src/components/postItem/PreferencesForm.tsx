@@ -144,14 +144,13 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
       
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="lookingFor">I'm looking for... <span className="text-red-500">*</span></Label>
+          <Label htmlFor="lookingFor" className="text-lg font-semibold text-gray-900">Description</Label>
           <Textarea 
             id="lookingFor" 
-            placeholder="Describe what you would like to trade for..." 
+            placeholder="Describe what you'd like to receive in return..." 
             rows={4}
             value={lookingForText}
             onChange={(e) => setLookingForText(e.target.value)}
-            
           />
         </div>
         
