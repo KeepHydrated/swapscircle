@@ -248,9 +248,9 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         {/* Header */}
         <div className="p-4 border-b border-border bg-background flex-shrink-0">
           
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-3">
             {targetItem?.image && (
-              <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-border">
+              <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-border">
                 <img 
                   src={targetItem.image} 
                   alt={targetItem.name} 
@@ -259,8 +259,8 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
               </div>
             )}
             <div>
-              <h2 className="text-xl font-semibold mb-1">Select Items to Trade</h2>
-              <p className="text-muted-foreground">
+              <h2 className="text-base font-semibold mb-0.5">Select Items to Trade</h2>
+              <p className="text-sm text-muted-foreground">
                 Choose one or more items to trade for <span className="font-medium text-foreground">{targetItem?.name}</span>
               </p>
             </div>
