@@ -239,7 +239,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-screen h-[100dvh] max-h-[100dvh] rounded-none border-0 pt-16 lg:max-w-4xl lg:w-[95vw] lg:h-[80vh] lg:max-h-[80vh] lg:rounded-lg lg:border lg:my-8 lg:pt-0 flex flex-col p-0 overflow-hidden">
+      <DialogContent className="w-screen h-[100dvh] max-h-[100dvh] rounded-none border-0 pt-16 md:max-w-4xl md:w-[95vw] md:h-[85vh] md:max-h-[85vh] md:rounded-lg md:border md:my-8 md:pt-0 flex flex-col p-0 overflow-hidden">
         <DialogTitle className="sr-only">Select Items to Trade</DialogTitle>
         <DialogDescription className="sr-only">
           Choose which of your items you want to trade for {targetItem?.name}
