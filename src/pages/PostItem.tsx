@@ -541,14 +541,9 @@ const PostItem: React.FC = () => {
           {/* What You're Looking For Column */}
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <div className="bg-purple-50 p-3 rounded-full mr-4">
-                  <Heart className="h-6 w-6 text-purple-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">What You're Looking For</h2>
-                  <p className="text-gray-600">Describe what you'd like to receive in return</p>
-                </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">What You're Looking For</h2>
+                <p className="text-gray-500 text-lg mt-1">Describe what you'd like to receive in return</p>
               </div>
               
               {/* Load Saved Preferences Button - moved to top right */}
