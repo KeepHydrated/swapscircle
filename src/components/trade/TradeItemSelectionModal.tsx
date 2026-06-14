@@ -219,10 +219,6 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         console.error('Error creating initial message:', messageError);
       }
 
-      toast({
-        title: "Trade suggestion sent!",
-        description: "Your trade suggestion has been sent successfully.",
-      });
 
       onClose();
       // Navigate to messages page with the new conversation selected
