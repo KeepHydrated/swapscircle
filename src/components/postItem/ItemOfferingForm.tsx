@@ -250,7 +250,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
         <div className="space-y-6">
         {/* Image Upload */}
         <div>
