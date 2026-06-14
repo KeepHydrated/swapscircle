@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Save, Check, Loader2, Package, Heart, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Save, Check, Loader2, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { postItem, uploadItemImage, createItem } from '@/services/authService';
 import { useNavigate, useLocation } from 'react-router-dom';
