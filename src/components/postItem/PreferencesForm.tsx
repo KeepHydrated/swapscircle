@@ -140,7 +140,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="bg-white p-6 rounded-xl border border-gray-200">
       
       <div className="space-y-6">
         <div className="space-y-2">
