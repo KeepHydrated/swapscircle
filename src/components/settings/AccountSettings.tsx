@@ -130,7 +130,7 @@ const AccountSettings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
 
       <Card className="border-0 shadow-none">
         <CardHeader className="hidden md:block p-0 mb-4">
