@@ -243,10 +243,6 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
           message: messageContent
         });
 
-      toast({
-        title: "Trade suggestion sent!",
-        description: "Your trade suggestion has been sent successfully.",
-      });
 
       onClose();
       navigate(`/messages?conversation=${tradeConversation.id}`);
