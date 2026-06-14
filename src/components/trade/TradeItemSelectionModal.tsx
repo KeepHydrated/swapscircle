@@ -268,7 +268,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
         </div>
 
         {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 pt-8 min-h-0">
+        <div className="flex-1 overflow-y-auto p-6 pt-4 min-h-0">
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
