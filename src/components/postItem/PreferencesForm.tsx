@@ -156,7 +156,7 @@ const PreferencesForm: React.FC<PreferencesFormProps> = ({
         
         {/* Categories Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Categories <span className="text-red-500">*</span></h3>
+          <h3 className="text-lg font-semibold text-gray-900">Categories you're interested in</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.keys(categories).map((categoryName) => (
               <div key={categoryName} className="flex items-center space-x-2">
