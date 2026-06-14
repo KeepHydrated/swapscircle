@@ -7,7 +7,7 @@ const HeroBanner = () => {
         {/* Left side - Text */}
         <div className="flex-shrink-0">
           <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight tracking-tight">
-            <span className="block mb-2 text-2xl md:text-4xl">Skip Shopping —</span>
+            <span className="block mb-4 text-2xl md:text-4xl">Skip Shopping —</span>
             <span className="block lg:inline font-normal">
               Trade with <span className="italic font-serif font-medium">friends</span>,
             </span>
