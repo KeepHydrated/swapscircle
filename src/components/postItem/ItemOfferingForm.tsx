@@ -254,7 +254,7 @@ const ItemOfferingForm: React.FC<ItemOfferingFormProps> = ({
         <div className="space-y-6">
         {/* Image Upload */}
         <div>
-          <Label htmlFor="images" className="text-lg font-semibold text-gray-900 mb-3 block">Add Images <span className="text-red-500">*</span></Label>
+          <p className="text-lg font-semibold text-gray-900 mb-3">Images ({totalImages} uploaded)</p>
           <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
             <Upload className="h-10 w-10 text-gray-400 mb-3" />
             <p className="text-base font-medium text-gray-700 mb-1">Upload your item photos</p>
