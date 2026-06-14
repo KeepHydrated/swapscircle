@@ -317,7 +317,7 @@ const ProfileSettings: React.FC = () => {
     <Card className="border-0 shadow-none">
       <CardHeader className="hidden md:flex md:flex-row md:items-start md:justify-between md:space-y-0 p-0 mb-6">
         <div className="space-y-2">
-          <CardTitle>Profile Information</CardTitle>
+          <CardTitle className="text-lg">Profile Information</CardTitle>
           <CardDescription>
             Update your profile information and avatar.
           </CardDescription>
