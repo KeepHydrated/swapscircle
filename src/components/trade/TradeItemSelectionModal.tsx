@@ -228,7 +228,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
       console.error('Error creating trade:', error);
       toast({
         title: "Error",
-        description: "Failed to create trade request.",
+        description: "Failed to zcreate trade request.",
       });
     } finally {
       setCreating(false);
@@ -332,7 +332,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
         {/* Footer */}
         {myItems.length > 0 && (
-          <div className="p-4 border-t border-border bg-muted/50 flex-shrink-0">
+          <div className="p-3 border-t border-border bg-muted/50 flex-shrink-0">
             <div className="flex items-center gap-4">
               <div className="flex-1 min-w-0 overflow-x-auto overflow-y-hidden pt-2.5 pr-2.5">
                 <div className="flex gap-3">
@@ -348,7 +348,34 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                         />
                         <button
                           onClick={() => setSelectedItemIds(selectedItemIds.filter((id) => id !== i.id))}
-                          className=
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-foreground text-background rounded-full flex items-center justify-center shadow-md"
+                          aria-label={`Remove ${i.name}`}
+                        >
+                          <X className="w-2.5 h-2.5" />
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2 flex-shrink-0">
+                <button
+                  onClick={onClose}
+                  className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmTrade}
+                  disabled={selectedItemIds.length === 0 || creating}
+                  className="bg-trademate-blue hover:bg-trademate-blue/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors"
+                >
+                  {creating ? 'Sending...' : `Suggest${selectedItemIds.length > 0 ? ` (${selectedItemIds.length})` : ''}`}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
