@@ -100,12 +100,22 @@ const Auth: React.FC = () => {
     }
   };
 
+  const getRedirectUrl = () => {
+    const origin = window.location.origin;
+    // Lovable preview/published URLs require a Lovable login. Always redirect
+    // to the live custom domain so the OAuth callback lands on the public site.
+    if (origin.includes('.lovable.app')) {
+      return 'https://swapscircle.com/';
+    }
+    return `${origin}/`;
+  };
+
   const handleGoogleSignIn = async () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/` },
+        options: { redirectTo: getRedirectUrl() },
       });
       if (error) throw error;
     } catch (error) {
