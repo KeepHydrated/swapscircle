@@ -89,14 +89,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className={`flex justify-between items-start p-6 ${!isOwnProfile ? 'pt-6 md:pt-6' : ''}`}>
         <div className="flex flex-col md:flex-row w-full">
           <div className="flex-shrink-0 mr-0 md:mr-6 flex justify-start mb-4 md:mb-0">
-            <Avatar className="w-20 h-20 profile-icon-border">
+            <Avatar className="w-16 h-16 profile-icon-border">
               <AvatarImage 
                 src={avatarSrc}
                 alt={`${profile.name}'s avatar`}
                 className="object-cover"
                 loading="eager"
               />
-              <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold w-full h-full flex items-center justify-center">
+              <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold w-full h-full flex items-center justify-center">
                 {(() => {
                   console.log('[ProfileHeader] Generating initials for name:', profile.name);
                   const initials = profile.name?.split(" ").map(name => name[0]).join("").substring(0, 2).toUpperCase() || "JD";
