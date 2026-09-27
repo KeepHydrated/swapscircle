@@ -673,7 +673,7 @@ const OtherPersonProfile: React.FC = () => {
           <Tabs 
             value={activeTab} 
             onValueChange={setActiveTab}
-            className="w-full"
+            className="w-full relative"
           >
             <TabsList ref={tabsBarRef} className="w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start sticky top-16 z-30">
               <TabsTrigger
