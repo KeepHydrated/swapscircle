@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronUp } from 'lucide-react';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { ReportButton } from '@/components/profile/ReportButton';
 import BlockUserButton from '@/components/profile/BlockUserButton';
-import { Star, UserX, MoreVertical } from 'lucide-react';
+import { Star, UserX, MoreVertical, Calendar, Repeat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -732,49 +731,75 @@ const OtherPersonProfile: React.FC = () => {
                 </Button>
               )}
             </div>
-            {/* Profile summary overlay sliding down from the sticky bar */}
+            {/* Compact profile header sliding down from the sticky bar */}
             <div
               ref={overlayRef}
               className={`absolute left-0 right-0 top-0 z-50 bg-background shadow-lg transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${summaryOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}
               aria-hidden={!summaryOpen || undefined}
             >
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setSummaryOpen(false)}
-                className="absolute right-4 top-6 -translate-y-1/2 z-10 h-7 w-7 rounded-full bg-muted p-0 text-muted-foreground"
-                aria-label="Hide profile summary"
-              >
-                <ChevronUp className="w-3.5 h-3.5 rotate-180" />
-              </Button>
-              <div className="px-4 py-4">
-                <div className="flex items-center gap-3">
+              <div className="px-6 py-6">
+                <div className="flex items-center justify-between gap-4">
                   {summaryAvatar ? (
                     <img src={summaryAvatar} alt={profileData.name} className="w-16 h-16 rounded-full object-cover profile-icon-border" />
                   ) : (
-                    <span className="w-16 h-16 rounded-full bg-muted flex items-center justify-center text-xl font-medium">
+                    <span className="w-16 h-16 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold profile-icon-border">
                       {(profileData.name || 'P').charAt(0).toUpperCase()}
                     </span>
                   )}
-                  <div className="min-w-0">
-                    <p className="font-bold text-lg truncate">{profileData.name}</p>
-                    <div className="flex items-center gap-1.5 text-sm">
-                      <span className="flex">
-                        {[0, 1, 2, 3, 4].map(i => (
-                          <Star key={i} size={14} fill={i < Math.floor(profileData.rating) ? '#FFD700' : 'none'} color={i < Math.floor(profileData.rating) ? '#FFD700' : '#D3D3D3'} className="inline-block" />
-                        ))}
-                      </span>
-                      <span className="text-muted-foreground">{profileData.tradesCompleted ?? 0} trades</span>
-                    </div>
-                    {profileData.location && (
-                      <p className="text-sm text-muted-foreground truncate">{profileData.location}</p>
-                    )}
+                  <div className="ml-auto flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <MoreVertical className="h-5 w-5 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-background border shadow-md z-[10000]">
+                        <DropdownMenuItem onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(`${window.location.origin}/other-person-profile?userId=${userId}`);
+                            toast.success('Profile link copied to clipboard!');
+                          } catch (error) {
+                            toast.error('Failed to copy profile link');
+                          }
+                        }}>
+                          Copy Profile Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive">
+                          {isUserBlocked ? 'Unblock User' : 'Block User'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setShowReportModal(true)} className="text-destructive focus:text-destructive">
+                          Report User
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <FriendRequestButton
+                      userId={userId || 'profile1'}
+                      initialStatus="none"
+                      onStatusChange={(status) => setIsFriend(status === 'accepted')}
+                    />
                   </div>
                 </div>
-                {profileData.description && profileData.description !== 'No bio available' && (
-                  <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{profileData.description}</p>
-                )}
+
+                <div className="mt-5 flex items-center gap-2 min-w-0">
+                  <p className="font-bold text-2xl truncate">{profileData.name}</p>
+                  <Star className="h-5 w-5 shrink-0 fill-rating text-rating" />
+                  <span className="shrink-0 text-base text-muted-foreground">{profileData.rating === 0 ? '0.0' : profileData.rating} ({profileData.reviewCount})</span>
+                </div>
+
+                <div className="mt-4 flex items-center gap-6 text-base text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-5 w-5" />
+                    {profileData.memberSince}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Repeat className="h-5 w-5" />
+                    {profileData.tradesCompleted ?? 0} trade{profileData.tradesCompleted === 1 ? '' : 's'}
+                  </span>
+                </div>
+
+                <p className="mt-5 text-base leading-relaxed text-foreground">
+                  {profileData.description || 'No bio available'}
+                </p>
               </div>
             </div>
           </div>
