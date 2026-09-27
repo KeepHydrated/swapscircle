@@ -154,7 +154,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {/* Action buttons will be rendered here by parent component */}
               <div id="profile-action-buttons" className="hidden md:flex"></div>
             </div>
-            <div className="text-sm text-gray-500 mb-2 flex justify-start flex-wrap gap-4">
+            <div className="text-sm text-gray-500 mb-2 mt-2 flex justify-start flex-wrap gap-4">
               {profile.location && profile.location.trim() && (
                 (() => {
                   // Check if it's coordinates (contains both comma and periods)
