@@ -787,8 +787,8 @@ const OtherPersonProfile: React.FC = () => {
                 )}
               </div>
             </div>
-            
-            {/* We're moving the tab content inside the Tabs component */}
+          </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <OtherProfileTabContent 
               activeTab={activeTab}
               items={visibleItems}
