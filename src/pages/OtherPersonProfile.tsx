@@ -675,7 +675,7 @@ const OtherPersonProfile: React.FC = () => {
             onValueChange={setActiveTab}
             className="w-full relative"
           >
-            <TabsList ref={tabsBarRef} className="w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start sticky top-16 z-30">
+            <TabsList ref={tabsBarRef} className="relative w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start sticky top-16 z-30">
               <TabsTrigger
                 value="available"
                 className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
@@ -688,24 +688,24 @@ const OtherPersonProfile: React.FC = () => {
               >
                 Reviews
               </TabsTrigger>
+              {tabsStuck && (
+                <button
+                  type="button"
+                  onClick={() => setSummaryOpen(o => !o)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-40 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="Show profile summary"
+                  aria-expanded={summaryOpen}
+                >
+                  {summaryAvatar ? (
+                    <img src={summaryAvatar} alt={profileData.name} className="w-7 h-7 rounded-full object-cover" />
+                  ) : (
+                    <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                      {(profileData.name || 'P').charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </button>
+              )}
             </TabsList>
-            {tabsStuck && (
-              <button
-                type="button"
-                onClick={() => setSummaryOpen(o => !o)}
-                className="absolute right-4 top-6 -translate-y-1/2 z-40 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label="Show profile summary"
-                aria-expanded={summaryOpen}
-              >
-                {summaryAvatar ? (
-                  <img src={summaryAvatar} alt={profileData.name} className="w-7 h-7 rounded-full object-cover" />
-                ) : (
-                  <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-                    {(profileData.name || 'P').charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </button>
-            )}
             {/* Profile summary overlay sliding from under the header */}
             <div
               className={`fixed left-0 right-0 top-16 z-40 bg-background shadow-lg transition-transform duration-300 ease-out ${summaryOpen ? 'translate-y-0' : '-translate-y-full'}`}
