@@ -42,7 +42,8 @@ const OtherPersonProfile: React.FC = () => {
   // State for profile data and loading
   const [profileData, setProfileData] = useState({
     ...otherPersonProfileData,
-    avatar_url: undefined as string | undefined
+    avatar_url: undefined as string | undefined,
+    tradesCompleted: 0
   });
   const [isLoading, setIsLoading] = useState(!!userId); // Only show loading if we have a userId to fetch
   const [userItems, setUserItems] = useState<any[]>([]);
