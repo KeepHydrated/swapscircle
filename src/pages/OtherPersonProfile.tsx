@@ -54,6 +54,9 @@ const OtherPersonProfile: React.FC = () => {
   const [tabsStuck, setTabsStuck] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const tabsBarRef = useRef<HTMLDivElement>(null);
+  const picButtonRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const [arrowStyle, setArrowStyle] = useState<{ left: number; top: number } | null>(null);
 
   useEffect(() => {
     const update = () => {
@@ -70,6 +73,26 @@ const OtherPersonProfile: React.FC = () => {
       window.removeEventListener('resize', update);
     };
   }, [isLoading]);
+
+  // Place the dropdown's close arrow exactly over the profile pic that was clicked
+  const syncArrowToPic = () => {
+    const pic = picButtonRef.current;
+    if (!pic) return;
+    const pr = pic.getBoundingClientRect();
+    setArrowStyle({ left: pr.left + pr.width / 2, top: pr.top + pr.height / 2 });
+  };
+
+  // Close the summary dropdown when clicking/tapping anywhere outside it
+  useEffect(() => {
+    if (!summaryOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const overlay = overlayRef.current;
+      if (overlay && e.target instanceof Node && overlay.contains(e.target)) return;
+      setSummaryOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    return () => document.removeEventListener('pointerdown', onPointerDown, true);
+  }, [summaryOpen]);
 
   const summaryAvatar = profileData.avatar_url && profileData.avatar_url !== '/placeholder.svg'
     ? profileData.avatar_url
@@ -690,10 +713,11 @@ const OtherPersonProfile: React.FC = () => {
               >
                 Reviews
               </TabsTrigger>
-              {tabsStuck && (
+              {tabsStuck && !summaryOpen && (
                 <button
                   type="button"
-                  onClick={() => setSummaryOpen(o => !o)}
+                  ref={picButtonRef}
+                  onClick={() => { syncArrowToPic(); setSummaryOpen(o => !o); }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 z-40 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label="Show profile summary"
                   aria-expanded={summaryOpen}
@@ -710,13 +734,15 @@ const OtherPersonProfile: React.FC = () => {
             </TabsList>
             {/* Profile summary overlay sliding from under the header */}
             <div
+              ref={overlayRef}
               className={`fixed left-0 right-0 top-16 z-40 bg-background shadow-lg transition-transform duration-300 ease-out ${summaryOpen ? 'translate-y-0' : '-translate-y-full'}`}
               aria-hidden={!summaryOpen || undefined}
             >
               <button
                 type="button"
                 onClick={() => setSummaryOpen(false)}
-                className="absolute right-4 top-2 z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                style={arrowStyle ? { left: arrowStyle.left, top: arrowStyle.top, transform: 'translate(-50%, -50%)' } : { right: '1rem', top: '0.5rem' }}
                 aria-label="Hide profile summary"
               >
                 <ChevronUp className="w-3.5 h-3.5" />
