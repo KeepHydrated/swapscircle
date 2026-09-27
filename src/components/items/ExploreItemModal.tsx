@@ -529,7 +529,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     e.stopPropagation();
                     onNavigatePrev();
                   }}
-                  className="fixed left-4 md:left-8 top-[calc(env(safe-area-inset-top)+10rem)] md:top-1/2 md:-translate-y-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 hover:scale-110 transition z-[60]"
+                  className="fixed left-4 md:left-8 top-[calc(env(safe-area-inset-top)+12rem)] md:top-1/2 md:-translate-y-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 hover:scale-110 transition z-[60]"
                   aria-label="Previous item"
                 >
                   <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -541,7 +541,7 @@ const ExploreItemModal: React.FC<ExploreItemModalProps> = ({
                     e.stopPropagation();
                     onNavigateNext();
                   }}
-                  className="fixed right-4 md:right-8 top-[calc(env(safe-area-inset-top)+10rem)] md:top-1/2 md:-translate-y-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 hover:scale-110 transition z-[60]"
+                  className="fixed right-4 md:right-8 top-[calc(env(safe-area-inset-top)+12rem)] md:top-1/2 md:-translate-y-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 hover:scale-110 transition z-[60]"
                   aria-label="Next item"
                 >
                   <ArrowRight className="w-6 h-6 text-gray-700" />
