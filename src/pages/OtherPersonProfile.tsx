@@ -53,40 +53,25 @@ const OtherPersonProfile: React.FC = () => {
   // Sticky tabs bar: show mini profile pic when the bar sticks under the header
   const [tabsStuck, setTabsStuck] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
-  const tabsBarRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const picButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [arrowStyle, setArrowStyle] = useState<{ left: number; top: number } | null>(null);
 
   useEffect(() => {
     const update = () => {
       const sentinel = sentinelRef.current;
-      const bar = sentinel?.nextElementSibling as HTMLElement | null;
-      if (!sentinel || !bar) return;
-      const stuck = bar.getBoundingClientRect().top - sentinel.getBoundingClientRect().top > 1;
+      if (!sentinel) return;
+      const stuck = sentinel.getBoundingClientRect().top <= 64;
       setTabsStuck(stuck);
       if (!stuck) setSummaryOpen(false);
     };
     update();
-    const main = sentinelRef.current?.closest('main');
     window.addEventListener('scroll', update, { passive: true });
-    main?.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     return () => {
       window.removeEventListener('scroll', update);
-      main?.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
   }, [isLoading]);
-
-  // Place the dropdown's close arrow exactly over the profile pic that was clicked
-  const syncArrowToPic = () => {
-    const pic = picButtonRef.current;
-    if (!pic) return;
-    const pr = pic.getBoundingClientRect();
-    setArrowStyle({ left: pr.left + pr.width / 2, top: pr.top + pr.height / 2 });
-  };
 
   // Close the summary dropdown when clicking/tapping anywhere outside it
   useEffect(() => {
@@ -701,10 +686,11 @@ const OtherPersonProfile: React.FC = () => {
 
         {/* Tabs with sticky header */}
         <div className="bg-card">
-          {/* Sentinel to detect when the tabs bar becomes the sticky header */}
+          {/* Fixed tabs row replaces the in-page row once it reaches the site header. */}
           <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+          {tabsStuck && <div className="h-12" aria-hidden />}
           <div
-            className={`relative sticky top-0 z-30 isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
+            className={`relative z-30 isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'fixed left-4 right-4 top-16 md:left-6 md:right-6 shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
           >
             <div className="relative">
               <Tabs 
@@ -712,7 +698,7 @@ const OtherPersonProfile: React.FC = () => {
                 onValueChange={setActiveTab}
                 className="w-full"
               >
-                <TabsList ref={tabsBarRef} className="relative w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start">
+                <TabsList className="relative w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start">
                   <TabsTrigger
                     value="available"
                     className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
@@ -728,11 +714,12 @@ const OtherPersonProfile: React.FC = () => {
                 </TabsList>
               </Tabs>
               {tabsStuck && !summaryOpen && (
-                <button
+                <Button
                   type="button"
-                  ref={picButtonRef}
-                  onClick={() => { syncArrowToPic(); setSummaryOpen(o => !o); }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-40 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSummaryOpen(true)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-40 h-7 w-7 rounded-full p-0"
                   aria-label="Show profile summary"
                   aria-expanded={summaryOpen}
                 >
@@ -743,7 +730,7 @@ const OtherPersonProfile: React.FC = () => {
                       {(profileData.name || 'P').charAt(0).toUpperCase()}
                     </span>
                   )}
-                </button>
+                </Button>
               )}
             </div>
             {/* Profile summary overlay sliding down from the sticky bar */}
@@ -752,15 +739,16 @@ const OtherPersonProfile: React.FC = () => {
               className={`absolute left-0 right-0 top-0 z-50 bg-background shadow-lg transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${summaryOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}
               aria-hidden={!summaryOpen || undefined}
             >
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setSummaryOpen(false)}
-                className="absolute right-8 top-[22px] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-                style={arrowStyle ? { right: 'auto', left: arrowStyle.left, top: arrowStyle.top, transform: 'translate(-50%, -50%)' } : undefined}
+                className="absolute right-4 top-6 -translate-y-1/2 z-10 h-7 w-7 rounded-full bg-muted p-0 text-muted-foreground"
                 aria-label="Hide profile summary"
               >
                 <ChevronUp className="w-3.5 h-3.5 rotate-180" />
-              </button>
+              </Button>
               <div className="px-4 py-4">
                 <div className="flex items-center gap-3">
                   {summaryAvatar ? (
