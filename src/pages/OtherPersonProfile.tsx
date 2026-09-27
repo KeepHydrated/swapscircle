@@ -648,16 +648,16 @@ const OtherPersonProfile: React.FC = () => {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="w-full flex rounded-none h-12 p-0 bg-card border-b justify-start">
+            <TabsList className="w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start">
               <TabsTrigger 
                 value="available" 
-                className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-2 border-transparent data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+                className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
               >
                 Items
               </TabsTrigger>
               <TabsTrigger 
                 value="reviews" 
-                className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-2 border-transparent data-[state=active]:border-primary rounded-none shadow-none data-[state=active]:shadow-none"
+                className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
               >
                 Reviews
               </TabsTrigger>
