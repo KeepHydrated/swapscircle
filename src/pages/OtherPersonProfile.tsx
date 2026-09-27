@@ -54,6 +54,9 @@ const OtherPersonProfile: React.FC = () => {
   const [tabsStuck, setTabsStuck] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const tabsBarRef = useRef<HTMLDivElement>(null);
+  const picButtonRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const [arrowStyle, setArrowStyle] = useState<{ left: number; top: number } | null>(null);
 
   useEffect(() => {
     const update = () => {
@@ -70,6 +73,26 @@ const OtherPersonProfile: React.FC = () => {
       window.removeEventListener('resize', update);
     };
   }, [isLoading]);
+
+  // Place the dropdown's close arrow exactly over the profile pic that was clicked
+  const syncArrowToPic = () => {
+    const pic = picButtonRef.current;
+    if (!pic) return;
+    const pr = pic.getBoundingClientRect();
+    setArrowStyle({ left: pr.left + pr.width / 2, top: pr.top + pr.height / 2 });
+  };
+
+  // Close the summary dropdown when clicking/tapping anywhere outside it
+  useEffect(() => {
+    if (!summaryOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const overlay = overlayRef.current;
+      if (overlay && e.target instanceof Node && overlay.contains(e.target)) return;
+      setSummaryOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    return () => document.removeEventListener('pointerdown', onPointerDown, true);
+  }, [summaryOpen]);
 
   const summaryAvatar = profileData.avatar_url && profileData.avatar_url !== '/placeholder.svg'
     ? profileData.avatar_url
