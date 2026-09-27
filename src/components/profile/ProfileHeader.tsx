@@ -212,7 +212,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <span>{profile.memberSince}</span>
               </div>
               {(profile.tradesCompleted || profile.tradesCompleted === 0) && (
-                <div className="flex items-center mt-3">
+                <div className="flex items-center">
                   <Repeat className="h-4 w-4 mr-1" />
                   <span>{profile.tradesCompleted} trade{profile.tradesCompleted !== 1 ? 's' : ''}</span>
                 </div>
