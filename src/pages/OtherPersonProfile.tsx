@@ -54,16 +54,19 @@ const OtherPersonProfile: React.FC = () => {
   const [tabsStuck, setTabsStuck] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const tabsBarRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const picButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [arrowStyle, setArrowStyle] = useState<{ left: number; top: number } | null>(null);
 
   useEffect(() => {
     const update = () => {
-      const bar = tabsBarRef.current;
-      if (!bar) return;
-      setTabsStuck(bar.getBoundingClientRect().top <= 64);
-      if (bar.getBoundingClientRect().top > 64) setSummaryOpen(false);
+      const sentinel = sentinelRef.current;
+      const bar = sentinel?.nextElementSibling as HTMLElement | null;
+      if (!sentinel || !bar) return;
+      const stuck = bar.getBoundingClientRect().top - sentinel.getBoundingClientRect().top > 1;
+      setTabsStuck(stuck);
+      if (!stuck) setSummaryOpen(false);
     };
     update();
     window.addEventListener('scroll', update, { passive: true });
