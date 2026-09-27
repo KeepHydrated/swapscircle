@@ -185,6 +185,7 @@ const OtherPersonProfile: React.FC = () => {
             description: profileData.bio || 'No bio available',
             rating: averageRating,
             reviewCount: reviews.length,
+            tradesCompleted: 0,
             location: profileData.location || '',
             memberSince: new Date(profileData.created_at).getFullYear().toString(),
             friendCount: 0, // Show 0 friends until we implement real friends
