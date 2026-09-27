@@ -332,9 +332,9 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
 
         {/* Footer */}
         {myItems.length > 0 && (
-          <div className="p-3 border-t border-border bg-muted/50 flex-shrink-0">
+          <div className="px-3 py-2 border-t border-border bg-muted/50 flex-shrink-0">
             <div className="flex items-center gap-4">
-              <div className="flex-1 min-w-0 overflow-x-auto overflow-y-hidden pt-2.5 pr-2.5 min-h-[60px]">
+              <div className="flex-1 min-w-0 overflow-x-auto overflow-y-hidden pt-2 pr-2.5 min-h-[48px]">
                 <div className="flex gap-3">
                   {myItems
                     .filter((i) => selectedItemIds.includes(i.id))
@@ -344,7 +344,7 @@ const TradeItemSelectionModal: React.FC<TradeItemSelectionModalProps> = ({
                           src={i.image}
                           alt={i.name}
                           title={i.name}
-                          className="w-12 h-12 rounded-lg object-cover border border-border"
+                          className="w-10 h-10 rounded-lg object-cover border border-border"
                         />
                         <button
                           onClick={() => setSelectedItemIds(selectedItemIds.filter((id) => id !== i.id))}
