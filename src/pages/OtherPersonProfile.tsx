@@ -688,9 +688,8 @@ const OtherPersonProfile: React.FC = () => {
         <div className="bg-card">
           {/* Fixed tabs row replaces the in-page row once it reaches the site header. */}
           <div ref={sentinelRef} className="h-px w-full" aria-hidden />
-          {tabsStuck && <div className="h-12" aria-hidden />}
           <div
-            className={`relative isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'fixed left-0 right-0 top-16 z-[9998] shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : 'z-30'}`}
+            className={`relative sticky top-16 z-[9998] isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
           >
             <div className="relative">
               <Tabs 
