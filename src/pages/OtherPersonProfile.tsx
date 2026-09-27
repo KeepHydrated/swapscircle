@@ -734,13 +734,15 @@ const OtherPersonProfile: React.FC = () => {
             </TabsList>
             {/* Profile summary overlay sliding from under the header */}
             <div
+              ref={overlayRef}
               className={`fixed left-0 right-0 top-16 z-40 bg-background shadow-lg transition-transform duration-300 ease-out ${summaryOpen ? 'translate-y-0' : '-translate-y-full'}`}
               aria-hidden={!summaryOpen || undefined}
             >
               <button
                 type="button"
                 onClick={() => setSummaryOpen(false)}
-                className="absolute right-4 top-2 z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                style={arrowStyle ? { left: arrowStyle.left, top: arrowStyle.top, transform: 'translate(-50%, -50%)' } : { right: '1rem', top: '0.5rem' }}
                 aria-label="Hide profile summary"
               >
                 <ChevronUp className="w-3.5 h-3.5" />
