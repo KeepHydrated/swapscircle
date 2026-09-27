@@ -690,7 +690,7 @@ const OtherPersonProfile: React.FC = () => {
           <div ref={sentinelRef} className="h-px w-full" aria-hidden />
           {tabsStuck && <div className="h-12" aria-hidden />}
           <div
-            className={`relative z-30 isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'fixed left-4 right-4 top-16 md:left-6 md:right-6 shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
+            className={`relative isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'fixed left-0 right-0 top-16 z-[9998] shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : 'z-30'}`}
           >
             <div className="relative">
               <Tabs 
