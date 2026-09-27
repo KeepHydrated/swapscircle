@@ -88,7 +88,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <div className="bg-white border-b">
       <div className={`flex justify-between items-start p-6 ${!isOwnProfile ? 'pt-20 md:pt-6' : ''}`}>
         <div className="flex flex-col md:flex-row w-full">
-          <div className="flex-shrink-0 mr-0 md:mr-6 flex justify-center mb-4 md:mb-0">
+          <div className="flex-shrink-0 mr-0 md:mr-6 flex justify-start mb-4 md:mb-0">
             <Avatar className="w-20 h-20 profile-icon-border">
               <AvatarImage 
                 src={avatarSrc}
@@ -106,8 +106,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </AvatarFallback>
             </Avatar>
           </div>
-          <div className="flex-grow text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-between">
+          <div className="flex-grow text-left">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">{profile.name}</h1>
                 <div className="flex items-center">
@@ -154,7 +154,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {/* Action buttons will be rendered here by parent component */}
               <div id="profile-action-buttons" className="hidden md:flex"></div>
             </div>
-            <div className="text-sm text-gray-500 mb-2 flex justify-center md:justify-start flex-wrap gap-4">
+            <div className="text-sm text-gray-500 mb-2 flex justify-start flex-wrap gap-4">
               {profile.location && profile.location.trim() && (
                 (() => {
                   // Check if it's coordinates (contains both comma and periods)

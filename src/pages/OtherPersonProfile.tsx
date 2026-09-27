@@ -534,7 +534,7 @@ const OtherPersonProfile: React.FC = () => {
           {/* Action buttons positioned differently for mobile vs desktop */}
           {isMobile ? (
             /* Mobile: Center positioned as before */
-            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
+            <div className="absolute top-6 right-4 flex flex-col items-end gap-2">
               {/* Blocked status indicator */}
               {isUserBlocked && (
                 <div className="bg-red-100 border border-red-300 text-red-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
