@@ -7,7 +7,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import FriendRequestButton from '@/components/profile/FriendRequestButton';
 import { ReportButton } from '@/components/profile/ReportButton';
 import BlockUserButton from '@/components/profile/BlockUserButton';
-import { Star, UserX, MoreVertical, Calendar, Repeat } from 'lucide-react';
+import { Star, UserX, MoreVertical, Calendar, Repeat, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -737,6 +737,15 @@ const OtherPersonProfile: React.FC = () => {
               className={`absolute left-0 right-0 top-0 z-50 bg-background shadow-lg transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${summaryOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}
               aria-hidden={!summaryOpen || undefined}
             >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSummaryOpen(false)}
+                className="absolute right-4 top-6 -translate-y-1/2 z-10 h-7 w-7 rounded-full bg-muted p-0"
+                aria-label="Close profile summary"
+              >
+                <ChevronUp className="h-4 w-4 rotate-180" />
+              </Button>
               <div className="px-6 py-6">
                 <div className="flex items-center justify-between gap-4">
                   {summaryAvatar ? (
