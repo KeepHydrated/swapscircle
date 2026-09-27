@@ -3239,6 +3239,16 @@ export type Database = {
         Args: { p_notification_id: string }
         Returns: undefined
       }
+      notify_user: {
+        Args: {
+          p_action_taken?: string
+          p_message: string
+          p_reference_id: string
+          p_type: Database["public"]["Enums"]["notification_type"]
+          p_user_id: string
+        }
+        Returns: string
+      }
       remove_moderator: {
         Args: { admin_user_id: string; moderator_id: string }
         Returns: undefined
