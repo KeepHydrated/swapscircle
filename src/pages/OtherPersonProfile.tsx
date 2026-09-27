@@ -69,12 +69,13 @@ const OtherPersonProfile: React.FC = () => {
       if (!stuck) setSummaryOpen(false);
     };
     update();
-    // The page scrolls inside MainLayout's <main>, not the window
-    const scroller = sentinelRef.current?.closest('main') ?? window;
-    scroller.addEventListener('scroll', update, { passive: true });
+    const main = sentinelRef.current?.closest('main');
+    window.addEventListener('scroll', update, { passive: true });
+    main?.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     return () => {
-      scroller.removeEventListener('scroll', update);
+      window.removeEventListener('scroll', update);
+      main?.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
   }, [isLoading]);
