@@ -675,20 +675,79 @@ const OtherPersonProfile: React.FC = () => {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start">
-              <TabsTrigger 
-                value="available" 
+            <TabsList ref={tabsBarRef} className="w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start sticky top-16 z-30">
+              <TabsTrigger
+                value="available"
                 className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
               >
                 Items
               </TabsTrigger>
-              <TabsTrigger 
-                value="reviews" 
+              <TabsTrigger
+                value="reviews"
                 className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
               >
                 Reviews
               </TabsTrigger>
             </TabsList>
+            {tabsStuck && (
+              <button
+                type="button"
+                onClick={() => setSummaryOpen(o => !o)}
+                className="absolute right-4 top-6 -translate-y-1/2 z-40 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Show profile summary"
+                aria-expanded={summaryOpen}
+              >
+                {summaryAvatar ? (
+                  <img src={summaryAvatar} alt={profileData.name} className="w-7 h-7 rounded-full object-cover" />
+                ) : (
+                  <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                    {(profileData.name || 'P').charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </button>
+            )}
+            {/* Profile summary overlay sliding from under the header */}
+            <div
+              className={`fixed left-0 right-0 top-16 z-40 bg-background shadow-lg transition-transform duration-300 ease-out ${summaryOpen ? 'translate-y-0' : '-translate-y-full'}`}
+              aria-hidden={!summaryOpen || undefined}
+            >
+              <button
+                type="button"
+                onClick={() => setSummaryOpen(false)}
+                className="absolute right-4 top-2 z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Hide profile summary"
+              >
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
+              <div className="px-4 py-4">
+                <div className="flex items-center gap-3">
+                  {summaryAvatar ? (
+                    <img src={summaryAvatar} alt={profileData.name} className="w-16 h-16 rounded-full object-cover profile-icon-border" />
+                  ) : (
+                    <span className="w-16 h-16 rounded-full bg-muted flex items-center justify-center text-xl font-medium">
+                      {(profileData.name || 'P').charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="font-bold text-lg truncate">{profileData.name}</p>
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <span className="flex">
+                        {[0, 1, 2, 3, 4].map(i => (
+                          <Star key={i} size={14} fill={i < Math.floor(profileData.rating) ? '#FFD700' : 'none'} color={i < Math.floor(profileData.rating) ? '#FFD700' : '#D3D3D3'} className="inline-block" />
+                        ))}
+                      </span>
+                      <span className="text-muted-foreground">{profileData.tradesCompleted ?? 0} trades</span>
+                    </div>
+                    {profileData.location && (
+                      <p className="text-sm text-muted-foreground truncate">{profileData.location}</p>
+                    )}
+                  </div>
+                </div>
+                {profileData.description && profileData.description !== 'No bio available' && (
+                  <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{profileData.description}</p>
+                )}
+              </div>
+            </div>
             
             {/* We're moving the tab content inside the Tabs component */}
             <OtherProfileTabContent 
