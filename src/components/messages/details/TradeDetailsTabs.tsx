@@ -306,7 +306,7 @@ const handleNextTheirItem = () => {
   };
 
   return (
-    <div className="p-4 border-b border-gray-200 bg-white flex flex-col h-full max-w-md mx-auto">
+    <div className="p-4 bg-white flex flex-col h-full max-w-md mx-auto">
       
       {/* Item Selector with consistent height and perfect alignment */}
       <div className="mb-4">
@@ -337,7 +337,7 @@ const handleNextTheirItem = () => {
       {/* Item Details Content */}
       <div className="flex-1 flex flex-col">
         {selectedItem === 'item1' ? (
-          <div className="bg-white rounded-lg border border-gray-200 md:border-0 overflow-hidden">
+          <div className="bg-white rounded-lg overflow-hidden">
             {/* Item Image with Navigation */}
             <div className="relative bg-gray-100 w-full aspect-[4/3]">
               <img 
@@ -430,7 +430,7 @@ const handleNextTheirItem = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-gray-200 md:border-0 overflow-hidden">
+          <div className="bg-white rounded-lg overflow-hidden">
             {/* Their Item Image with Navigation */}
             <div className="relative bg-gray-100 w-full aspect-[4/3]">
               <img 
