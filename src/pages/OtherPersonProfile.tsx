@@ -698,24 +698,32 @@ const OtherPersonProfile: React.FC = () => {
 
         {/* Tabs with sticky header */}
         <div className="bg-card">
-          <Tabs 
-            value={activeTab} 
-            onValueChange={setActiveTab}
-            className="w-full relative"
+          {/* Sentinel to detect when the tabs bar becomes the sticky header */}
+          <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+          <div
+            className={`relative sticky top-16 z-30 isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
           >
-            <TabsList ref={tabsBarRef} className="relative w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start sticky top-16 z-30">
-              <TabsTrigger
-                value="available"
-                className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
+            <div className="relative">
+              <Tabs 
+                value={activeTab} 
+                onValueChange={setActiveTab}
+                className="w-full"
               >
-                Items
-              </TabsTrigger>
-              <TabsTrigger
-                value="reviews"
-                className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
-              >
-                Reviews
-              </TabsTrigger>
+                <TabsList ref={tabsBarRef} className="relative w-full flex rounded-none h-12 p-0 bg-card border-t border-b justify-start">
+                  <TabsTrigger
+                    value="available"
+                    className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
+                  >
+                    Items
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="reviews"
+                    className="flex-1 md:flex-none md:min-w-[180px] h-full -mb-px border-b-[3px] border-transparent text-muted-foreground font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-bold rounded-none shadow-none data-[state=active]:shadow-none"
+                  >
+                    Reviews
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
               {tabsStuck && !summaryOpen && (
                 <button
                   type="button"
@@ -728,27 +736,27 @@ const OtherPersonProfile: React.FC = () => {
                   {summaryAvatar ? (
                     <img src={summaryAvatar} alt={profileData.name} className="w-7 h-7 rounded-full object-cover" />
                   ) : (
-                    <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                    <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground">
                       {(profileData.name || 'P').charAt(0).toUpperCase()}
                     </span>
                   )}
                 </button>
               )}
-            </TabsList>
-            {/* Profile summary overlay sliding from under the header */}
+            </div>
+            {/* Profile summary overlay sliding down from the sticky bar */}
             <div
               ref={overlayRef}
-              className={`fixed left-0 right-0 top-16 z-40 bg-background shadow-lg transition-transform duration-300 ease-out ${summaryOpen ? 'translate-y-0' : '-translate-y-full'}`}
+              className={`absolute left-0 right-0 top-0 z-50 bg-background shadow-lg transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${summaryOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}
               aria-hidden={!summaryOpen || undefined}
             >
               <button
                 type="button"
                 onClick={() => setSummaryOpen(false)}
-                className="absolute z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-                style={arrowStyle ? { left: arrowStyle.left, top: arrowStyle.top, transform: 'translate(-50%, -50%)' } : { right: '1rem', top: '0.5rem' }}
+                className="absolute right-8 top-[22px] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                style={arrowStyle ? { right: 'auto', left: arrowStyle.left, top: arrowStyle.top, transform: 'translate(-50%, -50%)' } : undefined}
                 aria-label="Hide profile summary"
               >
-                <ChevronUp className="w-3.5 h-3.5" />
+                <ChevronUp className="w-3.5 h-3.5 rotate-180" />
               </button>
               <div className="px-4 py-4">
                 <div className="flex items-center gap-3">
