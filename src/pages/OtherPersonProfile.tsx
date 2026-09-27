@@ -139,9 +139,9 @@ const OtherPersonProfile: React.FC = () => {
           // Fall back to sample reviews when the profile has none (e.g. demo profiles)
           if (reviews.length === 0) {
             reviews = [
-              { id: 'sample1', user: 'Jessica L.', rating: 5, comment: 'Excellent trader! The vintage camera was exactly as described, and meetup was quick and easy.', date: 'April 15, 2025' },
-              { id: 'sample2', user: 'Marcus T.', rating: 5, comment: 'Great communication and smooth trade. Would definitely trade again!', date: 'March 28, 2025' },
-              { id: 'sample3', user: 'Sophia R.', rating: 4, comment: 'Very satisfied with my trade. Item was in good condition as described.', date: 'February 12, 2025' },
+              { id: 'sample1', reviewer_id: '', user: 'Jessica L.', avatar_url: '', rating: 5, comment: 'Excellent trader! The vintage camera was exactly as described, and meetup was quick and easy.', date: 'April 15, 2025' },
+              { id: 'sample2', reviewer_id: '', user: 'Marcus T.', avatar_url: '', rating: 5, comment: 'Great communication and smooth trade. Would definitely trade again!', date: 'March 28, 2025' },
+              { id: 'sample3', reviewer_id: '', user: 'Sophia R.', avatar_url: '', rating: 4, comment: 'Very satisfied with my trade. Item was in good condition as described.', date: 'February 12, 2025' },
             ];
           }
           setUserReviews(reviews);
