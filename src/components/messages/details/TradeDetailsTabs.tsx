@@ -430,7 +430,7 @@ const handleNextTheirItem = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-gray-200 md:border-0 overflow-hidden">
+          <div className="bg-white rounded-lg overflow-hidden">
             {/* Their Item Image with Navigation */}
             <div className="relative bg-gray-100 w-full aspect-[4/3]">
               <img 
