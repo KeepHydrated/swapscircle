@@ -370,16 +370,13 @@ const AdminReports: React.FC = () => {
         ? `Your account has been permanently banned for: ${violationReason}. This is your ${ban.previous_ban_count + 1} violation.`
         : `Your account has been temporarily suspended for ${ban.ban_duration_days} days for: ${violationReason}. This is your ${ban.previous_ban_count + 1} violation.`;
 
-      const { error: notificationError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: reportedUserId,
-          type: 'violation',
-          reference_id: report.id,
-          message: notificationMessage,
-          action_taken: 'account_suspended',
-          action_by: user!.id
-        });
+      const { error: notificationError } = await supabase.rpc('notify_user', {
+        p_user_id: reportedUserId,
+        p_type: 'violation',
+        p_reference_id: report.id,
+        p_message: notificationMessage,
+        p_action_taken: 'account_suspended'
+      });
 
       if (notificationError) {
         console.error('Error creating notification:', notificationError);
