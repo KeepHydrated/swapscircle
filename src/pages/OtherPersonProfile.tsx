@@ -713,10 +713,11 @@ const OtherPersonProfile: React.FC = () => {
               >
                 Reviews
               </TabsTrigger>
-              {tabsStuck && (
+              {tabsStuck && !summaryOpen && (
                 <button
                   type="button"
-                  onClick={() => setSummaryOpen(o => !o)}
+                  ref={picButtonRef}
+                  onClick={() => { syncArrowToPic(); setSummaryOpen(o => !o); }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 z-40 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label="Show profile summary"
                   aria-expanded={summaryOpen}
