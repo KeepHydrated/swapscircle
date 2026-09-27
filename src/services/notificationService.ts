@@ -13,17 +13,15 @@ interface CreateNotificationParams {
 
 export const createNotification = async (params: CreateNotificationParams) => {
   try {
-    const { error } = await supabase
-      .from('notifications')
-      .insert({
-        user_id: params.userId,
-        type: 'comment', // Default to comment type since that's what the DB supports
-        message: `${params.title}: ${params.content}`,
-        reference_id: params.relatedId || '',
-        action_taken: params.type === 'friend' && params.title.includes('accepted') ? 'friend_accepted' : params.type,
-        action_by: params.actionBy, // Add this field
-        status: 'unread'
-      });
+    // Cross-user notifications go through the verified server-side function,
+    // which records the actual sender (action_by = auth.uid()).
+    const { error } = await supabase.rpc('notify_user', {
+      p_user_id: params.userId,
+      p_type: 'comment', // Default to comment type since that's what the DB supports
+      p_reference_id: params.relatedId || params.userId,
+      p_message: `${params.title}: ${params.content}`,
+      p_action_taken: params.type === 'friend' && params.title.includes('accepted') ? 'friend_accepted' : params.type
+    });
 
     if (error) {
       console.error('Error creating notification:', error);
