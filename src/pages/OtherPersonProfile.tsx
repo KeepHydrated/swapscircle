@@ -478,7 +478,7 @@ const OtherPersonProfile: React.FC = () => {
         <div className="bg-card rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 animate-pulse">
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-20 w-20 bg-gray-200 rounded-full"></div>
+              <div className="h-16 w-16 bg-gray-200 rounded-full"></div>
               <div className="space-y-2">
                 <div className="h-6 bg-gray-200 rounded w-32"></div>
                 <div className="h-4 bg-gray-200 rounded w-24"></div>
