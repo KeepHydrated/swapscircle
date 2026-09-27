@@ -48,6 +48,32 @@ const OtherPersonProfile: React.FC = () => {
   const [userItems, setUserItems] = useState<any[]>([]);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const { itemsInActiveTrades } = useItemsInActiveTrades();
+
+  // Sticky tabs bar: show mini profile pic when the bar sticks under the header
+  const [tabsStuck, setTabsStuck] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const tabsBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const update = () => {
+      const bar = tabsBarRef.current;
+      if (!bar) return;
+      setTabsStuck(bar.getBoundingClientRect().top <= 64);
+      if (bar.getBoundingClientRect().top > 64) setSummaryOpen(false);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [isLoading]);
+
+  const summaryAvatar = profileData.avatar_url && profileData.avatar_url !== '/placeholder.svg'
+    ? profileData.avatar_url
+    : undefined;
+
   
   // Convert items to MatchItems and add liked property, filtering out items in active trades
   const itemsAsMatchItems: MatchItem[] = userItems
