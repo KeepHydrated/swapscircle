@@ -69,10 +69,12 @@ const OtherPersonProfile: React.FC = () => {
       if (!stuck) setSummaryOpen(false);
     };
     update();
-    window.addEventListener('scroll', update, { passive: true });
+    // The page scrolls inside MainLayout's <main>, not the window
+    const scroller = sentinelRef.current?.closest('main') ?? window;
+    scroller.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     return () => {
-      window.removeEventListener('scroll', update);
+      scroller.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
   }, [isLoading]);
@@ -701,7 +703,7 @@ const OtherPersonProfile: React.FC = () => {
           {/* Sentinel to detect when the tabs bar becomes the sticky header */}
           <div ref={sentinelRef} className="h-px w-full" aria-hidden />
           <div
-            className={`relative sticky top-16 z-30 isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
+            className={`relative sticky top-0 z-30 isolate bg-background [overflow-anchor:none] ${tabsStuck ? 'shadow-[0_4px_12px_-8px_hsl(var(--foreground)/0.35)]' : ''}`}
           >
             <div className="relative">
               <Tabs 
